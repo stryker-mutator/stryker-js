@@ -20,9 +20,10 @@
   {
     "Guides": [
       "stryker-js/guides/angular",
-      "stryker-js/guides/react",
-      "stryker-js/guides/vuejs",
       "stryker-js/guides/nodejs",
+      "stryker-js/guides/react",
+      "stryker-js/guides/svelte",
+      "stryker-js/guides/vuejs",
       "stryker-js/guides/create-a-plugin"
     ]
   }

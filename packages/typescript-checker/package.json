@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/typescript-checker",
-  "version": "7.3.0",
+  "version": "8.0.0",
   "description": "A typescript type checker plugin to be used in Stryker, the JavaScript mutation testing framework",
   "files": [
     "dist/schema",
@@ -30,7 +30,7 @@
     "directory": "packages/typescript-checker"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "publishConfig": {
     "access": "public"
@@ -46,16 +46,16 @@
   },
   "homepage": "https://stryker-mutator.io/docs/stryker-js/typescript-checker",
   "dependencies": {
-    "@stryker-mutator/api": "7.3.0",
-    "@stryker-mutator/util": "7.3.0",
+    "@stryker-mutator/api": "8.0.0",
+    "@stryker-mutator/util": "8.0.0",
     "semver": "~7.5.0"
   },
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "7.3.0",
-    "@types/semver": "7.5.5"
+    "@stryker-mutator/test-helpers": "8.0.0",
+    "@types/semver": "7.5.6"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "~7.3.0",
+    "@stryker-mutator/core": "~8.0.0",
     "typescript": ">=3.6"
   }
 }

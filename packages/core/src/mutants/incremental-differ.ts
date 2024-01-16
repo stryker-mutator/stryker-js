@@ -2,7 +2,7 @@ import path from 'path';
 
 import { diff_match_patch as DiffMatchPatch } from 'diff-match-patch';
 import chalk from 'chalk';
-import { schema, Mutant, Position, Location, MutantStatus, StrykerOptions, FileDescriptions, MutateDescription } from '@stryker-mutator/api/core';
+import { schema, Mutant, Position, Location, StrykerOptions, FileDescriptions, MutateDescription } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
 import { I, normalizeFileName, normalizeLineEndings, notEmpty } from '@stryker-mutator/util';
@@ -302,13 +302,13 @@ export class IncrementalDiffer {
         // End users can use --force to force retesting of certain mutants
         return true;
       }
-      if (oldMutant.status === MutantStatus.Ignored) {
+      if (oldMutant.status === 'Ignored') {
         // Was previously ignored, but not anymore, we need to run it now
         return false;
       }
 
       const testsDiff = diffTestCoverage(mutant.id, oldCoverageTestKeysByMutantKey.get(mutantKey), coveringTests);
-      if (oldMutant.status === MutantStatus.Killed) {
+      if (oldMutant.status === 'Killed') {
         if (oldKillingTests) {
           for (const killingTest of oldKillingTests) {
             if (testsDiff.get(killingTest) === 'same') {

@@ -1,7 +1,7 @@
-import { defineConfig } from 'vitest/config'
+import { defineProject } from 'vitest/config';
 
-export default defineConfig({
+export default defineProject({
   test: {
-    setupFiles: ['vitest.setup.js']
+    setupFiles: ['vitest.setup.js'],
   },
-})
+});

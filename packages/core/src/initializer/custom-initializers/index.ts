@@ -7,6 +7,7 @@ import { AngularInitializer } from './angular-initializer.js';
 import { CustomInitializer } from './custom-initializer.js';
 import { ReactInitializer } from './react-initializer.js';
 import { VueJsInitializer } from './vue-js-initializer.js';
+import { SvelteInitializer } from './svelte-initializer.js';
 
 interface CustomInitializerContext extends BaseContext {
   [coreTokens.execa]: typeof import('execa').execaCommand;
@@ -14,6 +15,11 @@ interface CustomInitializerContext extends BaseContext {
 }
 
 export function createInitializers(injector: Injector<CustomInitializerContext>): CustomInitializer[] {
-  return [injector.injectClass(AngularInitializer), injector.injectClass(ReactInitializer), injector.injectClass(VueJsInitializer)];
+  return [
+    injector.injectClass(AngularInitializer),
+    injector.injectClass(ReactInitializer),
+    injector.injectClass(SvelteInitializer),
+    injector.injectClass(VueJsInitializer),
+  ];
 }
 createInitializers.inject = [commonTokens.injector] as const;

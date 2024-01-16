@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.0.0](https://github.com/stryker-mutator/stryker-js/compare/v7.3.0...v8.0.0) (2023-11-30)
+
+### Bug Fixes
+
+- **deps:** update dependency angular-html-parser to v5 ([#4533](https://github.com/stryker-mutator/stryker-js/issues/4533)) ([fb5a167](https://github.com/stryker-mutator/stryker-js/commit/fb5a1671304b007ee3c6a85f11415d36257f6122))
+
+### Features
+
+- **node:** drop official support for node 16 ([#4542](https://github.com/stryker-mutator/stryker-js/issues/4542)) ([e190207](https://github.com/stryker-mutator/stryker-js/commit/e190207e25926179c1a3ed2c0ff97a13720c57bd))
+- **svelte:** support mutating `.svelte` files ([0ef9a7f](https://github.com/stryker-mutator/stryker-js/commit/0ef9a7f5045799c39f7c6312c73a8d0345236615))
+
+### BREAKING CHANGES
+
+- **node:** NodeJS 16 is no longer supported. Please use NodeJS 18 or higher. See https://nodejs.org/en/about/previous-releases
+
 # [7.3.0](https://github.com/stryker-mutator/stryker-js/compare/v7.2.0...v7.3.0) (2023-10-15)
 
 ### Bug Fixes

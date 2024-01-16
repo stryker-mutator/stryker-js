@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.0.0](https://github.com/stryker-mutator/stryker-js/compare/v7.3.0...v8.0.0) (2023-11-30)
+
+### Bug Fixes
+
+- **deps:** update dependency @cucumber/messages to v23 ([#4540](https://github.com/stryker-mutator/stryker-js/issues/4540)) ([0472118](https://github.com/stryker-mutator/stryker-js/commit/047211879320c15f4ddb18878c0681198e06070b))
+
+### Features
+
+- **node:** drop official support for node 16 ([#4542](https://github.com/stryker-mutator/stryker-js/issues/4542)) ([e190207](https://github.com/stryker-mutator/stryker-js/commit/e190207e25926179c1a3ed2c0ff97a13720c57bd))
+
+### BREAKING CHANGES
+
+- **node:** NodeJS 16 is no longer supported. Please use NodeJS 18 or higher. See https://nodejs.org/en/about/previous-releases
+
 # [7.3.0](https://github.com/stryker-mutator/stryker-js/compare/v7.2.0...v7.3.0) (2023-10-15)
 
 ### Bug Fixes

@@ -1,6 +1,6 @@
 import os from 'os';
 
-import { MutantStatus, schema } from '@stryker-mutator/api/core';
+import { schema } from '@stryker-mutator/api/core';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
@@ -34,7 +34,7 @@ describe(ClearTextReporter.name, () => {
                 location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
                 mutatorName: 'Block',
                 replacement: '{}',
-                status: MutantStatus.Killed,
+                status: 'Killed',
               },
             ],
             source: 'console.log("hello world!")',
@@ -70,7 +70,7 @@ describe(ClearTextReporter.name, () => {
                 location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
                 mutatorName: 'Block',
                 replacement: '{}',
-                status: MutantStatus.Killed,
+                status: 'Killed',
               },
             ],
             source: 'console.log("hello world!")',
@@ -96,7 +96,7 @@ describe(ClearTextReporter.name, () => {
                 location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
                 mutatorName: 'Block',
                 replacement: '{}',
-                status: MutantStatus.Killed,
+                status: 'Killed',
               },
             ],
             source: 'console.log("hello world!")',
@@ -122,7 +122,7 @@ describe(ClearTextReporter.name, () => {
                 location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
                 mutatorName: 'Block',
                 replacement: '{}',
-                status: MutantStatus.Ignored,
+                status: 'Ignored',
               },
             ],
             source: 'console.log("hello world!")',
@@ -156,7 +156,7 @@ describe(ClearTextReporter.name, () => {
                 location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
                 mutatorName: 'Block',
                 replacement: '{}',
-                status: MutantStatus.Ignored,
+                status: 'Ignored',
               },
             ],
             source: 'console.log("hello world!")',
@@ -169,7 +169,7 @@ describe(ClearTextReporter.name, () => {
                 location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
                 mutatorName: 'Block',
                 replacement: '{}',
-                status: MutantStatus.Killed,
+                status: 'Killed',
               },
             ],
             source: 'console.log("hello world!")',
@@ -239,7 +239,7 @@ describe(ClearTextReporter.name, () => {
         });
       });
       it('should report a killed mutant to debug', async () => {
-        mutant.status = MutantStatus.Killed;
+        mutant.status = 'Killed';
         mutant.killedBy = ['1'];
         act(report);
         expect(testInjector.logger.debug).calledWithMatch(sinon.match('[Killed] Math'));
@@ -249,7 +249,7 @@ describe(ClearTextReporter.name, () => {
       });
 
       it('should report a CompileError mutant to debug', async () => {
-        mutant.status = MutantStatus.CompileError;
+        mutant.status = 'CompileError';
         mutant.statusReason = 'could not call bar of undefined';
         act(report);
         expect(testInjector.logger.debug).calledWithMatch(sinon.match('[CompileError] Math'));
@@ -259,7 +259,7 @@ describe(ClearTextReporter.name, () => {
       });
 
       it('should report a NoCoverage mutant to stdout', async () => {
-        mutant.status = MutantStatus.NoCoverage;
+        mutant.status = 'NoCoverage';
         act(report);
         expect(stdoutStub).calledWithMatch(sinon.match('[NoCoverage] Math'));
         expect(stdoutStub).calledWith(`${chalk.red('-   foo')}${os.EOL}`);
@@ -267,34 +267,34 @@ describe(ClearTextReporter.name, () => {
       });
 
       it('should report a Survived mutant to stdout', async () => {
-        mutant.status = MutantStatus.Survived;
+        mutant.status = 'Survived';
         act(report);
         expect(stdoutStub).calledWithMatch(sinon.match('[Survived] Math'));
       });
 
       it('should not report a Survived mutant to stdout when reportMutants is not true', async () => {
         testInjector.options.clearTextReporter.reportMutants = false;
-        mutant.status = MutantStatus.Survived;
+        mutant.status = 'Survived';
         act(report);
         expect(stdoutStub).not.calledWithMatch(sinon.match('[Survived] Math'));
       });
 
       it('should not report a NoCoverage mutant to stdout when reportMutants is not true', async () => {
         testInjector.options.clearTextReporter.reportMutants = false;
-        mutant.status = MutantStatus.NoCoverage;
+        mutant.status = 'NoCoverage';
         act(report);
         expect(stdoutStub).not.calledWithMatch(sinon.match('[NoCoverage] Math'));
       });
 
       it('should report a Timeout mutant to stdout', async () => {
-        mutant.status = MutantStatus.Timeout;
+        mutant.status = 'Timeout';
         act(report);
         expect(testInjector.logger.debug).calledWithMatch(sinon.match('[Timeout] Math'));
       });
 
       it('should report the tests ran for a Survived mutant to stdout for "perTest" coverage analysis', async () => {
         mutant.coveredBy = ['1', '2', '3'];
-        mutant.status = MutantStatus.Survived;
+        mutant.status = 'Survived';
         act(report);
         expect(stdoutStub).calledWithExactly(`Tests ran:${os.EOL}`);
         expect(stdoutStub).calledWithExactly(`    foo should be bar${os.EOL}`);
@@ -305,7 +305,7 @@ describe(ClearTextReporter.name, () => {
       it('should report the max tests to log and however many more tests', async () => {
         testInjector.options.clearTextReporter.maxTestsToLog = 2;
         mutant.coveredBy = ['1', '2', '3'];
-        mutant.status = MutantStatus.Survived;
+        mutant.status = 'Survived';
         act(report);
         expect(stdoutStub).calledWithExactly(`Tests ran:${os.EOL}`);
         expect(stdoutStub).calledWithExactly(`    foo should be bar${os.EOL}`);
@@ -318,7 +318,7 @@ describe(ClearTextReporter.name, () => {
       it('should report that all tests have ran for a surviving mutant that is static', async () => {
         testInjector.options.clearTextReporter.maxTestsToLog = 2;
         mutant.static = true;
-        mutant.status = MutantStatus.Survived;
+        mutant.status = 'Survived';
         act(report);
         expect(stdoutStub).calledWithExactly(`Ran all tests for this mutant.${os.EOL}`);
       });
@@ -326,7 +326,7 @@ describe(ClearTextReporter.name, () => {
       it('should not log individual ran tests when logTests is not true', () => {
         testInjector.options.clearTextReporter.logTests = false;
         mutant.coveredBy = ['1', '2', '3'];
-        mutant.status = MutantStatus.Survived;
+        mutant.status = 'Survived';
         act(report);
 
         const allCalls = stdoutStub.getCalls().map((call) => call.args.join(''));
@@ -345,7 +345,7 @@ describe(ClearTextReporter.name, () => {
       });
 
       it('should log source file location', () => {
-        mutant.status = MutantStatus.Survived;
+        mutant.status = 'Survived';
         mutant.location.start = { line: 4, column: 6 };
         act(report);
 
@@ -354,7 +354,7 @@ describe(ClearTextReporter.name, () => {
 
       it('should log source file names without colored text when clearTextReporter is not false and allowConsoleColors is false', () => {
         testInjector.options.allowConsoleColors = false;
-        mutant.status = MutantStatus.Survived;
+        mutant.status = 'Survived';
         mutant.location.start = { line: 4, column: 6 };
         // Recreate, color setting is set in constructor
         sut = testInjector.injector.injectClass(ClearTextReporter);

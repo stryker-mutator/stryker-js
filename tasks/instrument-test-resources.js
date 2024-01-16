@@ -92,6 +92,15 @@ async function main() {
     },
     '__stryker2__',
   );
+  await instrument(
+    {
+      './packages/vitest-runner/testResources/browser-project/src/heading.component.orig.ts':
+        './packages/vitest-runner/testResources/browser-project/src/heading.component.ts',
+      './packages/vitest-runner/testResources/browser-project/src/math.component.orig.ts':
+        './packages/vitest-runner/testResources/browser-project/src/math.component.ts',
+    },
+    '__stryker2__',
+  );
 }
 
 /**

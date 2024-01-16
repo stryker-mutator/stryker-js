@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.0.0](https://github.com/stryker-mutator/stryker-js/compare/v7.3.0...v8.0.0) (2023-11-30)
+
+### Bug Fixes
+
+- **deps:** update dependency tap-parser to ~15.3.0 ([#4492](https://github.com/stryker-mutator/stryker-js/issues/4492)) ([5ababb3](https://github.com/stryker-mutator/stryker-js/commit/5ababb3dc68eff28d38ff09c3d46cd10453a3dff))
+
 # [7.3.0](https://github.com/stryker-mutator/stryker-js/compare/v7.2.0...v7.3.0) (2023-10-15)
 
 ### Bug Fixes

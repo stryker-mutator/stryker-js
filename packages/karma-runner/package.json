@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/karma-runner",
-  "version": "7.3.0",
+  "version": "8.0.0",
   "description": "A plugin to use the karma test runner in Stryker, the JavaScript mutation testing framework",
   "files": [
     "dist/schema",
@@ -31,7 +31,7 @@
     "directory": "packages/karma-runner"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "keywords": [
     "stryker",
@@ -48,10 +48,10 @@
   },
   "homepage": "https://stryker-mutator.io/docs/stryker-js/karma-runner",
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "7.3.0",
+    "@stryker-mutator/test-helpers": "8.0.0",
     "@types/express": "4.17.21",
-    "@types/node": "20.9.0",
-    "@types/semver": "7.5.5",
+    "@types/node": "20.10.5",
+    "@types/semver": "7.5.6",
     "jasmine-core": "5.1.1",
     "karma": "6.4.2",
     "karma-chai": "0.1.0",
@@ -60,11 +60,11 @@
     "karma-mocha": "2.0.1"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "~7.3.0"
+    "@stryker-mutator/core": "~8.0.0"
   },
   "dependencies": {
-    "@stryker-mutator/api": "7.3.0",
-    "@stryker-mutator/util": "7.3.0",
+    "@stryker-mutator/api": "8.0.0",
+    "@stryker-mutator/util": "8.0.0",
     "decamelize": "~6.0.0",
     "semver": "~7.5.0",
     "tslib": "~2.6.0"

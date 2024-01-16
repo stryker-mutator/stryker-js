@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/core",
-  "version": "7.3.0",
+  "version": "8.0.0",
   "description": "The extendable JavaScript mutation testing framework",
   "type": "module",
   "files": [
@@ -29,7 +29,7 @@
     "directory": "packages/core"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "keywords": [
     "mutation testing",
@@ -68,9 +68,9 @@
     "stryker": "./bin/stryker.js"
   },
   "dependencies": {
-    "@stryker-mutator/api": "7.3.0",
-    "@stryker-mutator/instrumenter": "7.3.0",
-    "@stryker-mutator/util": "7.3.0",
+    "@stryker-mutator/api": "8.0.0",
+    "@stryker-mutator/instrumenter": "8.0.0",
+    "@stryker-mutator/util": "8.0.0",
     "ajv": "~8.12.0",
     "chalk": "~5.3.0",
     "commander": "~11.1.0",
@@ -84,9 +84,9 @@
     "lodash.groupby": "~4.6.0",
     "log4js": "~6.9.0",
     "minimatch": "~9.0.1",
-    "mutation-testing-elements": "2.0.5",
-    "mutation-testing-metrics": "2.0.5",
-    "mutation-testing-report-schema": "2.0.5",
+    "mutation-testing-elements": "3.0.1",
+    "mutation-testing-metrics": "3.0.0",
+    "mutation-testing-report-schema": "3.0.0",
     "npm-run-path": "~5.1.0",
     "progress": "~2.0.0",
     "rxjs": "~7.8.0",
@@ -98,13 +98,13 @@
     "typed-rest-client": "~1.8.0"
   },
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "7.3.0",
+    "@stryker-mutator/test-helpers": "8.0.0",
     "@types/diff-match-patch": "1.0.36",
     "@types/inquirer": "9.0.7",
     "@types/lodash.groupby": "4.6.9",
-    "@types/node": "20.9.0",
+    "@types/node": "20.10.5",
     "@types/progress": "2.0.7",
-    "@types/semver": "7.5.5",
+    "@types/semver": "7.5.6",
     "flatted": "3.2.9"
   }
 }

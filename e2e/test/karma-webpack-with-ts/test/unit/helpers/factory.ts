@@ -16,7 +16,7 @@ export function createMutantResult(overrides?: Partial<MutantResult>): MutantRes
     },
     mutatorName: 'bazMutator',
     replacement: 'baz',
-    status: MutantStatus.Killed,
+    status: 'Killed',
   };
   return { ...defaults, ...overrides };
 }

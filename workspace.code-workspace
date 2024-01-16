@@ -65,10 +65,6 @@
       "path": "perf"
     },
     {
-      "name": "testing-project",
-      "path": "testing-project"
-    },
-    {
       "name": "parent",
       "path": "."
     }

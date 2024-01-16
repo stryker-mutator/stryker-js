@@ -1,6 +1,6 @@
 import babel, { type types } from '@babel/core';
 import generate from '@babel/generator';
-import { Mutant as ApiMutant, Location, Position, MutantStatus } from '@stryker-mutator/api/core';
+import { Mutant as ApiMutant, Location, Position } from '@stryker-mutator/api/core';
 
 import { deepCloneNode, eqNode } from './util/index.js';
 
@@ -41,7 +41,7 @@ export class Mutant implements Mutable {
       mutatorName: this.mutatorName,
       replacement: this.replacementCode,
       statusReason: this.ignoreReason,
-      status: this.ignoreReason ? MutantStatus.Ignored : undefined,
+      status: this.ignoreReason ? 'Ignored' : undefined,
     };
   }
 

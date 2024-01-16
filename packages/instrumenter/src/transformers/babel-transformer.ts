@@ -179,10 +179,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
           yield {
             replacement,
             mutatorName: mutator.name,
-            ignoreReason:
-              directiveBookkeeper.findIgnoreReason(node.node.loc!.start.line, mutator.name) ??
-              findExcludedMutatorIgnoreReason(mutator.name) ??
-              ignorerBookkeeper.currentIgnoreMessage,
+            ignoreReason: directiveBookkeeper.findIgnoreReason(node.node.loc!.start.line, mutator.name) ?? ignorerBookkeeper.currentIgnoreMessage,
           };
         }
         for (let i = 0; i < totalMutatorCount - mutated; i++) {
@@ -194,14 +191,6 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
             ignoreReason: IGNORED_BY_LEVEL_STATUS,
           };
         }
-      }
-    }
-
-    function findExcludedMutatorIgnoreReason(mutatorName: string): string | undefined {
-      if (options.excludedMutations?.includes(mutatorName)) {
-        return `Ignored because of excluded mutation "${mutatorName}"`;
-      } else {
-        return undefined;
       }
     }
   }

@@ -4,7 +4,7 @@
   "concurrency": 2,
   "coverageAnalysis": "perTest",
   "mutator": {
-    "excludedMutations": ["ArithmeticOperator", "BlockStatement"]
+    "excludedMutations": ["@ArithmeticOperator", "BlockStatementRemoval"]
   },
   "reporters": [
     "clear-text",

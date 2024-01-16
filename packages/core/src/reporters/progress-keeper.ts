@@ -1,4 +1,4 @@
-import { MutantResult, MutantStatus, MutantRunPlan, MutantTestPlan, PlanKind } from '@stryker-mutator/api/core';
+import { MutantResult, MutantRunPlan, MutantTestPlan, PlanKind } from '@stryker-mutator/api/core';
 import { DryRunCompletedEvent, MutationTestingPlanReadyEvent, Reporter, RunTiming } from '@stryker-mutator/api/report';
 import { TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
 
@@ -47,10 +47,10 @@ export abstract class ProgressKeeper implements Reporter {
     if (ticks !== undefined) {
       this.progress.tested++;
       this.progress.ticks += this.ticksByMutantId.get(result.id) ?? 0;
-      if (result.status === MutantStatus.Survived) {
+      if (result.status === 'Survived') {
         this.progress.survived++;
       }
-      if (result.status === MutantStatus.Timeout) {
+      if (result.status === 'Timeout') {
         this.progress.timedOut++;
       }
     }
@@ -79,8 +79,8 @@ export abstract class ProgressKeeper implements Reporter {
     return hours > 0 // conditional time formatting
       ? `~${hours}h ${minutes}m`
       : minutes > 0
-      ? `~${minutes}m`
-      : '<1m';
+        ? `~${minutes}m`
+        : '<1m';
   }
 }
 

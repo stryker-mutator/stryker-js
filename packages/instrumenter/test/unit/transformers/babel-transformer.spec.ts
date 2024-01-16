@@ -34,8 +34,12 @@ describe('babel-transformer', () => {
   const fooMutator: NodeMutator<keyof MutationLevel> = {
     name: 'Foo',
     operators: { Foo: { mutationName: 'Foo' } },
-    *mutate(path) {
-      if (path.isIdentifier() && path.node.name === 'foo') {
+    *mutate(path, levelMutations) {
+      if (
+        path.isIdentifier() &&
+        path.node.name === 'foo' &&
+        (levelMutations === undefined || levelMutations.includes(this.operators.Foo.mutationName as string))
+      ) {
         yield types.identifier('bar');
       }
     },
@@ -46,8 +50,12 @@ describe('babel-transformer', () => {
   const plusMutator: NodeMutator<keyof MutationLevel> = {
     name: 'Plus',
     operators: { Plus: { mutationName: 'Plus' } },
-    *mutate(path) {
-      if (path.isBinaryExpression() && path.node.operator === '+') {
+    *mutate(path, levelMutations) {
+      if (
+        path.isBinaryExpression() &&
+        path.node.operator === '+' &&
+        (levelMutations === undefined || levelMutations.includes(this.operators.Plus.mutationName as string))
+      ) {
         yield types.binaryExpression('-', types.cloneNode(path.node.left, true), types.cloneNode(path.node.right, true));
       }
     },
@@ -136,7 +144,7 @@ describe('babel-transformer', () => {
       context.options.excludedMutations = ['Foo'];
       act(ast);
       expect(mutantCollector.mutants).lengthOf(1);
-      expect(mutantCollector.mutants[0].ignoreReason).eq('Ignored because of excluded mutation "Foo"');
+      expect(mutantCollector.mutants[0].ignoreReason).eq('Ignored by level');
     });
   });
 

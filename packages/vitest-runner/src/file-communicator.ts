@@ -4,7 +4,7 @@ import fs from 'fs/promises';
 import { MutantRunOptions } from '@stryker-mutator/api/test-runner';
 import { normalizeFileName } from '@stryker-mutator/util';
 
-import { collectTestName, toTestId } from './vitest-helpers.js';
+import { collectTestName, toRawTestId } from './vitest-helpers.js';
 
 export class FileCommunicator {
   public readonly vitestSetup = normalizeFileName(path.resolve(`.'vitest.${process.env.STRYKER_MUTATOR_WORKER}.setup.js`));
@@ -12,16 +12,18 @@ export class FileCommunicator {
   constructor(private readonly globalNamespace: string) {}
 
   public async setDryRun(): Promise<void> {
+    // Note: TestContext.meta got renamed to TestContext.task in vitest 1.0.0
     await fs.writeFile(
       // Write hit count, hit limit, isDryRun, global namespace, etc. Altogether in 1 file
       this.vitestSetup,
+
       this.setupFileTemplate(`
       ns.activeMutant = undefined;
       ${collectTestName.toString()}
-      ${toTestId.toString()}
+      ${toRawTestId.toString()}
   
       beforeEach((a) => {
-        ns.currentTestId = toTestId(a.meta);
+        ns.currentTestId = toRawTestId(a.meta ?? a.task);
       });
 
       afterEach(() => {

@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/util",
-  "version": "7.3.0",
+  "version": "8.0.0",
   "description": "Contains utilities for Stryker, the mutation testing framework for JavaScript and friends",
   "files": [
     "dist/src",
@@ -39,7 +39,7 @@
   },
   "homepage": "https://github.com/stryker-mutator/stryker-js/tree/master/packages/util#readme",
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "7.3.0",
-    "@types/node": "20.9.0"
+    "@stryker-mutator/test-helpers": "8.0.0",
+    "@types/node": "20.10.5"
   }
 }

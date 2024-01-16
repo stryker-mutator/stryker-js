@@ -80,10 +80,10 @@ export class OptionsValidator {
       const example = rawOptions.transpilers.includes('babel')
         ? 'babel src --out-dir lib'
         : rawOptions.transpilers.includes('typescript')
-        ? 'tsc -b'
-        : rawOptions.transpilers.includes('webpack')
-        ? 'webpack --config webpack.config.js'
-        : 'npm run build';
+          ? 'tsc -b'
+          : rawOptions.transpilers.includes('webpack')
+            ? 'webpack --config webpack.config.js'
+            : 'npm run build';
       this.log.warn(
         `DEPRECATED. Support for "transpilers" is removed. You can now configure your own "${optionsPath('buildCommand')}". For example, ${example}.`,
       );

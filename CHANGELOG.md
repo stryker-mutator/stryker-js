@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.0.0](https://github.com/stryker-mutator/stryker-js/compare/v7.3.0...v8.0.0) (2023-11-30)
+
+### Bug Fixes
+
+- **core:** short circuit test executor when no tests and allowEmpty ([#4477](https://github.com/stryker-mutator/stryker-js/issues/4477)) ([ce3e5cd](https://github.com/stryker-mutator/stryker-js/commit/ce3e5cdd2c3abcf4576fad485f6f86b11895caf1))
+- **deps:** update dependency @cucumber/messages to v23 ([#4540](https://github.com/stryker-mutator/stryker-js/issues/4540)) ([0472118](https://github.com/stryker-mutator/stryker-js/commit/047211879320c15f4ddb18878c0681198e06070b))
+- **deps:** update dependency angular-html-parser to v5 ([#4533](https://github.com/stryker-mutator/stryker-js/issues/4533)) ([fb5a167](https://github.com/stryker-mutator/stryker-js/commit/fb5a1671304b007ee3c6a85f11415d36257f6122))
+- **deps:** update dependency emoji-regex to v10 ([#4496](https://github.com/stryker-mutator/stryker-js/issues/4496)) ([418688b](https://github.com/stryker-mutator/stryker-js/commit/418688b8095afa380e72e4e5453155b84dc9d96d))
+- **deps:** update dependency tap-parser to ~15.3.0 ([#4492](https://github.com/stryker-mutator/stryker-js/issues/4492)) ([5ababb3](https://github.com/stryker-mutator/stryker-js/commit/5ababb3dc68eff28d38ff09c3d46cd10453a3dff))
+- **deps:** update mutation-testing-elements monorepo to v2.0.5 ([#4536](https://github.com/stryker-mutator/stryker-js/issues/4536)) ([45e3ae6](https://github.com/stryker-mutator/stryker-js/commit/45e3ae62427ea59dd5ddd42016ecf93b6ecf7e44))
+- **jest-runner:** support `handleTestEvent` class property ([#4623](https://github.com/stryker-mutator/stryker-js/issues/4623)) ([23f557d](https://github.com/stryker-mutator/stryker-js/commit/23f557d824f03a532e4e2d065710663eab2cda2f))
+
+### Features
+
+- **init:** add svelte custom initializer ([#4625](https://github.com/stryker-mutator/stryker-js/issues/4625)) ([418722d](https://github.com/stryker-mutator/stryker-js/commit/418722dfe9155b3db531b5f580edb8d267c6ab38))
+- **node:** drop official support for node 16 ([#4542](https://github.com/stryker-mutator/stryker-js/issues/4542)) ([e190207](https://github.com/stryker-mutator/stryker-js/commit/e190207e25926179c1a3ed2c0ff97a13720c57bd))
+- **svelte:** support mutating `.svelte` files ([0ef9a7f](https://github.com/stryker-mutator/stryker-js/commit/0ef9a7f5045799c39f7c6312c73a8d0345236615))
+- **vitest:** support browser mode ([#4628](https://github.com/stryker-mutator/stryker-js/issues/4628)) ([3d02969](https://github.com/stryker-mutator/stryker-js/commit/3d0296914e455fd3a1fa754ffa4711368af036c0))
+
+### BREAKING CHANGES
+
+- **node:** NodeJS 16 is no longer supported. Please use NodeJS 18 or higher. See https://nodejs.org/en/about/previous-releases
+
 # [7.3.0](https://github.com/stryker-mutator/stryker-js/compare/v7.2.0...v7.3.0) (2023-10-15)
 
 ### Bug Fixes
