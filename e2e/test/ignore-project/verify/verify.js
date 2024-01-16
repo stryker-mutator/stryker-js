@@ -30,7 +30,7 @@ describe('After running stryker on jest-react project', () => {
     });
   });
 
-  it('should report mutants that result from excluded mutators with the correct ignore reason', async () => {
+  it('should report mutants that are excluded from the excludedMutation list with the correct ignore reason', async () => {
     const report = await readMutationTestingJsonResult();
     const circleResult = report.files['src/Circle.js'];
     const mutantsAtLine3 = circleResult.mutants.filter(({ location }) => location.start.line === 3);
@@ -38,6 +38,29 @@ describe('After running stryker on jest-react project', () => {
     mutantsAtLine3.forEach((mutant) => {
       expect(mutant.status).eq('Ignored');
       expect(mutant.statusReason).eq('Ignored by level');
+    });
+  });
+
+  it('should report mutants that are excluded because they were not in the includedMutations list', async () => {
+    const report = await readMutationTestingJsonResult();
+    const addResult = report.files['src/Add.js'];
+    const mutantsAtLine7 = addResult.mutants.filter(({ location }) => location.start.line === 7);
+    const updateOperatorMutants = mutantsAtLine7.filter(({ mutatorName }) => mutatorName === 'UpdateOperator');
+
+    const mutantsAtLine14 = addResult.mutants.filter(({ location }) => location.start.line === 14);
+    const unaryOperatorMutants = mutantsAtLine14.filter(({ mutatorName }) => mutatorName === 'UnaryOperator');
+
+    expect(updateOperatorMutants).lengthOf(1);
+    expect(unaryOperatorMutants).lengthOf(1);
+
+    updateOperatorMutants.forEach((updateMutant) => {
+      expect(updateMutant.status).eq('Ignored');
+      expect(updateMutant.statusReason).eq('Ignored by level');
+    });
+
+    unaryOperatorMutants.forEach((updateMutant) => {
+      expect(updateMutant.status).eq('Ignored');
+      expect(updateMutant.statusReason).eq('Ignored by level');
     });
   });
 
