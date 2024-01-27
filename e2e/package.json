@@ -13,7 +13,7 @@
     "@cucumber/cucumber": "10.1.0",
     "@sveltejs/adapter-auto": "2.1.1",
     "@sveltejs/kit": "1.30.3",
-    "@sveltejs/vite-plugin-svelte": "2.5.3",
+    "@sveltejs/vite-plugin-svelte": "3.0.2",
     "@testing-library/dom": "9.3.3",
     "@testing-library/jest-dom": "6.1.6",
     "@testing-library/svelte": "4.0.5",
