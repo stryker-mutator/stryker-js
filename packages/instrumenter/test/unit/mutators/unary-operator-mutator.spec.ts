@@ -6,7 +6,7 @@ import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
 
 const unaryOperatorLevel: MutationLevel = {
   name: 'unaryOperatorLevel',
-  UnaryOperator: ['UnaryPlusOperatorNegation', 'UnaryBitwiseOrRemoval'],
+  UnaryOperator: ['UnaryPlusOperatorNegation', 'UnaryBitwiseNotRemoval'],
 };
 const unaryOperatorUndefinedLevel: MutationLevel = { name: 'unaryOperatorUndefinedLevel', UnaryOperator: [] };
 const noLevel = undefined;

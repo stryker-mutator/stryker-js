@@ -6,7 +6,7 @@ import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
 
 const assignmentOperatorLevel: MutationLevel = {
   name: 'AssignmentOperatorLevel',
-  AssignmentOperator: ['SubtractionAssignmentNegation', 'LeftShiftAssignmentNegation', 'LogicalAndAssignmentNegation'],
+  AssignmentOperator: ['SubtractionAssignmentNegation', 'LeftShiftAssignmentNegation', 'LogicalAndAssignmentToLogicalOrReplacement'],
 };
 const assignmentOperatorUndefinedLevel: MutationLevel = { name: 'AssignmentOperatorLevel', AssignmentOperator: [] };
 const noLevel = undefined;

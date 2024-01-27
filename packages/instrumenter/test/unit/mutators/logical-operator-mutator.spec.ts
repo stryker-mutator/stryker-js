@@ -6,7 +6,7 @@ import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
 
 const logicalOperatorLevel: MutationLevel = {
   name: 'logicalOperatorLevel',
-  LogicalOperator: ['LogicalOrOperatorNegation', 'LogicalAndOperatorNegation'],
+  LogicalOperator: ['LogicalOrOperatorToLogicalAndReplacement', 'LogicalAndOperatorToLogicalOrReplacement'],
 };
 
 const logicalOperatorUndefinedLevel: MutationLevel = {
