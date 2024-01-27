@@ -117,21 +117,6 @@ export class ClearTextScoreTable {
     this.columns = [
       new FileColumn(metricsResult),
       new MutationScoreColumn(metricsResult, options.thresholds),
-      new Column(
-        '% adjusted',
-        (row) => {
-          // TODO change every occurrence of this constant to row.metrics.ignoredByMutationlevel after updated metrics has
-          //  been published in mutation-testing-metrics
-          const ignoredByMutationlevel = 0;
-          if (isNaN(row.metrics.mutationScore)) {
-            return 'n/a';
-          }
-          const { mutationScore: score } = row.metrics;
-          const considered = row.metrics.totalMutants - ignoredByMutationlevel;
-          return ((score * considered) / row.metrics.totalMutants).toFixed(2);
-        },
-        metricsResult,
-      ),
       new Column(`${options.clearTextReporter.allowEmojis ? '✅' : '#'} killed`, (row) => row.metrics.killed.toString(), metricsResult),
       new Column(`${options.clearTextReporter.allowEmojis ? '⌛️' : '#'} timeout`, (row) => row.metrics.timeout.toString(), metricsResult),
       new Column(`${options.clearTextReporter.allowEmojis ? '👽' : '#'} survived`, (row) => row.metrics.survived.toString(), metricsResult),

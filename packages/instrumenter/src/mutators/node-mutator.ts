@@ -8,16 +8,9 @@ export interface NodeMutator<T extends keyof MutationLevel> {
    * @param path the NodePath to mutate.
    * @param levelMutations the relevant group of allowed mutations in the Mutation Level. Allows all if undefined.
    */
-  mutate(path: NodePath, levelMutations: string[] | undefined): Iterable<types.Node>;
-
-  /**
-   * Number of mutants that can be generated, .
-   */
-  numberOfMutants(path: NodePath): number;
-
-  /**
-   * Name of the Mutator.
-   */
+  // It would be stricter for the type to be `MutatorDefinition` rather than `keyof MutationLevel` but that
+  // prevents the definition of custom mutators from {@link babel.transformer.spec.ts}
+  mutate(path: NodePath): Iterable<[types.Node, keyof MutationLevel]>;
   readonly name: string;
 
   /**

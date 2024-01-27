@@ -54,24 +54,25 @@ export function expectJSMutationWithLevel(
   });
   const mutants: string[] = [];
   const originalNodeSet = nodeSet(ast);
-  const operations: string[] | undefined = level;
 
   babel.traverse(ast, {
     enter(path) {
-      for (const replacement of sut.mutate(path, operations)) {
-        const mutatedCode = generate(replacement).code;
-        const beforeMutatedCode = originalCode.substring(0, path.node.start ?? 0);
-        const afterMutatedCode = originalCode.substring(path.node.end ?? 0);
-        const mutant = `${beforeMutatedCode}${mutatedCode}${afterMutatedCode}`;
-        mutants.push(mutant);
+      for (const [replacement, mutationOperator] of sut.mutate(path)) {
+        if (level === undefined || level.includes(mutationOperator as string)) {
+          const mutatedCode = generate(replacement).code;
+          const beforeMutatedCode = originalCode.substring(0, path.node.start ?? 0);
+          const afterMutatedCode = originalCode.substring(path.node.end ?? 0);
+          const mutant = `${beforeMutatedCode}${mutatedCode}${afterMutatedCode}`;
+          mutants.push(mutant);
 
-        for (const replacementNode of nodeSet(replacement, path)) {
-          if (originalNodeSet.has(replacementNode)) {
-            expect.fail(
-              `Mutated ${replacementNode.type} node \`${
-                generate(replacementNode).code
-              }\` was found in the original AST. Please be sure to deep clone it (using \`cloneNode(ast, true)\`)`,
-            );
+          for (const replacementNode of nodeSet(replacement, path)) {
+            if (originalNodeSet.has(replacementNode)) {
+              expect.fail(
+                `Mutated ${replacementNode.type} node \`${
+                  generate(replacementNode).code
+                }\` was found in the original AST. Please be sure to deep clone it (using \`cloneNode(ast, true)\`)`,
+              );
+            }
           }
         }
       }

@@ -221,15 +221,14 @@
         "includedMutations": {
           "type": "array",
           "uniqueItems": true,
-          "default": [],
           "items": {
             "$ref": "#/definitions/MutationSpecification"
-          }
+          },
+          "minItems": 1
         },
         "excludedMutations": {
           "type": "array",
           "uniqueItems": true,
-          "default": [],
           "items": {
             "$ref": "#/definitions/MutationSpecification"
           }

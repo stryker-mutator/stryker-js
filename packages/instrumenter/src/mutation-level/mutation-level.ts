@@ -1,5 +1,4 @@
-import fs from 'fs';
-
+import { Node } from '@babel/core';
 import {
   ArithmeticOperator,
   ArrayDeclaration,
@@ -32,12 +31,11 @@ interface ReplacementConfiguration<T> {
   /**
    * Replacement for the fragment of code. ``undefined`` signifies removal of the fragment.
    */
-  replacement?: any;
-
+  replacement?: Node | Node[] | boolean | string | null;
   /**
    * Name of the mutation.
    */
-  mutationName: T;
+  mutationOperator: T;
 }
 
 /**
@@ -66,7 +64,3 @@ export interface MutationLevel {
   UpdateOperator?: UpdateOperator[];
   [k: string]: MutatorDefinition[] | string | undefined;
 }
-
-export const defaultMutationLevels: MutationLevel[] = JSON.parse(
-  fs.readFileSync(new URL('../../../src/mutation-level/default-mutation-levels.json', import.meta.url), 'utf-8'),
-).mutationLevels;

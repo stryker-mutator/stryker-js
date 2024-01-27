@@ -13,7 +13,9 @@ import { allMutantPlacers, MutantPlacer, throwPlacementError } from '../mutant-p
 import { Mutable, Mutant } from '../mutant.js';
 import { allMutators } from '../mutators/index.js';
 
-import { MutationLevel, defaultMutationLevels } from '../mutation-level/mutation-level.js';
+import { MutationLevel } from '../mutation-level/mutation-level.js';
+
+import { defaultMutationLevels } from '../mutation-level/default-mutation-levels.js';
 
 import { DirectiveBookkeeper } from './directive-bookkeeper.js';
 import { IgnorerBookkeeper } from './ignorer-bookkeeper.js';
@@ -21,8 +23,6 @@ import { IgnorerBookkeeper } from './ignorer-bookkeeper.js';
 import { AstTransformer } from './index.js';
 
 const { traverse } = babel;
-
-const IGNORED_BY_LEVEL_STATUS = 'Ignored by level';
 
 interface MutantsPlacement<TNode extends types.Node> {
   appliedMutants: Map<Mutant, TNode>;
@@ -164,35 +164,37 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
     const runLevel = createRunLevel();
 
     for (const mutator of mutators) {
-      const totalMutatorCount = mutator.numberOfMutants(node);
-
-      if (totalMutatorCount > 0 && (runLevel === undefined || mutator.name in runLevel)) {
-        let propertyValue = undefined;
-        if (runLevel !== undefined) {
-          propertyValue = runLevel?.[mutator.name] as string[];
-        }
-
-        let mutated = 0;
-
-        for (const replacement of mutator.mutate(node, propertyValue)) {
-          mutated++;
-          yield {
-            replacement,
-            mutatorName: mutator.name,
-            ignoreReason: directiveBookkeeper.findIgnoreReason(node.node.loc!.start.line, mutator.name) ?? ignorerBookkeeper.currentIgnoreMessage,
-          };
-        }
-        for (let i = 0; i < totalMutatorCount - mutated; i++) {
-          // totalMutatorCount - mutated is the number of potential mutants not mutated
-          const placeholderNode = babel.types.stringLiteral('excludedByLevel');
-          yield {
-            replacement: placeholderNode,
-            mutatorName: mutator.name,
-            ignoreReason: IGNORED_BY_LEVEL_STATUS,
-          };
-        }
+      for (const [replacement, mutationOperator] of mutator.mutate(node)) {
+        yield {
+          replacement,
+          mutatorName: mutator.name,
+          ignoreReason:
+            directiveBookkeeper.findIgnoreReason(node.node.loc!.start.line, mutator.name) ??
+            findExcludedMutatorIgnoreReason(runLevel, mutator.name, mutationOperator) ??
+            ignorerBookkeeper.currentIgnoreMessage,
+        };
       }
     }
+  }
+
+  function findExcludedMutatorIgnoreReason(
+    runLevel: MutationLevel | undefined,
+    mutatorName: string,
+    mutationOperator: keyof MutationLevel,
+  ): string | undefined {
+    if (runLevel === undefined) {
+      return;
+    }
+
+    if (!(mutatorName in runLevel)) {
+      return `Ignored because "${mutatorName}" is not recognised as a mutator`;
+    }
+
+    if (!runLevel[mutatorName]?.includes(mutationOperator as MutatorDefinition)) {
+      return `Ignored because the operator "${mutationOperator}" is excluded from the mutation run`;
+    }
+
+    return;
   }
 
   /**
@@ -209,7 +211,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
       } else {
         // remove `excludedMutations` from a complete level
         mutators.forEach((mut) =>
-          Object.values(mut.operators).forEach((op) => (runLevel[mut.name] as MutatorDefinition[]).push(op.mutationName as MutatorDefinition)),
+          Object.values(mut.operators).forEach((op) => (runLevel[mut.name] as MutatorDefinition[]).push(op.mutationOperator as MutatorDefinition)),
         );
       }
     }
@@ -242,18 +244,21 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
           const nodeMutatorToAdd = mutators.find((mut) => mut.name === opGroupName);
           if (nodeMutatorToAdd) {
             Object.values(nodeMutatorToAdd.operators).forEach((mutator) => {
-              updateFunc(runLevel[opGroupName] as MutatorDefinition[], mutator.mutationName as MutatorDefinition);
+              updateFunc(runLevel[opGroupName] as MutatorDefinition[], mutator.mutationOperator as MutatorDefinition);
             });
             continue;
           }
         }
 
         // Else, must be a suboperator
-        const nodeMutator = mutators.find((mut) => Object.values(mut.operators).some((mutator) => mutator.mutationName === spec));
+        const nodeMutator = mutators.find((mut) => Object.values(mut.operators).some((mutator) => mutator.mutationOperator === spec));
 
         if (nodeMutator) {
           updateFunc(runLevel[nodeMutator.name] as MutatorDefinition[], spec as MutatorDefinition);
+          continue;
         }
+
+        logger.warn(`Mutation operator "${spec}" not recognised. Did you make a typo?`);
       }
     }
   }

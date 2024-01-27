@@ -35,25 +35,21 @@ export const regexMutator: NodeMutator<Regex> = {
   name: 'Regex',
 
   operators: {
-    RegexRemoval: { mutationName: 'RegexRemoval' },
+    RegexRemoval: { mutationOperator: 'RegexRemoval' },
   },
 
-  *mutate(path, options) {
-    if (path.isRegExpLiteral() && isInMutationLevel(options)) {
+  *mutate(path) {
+    if (path.isRegExpLiteral()) {
       for (const replacementPattern of mutatePattern(path.node.pattern, path.node.flags)) {
         const replacement = types.regExpLiteral(replacementPattern, path.node.flags);
-        yield replacement;
+        yield [replacement, this.operators.RegexRemoval.mutationOperator];
       }
-    } else if (path.isStringLiteral() && isObviousRegexString(path) && isInMutationLevel(options)) {
+    } else if (path.isStringLiteral() && isObviousRegexString(path)) {
       const flags = getFlags(path.parentPath as NodePath<t.NewExpression>);
       for (const replacementPattern of mutatePattern(path.node.value, flags)) {
-        yield types.stringLiteral(replacementPattern);
+        yield [types.stringLiteral(replacementPattern), this.operators.RegexRemoval.mutationOperator];
       }
     }
-  },
-
-  numberOfMutants(path): number {
-    return path.isRegExpLiteral() || (path.isStringLiteral() && isObviousRegexString(path)) ? 1 : 0;
   },
 };
 
@@ -68,8 +64,4 @@ function mutatePattern(pattern: string, flags: string | undefined): string[] {
     }
   }
   return [];
-}
-
-function isInMutationLevel(levelMutations: string[] | undefined): boolean {
-  return levelMutations === undefined || levelMutations.includes(regexMutator.operators.RegexRemoval.mutationName);
 }

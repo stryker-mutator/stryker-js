@@ -10,28 +10,16 @@ export const arrowFunctionMutator: NodeMutator<ArrowFunction> = {
   name: 'ArrowFunction',
 
   operators: {
-    ArrowFunctionRemoval: { mutationName: 'ArrowFunctionRemoval' },
+    ArrowFunctionRemoval: { mutationOperator: 'ArrowFunctionRemoval' },
   },
 
-  *mutate(path, levelMutations) {
-    if (this.numberOfMutants(path) > 0 && isInMutationLevel(levelMutations)) {
-      yield types.arrowFunctionExpression([], types.identifier('undefined'));
-    }
-  },
-
-  numberOfMutants(path): number {
+  *mutate(path) {
     if (
       path.isArrowFunctionExpression() &&
       !types.isBlockStatement(path.node.body) &&
       !(types.isIdentifier(path.node.body) && path.node.body.name === 'undefined')
     ) {
-      return 1;
+      yield [types.arrowFunctionExpression([], types.identifier('undefined')), this.operators.ArrowFunctionRemoval.mutationOperator];
     }
-
-    return 0;
   },
 };
-
-function isInMutationLevel(levelMutations: string[] | undefined): boolean {
-  return levelMutations === undefined || levelMutations.includes(arrowFunctionMutator.operators.ArrowFunctionRemoval.mutationName);
-}

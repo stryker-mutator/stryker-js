@@ -10,36 +10,22 @@ export const arithmeticOperatorMutator: NodeMutator<ArithmeticOperator> = {
   name: 'ArithmeticOperator',
 
   operators: {
-    '+': { replacement: '-', mutationName: 'AdditionOperatorNegation' },
-    '-': { replacement: '+', mutationName: 'SubtractionOperatorNegation' },
-    '*': { replacement: '/', mutationName: 'MultiplicationOperatorNegation' },
-    '/': { replacement: '*', mutationName: 'DivisionOperatorNegation' },
-    '%': { replacement: '*', mutationName: 'RemainderOperatorToMultiplicationReplacement' },
+    '+': { replacement: '-', mutationOperator: 'AdditionOperatorNegation' },
+    '-': { replacement: '+', mutationOperator: 'SubtractionOperatorNegation' },
+    '*': { replacement: '/', mutationOperator: 'MultiplicationOperatorNegation' },
+    '/': { replacement: '*', mutationOperator: 'DivisionOperatorNegation' },
+    '%': { replacement: '*', mutationOperator: 'RemainderOperatorToMultiplicationReplacement' },
   },
 
-  *mutate(path, levelMutations) {
-    if (path.isBinaryExpression() && isSupported(path.node.operator, path.node) && isInMutationLevel(path.node, levelMutations)) {
-      const mutatedOperator = this.operators[path.node.operator].replacement;
-      const replacement = deepCloneNode(path.node);
-      replacement.operator = mutatedOperator;
-      yield replacement;
+  *mutate(path) {
+    if (path.isBinaryExpression() && isSupported(path.node.operator, path.node)) {
+      const { replacement, mutationOperator } = this.operators[path.node.operator];
+      const nodeClone = deepCloneNode(path.node);
+      nodeClone.operator = replacement as types.BinaryExpression['operator'];
+      yield [nodeClone, mutationOperator];
     }
   },
-
-  numberOfMutants(path): number {
-    return path.isBinaryExpression() && isSupported(path.node.operator, path.node) ? 1 : 0;
-  },
 };
-
-function isInMutationLevel(node: types.BinaryExpression, operations: string[] | undefined): boolean {
-  // No mutation level specified, so allow everything
-  if (operations === undefined) {
-    return true;
-  }
-
-  const mutatedOperator = arithmeticOperatorMutator.operators[node.operator].mutationName;
-  return operations.some((op) => op === mutatedOperator);
-}
 
 function isSupported(operator: string, node: types.BinaryExpression): boolean {
   if (!Object.keys(arithmeticOperatorMutator.operators).includes(operator)) {

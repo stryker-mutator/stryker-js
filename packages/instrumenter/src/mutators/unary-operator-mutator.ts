@@ -12,30 +12,21 @@ export const unaryOperatorMutator: NodeMutator<UnaryOperator> = {
   name: 'UnaryOperator',
 
   operators: {
-    '+': { replacement: '-', mutationName: 'UnaryPlusOperatorNegation' },
-    '-': { replacement: '+', mutationName: 'UnaryMinOperatorNegation' },
-    '~': { replacement: '', mutationName: 'UnaryBitwiseNotRemoval' },
+    '+': { replacement: '-', mutationOperator: 'UnaryPlusOperatorNegation' },
+    '-': { replacement: '+', mutationOperator: 'UnaryMinOperatorNegation' },
+    '~': { replacement: '', mutationOperator: 'UnaryBitwiseNotRemoval' },
   },
 
-  *mutate(path, levelMutations) {
+  *mutate(path) {
     if (path.isUnaryExpression() && isSupported(path.node.operator) && path.node.prefix) {
-      const mutation = this.operators[path.node.operator];
+      const { replacement, mutationOperator } = this.operators[path.node.operator];
 
-      if (levelMutations !== undefined && !levelMutations.includes(mutation.mutationName)) {
-        // Mutator not allowed by MutationLevel
-        return;
-      }
-
-      const replacementOperator = mutation.replacement.length
-        ? types.unaryExpression(mutation.replacement as '-' | '+', deepCloneNode(path.node.argument))
+      const nodeClone = (replacement as string).length
+        ? types.unaryExpression(replacement as '-' | '+', deepCloneNode(path.node.argument))
         : deepCloneNode(path.node.argument);
 
-      yield replacementOperator;
+      yield [nodeClone, mutationOperator];
     }
-  },
-
-  numberOfMutants(path): number {
-    return path.isUnaryExpression() && isSupported(path.node.operator) && path.node.prefix ? 1 : 0;
   },
 };
 

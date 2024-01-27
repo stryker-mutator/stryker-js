@@ -23,40 +23,35 @@ export const optionalChainingMutator: NodeMutator<OptionalChaining> = {
   name: 'OptionalChaining',
 
   operators: {
-    OptionalCallExpressionOptionalRemoval: { mutationName: 'OptionalCallExpressionOptionalRemoval' },
-    OptionalMemberExpressionOptionalRemoval: { mutationName: 'OptionalMemberExpressionOptionalRemoval' },
-    OptionalComputedMemberExpressionOptionalRemoval: { mutationName: 'OptionalComputedMemberExpressionOptionalRemoval' },
+    OptionalCallExpressionOptionalRemoval: { mutationOperator: 'OptionalCallExpressionOptionalRemoval' },
+    OptionalMemberExpressionOptionalRemoval: { mutationOperator: 'OptionalMemberExpressionOptionalRemoval' },
+    OptionalComputedMemberExpressionOptionalRemoval: { mutationOperator: 'OptionalComputedMemberExpressionOptionalRemoval' },
   },
 
-  *mutate(path, levelMutations) {
-    if (
-      path.isOptionalMemberExpression() &&
-      path.node.optional &&
-      (levelMutations === undefined ||
-        (!path.node.computed && levelMutations.includes(this.operators.OptionalMemberExpressionOptionalRemoval.mutationName)) ||
-        (path.node.computed && levelMutations.includes(this.operators.OptionalComputedMemberExpressionOptionalRemoval.mutationName)))
-    ) {
-      yield t.optionalMemberExpression(
-        t.cloneNode(path.node.object, true),
-        t.cloneNode(path.node.property, true),
-        path.node.computed,
-        /*optional*/ false,
-      );
+  *mutate(path) {
+    if (path.isOptionalMemberExpression() && path.node.optional) {
+      const mutationOperator = path.node.computed
+        ? this.operators.OptionalComputedMemberExpressionOptionalRemoval.mutationOperator
+        : this.operators.OptionalMemberExpressionOptionalRemoval.mutationOperator;
+      yield [
+        t.optionalMemberExpression(
+          t.cloneNode(path.node.object, true),
+          t.cloneNode(path.node.property, true),
+          path.node.computed,
+          /*optional*/ false,
+        ),
+        mutationOperator,
+      ];
     }
-    if (
-      path.isOptionalCallExpression() &&
-      path.node.optional &&
-      (levelMutations === undefined || levelMutations.includes(this.operators.OptionalCallExpressionOptionalRemoval.mutationName))
-    ) {
-      yield t.optionalCallExpression(
-        t.cloneNode(path.node.callee, true),
-        path.node.arguments.map((arg) => t.cloneNode(arg, true)),
-        /*optional*/ false,
-      );
+    if (path.isOptionalCallExpression() && path.node.optional) {
+      yield [
+        t.optionalCallExpression(
+          t.cloneNode(path.node.callee, true),
+          path.node.arguments.map((arg) => t.cloneNode(arg, true)),
+          /*optional*/ false,
+        ),
+        this.operators.OptionalCallExpressionOptionalRemoval.mutationOperator,
+      ];
     }
-  },
-
-  numberOfMutants(path): number {
-    return (path.isOptionalMemberExpression() || path.isOptionalCallExpression()) && path.node.optional ? 1 : 0;
   },
 };

@@ -37,7 +37,7 @@ describe('After running stryker on jest-react project', () => {
     expect(mutantsAtLine3).lengthOf(2);
     mutantsAtLine3.forEach((mutant) => {
       expect(mutant.status).eq('Ignored');
-      expect(mutant.statusReason).eq('Ignored by level');
+      expect(mutant.statusReason).eq('Ignored because the operator "MultiplicationOperatorNegation" is excluded from the mutation run');
     });
   });
 
@@ -55,12 +55,12 @@ describe('After running stryker on jest-react project', () => {
 
     updateOperatorMutants.forEach((updateMutant) => {
       expect(updateMutant.status).eq('Ignored');
-      expect(updateMutant.statusReason).eq('Ignored by level');
+      expect(updateMutant.statusReason).eq('Ignored because the operator "PostfixIncrementOperatorNegation" is excluded from the mutation run');
     });
 
     unaryOperatorMutants.forEach((updateMutant) => {
       expect(updateMutant.status).eq('Ignored');
-      expect(updateMutant.statusReason).eq('Ignored by level');
+      expect(updateMutant.statusReason).eq('Ignored because the operator "UnaryMinOperatorNegation" is excluded from the mutation run');
     });
   });
 

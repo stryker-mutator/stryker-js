@@ -8,30 +8,22 @@ export const logicalOperatorMutator: NodeMutator<LogicalOperator> = {
   name: 'LogicalOperator',
 
   operators: {
-    '&&': { replacement: '||', mutationName: 'LogicalAndOperatorToLogicalOrReplacement' },
-    '||': { replacement: '&&', mutationName: 'LogicalOrOperatorToLogicalAndReplacement' },
-    '??': { replacement: '&&', mutationName: 'NullishCoalescingOperatorToLogicalAndReplacement' },
+    '&&': { replacement: '||', mutationOperator: 'LogicalAndOperatorToLogicalOrReplacement' },
+    '||': { replacement: '&&', mutationOperator: 'LogicalOrOperatorToLogicalAndReplacement' },
+    '??': { replacement: '&&', mutationOperator: 'NullishCoalescingOperatorToLogicalAndReplacement' },
   },
 
-  *mutate(path, levelMutations) {
-    if (path.isLogicalExpression() && isSupported(path.node.operator) && isInMutationLevel(path.node.operator, levelMutations)) {
-      const mutatedOperator = this.operators[path.node.operator].replacement;
+  *mutate(path) {
+    if (path.isLogicalExpression() && isSupported(path.node.operator)) {
+      const { replacement, mutationOperator } = this.operators[path.node.operator];
 
-      const replacementOperator = deepCloneNode(path.node);
-      replacementOperator.operator = mutatedOperator;
-      yield replacementOperator;
+      const nodeClone = deepCloneNode(path.node);
+      nodeClone.operator = replacement as babel.types.LogicalExpression['operator'];
+      yield [nodeClone, mutationOperator];
     }
-  },
-
-  numberOfMutants(path): number {
-    return path.isLogicalExpression() && isSupported(path.node.operator) ? 1 : 0;
   },
 };
 
 function isSupported(operator: string): operator is keyof typeof logicalOperatorMutator.operators {
   return Object.keys(logicalOperatorMutator.operators).includes(operator);
-}
-
-function isInMutationLevel(operator: string, levelMutations: string[] | undefined): boolean {
-  return levelMutations === undefined || levelMutations.includes(logicalOperatorMutator.operators[operator].mutationName as string);
 }
