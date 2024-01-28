@@ -54,6 +54,7 @@ export class ExpirableTask<T = void> extends Task<T | typeof ExpirableTask.Timeo
         })
         .catch((error) => {
           clearTimeout(timer);
+          // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
           rej(error);
         });
     });

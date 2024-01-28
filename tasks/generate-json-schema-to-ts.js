@@ -63,7 +63,7 @@ function preprocessSchema(inputSchema) {
   try {
     switch (cleanedSchema.type) {
       case 'object':
-        const inputRequired = cleanedSchema.required || [];
+        const inputRequired = cleanedSchema.required ?? [];
         const outputSchema = {
           ...cleanedSchema,
           properties: preprocessProperties(cleanedSchema.properties),
