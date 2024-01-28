@@ -44,6 +44,8 @@ export function getFormat(fileName: string, override?: AstFormat): AstFormat | u
       case '.mjs':
       case '.cjs':
         return AstFormat.JS;
+      case '.mts':
+      case '.cts':
       case '.ts':
         return AstFormat.TS;
       case '.tsx':
