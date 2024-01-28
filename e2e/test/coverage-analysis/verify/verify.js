@@ -70,11 +70,11 @@ describe('Coverage analysis', () => {
 
     // Vitest only supports perTest coverage analysis
     it('should provide expected', async () => {
-      await actAssertPerTest(12);
+      await actAssertPerTest();
     });
-    it.only('should provide expected in browser mode', async () => {
+    it('should provide expected in browser mode', async () => {
       strykerOptions.vitest = { configFile: 'vitest.browser.config.js' };
-      await actAssertPerTest(14);
+      await actAssertPerTest();
     });
   });
 
@@ -192,7 +192,7 @@ describe('Coverage analysis', () => {
   }
 
   /** @param {number} expectedTestCount */
-  async function actAssertPerTest(expectedTestCount) {
+  async function actAssertPerTest(expectedTestCount = 10) {
     // Arrange
     strykerOptions.coverageAnalysis = 'perTest';
     const stryker = new Stryker(strykerOptions);
