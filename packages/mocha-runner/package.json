@@ -52,11 +52,11 @@
   "dependencies": {
     "@stryker-mutator/api": "8.0.0",
     "@stryker-mutator/util": "8.0.0",
-    "tslib": "~2.6.0"
+    "tslib": "~2.6.2"
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "8.0.0",
-    "@types/node": "20.10.5"
+    "@types/node": "20.11.9"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "~8.0.0",

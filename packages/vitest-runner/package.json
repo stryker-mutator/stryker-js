@@ -50,11 +50,11 @@
   "homepage": "https://stryker-mutator.io/docs/stryker-js/vitest-runner",
   "devDependencies": {
     "@stryker-mutator/test-helpers": "8.0.0",
-    "@types/node": "20.10.5",
-    "@vitest/browser": "1.1.0",
-    "playwright": "1.40.1",
+    "@types/node": "20.11.9",
+    "@vitest/browser": "1.2.2",
+    "playwright": "1.41.1",
     "ts-node": "10.9.2",
-    "vitest": "1.1.0"
+    "vitest": "1.2.2"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "~8.0.0",
@@ -63,7 +63,7 @@
   "dependencies": {
     "@stryker-mutator/api": "8.0.0",
     "@stryker-mutator/util": "8.0.0",
-    "tslib": "~2.6.0"
+    "tslib": "~2.6.2"
   },
   "initStrykerConfig": {
     "coverageAnalysis": "perTest"

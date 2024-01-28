@@ -175,10 +175,12 @@ export class ChildProcessProxy<T> implements Disposable {
         case ParentMessageKind.CallResult:
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           this.workerTasks[message.correlationId].resolve(message.result);
+          // eslint-disable-next-line @typescript-eslint/no-array-delete
           delete this.workerTasks[message.correlationId];
           break;
         case ParentMessageKind.CallRejection:
           this.workerTasks[message.correlationId].reject(new StrykerError(message.error));
+          // eslint-disable-next-line @typescript-eslint/no-array-delete
           delete this.workerTasks[message.correlationId];
           break;
         case ParentMessageKind.DisposeCompleted:
