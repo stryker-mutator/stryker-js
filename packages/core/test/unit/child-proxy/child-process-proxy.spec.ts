@@ -11,6 +11,7 @@ import sinon from 'sinon';
 
 import { ChildProcessProxy } from '../../../src/child-proxy/child-process-proxy.js';
 import {
+  CallMessage,
   DisposeMessage,
   InitMessage,
   ParentMessage,
@@ -284,6 +285,68 @@ describe(ChildProcessProxy.name, () => {
       // Assert
       expect(result).eq('ack');
       expect(childProcessMock.send).calledWith(stringUtils.serialize(expectedWorkerMessage));
+    });
+
+    it('should use a unique correlation id for each call', async () => {
+      // Arrange
+      receiveMessage({ kind: ParentMessageKind.Initialized });
+
+      // Act
+      const promises = [sut.proxy.say('echo'), sut.proxy.say('hello'), sut.proxy.sum(1, 2)];
+      clock.tick(0);
+      receiveMessage({ kind: ParentMessageKind.CallResult, correlationId: 0, result: 'ack' });
+      receiveMessage({ kind: ParentMessageKind.CallResult, correlationId: 1, result: 'ack' });
+      receiveMessage({ kind: ParentMessageKind.CallResult, correlationId: 2, result: 'ack' });
+      await Promise.all(promises);
+
+      // Assert
+      sinon.assert.calledThrice(childProcessMock.send);
+      const actualWorkerMessage1: CallMessage = JSON.parse(childProcessMock.send.firstCall.args[0] as string);
+      const actualWorkerMessage2: CallMessage = JSON.parse(childProcessMock.send.secondCall.args[0] as string);
+      const actualWorkerMessage3: CallMessage = JSON.parse(childProcessMock.send.thirdCall.args[0] as string);
+      expect(actualWorkerMessage1.correlationId).eq(0);
+      expect(actualWorkerMessage1.methodName).eq('say');
+      expect(actualWorkerMessage1.args).deep.eq(['echo']);
+      expect(actualWorkerMessage2.correlationId).eq(1);
+      expect(actualWorkerMessage2.methodName).eq('say');
+      expect(actualWorkerMessage2.args).deep.eq(['hello']);
+      expect(actualWorkerMessage3.correlationId).eq(2);
+      expect(actualWorkerMessage3.methodName).eq('sum');
+      expect(actualWorkerMessage3.args).deep.eq([1, 2]);
+    });
+
+    it('should resolve correct promises when receiving responses', async () => {
+      // Arrange
+      receiveMessage({ kind: ParentMessageKind.Initialized });
+      const delayedEcho = sut.proxy.say('echo');
+      const delayedHello = sut.proxy.sayHello();
+      clock.tick(0);
+      receiveMessage({ kind: ParentMessageKind.CallResult, correlationId: 0, result: 'ack' });
+      receiveMessage({ kind: ParentMessageKind.CallResult, correlationId: 1, result: 'Hello' });
+
+      // Act
+      const [echo, hello] = await Promise.all([delayedEcho, delayedHello]);
+
+      // Assert
+      expect(echo).eq('ack');
+      expect(hello).eq('Hello');
+    });
+
+    it('should resolve correct promises when receiving responses out-of-order', async () => {
+      // Arrange
+      receiveMessage({ kind: ParentMessageKind.Initialized });
+      const delayedEcho = sut.proxy.say('echo');
+      const delayedHello = sut.proxy.sayHello();
+      clock.tick(0);
+      receiveMessage({ kind: ParentMessageKind.CallResult, correlationId: 1, result: 'Hello' });
+      receiveMessage({ kind: ParentMessageKind.CallResult, correlationId: 0, result: 'ack' });
+
+      // Act
+      const [echo, hello] = await Promise.all([delayedEcho, delayedHello]);
+
+      // Assert
+      expect(echo).eq('ack');
+      expect(hello).eq('Hello');
     });
 
     it('should wait with starting to proxy until initialized', async () => {
