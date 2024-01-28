@@ -11,6 +11,7 @@
     "@babel/preset-env": "7.23.9",
     "@babel/preset-flow": "7.23.3",
     "@cucumber/cucumber": "10.3.1",
+    "@sveltejs/adapter-auto": "3.1.1",
     "@sveltejs/kit": "2.5.0",
     "@sveltejs/vite-plugin-svelte": "3.0.2",
     "@testing-library/dom": "9.3.4",
