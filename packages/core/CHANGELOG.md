@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.1.0](https://github.com/stryker-mutator/stryker-js/compare/v8.0.0...v8.1.0) (2024-01-29)
+
+### Bug Fixes
+
+- **deps:** update a lot of dependencies ([#4691](https://github.com/stryker-mutator/stryker-js/issues/4691)) ([5b45fa6](https://github.com/stryker-mutator/stryker-js/commit/5b45fa6fb318393378e8dc17ce43fc5e071ddce7))
+
+### Features
+
+- **core:** Add .next, .nuxt and .svelte-kit to ignorePattern ([#4645](https://github.com/stryker-mutator/stryker-js/issues/4645)) ([ddc28ea](https://github.com/stryker-mutator/stryker-js/commit/ddc28ea49fa483e4525df96315c1b0c7673449a1))
+- **instrumenter:** support `.mts` and `.cts` file extensions ([#4694](https://github.com/stryker-mutator/stryker-js/issues/4694)) ([7a09c75](https://github.com/stryker-mutator/stryker-js/commit/7a09c75bfda0bd2c3f26346e2c6d538e7942cc97))
+
 # [8.0.0](https://github.com/stryker-mutator/stryker-js/compare/v7.3.0...v8.0.0) (2023-11-30)
 
 ### Bug Fixes

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.1.0](https://github.com/stryker-mutator/stryker-js/compare/v8.0.0...v8.1.0) (2024-01-29)
+
+### Bug Fixes
+
+- **deps:** update a lot of dependencies ([#4691](https://github.com/stryker-mutator/stryker-js/issues/4691)) ([5b45fa6](https://github.com/stryker-mutator/stryker-js/commit/5b45fa6fb318393378e8dc17ce43fc5e071ddce7))
+- **deps:** update dependency angular-html-parser to ~5.2.0 ([#4649](https://github.com/stryker-mutator/stryker-js/issues/4649)) ([2d998e2](https://github.com/stryker-mutator/stryker-js/commit/2d998e210a2510a1d53f0d21c0970e7f35f6aecb))
+
+### Features
+
+- **instrumenter:** support `.mts` and `.cts` file extensions ([#4694](https://github.com/stryker-mutator/stryker-js/issues/4694)) ([7a09c75](https://github.com/stryker-mutator/stryker-js/commit/7a09c75bfda0bd2c3f26346e2c6d538e7942cc97))
+
 # [8.0.0](https://github.com/stryker-mutator/stryker-js/compare/v7.3.0...v8.0.0) (2023-11-30)
 
 ### Bug Fixes
