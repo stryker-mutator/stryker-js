@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.2.1](https://github.com/stryker-mutator/stryker-js/compare/v8.2.0...v8.2.1) (2024-01-29)
+
+### Bug Fixes
+
+- **publish:** use `npm ci` instead of `install` in publish ([#4697](https://github.com/stryker-mutator/stryker-js/issues/4697)) ([3fc5af8](https://github.com/stryker-mutator/stryker-js/commit/3fc5af8fbd409553f3ef95846250779721042e80))
+
 # [8.2.0](https://github.com/stryker-mutator/stryker-js/compare/v8.1.0...v8.2.0) (2024-01-29)
 
 ### Features
