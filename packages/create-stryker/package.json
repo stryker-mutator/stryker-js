@@ -7,6 +7,9 @@
     "dist/src",
     "src"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {},
   "repository": {
     "type": "git",
