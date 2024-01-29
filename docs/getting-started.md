@@ -29,26 +29,24 @@ This command will first install Stryker and then run the Stryker initializer. Du
 
 If you're asked to install Stryker, choose **Yes**.
 
-Please let us know if your option is missing here [by opening an issue](https://github.com/stryker-mutator/stryker-js/issues/new).
-
 After the init is done, inspect the `stryker.config.mjs` file.
 
 For more information on what these options mean, take a look at [the Configuration docs page](./configuration.md)
 
 ---
 
-## 4 Let's kill some mutants
+## 3 Let's kill some mutants
 
 Run Stryker to mutation test your project
 
 ```bash
-stryker run
+npx stryker run
 ```
 
-Have troubles running Stryker? Try running with trace logging.
+Have troubles running Stryker? Try running with trace logging. You can also take a look at our [troubleshooting guide](./troubleshooting.md).
 
 ```bash
-stryker run --logLevel trace
+npx stryker run --logLevel trace
 ```
 
 You can also have a look at [the Configuration docs page](./configuration.md) for more information about the configuration.

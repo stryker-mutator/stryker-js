@@ -4,17 +4,4 @@
 
 # Create Stryker
 
-## Run the project locally
-
-To run the project locally, follow these steps:
-
-1. Run `npm install`
-2. Run `npm start`
-
-## Pulish package
-
-Login to npm with `npm login`. You need to be a member of the stryker-mutator organization to publish.
-
-1. Run `npm run build`
-2. Run `npm publish`
-
+An initialer for StrykerJS! Run it with: `npm init stryker`. See [getting started](../../docs/getting-started.md) for more information.
