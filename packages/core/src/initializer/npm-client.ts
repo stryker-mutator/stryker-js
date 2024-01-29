@@ -48,35 +48,29 @@ export class NpmClient {
     return this.search(`/-/v1/search?text=keywords:${encodeURIComponent('@stryker-mutator/reporter-plugin')}`).then(mapSearchResultToPromptOption);
   }
 
-  public getAdditionalConfig(pkgInfo: PackageSummary): Promise<PackageInfo> {
-    const path = `/${encodeURIComponent(pkgInfo.name)}@${pkgInfo.version}`;
-    return this.innerNpmClient
-      .get<PackageInfo>(path)
-      .then(handleResult(path))
-      .catch((err) => {
-        this.log.warn(
-          `Could not fetch additional initialization config for dependency ${pkgInfo.name}. You might need to configure it manually`,
-          err,
-        );
-        return pkgInfo;
-      });
+  public async getAdditionalConfig(pkgInfo: PackageSummary): Promise<PackageInfo> {
+    const path = `/${encodeURIComponent(pkgInfo.name)}/${pkgInfo.version}`;
+    try {
+      const response = await this.innerNpmClient.get<PackageInfo>(path);
+      return handleResult(path)(response);
+    } catch (err) {
+      this.log.warn(`Could not fetch additional initialization config for dependency ${pkgInfo.name}. You might need to configure it manually`, err);
+      return pkgInfo;
+    }
   }
 
-  private search(path: string): Promise<NpmSearchResult> {
+  private async search(path: string): Promise<NpmSearchResult> {
     this.log.debug(`Searching: ${path}`);
-    return this.innerNpmClient
-      .get<NpmSearchResult>(path)
-      .then(handleResult(path))
-      .catch((err) => {
-        this.log.error(
-          `Unable to reach 'https://registry.npmjs.com' (for query ${path}). Please check your internet connection.`,
-          errorToString(err),
-        );
-        const result: NpmSearchResult = {
-          objects: [],
-          total: 0,
-        };
-        return result;
-      });
+    try {
+      const response = await this.innerNpmClient.get<NpmSearchResult>(path);
+      return handleResult(path)(response);
+    } catch (err) {
+      this.log.error(`Unable to reach 'https://registry.npmjs.com' (for query ${path}). Please check your internet connection.`, errorToString(err));
+      const result: NpmSearchResult = {
+        objects: [],
+        total: 0,
+      };
+      return result;
+    }
   }
 }
