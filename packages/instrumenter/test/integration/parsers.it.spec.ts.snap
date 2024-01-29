@@ -2084,6 +2084,166 @@ Object {
 }
 `;
 
+exports[`parsers integration should allow to parse a cts file 1`] = `
+Object {
+  "format": "ts",
+  "originFileName": "app.cts",
+  "rawContent": "export class App {}
+",
+  "root": Node {
+    "comments": Array [],
+    "end": 20,
+    "errors": Array [],
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 0,
+        "index": 20,
+        "line": 2,
+      },
+      "filename": undefined,
+      "identifierName": undefined,
+      "start": Position {
+        "column": 0,
+        "index": 0,
+        "line": 1,
+      },
+    },
+    "program": Node {
+      "body": Array [
+        Node {
+          "declaration": Node {
+            "body": Node {
+              "body": Array [],
+              "end": 19,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 19,
+                  "index": 19,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 17,
+                  "index": 17,
+                  "line": 1,
+                },
+              },
+              "range": Array [
+                17,
+                19,
+              ],
+              "start": 17,
+              "type": "ClassBody",
+            },
+            "end": 19,
+            "id": Node {
+              "end": 16,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 16,
+                  "index": 16,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": "App",
+                "start": Position {
+                  "column": 13,
+                  "index": 13,
+                  "line": 1,
+                },
+              },
+              "name": "App",
+              "range": Array [
+                13,
+                16,
+              ],
+              "start": 13,
+              "type": "Identifier",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 19,
+                "index": 19,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 7,
+                "index": 7,
+                "line": 1,
+              },
+            },
+            "range": Array [
+              7,
+              19,
+            ],
+            "start": 7,
+            "superClass": null,
+            "type": "ClassDeclaration",
+          },
+          "end": 19,
+          "exportKind": "value",
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 19,
+              "index": 19,
+              "line": 1,
+            },
+            "filename": undefined,
+            "identifierName": undefined,
+            "start": Position {
+              "column": 0,
+              "index": 0,
+              "line": 1,
+            },
+          },
+          "range": Array [
+            0,
+            19,
+          ],
+          "source": null,
+          "specifiers": Array [],
+          "start": 0,
+          "type": "ExportNamedDeclaration",
+        },
+      ],
+      "directives": Array [],
+      "end": 20,
+      "interpreter": null,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 0,
+          "index": 20,
+          "line": 2,
+        },
+        "filename": undefined,
+        "identifierName": undefined,
+        "start": Position {
+          "column": 0,
+          "index": 0,
+          "line": 1,
+        },
+      },
+      "range": Array [
+        0,
+        20,
+      ],
+      "sourceType": "module",
+      "start": 0,
+      "type": "Program",
+    },
+    "range": Array [
+      0,
+      20,
+    ],
+    "start": 0,
+    "type": "File",
+  },
+}
+`;
+
 exports[`parsers integration should allow to parse a mjs file 1`] = `
 Object {
   "format": "js",
@@ -2212,6 +2372,166 @@ Object {
       "start": 0,
       "type": "Program",
     },
+    "start": 0,
+    "type": "File",
+  },
+}
+`;
+
+exports[`parsers integration should allow to parse a mts file 1`] = `
+Object {
+  "format": "ts",
+  "originFileName": "app.mts",
+  "rawContent": "export class App {}
+",
+  "root": Node {
+    "comments": Array [],
+    "end": 20,
+    "errors": Array [],
+    "loc": SourceLocation {
+      "end": Position {
+        "column": 0,
+        "index": 20,
+        "line": 2,
+      },
+      "filename": undefined,
+      "identifierName": undefined,
+      "start": Position {
+        "column": 0,
+        "index": 0,
+        "line": 1,
+      },
+    },
+    "program": Node {
+      "body": Array [
+        Node {
+          "declaration": Node {
+            "body": Node {
+              "body": Array [],
+              "end": 19,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 19,
+                  "index": 19,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 17,
+                  "index": 17,
+                  "line": 1,
+                },
+              },
+              "range": Array [
+                17,
+                19,
+              ],
+              "start": 17,
+              "type": "ClassBody",
+            },
+            "end": 19,
+            "id": Node {
+              "end": 16,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 16,
+                  "index": 16,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": "App",
+                "start": Position {
+                  "column": 13,
+                  "index": 13,
+                  "line": 1,
+                },
+              },
+              "name": "App",
+              "range": Array [
+                13,
+                16,
+              ],
+              "start": 13,
+              "type": "Identifier",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 19,
+                "index": 19,
+                "line": 1,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 7,
+                "index": 7,
+                "line": 1,
+              },
+            },
+            "range": Array [
+              7,
+              19,
+            ],
+            "start": 7,
+            "superClass": null,
+            "type": "ClassDeclaration",
+          },
+          "end": 19,
+          "exportKind": "value",
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 19,
+              "index": 19,
+              "line": 1,
+            },
+            "filename": undefined,
+            "identifierName": undefined,
+            "start": Position {
+              "column": 0,
+              "index": 0,
+              "line": 1,
+            },
+          },
+          "range": Array [
+            0,
+            19,
+          ],
+          "source": null,
+          "specifiers": Array [],
+          "start": 0,
+          "type": "ExportNamedDeclaration",
+        },
+      ],
+      "directives": Array [],
+      "end": 20,
+      "interpreter": null,
+      "loc": SourceLocation {
+        "end": Position {
+          "column": 0,
+          "index": 20,
+          "line": 2,
+        },
+        "filename": undefined,
+        "identifierName": undefined,
+        "start": Position {
+          "column": 0,
+          "index": 0,
+          "line": 1,
+        },
+      },
+      "range": Array [
+        0,
+        20,
+      ],
+      "sourceType": "module",
+      "start": 0,
+      "type": "Program",
+    },
+    "range": Array [
+      0,
+      20,
+    ],
     "start": 0,
     "type": "File",
   },

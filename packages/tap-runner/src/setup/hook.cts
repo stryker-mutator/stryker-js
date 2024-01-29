@@ -18,7 +18,7 @@ process.on('exit', finalCleanup);
 (['SIGABRT', 'SIGINT', 'SIGHUP', 'SIGTERM'] as const).forEach((signal) =>
   process.on(signal, (_: unknown, signalNumber: number) => {
     process.exit(128 + signalNumber);
-  })
+  }),
 );
 
 function finalCleanup() {
