@@ -532,7 +532,7 @@ describe(StrykerInitializer.name, () => {
         keywords: [],
         version: '1.1.1',
       };
-      npmRestClient.get.withArgs(`/${encodeURIComponent(name)}@1.1.1`).resolves({
+      npmRestClient.get.withArgs(`/${encodeURIComponent(name)}/1.1.1`).resolves({
         result,
         statusCode: 200,
         headers: {},
