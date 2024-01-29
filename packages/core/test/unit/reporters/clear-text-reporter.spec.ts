@@ -243,8 +243,8 @@ describe(ClearTextReporter.name, () => {
         mutant.killedBy = ['1'];
         act(report);
         expect(testInjector.logger.debug).calledWithMatch(sinon.match('[Killed] Math'));
-        expect(testInjector.logger.debug).calledWith(`${chalk.red('-   foo')}`);
-        expect(testInjector.logger.debug).calledWith(`${chalk.green('+   bar')}`);
+        expect(testInjector.logger.debug).calledWith(chalk.red('-   foo'));
+        expect(testInjector.logger.debug).calledWith(chalk.green('+   bar'));
         expect(testInjector.logger.debug).calledWith('Killed by: foo should be bar');
       });
 
@@ -253,8 +253,8 @@ describe(ClearTextReporter.name, () => {
         mutant.statusReason = 'could not call bar of undefined';
         act(report);
         expect(testInjector.logger.debug).calledWithMatch(sinon.match('[CompileError] Math'));
-        expect(testInjector.logger.debug).calledWith(`${chalk.red('-   foo')}`);
-        expect(testInjector.logger.debug).calledWith(`${chalk.green('+   bar')}`);
+        expect(testInjector.logger.debug).calledWith(chalk.red('-   foo'));
+        expect(testInjector.logger.debug).calledWith(chalk.green('+   bar'));
         expect(testInjector.logger.debug).calledWith('Error message: could not call bar of undefined');
       });
 

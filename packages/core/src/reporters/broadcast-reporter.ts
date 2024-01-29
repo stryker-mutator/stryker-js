@@ -47,7 +47,7 @@ export class BroadcastReporter implements StrictReporter {
       Object.entries(this.reporters).map(async ([reporterName, reporter]) => {
         if (reporter[methodName]) {
           try {
-            await (reporter[methodName] as (...args: Parameters<Required<Reporter>[TMethod]>) => Promise<void> | void)!(...eventArgs);
+            await (reporter[methodName] as (...args: Parameters<Required<Reporter>[TMethod]>) => Promise<void> | void)(...eventArgs);
           } catch (error) {
             this.handleError(error, methodName, reporterName);
           }

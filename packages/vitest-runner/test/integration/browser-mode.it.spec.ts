@@ -13,7 +13,7 @@ const test1 = 'src/heading.component.spec.ts#HeadingComponent should project its
 const test2 = 'src/math.component.spec.ts#my-math should support simple addition';
 const test3 = 'src/math.component.spec.ts#my-math should support simple subtraction';
 
-describe('VitestRunner integration', () => {
+describe('VitestRunner in browser mode', () => {
   let sut: VitestTestRunner;
   let sandbox: TempTestDirectorySandbox;
   let options: VitestRunnerOptionsWithStrykerOptions;
@@ -132,7 +132,7 @@ describe('VitestRunner integration', () => {
       );
       assertions.expectKilled(runResult);
       expect(runResult.killedBy).deep.eq([test3]);
-      expect(runResult.nrOfTests).deep.eq(2);
+      expect(runResult.nrOfTests).deep.eq(1); // Only one test should be executed
       expect(runResult.failureMessage).contains('42 - 2 = 44');
     });
 
@@ -154,7 +154,7 @@ describe('VitestRunner integration', () => {
 
       // Assert
       assertions.expectSurvived(runResult);
-      expect(runResult.nrOfTests).eq(2);
+      expect(runResult.nrOfTests).eq(1);
     });
 
     it('should be able to kill a static mutant', async () => {
