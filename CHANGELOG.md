@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.2.2](https://github.com/stryker-mutator/stryker-js/compare/v8.2.1...v8.2.2) (2024-01-29)
+
+### Bug Fixes
+
+- **publish config:** make `create-stryker` a public package ([910851f](https://github.com/stryker-mutator/stryker-js/commit/910851f559b929ebdf4fefdf7ae3f42a68fc09b5))
+
 ## [8.2.1](https://github.com/stryker-mutator/stryker-js/compare/v8.2.0...v8.2.1) (2024-01-29)
 
 ### Bug Fixes

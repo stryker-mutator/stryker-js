@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/vitest-runner",
-  "version": "8.2.1",
+  "version": "8.2.2",
   "description": "A plugin to use the vitest test runner and framework in Stryker, the JavaScript mutation testing framework",
   "files": [
     "dist/schema",
@@ -49,7 +49,7 @@
   },
   "homepage": "https://stryker-mutator.io/docs/stryker-js/vitest-runner",
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "8.2.1",
+    "@stryker-mutator/test-helpers": "8.2.2",
     "@types/node": "20.11.10",
     "@vitest/browser": "1.2.2",
     "playwright": "1.41.1",
@@ -61,8 +61,8 @@
     "vitest": ">=0.31.2"
   },
   "dependencies": {
-    "@stryker-mutator/api": "8.2.1",
-    "@stryker-mutator/util": "8.2.1",
+    "@stryker-mutator/api": "8.2.2",
+    "@stryker-mutator/util": "8.2.2",
     "tslib": "~2.6.2"
   },
   "initStrykerConfig": {
