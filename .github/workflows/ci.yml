@@ -21,7 +21,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
     - name: Install dependencies
       run: npm ci || npm ci # retry once, install on windows is flaky...
     - name: Build & lint & test
