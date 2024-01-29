@@ -57,11 +57,6 @@ jobs:
         echo TEMP="D:\Temp" >> $env:GITHUB_ENV
         echo TMP="D:\Temp" >> $env:GITHUB_ENV
     - uses: actions/checkout@v4
-    - uses: actions/setup-node@v3
-      with:
-        node-version: lts/*
-        cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
     - name: Install dependencies
       # retry once, install on windows is flaky...
       run: npm ci || npm ci
