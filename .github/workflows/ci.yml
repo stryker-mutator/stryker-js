@@ -57,15 +57,9 @@ jobs:
         echo TEMP="D:\Temp" >> $env:GITHUB_ENV
         echo TMP="D:\Temp" >> $env:GITHUB_ENV
     - uses: actions/checkout@v4
-    - uses: actions/setup-node@v3
-      with:
-        node-version: lts/*
-        cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
     - name: Install dependencies
       # retry once, install on windows is flaky...
-      # Also, remove `--force` after v1 release of vitest
-      run: npm ci --force || npm ci --force 
+      run: npm ci || npm ci
     - name: Build packages
       run: npm run build
     - name: e2e install
@@ -74,7 +68,7 @@ jobs:
       run: 'npm run e2e:lint'
     - name: Run e2e tests
       run: 'npm run e2e:run'
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       if: failure()
       with:
         name: e2e-reports

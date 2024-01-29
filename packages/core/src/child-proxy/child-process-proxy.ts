@@ -37,7 +37,8 @@ export class ChildProcessProxy<T> implements Disposable {
   private readonly initTask: Task;
   private disposeTask: ExpirableTask | undefined;
   private fatalError: StrykerError | undefined;
-  private readonly workerTasks: Task[] = [];
+  private readonly workerTasks = new Map<number, Task>();
+  private workerTaskCounter = 0;
   private readonly log = log4js.getLogger(ChildProcessProxy.name);
   private readonly stdoutBuilder = new StringBuilder();
   private readonly stderrBuilder = new StringBuilder();
@@ -141,7 +142,8 @@ export class ChildProcessProxy<T> implements Disposable {
         return Promise.reject(this.fatalError);
       } else {
         const workerTask = new Task<void>();
-        const correlationId = this.workerTasks.push(workerTask) - 1;
+        const correlationId = this.workerTaskCounter++;
+        this.workerTasks.set(correlationId, workerTask);
         this.initTask.promise
           .then(() => {
             this.send({
@@ -174,12 +176,12 @@ export class ChildProcessProxy<T> implements Disposable {
           break;
         case ParentMessageKind.CallResult:
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          this.workerTasks[message.correlationId].resolve(message.result);
-          delete this.workerTasks[message.correlationId];
+          this.workerTasks.get(message.correlationId)!.resolve(message.result);
+          this.workerTasks.delete(message.correlationId);
           break;
         case ParentMessageKind.CallRejection:
-          this.workerTasks[message.correlationId].reject(new StrykerError(message.error));
-          delete this.workerTasks[message.correlationId];
+          this.workerTasks.get(message.correlationId)!.reject(new StrykerError(message.error));
+          this.workerTasks.delete(message.correlationId);
           break;
         case ParentMessageKind.DisposeCompleted:
           if (this.disposeTask) {
@@ -225,7 +227,7 @@ export class ChildProcessProxy<T> implements Disposable {
   }
 
   private reportError(error: Error) {
-    const onGoingWorkerTasks = this.workerTasks.filter((task) => !task.isCompleted);
+    const onGoingWorkerTasks = [...this.workerTasks.values()].filter((task) => !task.isCompleted);
     if (!this.initTask.isCompleted) {
       onGoingWorkerTasks.push(this.initTask);
     }

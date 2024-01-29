@@ -407,7 +407,7 @@ Restart each test runner worker process after `n` runs. Not recommended unless y
 
 ### `mutate` [`string[]`]
 
-Default: `['{src,lib}/**/*.js?(x)', '!{src,lib}/**/__tests__/**/*.js?(x)', '!{src,lib}/**/?(*.)+(spec|test).js?(x)', '!{src,lib}/**/*+(Spec|Test).js?(x)']`<br />
+Default: `['{src,lib}/**/!(*.+(s|S)pec|*.+(t|T)est).+(cjs|mjs|js|ts|mts|cts|jsx|tsx|html|vue|svelte)', '!{src,lib}/**/__tests__/**/*.+(cjs|mjs|js|ts|mts|cts|jsx|tsx|html|vue|svelte)']`<br />
 
 - Config file: `"mutate": ["src/**/*.js", "a.js"]` or `"mutate": ["src/**/*.ts","!src/**/*.spec.ts","!src/**/*.module.ts"]`
 - Command line:

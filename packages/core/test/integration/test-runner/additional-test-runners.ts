@@ -163,7 +163,7 @@ class AsynchronousPromiseRejectionHandlerTestRunner extends NotImplementedTestRu
   public promise?: Promise<void>;
 
   public async init() {
-    this.promise = Promise.reject('Reject for now, but will be caught asynchronously');
+    this.promise = Promise.reject(new Error('Reject for now, but will be caught asynchronously'));
   }
   public async dryRun(): Promise<DryRunResult> {
     // eslint-disable-next-line @typescript-eslint/no-empty-function

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.1.0](https://github.com/stryker-mutator/stryker-js/compare/v8.0.0...v8.1.0) (2024-01-29)
+
+### Bug Fixes
+
+- **deps:** update a lot of dependencies ([#4691](https://github.com/stryker-mutator/stryker-js/issues/4691)) ([5b45fa6](https://github.com/stryker-mutator/stryker-js/commit/5b45fa6fb318393378e8dc17ce43fc5e071ddce7))
+
 # [8.0.0](https://github.com/stryker-mutator/stryker-js/compare/v7.3.0...v8.0.0) (2023-11-30)
 
 **Note:** Version bump only for package @stryker-mutator/util

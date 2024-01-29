@@ -6,6 +6,7 @@ import { URL } from 'url';
 const settings = JSON.parse(fs.readFileSync(new URL('../../stryker.parent.conf.json', import.meta.url), 'utf-8'));
 settings.dashboard.module = import.meta.url.split('/').at(-2);
 settings.mochaOptions.spec = ['dist/test/**/*.js'];
+settings.mutate = ['src/**/*.ts'];
 /**
  * @type {import('../api/dist/src/core/index.js').PartialStrykerOptions}
  */

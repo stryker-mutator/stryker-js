@@ -24,7 +24,7 @@ describe(ProjectReader.name, () => {
       const sut = createSut();
       await sut.read();
       expect(testInjector.logger.warn).calledWith(
-        `No files found in directory ${process.cwd()} using ignore rules: ["node_modules",".git","*.tsbuildinfo","/stryker.log",".stryker-tmp","reports/stryker-incremental.json","reports/mutation/mutation.html","reports/mutation/mutation.json"]. Make sure you run Stryker from the root directory of your project with the correct "ignorePatterns".`,
+        `No files found in directory ${process.cwd()} using ignore rules: ["node_modules",".git","*.tsbuildinfo","/stryker.log",".next",".nuxt",".svelte-kit",".stryker-tmp","reports/stryker-incremental.json","reports/mutation/mutation.html","reports/mutation/mutation.json"]. Make sure you run Stryker from the root directory of your project with the correct "ignorePatterns".`,
       );
     });
     it('should discover files recursively using readdir', async () => {
@@ -237,8 +237,8 @@ describe(ProjectReader.name, () => {
           normalizeWhitespaces(`Warning: No files found for mutation with the given glob expressions.
             As a result, a dry-run will be performed without actually modifying anything. 
             If you intended to mutate files, please check and adjust the configuration. 
-            Current glob pattern(s) used: "{src,lib}/**/!(*.+(s|S)pec|*.+(t|T)est).+(cjs|mjs|js|ts|jsx|tsx|html|vue|svelte)", 
-            "!{src,lib}/**/__tests__/**/*.+(cjs|mjs|js|ts|jsx|tsx|html|vue|svelte)".
+            Current glob pattern(s) used: "{src,lib}/**/!(*.+(s|S)pec|*.+(t|T)est).+(cjs|mjs|js|ts|mts|cts|jsx|tsx|html|vue|svelte)", 
+            "!{src,lib}/**/__tests__/**/*.+(cjs|mjs|js|ts|mts|cts|jsx|tsx|html|vue|svelte)".
             To enable file mutation, consider configuring the \`mutate\` 
             property in your configuration file or using the --mutate option via the command line.`),
         );
