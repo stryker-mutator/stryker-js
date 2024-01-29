@@ -1,0 +1,42 @@
+{
+  "name": "create-stryker",
+  "version": "8.0.0",
+  "description": "Initializer for StrykerJS",
+  "type": "module",
+  "files": [
+    "dist/src/index.js"
+  ],
+  "scripts": {
+    "start": "tsc -b && node ./dist/src/index.js",
+    "build": "tsc -b"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stryker-mutator/stryker-js.git",
+    "directory": "packages/create-stryker"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "mutation testing",
+    "mutation",
+    "testing",
+    "js",
+    "stryker",
+    "initialize"
+  ],
+  "author": "Lex Krooswijk <lexkrooswijk@live.nl>",
+  "contributors": [
+    "Nico Jansen <jansennico@gmail.com>"
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker-js/issues"
+  },
+  "homepage": "https://stryker-mutator.io/",
+  "bin": "dist/src/index.js",
+  "dependencies": {
+    "@stryker-mutator/core": "~8.1.0"
+  }
+}

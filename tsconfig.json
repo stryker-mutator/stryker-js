@@ -4,6 +4,7 @@
     { "path": "packages/api" },
     { "path": "packages/util" },
     { "path": "packages/core" },
+    { "path": "packages/create-stryker" },
     { "path": "packages/instrumenter" },
     { "path": "packages/jasmine-runner" },
     { "path": "packages/jest-runner" },
