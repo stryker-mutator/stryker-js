@@ -40,6 +40,6 @@
   "homepage": "https://github.com/stryker-mutator/stryker-js/tree/master/packages/util#readme",
   "devDependencies": {
     "@stryker-mutator/test-helpers": "8.2.2",
-    "@types/node": "20.11.13"
+    "@types/node": "20.11.14"
   }
 }
