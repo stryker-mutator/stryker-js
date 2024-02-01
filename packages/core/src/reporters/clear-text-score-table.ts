@@ -120,13 +120,12 @@ export class ClearTextScoreTable {
       new Column(
         '% adjusted',
         (row) => {
-          // const { ignoredByMutationlevel } = row.metrics;
-          const ignoredByMutationlevel = 0;
+          const { ignoredByMutationLevel } = row.metrics;
           if (isNaN(row.metrics.mutationScore)) {
             return 'n/a';
           }
           const { mutationScore: score } = row.metrics;
-          const considered = row.metrics.totalMutants - ignoredByMutationlevel;
+          const considered = row.metrics.totalMutants - ignoredByMutationLevel;
           return ((score * considered) / row.metrics.totalMutants).toFixed(2);
         },
         metricsResult,
