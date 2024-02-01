@@ -63,7 +63,7 @@
     "typescript": "5.3.3",
     "vite": "5.0.12",
     "vitest": "1.2.2",
-    "webpack": "5.90.0",
+    "webpack": "5.90.1",
     "webpack-cli": "5.1.4"
   },
   "scripts": {
