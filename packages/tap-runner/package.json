@@ -57,7 +57,7 @@
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "8.2.2",
-    "@types/node": "20.11.14",
+    "@types/node": "20.11.15",
     "ava": "6.1.1",
     "tap": "18.7.0"
   },
