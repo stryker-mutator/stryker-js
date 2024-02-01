@@ -4,9 +4,8 @@ custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/
 ---
 
 Welcome to the Stryker for JavaScript & Friends documentation.
-Stryker started out as a pure JavaScript mutation testing framework, that's why it was simply referred to as **Stryker**, but it has since been rebranded to **StrykerJS**.
+Stryker started as a pure JavaScript mutation testing framework, which is why it was referred to as **Stryker**, but it has since been rebranded to **StrykerJS**.
 
-Today, Stryker supports most JavaScript projects.
-It includes support for TypeScript, React, Angular, VueJS and NodeJS.
+Today, StrykerJS supports most JavaScript projects, including TypeScript, React, Angular, VueJS, Svelte, and NodeJS.
 
-Don't hesitate to get started using our [getting started](./getting-started.md) guide.
+Now: let's [getting started](./getting-started.md) with StrykerJS.
