@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "8.2.3",
-    "@types/node": "20.11.16"
+    "@types/node": "20.11.17"
   },
   "dependencies": {
     "@stryker-mutator/api": "8.2.3",
