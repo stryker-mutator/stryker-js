@@ -3,27 +3,24 @@ title: Angular
 custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/guides/angular.md
 ---
 
-Stryker 4.0 and higher supports Angular projects using the Angular CLI starting from @angular/cli v9.0.0. Are you using an older version? Then there are some tips later in this document.
+StrykerJS supports Angular projects using the Angular CLI starting from @angular/cli v9.0.0. Are you using an older version? Then there are some tips later in this document.
 
-## @angular/cli 9.0.0 and higher
+Angular 16 added [experimental support for jest](https://blog.angular.io/angular-v16-is-here-4d7a28ec680d#1048). This is also supported in StrykerJS.
+
+
+## Angular with Karma
+
+:::note 
 
 This setup only works with @angular/cli 9.0.0 or higher. Are you using an older version of Angular? Then we highly suggest upgrading to at least version 9.0.0 of the cli. You can use the [Angular Update Guide](https://update.angular.io/) to help you with this. If it's not possible for you to upgrade your Angular version, please check out [the legacy guide for Stryker 3 and Angular CLI 6.1-8.2](./legacy/stryker-3/angular.md).
 
-## Install
+:::
 
-Either install the Stryker CLI globally using `npm install --global stryker-cli`, or use `npx` in front of every Stryker command.
-Install the Stryker packages using the command `stryker init`.
-
-Recommended other packages:
-
-- @angular/cli 9.0.0 or higher
-- @angular-devkit/build-angular 0.900.0 or higher
-- karma 4.3.0 or higher
-- typescript 3.7.2 or higher
+Install the Stryker packages using the command `npm init stryker`.
 
 ### Configuration
 
-The `stryker init` command also creates a `stryker.config.json` or `stryker.config.mjs` configuration in your repository
+The `npm init stryker` command also creates a `stryker.config.json` or `stryker.config.mjs` configuration in your repository
 like the one below which is a good starting point for Angular projects.
 You may have to change some paths or config settings like the selected browsers.
 We highly suggest using a headless browser when testing using Stryker.
@@ -42,11 +39,76 @@ We highly suggest using a headless browser when testing using Stryker.
     }
   },
   "reporters": ["progress", "clear-text", "html"],
-  "concurrency": 2,
-  "concurrency_comment": "Recommended to use about half of your available cores when running stryker with angular",
-  "coverageAnalysis": "perTest"
+  "concurrency": 4,
+  "concurrency_comment": "Recommended to use about half of your available cores when running stryker with angular"
 }
 ```
+
+## Angular with experimental Jest support
+
+:::note
+
+Jest support in Angular is experimental. As such, the integration that StrykerJS needs to hook into Angular is not yet supported. Please help us improve this integration by up-voting [issue #25434 in the angular-cli issue tracker](https://github.com/angular/angular-cli/issues/25434). This guide will proceed by explaining a setup that works currently, but might break in the future.
+
+:::
+
+### Install
+
+Install the needed packages with the following command: 
+
+```shell
+npm i -D @stryker-mutator/core @stryker-mutator/jest-runner
+```
+
+### Configuration
+
+Create a `stryker.config.json` file with the following content:
+
+```json
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "mutate": [
+    "src/**/*.ts",
+    "!src/**/*.spec.ts",
+    "!src/test.ts",
+    "!src/environments/*.ts"
+  ],
+  "testRunner": "jest",
+  "buildCommand": "ng test",
+  "buildCommand_comment": "ng test will build the project, also run the tests once. Please up-vote this issue to improve this behavior: https://github.com/angular/angular-cli/issues/25434",
+  "jest": {
+    "enableFindRelatedTests": false,
+    "config": {
+      "rootDir": "dist/test-out/browser",
+      "testEnvironment": "jsdom",
+      "testMatch": ["<rootDir>/**/*.mjs"],
+      "setupFilesAfterEnv": [
+        "<rootDir>/jest-global.mjs",
+        "<rootDir>/polyfills.mjs",
+        "<rootDir>/init-test-bed.mjs"
+      ],
+      "testPathIgnorePatterns": [
+        "<rootDir>/jest-global.mjs",
+        "<rootDir>/polyfills.mjs",
+        "<rootDir>/init-test-bed.mjs",
+        "<rootDir>/chunk-.*.mjs"
+      ]
+    }
+  },
+  "testRunnerNodeArgs": ["--experimental-vm-modules"],
+  "reporters": [
+    "progress",
+    "clear-text",
+    "html"
+  ]
+}
+```
+
+## Run
+
+Run Stryker using `npx stryker run`.
+
+## Check mutants for TypeScript type errors
 
 Consider adding the Stryker TypeScript checker to increase mutation testing performance and kill mutants that would result in compilation errors:
 
@@ -61,9 +123,6 @@ Consider adding the Stryker TypeScript checker to increase mutation testing perf
    ```
    If you experience issues, try setting the `tsconfigFile` option to `tsconfig.app.json`.
 
-### Run
-
-Run Stryker using `stryker run`.
 
 ## Troubleshooting
 
