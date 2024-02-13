@@ -3,16 +3,15 @@ title: Angular
 custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/guides/angular.md
 ---
 
-StrykerJS supports Angular projects using the Angular CLI starting from @angular/cli v9.0.0. Are you using an older version? Then there are some tips later in this document.
+StrykerJS supports Angular projects using the Angular CLI starting from @angular/cli v9.0.0. If you're using an older version, check the tips below.
 
-Angular 16 added [experimental support for jest](https://blog.angular.io/angular-v16-is-here-4d7a28ec680d#1048). This is also supported in StrykerJS.
-
+Angular 16 introduced [experimental support for Jest](https://blog.angular.io/angular-v16-is-here-4d7a28ec680d#1048), which is also supported in StrykerJS.
 
 ## Angular with Karma
 
 :::note 
 
-This setup only works with @angular/cli 9.0.0 or higher. Are you using an older version of Angular? Then we highly suggest upgrading to at least version 9.0.0 of the cli. You can use the [Angular Update Guide](https://update.angular.io/) to help you with this. If it's not possible for you to upgrade your Angular version, please check out [the legacy guide for Stryker 3 and Angular CLI 6.1-8.2](./legacy/stryker-3/angular.md).
+This setup only works with @angular/cli 9.0.0 or higher. If you're using an older version, we highly recommend upgrading to at least version 9.0.0 of the CLI. Refer to the [Angular Update Guide](https://update.angular.io/) for assistance. If upgrading isn't feasible, see [the legacy guide for Stryker 3 and Angular CLI 6.1-8.2](./legacy/stryker-3/angular.md).
 
 :::
 
@@ -20,10 +19,7 @@ Install the Stryker packages using the command `npm init stryker`.
 
 ### Configuration
 
-The `npm init stryker` command also creates a `stryker.config.json` or `stryker.config.mjs` configuration in your repository
-like the one below which is a good starting point for Angular projects.
-You may have to change some paths or config settings like the selected browsers.
-We highly suggest using a headless browser when testing using Stryker.
+The `npm init stryker` command also creates a `stryker.config.json` or `stryker.config.mjs` configuration in your repository. Below is a basic configuration for Angular projects with karma as a test runner:
 
 ```json
 {
@@ -48,7 +44,7 @@ We highly suggest using a headless browser when testing using Stryker.
 
 :::note
 
-Jest support in Angular is experimental. As such, the integration that StrykerJS needs to hook into Angular is not yet supported. Please help us improve this integration by up-voting [issue #25434 in the angular-cli issue tracker](https://github.com/angular/angular-cli/issues/25434). This guide will proceed by explaining a setup that works currently, but might break in the future.
+Jest support in Angular is experimental, so the integration StrykerJS needs is not supported yet. Help improve this integration by up-voting [issue #25434 in the angular-cli issue tracker](https://github.com/angular/angular-cli/issues/25434). Below is a setup that currently works but may change in the future.
 
 :::
 
