@@ -49,7 +49,7 @@
     "@stryker-mutator/api": "8.2.3",
     "@stryker-mutator/util": "8.2.3",
     "angular-html-parser": "~5.2.0",
-    "semver": "~7.5.4",
+    "semver": "~7.6.0",
     "weapon-regex": "~1.3.0"
   },
   "devDependencies": {
