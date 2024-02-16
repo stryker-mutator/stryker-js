@@ -48,7 +48,7 @@
   "devDependencies": {
     "@cucumber/cucumber": "10.3.1",
     "@stryker-mutator/test-helpers": "8.2.3",
-    "@types/semver": "7.5.6"
+    "@types/semver": "7.5.7"
   },
   "peerDependencies": {
     "@cucumber/cucumber": ">=8.0.0",
