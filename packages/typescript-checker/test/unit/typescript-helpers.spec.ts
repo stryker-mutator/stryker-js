@@ -200,11 +200,19 @@ describe('typescript-helpers', () => {
         '@stryker-mutator/typescript-checker only supports typescript@3.6 or higher. Found typescript@3.5.0',
       );
     });
+    it('should throw if typescript@3.5.0-beta', () => {
+      expect(guardTSVersion.bind(undefined, '3.5.0-beta')).throws(
+        '@stryker-mutator/typescript-checker only supports typescript@3.6 or higher. Found typescript@3.5.0-beta',
+      );
+    });
     it('should not throw if typescript@3.6.0', () => {
       expect(guardTSVersion.bind(undefined, '3.6.0')).not.throws();
     });
     it('should not throw if typescript@4.0.0', () => {
       expect(guardTSVersion.bind(undefined, '4.0.0')).not.throws();
+    });
+    it('should not throw if typescript@5.4.0-beta', () => {
+      expect(guardTSVersion.bind(undefined, '5.4.0-beta')).not.throws();
     });
   });
 

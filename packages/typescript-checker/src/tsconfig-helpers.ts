@@ -28,7 +28,7 @@ const LOW_EMIT_OPTIONS_FOR_PROJECT_REFERENCES: Readonly<Partial<ts.CompilerOptio
 });
 
 export function guardTSVersion(version = ts.version): void {
-  if (!semver.satisfies(version, '>=3.6')) {
+  if (!semver.satisfies(version, '>=3.6', { includePrerelease: true })) {
     throw new Error(`@stryker-mutator/typescript-checker only supports typescript@3.6 or higher. Found typescript@${version}`);
   }
 }
