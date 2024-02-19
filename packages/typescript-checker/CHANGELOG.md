@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.2.4](https://github.com/stryker-mutator/stryker-js/compare/v8.2.3...v8.2.4) (2024-02-19)
+
+### Bug Fixes
+
+- **deps:** update dependency semver to ~7.6.0 ([#4719](https://github.com/stryker-mutator/stryker-js/issues/4719)) ([ffe9aeb](https://github.com/stryker-mutator/stryker-js/commit/ffe9aebc3d5726796be085d31a356d6922a78948))
+- **typescript-checker:** support prerelease TypeScript versions ([#4738](https://github.com/stryker-mutator/stryker-js/issues/4738)) ([40ace6e](https://github.com/stryker-mutator/stryker-js/commit/40ace6efb8db155034f28dda5c159dfb05c42662))
+
 ## [8.2.3](https://github.com/stryker-mutator/stryker-js/compare/v8.2.2...v8.2.3) (2024-02-03)
 
 **Note:** Version bump only for package @stryker-mutator/typescript-checker

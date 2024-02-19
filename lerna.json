@@ -1,6 +1,6 @@
 {
   "packages": ["packages/*"],
-  "version": "8.2.3",
+  "version": "8.2.4",
   "command": {
     "version": {
       "allowBranch": ["master", "epic/*", "feat/*"],
