@@ -1,5 +1,7 @@
 import babel, { type NodePath } from '@babel/core';
 
+import { satisfies } from 'semver';
+
 import { mutantTestExpression, mutationCoverageSequenceExpression } from '../util/syntax-helpers.js';
 
 import { MutantPlacer } from './mutant-placer.js';
@@ -78,7 +80,7 @@ function isCallExpression(path: NodePath): path is NodePath<babel.types.CallExpr
 
 function isValidExpression(path: NodePath<babel.types.Expression>) {
   const parent = path.parentPath;
-  return !isObjectPropertyKey() && !isPartOfChain() && !parent.isTaggedTemplateExpression();
+  return !isObjectPropertyKey() && !isPartOfChain() && !parent.isTaggedTemplateExpression() && !isPartOfDeleteExpression();
 
   /**
    * Determines if the expression is property of an object.
@@ -112,12 +114,22 @@ function isValidExpression(path: NodePath<babel.types.Expression>) {
         (isCallExpression(parent) && parent.node.callee === path.node))
     );
   }
+
+  /**
+   * Determines if the expression is part of a delete expression.
+   * @returns true if the expression is part of a delete expression
+   * @example
+   * delete foo.bar;
+   */
+  function isPartOfDeleteExpression() {
+    return parent.isUnaryExpression() && parent.node.operator === 'delete';
+  }
 }
 
 /**
  * Places the mutants with a conditional expression: `global.activeMutant === 1? mutatedCode : originalCode`;
  */
-export const expressionMutantPlacer: MutantPlacer<babel.types.Expression> = {
+export const expressionMutantPlacer = {
   name: 'expressionMutantPlacer',
   canPlace(path) {
     return path.isExpression() && isValidExpression(path);
@@ -135,4 +147,4 @@ export const expressionMutantPlacer: MutantPlacer<babel.types.Expression> = {
     }
     path.replaceWith(expression);
   },
-};
+} satisfies MutantPlacer<babel.types.Expression>;

@@ -12,3 +12,7 @@ input?.id!.toString();
 bar?.baz[0]
 
 state.stats[organization?.organization_id] = action.payload.stats;
+
+// https://github.com/stryker-mutator/stryker-js/issues/4741
+delete myVariable?.[indexer]; 
+void foo?.();
