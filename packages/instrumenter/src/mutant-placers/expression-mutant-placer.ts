@@ -1,7 +1,5 @@
 import babel, { type NodePath } from '@babel/core';
 
-import { satisfies } from 'semver';
-
 import { mutantTestExpression, mutationCoverageSequenceExpression } from '../util/syntax-helpers.js';
 
 import { MutantPlacer } from './mutant-placer.js';
