@@ -35,6 +35,20 @@ describe('expressionMutantPlacer', () => {
       expect(expressionMutantPlacer.canPlace(templateLiteral)).false;
     });
 
+    it('should be false when the parent is a delete unary expression', () => {
+      const memberExpression = findNodePath(parseJS('delete myVariable?.[indexer];'), (p) => p.isOptionalMemberExpression());
+      expect(expressionMutantPlacer.canPlace(memberExpression)).false;
+    });
+
+    it('should be true when the parent is a non-delete unary expression', () => {
+      const memberExpression = findNodePath(parseJS('void myVariable[indexer];'), (p) => p.isMemberExpression());
+      const memberExpression2 = findNodePath(parseJS('typeof myVariable[indexer];'), (p) => p.isMemberExpression());
+      const memberExpression3 = findNodePath(parseJS('throw myVariable[indexer];'), (p) => p.isMemberExpression());
+      expect(expressionMutantPlacer.canPlace(memberExpression)).true;
+      expect(expressionMutantPlacer.canPlace(memberExpression2)).true;
+      expect(expressionMutantPlacer.canPlace(memberExpression3)).true;
+    });
+
     describe('object literals', () => {
       it('should be false when the expression is a key', () => {
         // A stringLiteral is considered an expression, while it is not save to place a mutant there!
