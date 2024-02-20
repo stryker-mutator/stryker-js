@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.2.5](https://github.com/stryker-mutator/stryker-js/compare/v8.2.4...v8.2.5) (2024-02-20)
+
+### Bug Fixes
+
+- **instrumenter:** don't place mutants inside delete expressions ([#4742](https://github.com/stryker-mutator/stryker-js/issues/4742)) ([315087f](https://github.com/stryker-mutator/stryker-js/commit/315087ff6e3a2ec163911bddf8e43cdf7230825b))
+
 ## [8.2.4](https://github.com/stryker-mutator/stryker-js/compare/v8.2.3...v8.2.4) (2024-02-19)
 
 ### Bug Fixes
