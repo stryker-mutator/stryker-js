@@ -40,7 +40,7 @@ export class TestHooksMiddleware {
   }
 
   public configureTestFramework(frameworks?: string[]): void {
-    this.testFramework = frameworks?.filter(isSupportedFramework)[0];
+    this.testFramework = frameworks?.find(isSupportedFramework);
   }
 
   public configureCoverageAnalysis(coverageAnalysis: CoverageAnalysis): void {
