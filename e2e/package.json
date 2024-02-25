@@ -38,7 +38,7 @@
     "jest-environment-jsdom": "29.7.0",
     "jest-environment-jsdom-sixteen": "1.0.3",
     "jsdom": "24.0.0",
-    "karma": "6.4.2",
+    "karma": "6.4.3",
     "karma-chai": "0.1.0",
     "karma-chrome-launcher": "3.2.0",
     "karma-jasmine": "5.1.0",
