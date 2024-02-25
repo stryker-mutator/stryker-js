@@ -49,7 +49,7 @@ describe(sut.name, () => {
       expectJSMutation(sut, 'class Foo { constructor() { bar(); } }', 'class Foo { constructor() {} }');
     });
 
-    it('should mutate a constructor with (typescript) parameter properties', () => {
+    it('should mutate a constructor with (typescript) parameter properties without a `super()` call', () => {
       expectJSMutation(sut, 'class Foo { constructor(private baz: string) { bar(); } }', 'class Foo { constructor(private baz: string) {} }');
     });
 
@@ -59,16 +59,26 @@ describe(sut.name, () => {
 
     /**
      * @see https://github.com/stryker-mutator/stryker-js/issues/2314
+     * @see https://github.com/stryker-mutator/stryker-js/issues/4744
      */
     it('should not mutate a constructor containing a super call and has (typescript) parameter properties', () => {
       expectJSMutation(sut, 'class Foo extends Bar { constructor(private baz: string) { super(); } }');
+      expectJSMutation(
+        sut,
+        'class Foo extends Bar { constructor(private baz: string) { const errorBody: Body = { message: `msg: ${baz}` }; super(errorBody);  } }',
+      );
     });
 
     /**
      * @see https://github.com/stryker-mutator/stryker-js/issues/2474
+     * @see https://github.com/stryker-mutator/stryker-js/issues/4744
      */
     it('should not mutate a constructor containing a super call and contains initialized properties', () => {
       expectJSMutation(sut, 'class Foo extends Bar { private baz = "qux"; constructor() { super(); } }');
+      expectJSMutation(
+        sut,
+        'class Foo extends Bar { private baz = "qux"; constructor() { const errorBody: Body = { message: `msg: ${baz}` }; super(errorBody);  } }',
+      );
     });
   });
 });
