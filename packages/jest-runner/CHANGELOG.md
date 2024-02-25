@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.2.6](https://github.com/stryker-mutator/stryker-js/compare/v8.2.5...v8.2.6) (2024-02-25)
+
+**Note:** Version bump only for package @stryker-mutator/jest-runner
+
 ## [8.2.5](https://github.com/stryker-mutator/stryker-js/compare/v8.2.4...v8.2.5) (2024-02-20)
 
 **Note:** Version bump only for package @stryker-mutator/jest-runner

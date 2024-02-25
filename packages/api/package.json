@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/api",
-  "version": "8.2.5",
+  "version": "8.2.6",
   "description": "The api for the extendable JavaScript mutation testing framework Stryker",
   "type": "module",
   "repository": {
