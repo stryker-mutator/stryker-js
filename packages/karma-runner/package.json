@@ -53,7 +53,7 @@
     "@types/node": "20.11.20",
     "@types/semver": "7.5.8",
     "jasmine-core": "5.1.2",
-    "karma": "6.4.2",
+    "karma": "6.4.3",
     "karma-chai": "0.1.0",
     "karma-chrome-launcher": "3.2.0",
     "karma-jasmine": "5.1.0",
