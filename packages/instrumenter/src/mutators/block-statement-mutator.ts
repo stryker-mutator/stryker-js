@@ -43,11 +43,11 @@ function isEmpty(path: NodePath<babel.types.BlockStatement>) {
  * @see https://github.com/stryker-mutator/stryker-js/issues/2474
  */
 function isInvalidConstructorBody(blockStatement: NodePath<babel.types.BlockStatement>): boolean {
-  return !!(
+  return Boolean(
     blockStatement.parentPath.isClassMethod() &&
-    blockStatement.parentPath.node.kind === 'constructor' &&
-    (containsTSParameterProperties(blockStatement.parentPath) || containsInitializedClassProperties(blockStatement.parentPath)) &&
-    hasSuperExpressionOnFirstLine(blockStatement)
+      blockStatement.parentPath.node.kind === 'constructor' &&
+      (containsTSParameterProperties(blockStatement.parentPath) || containsInitializedClassProperties(blockStatement.parentPath)) &&
+      hasSuperExpression(blockStatement),
   );
 }
 
@@ -62,10 +62,15 @@ function containsInitializedClassProperties(constructor: NodePath<babel.types.Cl
   );
 }
 
-function hasSuperExpressionOnFirstLine(constructor: NodePath<babel.types.BlockStatement>): boolean {
-  return (
-    types.isExpressionStatement(constructor.node.body[0]) &&
-    types.isCallExpression(constructor.node.body[0].expression) &&
-    types.isSuper(constructor.node.body[0].expression.callee)
-  );
+function hasSuperExpression(constructor: NodePath<babel.types.BlockStatement>): boolean {
+  let hasSuper = false;
+  constructor.traverse({
+    Super(path) {
+      if (path.parentPath.isCallExpression()) {
+        path.stop();
+        hasSuper = true;
+      }
+    },
+  });
+  return hasSuper;
 }
