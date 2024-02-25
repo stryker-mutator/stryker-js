@@ -37,7 +37,7 @@ export class StrykerInquirer {
         name: 'testRunner',
         type: 'list',
       });
-      return options.filter((_) => _.name === answers.testRunner)[0] ?? { name: CommandTestRunner.runnerName, pkg: null };
+      return options.find(({ name }) => name === answers.testRunner) ?? { name: CommandTestRunner.runnerName, pkg: null };
     } else {
       return { name: CommandTestRunner.runnerName, pkg: null };
     }
@@ -74,7 +74,7 @@ export class StrykerInquirer {
       name: 'packageManager',
       type: 'list',
     });
-    return options.filter((_) => _.name === answers.packageManager)[0];
+    return options.find(({ name }) => name === answers.packageManager)!;
   }
 
   public async promptJsonConfigType(): Promise<boolean> {
