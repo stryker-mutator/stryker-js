@@ -41,10 +41,10 @@
   },
   "homepage": "https://stryker-mutator.io",
   "dependencies": {
-    "@babel/core": "~7.23.9",
+    "@babel/core": "~7.24.0",
     "@babel/generator": "~7.23.6",
-    "@babel/parser": "~7.23.9",
-    "@babel/plugin-proposal-decorators": "~7.23.9",
+    "@babel/parser": "~7.24.0",
+    "@babel/plugin-proposal-decorators": "~7.24.0",
     "@babel/preset-typescript": "~7.23.3",
     "@stryker-mutator/api": "8.2.6",
     "@stryker-mutator/util": "8.2.6",
