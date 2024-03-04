@@ -417,7 +417,7 @@ Default: `['{src,lib}/**/!(*.+(s|S)pec|*.+(t|T)est).+(cjs|mjs|js|ts|mts|cts|jsx|
   - `--mutate "src/app/home/*.ts","!src/app/home/*.spec.ts"`, if you want to mutate just one specific directory
 
 With `mutate` you configure the subset of files or just one specific file to be mutated. These should be your _production code files_, and definitely not your test files.
-(Whereas with [`ignorePatterns`](#ignorepatterns-string) you prevent non-relevant files from being copied to the [sandbox directory](#tempDirName-string) in the first place)
+(Whereas with [`ignorePatterns`](#ignorepatterns-string) you prevent non-relevant files from being copied to the [sandbox directory](#tempdirname-string) in the first place)
 
 The default will try to guess your production code files based on sane defaults. It reads like this:
 
@@ -585,7 +585,7 @@ With `timeoutFactor` you can configure the allowed deviation relative to the tim
 
 ### `transpilers` (DEPRECATED)
 
-_Note: Support for "transpilers" plugins is removed since Stryker 4. You can now configure your own [buildCommand](#buildCommand-string)_
+_Note: Support for "transpilers" plugins is removed since Stryker 4. You can now configure your own [buildCommand](#buildcommand-string)_
 
 ### `tsconfigFile` [`string`]
 
