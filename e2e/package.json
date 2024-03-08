@@ -12,7 +12,7 @@
     "@babel/preset-flow": "7.24.0",
     "@cucumber/cucumber": "10.3.1",
     "@sveltejs/adapter-auto": "3.1.1",
-    "@sveltejs/kit": "2.5.2",
+    "@sveltejs/kit": "2.5.3",
     "@sveltejs/vite-plugin-svelte": "3.0.2",
     "@testing-library/dom": "9.3.4",
     "@testing-library/jest-dom": "6.4.2",
