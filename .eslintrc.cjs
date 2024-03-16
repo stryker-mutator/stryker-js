@@ -70,8 +70,6 @@ module.exports = {
     ],
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_*', ignoreRestSiblings: true, varsIgnorePattern: '^_' }],
     '@typescript-eslint/no-floating-promises': 'error',
-    '@typescript-eslint/class-methods-use-this': 'off',
-
     // disabled typescript-eslint rules we should enable in some way
 
     // fix - separate PR
@@ -124,6 +122,8 @@ module.exports = {
     '@typescript-eslint/no-unsafe-call': 'off',
 
     // we do not care
+    '@typescript-eslint/class-methods-use-this': 'off',
+    '@typescript-eslint/consistent-return': 'off',
     '@typescript-eslint/max-params': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-parameter-properties': 'off',
