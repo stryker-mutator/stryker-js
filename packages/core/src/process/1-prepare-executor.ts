@@ -9,6 +9,7 @@ import { coreTokens, PluginCreator } from '../di/index.js';
 import { TemporaryDirectory } from '../utils/temporary-directory.js';
 import { ConfigError } from '../errors.js';
 import { PluginLoader } from '../di/plugin-loader.js';
+import { frameworkPluginsFileUrl } from '../frameworks/index.js';
 import { reporterPluginsFileUrl } from '../reporters/index.js';
 import { Timer } from '../utils/timer.js';
 import { MetaSchemaBuilder, OptionsValidator } from '../config/index.js';
@@ -39,7 +40,7 @@ export class PrepareExecutor {
 
     // Load plugins
     const pluginLoader = configReaderInjector.injectClass(PluginLoader);
-    const pluginDescriptors = [...options.plugins, reporterPluginsFileUrl, ...options.appendPlugins];
+    const pluginDescriptors = [...options.plugins, frameworkPluginsFileUrl, reporterPluginsFileUrl, ...options.appendPlugins];
     const loadedPlugins = await pluginLoader.load(pluginDescriptors);
 
     // Revalidate the options with plugin schema additions
