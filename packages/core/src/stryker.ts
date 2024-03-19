@@ -37,6 +37,12 @@ export class Stryker {
         const mutantInstrumenter = mutantInstrumenterInjector.injectClass(MutantInstrumenterExecutor);
         const dryRunExecutorInjector = await mutantInstrumenter.execute();
 
+        if (dryRunExecutorInjector.resolve(commonTokens.options).instrumentRunOnly) {
+          const log = dryRunExecutorInjector.resolve(commonTokens.logger);
+          log.info('The instrument-run has been completed successfully. No mutations have been executed.');
+          return [];
+        }
+
         // 3. Perform a 'dry run' (initial test run). Runs the tests without active mutants and collects coverage.
         const dryRunExecutor = dryRunExecutorInjector.injectClass(DryRunExecutor);
         const mutationRunExecutorInjector = await dryRunExecutor.execute();

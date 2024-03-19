@@ -343,6 +343,11 @@
       "type": "string",
       "default": "reports/stryker-incremental.json"
     },
+    "instrumentRunOnly": {
+      "description": "Execute the instrument phase only. This will write the instrumented code to the `sandbox` directory. This can be useful to debug issues with the instrumented code.",
+      "type": "boolean",
+      "default": false
+    },
     "force": {
       "description": "Run all mutants, even if --incremental is provided and an incremental file exists. Can be used to force a rebuild of the incremental file.",
       "type": "boolean",
