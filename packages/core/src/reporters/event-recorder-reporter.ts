@@ -4,7 +4,7 @@ import { promises as fsPromises } from 'fs';
 import { MutantResult, schema, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { DryRunCompletedEvent, InstrumentRunCompletedEvent, MutationTestingPlanReadyEvent, Reporter } from '@stryker-mutator/api/report';
+import { DryRunCompletedEvent, MutationTestingPlanReadyEvent, Reporter } from '@stryker-mutator/api/report';
 
 import { fileUtils } from '../utils/file-utils.js';
 
@@ -44,8 +44,8 @@ export class EventRecorderReporter implements StrictReporter {
     this.allWork.push(this.createBaseFolderTask.then(() => this.writeToFile(eventName, data)));
   }
 
-  public onInstrumentRunCompleted(event: InstrumentRunCompletedEvent): void {
-    this.work('onInstrumentRunCompleted', event);
+  public onInstrumentRunCompleted(report: schema.MutationTestResult): void {
+    this.work('onInstrumentRunCompleted', report);
   }
 
   public onDryRunCompleted(event: DryRunCompletedEvent): void {

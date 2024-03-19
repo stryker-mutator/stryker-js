@@ -3,7 +3,6 @@ import { MutationTestMetricsResult } from 'mutation-testing-metrics';
 import { MutantResult, schema } from '../core/index.js';
 
 import { DryRunCompletedEvent } from './dry-run-completed-event.js';
-import { InstrumentRunCompletedEvent } from './instrument-run-completed-event.js';
 import { MutationTestingPlanReadyEvent } from './mutation-testing-plan-ready-event.js';
 
 /**
@@ -12,9 +11,10 @@ import { MutationTestingPlanReadyEvent } from './mutation-testing-plan-ready-eve
 export interface Reporter {
   /**
    * An event emitted when the instrument run completed successfully.
-   * @param event The instrument run completed event
+   * @param report the mutation instrument run result that is valid according to the mutation-testing-report-schema (json schema)
+   * @see https://github.com/stryker-mutator/mutation-testing-elements/blob/master/packages/report-schema/src/mutation-testing-report-schema.json
    */
-  onInstrumentRunCompleted?(event: InstrumentRunCompletedEvent): void;
+  onInstrumentRunCompleted?(report: Readonly<schema.MutationTestResult>): void;
 
   /**
    * An event emitted when the dry run completed successfully.

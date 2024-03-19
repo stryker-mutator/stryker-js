@@ -73,9 +73,6 @@ export class MutantInstrumenterExecutor {
     const sandbox = dryRunProvider.resolve(coreTokens.sandbox);
     await sandbox.init();
 
-    const reporter = dryRunProvider.resolve(coreTokens.reporter);
-    reporter.onInstrumentRunCompleted({ mutants: instrumentResult.mutants });
-
     return dryRunProvider;
   }
 

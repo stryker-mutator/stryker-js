@@ -22,6 +22,12 @@ export class JsonReporter implements Reporter {
 
   public static readonly inject = tokens(commonTokens.options, commonTokens.logger);
 
+  public onInstrumentRunCompleted(report: schema.MutationTestResult): void {
+    if (!this.options.instrumentRunOnly) return;
+
+    this.mainPromise = this.generateReport(report);
+  }
+
   public onMutationTestReportReady(report: schema.MutationTestResult): void {
     this.mainPromise = this.generateReport(report);
   }
