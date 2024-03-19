@@ -1,7 +1,7 @@
 import { MutantResult, schema, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
-import { DryRunCompletedEvent, MutationTestingPlanReadyEvent, Reporter } from '@stryker-mutator/api/report';
+import { DryRunCompletedEvent, InstrumentRunCompletedEvent, MutationTestingPlanReadyEvent, Reporter } from '@stryker-mutator/api/report';
 import { MutationTestMetricsResult } from 'mutation-testing-metrics';
 import { tokens } from 'typed-inject';
 
@@ -56,9 +56,14 @@ export class BroadcastReporter implements StrictReporter {
     );
   }
 
+  public onInstrumentRunCompleted(event: InstrumentRunCompletedEvent): void {
+    void this.broadcast('onInstrumentRunCompleted', event);
+  }
+
   public onDryRunCompleted(event: DryRunCompletedEvent): void {
     void this.broadcast('onDryRunCompleted', event);
   }
+
   public onMutationTestingPlanReady(event: MutationTestingPlanReadyEvent): void {
     void this.broadcast('onMutationTestingPlanReady', event);
   }

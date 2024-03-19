@@ -3,12 +3,19 @@ import { MutationTestMetricsResult } from 'mutation-testing-metrics';
 import { MutantResult, schema } from '../core/index.js';
 
 import { DryRunCompletedEvent } from './dry-run-completed-event.js';
+import { InstrumentRunCompletedEvent } from './instrument-run-completed-event.js';
 import { MutationTestingPlanReadyEvent } from './mutation-testing-plan-ready-event.js';
 
 /**
  * Represents a reporter which can report during or after a Stryker run
  */
 export interface Reporter {
+  /**
+   * An event emitted when the instrument run completed successfully.
+   * @param event The instrument run completed event
+   */
+  onInstrumentRunCompleted?(event: InstrumentRunCompletedEvent): void;
+
   /**
    * An event emitted when the dry run completed successfully.
    * @param event The dry run completed event

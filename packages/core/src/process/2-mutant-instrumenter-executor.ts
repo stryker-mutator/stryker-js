@@ -72,6 +72,10 @@ export class MutantInstrumenterExecutor {
     const dryRunProvider = checkerPoolProvider.provideClass(coreTokens.sandbox, Sandbox).provideValue(coreTokens.mutants, instrumentResult.mutants);
     const sandbox = dryRunProvider.resolve(coreTokens.sandbox);
     await sandbox.init();
+
+    const reporter = dryRunProvider.resolve(coreTokens.reporter);
+    reporter.onInstrumentRunCompleted({ mutants: instrumentResult.mutants });
+
     return dryRunProvider;
   }
 
