@@ -2,7 +2,6 @@ import { execaCommand } from 'execa';
 import { Injector, tokens, commonTokens, PluginContext, PluginKind } from '@stryker-mutator/api/plugin';
 import { createInstrumenter, InstrumentResult } from '@stryker-mutator/instrumenter';
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { Reporter } from '@stryker-mutator/api/report';
 import { I } from '@stryker-mutator/util';
 
 import { coreTokens, PluginCreator } from '../di/index.js';
@@ -44,7 +43,6 @@ export class MutantInstrumenterExecutor {
     commonTokens.options,
     coreTokens.pluginCreator,
     coreTokens.mutationTestReportHelper,
-    coreTokens.reporter,
   );
 
   constructor(
