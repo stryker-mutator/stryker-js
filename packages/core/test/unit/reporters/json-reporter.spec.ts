@@ -11,10 +11,34 @@ import { reporterUtil } from '../../../src/reporters/reporter-util.js';
 describe(JsonReporter.name, () => {
   let writeFileStub: sinon.SinonStub;
   let sut: JsonReporter;
+  let report: schema.MutationTestResult;
 
   beforeEach(() => {
     writeFileStub = sinon.stub(reporterUtil, 'writeFile');
     sut = testInjector.injector.injectClass(JsonReporter);
+    report = {
+      files: {},
+      schemaVersion: '1.0',
+      thresholds: {
+        high: 80,
+        low: 60,
+      },
+    };
+  });
+
+  describe('onInstrumentRunCompleted', () => {
+    it('should only generate report when instrument run only', () => {
+      testInjector.options.instrumentRunOnly = false;
+      sut.onInstrumentRunCompleted(report);
+      expect(sut.wrapUp()).undefined;
+    });
+
+    it('should generate a report when instrument run only', async () => {
+      testInjector.options.instrumentRunOnly = true;
+      sut.onInstrumentRunCompleted(report);
+      await sut.wrapUp();
+      expect(writeFileStub).calledWith(path.resolve('reports', 'mutation', 'mutation.json'), JSON.stringify(report));
+    });
   });
 
   describe('onMutationTestReportReady', () => {
@@ -37,14 +61,6 @@ describe(JsonReporter.name, () => {
     });
 
     it('should write the mutation report to disk', async () => {
-      const report: schema.MutationTestResult = {
-        files: {},
-        schemaVersion: '1.0',
-        thresholds: {
-          high: 80,
-          low: 60,
-        },
-      };
       sut.onMutationTestReportReady(report);
       await sut.wrapUp();
       expect(writeFileStub).calledWith(path.resolve('reports', 'mutation', 'mutation.json'), JSON.stringify(report));

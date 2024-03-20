@@ -146,4 +146,16 @@ describe(MutantInstrumenterExecutor.name, () => {
     await sut.execute();
     expect(sandboxMock.init).calledOnce;
   });
+
+  it('should report "onInstrumentRunCompleted" after instrumenting', async () => {
+    await sut.execute();
+
+    const mutantResults = instrumentResult.mutants.map((mutant) => ({
+      ...mutant,
+      status: 'Pending',
+    }));
+
+    expect(mutationTestReportHelperMock.mutationTestReport).calledOnceWithExactly(mutantResults);
+    expect(reporterMock.onInstrumentRunCompleted).calledOnce;
+  });
 });
