@@ -78,7 +78,7 @@
     "emoji-regex": "~10.3.0",
     "execa": "~8.0.1",
     "file-url": "~4.0.0",
-    "get-port": "~7.0.0",
+    "get-port": "~7.1.0",
     "glob": "~10.3.10",
     "inquirer": "~9.2.13",
     "lodash.groupby": "~4.6.0",
