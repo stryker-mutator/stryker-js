@@ -2,7 +2,12 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { regexMutator as sut } from '../../../src/mutators/regex-mutator.js';
-import { expectJSMutation } from '../../helpers/expect-mutation.js';
+import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
+import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
+
+const regexLevel: MutationLevel = { name: 'RegexLevel', Regex: ['RegexRemoval'] };
+const regexUndefinedLevel: MutationLevel = { name: 'RegexLevel', Regex: [] };
+const noLevel = undefined;
 
 describe(sut.name, () => {
   it('should have name "Regex"', () => {
@@ -52,5 +57,19 @@ describe(sut.name, () => {
 
   it('should only pass flags in new RegExp constructors if it is a string literal', () => {
     expectJSMutation(sut, 'new RegExp("\\\\u{20}", foo)', 'new RegExp("\\\\u", foo)');
+  });
+
+  describe('mutation level', () => {
+    it('should remove regex', () => {
+      expectJSMutationWithLevel(sut, regexLevel.Regex, 'new RegExp("\\\\u{20}", foo)', 'new RegExp("\\\\u", foo)');
+    });
+
+    it('should not perform any ' + sut.name + ' mutations', () => {
+      expectJSMutationWithLevel(sut, regexUndefinedLevel.Regex, 'new RegExp("\\\\u{20}", foo)');
+    });
+
+    it('should perform all ' + sut.name + ' mutations', () => {
+      expectJSMutationWithLevel(sut, noLevel, 'new RegExp("\\\\u{20}", foo)', 'new RegExp("\\\\u", foo)');
+    });
   });
 });

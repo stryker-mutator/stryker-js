@@ -4,6 +4,7 @@ import { notEmpty } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 
 import { NodeMutator } from '../mutators/node-mutator.js';
+import { MutationLevel } from '../mutation-level/mutation-level.js';
 
 const WILDCARD = 'all';
 const DEFAULT_REASON = 'Ignored using a comment';
@@ -60,7 +61,7 @@ export class DirectiveBookkeeper {
 
   constructor(
     private readonly logger: Logger,
-    private readonly allMutators: NodeMutator[],
+    private readonly allMutators: Array<NodeMutator<keyof MutationLevel>>,
     private readonly originFileName: string,
   ) {
     this.allMutatorNames = this.allMutators.map((x) => x.name.toLowerCase());

@@ -1,7 +1,15 @@
 import { expect } from 'chai';
 
-import { expectJSMutation } from '../../helpers/expect-mutation.js';
+import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
 import { stringLiteralMutator as sut } from '../../../src/mutators/string-literal-mutator.js';
+import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
+
+const stringLiteralLevel: MutationLevel = {
+  name: 'stringLiteralLevel',
+  StringLiteral: ['FilledStringLiteralToEmptyReplacement', 'FilledInterpolatedStringToEmptyReplacement'],
+};
+const stringLiteralUndefinedLevel: MutationLevel = { name: 'stringLiteralUndefinedLevel', StringLiteral: [] };
+const noLevel = undefined;
 
 describe(sut.name, () => {
   it('should have name "StringLiteral"', () => {
@@ -110,6 +118,36 @@ describe(sut.name, () => {
   describe('jsx', () => {
     it('should not mutate string JSX attributes', () => {
       expectJSMutation(sut, '<Record class="row" />');
+    });
+  });
+
+  describe('mutation level', () => {
+    it('should only mutate EmptyString and EmptyInterpolation', () => {
+      expectJSMutationWithLevel(
+        sut,
+        stringLiteralLevel.StringLiteral,
+        'const bar = "bar"; const foo = `name: ${level_name}`; const emptyString=""; const emptyInterp=``',
+        'const bar = ""; const foo = `name: ${level_name}`; const emptyString=""; const emptyInterp=``', // empties string
+        'const bar = "bar"; const foo = ``; const emptyString=""; const emptyInterp=``', // empties interpolation
+      );
+    });
+    it('should not perform any ' + sut.name + ' mutations', () => {
+      expectJSMutationWithLevel(
+        sut,
+        stringLiteralUndefinedLevel.StringLiteral,
+        'const bar = "bar"; const foo = `name: ${level_name}`; const emptyString=""; const emptyInterp=``',
+      );
+    });
+    it('should perform all ' + sut.name + ' mutations', () => {
+      expectJSMutationWithLevel(
+        sut,
+        noLevel,
+        'const bar = "bar"; const foo = `name: ${level_name}`; const emptyString=""; const emptyInterp=``',
+        'const bar = ""; const foo = `name: ${level_name}`; const emptyString=""; const emptyInterp=``', // empties string literal
+        'const bar = "bar"; const foo = ``; const emptyString=""; const emptyInterp=``', // empties interpolation
+        'const bar = "bar"; const foo = `name: ${level_name}`; const emptyString="Stryker was here!"; const emptyInterp=``', // fills string literal
+        'const bar = "bar"; const foo = `name: ${level_name}`; const emptyString=""; const emptyInterp=`Stryker was here!`', // fills interpolation
+      );
     });
   });
 });

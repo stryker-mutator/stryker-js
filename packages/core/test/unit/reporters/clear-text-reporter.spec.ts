@@ -47,12 +47,12 @@ describe(ClearTextReporter.name, () => {
       const serializedTable: string = stdoutStub.getCalls().pop()!.args[0];
       const rows = serializedTable.split(os.EOL);
       expect(rows).to.deep.eq([
-        '----------|---------|----------|-----------|------------|----------|----------|',
-        'File      | % score | # killed | # timeout | # survived | # no cov | # errors |',
-        '----------|---------|----------|-----------|------------|----------|----------|',
-        `All files |${chalk.green('  100.00 ')}|        1 |         0 |          0 |        0 |        0 |`,
-        ` file.js  |${chalk.green('  100.00 ')}|        1 |         0 |          0 |        0 |        0 |`,
-        '----------|---------|----------|-----------|------------|----------|----------|',
+        '----------|---------|------------|----------|-----------|------------|----------|----------|',
+        'File      | % score | % adjusted | # killed | # timeout | # survived | # no cov | # errors |',
+        '----------|---------|------------|----------|-----------|------------|----------|----------|',
+        `All files |${chalk.green('  100.00 ')}|     100.00 |        1 |         0 |          0 |        0 |        0 |`,
+        ` file.js  |${chalk.green('  100.00 ')}|     100.00 |        1 |         0 |          0 |        0 |        0 |`,
+        '----------|---------|------------|----------|-----------|------------|----------|----------|',
         '',
       ]);
     });
@@ -108,7 +108,7 @@ describe(ClearTextReporter.name, () => {
 
       const serializedTable: string = stdoutStub.getCalls().pop()!.args[0];
       const rows = serializedTable.split(os.EOL);
-      expect(rows[1]).to.eq('File      | % score | ✅ killed | ⌛️ timeout | 👽 survived | 🙈 no cov | 💥 errors |');
+      expect(rows[1]).to.eq('File      | % score | % adjusted | ✅ killed | ⌛️ timeout | 👽 survived | 🙈 no cov | 💥 errors |');
     });
 
     it('should report the clear text table with full n/a values', () => {
@@ -136,12 +136,12 @@ describe(ClearTextReporter.name, () => {
       const rows = serializedTable.split(os.EOL);
 
       expect(rows).to.deep.eq([
-        '----------|---------|----------|-----------|------------|----------|----------|',
-        'File      | % score | # killed | # timeout | # survived | # no cov | # errors |',
-        '----------|---------|----------|-----------|------------|----------|----------|',
-        `All files |${chalk.grey('     n/a ')}|        0 |         0 |          0 |        0 |        0 |`,
-        ` file.js  |${chalk.grey('     n/a ')}|        0 |         0 |          0 |        0 |        0 |`,
-        '----------|---------|----------|-----------|------------|----------|----------|',
+        '----------|---------|------------|----------|-----------|------------|----------|----------|',
+        'File      | % score | % adjusted | # killed | # timeout | # survived | # no cov | # errors |',
+        '----------|---------|------------|----------|-----------|------------|----------|----------|',
+        `All files |${chalk.grey('     n/a ')}|        n/a |        0 |         0 |          0 |        0 |        0 |`,
+        ` file.js  |${chalk.grey('     n/a ')}|        n/a |        0 |         0 |          0 |        0 |        0 |`,
+        '----------|---------|------------|----------|-----------|------------|----------|----------|',
         '',
       ]);
     });
@@ -183,13 +183,13 @@ describe(ClearTextReporter.name, () => {
       const rows = serializedTable.split(os.EOL);
 
       expect(rows).to.deep.eq([
-        '----------|---------|----------|-----------|------------|----------|----------|',
-        'File      | % score | # killed | # timeout | # survived | # no cov | # errors |',
-        '----------|---------|----------|-----------|------------|----------|----------|',
-        `All files |${chalk.green('  100.00 ')}|        1 |         0 |          0 |        0 |        0 |`,
-        ` file.js  |${chalk.grey('     n/a ')}|        0 |         0 |          0 |        0 |        0 |`,
-        ` file2.js |${chalk.green('  100.00 ')}|        1 |         0 |          0 |        0 |        0 |`,
-        '----------|---------|----------|-----------|------------|----------|----------|',
+        '----------|---------|------------|----------|-----------|------------|----------|----------|',
+        'File      | % score | % adjusted | # killed | # timeout | # survived | # no cov | # errors |',
+        '----------|---------|------------|----------|-----------|------------|----------|----------|',
+        `All files |${chalk.green('  100.00 ')}|     100.00 |        1 |         0 |          0 |        0 |        0 |`,
+        ` file.js  |${chalk.grey('     n/a ')}|        n/a |        0 |         0 |          0 |        0 |        0 |`,
+        ` file2.js |${chalk.green('  100.00 ')}|     100.00 |        1 |         0 |          0 |        0 |        0 |`,
+        '----------|---------|------------|----------|-----------|------------|----------|----------|',
         '',
       ]);
     });

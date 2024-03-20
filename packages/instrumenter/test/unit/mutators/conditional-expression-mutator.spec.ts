@@ -1,7 +1,30 @@
 import { expect } from 'chai';
 
-import { expectJSMutation } from '../../helpers/expect-mutation.js';
+import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
 import { conditionalExpressionMutator as sut } from '../../../src/mutators/conditional-expression-mutator.js';
+import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
+
+const conditionalLevel: MutationLevel = {
+  name: 'ConditionalLevel',
+  ConditionalExpression: [
+    'ForLoopConditionToFalseReplacement',
+    'IfConditionToFalseReplacement',
+    'IfConditionToTrueReplacement',
+    'SwitchStatementBodyRemoval',
+  ],
+};
+
+const booleanExpressionLevel: MutationLevel = {
+  name: 'ConditionalLevel',
+  ConditionalExpression: ['BooleanExpressionToFalseReplacement', 'BooleanExpressionToTrueReplacement'],
+};
+
+const conditionalUndefinedLevel: MutationLevel = {
+  name: 'ConditionLevelEmpty',
+  ConditionalExpression: [],
+};
+
+const noLevel = undefined;
 
 describe(sut.name, () => {
   it('should have name "ConditionalExpression"', () => {
@@ -139,5 +162,63 @@ describe(sut.name, () => {
 
   it('should mutate the expression of a while statement', () => {
     expectJSMutation(sut, 'while(a < b) { console.log(); }', 'while(false) { console.log(); }');
+  });
+
+  describe('mutation level', () => {
+    it('should only mutate for, if and switch statement', () => {
+      expectJSMutationWithLevel(
+        sut,
+        conditionalLevel.ConditionalExpression,
+        'for (var i = 0; i < 10; i++) { };if(x > 2); switch (x) {case 0: 2}; while (a > b); { } do { } while (a > b); var x = a > b ? 1 : 2',
+        'for (var i = 0; false; i++) { };if(x > 2); switch (x) {case 0: 2}; while (a > b); { } do { } while (a > b); var x = a > b ? 1 : 2', // mutates for loop
+        'for (var i = 0; i < 10; i++) { };if(false); switch (x) {case 0: 2}; while (a > b); { } do { } while (a > b); var x = a > b ? 1 : 2', // mutates if statement to false
+        'for (var i = 0; i < 10; i++) { };if(true); switch (x) {case 0: 2}; while (a > b); { } do { } while (a > b); var x = a > b ? 1 : 2', // mutates if statement to true
+        'for (var i = 0; i < 10; i++) { };if(x > 2); switch (x) {case 0:}; while (a > b); { } do { } while (a > b); var x = a > b ? 1 : 2', // mutates switch statement
+      );
+    });
+
+    it('should only mutate && boolean expressions', () => {
+      expectJSMutationWithLevel(
+        sut,
+        booleanExpressionLevel.ConditionalExpression,
+        'if (true) { }; for(let i=0;; i++) { }; if ((c1 && c2) || (c3 && c4)) { } ',
+        'if (true) { }; for(let i=0;; i++) { }; if ((c1 && c2) || (false)) { } ', // mutates c3 && c4 to false
+        'if (true) { }; for(let i=0;; i++) { }; if ((false) || (c3 && c4)) { } ', // mutates c1 && c2 to false
+      );
+    });
+
+    it('should only mutate || boolean expressions', () => {
+      expectJSMutationWithLevel(
+        sut,
+        booleanExpressionLevel.ConditionalExpression,
+        'if (true) { }; for(let i=0;; i++) { }; if ((c1 || c2) && (c3 || c4)) { } ',
+        'if (true) { }; for(let i=0;; i++) { }; if ((c1 || c2) && (true)) { } ', // mutates c3 || c4 to true
+        'if (true) { }; for(let i=0;; i++) { }; if ((true) && (c3 || c4)) { } ', // mutates c1 || c2 to true
+      );
+    });
+
+    it('should not perform any ' + sut.name + ' mutations', () => {
+      expectJSMutationWithLevel(
+        sut,
+        conditionalUndefinedLevel.ConditionalExpression,
+        'for (var i = 0; i < 10; i++) { };if(x > 2); switch (x) {case 0: 2}; while (a > b); { } do { } while (a > b); var x = a > b ? 1 : 2',
+      );
+    });
+
+    it('should perform all ' + sut.name + ' mutations', () => {
+      expectJSMutationWithLevel(
+        sut,
+        noLevel,
+        'for (var i = 0; i < 10; i++) { };if(x > 2); switch (x) {case 0: 2}; while (a > b); { } do { } while (a > b); var x = a > b ? 1 : 2',
+        'for (var i = 0; false; i++) { };if(x > 2); switch (x) {case 0: 2}; while (a > b); { } do { } while (a > b); var x = a > b ? 1 : 2', // mutates for loop
+        'for (var i = 0; i < 10; i++) { };if(false); switch (x) {case 0: 2}; while (a > b); { } do { } while (a > b); var x = a > b ? 1 : 2', // mutates if statement to false
+        'for (var i = 0; i < 10; i++) { };if(true); switch (x) {case 0: 2}; while (a > b); { } do { } while (a > b); var x = a > b ? 1 : 2', // mutates if statement to true
+        'for (var i = 0; i < 10; i++) { };if(x > 2); switch (x) {case 0:}; while (a > b); { } do { } while (a > b); var x = a > b ? 1 : 2', // mutates switch statement
+        'for (var i = 0; i < 10; i++) { };if(x > 2); switch (x) {case 0: 2}; while (false); { } do { } while (a > b); var x = a > b ? 1 : 2', // mutates while loop
+        'for (var i = 0; i < 10; i++) { };if(x > 2); switch (x) {case 0: 2}; while (a > b); { } do { } while (a > b); var x = false ? 1 : 2', // mutates boolean expression to false
+        'for (var i = 0; i < 10; i++) { };if(x > 2); switch (x) {case 0: 2}; while (a > b); { } do { } while (false); var x = a > b ? 1 : 2', // mutates do while loop
+        'for (var i = 0; i < 10; i++) { };if(x > 2); switch (x) {case 0: 2}; while (a > b); { } do { } while (a > b); var x = true ? 1 : 2', // mutates boolean expression to true
+      );
+    });
   });
 });

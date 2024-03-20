@@ -1,27 +1,29 @@
+import { LogicalOperator } from '@stryker-mutator/api/core';
+
 import { deepCloneNode } from '../util/index.js';
 
 import { NodeMutator } from './index.js';
 
-const logicalOperatorReplacements = Object.freeze({
-  '&&': '||',
-  '||': '&&',
-  '??': '&&',
-} as const);
-
-export const logicalOperatorMutator: NodeMutator = {
+export const logicalOperatorMutator: NodeMutator<LogicalOperator> = {
   name: 'LogicalOperator',
+
+  operators: {
+    '&&': { replacement: '||', mutationOperator: 'LogicalAndOperatorToLogicalOrReplacement' },
+    '||': { replacement: '&&', mutationOperator: 'LogicalOrOperatorToLogicalAndReplacement' },
+    '??': { replacement: '&&', mutationOperator: 'NullishCoalescingOperatorToLogicalAndReplacement' },
+  },
 
   *mutate(path) {
     if (path.isLogicalExpression() && isSupported(path.node.operator)) {
-      const mutatedOperator = logicalOperatorReplacements[path.node.operator];
+      const { replacement, mutationOperator } = this.operators[path.node.operator];
 
-      const replacement = deepCloneNode(path.node);
-      replacement.operator = mutatedOperator;
-      yield replacement;
+      const nodeClone = deepCloneNode(path.node);
+      nodeClone.operator = replacement as babel.types.LogicalExpression['operator'];
+      yield [nodeClone, mutationOperator];
     }
   },
 };
 
-function isSupported(operator: string): operator is keyof typeof logicalOperatorReplacements {
-  return Object.keys(logicalOperatorReplacements).includes(operator);
+function isSupported(operator: string): operator is keyof typeof logicalOperatorMutator.operators {
+  return Object.keys(logicalOperatorMutator.operators).includes(operator);
 }
