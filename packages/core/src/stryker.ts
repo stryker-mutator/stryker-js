@@ -38,7 +38,7 @@ export class Stryker {
         const dryRunExecutorInjector = await mutantInstrumenter.execute();
 
         if (dryRunExecutorInjector.resolve(commonTokens.options).instrumentRunOnly) {
-          const log = dryRunExecutorInjector.resolve(commonTokens.logger);
+          const log = loggerProvider.resolve(commonTokens.getLogger)(Stryker.name);
           log.info('The instrument-run has been completed successfully. No mutations have been executed.');
           return [];
         }
