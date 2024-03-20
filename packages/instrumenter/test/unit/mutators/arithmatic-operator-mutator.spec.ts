@@ -1,7 +1,15 @@
 import { expect } from 'chai';
 
 import { arithmeticOperatorMutator as sut } from '../../../src/mutators/arithmetic-operator-mutator.js';
-import { expectJSMutation } from '../../helpers/expect-mutation.js';
+import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
+import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
+
+const arithmeticLevel: MutationLevel = {
+  name: 'ArithemticLevel',
+  ArithmeticOperator: ['AdditionOperatorNegation', 'SubtractionOperatorNegation', 'MultiplicationOperatorNegation'],
+};
+const arithmeticOperatorUndefinedLevel: MutationLevel = { name: 'ArithmeticOperatorLevel', ArithmeticOperator: [] };
+const noLevel = undefined;
 
 describe(sut.name, () => {
   it('should have name "ArithmeticOperator"', () => {
@@ -29,5 +37,36 @@ describe(sut.name, () => {
     expectJSMutation(sut, '3 + `a`');
 
     expectJSMutation(sut, '"a" + b + "c" + d + "e"');
+  });
+
+  describe('mutation level', () => {
+    it('should only mutate +, - and *', () => {
+      expectJSMutationWithLevel(
+        sut,
+        arithmeticLevel.ArithmeticOperator,
+        'a + b; a - b; a * b; a % b; a / b; a % b',
+        'a - b; a - b; a * b; a % b; a / b; a % b', // mutates +
+        'a + b; a + b; a * b; a % b; a / b; a % b', // mutates -
+        'a + b; a - b; a / b; a % b; a / b; a % b', // mutates *
+      );
+    });
+
+    it('should not perform any ' + sut.name + ' mutations', () => {
+      expectJSMutationWithLevel(sut, arithmeticOperatorUndefinedLevel.ArithmeticOperator, 'a + b; a - b; a * b; a % b; a / b; a % b');
+    });
+
+    it('should perform all ' + sut.name + ' mutations', () => {
+      expectJSMutationWithLevel(
+        sut,
+        noLevel,
+        'a + b; a - b; a * b; a % b; a / b; a % b',
+        'a + b; a - b; a * b; a % b; a * b; a % b', // mutates /
+        'a + b; a - b; a * b; a % b; a / b; a * b', // mutates %
+        'a + b; a - b; a * b; a * b; a / b; a % b', // mutates %
+        'a - b; a - b; a * b; a % b; a / b; a % b', // mutates +
+        'a + b; a + b; a * b; a % b; a / b; a % b', // mutates -
+        'a + b; a - b; a / b; a % b; a / b; a % b', // mutates *
+      );
+    });
   });
 });
