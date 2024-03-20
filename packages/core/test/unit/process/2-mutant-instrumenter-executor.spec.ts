@@ -15,8 +15,11 @@ import { CheckerFacade, createCheckerFactory } from '../../../src/checker/index.
 import { createPreprocessor, FilePreprocessor, Sandbox } from '../../../src/sandbox/index.js';
 import { Pool } from '../../../src/concurrent/index.js';
 import { FileSystemTestDouble } from '../../helpers/file-system-test-double.js';
+import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-report-helper.js';
+import { StrictReporter } from '../../../src/reporters/strict-reporter.js';
 
 describe(MutantInstrumenterExecutor.name, () => {
+  let reporterMock: sinon.SinonStubbedInstance<StrictReporter>;
   let sut: MutantInstrumenterExecutor;
   let project: Project;
   let injectorMock: sinon.SinonStubbedInstance<Injector<DryRunContext>>;
@@ -27,6 +30,7 @@ describe(MutantInstrumenterExecutor.name, () => {
   let checkerPoolMock: sinon.SinonStubbedInstance<I<Pool<I<CheckerFacade>>>>;
   let concurrencyTokenProviderMock: ConcurrencyTokenProviderMock;
   let pluginCreatorMock: sinon.SinonStubbedInstance<PluginCreator>;
+  let mutationTestReportHelperMock: sinon.SinonStubbedInstance<MutationTestReportHelper>;
 
   beforeEach(() => {
     const fsTestDouble = new FileSystemTestDouble({ 'foo.js': 'console.log("bar")', 'foo.spec.js': '' });
@@ -34,6 +38,7 @@ describe(MutantInstrumenterExecutor.name, () => {
     project = new Project(fsTestDouble, fileDescriptions);
     concurrencyTokenProviderMock = createConcurrencyTokenProviderMock();
     checkerPoolMock = createCheckerPoolMock();
+    reporterMock = factory.reporter();
 
     instrumentResult = {
       files: [{ name: 'foo.js', content: 'console.log(global.activeMutant === 1? "": "bar")', mutate: true }],
@@ -47,7 +52,14 @@ describe(MutantInstrumenterExecutor.name, () => {
     sandboxFilePreprocessorMock.preprocess.resolves();
     injectorMock = factory.injector() as unknown as sinon.SinonStubbedInstance<Injector<DryRunContext>>;
     pluginCreatorMock = sinon.createStubInstance(PluginCreator);
-    sut = new MutantInstrumenterExecutor(injectorMock as Injector<MutantInstrumenterContext>, project, testInjector.options, pluginCreatorMock);
+    mutationTestReportHelperMock = sinon.createStubInstance(MutationTestReportHelper);
+    sut = new MutantInstrumenterExecutor(
+      injectorMock as Injector<MutantInstrumenterContext>,
+      project,
+      testInjector.options,
+      pluginCreatorMock,
+      mutationTestReportHelperMock,
+    );
     injectorMock.injectFunction.withArgs(createInstrumenter).returns(instrumenterMock);
     injectorMock.injectFunction.withArgs(createPreprocessor).returns(sandboxFilePreprocessorMock);
     injectorMock.resolve.withArgs(coreTokens.sandbox).returns(sandboxMock);
@@ -56,6 +68,7 @@ describe(MutantInstrumenterExecutor.name, () => {
       .returns(concurrencyTokenProviderMock)
       .withArgs(coreTokens.checkerPool)
       .returns(checkerPoolMock);
+    injectorMock.resolve.withArgs(coreTokens.reporter).returns(reporterMock);
     instrumenterMock.instrument.resolves(instrumentResult);
   });
 
