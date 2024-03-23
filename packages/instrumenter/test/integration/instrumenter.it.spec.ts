@@ -6,6 +6,7 @@ import chaiJestSnapshot from 'chai-jest-snapshot';
 
 import { NodePath } from '@babel/core';
 
+import { AngularIgnore } from '../../src/frameworks/angular-ignore.js';
 import { createInstrumenter, File, Instrumenter } from '../../src/index.js';
 import { createInstrumenterOptions } from '../helpers/factories.js';
 import { resolveTestResource } from '../helpers/resolve-test-resource.js';
@@ -26,7 +27,12 @@ describe('instrumenter integration', () => {
     await arrangeAndActAssert('ts-sample.ts');
   });
   it('should be able to instrument an angular component', async () => {
-    await arrangeAndActAssert('app.component.ts');
+    const angularIgnore = testInjector.injector.injectClass(AngularIgnore);
+    await arrangeAndActAssert('app.component.ts', createInstrumenterOptions({ ignorers: [angularIgnore] }));
+  });
+  it('should be able to instrument an angular directive', async () => {
+    const angularIgnore = testInjector.injector.injectClass(AngularIgnore);
+    await arrangeAndActAssert('app.directive.ts', createInstrumenterOptions({ ignorers: [angularIgnore] }));
   });
   it('should be able to instrument a lit-html file', async () => {
     await arrangeAndActAssert('lit-html-sample.ts');

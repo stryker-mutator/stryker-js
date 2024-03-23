@@ -1,15 +1,11 @@
-import { input, model, output, Component } from '@angular/core';
+import { input, model, output, Directive } from '@angular/core';
 
 const inputOutsideClass = input('', { alias: 'input-outside-class' });
 const modelOutsideClass = model('', { alias: 'model-outside-class' });
 const outputOutsideClass = output<string>({ alias: 'output-outside-class' });
 
-@Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
-})
-export class AppComponent {
+@Directive({ selector: '[appDirective]' })
+export class AppDirective {
   normalInput = input('', { alias: 'normal-input' });
   requiredInput = input.required<string>({ alias: 'required-input' });
 
@@ -17,8 +13,6 @@ export class AppComponent {
   requiredModel = model.required<string>({ alias: 'required-model' });
 
   normalOutput = output<string>({ alias: 'normal-output' });
-
-  title = 'angular-app';
 
   public publicFunction(): void {
     const inputInsideFunction = input('', { alias: 'input-inside-function' });
