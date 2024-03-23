@@ -1,5 +1,6 @@
 import { StrykerOptions, PartialStrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
 import { BaseContext, commonTokens, Injector, tokens } from '@stryker-mutator/api/plugin';
+import { frameworkPluginsFileUrl } from '@stryker-mutator/instrumenter';
 import { deepFreeze } from '@stryker-mutator/util';
 import { execaCommand } from 'execa';
 
@@ -9,7 +10,6 @@ import { coreTokens, PluginCreator } from '../di/index.js';
 import { TemporaryDirectory } from '../utils/temporary-directory.js';
 import { ConfigError } from '../errors.js';
 import { PluginLoader } from '../di/plugin-loader.js';
-import { frameworkPluginsFileUrl } from '../frameworks/index.js';
 import { reporterPluginsFileUrl } from '../reporters/index.js';
 import { Timer } from '../utils/timer.js';
 import { MetaSchemaBuilder, OptionsValidator } from '../config/index.js';
