@@ -1,5 +1,6 @@
 import { StrykerOptions, PartialStrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
 import { BaseContext, commonTokens, Injector, tokens } from '@stryker-mutator/api/plugin';
+import { frameworkPluginsFileUrl } from '@stryker-mutator/instrumenter';
 import { deepFreeze } from '@stryker-mutator/util';
 import { execaCommand } from 'execa';
 
@@ -39,7 +40,7 @@ export class PrepareExecutor {
 
     // Load plugins
     const pluginLoader = configReaderInjector.injectClass(PluginLoader);
-    const pluginDescriptors = [...options.plugins, reporterPluginsFileUrl, ...options.appendPlugins];
+    const pluginDescriptors = [...options.plugins, frameworkPluginsFileUrl, reporterPluginsFileUrl, ...options.appendPlugins];
     const loadedPlugins = await pluginLoader.load(pluginDescriptors);
 
     // Revalidate the options with plugin schema additions

@@ -1,11 +1,9 @@
-import { booleanAttribute, Component, EventEmitter, Input, input, model, output, Output } from '@angular/core';
+import { booleanAttribute, Directive, EventEmitter, input, Input, model, output, Output } from '@angular/core';
 
-@Component({
-  selector: 'app-root',
-  styleUrls: ['./app.component.css'],
-  templateUrl: './app.component.html'
+@Directive({
+  selector: '[appNoop]'
 })
-export class AppComponent {
+export class NoopDirective {
   @Input({ alias: 'decorator-input', transform: booleanAttribute }) decoratorInput = false
   signalInput = input(false, { alias: 'signal-input', transform: booleanAttribute });
   signalRequiredInput = input.required({ alias: 'signal-required-input', transform: booleanAttribute });
@@ -15,6 +13,4 @@ export class AppComponent {
 
   @Output() decoratorOutput = new EventEmitter<boolean>();
   signalOutput = output({ alias: 'signal-output' });
-
-  public title = 'angular' + '-project';
 }
