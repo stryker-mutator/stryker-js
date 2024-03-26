@@ -37,7 +37,7 @@
     "json-schema-to-typescript": "13.1.2",
     "lerna": "8.1.2",
     "minimatch": "9.0.3",
-    "mocha": "10.3.0",
+    "mocha": "10.4.0",
     "prettier": "3.2.5",
     "rimraf": "5.0.5",
     "sinon": "17.0.1",
