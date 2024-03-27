@@ -103,6 +103,10 @@ export class StrykerCli {
         'Execute the initial test run only, without doing actual mutation testing. Doing a dry run only can be used to test that StrykerJS can run your test setup, for example, in CI pipelines.',
       )
       .option(
+        '--instrumentRunOnly',
+        'Execute the instrument phase only. This will write the instrumented code to the `sandbox` directory. This can be useful to debug issues with the instrumented code.',
+      )
+      .option(
         '--checkers <listOfCheckersOrEmptyString>',
         'A comma separated list of checkers to use, for example --checkers typescript',
         createSplitter(','),

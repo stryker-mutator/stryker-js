@@ -20,7 +20,6 @@ import { DryRunContext } from './3-dry-run-executor.js';
 export interface MutationTestContext extends DryRunContext {
   [coreTokens.testRunnerPool]: I<Pool<TestRunner>>;
   [coreTokens.timeOverheadMS]: number;
-  [coreTokens.mutationTestReportHelper]: MutationTestReportHelper;
   [coreTokens.mutantTestPlanner]: MutantTestPlanner;
   [coreTokens.dryRunResult]: I<CompleteDryRunResult>;
 }

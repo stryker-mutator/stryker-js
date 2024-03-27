@@ -88,6 +88,13 @@ describe(Stryker.name, () => {
       expect(mutationTestExecutorMock.execute).calledOnce;
     });
 
+    it('should stop after instrumenting in an instrument only run ', async () => {
+      testInjector.options.instrumentRunOnly = true;
+      expect(await sut.runMutationTest()).lengthOf(0);
+      expect(dryRunExecutorMock.execute).not.called;
+      expect(mutationTestExecutorMock.execute).not.called;
+    });
+
     it('should provide the cli options to the prepare executor', async () => {
       cliOptions.logLevel = LogLevel.Trace;
       const expectedCliOptions = { ...cliOptions };

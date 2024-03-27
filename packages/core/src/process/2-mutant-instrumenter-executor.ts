@@ -2,7 +2,6 @@ import { execaCommand } from 'execa';
 import { Injector, tokens, commonTokens, PluginContext, PluginKind } from '@stryker-mutator/api/plugin';
 import { createInstrumenter, InstrumentResult } from '@stryker-mutator/instrumenter';
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { Reporter } from '@stryker-mutator/api/report';
 import { I } from '@stryker-mutator/util';
 
 import { coreTokens, PluginCreator } from '../di/index.js';
@@ -16,6 +15,8 @@ import { TemporaryDirectory } from '../utils/temporary-directory.js';
 import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
 import { FileSystem, Project } from '../fs/index.js';
 import { IdGenerator } from '../child-proxy/id-generator.js';
+import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper.js';
+import { StrictReporter } from '../reporters/strict-reporter.js';
 
 import { DryRunContext } from './3-dry-run-executor.js';
 
@@ -23,7 +24,7 @@ export interface MutantInstrumenterContext extends PluginContext {
   [commonTokens.options]: StrykerOptions;
   [coreTokens.project]: Project;
   [coreTokens.loggingContext]: LoggingClientContext;
-  [coreTokens.reporter]: Required<Reporter>;
+  [coreTokens.reporter]: StrictReporter;
   [coreTokens.timer]: I<Timer>;
   [coreTokens.temporaryDirectory]: I<TemporaryDirectory>;
   [coreTokens.execa]: typeof execaCommand;
@@ -32,15 +33,24 @@ export interface MutantInstrumenterContext extends PluginContext {
   [coreTokens.pluginModulePaths]: readonly string[];
   [coreTokens.fs]: I<FileSystem>;
   [coreTokens.pluginCreator]: PluginCreator;
+  [coreTokens.mutationTestReportHelper]: MutationTestReportHelper;
 }
 
 export class MutantInstrumenterExecutor {
-  public static readonly inject = tokens(commonTokens.injector, coreTokens.project, commonTokens.options, coreTokens.pluginCreator);
+  public static readonly inject = tokens(
+    commonTokens.injector,
+    coreTokens.project,
+    commonTokens.options,
+    coreTokens.pluginCreator,
+    coreTokens.mutationTestReportHelper,
+  );
+
   constructor(
     private readonly injector: Injector<MutantInstrumenterContext>,
     private readonly project: Project,
     private readonly options: StrykerOptions,
     private readonly pluginCreator: PluginCreator,
+    private readonly mutationTestReportHelper: I<MutationTestReportHelper>,
   ) {}
 
   public async execute(): Promise<Injector<DryRunContext>> {
@@ -72,6 +82,16 @@ export class MutantInstrumenterExecutor {
     const dryRunProvider = checkerPoolProvider.provideClass(coreTokens.sandbox, Sandbox).provideValue(coreTokens.mutants, instrumentResult.mutants);
     const sandbox = dryRunProvider.resolve(coreTokens.sandbox);
     await sandbox.init();
+
+    const mutantResults = instrumentResult.mutants.map((mutant) => ({
+      ...mutant,
+      status: mutant.status ?? 'Pending',
+    }));
+
+    const report = await this.mutationTestReportHelper.mutationTestReport(mutantResults);
+    const reporter = dryRunProvider.resolve(coreTokens.reporter);
+    reporter.onInstrumentRunCompleted(report);
+
     return dryRunProvider;
   }
 

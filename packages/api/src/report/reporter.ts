@@ -10,6 +10,13 @@ import { MutationTestingPlanReadyEvent } from './mutation-testing-plan-ready-eve
  */
 export interface Reporter {
   /**
+   * An event emitted when the instrument run completed successfully.
+   * @param report the mutation instrument run result that is valid according to the mutation-testing-report-schema (json schema)
+   * @see https://github.com/stryker-mutator/mutation-testing-elements/blob/master/packages/report-schema/src/mutation-testing-report-schema.json
+   */
+  onInstrumentRunCompleted?(report: Readonly<schema.MutationTestResult>): void;
+
+  /**
    * An event emitted when the dry run completed successfully.
    * @param event The dry run completed event
    */

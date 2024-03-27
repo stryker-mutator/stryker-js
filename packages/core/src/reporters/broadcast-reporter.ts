@@ -56,9 +56,14 @@ export class BroadcastReporter implements StrictReporter {
     );
   }
 
+  public onInstrumentRunCompleted(report: schema.MutationTestResult): void {
+    void this.broadcast('onInstrumentRunCompleted', report);
+  }
+
   public onDryRunCompleted(event: DryRunCompletedEvent): void {
     void this.broadcast('onDryRunCompleted', event);
   }
+
   public onMutationTestingPlanReady(event: MutationTestingPlanReadyEvent): void {
     void this.broadcast('onMutationTestingPlanReady', event);
   }

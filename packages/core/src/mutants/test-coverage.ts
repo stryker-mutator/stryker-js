@@ -61,8 +61,14 @@ export class TestCoverage {
     return this.#testsByMutantId.get(mutantId);
   }
 
+  public static default = defaultTestCoverage;
   public static from = testCoverageFrom;
 }
+
+function defaultTestCoverage(): TestCoverage {
+  return new TestCoverage(new Map(), new Map(), undefined, new Map());
+}
+defaultTestCoverage.inject = [] as const;
 
 function testCoverageFrom({ tests, mutantCoverage }: CompleteDryRunResult, logger: Logger): TestCoverage {
   const hitsByMutantId = new Map<string, number>();

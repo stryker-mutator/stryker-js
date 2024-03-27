@@ -318,6 +318,7 @@ export const strykerWithPluginOptions = <T>(pluginOptions: T): StrykerOptions & 
 };
 
 export const ALL_REPORTER_EVENTS: Array<keyof Reporter> = [
+  'onInstrumentRunCompleted',
   'onDryRunCompleted',
   'onMutationTestingPlanReady',
   'onMutantTested',

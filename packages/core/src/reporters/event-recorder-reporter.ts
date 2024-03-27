@@ -44,9 +44,14 @@ export class EventRecorderReporter implements StrictReporter {
     this.allWork.push(this.createBaseFolderTask.then(() => this.writeToFile(eventName, data)));
   }
 
+  public onInstrumentRunCompleted(report: schema.MutationTestResult): void {
+    this.work('onInstrumentRunCompleted', report);
+  }
+
   public onDryRunCompleted(event: DryRunCompletedEvent): void {
     this.work('onDryRunCompleted', event);
   }
+
   public onMutationTestingPlanReady(event: MutationTestingPlanReadyEvent): void {
     this.work('onMutationTestingPlanReady', event);
   }
