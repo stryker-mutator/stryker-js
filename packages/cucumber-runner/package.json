@@ -46,7 +46,7 @@
   "author": "Nico Jansen <jansennico@gmail.com>",
   "license": "ISC",
   "devDependencies": {
-    "@cucumber/cucumber": "10.3.1",
+    "@cucumber/cucumber": "10.3.2",
     "@stryker-mutator/test-helpers": "8.2.6",
     "@types/semver": "7.5.8"
   },
