@@ -21,7 +21,8 @@
     "test:all": "npm run test:unit && npm run test:integration",
     "test:unit": "mocha 'dist/test/unit/**/*.js'",
     "test:integration": "mocha --timeout 60000 'dist/test/integration/**/*.js'",
-    "stryker": "node bin/stryker.js run"
+    "stryker": "node bin/stryker.js run",
+    "stryker-server": "node bin/stryker-server.js"
   },
   "repository": {
     "type": "git",
@@ -65,7 +66,8 @@
   },
   "homepage": "https://stryker-mutator.io/",
   "bin": {
-    "stryker": "./bin/stryker.js"
+    "stryker": "./bin/stryker.js",
+    "stryker-server": "./bin/stryker-server.js"
   },
   "dependencies": {
     "@stryker-mutator/api": "8.2.6",
