@@ -1,8 +1,9 @@
+import * as net from 'node:net';
+
 import { MutantResult, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { JSONRPCRequest, JSONRPCServer, TypedJSONRPCServer } from 'json-rpc-2.0';
 
 import { StrykerInstrumenter } from './server/stryker-instrumenter.js';
-// import { MutationTestResult } from 'mutation-testing-report-schema';
 
 // TODO: extract RPC methods to a separate package for reuse?
 
@@ -12,12 +13,13 @@ type Methods = {
 };
 
 export class StrykerServer {
-  private readonly readStream = process.stdin;
-  private readonly writeStream = process.stdout;
-
   private readonly jsonRpcServer: TypedJSONRPCServer<Methods>;
 
+  private readonly server: net.Server;
+
   constructor() {
+    this.server = net.createServer(); // Create a TCP server
+
     this.jsonRpcServer = new JSONRPCServer();
 
     this.jsonRpcServer.addMethod('instrument', async (params: { globPatterns?: string[] }) => {
@@ -28,32 +30,33 @@ export class StrykerServer {
       return await instrumenter.runInstrumentation();
     });
 
-    // Listen for data from the client
-    this.readStream.on('data', async (data) => {
-      let request: JSONRPCRequest | undefined;
+    this.server.on('connection', (socket: net.Socket) => {
+      socket.on('data', async (data) => {
+        let request: JSONRPCRequest | undefined;
 
-      try {
-        request = JSON.parse(data.toString());
-      } catch {}
+        try {
+          request = JSON.parse(data.toString());
+        } catch {}
 
-      if (request) {
-        const response = await this.jsonRpcServer.receive(request);
-        if (response) {
-          this.writeStream.write(JSON.stringify(response));
+        if (request) {
+          const response = await this.jsonRpcServer.receive(request);
+          if (response) {
+            socket.write(JSON.stringify(response) + '\n');
+          }
         }
-      }
+      });
+
+      socket.on('close', () => {
+        console.log('Connection closed.');
+      });
+
+      socket.on('error', (err) => {
+        console.error('Socket Error:', err);
+      });
     });
 
-    // Handle connection closure
-    this.readStream.on('end', () => {
-      console.log('Connection closed.');
-      process.exit(0);
-    });
-
-    // Handle connection errors
-    this.readStream.on('error', (err) => {
-      console.error('Error:', err);
-      process.exit(1);
+    this.server.listen(8080, () => {
+      console.log('Server listening on port 8080');
     });
   }
 }
