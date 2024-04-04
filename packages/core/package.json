@@ -83,6 +83,7 @@
     "get-port": "~7.0.0",
     "glob": "~10.3.10",
     "inquirer": "~9.2.13",
+    "json-rpc-2.0": "^1.7.0",
     "lodash.groupby": "~4.6.0",
     "log4js": "~6.9.1",
     "minimatch": "~9.0.3",

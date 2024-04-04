@@ -1,2 +1,4 @@
 #!/usr/bin/env node
-console.log('Hello from server.js');
+import { StrykerServer } from '../dist/src/index.js';
+
+new StrykerServer();
