@@ -1,6 +1,8 @@
-import { MutantResult, PartialStrykerOptions } from '@stryker-mutator/api/core';
+import { PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { createInjector } from 'typed-inject';
 import { commonTokens } from '@stryker-mutator/api/plugin';
+
+import { MutationTestResult } from 'mutation-testing-report-schema';
 
 import { LogConfigurator } from '../logging/index.js';
 import { coreTokens, provideLogger } from '../di/index.js';
@@ -21,7 +23,7 @@ export class StrykerInstrumenter {
     private readonly injectorFactory = createInjector,
   ) {}
 
-  public async runInstrumentation(): Promise<MutantResult[]> {
+  public async runInstrumentation(): Promise<MutationTestResult> {
     const rootInjector = this.injectorFactory();
     const loggerProvider = provideLogger(rootInjector);
 

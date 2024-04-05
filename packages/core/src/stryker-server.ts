@@ -1,6 +1,6 @@
 import { WebSocketServer, WebSocket } from 'ws';
-import { MutantResult } from '@stryker-mutator/api/core';
 import { JSONRPCRequest, JSONRPCServer, TypedJSONRPCServer } from 'json-rpc-2.0';
+import { MutationTestResult } from 'mutation-testing-report-schema';
 
 import { StrykerInstrumenter } from './server/stryker-instrumenter.js';
 
@@ -8,7 +8,7 @@ import { StrykerInstrumenter } from './server/stryker-instrumenter.js';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 type Methods = {
-  instrument(params: { globPatterns?: string[] }): MutantResult[];
+  instrument(params: { globPatterns?: string[] }): MutationTestResult;
 };
 
 export class StrykerServer {
