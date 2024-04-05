@@ -49,5 +49,7 @@ export class StrykerServer {
         console.error('WebSocket Error:', err);
       });
     });
+
+    console.log('Server started');
   }
 }
