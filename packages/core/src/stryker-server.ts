@@ -1,6 +1,5 @@
-import * as net from 'node:net';
-
-import { MutantResult, PartialStrykerOptions } from '@stryker-mutator/api/core';
+import { WebSocketServer, WebSocket } from 'ws';
+import { MutantResult } from '@stryker-mutator/api/core';
 import { JSONRPCRequest, JSONRPCServer, TypedJSONRPCServer } from 'json-rpc-2.0';
 
 import { StrykerInstrumenter } from './server/stryker-instrumenter.js';
@@ -14,49 +13,41 @@ type Methods = {
 
 export class StrykerServer {
   private readonly jsonRpcServer: TypedJSONRPCServer<Methods>;
-
-  private readonly server: net.Server;
+  private readonly webSocketServer: WebSocketServer;
 
   constructor() {
-    this.server = net.createServer(); // Create a TCP server
+    this.webSocketServer = new WebSocketServer({ port: 8080 });
 
     this.jsonRpcServer = new JSONRPCServer();
 
     this.jsonRpcServer.addMethod('instrument', async (params: { globPatterns?: string[] }) => {
-      const cliOptions: PartialStrykerOptions = { mutate: params.globPatterns };
-
-      const instrumenter = new StrykerInstrumenter(cliOptions);
-
+      const instrumenter = new StrykerInstrumenter({ mutate: params.globPatterns });
       return await instrumenter.runInstrumentation();
     });
 
-    this.server.on('connection', (socket: net.Socket) => {
-      socket.on('data', async (data) => {
+    this.webSocketServer.on('connection', (ws: WebSocket) => {
+      ws.on('message', async (message: string) => {
         let request: JSONRPCRequest | undefined;
 
         try {
-          request = JSON.parse(data.toString());
+          request = JSON.parse(message);
         } catch {}
 
         if (request) {
           const response = await this.jsonRpcServer.receive(request);
           if (response) {
-            socket.write(JSON.stringify(response) + '\n');
+            ws.send(JSON.stringify(response));
           }
         }
       });
 
-      socket.on('close', () => {
+      ws.on('close', () => {
         console.log('Connection closed.');
       });
 
-      socket.on('error', (err) => {
-        console.error('Socket Error:', err);
+      ws.on('error', (err) => {
+        console.error('WebSocket Error:', err);
       });
-    });
-
-    this.server.listen(8080, () => {
-      console.log('Server listening on port 8080');
     });
   }
 }
