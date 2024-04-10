@@ -28,13 +28,13 @@ export class MutantInstrumenterExecutor {
   ) {}
 
   public async execute(): Promise<MutationTestResult> {
-    // Create the checker and instrumenter
     const instrumenter = this.injector.injectFunction(createInstrumenter);
 
     // Instrument files in-memory
     const ignorers = this.options.ignorers.map((name) => this.pluginCreator.create(PluginKind.Ignore, name));
     const instrumentResult = await instrumenter.instrument(await this.readFilesToMutate(), { ignorers, ...this.options.mutator });
 
+    // Map to MutantResults for the report
     const mutantResults = instrumentResult.mutants.map((mutant) => ({
       ...mutant,
       status: mutant.status ?? 'Pending',

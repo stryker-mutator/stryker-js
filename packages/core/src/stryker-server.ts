@@ -1,29 +1,35 @@
 import { WebSocketServer, WebSocket } from 'ws';
 import { JSONRPCRequest, JSONRPCServer, TypedJSONRPCServer } from 'json-rpc-2.0';
+
+import { Injector, createInjector } from 'typed-inject';
+
+import { commonTokens } from '@stryker-mutator/api/plugin';
+
 import { MutationTestResult } from 'mutation-testing-report-schema';
 
-import { StrykerInstrumenter } from './server/stryker-instrumenter.js';
+import { StrykerOptions } from '@stryker-mutator/api/core';
 
-// TODO: extract RPC methods to a separate package for reuse?
+import { MutationServerMethods } from './server/mutation-server-methods.js';
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-type Methods = {
-  instrument(params: { globPatterns?: string[] }): MutationTestResult;
-};
+import { provideLogger } from './di/provide-logger.js';
+import { PrepareExecutor } from './process/1-prepare-executor.js';
+import { MutantInstrumenterContext } from './process/2-mutant-instrumenter-executor.js';
+import { MutantInstrumenterExecutor } from './server/mutant-instrument-executor.js';
+import { ProjectReader } from './fs/project-reader.js';
+import { coreTokens } from './di/index.js';
 
 export class StrykerServer {
-  private readonly jsonRpcServer: TypedJSONRPCServer<Methods>;
+  private readonly jsonRpcServer: TypedJSONRPCServer<MutationServerMethods>;
   private readonly webSocketServer: WebSocketServer;
+  private mutantInstrumenterInjector: Injector<MutantInstrumenterContext> | undefined;
+  private options: StrykerOptions | undefined;
 
-  constructor() {
+  constructor(private readonly injectorFactory = createInjector) {
     this.webSocketServer = new WebSocketServer({ port: 8080 });
 
     this.jsonRpcServer = new JSONRPCServer();
 
-    this.jsonRpcServer.addMethod('instrument', async (params: { globPatterns?: string[] }) => {
-      const instrumenter = new StrykerInstrumenter({ mutate: params.globPatterns });
-      return await instrumenter.runInstrumentation();
-    });
+    this.jsonRpcServer.addMethod('instrument', async (params: { globPatterns?: string[] }) => this.instrument(params.globPatterns));
 
     this.webSocketServer.on('connection', (ws: WebSocket) => {
       ws.on('message', async (message: string) => {
@@ -41,15 +47,43 @@ export class StrykerServer {
         }
       });
 
-      ws.on('close', () => {
-        console.log('Connection closed.');
-      });
-
       ws.on('error', (err) => {
         console.error('WebSocket Error:', err);
       });
     });
 
+    // Message to confirm process is ready to setup the WebSocket connection
     console.log('Server started');
+  }
+
+  private async instrument(globPatterns?: string[]): Promise<MutationTestResult> {
+    // Load instrumenter context once and reuse it partially for every subsequent run for performance reasons
+    if (!this.mutantInstrumenterInjector) {
+      this.mutantInstrumenterInjector = await this.provideInstrumenterContext();
+      this.options = this.mutantInstrumenterInjector.resolve(commonTokens.options);
+    }
+    const options: StrykerOptions = { ...this.options! };
+
+    if (globPatterns) {
+      // Override the mutate property with the provided glob patterns
+      options.mutate = globPatterns;
+    }
+
+    const updatedMutantInstrumenterInjector = this.mutantInstrumenterInjector.provideValue(commonTokens.options, options);
+
+    // Reload project as files might have changed since the last run
+    const project = await updatedMutantInstrumenterInjector.injectClass(ProjectReader).read();
+
+    const mutantInstrumenter = updatedMutantInstrumenterInjector.provideValue(coreTokens.project, project).injectClass(MutantInstrumenterExecutor);
+
+    return await mutantInstrumenter.execute();
+  }
+
+  private async provideInstrumenterContext() {
+    const rootInjector = this.injectorFactory();
+    const loggerProvider = provideLogger(rootInjector);
+
+    const prepareExecutor = loggerProvider.injectClass(PrepareExecutor);
+    return await prepareExecutor.execute({});
   }
 }
