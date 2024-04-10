@@ -9,6 +9,8 @@ import { MutationTestResult } from 'mutation-testing-report-schema';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 
+import { Command } from 'commander';
+
 import { MutationServerMethods } from './server/mutation-server-methods.js';
 
 import { provideLogger } from './di/provide-logger.js';
@@ -24,8 +26,16 @@ export class StrykerServer {
   private mutantInstrumenterInjector: Injector<MutantInstrumenterContext> | undefined;
   private options: StrykerOptions | undefined;
 
-  constructor(private readonly injectorFactory = createInjector) {
-    this.webSocketServer = new WebSocketServer({ port: 8080 });
+  constructor(
+    private readonly argv: string[],
+    private readonly injectorFactory = createInjector,
+    private readonly program: Command = new Command(),
+  ) {
+    this.program.option('-p, --port <port>', 'Start the Stryker server').showSuggestionAfterError().parse(this.argv);
+
+    const options = this.program.opts();
+
+    this.webSocketServer = new WebSocketServer({ port: options.port ?? 8080 });
 
     this.jsonRpcServer = new JSONRPCServer();
 
