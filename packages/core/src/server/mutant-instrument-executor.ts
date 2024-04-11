@@ -4,7 +4,7 @@ import { StrykerOptions } from '@stryker-mutator/api/core';
 
 import { I } from '@stryker-mutator/util';
 
-import { MutationTestResult } from 'mutation-testing-report-schema';
+import { Location, MutationTestResult } from 'mutation-testing-report-schema';
 
 import { coreTokens, PluginCreator } from '../di/index.js';
 import { Project } from '../fs/project.js';
@@ -35,15 +35,31 @@ export class MutantInstrumenterExecutor {
     const instrumentResult = await instrumenter.instrument(await this.readFilesToMutate(), { ignorers, ...this.options.mutator });
 
     // Map to MutantResults for the report
-    const mutantResults = instrumentResult.mutants.map((mutant) => ({
-      ...mutant,
-      status: mutant.status ?? 'Pending',
-    }));
+    const mutantResults = instrumentResult.mutants.map((mutant) => {
+      return {
+        ...mutant,
+        location: this.correctLocation(mutant.location),
+        status: mutant.status ?? 'Pending',
+      };
+    });
 
     return await this.mutationTestReportHelper.mutationTestReport(mutantResults);
   }
 
   private readFilesToMutate() {
     return Promise.all([...this.project.filesToMutate.values()].map((file) => file.toInstrumenterFile()));
+  }
+
+  private correctLocation(location: Location) {
+    return {
+      start: {
+        line: ++location.start.line,
+        column: ++location.start.column,
+      },
+      end: {
+        line: ++location.end.line,
+        column: ++location.end.column,
+      },
+    };
   }
 }
