@@ -81,7 +81,7 @@ export class PrepareExecutor {
         .provideValue(coreTokens.process, process)
         .provideClass(coreTokens.unexpectedExitRegistry, UnexpectedExitHandler)
         .provideValue(coreTokens.pluginModulePaths, loadedPlugins.pluginModulePaths)
-        .provideFactory(coreTokens.testCoverage, TestCoverage.default)
+        .provideFactory(coreTokens.testCoverage, TestCoverage.empty)
         .provideValue(coreTokens.requireFromCwd, requireResolve)
         .provideClass(coreTokens.mutationTestReportHelper, MutationTestReportHelper);
     }

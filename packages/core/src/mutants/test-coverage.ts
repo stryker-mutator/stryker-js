@@ -61,7 +61,7 @@ export class TestCoverage {
     return this.#testsByMutantId.get(mutantId);
   }
 
-  public static default = defaultTestCoverage;
+  public static empty = emptyTestCoverage;
   public static from = testCoverageFrom;
 }
 
@@ -102,7 +102,7 @@ function testCoverageFrom({ tests, mutantCoverage }: CompleteDryRunResult, logge
 }
 testCoverageFrom.inject = [coreTokens.dryRunResult, commonTokens.logger] as const;
 
-function defaultTestCoverage(): TestCoverage {
+function emptyTestCoverage(): TestCoverage {
   return new TestCoverage(new Map(), new Map(), undefined, new Map());
 }
-defaultTestCoverage.inject = [] as const;
+emptyTestCoverage.inject = [] as const;
