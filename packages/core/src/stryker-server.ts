@@ -1,5 +1,5 @@
 import { WebSocketServer, WebSocket } from 'ws';
-import { JSONRPCRequest, JSONRPCServer, TypedJSONRPCServer, createJSONRPCErrorResponse } from 'json-rpc-2.0';
+import { JSONRPCServer, TypedJSONRPCServer, createJSONRPCErrorResponse } from 'json-rpc-2.0';
 
 import { Injector, createInjector } from 'typed-inject';
 
@@ -7,7 +7,7 @@ import { commonTokens } from '@stryker-mutator/api/plugin';
 
 import { MutationTestResult } from 'mutation-testing-report-schema';
 
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import { MutantResult, StrykerOptions } from '@stryker-mutator/api/core';
 
 import { Command } from 'commander';
 
@@ -19,6 +19,7 @@ import { MutantInstrumenterContext } from './process/2-mutant-instrumenter-execu
 import { MutantInstrumenterExecutor } from './server/mutant-instrument-executor.js';
 import { ProjectReader } from './fs/project-reader.js';
 import { coreTokens } from './di/index.js';
+import { Stryker } from './stryker.js';
 
 export class StrykerServer {
   private readonly jsonRpcServer: TypedJSONRPCServer<MutationServerMethods>;
@@ -40,6 +41,7 @@ export class StrykerServer {
     this.jsonRpcServer = new JSONRPCServer();
 
     this.jsonRpcServer.addMethod('instrument', async (params: { globPatterns?: string[] }) => this.instrument(params.globPatterns));
+    this.jsonRpcServer.addMethod('mutate', async (params: { globPatterns?: string[] }) => this.mutate(params.globPatterns));
 
     this.webSocketServer.on('connection', (ws: WebSocket) => {
       ws.on('message', async (message: string) => {
@@ -90,5 +92,9 @@ export class StrykerServer {
 
     const prepareExecutor = loggerProvider.injectClass(PrepareExecutor);
     return await prepareExecutor.execute({});
+  }
+
+  private async mutate(globPatterns?: string[]): Promise<MutantResult[]> {
+    return await new Stryker({ mutate: globPatterns }).runMutationTest();
   }
 }
