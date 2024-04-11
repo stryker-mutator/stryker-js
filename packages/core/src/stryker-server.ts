@@ -1,5 +1,5 @@
 import { WebSocketServer, WebSocket } from 'ws';
-import { JSONRPCRequest, JSONRPCServer, TypedJSONRPCServer } from 'json-rpc-2.0';
+import { JSONRPCRequest, JSONRPCServer, TypedJSONRPCServer, createJSONRPCErrorResponse } from 'json-rpc-2.0';
 
 import { Injector, createInjector } from 'typed-inject';
 
@@ -43,18 +43,13 @@ export class StrykerServer {
 
     this.webSocketServer.on('connection', (ws: WebSocket) => {
       ws.on('message', async (message: string) => {
-        let request: JSONRPCRequest | undefined;
+        let response = await this.jsonRpcServer.receiveJSON(message);
 
-        try {
-          request = JSON.parse(message);
-        } catch {}
-
-        if (request) {
-          const response = await this.jsonRpcServer.receive(request);
-          if (response) {
-            ws.send(JSON.stringify(response));
-          }
+        if (!response) {
+          response = createJSONRPCErrorResponse(null, -32603, 'Internal JSON-RPC error');
         }
+
+        ws.send(JSON.stringify(response));
       });
 
       ws.on('error', (err) => {
