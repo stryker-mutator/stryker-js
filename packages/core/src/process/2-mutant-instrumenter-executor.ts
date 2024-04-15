@@ -17,6 +17,8 @@ import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
 import { FileSystem, Project } from '../fs/index.js';
 import { IdGenerator } from '../child-proxy/id-generator.js';
 
+import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper.js';
+
 import { DryRunContext } from './3-dry-run-executor.js';
 
 export interface MutantInstrumenterContext extends PluginContext {
@@ -32,6 +34,7 @@ export interface MutantInstrumenterContext extends PluginContext {
   [coreTokens.pluginModulePaths]: readonly string[];
   [coreTokens.fs]: I<FileSystem>;
   [coreTokens.pluginCreator]: PluginCreator;
+  [coreTokens.mutationTestReportHelper]: MutationTestReportHelper;
 }
 
 export class MutantInstrumenterExecutor {
