@@ -1,7 +1,6 @@
 import { WebSocketServer, WebSocket } from 'ws';
 import { JSONRPCServer, TypedJSONRPCServer, createJSONRPCErrorResponse } from 'json-rpc-2.0';
 import { createInjector } from 'typed-inject';
-import { MutationTestResult } from 'mutation-testing-report-schema';
 import { MutantResult } from '@stryker-mutator/api/core';
 import { Command } from 'commander';
 
@@ -51,7 +50,7 @@ export class StrykerServer {
     console.log('Server started');
   }
 
-  private async instrument(globPatterns?: string[]): Promise<MutationTestResult> {
+  private async instrument(globPatterns?: string[]): Promise<MutantResult[]> {
     const rootInjector = this.injectorFactory();
 
     const loggerProvider = provideLogger(rootInjector);

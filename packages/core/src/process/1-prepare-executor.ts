@@ -1,6 +1,6 @@
 import { StrykerOptions, PartialStrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
 import { BaseContext, commonTokens, Injector, tokens } from '@stryker-mutator/api/plugin';
-import { deepFreeze, requireResolve } from '@stryker-mutator/util';
+import { deepFreeze } from '@stryker-mutator/util';
 import { execaCommand } from 'execa';
 
 import { ConfigReader } from '../config/config-reader.js';
@@ -15,8 +15,6 @@ import { MetaSchemaBuilder, OptionsValidator } from '../config/index.js';
 import { BroadcastReporter } from '../reporters/broadcast-reporter.js';
 import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
 import { FileSystem, ProjectReader } from '../fs/index.js';
-import { TestCoverage } from '../mutants/test-coverage.js';
-import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper.js';
 
 import { MutantInstrumenterContext } from './index.js';
 
@@ -80,10 +78,7 @@ export class PrepareExecutor {
         .provideValue(coreTokens.execa, execaCommand)
         .provideValue(coreTokens.process, process)
         .provideClass(coreTokens.unexpectedExitRegistry, UnexpectedExitHandler)
-        .provideValue(coreTokens.pluginModulePaths, loadedPlugins.pluginModulePaths)
-        .provideFactory(coreTokens.testCoverage, TestCoverage.empty)
-        .provideValue(coreTokens.requireFromCwd, requireResolve)
-        .provideClass(coreTokens.mutationTestReportHelper, MutationTestReportHelper);
+        .provideValue(coreTokens.pluginModulePaths, loadedPlugins.pluginModulePaths);
     }
   }
 }

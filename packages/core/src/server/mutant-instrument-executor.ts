@@ -1,33 +1,22 @@
 import { Injector, tokens, commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
 import { createInstrumenter } from '@stryker-mutator/instrumenter';
-import { StrykerOptions } from '@stryker-mutator/api/core';
-
-import { I } from '@stryker-mutator/util';
-
-import { Location, MutationTestResult } from 'mutation-testing-report-schema';
+import { MutantResult, StrykerOptions } from '@stryker-mutator/api/core';
+import { Location } from 'mutation-testing-report-schema';
 
 import { coreTokens, PluginCreator } from '../di/index.js';
 import { Project } from '../fs/project.js';
 import { MutantInstrumenterContext } from '../process/2-mutant-instrumenter-executor.js';
-import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper.js';
 
 export class MutantInstrumenterExecutor {
-  public static readonly inject = tokens(
-    commonTokens.injector,
-    coreTokens.project,
-    commonTokens.options,
-    coreTokens.pluginCreator,
-    coreTokens.mutationTestReportHelper,
-  );
+  public static readonly inject = tokens(commonTokens.injector, coreTokens.project, commonTokens.options, coreTokens.pluginCreator);
   constructor(
     private readonly injector: Injector<MutantInstrumenterContext>,
     private readonly project: Project,
     private readonly options: StrykerOptions,
     private readonly pluginCreator: PluginCreator,
-    private readonly mutationTestReportHelper: I<MutationTestReportHelper>,
   ) {}
 
-  public async execute(): Promise<MutationTestResult> {
+  public async execute(): Promise<MutantResult[]> {
     const instrumenter = this.injector.injectFunction(createInstrumenter);
 
     // Instrument files in-memory
@@ -43,7 +32,7 @@ export class MutantInstrumenterExecutor {
       };
     });
 
-    return await this.mutationTestReportHelper.mutationTestReport(mutantResults);
+    return mutantResults;
   }
 
   private readFilesToMutate() {
