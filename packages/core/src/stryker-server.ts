@@ -27,8 +27,15 @@ export class StrykerServer {
 
     this.jsonRpcServer = new JSONRPCServer();
 
-    this.jsonRpcServer.addMethod('instrument', async (params: { globPatterns?: string[] }) => this.instrument(params.globPatterns));
-    this.jsonRpcServer.addMethod('mutate', async (params: { globPatterns?: string[] }) => this.mutate(params.globPatterns));
+    const methods: MutationServerMethods = {
+      instrument: async (params: { globPatterns?: string[] }) => await this.instrument(params.globPatterns),
+      mutate: async (params: { globPatterns?: string[] }) => await this.mutate(params.globPatterns),
+    };
+
+    for (const key in methods) {
+      const k = key as keyof MutationServerMethods;
+      this.jsonRpcServer.addMethod(k, methods[k]);
+    }
 
     this.webSocketServer.on('connection', (ws: WebSocket) => {
       ws.on('message', async (message: string) => {
