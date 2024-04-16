@@ -35,6 +35,13 @@ export interface MutateParams extends PartialResultParams {
   globPatterns?: string[];
 }
 
+export interface MutatePartialResult {
+  /**
+   * The mutant results.
+   */
+  mutants: MutantResult[];
+}
+
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type ServerMethods = {
   instrument(params: InstrumentParams): Promise<MutantResult[]>;
@@ -43,5 +50,5 @@ export type ServerMethods = {
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type ClientMethods = {
-  // empty for now
+  // No methods for the client yet
 };

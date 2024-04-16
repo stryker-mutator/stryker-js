@@ -8,6 +8,7 @@ import { I, normalizeFileName, normalizeWhitespaces, type requireResolve } from 
 import { calculateMutationTestMetrics, MutationTestMetricsResult } from 'mutation-testing-metrics';
 import { MutantRunResult, MutantRunStatus, TestResult } from '@stryker-mutator/api/test-runner';
 import { CheckStatus, PassedCheckResult, CheckResult } from '@stryker-mutator/api/check';
+import { Observable, Subject } from 'rxjs';
 
 import { strykerVersion } from '../stryker-package.js';
 import { coreTokens } from '../di/index.js';
@@ -48,6 +49,9 @@ export class MutationTestReportHelper {
     private readonly fs: I<FileSystem>,
     private readonly requireFromCwd: typeof requireResolve,
   ) {}
+
+  private readonly partialResult$Subject = new Subject<MutantResult>();
+  public partialResult$: Observable<MutantResult> = this.partialResult$Subject.asObservable();
 
   public reportCheckFailed(mutant: MutantTestCoverage, checkResult: Exclude<CheckResult, PassedCheckResult>): MutantResult {
     const location = this.toLocation(mutant.location);
@@ -108,6 +112,7 @@ export class MutationTestReportHelper {
 
   private reportOne(result: MutantResult): MutantResult {
     this.reporter.onMutantTested(result);
+    this.partialResult$Subject.next(result);
     return result;
   }
 
@@ -127,6 +132,7 @@ export class MutationTestReportHelper {
       await this.fs.writeFile(this.options.incrementalFile, JSON.stringify(report, null, 2), 'utf-8');
     }
     this.determineExitCode(metrics);
+    this.partialResult$Subject.complete();
   }
 
   private determineExitCode(metrics: MutationTestMetricsResult) {

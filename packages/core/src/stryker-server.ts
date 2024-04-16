@@ -9,13 +9,30 @@ import {
 } from 'json-rpc-2.0';
 import { createInjector } from 'typed-inject';
 import { MutantResult } from '@stryker-mutator/api/core';
+import { commonTokens } from '@stryker-mutator/api/plugin';
 import { Command } from 'commander';
+
+import { bufferTime, filter } from 'rxjs';
 
 import { provideLogger } from './di/provide-logger.js';
 import { PrepareExecutor } from './process/1-prepare-executor.js';
-import { MutantInstrumenterExecutor } from './server/mutant-instrument-executor.js';
+import { MutantInstrumenterExecutor as ServerMutantInstrumenterExecutor } from './server/mutant-instrument-executor.js';
+import { MutantInstrumenterExecutor } from './process/2-mutant-instrumenter-executor.js';
 import { Stryker } from './stryker.js';
-import { ClientMethods, ServerMethods } from './server/mutation-server-protocol.js';
+import {
+  ClientMethods,
+  InstrumentParams,
+  MutateParams,
+  MutatePartialResult,
+  ProgressParams,
+  ProgressToken,
+  ServerMethods,
+} from './server/mutation-server-protocol.js';
+import { DryRunExecutor } from './process/3-dry-run-executor.js';
+import { MutationTestExecutor } from './process/4-mutation-test-executor.js';
+import { coreTokens } from './di/index.js';
+import { ConfigError, retrieveCause } from './errors.js';
+import { LogConfigurator } from './logging/log-configurator.js';
 
 export class StrykerServer {
   private readonly jsonRpcServer: TypedJSONRPCServer<ServerMethods>;
@@ -51,8 +68,8 @@ export class StrykerServer {
 
       const clientMethods: ClientMethods = {};
       const serverMethods: ServerMethods = {
-        instrument: async (params: { globPatterns?: string[] }) => await this.instrument(params.globPatterns),
-        mutate: async (params: { globPatterns?: string[] }) => await this.mutate(params.globPatterns),
+        instrument: async (params: InstrumentParams) => await this.instrument(params),
+        mutate: async (params: MutateParams) => await this.mutate(params),
       };
 
       const allMethods = { ...clientMethods, ...serverMethods };
@@ -81,22 +98,94 @@ export class StrykerServer {
     console.log('Server started');
   }
 
-  private async instrument(globPatterns?: string[]): Promise<MutantResult[]> {
+  private async instrument(params: InstrumentParams): Promise<MutantResult[]> {
     const rootInjector = this.injectorFactory();
 
     const loggerProvider = provideLogger(rootInjector);
 
     const prepareExecutor = loggerProvider.injectClass(PrepareExecutor);
 
-    const options = globPatterns?.length ? { mutate: globPatterns } : {};
+    const options = params.globPatterns?.length ? { mutate: params.globPatterns } : {};
     const mutantInstrumenterInjector = await prepareExecutor.execute(options);
 
-    const mutantInstrumenter = mutantInstrumenterInjector.injectClass(MutantInstrumenterExecutor);
+    const mutantInstrumenter = mutantInstrumenterInjector.injectClass(ServerMutantInstrumenterExecutor);
 
     return await mutantInstrumenter.execute();
   }
 
-  private async mutate(globPatterns?: string[]): Promise<MutantResult[]> {
-    return await new Stryker({ mutate: globPatterns }).runMutationTest();
+  private async mutate(params: MutateParams): Promise<MutantResult[]> {
+    if (!params.partialResultToken) {
+      // No partial results requested, just run the mutation test
+      return await new Stryker({ mutate: params.globPatterns }).runMutationTest();
+    }
+
+    const token: ProgressToken = params.partialResultToken;
+
+    const options = params.globPatterns?.length ? { mutate: params.globPatterns } : {};
+
+    const rootInjector = this.injectorFactory();
+    const loggerProvider = provideLogger(rootInjector);
+
+    try {
+      // 1. Prepare. Load Stryker configuration, load the input files and starts the logging server
+      const prepareExecutor = loggerProvider.injectClass(PrepareExecutor);
+      const mutantInstrumenterInjector = await prepareExecutor.execute(options);
+
+      try {
+        // 2. Mutate and instrument the files and write to the sandbox.
+        const mutantInstrumenter = mutantInstrumenterInjector.injectClass(MutantInstrumenterExecutor);
+        const dryRunExecutorInjector = await mutantInstrumenter.execute();
+
+        // 3. Perform a 'dry run' (initial test run). Runs the tests without active mutants and collects coverage.
+        const dryRunExecutor = dryRunExecutorInjector.injectClass(DryRunExecutor);
+        const mutationRunExecutorInjector = await dryRunExecutor.execute();
+
+        const mutationTestReportHelper = mutationRunExecutorInjector.resolve(coreTokens.mutationTestReportHelper);
+
+        // Setup reporting of partial results to the client
+        mutationTestReportHelper.partialResult$
+          .pipe(
+            bufferTime(250), // Buffer for 100ms
+            filter((arr) => arr.length > 0), // Only send if there are results
+          )
+          .subscribe((partialResults: MutantResult[]) => {
+            const partialResultParams: ProgressParams<MutatePartialResult> = { token: token, value: { mutants: partialResults } };
+            this.serverAndClient!.notify('progress', partialResultParams);
+          });
+
+        // 4. Actual mutation testing. Will check every mutant and if valid run it in an available test runner.
+        const mutationRunExecutor = mutationRunExecutorInjector.injectClass(MutationTestExecutor);
+
+        await mutationRunExecutor.execute();
+
+        return []; // All results are streamed as partial result notifications
+      } catch (error) {
+        if (mutantInstrumenterInjector.resolve(commonTokens.options).cleanTempDir !== 'always') {
+          const log = loggerProvider.resolve(commonTokens.getLogger)(Stryker.name);
+          log.debug('Not removing the temp dir because an error occurred');
+          mutantInstrumenterInjector.resolve(coreTokens.temporaryDirectory).removeDuringDisposal = false;
+        }
+        throw error;
+      }
+    } catch (error) {
+      const log = loggerProvider.resolve(commonTokens.getLogger)(Stryker.name);
+      const cause = retrieveCause(error);
+      if (cause instanceof ConfigError) {
+        log.error(cause.message);
+      } else {
+        log.error('Unexpected error occurred while running Stryker', error);
+        log.info('This might be a known problem with a solution documented in our troubleshooting guide.');
+        log.info('You can find it at https://stryker-mutator.io/docs/stryker-js/troubleshooting/');
+        if (!log.isTraceEnabled()) {
+          log.info(
+            'Still having trouble figuring out what went wrong? Try `npx stryker run --fileLogLevel trace --logLevel debug` to get some more info.',
+          );
+        }
+      }
+      throw cause;
+    } finally {
+      await rootInjector.dispose();
+      await LogConfigurator.shutdown();
+    }
   }
 }
