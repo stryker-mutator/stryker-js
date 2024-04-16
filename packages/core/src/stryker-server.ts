@@ -1,18 +1,28 @@
 import { WebSocketServer, WebSocket } from 'ws';
-import { JSONRPCServer, TypedJSONRPCServer, createJSONRPCErrorResponse } from 'json-rpc-2.0';
+import {
+  JSONRPCClient,
+  JSONRPCServer,
+  TypedJSONRPCServerAndClient,
+  JSONRPCServerAndClient,
+  TypedJSONRPCClient,
+  TypedJSONRPCServer,
+} from 'json-rpc-2.0';
 import { createInjector } from 'typed-inject';
 import { MutantResult } from '@stryker-mutator/api/core';
 import { Command } from 'commander';
 
-import { MutationServerMethods } from './server/mutation-server-methods.js';
 import { provideLogger } from './di/provide-logger.js';
 import { PrepareExecutor } from './process/1-prepare-executor.js';
 import { MutantInstrumenterExecutor } from './server/mutant-instrument-executor.js';
 import { Stryker } from './stryker.js';
+import { ClientMethods, ServerMethods } from './server/mutation-server-protocol.js';
 
 export class StrykerServer {
-  private readonly jsonRpcServer: TypedJSONRPCServer<MutationServerMethods>;
+  private readonly jsonRpcServer: TypedJSONRPCServer<ServerMethods>;
+  private jsonRpcClient: TypedJSONRPCClient<ClientMethods> | undefined;
   private readonly webSocketServer: WebSocketServer;
+  private isConnected = false; // Flag to track connection status
+  private serverAndClient: TypedJSONRPCServerAndClient<ServerMethods, ClientMethods> | undefined;
 
   constructor(
     private readonly argv: string[],
@@ -27,29 +37,43 @@ export class StrykerServer {
 
     this.jsonRpcServer = new JSONRPCServer();
 
-    const methods: MutationServerMethods = {
-      instrument: async (params: { globPatterns?: string[] }) => await this.instrument(params.globPatterns),
-      mutate: async (params: { globPatterns?: string[] }) => await this.mutate(params.globPatterns),
-    };
-
-    for (const key in methods) {
-      const k = key as keyof MutationServerMethods;
-      this.jsonRpcServer.addMethod(k, methods[k]);
-    }
-
     this.webSocketServer.on('connection', (ws: WebSocket) => {
+      if (this.isConnected) {
+        ws.close(4000, 'Only one connection allowed');
+        return;
+      }
+
+      this.isConnected = true;
+
+      this.jsonRpcClient = new JSONRPCClient((message) => ws.send(JSON.stringify(message)));
+
+      this.serverAndClient = new JSONRPCServerAndClient(this.jsonRpcServer, this.jsonRpcClient);
+
+      const clientMethods: ClientMethods = {};
+      const serverMethods: ServerMethods = {
+        instrument: async (params: { globPatterns?: string[] }) => await this.instrument(params.globPatterns),
+        mutate: async (params: { globPatterns?: string[] }) => await this.mutate(params.globPatterns),
+      };
+
+      const allMethods = { ...clientMethods, ...serverMethods };
+
+      for (const key in allMethods) {
+        const k = key as keyof typeof allMethods;
+        this.serverAndClient.addMethod(k, allMethods[k]);
+      }
+
       ws.on('message', async (message: string) => {
-        let response = await this.jsonRpcServer.receiveJSON(message);
-
-        if (!response) {
-          response = createJSONRPCErrorResponse(null, -32603, 'Internal JSON-RPC error');
-        }
-
-        ws.send(JSON.stringify(response));
+        await this.serverAndClient!.receiveAndSend(JSON.parse(message));
       });
 
       ws.on('error', (err) => {
         console.error('WebSocket Error:', err);
+      });
+
+      ws.on('close', () => {
+        this.isConnected = false;
+
+        this.serverAndClient!.rejectAllPendingRequests('Connection is closed.');
       });
     });
 
