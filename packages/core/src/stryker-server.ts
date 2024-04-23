@@ -8,17 +8,18 @@ import {
   TypedJSONRPCServer,
 } from 'json-rpc-2.0';
 import { createInjector } from 'typed-inject';
-import { MutantResult } from '@stryker-mutator/api/core';
+import { MutantResult, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { Command } from 'commander';
 
-import { bufferTime, filter } from 'rxjs';
+import { from, fromEvent, fromEventPattern } from 'rxjs';
 
 import { provideLogger } from './di/provide-logger.js';
 import { PrepareExecutor } from './process/1-prepare-executor.js';
 import { MutantInstrumenterExecutor as ServerMutantInstrumenterExecutor } from './server/mutant-instrument-executor.js';
 import { MutantInstrumenterExecutor } from './process/2-mutant-instrumenter-executor.js';
 import { Stryker } from './stryker.js';
+import { BroadcastReporter } from './reporters/index.js';
 import {
   ClientMethods,
   InstrumentParams,
@@ -119,9 +120,8 @@ export class StrykerServer {
       return await new Stryker({ mutate: params.globPatterns }).runMutationTest();
     }
 
-    const token: ProgressToken = params.partialResultToken;
-
-    const options = params.globPatterns?.length ? { mutate: params.globPatterns } : {};
+    const options: PartialStrykerOptions = params.globPatterns?.length ? { mutate: params.globPatterns } : {};
+    options.reporters = ['empty']; // used to stream results
 
     const rootInjector = this.injectorFactory();
     const loggerProvider = provideLogger(rootInjector);
@@ -129,7 +129,20 @@ export class StrykerServer {
     try {
       // 1. Prepare. Load Stryker configuration, load the input files and starts the logging server
       const prepareExecutor = loggerProvider.injectClass(PrepareExecutor);
+
       const mutantInstrumenterInjector = await prepareExecutor.execute(options);
+
+      const broadcastReporter = mutantInstrumenterInjector.resolve(coreTokens.reporter) as BroadcastReporter;
+      const emptyReporter = broadcastReporter.reporters.empty;
+      if (!emptyReporter) {
+        throw new Error('Reporter unavailable');
+      }
+
+      const token: ProgressToken = params.partialResultToken;
+      emptyReporter.onMutantTested = (result) => {
+        const progressParams: ProgressParams<MutatePartialResult> = { token: token, value: { mutants: [result] } };
+        this.serverAndClient!.notify('progress', progressParams);
+      };
 
       try {
         // 2. Mutate and instrument the files and write to the sandbox.
@@ -139,19 +152,6 @@ export class StrykerServer {
         // 3. Perform a 'dry run' (initial test run). Runs the tests without active mutants and collects coverage.
         const dryRunExecutor = dryRunExecutorInjector.injectClass(DryRunExecutor);
         const mutationRunExecutorInjector = await dryRunExecutor.execute();
-
-        const mutationTestReportHelper = mutationRunExecutorInjector.resolve(coreTokens.mutationTestReportHelper);
-
-        // Setup reporting of partial results to the client
-        mutationTestReportHelper.partialResult$
-          .pipe(
-            bufferTime(250), // Buffer for 100ms
-            filter((arr) => arr.length > 0), // Only send if there are results
-          )
-          .subscribe((partialResults: MutantResult[]) => {
-            const partialResultParams: ProgressParams<MutatePartialResult> = { token: token, value: { mutants: partialResults } };
-            this.serverAndClient!.notify('progress', partialResultParams);
-          });
 
         // 4. Actual mutation testing. Will check every mutant and if valid run it in an available test runner.
         const mutationRunExecutor = mutationRunExecutorInjector.injectClass(MutationTestExecutor);
