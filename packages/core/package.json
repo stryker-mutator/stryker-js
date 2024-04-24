@@ -21,7 +21,8 @@
     "test:all": "npm run test:unit && npm run test:integration",
     "test:unit": "mocha 'dist/test/unit/**/*.js'",
     "test:integration": "mocha --timeout 60000 'dist/test/integration/**/*.js'",
-    "stryker": "node bin/stryker.js run"
+    "stryker": "node bin/stryker.js run",
+    "stryker-server": "node bin/stryker-server.js"
   },
   "repository": {
     "type": "git",
@@ -65,7 +66,8 @@
   },
   "homepage": "https://stryker-mutator.io/",
   "bin": {
-    "stryker": "./bin/stryker.js"
+    "stryker": "./bin/stryker.js",
+    "stryker-server": "./bin/stryker-server.js"
   },
   "dependencies": {
     "@stryker-mutator/api": "8.2.6",
@@ -81,6 +83,7 @@
     "get-port": "~7.0.0",
     "glob": "~10.3.10",
     "inquirer": "~9.2.13",
+    "json-rpc-2.0": "^1.7.0",
     "lodash.groupby": "~4.6.0",
     "log4js": "~6.9.1",
     "minimatch": "~9.0.3",
@@ -95,7 +98,8 @@
     "tree-kill": "~1.2.2",
     "tslib": "2.6.2",
     "typed-inject": "~4.0.0",
-    "typed-rest-client": "~1.8.11"
+    "typed-rest-client": "~1.8.11",
+    "ws": "^8.16.0"
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "8.2.6",
@@ -105,6 +109,7 @@
     "@types/node": "20.12.7",
     "@types/progress": "2.0.7",
     "@types/semver": "7.5.8",
+    "@types/ws": "^8.5.10",
     "flatted": "3.3.1"
   }
 }
