@@ -47,8 +47,3 @@ export type ServerMethods = {
   instrument(params: InstrumentParams): Promise<MutantResult[]>;
   mutate(params: MutateParams): Promise<MutantResult[]>;
 };
-
-// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-export type ClientMethods = {
-  // No methods for the client yet
-};

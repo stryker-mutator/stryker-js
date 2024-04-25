@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 
-import { JsonRpcRequestHandler } from './server/json-rpc/json-rpc-request-handler.js';
-import { WebSocketTransport } from './server/transport/web-socket-transport.js';
+import { setupJsonRpcMessaging } from './server/json-rpc-messaging.js';
+import { WebSocketTransporter } from './server/transport/web-socket-transporter.js';
 
 export class StrykerServer {
   constructor(
@@ -9,13 +9,11 @@ export class StrykerServer {
     private readonly program: Command = new Command(),
   ) {
     this.program.option('-p, --port <port>', 'Start the Stryker server').showSuggestionAfterError().parse(this.argv);
-
     const options = this.program.opts();
 
-    new WebSocketTransport((options.port as number) ?? 8080, (ws) => {
-      JsonRpcRequestHandler.handleWebSocketRequests(ws);
+    const transporter = new WebSocketTransporter((options.port as number) ?? 8080);
+    transporter.onConnected(() => {
+      setupJsonRpcMessaging(transporter);
     });
-
-    console.log('Server started');
   }
 }

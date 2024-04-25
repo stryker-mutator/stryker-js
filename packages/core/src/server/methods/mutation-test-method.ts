@@ -14,6 +14,11 @@ import { coreTokens } from '../../di/index.js';
 import { ConfigError, retrieveCause } from '../../errors.js';
 import { LogConfigurator } from '../../logging/log-configurator.js';
 
+/**
+ * Run a mutation test and get partial results via a callback.
+ * @param globPatterns  The glob patterns to mutate.
+ * @param onMutantTested  A callback that is called when a mutant is tested.
+ */
 export async function runMutationTestRealtime(
   globPatterns: string[] | undefined,
   onMutantTested: (result: Readonly<MutantResult>) => void,
@@ -80,6 +85,11 @@ export async function runMutationTestRealtime(
   }
 }
 
+/**
+ * Run a mutation test.
+ * @param globPatterns The glob patterns to mutate.
+ * @returns The mutant results.
+ */
 export async function runMutationTest(globPatterns?: string[]): Promise<MutantResult[]> {
   return await new Stryker({ mutate: globPatterns }).runMutationTest();
 }
