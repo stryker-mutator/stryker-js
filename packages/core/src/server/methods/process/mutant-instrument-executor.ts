@@ -3,9 +3,9 @@ import { createInstrumenter } from '@stryker-mutator/instrumenter';
 import { MutantResult, StrykerOptions } from '@stryker-mutator/api/core';
 import { Location } from 'mutation-testing-report-schema';
 
-import { coreTokens, PluginCreator } from '../di/index.js';
-import { Project } from '../fs/project.js';
-import { MutantInstrumenterContext } from '../process/2-mutant-instrumenter-executor.js';
+import { coreTokens, PluginCreator } from '../../../di/index.js';
+import { Project } from '../../../fs/project.js';
+import { MutantInstrumenterContext } from '../../../process/2-mutant-instrumenter-executor.js';
 
 export class MutantInstrumenterExecutor {
   public static readonly inject = tokens(commonTokens.injector, coreTokens.project, commonTokens.options, coreTokens.pluginCreator);
