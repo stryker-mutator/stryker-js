@@ -69,8 +69,8 @@ export class StrykerServer {
 
       const clientMethods: ClientMethods = {};
       const serverMethods: ServerMethods = {
-        instrument: async (params: InstrumentParams) => await this.instrument(params),
-        mutate: async (params: MutateParams) => await this.mutate(params),
+        instrument: this.instrument.bind(this),
+        mutate: this.mutate.bind(this),
       };
 
       const allMethods = { ...clientMethods, ...serverMethods };
