@@ -8,10 +8,10 @@ import { Transporter } from './transporter.js';
 export class WebSocketTransporter implements Transporter {
   private readonly webSocketServer: WebSocketServer;
   private isConnected = false;
-  private onMessageCallback: ((message: string) => void) | null = null;
-  private onCloseCallback: (() => void) | null = null;
-  private onConnectedCallback: (() => void) | null = null;
-  private onErrorCallback: ((error: Error) => void) | null = null;
+  private readonly onMessageCallbacks: Array<(message: string) => void> = [];
+  private readonly onCloseCallbacks: Array<() => void> = [];
+  private readonly onConnectedCallbacks: Array<() => void> = [];
+  private readonly onErrorCallbacks: Array<(error: Error) => void> = [];
 
   /**
    * Create a new WebSocket server for sending and receiving messages
@@ -38,20 +38,20 @@ export class WebSocketTransporter implements Transporter {
     ws.on('close', this.handleClose.bind(this));
     ws.on('error', this.handleError.bind(this));
 
-    this.onConnectedCallback?.();
+    this.onConnectedCallbacks.forEach((callback) => callback());
   }
 
   private handleMessage(message: string): void {
-    this.onMessageCallback?.(message);
+    this.onMessageCallbacks.forEach((callback) => callback(message));
   }
 
   private handleClose(): void {
     this.isConnected = false;
-    this.onCloseCallback?.();
+    this.onCloseCallbacks.forEach((callback) => callback());
   }
 
   private handleError(error: Error): void {
-    this.onErrorCallback?.(error);
+    this.onErrorCallbacks.forEach((callback) => callback(error));
   }
 
   public send(message: string): void {
@@ -63,18 +63,18 @@ export class WebSocketTransporter implements Transporter {
   }
 
   public onMessage(callback: (message: string) => void): void {
-    this.onMessageCallback = callback;
+    this.onMessageCallbacks.push(callback);
   }
 
   public onClose(callback: () => void): void {
-    this.onCloseCallback = callback;
+    this.onCloseCallbacks.push(callback);
   }
 
   public onConnected(callback: () => void): void {
-    this.onConnectedCallback = callback;
+    this.onConnectedCallbacks.push(callback);
   }
 
   public onError(callback: (error: Error) => void): void {
-    this.onErrorCallback = callback;
+    this.onErrorCallbacks.push(callback);
   }
 }
