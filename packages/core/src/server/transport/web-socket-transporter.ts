@@ -13,9 +13,14 @@ export class WebSocketTransporter implements Transporter {
   private onConnectedCallback: (() => void) | null = null;
   private onErrorCallback: ((error: Error) => void) | null = null;
 
-  constructor(port: number) {
-    this.webSocketServer = new WebSocketServer({ port }, () => {
-      console.log('Server started');
+  /**
+   * Create a new WebSocket server for sending and receiving messages
+   * @param port The port to listen on. If not provided, a random available port will be used
+   */
+  constructor(port?: number) {
+    this.webSocketServer = new WebSocketServer({ port: port ?? 0 }, () => {
+      const address = this.webSocketServer.address() as WebSocket.AddressInfo;
+      console.log('Server is listening on port:', address.port);
     });
 
     this.webSocketServer.on('connection', this.handleConnection.bind(this));

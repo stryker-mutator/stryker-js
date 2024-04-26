@@ -1,7 +1,7 @@
 import { Command } from 'commander';
 
-import { setupJsonRpcMessaging } from './server/json-rpc-messaging.js';
 import { WebSocketTransporter } from './server/transport/web-socket-transporter.js';
+import { MutationServerProtocolHandler } from './server/mutation-server-protocol-handler.js';
 
 export class StrykerServer {
   constructor(
@@ -11,9 +11,7 @@ export class StrykerServer {
     this.program.option('-p, --port <port>', 'Start the Stryker server').showSuggestionAfterError().parse(this.argv);
     const options = this.program.opts();
 
-    const transporter = new WebSocketTransporter((options.port as number) ?? 8080);
-    transporter.onConnected(() => {
-      setupJsonRpcMessaging(transporter);
-    });
+    const transporter = new WebSocketTransporter(options.port as number);
+    new MutationServerProtocolHandler(transporter);
   }
 }
