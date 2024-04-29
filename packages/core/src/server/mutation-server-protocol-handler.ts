@@ -32,15 +32,15 @@ export class MutationServerProtocolHandler {
   }
 
   private setupTransporterCallbacks(): void {
-    this.transporter.onMessage(async (message: string) => {
+    this.transporter.on('message', async (message: string) => {
       await this.serverAndClient.receiveAndSend(JSON.parse(message));
     });
 
-    this.transporter.onClose(() => {
+    this.transporter.on('close', () => {
       this.serverAndClient.rejectAllPendingRequests('Connection is closed.');
     });
 
-    this.transporter.onError((error: Error) => {
+    this.transporter.on('error', (error: Error) => {
       console.error('Error occurred in transporter:', error);
     });
   }

@@ -1,29 +1,31 @@
+import EventEmitter from 'events';
+
 import WebSocket, { WebSocketServer } from 'ws';
 
-import { Transporter } from './transporter.js';
+import { Transporter, TransporterEvents } from './transporter.js';
 
 /**
  * A transporter that uses WebSockets to send and receive messages
  */
-export class WebSocketTransporter implements Transporter {
+export class WebSocketTransporter extends EventEmitter<TransporterEvents> implements Transporter {
   private readonly webSocketServer: WebSocketServer;
   private isConnected = false;
-  private readonly onMessageCallbacks: Array<(message: string) => void> = [];
-  private readonly onCloseCallbacks: Array<() => void> = [];
-  private readonly onConnectedCallbacks: Array<() => void> = [];
-  private readonly onErrorCallbacks: Array<(error: Error) => void> = [];
 
   /**
    * Create a new WebSocket server for sending and receiving messages
    * @param port The port to listen on. If not provided, a random available port will be used
    */
   constructor(port?: number) {
+    super();
     this.webSocketServer = new WebSocketServer({ port: port ?? 0 }, () => {
+      // Confirm to parent process that server is ready to accept connections on given port
       const address = this.webSocketServer.address() as WebSocket.AddressInfo;
       console.log('Server is listening on port:', address.port);
     });
 
     this.webSocketServer.on('connection', this.handleConnection.bind(this));
+
+    this.on('close', () => (this.isConnected = false));
   }
 
   private handleConnection(ws: WebSocket): void {
@@ -34,24 +36,13 @@ export class WebSocketTransporter implements Transporter {
 
     this.isConnected = true;
 
-    ws.on('message', this.handleMessage.bind(this));
-    ws.on('close', this.handleClose.bind(this));
-    ws.on('error', this.handleError.bind(this));
+    ws.on('message', (data: WebSocket.RawData) => {
+      this.emit('message', data.toString());
+    });
+    ws.on('close', () => this.emit('close'));
+    ws.on('error', (error: Error) => this.emit('error', error));
 
-    this.onConnectedCallbacks.forEach((callback) => callback());
-  }
-
-  private handleMessage(message: string): void {
-    this.onMessageCallbacks.forEach((callback) => callback(message));
-  }
-
-  private handleClose(): void {
-    this.isConnected = false;
-    this.onCloseCallbacks.forEach((callback) => callback());
-  }
-
-  private handleError(error: Error): void {
-    this.onErrorCallbacks.forEach((callback) => callback(error));
+    ws.emit('connected');
   }
 
   public send(message: string): void {
@@ -60,21 +51,5 @@ export class WebSocketTransporter implements Transporter {
         client.send(message);
       }
     });
-  }
-
-  public onMessage(callback: (message: string) => void): void {
-    this.onMessageCallbacks.push(callback);
-  }
-
-  public onClose(callback: () => void): void {
-    this.onCloseCallbacks.push(callback);
-  }
-
-  public onConnected(callback: () => void): void {
-    this.onConnectedCallbacks.push(callback);
-  }
-
-  public onError(callback: (error: Error) => void): void {
-    this.onErrorCallbacks.push(callback);
   }
 }
