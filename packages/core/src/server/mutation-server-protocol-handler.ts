@@ -1,14 +1,15 @@
 import { JSONRPCClient, JSONRPCServer, JSONRPCServerAndClient, TypedJSONRPCServerAndClient } from 'json-rpc-2.0';
-
 import { MutantResult } from '@stryker-mutator/api/core';
+import { tokens } from 'typed-inject';
 
-import { ClientMethods, InstrumentParams, MutateParams, MutatePartialResult, ProgressParams, ServerMethods } from './mutation-server-protocol.js';
-import { runInstrumentation } from './methods/instrument-method.js';
-import { runMutationTest, runMutationTestRealtime } from './methods/mutation-test-method.js';
-import { Transporter } from './transport/transporter.js';
+import { runInstrumentation, runMutationTest, runMutationTestRealtime } from './methods/index.js';
+import { Transporter } from './transport/index.js';
+
+import { serverTokens, ClientMethods, InstrumentParams, MutateParams, MutatePartialResult, ProgressParams, ServerMethods } from './index.js';
 
 export class MutationServerProtocolHandler {
   private readonly serverAndClient: TypedJSONRPCServerAndClient<ServerMethods, ClientMethods>;
+  public static readonly inject = tokens(serverTokens.transporter);
 
   constructor(private readonly transporter: Transporter) {
     const jsonRpcServer = new JSONRPCServer();
