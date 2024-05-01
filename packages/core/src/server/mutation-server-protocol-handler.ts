@@ -2,14 +2,15 @@ import { JSONRPCClient, JSONRPCServer, JSONRPCServerAndClient, TypedJSONRPCServe
 import { MutantResult } from '@stryker-mutator/api/core';
 import { tokens } from 'typed-inject';
 
-import { runInstrumentation, runMutationTest, runMutationTestRealtime } from './methods/index.js';
+import { runInstrumentation, MutationTestMethod } from './methods/index.js';
 import { Transporter } from './transport/index.js';
+import * as serverTokens from './server-tokens.js';
 
-import { serverTokens, ClientMethods, InstrumentParams, MutateParams, MutatePartialResult, ProgressParams, ServerMethods } from './index.js';
+import { ClientMethods, InstrumentParams, MutateParams, MutatePartialResult, ProgressParams, ServerMethods } from './index.js';
 
 export class MutationServerProtocolHandler {
-  private readonly serverAndClient: TypedJSONRPCServerAndClient<ServerMethods, ClientMethods>;
   public static readonly inject = tokens(serverTokens.transporter);
+  private readonly serverAndClient: TypedJSONRPCServerAndClient<ServerMethods, ClientMethods>;
 
   constructor(private readonly transporter: Transporter) {
     const jsonRpcServer = new JSONRPCServer();
@@ -48,7 +49,7 @@ export class MutationServerProtocolHandler {
 
   private async runMutationTest(params: MutateParams): Promise<MutantResult[]> {
     if (params.partialResultToken) {
-      await runMutationTestRealtime(params.globPatterns, (result) => {
+      await MutationTestMethod.runMutationTestRealtime(params.globPatterns, (result) => {
         const progressParams: ProgressParams<MutatePartialResult> = { token: params.partialResultToken!, value: { mutants: [result] } };
         this.serverAndClient.notify('progress', progressParams);
       });
@@ -56,6 +57,6 @@ export class MutationServerProtocolHandler {
       return []; // All results are streamed as per protocol.
     }
 
-    return runMutationTest(params.globPatterns);
+    return MutationTestMethod.runMutationTest(params.globPatterns);
   }
 }
