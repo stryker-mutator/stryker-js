@@ -12,10 +12,19 @@ import { MutationTestMethod, InstrumentMethod } from '../../../src/server/method
 
 describe(MutationServerProtocolHandler.name, () => {
   let transporterMock: TransporterMock;
+  let clock: sinon.SinonFakeTimers;
+
+  before(() => {
+    clock = sinon.useFakeTimers();
+  });
 
   beforeEach(() => {
     transporterMock = new TransporterMock();
     new MutationServerProtocolHandler(transporterMock);
+  });
+
+  after(() => {
+    clock.restore();
   });
 
   it('should run mutation test on request via transporter', async () => {
@@ -34,8 +43,8 @@ describe(MutationServerProtocolHandler.name, () => {
     // Act
     transporterMock.emit('message', runMutationRequest);
 
-    // Wait for the event loop to finish
-    await new Promise((res) => setTimeout(res, 10));
+    // Wait for event loop to finish before asserting
+    await clock.tickAsync(1);
 
     // Assert
     const successResponse = createJSONRPCSuccessResponse(1, mutationTestResult);
@@ -58,7 +67,8 @@ describe(MutationServerProtocolHandler.name, () => {
     // Act
     transporterMock.emit('message', runInstrumentationRequest);
 
-    await new Promise((res) => setTimeout(res, 10));
+    // Wait for event loop to finish before asserting
+    await clock.tickAsync(1);
 
     // Assert
     const successResponse = createJSONRPCSuccessResponse(1, instrumentResult);
@@ -85,8 +95,8 @@ describe(MutationServerProtocolHandler.name, () => {
     // Act
     transporterMock.emit('message', runMutationRequest);
 
-    // Wait for the event loop to finish
-    await new Promise((res) => setTimeout(res, 10));
+    // Wait for event loop to finish before asserting
+    await clock.tickAsync(1);
 
     const progressNotificationParams: ProgressParams<MutatePartialResult> = {
       token: partialResultToken,

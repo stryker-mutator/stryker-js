@@ -45,8 +45,6 @@ export class WebSocketTransporter extends EventEmitter<TransporterEvents> implem
     });
     ws.on('close', () => this.emit('close'));
     ws.on('error', (error: Error) => this.emit('error', error));
-
-    ws.emit('connected');
   }
 
   public send(message: string): void {
