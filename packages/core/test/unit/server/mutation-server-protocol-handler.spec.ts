@@ -1,14 +1,14 @@
 import { EventEmitter } from 'events';
 
 import sinon from 'sinon';
-import { createJSONRPCRequest, createJSONRPCSuccessResponse } from 'json-rpc-2.0';
+import { JSONRPCServerAndClient, createJSONRPCNotification, createJSONRPCRequest, createJSONRPCSuccessResponse } from 'json-rpc-2.0';
 import { expect } from 'chai';
-
+import { factory } from '@stryker-mutator/test-helpers';
 import { MutantResult } from '@stryker-mutator/api/core';
 
-import { MutateParams, MutationServerProtocolHandler } from '../../../src/server/index.js';
-import { Transporter, TransporterEvents } from '../../../src/server/transport/transporter.js';
-import { MutationTestMethod } from '../../../src/server/methods/mutation-test-method.js';
+import { InstrumentParams, MutateParams, MutatePartialResult, MutationServerProtocolHandler, ProgressParams } from '../../../src/server/index.js';
+import { Transporter, TransporterEvents } from '../../../src/server/transport/index.js';
+import { MutationTestMethod, InstrumentMethod } from '../../../src/server/methods/index.js';
 
 describe(MutationServerProtocolHandler.name, () => {
   let transporterMock: TransporterMock;
@@ -40,6 +40,86 @@ describe(MutationServerProtocolHandler.name, () => {
     // Assert
     const successResponse = createJSONRPCSuccessResponse(1, mutationTestResult);
     expect(sendSpy).calledOnceWith(JSON.stringify(successResponse));
+  });
+
+  it('should run instrumentation on request via transporter', async () => {
+    // Arrange
+    const sendSpy = sinon.spy(transporterMock, 'send');
+    const instrumentResult: MutantResult[] = [];
+
+    sinon.replace(InstrumentMethod, 'runInstrumentation', sinon.fake.resolves(instrumentResult));
+
+    const instrumentParams: InstrumentParams = {
+      globPatterns: ['foo'],
+    };
+    const jsonRpcRequest = createJSONRPCRequest(1, 'instrument', instrumentParams);
+    const runInstrumentationRequest = JSON.stringify(jsonRpcRequest);
+
+    // Act
+    transporterMock.emit('message', runInstrumentationRequest);
+
+    await new Promise((res) => setTimeout(res, 10));
+
+    // Assert
+    const successResponse = createJSONRPCSuccessResponse(1, instrumentResult);
+    expect(sendSpy).calledOnceWith(JSON.stringify(successResponse));
+  });
+
+  it('should report partial results when partialResultToken is provided in mutation test request', async () => {
+    // Arrange
+    const sendSpy = sinon.spy(transporterMock, 'send');
+    const mutationTestResult: MutantResult = factory.mutantResult();
+    sinon.replace(MutationTestMethod, 'runMutationTestRealtime', sinon.fake.yields(mutationTestResult));
+
+    const partialResultToken = 'token';
+    const requestId = 1;
+
+    // Create a JSON-RPC request
+    const mutateParams: MutateParams = {
+      globPatterns: ['foo', 'bar', 'baz'],
+      partialResultToken,
+    };
+    const jsonRpcRequest = createJSONRPCRequest(requestId, 'mutate', mutateParams);
+    const runMutationRequest = JSON.stringify(jsonRpcRequest);
+
+    // Act
+    transporterMock.emit('message', runMutationRequest);
+
+    // Wait for the event loop to finish
+    await new Promise((res) => setTimeout(res, 10));
+
+    const progressNotificationParams: ProgressParams<MutatePartialResult> = {
+      token: partialResultToken,
+      value: { mutants: [mutationTestResult] },
+    };
+    const progressNotification = createJSONRPCNotification('progress', progressNotificationParams);
+
+    // Assert
+    expect(sendSpy.calledTwice).to.be.true;
+    expect(sendSpy).calledWith(JSON.stringify(progressNotification));
+    expect(sendSpy).calledWith(JSON.stringify(createJSONRPCSuccessResponse(requestId, [])));
+  });
+
+  it('should reject all pending requests when transporter is closed', async () => {
+    // Arrange
+    const rejectAllPendingRequestsSpy = sinon.spy(JSONRPCServerAndClient.prototype, 'rejectAllPendingRequests');
+
+    // Act
+    transporterMock.emit('close');
+
+    // Assert
+    expect(rejectAllPendingRequestsSpy).calledOnceWith('Connection is closed.');
+  });
+
+  it('should log on error in transporter', async () => {
+    // Arrange
+    const consoleErrorSpy = sinon.spy(console, 'error');
+
+    // Act
+    transporterMock.emit('error', new Error('Transporter error'));
+
+    // Assert
+    expect(consoleErrorSpy).calledOnceWith('Error occurred in transporter:', sinon.match.instanceOf(Error));
   });
 });
 

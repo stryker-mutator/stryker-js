@@ -2,7 +2,7 @@ import { JSONRPCClient, JSONRPCServer, JSONRPCServerAndClient, TypedJSONRPCServe
 import { MutantResult } from '@stryker-mutator/api/core';
 import { tokens } from 'typed-inject';
 
-import { runInstrumentation, MutationTestMethod } from './methods/index.js';
+import { MutationTestMethod, InstrumentMethod } from './methods/index.js';
 import { Transporter } from './transport/index.js';
 import * as serverTokens from './server-tokens.js';
 
@@ -23,7 +23,7 @@ export class MutationServerProtocolHandler {
 
   private setupServerMethods(): void {
     const serverMethods: ServerMethods = {
-      instrument: async (params: InstrumentParams) => runInstrumentation(params.globPatterns),
+      instrument: async (params: InstrumentParams) => InstrumentMethod.runInstrumentation(params.globPatterns),
       mutate: this.runMutationTest.bind(this),
     };
 
