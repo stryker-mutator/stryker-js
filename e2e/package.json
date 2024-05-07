@@ -49,7 +49,7 @@
     "mocha": "10.4.0",
     "mutation-testing-metrics": "3.0.2",
     "mutation-testing-report-schema": "3.0.2",
-    "playwright": "1.43.1",
+    "playwright": "1.44.0",
     "rxjs": "7.8.1",
     "semver": "7.6.0",
     "svelte": "4.2.15",
