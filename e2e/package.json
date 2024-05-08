@@ -22,7 +22,7 @@
     "@types/node": "20.12.10",
     "@types/semver": "7.5.8",
     "@types/tap": "15.0.11",
-    "@vitest/browser": "1.5.0",
+    "@vitest/browser": "1.6.0",
     "ajv": "8.12.0",
     "axios": "1.6.8",
     "chai": "4.4.1",
@@ -62,7 +62,7 @@
     "tslib": "2.6.2",
     "typescript": "5.4.5",
     "vite": "5.2.11",
-    "vitest": "1.5.0",
+    "vitest": "1.6.0",
     "webpack": "5.91.0",
     "webpack-cli": "5.1.4"
   },
