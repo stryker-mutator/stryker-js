@@ -7,6 +7,7 @@ import { expect } from 'chai';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 import { PartialStrykerOptions, LogLevel } from '@stryker-mutator/api/core';
 import { BaseContext } from '@stryker-mutator/api/plugin';
+import { frameworkPluginsFileUrl } from '@stryker-mutator/instrumenter';
 
 import { MutantInstrumenterContext, PrepareExecutor } from '../../../src/process/index.js';
 import { coreTokens, PluginLoader, LoadedPlugins } from '../../../src/di/index.js';
@@ -86,7 +87,13 @@ describe(PrepareExecutor.name, () => {
     await sut.execute(cliOptions);
 
     // Assert
-    sinon.assert.calledWithExactly(pluginLoaderMock.load, ['@stryker-mutator/*', './my-custom-plugin.js', reporterPluginsFileUrl, 'appended']);
+    sinon.assert.calledWithExactly(pluginLoaderMock.load, [
+      '@stryker-mutator/*',
+      './my-custom-plugin.js',
+      frameworkPluginsFileUrl,
+      reporterPluginsFileUrl,
+      'appended',
+    ]);
   });
 
   it('should provided the loaded modules as pluginModulePaths', async () => {
