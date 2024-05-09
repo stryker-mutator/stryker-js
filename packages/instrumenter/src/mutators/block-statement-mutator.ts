@@ -1,15 +1,21 @@
 import babel, { type NodePath } from '@babel/core';
 
+import { BlockStatement } from '@stryker-mutator/api/core';
+
 import { NodeMutator } from './node-mutator.js';
 
 const { types } = babel;
 
-export const blockStatementMutator: NodeMutator = {
+export const blockStatementMutator: NodeMutator<BlockStatement> = {
   name: 'BlockStatement',
+
+  operators: {
+    BlockStatementRemoval: { mutationOperator: 'BlockStatementRemoval' },
+  },
 
   *mutate(path) {
     if (path.isBlockStatement() && isValid(path)) {
-      yield types.blockStatement([]);
+      yield [types.blockStatement([]), this.operators.BlockStatementRemoval.mutationOperator];
     }
   },
 };

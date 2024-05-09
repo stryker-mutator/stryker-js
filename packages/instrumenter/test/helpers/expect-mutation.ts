@@ -4,6 +4,7 @@ import generator from '@babel/generator';
 import { expect } from 'chai';
 
 import { NodeMutator } from '../../src/mutators/node-mutator.js';
+import { MutationLevel } from '../../src/mutation-level/mutation-level.js';
 
 const generate = generator.default;
 
@@ -35,7 +36,16 @@ const plugins = [
   'typescript',
 ] as ParserPlugin[];
 
-export function expectJSMutation(sut: NodeMutator, originalCode: string, ...expectedReplacements: string[]): void {
+export function expectJSMutation(sut: NodeMutator<keyof MutationLevel>, originalCode: string, ...expectedReplacements: string[]): void {
+  expectJSMutationWithLevel(sut, undefined, originalCode, ...expectedReplacements);
+}
+
+export function expectJSMutationWithLevel(
+  sut: NodeMutator<keyof MutationLevel>,
+  level: string[] | undefined,
+  originalCode: string,
+  ...expectedReplacements: string[]
+): void {
   const sourceFileName = 'source.js';
   const ast = parse(originalCode, {
     sourceFilename: sourceFileName,
@@ -47,20 +57,22 @@ export function expectJSMutation(sut: NodeMutator, originalCode: string, ...expe
 
   babel.traverse(ast, {
     enter(path) {
-      for (const replacement of sut.mutate(path)) {
-        const mutatedCode = generate(replacement).code;
-        const beforeMutatedCode = originalCode.substring(0, path.node.start ?? 0);
-        const afterMutatedCode = originalCode.substring(path.node.end ?? 0);
-        const mutant = `${beforeMutatedCode}${mutatedCode}${afterMutatedCode}`;
-        mutants.push(mutant);
+      for (const [replacement, mutationOperator] of sut.mutate(path)) {
+        if (level === undefined || level.includes(mutationOperator as string)) {
+          const mutatedCode = generate(replacement).code;
+          const beforeMutatedCode = originalCode.substring(0, path.node.start ?? 0);
+          const afterMutatedCode = originalCode.substring(path.node.end ?? 0);
+          const mutant = `${beforeMutatedCode}${mutatedCode}${afterMutatedCode}`;
+          mutants.push(mutant);
 
-        for (const replacementNode of nodeSet(replacement, path)) {
-          if (originalNodeSet.has(replacementNode)) {
-            expect.fail(
-              `Mutated ${replacementNode.type} node \`${
-                generate(replacementNode).code
-              }\` was found in the original AST. Please be sure to deep clone it (using \`cloneNode(ast, true)\`)`,
-            );
+          for (const replacementNode of nodeSet(replacement, path)) {
+            if (originalNodeSet.has(replacementNode)) {
+              expect.fail(
+                `Mutated ${replacementNode.type} node \`${
+                  generate(replacementNode).code
+                }\` was found in the original AST. Please be sure to deep clone it (using \`cloneNode(ast, true)\`)`,
+              );
+            }
           }
         }
       }

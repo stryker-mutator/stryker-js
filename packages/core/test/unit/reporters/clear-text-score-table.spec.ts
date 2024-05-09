@@ -28,6 +28,7 @@ describe(ClearTextScoreTable.name, () => {
           runtimeErrors: 4,
           survived: 3,
           timeout: 2,
+          totalMutants: 1,
         }),
       );
       const sut = new ClearTextScoreTable(metricsResult, testInjector.options);

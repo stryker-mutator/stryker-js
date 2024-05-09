@@ -64,9 +64,7 @@ describe(Instrumenter.name, () => {
     // Assert
     // eslint-disable-next-line @typescript-eslint/prefer-destructuring
     const actual = helper.transformerStub.getCall(0).args[2];
-    const expected: transformers.TransformerOptions = createInstrumenterOptions({
-      excludedMutations: [],
-    });
+    const expected: transformers.TransformerOptions = createInstrumenterOptions();
     expect(actual).deep.eq({
       options: expected,
       mutateDescription: [{ start: { line: 1, column: 0 }, end: { line: 7, column: 42 } }],
