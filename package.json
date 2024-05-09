@@ -18,7 +18,7 @@
     "@typescript-eslint/eslint-plugin": "7.2.0",
     "@typescript-eslint/parser": "7.2.0",
     "c8": "9.1.0",
-    "chai": "4.4.1",
+    "chai": "5.1.1",
     "chai-as-promised": "7.1.1",
     "chai-jest-snapshot": "2.0.0",
     "concurrently": "8.2.2",
