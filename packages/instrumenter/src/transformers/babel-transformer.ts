@@ -5,11 +5,17 @@ import babel, { type NodePath, type types } from '@babel/core';
 import { File } from '@babel/core';
 /* eslint-enable import/no-duplicates */
 
+import { MutationSpecification, MutatorDefinition } from '@stryker-mutator/api/core';
+
 import { isImportDeclaration, isTypeNode, locationIncluded, locationOverlaps, placeHeaderIfNeeded } from '../util/syntax-helpers.js';
 import { ScriptFormat } from '../syntax/index.js';
 import { allMutantPlacers, MutantPlacer, throwPlacementError } from '../mutant-placers/index.js';
 import { Mutable, Mutant } from '../mutant.js';
 import { allMutators } from '../mutators/index.js';
+
+import { MutationLevel } from '../mutation-level/mutation-level.js';
+
+import { defaultMutationLevels } from '../mutation-level/default-mutation-levels.js';
 
 import { DirectiveBookkeeper } from './directive-bookkeeper.js';
 import { IgnorerBookkeeper } from './ignorer-bookkeeper.js';
@@ -152,24 +158,104 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
    * Generate mutants for the current node.
    */
   function* mutate(node: NodePath): Iterable<Mutable> {
+    const runLevel = createRunLevel();
+
     for (const mutator of mutators) {
-      for (const replacement of mutator.mutate(node)) {
+      for (const [replacement, mutationOperator] of mutator.mutate(node)) {
         yield {
           replacement,
           mutatorName: mutator.name,
           ignoreReason:
             directiveBookkeeper.findIgnoreReason(node.node.loc!.start.line, mutator.name) ??
-            findExcludedMutatorIgnoreReason(mutator.name) ??
+            findExcludedMutatorIgnoreReason(runLevel, mutator.name, mutationOperator) ??
             ignorerBookkeeper.currentIgnoreMessage,
         };
       }
     }
+  }
 
-    function findExcludedMutatorIgnoreReason(mutatorName: string): string | undefined {
-      if (options.excludedMutations.includes(mutatorName)) {
-        return `Ignored because of excluded mutation "${mutatorName}"`;
-      } else {
+  function findExcludedMutatorIgnoreReason(
+    runLevel: MutationLevel | undefined,
+    mutatorName: string,
+    mutationOperator: keyof MutationLevel,
+  ): string | undefined {
+    if (runLevel === undefined) {
+      return;
+    }
+
+    if (!(mutatorName in runLevel)) {
+      return `Ignored because "${mutatorName}" is not recognised as a mutator`;
+    }
+
+    if (!runLevel[mutatorName]?.includes(mutationOperator as MutatorDefinition)) {
+      return `Ignored because the operator "${mutationOperator}" is excluded from the mutation run`;
+    }
+
+    return;
+  }
+
+  /**
+   * @returns `undefined` for the default stryker behaviour or a MutationLevel according to the specification
+   */
+  function createRunLevel(): MutationLevel | undefined {
+    const runLevel: MutationLevel = { name: 'RunningLevel' };
+    mutators.forEach((mut) => (runLevel[mut.name] = []));
+
+    if (options.includedMutations === undefined || options.includedMutations.length === 0) {
+      if (options.excludedMutations === undefined) {
+        // include everything
         return undefined;
+      } else {
+        // remove `excludedMutations` from a complete level
+        mutators.forEach((mut) =>
+          Object.values(mut.operators).forEach((op) => (runLevel[mut.name] as MutatorDefinition[]).push(op.mutationOperator as MutatorDefinition)),
+        );
+      }
+    }
+
+    updateRunLevel(runLevel, options.includedMutations, true);
+    updateRunLevel(runLevel, options.excludedMutations, false);
+
+    return runLevel;
+  }
+
+  function updateRunLevel(runLevel: MutationLevel, mutations: MutationSpecification[] | undefined, includeMutations: boolean) {
+    if (mutations) {
+      const updateFunc: (mutatorList: MutatorDefinition[], ...toUpdate: MutatorDefinition[]) => void = includeMutations
+        ? (mutatorList, toAdd) => mutatorList.push(toAdd)
+        : (mutatorList, toRemove) => mutatorList.splice(0, mutatorList.length, ...mutatorList.filter((m) => !toRemove.includes(m))); // in-place filter
+
+      for (const spec of mutations) {
+        // Check if it's a mutation level
+        const defaultLevel = defaultMutationLevels.find((dl) => '@' + dl.name === spec);
+        if (defaultLevel) {
+          Object.keys(defaultLevel)
+            .filter((k) => k !== 'name')
+            .forEach((levelKey) => updateFunc(runLevel[levelKey] as MutatorDefinition[], ...(defaultLevel[levelKey] as MutatorDefinition[])));
+          continue;
+        }
+
+        // Check if it's a operator group
+        const opGroupName = Object.keys(runLevel).find((levelKey) => levelKey !== 'name' && '@' + levelKey === spec);
+        if (opGroupName) {
+          const nodeMutatorToAdd = mutators.find((mut) => mut.name === opGroupName);
+          if (nodeMutatorToAdd) {
+            Object.values(nodeMutatorToAdd.operators).forEach((mutator) => {
+              updateFunc(runLevel[opGroupName] as MutatorDefinition[], mutator.mutationOperator as MutatorDefinition);
+            });
+            continue;
+          }
+        }
+
+        // Else, must be a suboperator
+        const nodeMutator = mutators.find((mut) => Object.values(mut.operators).some((mutator) => mutator.mutationOperator === spec));
+
+        if (nodeMutator) {
+          updateFunc(runLevel[nodeMutator.name] as MutatorDefinition[], spec as MutatorDefinition);
+          continue;
+        }
+
+        logger.warn(`Mutation operator "${spec}" not recognised. Did you make a typo?`);
       }
     }
   }

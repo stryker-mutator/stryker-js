@@ -218,12 +218,20 @@
           ],
           "default": null
         },
+        "includedMutations": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/definitions/MutationSpecification"
+          },
+          "minItems": 1
+        },
         "excludedMutations": {
           "type": "array",
+          "uniqueItems": true,
           "items": {
-            "type": "string"
-          },
-          "default": []
+            "$ref": "#/definitions/MutationSpecification"
+          }
         }
       }
     },
@@ -253,6 +261,452 @@
           "default": true
         }
       }
+    },
+    "MutationSpecification": {
+      "anyOf": [
+        { "$ref": "#/definitions/MutationLevelName"},
+        { "$ref": "#/definitions/MutatorDefinition"},
+        { "$ref": "#/definitions/MutatorGroupName"}
+      ]
+    },
+    "MutationLevelName": { 
+      "title": "MutationLevelName", 
+      "type": "string"
+    },
+    "MutatorDefinition" : {
+      "anyOf": [
+        { "$ref": "#/definitions/ArithmeticOperator" },
+        { "$ref": "#/definitions/ArrayDeclaration" },
+        { "$ref": "#/definitions/ArrowFunction"},
+        { "$ref": "#/definitions/AssignmentOperator" },
+        { "$ref": "#/definitions/BlockStatement" },
+        { "$ref": "#/definitions/BooleanLiteral" },
+        { "$ref": "#/definitions/ConditionalExpression" },
+        { "$ref": "#/definitions/EqualityOperator" },
+        { "$ref": "#/definitions/LogicalOperator"},
+        { "$ref": "#/definitions/MethodExpression" },
+        { "$ref": "#/definitions/ObjectLiteral" },
+        { "$ref": "#/definitions/OptionalChaining" },
+        { "$ref": "#/definitions/Regex" },
+        { "$ref": "#/definitions/StringLiteral" },
+        { "$ref": "#/definitions/UnaryOperator" },
+        { "$ref": "#/definitions/UpdateOperator" }
+      ]
+    },
+    "MutatorGroupName": {
+      "enum": [
+        "@ArithmeticOperator",
+        "@ArrayDeclaration",
+        "@AssignmentOperator",
+        "@BooleanLiteral",
+        "@ConditionalExpression",
+        "@EqualityOperator",
+        "@MethodExpression",
+        "@ObjectLiteral",
+        "@OptionalChaining",
+        "@StringLiteral",
+        "@UnaryOperator",
+        "@UpdateOperator"
+      ]
+    },
+    "ArithmeticOperator": {
+      "title": "ArithmeticOperator",
+      "anyOf": [
+        {
+          "const" : "AdditionOperatorNegation",
+          "description": "Replace ```a + b``` with ```a - b```."
+        },
+        {
+          "const" : "DivisionOperatorNegation",
+          "description": "Replace ```a / b``` with ```a * b```."
+        },
+        {
+          "const" : "MultiplicationOperatorNegation",
+          "description": "Replace ```a * b``` with ```a / b```."
+        },
+        {
+          "const" : "RemainderOperatorToMultiplicationReplacement",
+          "description": "Replace ```a % b``` with ```a * b```."
+        },
+        {
+          "const" : "SubtractionOperatorNegation",
+          "description": "Replace ```a - b``` with ```a + b```."
+        }
+      ]
+    },
+    "ArrayDeclaration": {
+      "title": "ArrayDeclaration",
+      "anyOf": [
+        {
+          "const": "ArrayConstructorItemsFill",
+          "description": "Replace ```new Array()``` with  ```new Array(Stryker was here)```."
+        },
+        {
+          "const": "ArrayConstructorItemsRemoval",
+          "description": "Replace ```new Array([1, 2, 3, 4])``` with ```new Array()```."
+        },
+        {
+          "const": "ArrayLiteralItemsFill",
+          "description": "Replace ```[ ]``` with ```[Stryker was here]```."
+        },
+        {
+          "const": "ArrayLiteralItemsRemoval",
+          "description": "Replace ```[1, 2, 3, 4]``` with ```[ ]```."
+        }
+      ]
+    },
+    "AssignmentOperator": {
+      "title": "AssignmentOperator",
+      "anyOf": [
+        {
+          "const" : "AdditionAssignmentNegation",
+          "description": "Replace ```a += b``` with ```a -= b```."
+        },
+        {
+          "const" : "BitwiseAndAssignmentToBitwiseOrReplacement",
+          "description": "Replace ```a &= b``` with ```a |= b```."
+        },
+        {
+          "const" : "BitwiseOrAssignmentToBitwiseAndReplacement",
+          "description": "Replace ```a |= b``` with ```a &= b```."
+        },
+        {
+          "const" : "DivisionAssignmentNegation",
+          "description": "Replace ```a /= b``` with ```a *= b```."
+        },
+        {
+          "const" : "LeftShiftAssignmentNegation",
+          "description": "Replace ```a <<= b``` with ```a >>= b```."
+        },
+        {
+          "const" : "LogicalAndAssignmentToLogicalOrReplacement",
+          "description": "Replace ```a &&= b``` with ```a ||= b```."
+        },
+        {
+          "const" : "LogicalOrAssignmentToLogicalAndReplacement",
+          "description": "Replace ```a ||= b``` with ```a &&= b```."
+        },
+        {
+          "const" : "MultiplicationAssignmentNegation",
+          "description": "Replace ```a *= b``` with ```a /= b```."
+        },
+        {
+          "const" : "NullishCoalescingAssignmentToLogicalAndReplacement",
+          "description": "Replace ```a ??= b``` with ```a &&= b```."
+        },
+        {
+          "const" : "RemainderAssignmentToMultiplicationReplacement",
+          "description": "Replace ```a %= b``` with ```a *= b```."
+        },
+        {
+          "const" : "RightShiftAssignmentNegation",
+          "description": "Replace ```a >>= b``` with ```a <<= b```."
+        },
+        {
+          "const" : "SubtractionAssignmentNegation",
+          "description": "Replace ```a -= b``` with ```a += b```."
+        }
+      ]
+    },
+    "ArrowFunction": {
+      "const": "ArrowFunctionRemoval",
+      "description": "Mutates bodies of arrow functions to undefined"
+    },
+    "BlockStatement": {
+      "const": "BlockStatementRemoval",
+      "description": "Removes the content of every block statement."
+    },
+    "BooleanLiteral": {
+      "title": "BooleanLiteral",
+      "anyOf": [
+        {
+          "const" : "FalseLiteralNegation",
+          "description": "Replace ```false``` with ```true```."
+        },
+        {
+          "const" : "LogicalNotRemoval",
+          "description": "Replace ```!(a == b)``` with ```a == b```."
+        },
+        {
+          "const" : "TrueLiteralNegation",
+          "description": "Replace ```true``` with ```false```."
+        }
+      ]
+    },
+    "ConditionalExpression": {
+      "title": "ConditionalExpression",
+      "anyOf": [
+        {
+          "const" : "BooleanExpressionToFalseReplacement",
+          "description": "Replace ```var x = a > b ? 1 : 2;``` with ```var x = false ? 1 : 2;```."
+        },
+        {
+          "const" : "BooleanExpressionToTrueReplacement",
+          "description": "Replace ```var x = a > b ? 1 : 2;``` with ```var x = true ? 1 : 2;```."
+        },
+        {
+          "const" : "DoWhileLoopConditionToFalseReplacement",
+          "description": "Replace ```do { } while (a > b);``` with ```do { } while (false);```."
+        },
+        {
+          "const" : "ForLoopConditionToFalseReplacement",
+          "description": "Replace ```for (var i = 0; i < 10; i++) { }``` with ```for (var i = 0; false; i++) { }```."
+        },
+        {
+          "const" : "IfConditionToFalseReplacement",
+          "description": "Replace ```if (a > b) { }``` with ```if (false) { }```."
+        },
+        {
+          "const" : "IfConditionToTrueReplacement",
+          "description": "Replace ```if (a > b) { }``` with ```if (true) { }```."
+        },
+        {
+          "const" : "SwitchStatementBodyRemoval",
+          "description": "Replace ```switch(x) { case 1: doSomething(); default: default(); } with switch(x) { case 1: default: default(); }```."
+        },
+        {
+          "const" : "WhileLoopConditionToFalseReplacement",
+          "description": "Replace ```while (a > b) { }``` with ```while (false) { }```."
+        }
+      ]
+    },
+   "EqualityOperator": {
+      "title": "EqualityOperator",
+      "anyOf": [
+        {
+          "const" : "EqualityOperatorNegation",
+          "description": "Replace ```a == b``` with ```a != b```."
+        },
+        {
+          "const" : "GreaterThanEqualOperatorBoundary",
+          "description": "Replace ```a >= b``` with ```a > b```."
+        },
+        {
+          "const" : "GreaterThanEqualOperatorNegation",
+          "description": "Replace ```a >= b``` with ```a < b```."
+        },
+        {
+          "const" : "GreaterThanOperatorBoundary",
+          "description": "Replace ```a > b``` with ```a >= b```."
+        },
+        {
+          "const" : "GreaterThanOperatorNegation",
+          "description": "Replace ```a > b``` with ```a <= b```."
+        },
+        {
+          "const" : "InequalityOperatorNegation",
+          "description": "Replace ```a != b``` with ```a == b```."
+        },
+        {
+          "const" : "LessThanEqualOperatorBoundary",
+          "description": "Replace ```a <= b``` with ```a < b```."
+        },
+        {
+          "const" : "LessThanEqualOperatorNegation",
+          "description": "Replace ```a <= b``` with ```a > b```."
+        },
+        {
+          "const" : "LessThanOperatorBoundary",
+          "description": "Replace ```a < b``` with ```a <= b```."
+        },
+        {
+          "const" : "LessThanOperatorNegation",
+          "description": "Replace ```a < b``` with ```a >= b```."
+        },
+        {
+          "const" : "StrictEqualityOperatorNegation",
+          "description": "Replace ```a === b``` with ```a !== b```."
+        },
+        {
+          "const" : "StrictInequalityOperatorNegation",
+          "description": "Replace ```a !== b``` with ```a === b```."
+        }
+      ]
+    },
+    "LogicalOperator": {
+      "title": "LogicalOperator",
+      "anyOf": [
+        {
+          "const" : "LogicalAndOperatorToLogicalOrReplacement",
+          "description": "Replace ```a && b``` with ```a || b```."
+        },
+        {
+          "const" : "LogicalOrOperatorToLogicalAndReplacement",
+          "description": "Replace ```a || b``` with ```a && b```."
+        },
+        {
+          "const" : "NullishCoalescingOperatorToLogicalAndReplacement",
+          "description": "Replace ```a ?? b``` with ```a && b```."
+        }
+      ]
+    },
+    "MethodExpression": {
+      "title": "MethodExpression",
+      "anyOf": [
+        {
+          "const": "CharAtMethodCallRemoval",
+          "description": "Remove ```charAt()``` call."
+        },
+        {
+          "const": "EndsWithMethodCallNegation",
+          "description": "Replace ```endsWith()``` with ```startsWith()```."
+        },
+        {
+          "const": "EveryMethodCallToSomeReplacement",
+          "description": "Replace ```every()``` with ```some()```."
+        },
+        {
+          "const": "FilterMethodCallRemoval",
+          "description": "Remove ```filter()``` call."
+        },
+        {
+          "const": "MaxMethodCallNegation",
+          "description": "Replace ```max()``` with ```min()```."
+        },
+        {
+          "const": "MinMethodCallNegation",
+          "description": "Replace ```min()``` with ```max()```."
+        },
+        {
+          "const": "ReverseMethodCallRemoval",
+          "description": "Remove ```reverse()``` call"
+        },
+        {
+          "const": "SliceMethodCallRemoval",
+          "description": "Remove ```slice()``` call."
+        },
+        {
+          "const": "SomeMethodCallToEveryReplacement",
+          "description": "Replace ```some()``` with ```every()```."
+        },
+        {
+          "const": "SortMethodCallRemoval",
+          "description": "Remove ```sort()``` call."
+        },
+        {
+          "const": "StartsWithMethodCallNegation",
+          "description": "Replace ```startsWith()``` with ```endsWith()```."
+        },
+        {
+          "const": "SubstringMethodCallRemoval",
+          "description": "Remove ```substring()``` call."
+        },
+        {
+          "const": "SubstrMethodCallRemoval",
+          "description": "Remove ```substr()``` call."
+        },
+        {
+          "const": "ToLocaleLowerCaseMethodCallNegation",
+          "description": "Replace ```toLocaleLowerCase()``` with ```toLocaleUpperCase()```."
+        },
+        {
+          "const": "ToLocaleUpperCaseMethodCallNegation",
+          "description": "Replace ```toLocaleUpperCase()``` with ```toLocaleLowerCase()```."
+        },
+        {
+          "const": "ToLowerCaseMethodCallNegation",
+          "description": "Replace ```toLowerCase()``` with ```toUpperCase()```."
+        },
+        {
+          "const": "ToUpperCaseMethodCallNegation",
+          "description": "Replace ```toUpperCase()``` with ```toLowerCase()```."
+        },
+        {
+          "const": "TrimEndMethodCallNegation",
+          "description": "Replace ```trimEnd()``` with ```trimStart()```."
+        },
+        {
+          "const": "TrimMethodCallRemoval",
+          "description": "Remove ```trim()``` call."
+        },
+        {
+          "const": "TrimStartMethodCallNegation",
+          "description": "Replace ```trimStart()``` with ```trimEnd()```."
+        }
+      ]
+    },
+    "ObjectLiteral": {
+      "const": "ObjectLiteralPropertiesRemoval",
+      "description": "Replace ```{ foo: 'bar' }``` with ```{ }```."
+    },
+    "OptionalChaining": {
+      "title": "OptionalChaining",
+      "anyOf": [
+        {
+          "const": "OptionalCallExpressionOptionalRemoval",
+          "description": "Replace ```foo?.()``` with ```foo()```."
+        },
+        {
+          "const": "OptionalComputedMemberExpressionOptionalRemoval",
+          "description": "Replace ```foo?.[1]``` with ```foo[1]```."
+        },
+        {
+          "const": "OptionalMemberExpressionOptionalRemoval",
+          "description": "Replace ```foo?.bar``` with ```foo.bar```."
+        }
+      ]
+    },
+    "Regex": {
+      "const": "RegexRemoval"
+    },
+    "StringLiteral": {
+      "title": "StringLiteral",
+      "anyOf": [
+        {
+          "const": "EmptyInterpolatedStringToFilledReplacement",
+          "description": "Replace ```s\"\"``` with ```s\"Stryker was here!\"```."
+        },
+        {
+          "const": "EmptyStringLiteralToFilledReplacement",
+          "description": "Replace ```\"\"``` with ```\"Stryker was here!\"```."
+        },
+        {
+          "const": "FilledInterpolatedStringToEmptyReplacement",
+          "description": "Replace ```s\"foo ${bar}\"``` with ```s\"\"```."
+        },
+        {
+          "const": "FilledStringLiteralToEmptyReplacement",
+          "description": "Replace ```\"foo\"``` with ```\"\"```."
+        }
+      ]
+    },
+    "UnaryOperator": {
+      "title": "UnaryOperator",
+      "anyOf": [
+        {
+          "const": "UnaryBitwiseNotRemoval",
+          "description": "Remove ```~``` from ```~a```."
+        },
+        {
+          "const": "UnaryMinOperatorNegation",
+          "description": "Replace ```-a``` with ```+a.```"
+        },
+        {
+          "const": "UnaryPlusOperatorNegation",
+          "description": "Replace ```+a``` with ```-a```."
+        }
+      ]
+    },
+    "UpdateOperator": {
+      "title": "UpdateOperator",
+      "anyOf": [
+        {
+          "const": "PostfixDecrementOperatorNegation",
+          "description": "Replace ```a--``` with ```a++```."
+        },
+        {
+          "const": "PostfixIncrementOperatorNegation",
+          "description": "Replace ```a++``` with ```a--```."
+        },
+         {
+          "const": "PrefixDecrementOperatorNegation",
+          "description": "Replace ```--a``` with ```++a```."
+        },
+        {
+          "const": "PrefixIncrementOperatorNegation",
+          "description": "Replace ```++a``` with ```--a```."
+        }
+      ]
     }
   },
   "properties": {

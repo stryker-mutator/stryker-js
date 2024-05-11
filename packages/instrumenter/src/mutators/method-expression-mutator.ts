@@ -1,38 +1,42 @@
 import babel from '@babel/core';
 
-import { deepCloneNode } from '../util/syntax-helpers.js';
+import { MethodExpression } from '@stryker-mutator/api/core';
+
+import { deepCloneNode } from '../util/index.js';
 
 import { NodeMutator } from './node-mutator.js';
 
 const { types } = babel;
 
-const replacements = new Map([
-  ['charAt', null],
-  ['endsWith', 'startsWith'],
-  ['every', 'some'],
-  ['filter', null],
-  ['reverse', null],
-  ['slice', null],
-  ['sort', null],
-  ['substr', null],
-  ['substring', null],
-  ['toLocaleLowerCase', 'toLocaleUpperCase'],
-  ['toLowerCase', 'toUpperCase'],
-  ['trim', null],
-  ['trimEnd', 'trimStart'],
-  ['min', 'max'],
-]);
-
-for (const [key, value] of Array.from(replacements)) {
-  if (value) {
-    replacements.set(value, key);
-  }
-}
-
-export const methodExpressionMutator: NodeMutator = {
+export const methodExpressionMutator: NodeMutator<MethodExpression> = {
   name: 'MethodExpression',
 
+  operators: {
+    charAt: { replacement: null, mutationOperator: 'CharAtMethodCallRemoval' },
+    endsWith: { replacement: 'startsWith', mutationOperator: 'EndsWithMethodCallNegation' },
+    startsWith: { replacement: 'endsWith', mutationOperator: 'StartsWithMethodCallNegation' },
+    every: { replacement: 'some', mutationOperator: 'EveryMethodCallToSomeReplacement' },
+    some: { replacement: 'every', mutationOperator: 'SomeMethodCallToEveryReplacement' },
+    filter: { replacement: null, mutationOperator: 'FilterMethodCallRemoval' },
+    reverse: { replacement: null, mutationOperator: 'ReverseMethodCallRemoval' },
+    slice: { replacement: null, mutationOperator: 'SliceMethodCallRemoval' },
+    sort: { replacement: null, mutationOperator: 'SortMethodCallRemoval' },
+    substr: { replacement: null, mutationOperator: 'SubstrMethodCallRemoval' },
+    substring: { replacement: null, mutationOperator: 'SubstringMethodCallRemoval' },
+    toLocaleLowerCase: { replacement: 'toLocaleUpperCase', mutationOperator: 'ToLocaleLowerCaseMethodCallNegation' },
+    toLocaleUpperCase: { replacement: 'toLocaleLowerCase', mutationOperator: 'ToLocaleUpperCaseMethodCallNegation' },
+    toLowerCase: { replacement: 'toUpperCase', mutationOperator: 'ToLowerCaseMethodCallNegation' },
+    toUpperCase: { replacement: 'toLowerCase', mutationOperator: 'ToUpperCaseMethodCallNegation' },
+    trim: { replacement: null, mutationOperator: 'TrimMethodCallRemoval' },
+    trimEnd: { replacement: 'trimStart', mutationOperator: 'TrimEndMethodCallNegation' },
+    trimStart: { replacement: 'trimEnd', mutationOperator: 'TrimStartMethodCallNegation' },
+    min: { replacement: 'max', mutationOperator: 'MinMethodCallNegation' },
+    max: { replacement: 'min', mutationOperator: 'MaxMethodCallNegation' },
+  },
+
   *mutate(path) {
+    // In case `operations` is undefined, any checks will short-circuit to true and allow the mutation
+
     if (!(path.isCallExpression() || path.isOptionalCallExpression())) {
       return;
     }
@@ -42,26 +46,33 @@ export const methodExpressionMutator: NodeMutator = {
       return;
     }
 
-    const newName = replacements.get(callee.property.name);
-    if (newName === undefined) {
-      return;
-    }
-
-    if (newName === null) {
-      // Remove the method expression. I.e. `foo.trim()` => `foo`
-      yield deepCloneNode(callee.object);
+    const mutation = this.operators[callee.property.name];
+    if (mutation === undefined) {
+      // Function is not known in `operators`, so no mutations
       return;
     }
 
     // Replace the method expression. I.e. `foo.toLowerCase()` => `foo.toUpperCase`
     const nodeArguments = path.node.arguments.map((argumentNode) => deepCloneNode(argumentNode));
 
-    const mutatedCallee = types.isMemberExpression(callee)
-      ? types.memberExpression(deepCloneNode(callee.object), types.identifier(newName), false, callee.optional)
-      : types.optionalMemberExpression(deepCloneNode(callee.object), types.identifier(newName), false, callee.optional);
+    let mutatedCallee = undefined;
 
-    yield types.isCallExpression(path.node)
-      ? types.callExpression(mutatedCallee, nodeArguments)
-      : types.optionalCallExpression(mutatedCallee, nodeArguments, path.node.optional);
+    if (mutation.replacement != null) {
+      mutatedCallee = types.isMemberExpression(callee)
+        ? types.memberExpression(deepCloneNode(callee.object), types.identifier(mutation.replacement as string), false, callee.optional)
+        : types.optionalMemberExpression(deepCloneNode(callee.object), types.identifier(mutation.replacement as string), false, callee.optional);
+    } else if (typeof mutation.replacement == 'object' && mutation.replacement == null) {
+      yield [deepCloneNode(callee.object), mutation.mutationOperator];
+      return;
+    }
+
+    if (mutatedCallee != undefined) {
+      yield [
+        types.isCallExpression(path.node)
+          ? types.callExpression(mutatedCallee, nodeArguments)
+          : types.optionalCallExpression(mutatedCallee, nodeArguments, path.node.optional),
+        mutation.mutationOperator,
+      ];
+    }
   },
 };
