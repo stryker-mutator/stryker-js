@@ -83,7 +83,7 @@ describe(ClearTextReporter.name, () => {
       expect(stdoutStub).not.calledWithMatch(sinon.match('File      | % score | # killed | # timeout | # survived | # no cov | # errors |'));
     });
 
-    it('should not report 100% covered rows when skipFull is true', () => {
+    it('should not report files that achieved a 100% score when skipFull is true', () => {
       testInjector.options.clearTextReporter.skipFull = true;
 
       act({
@@ -132,7 +132,7 @@ describe(ClearTextReporter.name, () => {
       ]);
     });
 
-    it('should omitting the entire table if skipFull is true and all files achieve a 100% score', () => {
+    it('should omit the entire table if skipFull is true and all files achieve a 100% score', () => {
       testInjector.options.clearTextReporter.skipFull = true;
 
       act({
