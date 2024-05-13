@@ -49,6 +49,7 @@ describe(OptionsValidator.name, () => {
           reportTests: true,
           reportMutants: true,
           reportScoreTable: true,
+          skipFull: false,
         },
         commandRunner: {
           command: 'npm test',

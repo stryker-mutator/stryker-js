@@ -49,6 +49,7 @@ export const createClearTextReporterOptions = factoryMethod<ClearTextReporterOpt
   reportTests: true,
   reportMutants: true,
   reportScoreTable: true,
+  skipFull: false,
 }));
 
 export type ConcurrencyTokenProviderMock = sinon.SinonStubbedInstance<I<ConcurrencyTokenProvider>> & {

@@ -112,8 +112,9 @@ export class ClearTextScoreTable {
 
   constructor(
     private readonly metricsResult: MetricsResult,
-    options: StrykerOptions,
+    private readonly options: StrykerOptions,
   ) {
+
     this.columns = [
       new FileColumn(metricsResult),
       new MutationScoreColumn(metricsResult, options.thresholds),
@@ -142,9 +143,13 @@ export class ClearTextScoreTable {
   }
 
   private drawValues(current = this.metricsResult, ancestorCount = 0): string[] {
-    return [this.drawRow((c) => c.drawTableCell(current, ancestorCount))].concat(
-      current.childResults.flatMap((child) => this.drawValues(child, ancestorCount + 1)),
-    );
+    let rows = current.childResults.flatMap((child) => this.drawValues(child, ancestorCount + 1));
+
+    if (ancestorCount > 0 || !this.options.clearTextReporter.skipFull) {
+        rows.unshift(this.drawRow((c) => c.drawTableCell(current, ancestorCount)));
+    }
+
+    return rows;
   }
 
   /**
