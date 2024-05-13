@@ -96,7 +96,7 @@ Choose whether or not to clean the temp dir (which is ".stryker-tmp" inside the 
 
 ### `clearTextReporter` [`ClearTextOptions`]
 
-Default: `{ "allowColor": true, "allowEmojis": false, "logTests": true, "maxTestsToLog": 3, "reportTests": true, "reportMutants": true, "reportScoreTable": true }`<br />
+Default: `{ "allowColor": true, "allowEmojis": false, "logTests": true, "maxTestsToLog": 3, "reportTests": true, "reportMutants": true, "reportScoreTable": true, "skipFull": false }`<br />
 
 Config file:
 
@@ -109,7 +109,8 @@ Config file:
     "maxTestsToLog": 3,
     "reportTests": true,
     "reportMutants": true,
-    "reportScoreTable": true
+    "reportScoreTable": true,
+    "skipFull": false
   }
 }
 ```
