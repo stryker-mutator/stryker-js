@@ -96,6 +96,19 @@ describe(ClearTextReporter.name, () => {
                 location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
                 mutatorName: 'Block',
                 replacement: '{}',
+                status: 'Ignored',
+              },
+            ],
+            source: 'console.log("hello world!")',
+          },
+          'src/file2.js': {
+            language: 'js',
+            mutants: [
+              {
+                id: '1',
+                location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+                mutatorName: 'Block',
+                replacement: '{}',
                 status: 'Killed',
               },
             ],
@@ -108,13 +121,72 @@ describe(ClearTextReporter.name, () => {
 
       const serializedTable: string = stdoutStub.getCalls().pop()!.args[0];
       const rows = serializedTable.split(os.EOL);
+
       expect(rows).to.deep.eq([
         '----------|---------|----------|-----------|------------|----------|----------|',
         'File      | % score | # killed | # timeout | # survived | # no cov | # errors |',
         '----------|---------|----------|-----------|------------|----------|----------|',
+        ` file.js  |${chalk.grey('     n/a ')}|        0 |         0 |          0 |        0 |        0 |`,
         '----------|---------|----------|-----------|------------|----------|----------|',
         '',
       ]);
+    });
+
+    it('should omitting the entire table if skipFull is true and all files achieve a 100% score', () => {
+      testInjector.options.clearTextReporter.skipFull = true;
+
+      act({
+        files: {
+          'src/file.js': {
+            language: 'js',
+            mutants: [
+              {
+                id: '1',
+                location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+                mutatorName: 'Block',
+                replacement: '{}',
+                status: 'Killed',
+              },
+            ],
+            source: 'console.log("hello world!")',
+          },
+        },
+        schemaVersion: '1.0',
+        thresholds: factory.mutationScoreThresholds({}),
+      });
+
+      const serializedTable: string = stdoutStub.getCalls().pop()!.args[0];
+      const rows = serializedTable.split(os.EOL);
+
+      expect(rows).to.deep.eq([]);
+    });
+
+    it('should not report 100% covered rows when skipFull is true', () => {
+      testInjector.options.clearTextReporter.skipFull = true;
+
+      act({
+        files: {
+          'src/file.js': {
+            language: 'js',
+            mutants: [
+              {
+                id: '1',
+                location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+                mutatorName: 'Block',
+                replacement: '{}',
+                status: 'Killed',
+              },
+            ],
+            source: 'console.log("hello world!")',
+          },
+        },
+        schemaVersion: '1.0',
+        thresholds: factory.mutationScoreThresholds({}),
+      });
+
+      const serializedTable: string = stdoutStub.getCalls().pop()!.args[0];
+      const rows = serializedTable.split(os.EOL);
+      expect(rows).to.deep.eq([]);
     });
 
     it('should show emojis in table with enableConsoleEmojis flag', () => {
