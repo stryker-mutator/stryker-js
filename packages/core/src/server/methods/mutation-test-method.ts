@@ -23,11 +23,12 @@ export class MutationTestMethod {
   public static async runMutationTestRealtime(
     globPatterns: string[] | undefined,
     onMutantTested: (result: Readonly<MutantResult>) => void,
+    injectorFactory = createInjector,
   ): Promise<void> {
     const options: PartialStrykerOptions = globPatterns?.length ? { mutate: globPatterns } : {};
     options.reporters = ['empty']; // used to stream results
 
-    const rootInjector = createInjector();
+    const rootInjector = injectorFactory();
     const loggerProvider = provideLogger(rootInjector);
 
     try {
@@ -36,7 +37,7 @@ export class MutationTestMethod {
 
       const mutantInstrumenterInjector = await prepareExecutor.execute(options);
 
-      const broadcastReporter = mutantInstrumenterInjector.resolve(coreTokens.reporter) as BroadcastReporter;
+      const broadcastReporter = mutantInstrumenterInjector.injectClass(BroadcastReporter);
       const emptyReporter = broadcastReporter.reporters.empty;
       if (!emptyReporter) {
         throw new Error('Reporter unavailable');
