@@ -11,8 +11,8 @@ export class InstrumentMethod {
    * @param globPatterns The glob patterns to instrument.
    * @returns The mutant results.
    */
-  public static async runInstrumentation(globPatterns?: string[]): Promise<MutantResult[]> {
-    const rootInjector = createInjector();
+  public static async runInstrumentation(globPatterns?: string[], injectorFactory = createInjector): Promise<MutantResult[]> {
+    const rootInjector = injectorFactory();
 
     const loggerProvider = provideLogger(rootInjector);
 
