@@ -54,16 +54,16 @@ describe(MutationTestMethod.name, () => {
       .withArgs(DryRunExecutor)
       .returns(dryRunExecutorMock)
       .withArgs(MutationTestExecutor)
-      .returns(mutationTestExecutorMock)
-      .withArgs(BroadcastReporter)
-      .returns(reporterStub);
+      .returns(mutationTestExecutorMock);
     injectorMock.resolve
       .withArgs(commonTokens.getLogger)
       .returns(getLoggerStub)
       .withArgs(coreTokens.temporaryDirectory)
       .returns(temporaryDirectoryMock)
       .withArgs(commonTokens.options)
-      .returns(testInjector.options);
+      .returns(testInjector.options)
+      .withArgs(coreTokens.reporter)
+      .returns(reporterStub);
     getLoggerStub.returns(loggerMock);
 
     prepareExecutorMock.execute.resolves(injectorMock as typedInject.Injector<MutationTestContext>);

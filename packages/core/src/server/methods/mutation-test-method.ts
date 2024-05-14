@@ -37,7 +37,7 @@ export class MutationTestMethod {
 
       const mutantInstrumenterInjector = await prepareExecutor.execute(options);
 
-      const broadcastReporter = mutantInstrumenterInjector.injectClass(BroadcastReporter);
+      const broadcastReporter = mutantInstrumenterInjector.resolve(coreTokens.reporter) as BroadcastReporter;
       const emptyReporter = broadcastReporter.reporters.empty;
       if (!emptyReporter) {
         throw new Error('Reporter unavailable');
