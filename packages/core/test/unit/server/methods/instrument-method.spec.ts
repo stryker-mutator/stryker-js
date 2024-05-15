@@ -39,7 +39,8 @@ describe(InstrumentMethod.name, () => {
 
   describe('runInstrumentation', () => {
     it('should run the instrumentation if no glob patterns are provided', async () => {
-      await InstrumentMethod.runInstrumentation(undefined, () => injectorStub);
+      const result = await InstrumentMethod.runInstrumentation(undefined, () => injectorStub);
+      expect(result).to.deep.equal([]);
       expect(mutantInstrumenterExecutorMock.execute).calledOnce;
     });
 
