@@ -1,8 +1,11 @@
 import EventEmitter from 'events';
 
 import WebSocket, { WebSocketServer } from 'ws';
+import { tokens } from 'typed-inject';
 
-import { Transporter, TransporterEvents } from './transporter.js';
+import { serverTokens } from './../index.js';
+
+import { Transporter, TransporterEvents } from './index.js';
 
 /**
  * A transporter that uses WebSockets to send and receive messages
@@ -10,6 +13,7 @@ import { Transporter, TransporterEvents } from './transporter.js';
 export class WebSocketTransporter extends EventEmitter<TransporterEvents> implements Transporter {
   private readonly webSocketServer: WebSocketServer;
   private isConnected = false;
+  public static readonly inject = tokens(serverTokens.port);
 
   /**
    * Create a new WebSocket server for sending and receiving messages
@@ -41,8 +45,6 @@ export class WebSocketTransporter extends EventEmitter<TransporterEvents> implem
     });
     ws.on('close', () => this.emit('close'));
     ws.on('error', (error: Error) => this.emit('error', error));
-
-    ws.emit('connected');
   }
 
   public send(message: string): void {

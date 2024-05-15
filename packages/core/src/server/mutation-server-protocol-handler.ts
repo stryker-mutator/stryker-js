@@ -1,13 +1,15 @@
 import { JSONRPCClient, JSONRPCServer, JSONRPCServerAndClient, TypedJSONRPCServerAndClient } from 'json-rpc-2.0';
-
 import { MutantResult } from '@stryker-mutator/api/core';
+import { tokens } from 'typed-inject';
 
-import { ClientMethods, InstrumentParams, MutateParams, MutatePartialResult, ProgressParams, ServerMethods } from './mutation-server-protocol.js';
-import { runInstrumentation } from './methods/instrument-method.js';
-import { runMutationTest, runMutationTestRealtime } from './methods/mutation-test-method.js';
-import { Transporter } from './transport/transporter.js';
+import { MutationTestMethod, InstrumentMethod } from './methods/index.js';
+import { Transporter } from './transport/index.js';
+import * as serverTokens from './server-tokens.js';
+
+import { ClientMethods, InstrumentParams, MutateParams, MutatePartialResult, ProgressParams, ServerMethods } from './index.js';
 
 export class MutationServerProtocolHandler {
+  public static readonly inject = tokens(serverTokens.transporter);
   private readonly serverAndClient: TypedJSONRPCServerAndClient<ServerMethods, ClientMethods>;
 
   constructor(private readonly transporter: Transporter) {
@@ -21,7 +23,7 @@ export class MutationServerProtocolHandler {
 
   private setupServerMethods(): void {
     const serverMethods: ServerMethods = {
-      instrument: async (params: InstrumentParams) => runInstrumentation(params.globPatterns),
+      instrument: async (params: InstrumentParams) => InstrumentMethod.runInstrumentation(params.globPatterns),
       mutate: this.runMutationTest.bind(this),
     };
 
@@ -47,7 +49,7 @@ export class MutationServerProtocolHandler {
 
   private async runMutationTest(params: MutateParams): Promise<MutantResult[]> {
     if (params.partialResultToken) {
-      await runMutationTestRealtime(params.globPatterns, (result) => {
+      await MutationTestMethod.runMutationTestRealtime(params.globPatterns, (result) => {
         const progressParams: ProgressParams<MutatePartialResult> = { token: params.partialResultToken!, value: { mutants: [result] } };
         this.serverAndClient.notify('progress', progressParams);
       });
@@ -55,6 +57,6 @@ export class MutationServerProtocolHandler {
       return []; // All results are streamed as per protocol.
     }
 
-    return runMutationTest(params.globPatterns);
+    return MutationTestMethod.runMutationTest(params.globPatterns);
   }
 }
