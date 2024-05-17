@@ -35,12 +35,51 @@ export interface MutateParams extends PartialResultParams {
   globPatterns?: string[];
 }
 
+export interface CancelParams {
+  /**
+   * The request id to cancel.
+   */
+  id: number | string;
+}
+
 export interface MutatePartialResult {
   /**
    * The mutant results.
    */
   mutants: MutantResult[];
 }
+
+export interface Notification<T> {
+  /**
+   * The method name.
+   */
+  method: string;
+  /**
+   * The method parameters.
+   */
+  params: T;
+}
+
+export interface CancelNotification extends Notification<CancelParams> {
+  method: '$/cancelRequest';
+}
+
+export type CancelRequest = Notification<CancelParams>;
+
+export const ErrorCodes = {
+  // Defined by JSON-RPC
+  ParseError: -32700,
+  InvalidRequest: -32600,
+  MethodNotFound: -32601,
+  InvalidParams: -32602,
+  InternalError: -32603,
+
+  /**
+   * The client has canceled a request and a server has detected
+   * the cancel.
+   */
+  RequestCancelled: -32000,
+};
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type ServerMethods = {

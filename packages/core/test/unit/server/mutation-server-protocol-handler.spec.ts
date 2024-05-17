@@ -79,7 +79,7 @@ describe(MutationServerProtocolHandler.name, () => {
     // Arrange
     const sendSpy = sinon.spy(transporterMock, 'send');
     const mutationTestResult: MutantResult = factory.mutantResult();
-    sinon.replace(MutationTestMethod, 'runMutationTestRealtime', sinon.fake.yields(mutationTestResult));
+    sinon.replace(MutationTestMethod.prototype, 'runMutationTestRealtime', sinon.fake.yields(mutationTestResult));
 
     const partialResultToken = 'token';
     const requestId = 1;
@@ -105,7 +105,7 @@ describe(MutationServerProtocolHandler.name, () => {
     const progressNotification = createJSONRPCNotification('progress', progressNotificationParams);
 
     // Assert
-    expect(sendSpy.calledTwice).to.be.true;
+    expect(sendSpy).calledTwice;
     expect(sendSpy).calledWith(JSON.stringify(progressNotification));
     expect(sendSpy).calledWith(JSON.stringify(createJSONRPCSuccessResponse(requestId, [])));
   });

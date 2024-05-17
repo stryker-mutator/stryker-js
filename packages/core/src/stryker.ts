@@ -23,7 +23,7 @@ export class Stryker {
     private readonly injectorFactory = createInjector,
   ) {}
 
-  public async runMutationTest(): Promise<MutantResult[]> {
+  public async runMutationTest(abortSignal?: AbortSignal | undefined): Promise<MutantResult[]> {
     const rootInjector = this.injectorFactory();
     const loggerProvider = provideLogger(rootInjector);
 
@@ -39,7 +39,7 @@ export class Stryker {
 
         // 3. Perform a 'dry run' (initial test run). Runs the tests without active mutants and collects coverage.
         const dryRunExecutor = dryRunExecutorInjector.injectClass(DryRunExecutor);
-        const mutationRunExecutorInjector = await dryRunExecutor.execute();
+        const mutationRunExecutorInjector = (await dryRunExecutor.execute()).provideValue(commonTokens.abortSignal, abortSignal);
 
         // 4. Actual mutation testing. Will check every mutant and if valid run it in an available test runner.
         const mutationRunExecutor = mutationRunExecutorInjector.injectClass(MutationTestExecutor);

@@ -1,5 +1,5 @@
-import { from, partition, merge, Observable, lastValueFrom, EMPTY, concat, bufferTime, mergeMap } from 'rxjs';
-import { toArray, map, shareReplay, tap } from 'rxjs/operators';
+import { from, partition, merge, Observable, lastValueFrom, EMPTY, concat, bufferTime, mergeMap, fromEvent } from 'rxjs';
+import { toArray, map, shareReplay, tap, take, takeUntil } from 'rxjs/operators';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { MutantResult, Mutant, StrykerOptions, PlanKind, MutantTestPlan, MutantRunPlan } from '@stryker-mutator/api/core';
 import { TestRunner, CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
@@ -50,6 +50,7 @@ export class MutationTestExecutor {
     coreTokens.timer,
     coreTokens.concurrencyTokenProvider,
     coreTokens.dryRunResult,
+    commonTokens.abortSignal,
   );
 
   constructor(
@@ -64,6 +65,7 @@ export class MutationTestExecutor {
     private readonly timer: I<Timer>,
     private readonly concurrencyTokenProvider: I<ConcurrencyTokenProvider>,
     private readonly dryRunResult: CompleteDryRunResult,
+    private readonly abortSignal: AbortSignal | undefined,
   ) {}
 
   public async execute(): Promise<MutantResult[]> {
@@ -72,17 +74,21 @@ export class MutationTestExecutor {
       return [];
     }
 
-    if (this.dryRunResult.tests.length === 0 && this.options.allowEmpty) {
+    if ((this.dryRunResult.tests.length === 0 && this.options.allowEmpty) || this.abortSignal?.aborted) {
       this.logDone();
       return [];
     }
+
+    const stop = this.abortSignal ? fromEvent(this.abortSignal, 'abort').pipe(take(1)) : EMPTY;
 
     const mutantTestPlans = await this.planner.makePlan(this.mutants);
     const { earlyResult$, runMutant$ } = this.executeEarlyResult(from(mutantTestPlans));
     const { passedMutant$, checkResult$ } = this.executeCheck(runMutant$);
     const { coveredMutant$, noCoverageResult$ } = this.executeNoCoverage(passedMutant$);
     const testRunnerResult$ = this.executeRunInTestRunner(coveredMutant$);
-    const results = await lastValueFrom(merge(testRunnerResult$, checkResult$, noCoverageResult$, earlyResult$).pipe(toArray()));
+
+    const results = await lastValueFrom(merge(testRunnerResult$, checkResult$, noCoverageResult$, earlyResult$).pipe(takeUntil(stop), toArray()));
+
     await this.mutationTestReportHelper.reportAll(results);
     await this.reporter.wrapUp();
     this.logDone();
