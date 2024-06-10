@@ -22,11 +22,10 @@ export class MutationTestMethod {
    * @param onMutantTested  A callback that is called when a mutant is tested.
    */
   public async runMutationTestRealtime(
-    globPatterns: string[] | undefined,
+    options: PartialStrykerOptions,
     abortSignal: AbortSignal,
     onMutantTested: (result: Readonly<MutantResult>) => void,
   ): Promise<void> {
-    const options: PartialStrykerOptions = globPatterns?.length ? { mutate: globPatterns } : {};
     options.reporters = ['empty']; // used to stream results
 
     const rootInjector = this.injectorFactory();
@@ -93,7 +92,7 @@ export class MutationTestMethod {
    * @param globPatterns The glob patterns to mutate.
    * @returns The mutant results.
    */
-  public static async runMutationTest(abortSignal: AbortSignal, globPatterns?: string[]): Promise<MutantResult[]> {
-    return await new Stryker({ mutate: globPatterns }).runMutationTest(abortSignal);
+  public static async runMutationTest(abortSignal: AbortSignal, options: PartialStrykerOptions): Promise<MutantResult[]> {
+    return await new Stryker(options).runMutationTest(abortSignal);
   }
 }

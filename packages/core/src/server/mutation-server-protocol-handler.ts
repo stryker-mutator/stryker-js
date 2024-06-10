@@ -8,7 +8,7 @@ import {
   TypedJSONRPCServerAndClient,
   createJSONRPCErrorResponse,
 } from 'json-rpc-2.0';
-import { MutantResult } from '@stryker-mutator/api/core';
+import { MutantResult, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { tokens } from 'typed-inject';
 
 import { MutationTestMethod, InstrumentMethod } from './methods/index.js';
@@ -24,6 +24,8 @@ import {
   ProgressParams,
   ErrorCodes,
   ServerMethods,
+  InitializeResult,
+  InitializeParams,
 } from './index.js';
 
 /**
@@ -35,18 +37,40 @@ export class MutationServerProtocolHandler {
 
   // Map of request id to cancellation callback.
   private readonly cancellableRequests = new Map<number | string, AbortController>();
+  private readonly strykerOptionsOverwrite: PartialStrykerOptions = {};
+  private initialized = false;
 
   constructor(private readonly transporter: Transporter) {
     const jsonRpcServer = new JSONRPCServer();
     const jsonRpcClient = new JSONRPCClient((message) => transporter.send(JSON.stringify(message)));
     this.serverAndClient = new JSONRPCServerAndClient(jsonRpcServer, jsonRpcClient);
 
-    this.serverAndClient.applyServerMiddleware(this.handleRequestCancellation.bind(this));
+    this.serverAndClient.applyServerMiddleware(this.serverInitializedMiddleware.bind(this), this.requestCancellationMiddleware.bind(this));
     this.setupServerMethods();
     this.setupTransporterCallbacks();
   }
 
-  private async handleRequestCancellation(next: JSONRPCServerMiddlewareNext<void>, request: JSONRPCRequest, serverParams: void) {
+  private async serverInitializedMiddleware(next: JSONRPCServerMiddlewareNext<void>, request: JSONRPCRequest, serverParams: void) {
+    if (this.initialized && request.method === 'initialize') {
+      // Server is already initialized, only allow initialize requests once.
+      return createJSONRPCErrorResponse(
+        request.id ?? null,
+        ErrorCodes.InvalidRequest,
+        'Server is already initialized, you can only request initialization once.',
+      );
+    } else if (!this.initialized && request.method !== 'initialize') {
+      // Server is not initialized, only allow initialize requests.
+      return createJSONRPCErrorResponse(
+        request.id ?? null,
+        ErrorCodes.ServerNotInitialized,
+        'Server is not initialized, you must request initialization first.',
+      );
+    }
+
+    return next(request, serverParams);
+  }
+
+  private async requestCancellationMiddleware(next: JSONRPCServerMiddlewareNext<void>, request: JSONRPCRequest, serverParams: void) {
     if (request.id) {
       this.cancellableRequests.set(request.id, new AbortController());
     }
@@ -62,7 +86,23 @@ export class MutationServerProtocolHandler {
 
   private setupServerMethods(): void {
     this.serverAndClient.addMethodAdvanced('mutate', this.runMutationTestServerMethod.bind(this));
-    this.serverAndClient.addMethod('instrument', async (params: InstrumentParams) => InstrumentMethod.runInstrumentation(params.globPatterns));
+    this.serverAndClient.addMethod('instrument', this.runInstrumentation.bind(this));
+    this.serverAndClient.addMethod('initialize', this.initialize.bind(this));
+  }
+
+  private async initialize(params: InitializeParams): Promise<typeof InitializeResult> {
+    this.strykerOptionsOverwrite.configFile = params.configUri;
+    this.initialized = true;
+    return {};
+  }
+
+  private async runInstrumentation(params: InstrumentParams): Promise<MutantResult[]> {
+    const options: PartialStrykerOptions = {
+      ...this.strykerOptionsOverwrite,
+      ...(params.globPatterns?.length && { mutate: params.globPatterns }),
+    };
+
+    return await InstrumentMethod.runInstrumentation(options);
   }
 
   private async runMutationTestServerMethod(jsonRPCRequest: JSONRPCRequest): Promise<JSONRPCResponse> {
@@ -78,19 +118,23 @@ export class MutationServerProtocolHandler {
       throw new Error('No cancellation token found for request');
     }
 
+    const options: PartialStrykerOptions = {
+      ...this.strykerOptionsOverwrite,
+      ...(params.globPatterns?.length && { mutate: params.globPatterns }),
+    };
+
     const { signal } = abortController;
     const { partialResultToken } = params;
-
     let mutantResults: MutantResult[] = [];
 
     try {
       if (partialResultToken) {
-        await new MutationTestMethod().runMutationTestRealtime(params.globPatterns, signal, (result) => {
+        await new MutationTestMethod().runMutationTestRealtime(options, signal, (result) => {
           const progressParams: ProgressParams<MutatePartialResult> = { token: partialResultToken, value: { mutants: [result] } };
           this.serverAndClient.notify('progress', progressParams);
         });
       } else {
-        mutantResults = await MutationTestMethod.runMutationTest(signal, params.globPatterns);
+        mutantResults = await MutationTestMethod.runMutationTest(signal, options);
       }
     } catch (error) {
       if (!signal.aborted) {

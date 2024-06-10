@@ -1,5 +1,5 @@
 import { createInjector } from 'typed-inject';
-import { MutantResult } from '@stryker-mutator/api/core';
+import { MutantResult, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
 import { provideLogger } from './../../di/provide-logger.js';
 import { PrepareExecutor } from './../../process/1-prepare-executor.js';
@@ -11,14 +11,13 @@ export class InstrumentMethod {
    * @param globPatterns The glob patterns to instrument.
    * @returns The mutant results.
    */
-  public static async runInstrumentation(globPatterns?: string[], injectorFactory = createInjector): Promise<MutantResult[]> {
+  public static async runInstrumentation(options: PartialStrykerOptions, injectorFactory = createInjector): Promise<MutantResult[]> {
     const rootInjector = injectorFactory();
 
     const loggerProvider = provideLogger(rootInjector);
 
     const prepareExecutor = loggerProvider.injectClass(PrepareExecutor);
 
-    const options = globPatterns?.length ? { mutate: globPatterns } : {};
     const mutantInstrumenterInjector = await prepareExecutor.execute(options);
 
     const mutantInstrumenter = mutantInstrumenterInjector.injectClass(ServerMutantInstrumenterExecutor);

@@ -81,31 +81,31 @@ describe(MutationTestMethod.name, () => {
 
   describe('runMutationTestRealtime', () => {
     it('should execute the preparations', async () => {
-      await sut.runMutationTestRealtime(undefined, abortController.signal, () => undefined);
+      await sut.runMutationTestRealtime({}, abortController.signal, () => undefined);
       expect(prepareExecutorMock.execute).calledOnce;
     });
     it('should execute the mutant instrumenter', async () => {
-      await sut.runMutationTestRealtime(undefined, abortController.signal, () => undefined);
+      await sut.runMutationTestRealtime({}, abortController.signal, () => undefined);
       expect(mutantInstrumenterExecutorMock.execute).calledOnce;
     });
     it('should execute the dry run', async () => {
-      await sut.runMutationTestRealtime(undefined, abortController.signal, () => undefined);
+      await sut.runMutationTestRealtime({}, abortController.signal, () => undefined);
       expect(dryRunExecutorMock.execute).calledOnce;
     });
 
     it('should execute actual mutation testing', async () => {
-      await sut.runMutationTestRealtime(undefined, abortController.signal, () => undefined);
+      await sut.runMutationTestRealtime({}, abortController.signal, () => undefined);
       expect(mutationTestExecutorMock.execute).calledOnce;
     });
 
     it('should reject when empty reporter is not available', async () => {
       (reporterStub.reporters as any) = {};
-      await expect(sut.runMutationTestRealtime(undefined, abortController.signal, () => undefined)).rejectedWith('Reporter unavailable');
+      await expect(sut.runMutationTestRealtime({}, abortController.signal, () => undefined)).rejectedWith('Reporter unavailable');
     });
 
     it('should execute prepare with the given glob patterns and empty reporter', async () => {
       const globPatterns = ['foo.js', 'bar.js'];
-      await sut.runMutationTestRealtime(globPatterns, abortController.signal, () => undefined);
+      await sut.runMutationTestRealtime({ mutate: globPatterns }, abortController.signal, () => undefined);
 
       expect(prepareExecutorMock.execute).calledOnceWith({ mutate: globPatterns, reporters: ['empty'] });
     });
@@ -113,44 +113,44 @@ describe(MutationTestMethod.name, () => {
     it('should reject when prepare rejects', async () => {
       const expectedError = new Error('expected error for testing');
       prepareExecutorMock.execute.rejects(expectedError);
-      await expect(sut.runMutationTestRealtime(undefined, abortController.signal, () => undefined)).rejectedWith(expectedError);
+      await expect(sut.runMutationTestRealtime({}, abortController.signal, () => undefined)).rejectedWith(expectedError);
     });
 
     it('should not log a stack trace for a config error', async () => {
       const expectedError = new ConfigError('foo should be bar');
       prepareExecutorMock.execute.rejects(expectedError);
-      await expect(sut.runMutationTestRealtime(undefined, abortController.signal, () => undefined)).rejected;
+      await expect(sut.runMutationTestRealtime({}, abortController.signal, () => undefined)).rejected;
       expect(loggerMock.error).calledWithExactly('foo should be bar');
     });
 
     it('should reject when execute the mutant instrumenter rejects', async () => {
       const expectedError = new Error('expected error for testing');
       mutationTestExecutorMock.execute.rejects(expectedError);
-      await expect(sut.runMutationTestRealtime(undefined, abortController.signal, () => undefined)).rejectedWith(expectedError);
+      await expect(sut.runMutationTestRealtime({}, abortController.signal, () => undefined)).rejectedWith(expectedError);
     });
 
     it('should reject when execute the dry run rejects', async () => {
       const expectedError = new Error('expected error for testing');
       dryRunExecutorMock.execute.rejects(expectedError);
-      await expect(sut.runMutationTestRealtime(undefined, abortController.signal, () => undefined)).rejectedWith(expectedError);
+      await expect(sut.runMutationTestRealtime({}, abortController.signal, () => undefined)).rejectedWith(expectedError);
     });
 
     it('should reject when execute actual mutation testing rejects', async () => {
       const expectedError = new Error('expected error for testing');
       mutationTestExecutorMock.execute.rejects(expectedError);
-      await expect(sut.runMutationTestRealtime(undefined, abortController.signal, () => undefined)).rejectedWith(expectedError);
+      await expect(sut.runMutationTestRealtime({}, abortController.signal, () => undefined)).rejectedWith(expectedError);
     });
 
     it('should log the error when prepare rejects unexpectedly', async () => {
       const expectedError = new Error('expected error for testing');
       prepareExecutorMock.execute.rejects(expectedError);
-      await expect(sut.runMutationTestRealtime(undefined, abortController.signal, () => undefined)).rejected;
+      await expect(sut.runMutationTestRealtime({}, abortController.signal, () => undefined)).rejected;
       expect(loggerMock.error).calledWith('Unexpected error occurred while running Stryker', expectedError);
     });
 
     it('should disable `removeDuringDisposal` on the temp dir when dry run rejects', async () => {
       dryRunExecutorMock.execute.rejects(new Error('expected error for testing'));
-      await expect(sut.runMutationTestRealtime(undefined, abortController.signal, () => undefined)).rejected;
+      await expect(sut.runMutationTestRealtime({}, abortController.signal, () => undefined)).rejected;
       expect(getLoggerStub).calledWith('Stryker');
       expect(loggerMock.debug).calledWith('Not removing the temp dir because an error occurred');
       expect(temporaryDirectoryMock.removeDuringDisposal).false;
@@ -159,14 +159,14 @@ describe(MutationTestMethod.name, () => {
     it('should not disable `removeDuringDisposal` on the temp dir when dry run rejects and cleanTempDir is set to `always`', async () => {
       dryRunExecutorMock.execute.rejects(new Error('expected error for testing'));
       testInjector.options.cleanTempDir = 'always';
-      await expect(sut.runMutationTestRealtime(undefined, abortController.signal, () => undefined)).rejected;
+      await expect(sut.runMutationTestRealtime({}, abortController.signal, () => undefined)).rejected;
       expect(temporaryDirectoryMock.removeDuringDisposal).not.false;
     });
 
     it('should log the error when dry run rejects unexpectedly', async () => {
       const expectedError = new Error('expected error for testing');
       dryRunExecutorMock.execute.rejects(expectedError);
-      await expect(sut.runMutationTestRealtime(undefined, abortController.signal, () => undefined)).rejected;
+      await expect(sut.runMutationTestRealtime({}, abortController.signal, () => undefined)).rejected;
       expect(getLoggerStub).calledWith('Stryker');
       expect(loggerMock.error).calledWith('Unexpected error occurred while running Stryker', expectedError);
     });
@@ -175,7 +175,7 @@ describe(MutationTestMethod.name, () => {
       const expectedError = new Error('expected error for testing');
       loggerMock.isTraceEnabled.returns(false);
       dryRunExecutorMock.execute.rejects(expectedError);
-      await expect(sut.runMutationTestRealtime(undefined, abortController.signal, () => undefined)).rejected;
+      await expect(sut.runMutationTestRealtime({}, abortController.signal, () => undefined)).rejected;
       [
         'This might be a known problem with a solution documented in our troubleshooting guide.',
         'You can find it at https://stryker-mutator.io/docs/stryker-js/troubleshooting/',
@@ -187,7 +187,7 @@ describe(MutationTestMethod.name, () => {
       const expectedError = new Error('expected error for testing');
       loggerMock.isTraceEnabled.returns(true);
       dryRunExecutorMock.execute.rejects(expectedError);
-      await expect(sut.runMutationTestRealtime(undefined, abortController.signal, () => undefined)).rejected;
+      await expect(sut.runMutationTestRealtime({}, abortController.signal, () => undefined)).rejected;
       [
         'This might be a known problem with a solution documented in our troubleshooting guide.',
         'You can find it at https://stryker-mutator.io/docs/stryker-js/troubleshooting/',
@@ -195,27 +195,28 @@ describe(MutationTestMethod.name, () => {
     });
 
     it('should dispose the injector', async () => {
-      await sut.runMutationTestRealtime(undefined, abortController.signal, () => undefined), expect(injectorMock.dispose).called;
+      await sut.runMutationTestRealtime({}, abortController.signal, () => undefined), expect(injectorMock.dispose).called;
     });
 
     it('should dispose also on a rejection injector', async () => {
       prepareExecutorMock.execute.rejects(new Error('expected error'));
-      await expect(sut.runMutationTestRealtime(undefined, abortController.signal, () => undefined)).rejected;
+      await expect(sut.runMutationTestRealtime({}, abortController.signal, () => undefined)).rejected;
       expect(injectorMock.dispose).called;
     });
 
     it('should shut down the logging server', async () => {
-      await sut.runMutationTestRealtime(undefined, abortController.signal, () => undefined), expect(shutdownLoggingStub).called;
+      await sut.runMutationTestRealtime({}, abortController.signal, () => undefined), expect(shutdownLoggingStub).called;
     });
 
     it('should dispose the injector when actual mutation testing rejects', async () => {
       mutationTestExecutorMock.execute.rejects(new Error('Expected error for testing'));
-      await expect(sut.runMutationTestRealtime(undefined, abortController.signal, () => undefined)).rejected;
+      await expect(sut.runMutationTestRealtime({}, abortController.signal, () => undefined)).rejected;
       expect(injectorMock.dispose).called;
     });
+
     it('should shut down the logging server when actual mutation testing rejects', async () => {
       mutationTestExecutorMock.execute.rejects(new Error('Expected error for testing'));
-      await expect(sut.runMutationTestRealtime(undefined, abortController.signal, () => undefined)).rejected;
+      await expect(sut.runMutationTestRealtime({}, abortController.signal, () => undefined)).rejected;
       expect(shutdownLoggingStub).called;
     });
   });

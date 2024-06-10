@@ -1,5 +1,14 @@
 import { MutantResult } from '@stryker-mutator/api/core';
 
+export interface InitializeParams {
+  /**
+   * The URI of the mutation testing framework config file
+   */
+  configUri?: string;
+}
+
+export const InitializeResult = {};
+
 export type ProgressToken = number | string;
 
 export interface ProgressParams<T> {
@@ -79,10 +88,17 @@ export const ErrorCodes = {
    * the cancel.
    */
   RequestCancelled: -32000,
+
+  /**
+   * Error code indicating that a server received a notification or
+   * request before the server has received the `initialize` request.
+   */
+  ServerNotInitialized: -32001,
 };
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export type ServerMethods = {
+  initialize(params: InitializeParams): Promise<typeof InitializeResult>;
   instrument(params: InstrumentParams): Promise<MutantResult[]>;
   mutate(params: MutateParams): Promise<MutantResult[]>;
 };

@@ -39,20 +39,15 @@ describe(InstrumentMethod.name, () => {
 
   describe('runInstrumentation', () => {
     it('should run the instrumentation if no glob patterns are provided', async () => {
-      const result = await InstrumentMethod.runInstrumentation(undefined, () => injectorStub);
+      const result = await InstrumentMethod.runInstrumentation({}, () => injectorStub);
       expect(result).to.deep.equal([]);
       expect(mutantInstrumenterExecutorMock.execute).calledOnce;
     });
 
     it('should run the instrumentation with the provided glob patterns', async () => {
       const globPatterns = ['glob/pattern'];
-      await InstrumentMethod.runInstrumentation(globPatterns, () => injectorStub);
+      await InstrumentMethod.runInstrumentation({ mutate: globPatterns }, () => injectorStub);
       expect(prepareExecutorMock.execute).calledOnceWith({ mutate: globPatterns });
-    });
-
-    it('should not overwrite mutate property if no glob patterns are provided', async () => {
-      await InstrumentMethod.runInstrumentation([], () => injectorStub);
-      expect(prepareExecutorMock.execute).calledOnceWith({});
     });
   });
 });
