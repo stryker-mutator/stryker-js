@@ -19,6 +19,7 @@ export const commonTokens = Object.freeze({
   options: stringLiteral('options'),
   fileDescriptions: stringLiteral('fileDescriptions'),
   target,
+  abortSignal: stringLiteral('abortSignal'),
 });
 
 /**

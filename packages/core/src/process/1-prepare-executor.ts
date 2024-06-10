@@ -14,7 +14,6 @@ import { Timer } from '../utils/timer.js';
 import { MetaSchemaBuilder, OptionsValidator } from '../config/index.js';
 import { BroadcastReporter } from '../reporters/broadcast-reporter.js';
 import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
-
 import { FileSystem, ProjectReader } from '../fs/index.js';
 
 import { MutantInstrumenterContext } from './index.js';
