@@ -192,7 +192,7 @@ export class MutantTestPlanner {
             staticRunPlans.length / runPlans.length,
           )}% of total) that are estimated to take ${percentage(
             relativeTimeForStaticMutants,
-          )}% of the time running the tests!\n  You might want to enable "ignoreStatic" to ignore these static mutants for your next run. \n  For more information about static mutants visit: https://stryker-mutator.io/docs/mutation-testing-elements/static-mutants.\n  (disable "${optionsPath(
+          )}% of the time running the tests!\n  You might want to enable "ignoreStatic" to ignore these static mutants for your next run. \n  For more information about static mutants visit: https://stryker-mutator.io/docs/mutation-testing-elements/static-mutants\n  (disable "${optionsPath(
             'warnings',
             'slow',
           )}" to ignore this warning)`,
