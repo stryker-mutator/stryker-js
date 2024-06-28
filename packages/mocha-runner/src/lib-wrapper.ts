@@ -13,7 +13,7 @@ const mochaRoot = path.dirname(require.resolve('mocha/package.json'));
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const runHelpers = require(`${mochaRoot}/lib/cli/run-helpers`);
 
-let collectFiles: ((options: MochaOptions) => string[]) | undefined;
+let collectFiles: ((options: MochaOptions) => string[] | { files: string[]; unmatchedFiles: string[] }) | undefined;
 
 /*
  * If read, object containing parsed arguments

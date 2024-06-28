@@ -31,7 +31,11 @@ export class MochaAdapter {
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       (process as any).exit = () => {};
       const files = LibWrapper.collectFiles!(options);
-      return files;
+      if (Array.isArray(files)) {
+        return files;
+      } else {
+        return files.files;
+      }
     } finally {
       process.exit = originalProcessExit;
     }
