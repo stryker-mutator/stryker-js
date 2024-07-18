@@ -1,5 +1,7 @@
 import babel from '@babel/core';
 
+import { OptionalChaining } from '@stryker-mutator/api/core';
+
 import { NodeMutator } from './index.js';
 
 const { types: t } = babel;
@@ -16,24 +18,40 @@ const { types: t } = babel;
  * foo?.[1] -> foo[1]
  * foo?.() -> foo()
  */
-export const optionalChainingMutator: NodeMutator = {
+
+export const optionalChainingMutator: NodeMutator<OptionalChaining> = {
   name: 'OptionalChaining',
+
+  operators: {
+    OptionalCallExpressionOptionalRemoval: { mutationOperator: 'OptionalCallExpressionOptionalRemoval' },
+    OptionalMemberExpressionOptionalRemoval: { mutationOperator: 'OptionalMemberExpressionOptionalRemoval' },
+    OptionalComputedMemberExpressionOptionalRemoval: { mutationOperator: 'OptionalComputedMemberExpressionOptionalRemoval' },
+  },
 
   *mutate(path) {
     if (path.isOptionalMemberExpression() && path.node.optional) {
-      yield t.optionalMemberExpression(
-        t.cloneNode(path.node.object, true),
-        t.cloneNode(path.node.property, true),
-        path.node.computed,
-        /*optional*/ false,
-      );
+      const mutationOperator = path.node.computed
+        ? this.operators.OptionalComputedMemberExpressionOptionalRemoval.mutationOperator
+        : this.operators.OptionalMemberExpressionOptionalRemoval.mutationOperator;
+      yield [
+        t.optionalMemberExpression(
+          t.cloneNode(path.node.object, true),
+          t.cloneNode(path.node.property, true),
+          path.node.computed,
+          /*optional*/ false,
+        ),
+        mutationOperator,
+      ];
     }
     if (path.isOptionalCallExpression() && path.node.optional) {
-      yield t.optionalCallExpression(
-        t.cloneNode(path.node.callee, true),
-        path.node.arguments.map((arg) => t.cloneNode(arg, true)),
-        /*optional*/ false,
-      );
+      yield [
+        t.optionalCallExpression(
+          t.cloneNode(path.node.callee, true),
+          path.node.arguments.map((arg) => t.cloneNode(arg, true)),
+          /*optional*/ false,
+        ),
+        this.operators.OptionalCallExpressionOptionalRemoval.mutationOperator,
+      ];
     }
   },
 };

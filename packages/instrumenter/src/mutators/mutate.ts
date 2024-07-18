@@ -1,3 +1,5 @@
+import { MutatorDefinition } from '@stryker-mutator/api/core';
+
 import { arithmeticOperatorMutator } from './arithmetic-operator-mutator.js';
 import { NodeMutator } from './node-mutator.js';
 import { blockStatementMutator } from './block-statement-mutator.js';
@@ -16,7 +18,7 @@ import { regexMutator } from './regex-mutator.js';
 import { optionalChainingMutator } from './optional-chaining-mutator.js';
 import { assignmentOperatorMutator } from './assignment-operator-mutator.js';
 
-export const allMutators: NodeMutator[] = [
+export const allMutators: Array<NodeMutator<MutatorDefinition>> = [
   arithmeticOperatorMutator,
   arrayDeclarationMutator,
   arrowFunctionMutator,

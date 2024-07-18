@@ -1,19 +1,51 @@
-import babel, { type NodePath } from '@babel/core';
+import babel, { Node, type NodePath } from '@babel/core';
+
+import { StringLiteral } from '@stryker-mutator/api/core';
 
 import { NodeMutator } from './node-mutator.js';
 
 const { types } = babel;
 
-export const stringLiteralMutator: NodeMutator = {
+export const stringLiteralMutator: NodeMutator<StringLiteral> = {
   name: 'StringLiteral',
+
+  operators: {
+    EmptyStringLiteralToFilledReplacement: {
+      replacement: types.stringLiteral('Stryker was here!'),
+      mutationOperator: 'EmptyStringLiteralToFilledReplacement',
+    },
+    FilledStringLiteralToEmptyReplacement: {
+      replacement: types.stringLiteral(''),
+      mutationOperator: 'FilledStringLiteralToEmptyReplacement',
+    },
+    FilledInterpolatedStringToEmptyReplacement: {
+      replacement: types.templateLiteral([types.templateElement({ raw: '' })], []),
+      mutationOperator: 'FilledInterpolatedStringToEmptyReplacement',
+    },
+    EmptyInterpolatedStringToFilledReplacement: {
+      replacement: types.templateLiteral([types.templateElement({ raw: 'Stryker was here!' })], []),
+      mutationOperator: 'EmptyInterpolatedStringToFilledReplacement',
+    },
+  },
 
   *mutate(path) {
     if (path.isTemplateLiteral()) {
-      const replacement = path.node.quasis.length === 1 && path.node.quasis[0].value.raw.length === 0 ? 'Stryker was here!' : '';
-      yield types.templateLiteral([types.templateElement({ raw: replacement })], []);
+      const stringIsEmpty = path.node.quasis.length === 1 && path.node.quasis[0].value.raw.length === 0;
+
+      const { replacement, mutationOperator } = stringIsEmpty
+        ? this.operators.EmptyInterpolatedStringToFilledReplacement
+        : this.operators.FilledInterpolatedStringToEmptyReplacement;
+
+      yield [replacement as Node, mutationOperator];
     }
     if (path.isStringLiteral() && isValidParent(path)) {
-      yield types.stringLiteral(path.node.value.length === 0 ? 'Stryker was here!' : '');
+      const stringIsEmpty = path.node.value.length === 0;
+
+      const { replacement, mutationOperator } = stringIsEmpty
+        ? this.operators.EmptyStringLiteralToFilledReplacement
+        : this.operators.FilledStringLiteralToEmptyReplacement;
+
+      yield [replacement as Node, mutationOperator];
     }
   },
 };

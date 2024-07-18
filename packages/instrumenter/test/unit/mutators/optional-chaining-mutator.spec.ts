@@ -2,7 +2,19 @@ import { expect } from 'chai';
 
 import { optionalChainingMutator as sut } from '../../../src/mutators/optional-chaining-mutator.js';
 
-import { expectJSMutation } from '../../helpers/expect-mutation.js';
+import { expectJSMutation, expectJSMutationWithLevel } from '../../helpers/expect-mutation.js';
+import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
+
+const optionalChainingLevel: MutationLevel = {
+  name: 'OptionalChainingLevel',
+  OptionalChaining: ['OptionalMemberExpressionOptionalRemoval'],
+};
+const optionalChainingUndefinedLevel: MutationLevel = {
+  name: 'optionalChainingUndefinedLevel',
+  OptionalChaining: [],
+};
+
+const noLevel = undefined;
 
 describe(sut.name, () => {
   it('should have name "OptionalChaining"', () => {
@@ -28,5 +40,29 @@ describe(sut.name, () => {
     expectJSMutation(sut, 'foo.bar()?.[0]', 'foo.bar()[0]');
     expectJSMutation(sut, 'foo.bar?.()[0]', 'foo.bar()[0]');
     expectJSMutation(sut, 'foo.bar()?.baz', 'foo.bar().baz');
+  });
+
+  describe('mutation level', () => {
+    it('should only mutate OptionalMemberExpression', () => {
+      expectJSMutationWithLevel(
+        sut,
+        optionalChainingLevel.OptionalChaining,
+        'foo?.bar; foo?.[0]; foo?.()',
+        'foo.bar; foo?.[0]; foo?.()', // removes .bar optional
+      );
+    });
+    it('should not perform any ' + sut.name + ' mutations', () => {
+      expectJSMutationWithLevel(sut, optionalChainingUndefinedLevel.OptionalChaining, 'foo?.bar; foo?.[0]; foo?.()');
+    });
+    it('should perform all ' + sut.name + ' mutations', () => {
+      expectJSMutationWithLevel(
+        sut,
+        noLevel,
+        'foo?.bar; foo?.[0]; foo?.()',
+        'foo.bar; foo?.[0]; foo?.()', // removes .bar optional
+        'foo?.bar; foo[0]; foo?.()', // removes [0] optional
+        'foo?.bar; foo?.[0]; foo()', // removes () optional
+      );
+    });
   });
 });

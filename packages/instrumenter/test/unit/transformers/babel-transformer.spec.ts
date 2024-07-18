@@ -14,6 +14,7 @@ import { instrumentationBabelHeader } from '../../../src/util/index.js';
 import { MutantPlacer } from '../../../src/mutant-placers/index.js';
 import { NodeMutator } from '../../../src/mutators/index.js';
 import { createJSAst, createTSAst } from '../../helpers/factories.js';
+import { MutationLevel } from '../../../src/mutation-level/mutation-level.js';
 
 const generate = generator.default;
 const { types } = babel;
@@ -26,23 +27,28 @@ const { types } = babel;
  */
 describe('babel-transformer', () => {
   let context: sinon.SinonStubbedInstance<TransformerContext>;
-  let mutators: NodeMutator[];
+  let mutators: Array<NodeMutator<keyof MutationLevel>>;
   let mutantPlacers: MutantPlacer[];
   let mutantCollector: MutantCollector;
 
-  const fooMutator: NodeMutator = {
+  const fooMutator: NodeMutator<keyof MutationLevel> = {
     name: 'Foo',
+    operators: { Foo: { mutationOperator: 'Foo' } },
     *mutate(path) {
       if (path.isIdentifier() && path.node.name === 'foo') {
-        yield types.identifier('bar');
+        yield [types.identifier('bar'), this.operators.Foo.mutationOperator];
       }
     },
   };
-  const plusMutator: NodeMutator = {
+  const plusMutator: NodeMutator<keyof MutationLevel> = {
     name: 'Plus',
+    operators: { Plus: { mutationOperator: 'Plus' } },
     *mutate(path) {
       if (path.isBinaryExpression() && path.node.operator === '+') {
-        yield types.binaryExpression('-', types.cloneNode(path.node.left, true), types.cloneNode(path.node.right, true));
+        yield [
+          types.binaryExpression('-', types.cloneNode(path.node.left, true), types.cloneNode(path.node.right, true)),
+          this.operators.Plus.mutationOperator,
+        ];
       }
     },
   };
@@ -127,7 +133,7 @@ describe('babel-transformer', () => {
       context.options.excludedMutations = ['Foo'];
       act(ast);
       expect(mutantCollector.mutants).lengthOf(1);
-      expect(mutantCollector.mutants[0].ignoreReason).eq('Ignored because of excluded mutation "Foo"');
+      expect(mutantCollector.mutants[0].ignoreReason).eq('Ignored because the operator "Foo" is excluded from the mutation run');
     });
   });
 
@@ -622,9 +628,10 @@ describe('babel-transformer', () => {
       });
       mutators.push({
         name: 'blockMutatorForTest',
+        operators: { BlockMutatorForTest: { mutationOperator: 'blockMutatorForTest' } },
         *mutate(path) {
           if (path.isBlockStatement()) {
-            yield types.blockStatement([]);
+            yield [types.blockStatement([]), this.operators.BlockMutatorForTest.mutationOperator];
           }
         },
       });
@@ -729,12 +736,10 @@ describe('babel-transformer', () => {
   });
 
   function act(ast: ScriptAst) {
-    (transformBabel as (...args: [...Parameters<AstTransformer<ScriptFormat>>, mutators: NodeMutator[], mutantPlacers: MutantPlacer[]]) => void)(
-      ast,
-      mutantCollector,
-      context,
-      mutators,
-      mutantPlacers,
-    );
+    (
+      transformBabel as (
+        ...args: [...Parameters<AstTransformer<ScriptFormat>>, mutators: Array<NodeMutator<keyof MutationLevel>>, mutantPlacers: MutantPlacer[]]
+      ) => void
+    )(ast, mutantCollector, context, mutators, mutantPlacers);
   }
 });

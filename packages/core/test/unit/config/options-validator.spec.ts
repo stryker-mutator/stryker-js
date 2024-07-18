@@ -79,7 +79,6 @@ describe(OptionsValidator.name, () => {
           '!{src,lib}/**/__tests__/**/*.+(cjs|mjs|js|ts|mts|cts|jsx|tsx|html|vue|svelte)',
         ],
         mutator: {
-          excludedMutations: [],
           plugins: null,
         },
         plugins: ['@stryker-mutator/*'],
