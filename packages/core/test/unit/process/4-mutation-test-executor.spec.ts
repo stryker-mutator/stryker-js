@@ -8,6 +8,7 @@ import { mergeMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { Mutant, MutantTestCoverage, MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan } from '@stryker-mutator/api/core';
 import { I, Task } from '@stryker-mutator/util';
+import { commonTokens } from '@stryker-mutator/api/plugin';
 
 import { MutationTestExecutor } from '../../../src/process/index.js';
 import { coreTokens } from '../../../src/di/index.js';
@@ -48,6 +49,7 @@ describe(MutationTestExecutor.name, () => {
   let concurrencyTokenProviderMock: sinon.SinonStubbedInstance<ConcurrencyTokenProvider>;
   let sandboxMock: sinon.SinonStubbedInstance<Sandbox>;
   let completeDryRunResult: sinon.SinonStubbedInstance<CompleteDryRunResult>;
+  let abortController: AbortController;
 
   beforeEach(() => {
     reporterMock = factory.reporter();
@@ -73,6 +75,7 @@ describe(MutationTestExecutor.name, () => {
       >
     ).callsFake((item$, task) => item$.pipe(mergeMap((item) => task(testRunner, item))));
 
+    abortController = new AbortController();
     mutants = [factory.mutant()];
     mutantTestPlans = [];
     completeDryRunResult = factory.completeDryRunResult();
@@ -90,6 +93,7 @@ describe(MutationTestExecutor.name, () => {
       .provideValue(coreTokens.testRunnerPool, testRunnerPoolMock)
       .provideValue(coreTokens.concurrencyTokenProvider, concurrencyTokenProviderMock)
       .provideValue(coreTokens.dryRunResult, completeDryRunResult)
+      .provideValue(commonTokens.abortSignal, abortController.signal)
       .injectClass(MutationTestExecutor);
   });
 
