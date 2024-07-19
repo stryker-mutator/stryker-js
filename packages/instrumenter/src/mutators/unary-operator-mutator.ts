@@ -1,32 +1,35 @@
 import babel from '@babel/core';
 
+import { UnaryOperator } from '@stryker-mutator/api/core';
+
 import { deepCloneNode } from '../util/index.js';
 
 import { NodeMutator } from './index.js';
 
 const { types } = babel;
 
-enum UnaryOperator {
-  '+' = '-',
-  '-' = '+',
-  '~' = '',
-}
-
-export const unaryOperatorMutator: NodeMutator = {
+export const unaryOperatorMutator: NodeMutator<UnaryOperator> = {
   name: 'UnaryOperator',
+
+  operators: {
+    '+': { replacement: '-', mutationOperator: 'UnaryPlusOperatorNegation' },
+    '-': { replacement: '+', mutationOperator: 'UnaryMinOperatorNegation' },
+    '~': { replacement: '', mutationOperator: 'UnaryBitwiseNotRemoval' },
+  },
 
   *mutate(path) {
     if (path.isUnaryExpression() && isSupported(path.node.operator) && path.node.prefix) {
-      const mutatedOperator = UnaryOperator[path.node.operator];
-      const replacement = mutatedOperator.length
-        ? types.unaryExpression(mutatedOperator as '-' | '+', deepCloneNode(path.node.argument))
+      const { replacement, mutationOperator } = this.operators[path.node.operator];
+
+      const nodeClone = (replacement as string).length
+        ? types.unaryExpression(replacement as '-' | '+', deepCloneNode(path.node.argument))
         : deepCloneNode(path.node.argument);
 
-      yield replacement;
+      yield [nodeClone, mutationOperator];
     }
   },
 };
 
-function isSupported(operator: string): operator is keyof typeof UnaryOperator {
-  return Object.keys(UnaryOperator).includes(operator);
+function isSupported(operator: string): operator is keyof typeof unaryOperatorMutator.operators {
+  return operator in unaryOperatorMutator.operators;
 }

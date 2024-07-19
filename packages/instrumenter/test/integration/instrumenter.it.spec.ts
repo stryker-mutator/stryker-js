@@ -50,7 +50,10 @@ describe('instrumenter integration', () => {
     await arrangeAndActAssert('shebang.js');
   });
   it('should not place excluded mutations', async () => {
-    await arrangeAndActAssert('excluded-mutations.js', createInstrumenterOptions({ excludedMutations: ['ArithmeticOperator'] }));
+    await arrangeAndActAssert(
+      'excluded-mutations.js',
+      createInstrumenterOptions({ excludedMutations: ['@Level1', '@ArithmeticOperator', 'AdditionOperatorNegation'] }),
+    );
   });
   it('should not place disabled mutants', async () => {
     await arrangeAndActAssert('disabled.js');
