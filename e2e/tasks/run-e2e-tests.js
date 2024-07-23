@@ -54,7 +54,7 @@ runE2eTests().subscribe({
  * @param {string} command
  * @param {string} testDir
  * @param {boolean} stream
- * @returns {Promise<import('execa').ExecaReturnValue<string>>}
+ * @returns {Promise<unknown>}
  */
 async function execNpm(command, testDir, stream) {
   const currentTestDir = path.resolve(testRootDir, testDir);
