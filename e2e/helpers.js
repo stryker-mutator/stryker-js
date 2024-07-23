@@ -2,13 +2,11 @@ import { promises as fsPromises } from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
 
-import chai from 'chai';
+import { use, expect } from 'chai';
 import { calculateMutationTestMetrics } from 'mutation-testing-metrics';
 import chaiJestSnapshot from 'chai-jest-snapshot';
 
-const { expect } = chai;
-
-chai.use(chaiJestSnapshot);
+use(chaiJestSnapshot);
 
 before(function () {
   chaiJestSnapshot.resetSnapshotRegistry();
