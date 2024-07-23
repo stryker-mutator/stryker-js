@@ -9,7 +9,7 @@ export class SvelteInitializer implements CustomInitializer {
   public readonly name = 'svelte';
 
   public async createConfig(): Promise<CustomInitializerConfiguration> {
-    const testRunnerChoices = ['jest', 'vitest'];
+    const testRunnerChoices = [{ value: 'jest' }, { value: 'vitest' }];
     const testRunnerNodeArgs: string[] = [];
     const { testRunner } = await inquirer.prompt<{ testRunner: string }>({
       choices: testRunnerChoices,

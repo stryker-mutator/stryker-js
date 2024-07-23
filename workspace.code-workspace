@@ -119,6 +119,7 @@
       "preprocessors",
       "promisified",
       "quasis",
+      "rawlist",
       "serialise",
       "serializable",
       "stryker",

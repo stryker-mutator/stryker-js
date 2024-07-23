@@ -30,13 +30,13 @@ export function createSuite(overrides?: Partial<Suite>): Suite {
     name: 'suite',
     tasks: [],
     type: 'suite',
-    projectName: '',
+    file: createVitestFile(),
     ...overrides,
   };
 }
 
-export function createVitestFile(overrides?: Partial<File>): File {
-  return {
+export function createVitestFile(overrides?: Partial<Omit<File, 'file'>>): File {
+  const file = {
     projectName: '',
     name: 'file.js',
     filepath: 'file.spec.js',
@@ -46,7 +46,9 @@ export function createVitestFile(overrides?: Partial<File>): File {
     tasks: [],
     meta: {},
     ...overrides,
-  };
+  } as File;
+  file.file = file;
+  return file;
 }
 
 export function createVitestTest(overrides?: Partial<Test>): Test {

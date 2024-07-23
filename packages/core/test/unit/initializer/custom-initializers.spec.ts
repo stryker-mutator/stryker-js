@@ -3,7 +3,7 @@ import os from 'os';
 
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { execaCommand, ExecaReturnValue } from 'execa';
+import { execaCommand, Result } from 'execa';
 import inquirer from 'inquirer';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { resolveFromCwd } from '@stryker-mutator/util';
@@ -17,6 +17,8 @@ import { VueJsInitializer } from '../../../src/initializer/custom-initializers/v
 import { fileUtils } from '../../../src/utils/file-utils.js';
 import { SvelteInitializer } from '../../../src/initializer/custom-initializers/svelte-initializer.js';
 import { CustomInitializerConfiguration } from '../../../src/initializer/custom-initializers/custom-initializer.js';
+
+type ExecaBufferResult = Result<{ encoding: 'buffer' }>;
 
 describe('CustomInitializers', () => {
   let inquirerPrompt: sinon.SinonStubbedMember<typeof inquirer.prompt>;
@@ -84,7 +86,7 @@ describe('CustomInitializers', () => {
       resolveStub.returns('./node_modules/@angular/cli/package.json');
       existsStub.resolves(false);
       readFileStub.resolves('{"version": "15.1.0"}');
-      execaStub.resolves({ stdout: Buffer.from('') } as ExecaReturnValue<Buffer>);
+      execaStub.resolves({ stdout: Uint8Array.from([]) } as ExecaBufferResult);
 
       // Act
       await sut.createConfig();
@@ -101,7 +103,7 @@ describe('CustomInitializers', () => {
       resolveStub.returns('./node_modules/@angular/cli/package.json');
       existsStub.resolves(false);
       readFileStub.resolves('{"version": "15.0.9"}'); // version 15.1 added the support
-      execaStub.resolves({ stdout: Buffer.from('') } as ExecaReturnValue<Buffer>);
+      execaStub.resolves({ stdout: Uint8Array.from([]) } as ExecaBufferResult);
 
       // Act
       await sut.createConfig();
@@ -115,7 +117,7 @@ describe('CustomInitializers', () => {
       resolveStub.returns('./node_modules/@angular/cli/package.json');
       existsStub.resolves(true);
       readFileStub.resolves('{"version": "16.0.0"}');
-      execaStub.resolves({ stdout: Buffer.from('') } as ExecaReturnValue<Buffer>);
+      execaStub.resolves({ stdout: Uint8Array.from([]) } as ExecaBufferResult);
 
       // Act
       await sut.createConfig();
@@ -129,7 +131,7 @@ describe('CustomInitializers', () => {
       resolveStub.returns('./node_modules/@angular/cli/package.json');
       existsStub.resolves(false);
       readFileStub.resolves('{"version": "15.1.0"}');
-      execaStub.resolves({ stdout: 'Some detailed output' } as unknown as ExecaReturnValue<Buffer>);
+      execaStub.resolves({ stdout: 'Some detailed output' } as Result<{ encoding: 'utf8' }>);
 
       // Act
       await sut.createConfig();
@@ -185,7 +187,7 @@ describe('CustomInitializers', () => {
       inquirerPrompt.resolves({ testRunner: 'vitest' });
       await sut.createConfig();
       sinon.assert.calledOnceWithExactly(inquirerPrompt, {
-        choices: ['jest', 'vitest'],
+        choices: [{ value: 'jest' }, { value: 'vitest' }],
         message: 'Which test runner are you using?',
         name: 'testRunner',
         type: 'list',

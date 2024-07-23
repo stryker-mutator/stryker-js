@@ -4,5 +4,5 @@ exports[`instrumenter integration type declarations should not produce mutants f
 "/**
  * @see https://github.com/stryker-mutator/stryker-js/issues/2465
  */
-const flatten = (require('lodash/flatten') as typeof import('lodash/flatten'));"
+const flatten = require('lodash/flatten') as typeof import('lodash/flatten');"
 `;

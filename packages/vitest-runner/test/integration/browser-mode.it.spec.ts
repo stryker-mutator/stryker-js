@@ -1,9 +1,7 @@
 import path from 'path';
 
 import { assertions, factory, TempTestDirectorySandbox, testInjector } from '@stryker-mutator/test-helpers';
-
 import { TestStatus } from '@stryker-mutator/api/test-runner';
-
 import { expect } from 'chai';
 
 import { createVitestTestRunnerFactory, VitestTestRunner } from '../../src/vitest-test-runner.js';
@@ -13,7 +11,7 @@ const test1 = 'src/heading.component.spec.ts#HeadingComponent should project its
 const test2 = 'src/math.component.spec.ts#my-math should support simple addition';
 const test3 = 'src/math.component.spec.ts#my-math should support simple subtraction';
 
-describe('VitestRunner in browser mode', () => {
+describe.only('VitestRunner in browser mode', () => {
   let sut: VitestTestRunner;
   let sandbox: TempTestDirectorySandbox;
   let options: VitestRunnerOptionsWithStrykerOptions;
