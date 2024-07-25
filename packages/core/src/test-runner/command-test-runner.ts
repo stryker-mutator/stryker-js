@@ -75,6 +75,7 @@ export class CommandTestRunner implements TestRunner {
         objectUtils
           .kill(childProcess.pid)
           .then(() => handleResolve(errorResult(error)))
+          // eslint-disable-next-line @typescript-eslint/use-unknown-in-catch-callback-variable
           .catch(rej);
       });
       childProcess.on('exit', (code) => {

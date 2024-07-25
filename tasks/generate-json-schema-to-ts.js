@@ -49,6 +49,7 @@ async function generateAllSchemas() {
   const files = await glob('packages/!(core)/schema/*.json', { cwd: resolveFromParent() });
   await Promise.all(files.map((fileName) => generate(resolveFromParent(fileName))));
 }
+// eslint-disable-next-line @typescript-eslint/use-unknown-in-catch-callback-variable
 generateAllSchemas().catch((err) => {
   console.error('TS generation failed', err);
   process.exitCode = 1;

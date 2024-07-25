@@ -125,6 +125,7 @@ async function instrument(fromTo, globalNamespace = INSTRUMENTER_CONSTANTS.NAMES
     console.log(`✅ ${toFileName}`);
   });
 }
+// eslint-disable-next-line @typescript-eslint/use-unknown-in-catch-callback-variable
 main().catch((err) => {
   console.error(err);
   process.exitCode = 1;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-type-parameters */
 import { KnownKeys } from './known-keys.js';
 import { Primitive } from './primitive.js';
 

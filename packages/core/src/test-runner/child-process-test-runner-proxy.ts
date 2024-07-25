@@ -61,7 +61,7 @@ export class ChildProcessTestRunnerProxy implements TestRunner {
   public async dispose(): Promise<void> {
     await ExpirableTask.timeout(
       // First let the inner test runner dispose
-      this.worker.proxy.dispose().catch((error) => {
+      this.worker.proxy.dispose().catch((error: unknown) => {
         // It's OK if the child process is already down.
         if (!(error instanceof ChildProcessCrashedError)) {
           // Handle error by logging it. We still want to kill the child process.
