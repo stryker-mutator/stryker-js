@@ -10,6 +10,7 @@ stryker-tmp
 .stryker-tmp
 .stryker-tmp-2
 .nyc_output
+.tap
 .DS_Store
 *.map
 src-generated

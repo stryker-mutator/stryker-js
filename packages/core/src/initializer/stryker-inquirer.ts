@@ -24,7 +24,7 @@ export class StrykerInquirer {
       choices,
       message: 'Are you using one of these frameworks? Then select a preset configuration.',
       name: 'preset',
-      type: 'list',
+      type: 'select',
     });
     return options.find((_) => _.name === answers.preset);
   }
