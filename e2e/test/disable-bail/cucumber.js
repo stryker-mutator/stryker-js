@@ -1,1 +1,3 @@
-module.exports = { default: '--publish-quiet' };
+export default {
+  parallel: 2,
+};

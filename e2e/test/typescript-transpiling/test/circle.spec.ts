@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { getCircumference } from '../src/Circle';
+import { getCircumference } from '../src/circle.js';
 
 describe('Circle', () => {
   it('should have a circumference of 2PI when the radius is 1', () => {

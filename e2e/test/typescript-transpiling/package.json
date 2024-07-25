@@ -4,6 +4,7 @@
   "private": true,
   "description": "A module to perform an integration test",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "clean": "rimraf dist",
     "prebuild": "npm run clean",

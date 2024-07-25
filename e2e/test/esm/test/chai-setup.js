@@ -1,8 +1,8 @@
-import chai from 'chai';
+import { util, Assertion, expect } from 'chai';
 
-chai.util.addMethod(chai.Assertion.prototype, 'toEqual', function (expected) {
-  var obj = chai.util.flag(this, 'object');
-  new chai.Assertion(obj).to.deep.equal(expected);
+util.addMethod(Assertion.prototype, 'toEqual', function (expected) {
+  var obj = util.flag(this, 'object');
+  new Assertion(obj).to.deep.equal(expected);
 });
 
-global.expect = chai.expect;
+global.expect = expect;

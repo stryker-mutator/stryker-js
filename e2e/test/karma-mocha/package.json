@@ -2,6 +2,7 @@
   "name": "karma-mocha",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "description": "A module to perform an integration test",
   "main": "index.js",
   "scripts": {

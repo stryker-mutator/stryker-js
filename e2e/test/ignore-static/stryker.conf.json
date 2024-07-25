@@ -5,8 +5,9 @@
   "reporters": ["json", "html"],
   "ignoreStatic": true,
   "jasmineConfigFile": "jasmine.json",
+  "testRunnerNodeArgs": ["--experimental-vm-modules"],
   "karma": {
-    "configFile": "karma.conf.js"
+    "configFile": "karma.conf.cjs"
   },
   "jest": {
     "configFile": "jest.config.json"

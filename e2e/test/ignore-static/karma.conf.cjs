@@ -6,9 +6,9 @@ module.exports = function (config) {
     basePath: '',
     frameworks: ['vite', 'jasmine'],
     files: [
-      { pattern: 'src/**/*.js', type: 'module', watched: false, served: false },
-      { pattern: 'spec/chai-setup.js', type: 'module', watched: false, served: false },
-      { pattern: 'spec/**/*.spec.js', type: 'module', watched: false, served: false },
+      { pattern: 'src/**/*.js', watched: false, served: false, type: 'module' },
+      { pattern: 'spec/chai-setup.js', watched: false, served: false, type: 'module' },
+      { pattern: 'spec/**/*.spec.js', watched: false, served: false, type: 'module' },
     ],
     reporters: ['progress'],
     port: 9876,

@@ -1,4 +1,4 @@
-import { square } from './square';
+import { square } from './square.js';
 import { expect } from 'chai';
 
 describe('square', () => {

@@ -1,9 +1,4 @@
-if (typeof require === 'function') {
-  loop = require('../src/loop').loop;
-}
-if (typeof expect === 'undefined') {
-  globalThis.expect = require('chai').expect;
-}
+import { loop } from '../src/loop.js';
 
 describe('loop', () => {
   it('should result in 15 for n=5 and a sum function', () => {

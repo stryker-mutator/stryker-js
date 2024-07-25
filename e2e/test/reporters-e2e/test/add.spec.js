@@ -1,9 +1,5 @@
-var addModule = require('../../src/Add');
-var add = addModule.add;
-var addOne = addModule.addOne;
-var isNegativeNumber = addModule.isNegativeNumber;
-var negate = addModule.negate;
-var notCovered = addModule.notCovered;
+import { add, addOne, isNegativeNumber, negate, notCovered } from '../src/add.js';
+import { expect } from 'chai';
 
 describe('Add', function() {
   it('should be able to add two numbers', function() {

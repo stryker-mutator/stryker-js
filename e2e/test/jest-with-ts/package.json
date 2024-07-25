@@ -6,6 +6,7 @@
     "test:unit": "jest",
     "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
+  "type": "module",
   "dependencies": {
     "azure-storage": "^2.10.4"
   },

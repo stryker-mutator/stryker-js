@@ -1,6 +1,7 @@
 {
   "name": "exit-prematurely-dry-run-fails",
   "version": "0.0.0",
+  "type": "module",
   "private": true,
   "description": "A module to perform an integration test",
   "main": "index.js",

@@ -1,4 +1,4 @@
 
-module.exports = function ninjaCatSays(toSay) {
+export default function ninjaCatSays(toSay) {
   return `🐱‍👓 ${toSay}`;
 }

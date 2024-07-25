@@ -1,6 +1,6 @@
-const { Given, When, Then } = require('@cucumber/cucumber');
-const { expect } = require('chai');
-const { MyMath } = require('../../src/math');
+import { Given, When, Then } from '@cucumber/cucumber';
+import { expect } from 'chai';
+import { MyMath } from '../../src/math.js';
 
 const myMath = new MyMath();
 
