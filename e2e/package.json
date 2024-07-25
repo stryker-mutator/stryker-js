@@ -59,7 +59,7 @@
     "ts-jest": "29.1.2",
     "ts-loader": "9.5.1",
     "ts-node": "10.9.2",
-    "tslib": "2.6.2",
+    "tslib": "2.6.3",
     "typescript": "5.4.5",
     "vite": "5.2.11",
     "vitest": "1.5.0",
