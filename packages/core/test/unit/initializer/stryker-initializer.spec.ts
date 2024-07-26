@@ -102,11 +102,11 @@ describe(StrykerInitializer.name, () => {
         inquirerPrompt.getCall(5).args[0],
       ] as Question[];
 
-      expect(promptPreset.type).to.eq('list');
+      expect(promptPreset.type).to.eq('select');
       expect(promptPreset.name).to.eq('preset');
       const expectedPresetChoices: ListChoices = [{ value: 'awesome-preset' }, new inquirer.Separator(), { value: 'None/other' }];
       expect((promptPreset as ListQuestion).choices).to.deep.eq(expectedPresetChoices);
-      expect(promptTestRunner.type).to.eq('list');
+      expect(promptTestRunner.type).to.eq('select');
       expect(promptTestRunner.name).to.eq('testRunner');
       const expectedTestRunnerChoices: ListChoices = [
         { value: 'awesome' },
@@ -128,10 +128,10 @@ describe(StrykerInitializer.name, () => {
         { value: 'dashboard', checked: false },
       ];
       expect((promptReporters as ListQuestion).choices).to.deep.eq(expectedReporterChoices);
-      expect(promptPackageManagers.type).to.eq('list');
+      expect(promptPackageManagers.type).to.eq('select');
       const expectedPackageManagerChoices: ListChoices = [{ value: 'npm' }, { value: 'yarn' }, { value: 'pnpm' }];
       expect((promptPackageManagers as ListQuestion).choices).to.deep.eq(expectedPackageManagerChoices);
-      expect(promptConfigTypes.type).to.eq('list');
+      expect(promptConfigTypes.type).to.eq('select');
       const expectedConfigFormatChoices: ListChoices = [{ value: 'JSON' }, { value: 'JavaScript' }];
       expect((promptConfigTypes as ListQuestion).choices).to.deep.eq(expectedConfigFormatChoices);
     });
@@ -221,14 +221,14 @@ describe(StrykerInitializer.name, () => {
         inquirerPrompt.getCall(1).args[0],
         inquirerPrompt.getCall(2).args[0],
       ] as Question[];
-      expect(promptPreset.type).to.eq('list');
+      expect(promptPreset.type).to.eq('select');
       expect(promptPreset.name).to.eq('preset');
       const expectedPresetChoices: ListChoices = [{ value: 'awesome-preset' }, new inquirer.Separator(), { value: 'None/other' }];
       expect((promptPreset as ListQuestion).choices).to.deep.eq(expectedPresetChoices);
-      expect(promptConfigType.type).to.eq('list');
+      expect(promptConfigType.type).to.eq('select');
       const expectedConfigChoices: ListChoices = [{ value: 'JSON' }, { value: 'JavaScript' }];
       expect((promptConfigType as ListQuestion).choices).to.deep.eq(expectedConfigChoices);
-      expect(promptPackageManager.type).to.eq('list');
+      expect(promptPackageManager.type).to.eq('select');
       const expectedPackageManagerChoices: ListChoices = [{ value: 'npm' }, { value: 'yarn' }, { value: 'pnpm' }];
       expect((promptPackageManager as ListQuestion).choices).to.deep.eq(expectedPackageManagerChoices);
     });

@@ -41,7 +41,7 @@ export class StrykerInquirer {
         message:
           'Which test runner do you want to use? If your test runner isn\'t listed here, you can choose "command" (it uses your `npm test` command, but will come with a big performance penalty)',
         name: 'testRunner',
-        type: 'list',
+        type: 'select',
       });
       return options.find(({ name }) => name === answers.testRunner) ?? { name: CommandTestRunner.runnerName, pkg: null };
     } else {
@@ -79,7 +79,7 @@ export class StrykerInquirer {
       default: ['npm'],
       message: 'Which package manager do you want to use?',
       name: 'packageManager',
-      type: 'list',
+      type: 'select',
     });
     return options.find(({ name }) => name === answers.packageManager)!;
   }
@@ -92,7 +92,7 @@ export class StrykerInquirer {
       default: json,
       message: 'What file type do you want for your config file?',
       name: 'configType',
-      type: 'list',
+      type: 'select',
     });
     return answers.configType === json;
   }

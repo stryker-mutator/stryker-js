@@ -15,7 +15,7 @@ export class SvelteInitializer implements CustomInitializer {
       choices: testRunnerChoices,
       message: 'Which test runner are you using?',
       name: 'testRunner',
-      type: 'list',
+      type: 'select',
     });
     if (testRunner === 'jest') {
       const { nativeEsm } = await inquirer.prompt<{ nativeEsm: boolean }>({

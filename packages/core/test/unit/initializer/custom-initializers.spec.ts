@@ -190,7 +190,7 @@ describe('CustomInitializers', () => {
         choices: [{ value: 'jest' }, { value: 'vitest' }],
         message: 'Which test runner are you using?',
         name: 'testRunner',
-        type: 'list',
+        type: 'select',
       });
     });
 
