@@ -20,10 +20,11 @@ import { GitignoreWriter } from '../../../src/initializer/gitignore-writer.js';
 import { SUPPORTED_CONFIG_FILE_NAMES } from '../../../src/config/config-file-formats.js';
 import { CustomInitializer, CustomInitializerConfiguration } from '../../../src/initializer/custom-initializers/custom-initializer.js';
 import { PackageInfo } from '../../../src/initializer/package-info.js';
+import { ListChoices, InputQuestion, ListQuestion, Question, CheckboxChoices } from '../../../src/initializer/types.js';
 
 describe(StrykerInitializer.name, () => {
   let sut: StrykerInitializer;
-  let inquirerPrompt: sinon.SinonStub;
+  let inquirerPrompt: sinon.SinonStubbedMember<typeof inquirer.prompt>;
   let childExecSync: sinon.SinonStub;
   let childExec: sinon.SinonStub;
   let fsWriteFile: sinon.SinonStubbedMember<typeof fs.promises.writeFile>;
@@ -92,35 +93,47 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
 
       expect(inquirerPrompt).callCount(6);
-      const [
-        promptPreset,
-        promptTestRunner,
-        promptBuildCommand,
-        promptReporters,
-        promptPackageManagers,
-        promptConfigTypes,
-      ]: inquirer.ui.FetchedQuestion[] = [
+      const [promptPreset, promptTestRunner, promptBuildCommand, promptReporters, promptPackageManagers, promptConfigTypes] = [
         inquirerPrompt.getCall(0).args[0],
         inquirerPrompt.getCall(1).args[0],
         inquirerPrompt.getCall(2).args[0],
         inquirerPrompt.getCall(3).args[0],
         inquirerPrompt.getCall(4).args[0],
         inquirerPrompt.getCall(5).args[0],
-      ];
+      ] as Question[];
 
-      expect(promptPreset.type).to.eq('list');
+      expect(promptPreset.type).to.eq('select');
       expect(promptPreset.name).to.eq('preset');
-      expect(promptPreset.choices).to.deep.eq(['awesome-preset', new inquirer.Separator(), 'None/other']);
-      expect(promptTestRunner.type).to.eq('list');
+      const expectedPresetChoices: ListChoices = [{ value: 'awesome-preset' }, new inquirer.Separator(), { value: 'None/other' }];
+      expect((promptPreset as ListQuestion).choices).to.deep.eq(expectedPresetChoices);
+      expect(promptTestRunner.type).to.eq('select');
       expect(promptTestRunner.name).to.eq('testRunner');
-      expect(promptTestRunner.choices).to.deep.eq(['awesome', 'hyper', 'ghost', 'jest', new inquirer.Separator(), 'command']);
+      const expectedTestRunnerChoices: ListChoices = [
+        { value: 'awesome' },
+        { value: 'hyper' },
+        { value: 'ghost' },
+        { value: 'jest' },
+        new inquirer.Separator(),
+        { value: 'command' },
+      ];
+      expect((promptTestRunner as ListQuestion).choices).to.deep.eq(expectedTestRunnerChoices);
       expect(promptBuildCommand.name).to.eq('buildCommand');
       expect(promptReporters.type).to.eq('checkbox');
-      expect(promptReporters.choices).to.deep.eq(['dimension', 'mars', 'html', 'clear-text', 'progress', 'dashboard']);
-      expect(promptPackageManagers.type).to.eq('list');
-      expect(promptPackageManagers.choices).to.deep.eq(['npm', 'yarn', 'pnpm']);
-      expect(promptConfigTypes.type).to.eq('list');
-      expect(promptConfigTypes.choices).to.deep.eq(['JSON', 'JavaScript']);
+      const expectedReporterChoices: CheckboxChoices = [
+        { value: 'dimension', checked: false },
+        { value: 'mars', checked: false },
+        { value: 'html', checked: true },
+        { value: 'clear-text', checked: true },
+        { value: 'progress', checked: true },
+        { value: 'dashboard', checked: false },
+      ];
+      expect((promptReporters as ListQuestion).choices).to.deep.eq(expectedReporterChoices);
+      expect(promptPackageManagers.type).to.eq('select');
+      const expectedPackageManagerChoices: ListChoices = [{ value: 'npm' }, { value: 'yarn' }, { value: 'pnpm' }];
+      expect((promptPackageManagers as ListQuestion).choices).to.deep.eq(expectedPackageManagerChoices);
+      expect(promptConfigTypes.type).to.eq('select');
+      const expectedConfigFormatChoices: ListChoices = [{ value: 'JSON' }, { value: 'JavaScript' }];
+      expect((promptConfigTypes as ListQuestion).choices).to.deep.eq(expectedConfigFormatChoices);
     });
 
     it('should immediately complete when a preset and package manager is chosen', async () => {
@@ -203,18 +216,21 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       expect(inquirerPrompt).callCount(3);
-      const [promptPreset, promptConfigType, promptPackageManager]: inquirer.ui.FetchedQuestion[] = [
+      const [promptPreset, promptConfigType, promptPackageManager] = [
         inquirerPrompt.getCall(0).args[0],
         inquirerPrompt.getCall(1).args[0],
         inquirerPrompt.getCall(2).args[0],
-      ];
-      expect(promptPreset.type).to.eq('list');
+      ] as Question[];
+      expect(promptPreset.type).to.eq('select');
       expect(promptPreset.name).to.eq('preset');
-      expect(promptPreset.choices).to.deep.eq(['awesome-preset', new inquirer.Separator(), 'None/other']);
-      expect(promptConfigType.type).to.eq('list');
-      expect(promptConfigType.choices).to.deep.eq(['JSON', 'JavaScript']);
-      expect(promptPackageManager.type).to.eq('list');
-      expect(promptPackageManager.choices).to.deep.eq(['npm', 'yarn', 'pnpm']);
+      const expectedPresetChoices: ListChoices = [{ value: 'awesome-preset' }, new inquirer.Separator(), { value: 'None/other' }];
+      expect((promptPreset as ListQuestion).choices).to.deep.eq(expectedPresetChoices);
+      expect(promptConfigType.type).to.eq('select');
+      const expectedConfigChoices: ListChoices = [{ value: 'JSON' }, { value: 'JavaScript' }];
+      expect((promptConfigType as ListQuestion).choices).to.deep.eq(expectedConfigChoices);
+      expect(promptPackageManager.type).to.eq('select');
+      const expectedPackageManagerChoices: ListChoices = [{ value: 'npm' }, { value: 'yarn' }, { value: 'pnpm' }];
+      expect((promptPackageManager as ListQuestion).choices).to.deep.eq(expectedPackageManagerChoices);
     });
 
     it('should install any additional dependencies', async () => {
@@ -324,9 +340,10 @@ describe(StrykerInitializer.name, () => {
 
       await sut.initialize();
 
-      const promptBuildCommand = inquirerPrompt.getCalls().filter((call) => call.args[0].name === 'buildCommand');
+      const promptBuildCommand = inquirerPrompt.getCalls().filter((call) => (call.args[0] as Question).name === 'buildCommand');
       expect(promptBuildCommand.length === 1);
-      expect(promptBuildCommand[0].args[0].when).to.be.false;
+      const buildQuestion = promptBuildCommand[0].args[0] as InputQuestion;
+      expect(buildQuestion.when).to.be.false;
       expect(fs.promises.writeFile).calledWith(
         'stryker.config.json',
         sinon.match((val) => !val.includes('"buildCommand": ')),

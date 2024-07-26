@@ -74,7 +74,7 @@ describe('Coverage analysis', () => {
     });
     it('should provide expected in browser mode', async () => {
       strykerOptions.vitest = { configFile: 'vitest.browser.config.js' };
-      await actAssertPerTest();
+      await actAssertPerTest(12);
     });
   });
 
@@ -94,13 +94,13 @@ describe('Coverage analysis', () => {
     });
     describe('and mocha test framework', () => {
       beforeEach(() => {
-        karmaConfigOverrides.frameworks = ['chai', 'mocha'];
+        karmaConfigOverrides.frameworks = ['mocha', 'vite'];
       });
       describeTests();
     });
     describe('and jasmine test framework', () => {
       beforeEach(() => {
-        karmaConfigOverrides.frameworks = ['chai', 'jasmine'];
+        karmaConfigOverrides.frameworks = ['jasmine', 'vite'];
       });
       describeTests();
     });

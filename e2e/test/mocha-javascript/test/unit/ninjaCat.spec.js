@@ -1,5 +1,5 @@
-const ninjaCatSays = require('../../src/🐱‍👓ninja.cat');
-const { expect } = require('chai');
+import ninjaCatSays from '../../src/🐱‍👓ninja.cat.js';
+import { expect } from 'chai';
 
 describe('🐱‍👓', () => {
   describe('ninjaCatSays', () => {

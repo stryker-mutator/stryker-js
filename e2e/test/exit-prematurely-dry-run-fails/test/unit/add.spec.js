@@ -1,5 +1,5 @@
-const { add } = require('../../src/add');
-const { expect } = require('chai');
+import { add } from '../../src/add.js';
+import { expect } from 'chai';
 
 describe('add', () => {
 

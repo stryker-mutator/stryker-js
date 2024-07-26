@@ -1,9 +1,7 @@
 import path from 'path';
 
 import { assertions, factory, TempTestDirectorySandbox, testInjector } from '@stryker-mutator/test-helpers';
-
 import { TestStatus } from '@stryker-mutator/api/test-runner';
-
 import { expect } from 'chai';
 
 import { createVitestTestRunnerFactory, VitestTestRunner } from '../../src/vitest-test-runner.js';

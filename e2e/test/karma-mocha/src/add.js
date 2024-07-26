@@ -1,21 +1,21 @@
-var add = function(num1, num2) {
+export function add(num1, num2) {
   return num1 + num2;
 };
 
-var addOne = function(number) {
+export function addOne(number) {
   number++;
   return number;
 };
 
-var negate = function(number) {
+export function negate(number) {
   return -number;
 };
 
-var notCovered = function(number) {
+export function notCovered(number) {
   return number > 10;
 };
 
-var isNegativeNumber = function(number) {
+export function isNegativeNumber(number) {
   var isNegative = false;
   if(number < 0){
     isNegative = true;

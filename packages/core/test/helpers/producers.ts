@@ -141,6 +141,7 @@ export function createDirent(overrides?: Partial<CreateDirentOptions>): Dirent {
   return {
     isBlockDevice: dummy,
     isCharacterDevice: dummy,
+    parentPath: '',
     isDirectory: () => isDirectory,
     isFIFO: dummy,
     isFile: () => !isDirectory,

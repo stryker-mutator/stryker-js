@@ -1,10 +1,5 @@
-var expect = require('chai').expect;
-var addModule = require('../src/Add');
-var add = addModule.add;
-var addOne = addModule.addOne;
-var isNegativeNumber = addModule.isNegativeNumber;
-var negate = addModule.negate;
-var notCovered = addModule.notCovered;
+import { expect } from 'chai';
+import { add, addOne, isNegativeNumber, negate, notCovered } from '../src/Add.js';
 
 console.log(process.env.path);
 

@@ -16,7 +16,7 @@ import { TypescriptCheckerOptionsWithStrykerOptions } from './typescript-checker
 import { HybridFileSystem } from './fs/hybrid-file-system.js';
 
 typescriptCheckerLoggerFactory.inject = tokens(commonTokens.getLogger, commonTokens.target);
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-unsafe-function-type
 function typescriptCheckerLoggerFactory(loggerFactory: LoggerFactoryMethod, target: Function | undefined) {
   const targetName = target?.name ?? TypescriptChecker.name;
   const category = targetName === TypescriptChecker.name ? TypescriptChecker.name : `${TypescriptChecker.name}.${targetName}`;

@@ -1,5 +1,4 @@
-var circleModule = require('../../src/Circle');
-var getCircumference = circleModule.getCircumference;
+import { getCircumference } from '../../src/Circle.js';
 
 describe('Circle', function() {
   it('should have a circumference of 2PI when the radius is 1', function() {

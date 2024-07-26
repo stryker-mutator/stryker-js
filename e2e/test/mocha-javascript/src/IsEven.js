@@ -1,5 +1,5 @@
 
-module.exports.isEven = function(number) {
+export function isEven(number) {
   // Note: Implemented with a case switch statement, in order to reproduce this issue:
   // https://github.com/stryker-mutator/stryker-js/issues/2469#issuecomment-690303849
   let mod2 = number % 2; 

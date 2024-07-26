@@ -15,6 +15,12 @@ export class TempTestDirectorySandbox {
   private originalWorkingDir: string | undefined;
   private readonly from;
   private readonly soft;
+
+  /**
+   *
+   * @param from The directory to copy to the temp dir
+   * @param param1 The options for this sandbox. `soft` means that the `from` directory is the actual temp directory will not actually be copied.
+   */
   constructor(from: string, { soft = false }: { soft?: boolean } = {}) {
     this.from = path.resolve('testResources', from);
     this.soft = soft;

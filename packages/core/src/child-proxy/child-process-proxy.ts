@@ -153,7 +153,7 @@ export class ChildProcessProxy<T> implements Disposable {
               methodName,
             });
           })
-          .catch((error) => {
+          .catch((error: unknown) => {
             workerTask.reject(error);
           });
         return workerTask.promise;

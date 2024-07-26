@@ -3,7 +3,7 @@ import path from 'path';
 import type { execaCommand } from 'execa';
 import { npmRunPathEnv } from 'npm-run-path';
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { normalizeWhitespaces, I } from '@stryker-mutator/util';
+import { normalizeWhitespaces, I, isErrnoException } from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 import { tokens, commonTokens, Disposable } from '@stryker-mutator/api/plugin';
 
@@ -107,19 +107,17 @@ export class Sandbox implements Disposable {
       if (nodeModulesList.length > 0) {
         for (const nodeModules of nodeModulesList) {
           this.log.debug(`Create symlink from ${path.resolve(nodeModules)} to ${path.join(this.workingDirectory, nodeModules)}`);
-          await fileUtils
-            .symlinkJunction(path.resolve(nodeModules), path.join(this.workingDirectory, nodeModules))
-            .catch((error: NodeJS.ErrnoException) => {
-              if (error.code === 'EEXIST') {
-                this.log.warn(
-                  normalizeWhitespaces(`Could not symlink "${nodeModules}" in sandbox directory,
+          await fileUtils.symlinkJunction(path.resolve(nodeModules), path.join(this.workingDirectory, nodeModules)).catch((error: unknown) => {
+            if (isErrnoException(error) && error.code === 'EEXIST') {
+              this.log.warn(
+                normalizeWhitespaces(`Could not symlink "${nodeModules}" in sandbox directory,
               it is already created in the sandbox. Please remove the node_modules from your sandbox files.
               Alternatively, set \`symlinkNodeModules\` to \`false\` to disable this warning.`),
-                );
-              } else {
-                this.log.warn(`Unexpected error while trying to symlink "${nodeModules}" in sandbox directory.`, error);
-              }
-            });
+              );
+            } else {
+              this.log.warn(`Unexpected error while trying to symlink "${nodeModules}" in sandbox directory.`, error);
+            }
+          });
         }
       } else {
         this.log.debug(`Could not find a node_modules folder to symlink into the sandbox directory. Search "${basePath}" and its parent directories`);

@@ -1,6 +1,7 @@
-const chai = require('chai');
+import { util, Assertion, expect } from 'chai';
 
-chai.util.addMethod(chai.Assertion.prototype, 'toEqual', function (expected) {
-  var obj = chai.util.flag(this, 'object');
-  new chai.Assertion(obj).to.deep.equal(expected);
+util.addMethod(Assertion.prototype, 'toEqual', function (expected) {
+  var obj = util.flag(this, 'object');
+  new Assertion(obj).to.deep.equal(expected);
 });
+globalThis.expect = expect;

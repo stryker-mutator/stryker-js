@@ -1,9 +1,9 @@
 import { promises as fsPromises } from 'fs';
 
-import chai, { expect } from 'chai';
+import { use, expect } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 describe('Verify stryker has handled dry run failure correctly', () => {
   /**
    * @type {string}

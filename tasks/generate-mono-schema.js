@@ -28,4 +28,5 @@ async function buildMonoSchema() {
   await writeFile(outFile, JSON.stringify(monoSchema, null, 2));
   console.info(`✅ Merged ${schemaFiles.length} schemas into ${path.relative(resolveFromParent(), outFile)}`);
 }
+// eslint-disable-next-line @typescript-eslint/use-unknown-in-catch-callback-variable
 buildMonoSchema().catch(console.error);

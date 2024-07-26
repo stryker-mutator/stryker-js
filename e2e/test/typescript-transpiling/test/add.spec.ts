@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { add, addOne, isNegativeNumber, negate } from '../src/Add';
+import { add, addOne, isNegativeNumber, negate } from '../src/add.js';
 
 describe('Add', () => {
   it('should be able to add two numbers', () => {

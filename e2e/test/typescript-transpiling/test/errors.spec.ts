@@ -1,4 +1,4 @@
-import { InjectionError } from '../src/Errors';
+import { InjectionError } from '../src/errors.js';
 import { expect } from 'chai';
 
 describe(InjectionError.name, () => {
