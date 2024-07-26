@@ -11,7 +11,7 @@ const test1 = 'src/heading.component.spec.ts#HeadingComponent should project its
 const test2 = 'src/math.component.spec.ts#my-math should support simple addition';
 const test3 = 'src/math.component.spec.ts#my-math should support simple subtraction';
 
-describe.only('VitestRunner in browser mode', () => {
+describe('VitestRunner in browser mode', () => {
   let sut: VitestTestRunner;
   let sandbox: TempTestDirectorySandbox;
   let options: VitestRunnerOptionsWithStrykerOptions;
