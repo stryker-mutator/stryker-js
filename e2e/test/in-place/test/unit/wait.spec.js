@@ -3,7 +3,7 @@ import path from 'path';
 
 describe('wait', () => {
   it('should wait until `.lock` is removed', async () => {
-    while (existsSync(path.resolve(import.meta.dirname, '..', '..', '.lock'))) {
+    while (existsSync(new URL('../../.lock', import.meta.url))) {
       await sleep(10);
     }
   });
