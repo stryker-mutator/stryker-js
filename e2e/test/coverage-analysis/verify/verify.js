@@ -100,7 +100,7 @@ describe('Coverage analysis', () => {
     });
     describe('and jasmine test framework', () => {
       beforeEach(() => {
-        karmaConfigOverrides.frameworks = ['jasmine'];
+        karmaConfigOverrides.frameworks = ['jasmine', 'vite'];
       });
       describeTests();
     });
