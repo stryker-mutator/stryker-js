@@ -1,5 +1,5 @@
 import 'source-map-support/register.js';
-import chai from 'chai';
+import { use } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinonChai from 'sinon-chai';
 import sinon from 'sinon';
@@ -7,8 +7,8 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 
 import { state } from '../src/jest-plugins/messaging.cjs';
 
-chai.use(sinonChai);
-chai.use(chaiAsPromised);
+use(sinonChai);
+use(chaiAsPromised);
 const initialCwd = process.cwd();
 export const originalProcessExit = process.exit;
 

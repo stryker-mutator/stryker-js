@@ -1,4 +1,3 @@
-import { URL } from 'url';
 import fs from 'fs';
 
 import { MochaOptions } from '../src-generated/mocha-runner-options.js';
