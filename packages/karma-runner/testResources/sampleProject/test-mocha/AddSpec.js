@@ -1,3 +1,8 @@
+function equal (actual, expected) {
+  if (actual !== expected) {
+    throw new Error(`Expected ${expected} but got ${actual}`);
+  }
+}
 describe('Add', function () {
   it('should be able to add two numbers', function (done) {
     var num1 = 2;
@@ -6,7 +11,7 @@ describe('Add', function () {
 
     var actual = add(num1, num2);
 
-    expect(actual).eq(expected);
+    equal(actual, expected);
     window.setTimeout(function () {
       done();
     }, 20);
@@ -18,7 +23,7 @@ describe('Add', function () {
 
     var actual = addOne(number);
 
-    expect(actual).eq(expected);
+    equal(actual, expected);
   });
 
   it('should be able negate a number', function () {
@@ -27,7 +32,7 @@ describe('Add', function () {
 
     var actual = negate(number);
 
-    expect(actual).eq(expected);
+    equal(actual, expected);
   });
 
   it('should be able to recognize a negative number', function () {
@@ -35,7 +40,7 @@ describe('Add', function () {
 
     var isNegative = isNegativeNumber(number);
 
-    expect(isNegative).eq(true);
+    equal(isNegative, true);
   });
 
   it('should be able to recognize that 0 is not a negative number', function () {
@@ -43,6 +48,6 @@ describe('Add', function () {
 
     var isNegative = isNegativeNumber(number);
 
-    expect(isNegative).eq(false);
+    equal(isNegative, false);
   });
 });

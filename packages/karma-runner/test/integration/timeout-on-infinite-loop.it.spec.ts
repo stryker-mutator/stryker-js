@@ -10,7 +10,7 @@ describe('Infinite loop', () => {
     const karmaOptions = {
       config: {
         browsers: ['ChromeHeadless'],
-        frameworks: ['mocha', 'chai'],
+        frameworks: ['mocha'],
         files: [resolveTestResource('infinite-loop', 'infinite-loop.instrumented.js'), resolveTestResource('infinite-loop', 'infinite-loop.spec.js')],
       },
     };
