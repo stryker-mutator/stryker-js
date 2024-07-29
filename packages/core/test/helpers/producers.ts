@@ -73,12 +73,14 @@ export function createTestRunnerPoolMock(): sinon.SinonStubbedInstance<I<Pool<Te
   };
 }
 
-export function createCheckerPoolMock(): sinon.SinonStubbedInstance<I<Pool<I<CheckerFacade>>>> {
-  return {
+export function createCheckerPoolMock() {
+  const pool: sinon.SinonStubbedInstance<I<Pool<I<CheckerFacade>>>> = {
     dispose: sinon.stub(),
     init: sinon.stub(),
     schedule: sinon.stub<any>(),
   };
+  pool.dispose.resolves();
+  return pool;
 }
 
 export const logger = (): sinon.SinonStubbedInstance<Logger> => {
