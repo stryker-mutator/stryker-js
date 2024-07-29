@@ -26,7 +26,8 @@ export class AngularProjectStarter implements ProjectStarter {
     private readonly requireFromCwd: typeof requireResolve,
   ) {}
 
-  public start(): Promise<StartedProject> {
+  // eslint-disable-next-line @typescript-eslint/require-await -- Any thrown errors need to be translated to rejections
+  public async start(): Promise<StartedProject> {
     this.verifyAngularCliVersion();
     const { ngConfig } = (this.options as KarmaRunnerOptionsWithStrykerOptions).karma;
 
@@ -50,9 +51,9 @@ export class AngularProjectStarter implements ProjectStarter {
     }
     const actualCommand = `ng ${cliArgs.join(' ')}`;
     this.logger.debug(`Starting Angular tests: ${actualCommand}`);
-    return Promise.resolve({
+    return {
       exitPromise: cli({ cliArgs }),
-    });
+    };
   }
   private verifyAngularCliVersion() {
     const pkg = this.requireFromCwd('@angular/cli/package') as { version: string };
