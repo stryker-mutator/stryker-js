@@ -111,7 +111,7 @@ describe(TestCoverage.name, () => {
       expect(actualCoverage.hitsByMutantId.get('2')).eq(200);
     });
 
-    it('should allow log when a non-existing test is presented (#2485)', async () => {
+    it('should allow log when a non-existing test is presented (#2485)', () => {
       // Arrange
       const dryRunResult = factory.completeDryRunResult({
         tests: [factory.successTestResult({ id: 'spec1', timeSpentMs: 20 })], // test result for spec2 is missing

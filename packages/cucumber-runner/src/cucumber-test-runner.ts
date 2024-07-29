@@ -203,9 +203,9 @@ export class CucumberTestRunner implements TestRunner {
       return Object.entries(
         testFilter?.reduce<Record<string, string[]>>((acc, testId) => {
           const [fileName, lineNumber] = testId.split(':');
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+
           const lines = acc[fileName] ?? (acc[fileName] = []);
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+
           lines.push(lineNumber);
           return acc;
         }, {}),

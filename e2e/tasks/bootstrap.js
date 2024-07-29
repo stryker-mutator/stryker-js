@@ -35,7 +35,7 @@ from(dirs)
         try {
           await execa('npm', [command], { timeout: 500000, cwd, stdio: 'pipe' });
         } catch (err) {
-          throw new Error(`Error running "npm ${command}" in ${cwd}`, { cause: err });
+          throw new Error(`Error running "npm ${command}" in ${cwd.href}`, { cause: err });
         }
       }
       return dir;

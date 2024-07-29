@@ -7,7 +7,7 @@ import { commonTokens, PluginKind, Plugin } from '@stryker-mutator/api/plugin';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { Task } from '@stryker-mutator/util';
+import { errorToString, Task } from '@stryker-mutator/util';
 import type { createInjector, Injector } from 'typed-inject';
 
 import { ChildProcessContext, ChildProcessProxyWorker } from '../../../src/child-proxy/child-process-proxy-worker.js';
@@ -159,7 +159,7 @@ describe(ChildProcessProxyWorker.name, () => {
       await processOnMessage(initMessage);
       const error = new Error('foobar');
       processOnStub.withArgs('unhandledRejection').callArgWith(1, error);
-      expect(logMock.debug).calledWith(`UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 1): ${error}`);
+      expect(logMock.debug).calledWith(`UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 1): ${errorToString(error)}`);
     });
 
     it('should handle rejectionHandled events', async () => {

@@ -6,7 +6,7 @@ import { testInjector, tick } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { Config, ConfigOptions, ClientOptions } from 'karma';
 import sinon from 'sinon';
-import { requireResolve } from '@stryker-mutator/util';
+import type { requireResolve } from '@stryker-mutator/util';
 
 import { configureKarma as sut } from '../../../src/karma-plugins/stryker-karma.conf.js';
 import { strykerReporterFactory } from '../../../src/karma-plugins/stryker-reporter.js';

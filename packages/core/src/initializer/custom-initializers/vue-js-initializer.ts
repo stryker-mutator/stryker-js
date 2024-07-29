@@ -17,11 +17,11 @@ export class VueJsInitializer implements CustomInitializer {
     reporters: ['progress', 'clear-text', 'html'],
   };
 
-  public async createConfig(): Promise<CustomInitializerConfiguration> {
-    return {
+  public createConfig(): Promise<CustomInitializerConfiguration> {
+    return Promise.resolve({
       config: this.vitestConf,
       dependencies: ['@stryker-mutator/vitest-runner'],
       guideUrl,
-    };
+    });
   }
 }

@@ -57,7 +57,6 @@ export class TSConfigPreprocessor implements FilePreprocessor {
       const tsconfigFile = project.files.get(tsconfigFileName);
       if (tsconfigFile) {
         this.log.debug('Rewriting file %s', tsconfigFile);
-        // eslint-disable-next-line import/no-extraneous-dependencies
         const { default: ts } = await import('typescript');
         const { config }: { config?: TSConfig } = ts.parseConfigFileTextToJson(tsconfigFileName, await tsconfigFile.readContent());
         if (config) {
@@ -99,7 +98,6 @@ export class TSConfigPreprocessor implements FilePreprocessor {
   }
 
   private async rewriteProjectReferences(project: Project, config: TSConfig, originTSConfigFileName: string): Promise<void> {
-    // eslint-disable-next-line import/no-extraneous-dependencies
     const { default: ts } = await import('typescript');
     if (Array.isArray(config.references)) {
       for (const reference of config.references) {

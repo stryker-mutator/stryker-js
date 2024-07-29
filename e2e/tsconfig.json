@@ -16,5 +16,13 @@
     "target": "ES2022",
     "lib": ["ES2022"]
   },
-  "include": ["tasks", "test/*/verify/*.js", "test/*/stryker-plugins/**/*.js", "test/*/stryker-plugins/**/*.ts", "helpers.js"]
+  "include": [
+    "tasks",
+    "test/*/verify/*.js",
+    "test/*/stryker-plugins/**/*.js",
+    "test/*/stryker-plugins/**/*.ts",
+    "helpers.js",
+    "test/*/*.mjs",
+    "eslint.config.js"
+  ]
 }

@@ -75,7 +75,6 @@ describe('fileUtils', () => {
     const fileNames = await glob('**/*', { cwd: dir, nodir: true });
     const files = Object.fromEntries(
       await Promise.all(
-        // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
         fileNames
           .sort()
           .map((fileName) => path.resolve(dir, fileName))

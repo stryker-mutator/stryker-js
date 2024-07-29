@@ -17,19 +17,19 @@ describe('Plugins integration', () => {
       pluginCreator = testInjector.injector.provideValue(coreTokens.pluginsByKind, plugins.pluginsByKind).injectClass(PluginCreator);
     });
 
-    it('should be able to load a "ValuePlugin"', async () => {
+    it('should be able to load a "ValuePlugin"', () => {
       const plugin = pluginCreator.create(PluginKind.Ignore, 'console.debug');
       expect(plugin).ok;
       expect(plugin.shouldIgnore).a('function');
     });
 
-    it('should be able to load a "FactoryPlugin"', async () => {
+    it('should be able to load a "FactoryPlugin"', () => {
       const plugin = pluginCreator.create(PluginKind.TestRunner, 'lazy');
       expect(plugin).ok;
       expect(plugin.capabilities).a('function');
     });
 
-    it('should be able to load a "ClassPlugin"', async () => {
+    it('should be able to load a "ClassPlugin"', () => {
       const plugin = pluginCreator.create(PluginKind.Reporter, 'console');
       expect(plugin).ok;
       expect(plugin.onMutationTestReportReady).a('function');

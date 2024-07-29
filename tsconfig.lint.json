@@ -11,6 +11,8 @@
     "packages/*/test",
     "packages/jest-runner/jest-env/*.js",
     "packages/*/stryker.conf.js",
-    "tasks/**/*.js"
+    "packages/api/core.d.ts",
+    "tasks/**/*.js",
+    "eslint.config.js"
   ]
 }

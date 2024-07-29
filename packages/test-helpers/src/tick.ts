@@ -6,6 +6,7 @@ import { promisify } from 'util';
  */
 export async function tick(n = 1): Promise<void> {
   const nextTickAsPromised = promisify(process.nextTick);
+
   for await (const _ of Array.from({ length: n })) {
     await nextTickAsPromised();
   }

@@ -91,7 +91,7 @@ describe(MochaTestRunner.name, () => {
 
     it('should handle requires and collect root hooks', async () => {
       const requires = ['test/setup.js'];
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
+
       const expectedRootHooks = { beforeEach() {} };
       mochaOptionsLoaderMock.load.returns(createMochaOptions({ require: requires }));
       mochaAdapterMock.handleRequires.resolves(expectedRootHooks);

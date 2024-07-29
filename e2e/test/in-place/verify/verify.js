@@ -42,11 +42,19 @@ describe('in place', () => {
     let addJSMutatedContent;
     await fsPromises.writeFile(rootResolve('.lock'), ''); // this will lock the test run completion
     const onGoingStrykerRun = execa('node', [path.resolve('..', '..', 'node_modules', '.bin', 'stryker'), 'run']);
-    onGoingStrykerRun.stdout.on('data', async (data) => {
+    onGoingStrykerRun.stdout.on('data', (data) => {
       if (data.toString().includes('Starting initial test run')) {
-        addJSMutatedContent = await readAddJS();
-        // Now, mr bond, it is time to die!
-        onGoingStrykerRun.kill();
+        readAddJS()
+          .then((content) => {
+            addJSMutatedContent = content;
+          })
+          .catch((err) => {
+            expect.fail(err);
+          })
+          .finally(() => {
+            // No, mr bond, it is time to die!
+            onGoingStrykerRun.kill();
+          });
       }
     });
     // Act

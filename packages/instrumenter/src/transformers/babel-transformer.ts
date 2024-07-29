@@ -1,9 +1,7 @@
 import babel, { type NodePath, type types } from '@babel/core';
 
-/* eslint-disable import/no-duplicates */
 // @ts-expect-error The babel types don't define "File" yet
 import { File } from '@babel/core';
-/* eslint-enable import/no-duplicates */
 
 import { isImportDeclaration, isTypeNode, locationIncluded, locationOverlaps, placeHeaderIfNeeded } from '../util/syntax-helpers.js';
 import { ScriptFormat } from '../syntax/index.js';

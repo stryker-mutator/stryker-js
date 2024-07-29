@@ -3,8 +3,6 @@ import type { Circus } from '@jest/types';
 // @ts-expect-error see https://github.com/microsoft/TypeScript/issues/49721#issuecomment-1319854183
 import type { InstrumenterContext } from '@stryker-mutator/api/core';
 
-import { satisfies } from 'semver';
-
 import { state } from './messaging.cjs';
 
 function fullNameDescribeBlock(describe: Circus.DescribeBlock): string {

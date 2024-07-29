@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/require-await */
 import { Dirent, PathLike } from 'fs';
 
 import { FileDescriptions, MutateDescription } from '@stryker-mutator/api/core';
@@ -53,7 +54,6 @@ export class FileSystemTestDouble implements I<FileSystem> {
     this.dirs.add(path.toString());
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   public async readdir(path: Param<'readdir', 0>, options?: any): Promise<any> {
     if (!options?.withFileTypes) {
       this.throwNotSupported();
@@ -62,10 +62,7 @@ export class FileSystemTestDouble implements I<FileSystem> {
     const dirents: Dirent[] = Object.keys(this.files)
       .filter((file) => file.startsWith(dirName))
       .map((fileName) => {
-        const filePath = fileName
-          .substring(dirName.length)
-          .split(/[\/\\]/)
-          .filter(Boolean);
+        const filePath = fileName.substring(dirName.length).split(/[/\\]/).filter(Boolean);
         const [name] = filePath;
         const isDirectory = filePath.length > 1;
         return createDirent({ name, isDirectory });

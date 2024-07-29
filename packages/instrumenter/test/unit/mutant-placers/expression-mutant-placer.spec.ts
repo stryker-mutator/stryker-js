@@ -82,6 +82,7 @@ describe('expressionMutantPlacer', () => {
 
       okPointers.forEach(([js, query, only]) => {
         const path = findNodePath(parseJS(js), query);
+        // eslint-disable-next-line @typescript-eslint/no-base-to-string
         (only ? it.only : it)(`should allow placing in \`${path.toString()}\` of \`${js}\``, () => {
           expect(expressionMutantPlacer.canPlace(path)).true;
         });
@@ -98,6 +99,7 @@ describe('expressionMutantPlacer', () => {
       ];
       falsePointers.forEach(([js, query, only]) => {
         const path = findNodePath(parseTS(js), query);
+        // eslint-disable-next-line @typescript-eslint/no-base-to-string
         (only ? it.only : it)(`should not allow placing in \`${path.toString()}\` of \`${js}\``, () => {
           expect(expressionMutantPlacer.canPlace(path)).false;
         });

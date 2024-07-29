@@ -1,9 +1,9 @@
 import os from 'os';
 import fs from 'fs/promises';
 
-import { execaCommand } from 'execa';
+import type { execaCommand } from 'execa';
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { Immutable, resolveFromCwd } from '@stryker-mutator/util';
+import { Immutable, type resolveFromCwd } from '@stryker-mutator/util';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 
@@ -41,7 +41,7 @@ export class AngularInitializer implements CustomInitializer {
     },
     reporters: ['progress', 'clear-text', 'html'],
     concurrency: Math.floor(os.cpus().length / 2),
-    // eslint-disable-next-line camelcase
+
     concurrency_comment: 'Recommended to use about half of your available cores when running stryker with angular',
     coverageAnalysis: 'perTest',
   };

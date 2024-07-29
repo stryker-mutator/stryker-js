@@ -212,7 +212,7 @@ export class JestTestRunner implements TestRunner {
   }
 
   private collectSerializableErrorText(error?: jest.TestResult.SerializableError): string | undefined {
-    return error && `${error.code && `${error.code} `}${error.message} ${error.stack}`;
+    return error && `${error.code ? `${String(error.code)} ` : ''}${error.message} ${error.stack}`;
   }
 
   private setEnv() {

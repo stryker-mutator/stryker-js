@@ -7,14 +7,14 @@ import { createJSAst, createRange, createTSAst } from '../../helpers/factories.j
 import { parserContextStub } from '../../helpers/stubs.js';
 import { AstFormat, Range, TemplateScript } from '../../../src/syntax/index.js';
 
-describe('svelte-parser', async () => {
+describe('svelte-parser', () => {
   let contextStub: sinon.SinonStubbedInstance<ParserContext>;
 
   beforeEach(() => {
     contextStub = parserContextStub();
   });
 
-  describe('svelte script tags', async () => {
+  describe('svelte script tags', () => {
     it('should be able to parse an instance script tag', async () => {
       const script = 'const name = "test"';
       const jsAst = createJSAst({ rawContent: script });
@@ -202,7 +202,7 @@ describe('svelte-parser', async () => {
     it('should find all script tags (instance, module and html)', async () => {
       const scripts = ["const name = 'test'", "const name = 'world'", "const name = 'test'"];
       const jsAsts = [createJSAst({ rawContent: scripts[0] }), createJSAst({ rawContent: scripts[1] }), createJSAst({ rawContent: scripts[2] })];
-      const svelte = `<script>${scripts[0]}</script><script context=\"module\">${scripts[1]}</script><div><h1>hello</h1><script>${scripts[2]}</script></div>`;
+      const svelte = `<script>${scripts[0]}</script><script context="module">${scripts[1]}</script><div><h1>hello</h1><script>${scripts[2]}</script></div>`;
       contextStub.parse
         .withArgs(scripts[0], sinon.match.any)
         .resolves(jsAsts[0])
@@ -223,7 +223,7 @@ describe('svelte-parser', async () => {
     it('should support typescript scripts', async () => {
       const scripts = ['const hello: string = "hello";', 'const foo: string = "foo";', 'const bar: string = "bar";'];
       const tsAsts = [createTSAst({ rawContent: scripts[0] }), createTSAst({ rawContent: scripts[1] }), createTSAst({ rawContent: scripts[2] })];
-      const svelte = `<script lang="ts">${scripts[0]}</script><script lang="ts" context=\"module\">${scripts[1]}</script><div><h1>hello</h1><script lang="ts">${scripts[2]}</script></div>`;
+      const svelte = `<script lang="ts">${scripts[0]}</script><script lang="ts" context="module">${scripts[1]}</script><div><h1>hello</h1><script lang="ts">${scripts[2]}</script></div>`;
       contextStub.parse
         .withArgs(scripts[0], 'index.svelte', AstFormat.TS)
         .resolves(tsAsts[0])

@@ -124,11 +124,10 @@ export class ChildProcessProxy<T> implements Disposable {
   private initProxy(): Promisified<T> {
     // This proxy is a genuine javascript `Proxy` class
     // More info: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy
-    const self = this;
     return new Proxy({} as Promisified<T>, {
-      get(_, propertyKey) {
+      get: (_, propertyKey) => {
         if (typeof propertyKey === 'string') {
-          return self.forward(propertyKey);
+          return this.forward(propertyKey);
         } else {
           return undefined;
         }
@@ -301,6 +300,7 @@ export class ChildProcessProxy<T> implements Disposable {
   }
 
   private logUnidentifiedMessage(message: never) {
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     this.log.error(`Received unidentified message ${message}`);
   }
 }

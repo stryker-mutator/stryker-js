@@ -93,7 +93,7 @@ describe('tap-runner integration', () => {
 
       // Assert
       assertions.expectKilled(run);
-      // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
+
       expect([...run.killedBy].sort()).deep.eq(['tests/error.spec.js']);
       expect(run.failureMessage).eq('Concat two strings > An error occurred: An error occurred');
     });

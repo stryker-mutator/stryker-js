@@ -13,14 +13,14 @@ describe(ConcurrencyTokenProvider.name, () => {
     return testInjector.injector.injectClass(ConcurrencyTokenProvider);
   }
 
-  it('should log about processes', async () => {
+  it('should log about processes', () => {
     testInjector.options.concurrency = 9;
     const sut = createSut();
     expect(testInjector.logger.info).calledWith('Creating %s test runner process(es).', 9);
     sut.dispose();
   });
 
-  it('should log about processes created inc checkers', async () => {
+  it('should log about processes created inc checkers', () => {
     testInjector.options.concurrency = 9;
     testInjector.options.checkers = ['typescript'];
     const sut = createSut();
@@ -59,7 +59,7 @@ describe(ConcurrencyTokenProvider.name, () => {
       expect(actualTokens).deep.eq([0, 1, 2, 3]);
     });
 
-    it('should emit 4 more tokens when the checkers are freed', async () => {
+    it('should emit 4 more tokens when the checkers are freed', () => {
       testInjector.options.concurrency = 8;
       testInjector.options.checkers = ['typescript'];
       const sut = createSut();

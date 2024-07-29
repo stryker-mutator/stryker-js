@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-member-accessibility */
-/* eslint-disable @typescript-eslint/class-name-casing */
-
 /**
  * Grabbed from https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/jasmine,
  *
@@ -29,7 +26,7 @@ export interface FailedExpectation extends CustomReportExpectation {
   expected: string;
 }
 
-export interface PassedExpectation extends CustomReportExpectation {}
+export type PassedExpectation = CustomReportExpectation;
 export interface RunDetails {
   failedExpectations: ExpectationResult[];
   order: Order;

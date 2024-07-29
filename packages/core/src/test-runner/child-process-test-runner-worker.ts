@@ -41,7 +41,7 @@ export class ChildProcessTestRunnerWorker implements TestRunner {
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
     const dryRunResult = await this.underlyingTestRunner.dryRun(options);
     if (dryRunResult.status === DryRunStatus.Complete && !dryRunResult.mutantCoverage && options.coverageAnalysis !== 'off') {
-      // @ts-expect-error
+      // @ts-expect-error global __mutantCoverage__ isn't statically typed
       dryRunResult.mutantCoverage = global.__mutantCoverage__;
     }
     if (dryRunResult.status === DryRunStatus.Error) {

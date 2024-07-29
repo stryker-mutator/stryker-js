@@ -111,6 +111,7 @@
       "instrumenter",
       "Instrumenter",
       "memfs",
+      "mocharc",
       "Multiprocess",
       "mutables",
       "mutators",
@@ -124,10 +125,12 @@
       "serialise",
       "serializable",
       "stryker",
+      "tseslint",
       "Unserializable",
       "Unserializables",
       "Whitespaces"
     ],
+    "cSpell.flagWords": ["!instrumenter"],
     "cSpell.language": "en",
     "liveServer.settings.multiRootWorkspaceName": "typescript-checker"
   },

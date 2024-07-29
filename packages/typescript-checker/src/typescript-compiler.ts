@@ -106,7 +106,6 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
         watchDirectory: (): ts.FileWatcher => {
           // this is used to see if new files are added to a directory. Can safely be ignored for mutation testing.
           return {
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
             close() {},
           };
         },
@@ -145,10 +144,14 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
         this.currentErrors.push(error);
       },
       (status) => {
+        // TODO: Remove this eslint warning
+        // eslint-disable-next-line @typescript-eslint/no-base-to-string
         this.log.debug(status.messageText.toString());
       },
       (summary) => {
-        summary.code !== FILE_CHANGE_DETECTED_DIAGNOSTIC_CODE && this.currentTask.resolve();
+        if (summary.code !== FILE_CHANGE_DETECTED_DIAGNOSTIC_CODE) {
+          this.currentTask.resolve();
+        }
       },
     );
 

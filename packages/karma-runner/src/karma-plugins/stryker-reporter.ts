@@ -131,7 +131,6 @@ export class StrykerReporter implements karma.Reporter {
     this.hitCount = result.hitCount;
   };
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   public readonly onBrowserError = (browser: Browser, error: any): void => {
     if (this.initTask) {
       this.initTask.reject(error);
