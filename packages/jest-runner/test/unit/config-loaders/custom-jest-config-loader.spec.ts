@@ -5,7 +5,7 @@ import type { Config } from '@jest/types';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { testInjector } from '@stryker-mutator/test-helpers';
-import { requireResolve } from '@stryker-mutator/util';
+import type { requireResolve } from '@stryker-mutator/util';
 
 import { CustomJestConfigLoader } from '../../../src/config-loaders/custom-jest-config-loader.js';
 import { createJestOptions } from '../../helpers/producers.js';
@@ -90,7 +90,7 @@ describe(CustomJestConfigLoader.name, () => {
 
     it('should load the Jest configuration from an async function in the jest.config.js', async () => {
       fileExistsSyncStub.returns(true);
-      requireFromCwdStub.returns(async () => readConfig);
+      requireFromCwdStub.returns(() => Promise.resolve(readConfig));
 
       const config = await sut.loadConfig();
 

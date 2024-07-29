@@ -4,9 +4,9 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { I } from '@stryker-mutator/util';
 
 import { File, Instrumenter } from '../../src/index.js';
-import * as parsers from '../../src/parsers/index.js';
+import type * as parsers from '../../src/parsers/index.js';
 import * as transformers from '../../src/transformers/index.js';
-import * as printers from '../../src/printers/index.js';
+import type * as printers from '../../src/printers/index.js';
 import { createJSAst, createTSAst, createMutable, createInstrumenterOptions } from '../helpers/factories.js';
 import { parseJS } from '../helpers/syntax-test-helpers.js';
 import { instrumenterTokens } from '../../src/instrumenter-tokens.js';
@@ -62,7 +62,7 @@ describe(Instrumenter.name, () => {
     await act(input);
 
     // Assert
-    // eslint-disable-next-line @typescript-eslint/prefer-destructuring
+
     const actual = helper.transformerStub.getCall(0).args[2];
     const expected: transformers.TransformerOptions = createInstrumenterOptions({
       excludedMutations: [],

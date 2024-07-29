@@ -1,8 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 
-import { fsPromisesCp } from './fs-promises-cp.js';
-
 /**
  * Utility class that can be used to create a temp dir and populate it with a project.
  * This is useful, because esm means that a test project cannot be loaded twice directly.
@@ -35,7 +33,7 @@ export class TempTestDirectorySandbox {
       this.tmpDir = path.resolve(this.from);
     } else {
       this.tmpDir = path.resolve(this.originalWorkingDir, 'testResources', 'tmp', `workDir-${random()}`);
-      await fsPromisesCp(this.from, this.tmpDir, { recursive: true });
+      await fs.promises.cp(this.from, this.tmpDir, { recursive: true });
     }
     process.chdir(this.tmpDir);
   }

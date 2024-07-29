@@ -1,4 +1,4 @@
-import inquirer from 'inquirer';
+import type inquirer from 'inquirer';
 
 export type Answers = Parameters<typeof inquirer.prompt>[0];
 export type Question = Extract<Parameters<typeof inquirer.prompt>[0], { type: string }>;

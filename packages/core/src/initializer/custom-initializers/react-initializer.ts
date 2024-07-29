@@ -22,7 +22,7 @@ export class ReactInitializer implements CustomInitializer {
     },
   };
 
-  public async createConfig(): Promise<CustomInitializerConfiguration> {
-    return { config: this.config, guideUrl, dependencies: this.dependencies };
+  public createConfig(): Promise<CustomInitializerConfiguration> {
+    return Promise.resolve({ config: this.config, guideUrl, dependencies: this.dependencies });
   }
 }

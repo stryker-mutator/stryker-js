@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import type { IFormatterOptions } from '@cucumber/cucumber';
 import {
   Envelope,
@@ -48,7 +47,6 @@ const TestStatusCopy = {
   Skipped: 2 as unknown as TestStatus.Skipped,
 };
 
-// eslint-disable-next-line import/no-default-export
 export default class StrykerFormatter extends Formatter {
   constructor(options: IFormatterOptions) {
     super(options);
@@ -73,12 +71,12 @@ export default class StrykerFormatter extends Formatter {
     } else if (envelope.testCaseStarted) {
       this.testCasesStarted.push(envelope.testCaseStarted);
       const { example, scenario } = this.findDetails(
-        envelope.testCaseStarted.id
+        envelope.testCaseStarted.id,
       );
       if (StrykerFormatter.coverageAnalysis === 'perTest') {
         StrykerFormatter.instrumenterContext.currentTestId = determineTestId(
           scenario,
-          example
+          example,
         );
       }
     } else if (envelope.testCaseFinished) {
@@ -105,7 +103,7 @@ export default class StrykerFormatter extends Formatter {
       name: determineName(scenario, example),
       timeSpentMs: timeDiffMs(
         currentTestCaseStarted.timestamp,
-        testCaseFinished.timestamp
+        testCaseFinished.timestamp,
       ),
       fileName: scenario.fileName,
       startPosition: determinePosition(scenario, example),
@@ -127,19 +125,19 @@ export default class StrykerFormatter extends Formatter {
 
   private findDetails(testCaseStartedId: string) {
     const currentTestCaseStarted = this.testCasesStarted.find(
-      (testCase) => testCase.id === testCaseStartedId
+      (testCase) => testCase.id === testCaseStartedId,
     )!;
     const currentTestCase = this.testCases.find(
-      (testCase) => testCase.id === currentTestCaseStarted.testCaseId
+      (testCase) => testCase.id === currentTestCaseStarted.testCaseId,
     )!;
     const currentPickle = this.pickles.find(
-      (pickle) => pickle.id === currentTestCase.pickleId
+      (pickle) => pickle.id === currentTestCase.pickleId,
     )!;
     const currentScenario = this.scenarios.find((scenario) =>
-      currentPickle.astNodeIds.includes(scenario.id)
+      currentPickle.astNodeIds.includes(scenario.id),
     )!;
     const testSteps = this.testStepsFinished.filter(
-      (testStep) => testStep.testCaseStartedId === currentTestCaseStarted.id
+      (testStep) => testStep.testCaseStartedId === currentTestCaseStarted.id,
     );
     const currentExample = currentScenario.examples
       .flatMap((example) => example.tableBody)
@@ -159,7 +157,7 @@ const failureStatusList = Object.freeze([
 ]);
 function determineTestId(
   scenario: DescribedScenario,
-  example: TableRow | undefined
+  example: TableRow | undefined,
 ) {
   return `${scenario.fileName}:${
     (example?.location ?? scenario.location).line
@@ -170,14 +168,14 @@ function determineTestStatus(testSteps: TestStepFinished[]): TestStatus {
   if (
     !testSteps.some(
       (testStep) =>
-        testStep.testStepResult.status !== TestStepResultStatus.PASSED
+        testStep.testStepResult.status !== TestStepResultStatus.PASSED,
     )
   ) {
     return TestStatusCopy.Success;
   }
   if (
     testSteps.some((testStep) =>
-      failureStatusList.includes(testStep.testStepResult.status)
+      failureStatusList.includes(testStep.testStepResult.status),
     )
   ) {
     return TestStatusCopy.Failed;
@@ -189,7 +187,7 @@ function determineFailureMessage(testSteps: TestStepFinished[]): string {
   const failureStep = testSteps.find(
     (testStep) =>
       failureStatusList.includes(testStep.testStepResult.status) &&
-      testStep.testStepResult.message
+      testStep.testStepResult.message,
   );
   return failureStep?.testStepResult.message ?? 'Failed';
 }
@@ -200,9 +198,10 @@ function timeDiffMs(start: Timestamp, end: Timestamp) {
   );
 }
 function* collectScenarios(
-  gherkinDocument: GherkinDocument
+  gherkinDocument: GherkinDocument,
 ): Iterable<DescribedScenario> {
   if (gherkinDocument.feature?.children) {
+    // eslint-disable-next-line no-unsafe-optional-chaining -- it is safe, see line above ☝
     for (const child of gherkinDocument.feature?.children) {
       if (child.scenario) {
         yield {
@@ -228,7 +227,7 @@ function* collectScenarios(
 
 function determinePosition(
   scenario: DescribedScenario,
-  example: TableRow | undefined
+  example: TableRow | undefined,
 ): Position {
   return toPosition(example?.location ?? scenario.location);
 }
@@ -241,7 +240,7 @@ function toPosition(location: Location): Position {
 }
 function determineName(
   scenario: DescribedScenario,
-  example: TableRow | undefined
+  example: TableRow | undefined,
 ) {
   if (example) {
     return `${scenario.fullName} [Example L${example.location.line}]`;

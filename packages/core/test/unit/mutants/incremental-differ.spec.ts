@@ -288,8 +288,9 @@ class ScenarioBuilder {
         name: `add(${a}, ${b}) = ${answer}`,
         location: loc(8, 3),
       });
-    // clear all tests
-    while (this.incrementalTestFiles[testAdd].tests.shift()) {}
+    while (this.incrementalTestFiles[testAdd].tests.shift()) {
+      // clear all tests
+    }
     this.incrementalTestFiles[testAdd].tests.push(generateTest('spec4', 1, 1, 2), generateTest('spec5', 1, 2, 3), generateTest('spec6', 2, 2, 4));
     this.incrementalFiles[srcAdd].mutants[0].coveredBy = ['spec4', 'spec5', 'spec6'];
     this.incrementalFiles[srcAdd].mutants[0].killedBy = ['spec4'];
@@ -332,8 +333,9 @@ class ScenarioBuilder {
         name: `should result in ${answer} for ${a} and ${b}`,
         location: loc(5, 4),
       });
-    // clear all tests
-    while (this.incrementalTestFiles[testAdd].tests.shift()) {}
+    while (this.incrementalTestFiles[testAdd].tests.shift()) {
+      // clear all tests
+    }
     this.incrementalTestFiles[testAdd].tests.push(
       factory.mutationTestReportSchemaTestDefinition({ id: 'spec3', name: 'should have name "add"', location: loc(9, 2) }),
       createAddWithTestGenerationTestDefinition('spec4', 40, 2, 42),

@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+/* eslint-disable @typescript-eslint/no-base-to-string */
+// TODO: Enable these rules again
 import { EOL } from 'os';
 
 import ts from 'typescript';
@@ -16,7 +19,7 @@ import { TypescriptCheckerOptionsWithStrykerOptions } from './typescript-checker
 import { HybridFileSystem } from './fs/hybrid-file-system.js';
 
 typescriptCheckerLoggerFactory.inject = tokens(commonTokens.getLogger, commonTokens.target);
-// eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-unsafe-function-type
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 function typescriptCheckerLoggerFactory(loggerFactory: LoggerFactoryMethod, target: Function | undefined) {
   const targetName = target?.name ?? TypescriptChecker.name;
   const category = targetName === TypescriptChecker.name ? TypescriptChecker.name : `${TypescriptChecker.name}.${targetName}`;
@@ -88,18 +91,18 @@ export class TypescriptChecker implements Checker {
    * These groups will get send to the check method.
    * @param mutants All the mutants to group.
    */
-  public async group(mutants: Mutant[]): Promise<string[][]> {
+  public group(mutants: Mutant[]): Promise<string[][]> {
     if (!this.options.typescriptChecker.prioritizePerformanceOverAccuracy) {
-      return mutants.map((m) => [m.id]);
+      return Promise.resolve(mutants.map((m) => [m.id]));
     }
     const { nodes } = this.tsCompiler;
     const [mutantsOutsideProject, mutantsInProject] = split(mutants, (m) => nodes.get(toPosixFileName(m.fileName)) == null);
 
     const groups = createGroups(mutantsInProject, nodes);
     if (mutantsOutsideProject.length) {
-      return [mutantsOutsideProject.map((m) => m.id), ...groups];
+      return Promise.resolve([mutantsOutsideProject.map((m) => m.id), ...groups]);
     } else {
-      return groups;
+      return Promise.resolve(groups);
     }
   }
 

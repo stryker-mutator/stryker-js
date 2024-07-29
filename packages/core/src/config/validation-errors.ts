@@ -129,16 +129,17 @@ function describeError(error: ErrorObject): string {
   const errorPrefix = `Config option "${error.instancePath.substr(1)}"`;
 
   switch (error.keyword) {
-    case 'type':
+    case 'type': {
       const expectedTypeDescription = error.params.type.split(',').join(' or ');
       return `${errorPrefix} has the wrong type. It should be a ${expectedTypeDescription}, but was a ${jsonSchemaType(error.data)}.`;
+    }
     case 'enum':
       return `${errorPrefix} should be one of the allowed values (${error.params.allowedValues.map(stringify).join(', ')}), but was ${stringify(
         error.data,
       )}.`;
     case 'minimum':
     case 'maximum':
-      return `${errorPrefix} ${error.message}, was ${error.data}.`;
+      return `${errorPrefix} ${error.message}, was ${String(error.data)}.`;
     default:
       return `${errorPrefix} ${error.message!.replace(/'/g, '"')}`;
   }

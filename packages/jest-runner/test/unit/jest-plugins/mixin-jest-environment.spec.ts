@@ -27,7 +27,7 @@ describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
   });
 
   describe('constructor', () => {
-    it('should copy over the instrumenterContext on the __stryker__ variable', async () => {
+    it('should copy over the instrumenterContext on the __stryker__ variable', () => {
       // Arrange
       state.clear();
 
@@ -55,7 +55,7 @@ describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
       expect(sut.global.__stryker__).eq(state.instrumenterContext);
     });
 
-    it('should add the testPath to the test files with stryker environment', async () => {
+    it('should add the testPath to the test files with stryker environment', () => {
       // Arrange
       state.clear();
 

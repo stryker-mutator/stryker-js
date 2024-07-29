@@ -202,7 +202,7 @@ export class StrykerInitializer {
     this.out(cmd);
     try {
       childProcess.execSync(cmd, { stdio: [0, 1, 2] });
-    } catch (_) {
+    } catch {
       this.out(`An error occurred during installation, please try it yourself: "${cmd}"`);
     }
   }

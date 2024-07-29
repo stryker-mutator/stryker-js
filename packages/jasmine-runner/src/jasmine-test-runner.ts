@@ -80,29 +80,28 @@ export class JasmineTestRunner implements TestRunner {
       }
       const jasmineInstance: jasmine = this.jasmine;
       this.specIdsFilter = testFilter;
-      const self = this;
       const tests: TestResult[] = [];
       let startTimeCurrentSpec = 0;
       let result: DryRunResult | undefined;
       const reporter: jasmine.CustomReporter = {
-        jasmineStarted() {
-          self.instrumenterContext.activeMutant = activeMutantId;
+        jasmineStarted: () => {
+          this.instrumenterContext.activeMutant = activeMutantId;
         },
-        specStarted(spec) {
+        specStarted: (spec) => {
           if (coverageAnalysis && coverageAnalysis === 'perTest') {
-            self.instrumenterContext.currentTestId = spec.id;
+            this.instrumenterContext.currentTestId = spec.id;
           }
-          startTimeCurrentSpec = new self.Date().getTime();
+          startTimeCurrentSpec = new this.Date().getTime();
         },
-        specDone(specResult: jasmine.SpecResult) {
-          tests.push(helpers.toStrykerTestResult(specResult, new self.Date().getTime() - startTimeCurrentSpec));
+        specDone: (specResult: jasmine.SpecResult) => {
+          tests.push(helpers.toStrykerTestResult(specResult, new this.Date().getTime() - startTimeCurrentSpec));
         },
-        jasmineDone() {
+        jasmineDone: () => {
           let mutantCoverage: MutantCoverage | undefined = undefined;
           if (coverageAnalysis === 'all' || coverageAnalysis === 'perTest') {
-            ({ mutantCoverage } = self.instrumenterContext);
+            ({ mutantCoverage } = this.instrumenterContext);
           }
-          result = determineHitLimitReached(self.instrumenterContext.hitCount, self.instrumenterContext.hitLimit) ?? {
+          result = determineHitLimitReached(this.instrumenterContext.hitCount, this.instrumenterContext.hitLimit) ?? {
             status: DryRunStatus.Complete,
             tests,
             mutantCoverage,

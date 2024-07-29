@@ -27,6 +27,7 @@ export function configLoaderFactory(
       warnAboutConfigFile(optionsWithJest.jest.projectType, optionsWithJest.jest.configFile);
       return injector.injectClass(ReactScriptsJestConfigLoader);
     default:
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       throw new Error(`No configLoader available for ${optionsWithJest.jest.projectType}`);
   }
 }

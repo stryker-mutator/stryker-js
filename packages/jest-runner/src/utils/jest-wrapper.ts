@@ -2,7 +2,7 @@ import path from 'path';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { commonTokens } from '@stryker-mutator/api/plugin';
-import { requireResolve } from '@stryker-mutator/util';
+import type { requireResolve } from '@stryker-mutator/util';
 import type * as jestModule from 'jest';
 
 import { JestRunnerOptionsWithStrykerOptions } from '../jest-runner-options-with-stryker-options.js';

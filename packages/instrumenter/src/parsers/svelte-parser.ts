@@ -30,7 +30,6 @@ interface ScriptTag {
 type RangedProgram = Program & Range;
 const MIN_SVELTE_VERSION = '>=3.30';
 export async function parse(text: string, fileName: string, context: ParserContext): Promise<SvelteAst> {
-  // eslint-disable-next-line import/no-extraneous-dependencies
   const { parse: svelteParse, walk, preprocess, VERSION } = await import('svelte/compiler');
 
   if (!satisfies(VERSION, MIN_SVELTE_VERSION)) {

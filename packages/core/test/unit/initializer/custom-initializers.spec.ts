@@ -3,10 +3,10 @@ import os from 'os';
 
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { execaCommand, Result } from 'execa';
+import type { execaCommand, Result } from 'execa';
 import inquirer from 'inquirer';
 import { testInjector } from '@stryker-mutator/test-helpers';
-import { resolveFromCwd } from '@stryker-mutator/util';
+import type { resolveFromCwd } from '@stryker-mutator/util';
 import { PartialStrykerOptions } from '@stryker-mutator/api/core';
 
 import { coreTokens } from '../../../src/di/index.js';

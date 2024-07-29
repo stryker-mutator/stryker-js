@@ -30,7 +30,6 @@ export function serialize(thing: unknown): string {
   return JSON.stringify(thing);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
 export function deserialize<T>(stringified: string): T {
   return JSON.parse(stringified);
 }

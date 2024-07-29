@@ -11,6 +11,7 @@ stryker-tmp
 .stryker-tmp-2
 .nyc_output
 .tap
+.eslintcache
 .DS_Store
 *.map
 src-generated

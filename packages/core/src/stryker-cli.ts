@@ -52,7 +52,7 @@ export class StrykerCli {
   public run(): void {
     const dashboard: Partial<DashboardOptions> = {};
     this.program
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
+
       .version(strykerVersion)
       .usage('<command> [options] [configFile]')
       .description(
@@ -224,7 +224,6 @@ export class StrykerCli {
 }
 
 export function guardMinimalNodeVersion(processVersion = process.version): void {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
   if (!semver.satisfies(processVersion, strykerEngines.node)) {
     throw new Error(
       `Node.js version ${processVersion} detected. StrykerJS requires version to match ${strykerEngines.node}. Please update your Node.js version or visit https://nodejs.org/ for additional instructions`,

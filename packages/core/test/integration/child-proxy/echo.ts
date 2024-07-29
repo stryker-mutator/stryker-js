@@ -65,7 +65,7 @@ export class Echo {
 
   public memoryLeak(): void {
     const arr: number[] = [];
-    // eslint-disable-next-line no-constant-condition
+
     while (true) {
       arr.push(1);
     }

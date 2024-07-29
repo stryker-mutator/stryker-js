@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/require-array-sort-compare */
 import path from 'path';
 
 import { factory, assertions, testInjector, TempTestDirectorySandbox } from '@stryker-mutator/test-helpers';

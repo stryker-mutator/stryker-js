@@ -96,13 +96,14 @@ export class DryRunExecutor {
 
   private validateResultCompleted(runResult: DryRunResult): asserts runResult is CompleteDryRunResult {
     switch (runResult.status) {
-      case DryRunStatus.Complete:
+      case DryRunStatus.Complete: {
         const failedTests = runResult.tests.filter(isFailedTest);
         if (failedTests.length) {
           this.logFailedTestsInInitialRun(failedTests);
           throw new ConfigError('There were failed tests in the initial test run.');
         }
         return;
+      }
       case DryRunStatus.Error:
         this.logErrorsInInitialRun(runResult);
         break;
