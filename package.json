@@ -43,7 +43,7 @@
     "source-map-support": "0.5.21",
     "ts-node": "10.9.2",
     "typescript": "5.5.4",
-    "typescript-eslint": "8.0.0-alpha.58"
+    "typescript-eslint": "8.0.0-alpha.59"
   },
   "scripts": {
     "all": "npm run clean && npm run build && npm run lint && npm run test",
