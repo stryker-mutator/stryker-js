@@ -89,6 +89,9 @@ Object {
       ],
       "directives": Array [],
       "end": 13,
+      "extra": Object {
+        "topLevelAwait": false,
+      },
       "interpreter": null,
       "loc": SourceLocation {
         "end": Position {
@@ -1112,6 +1115,9 @@ export default {
             ],
             "directives": Array [],
             "end": 303,
+            "extra": Object {
+              "topLevelAwait": false,
+            },
             "interpreter": null,
             "loc": SourceLocation {
               "end": Position {
@@ -1839,6 +1845,9 @@ export class AppComponent {
       ],
       "directives": Array [],
       "end": 216,
+      "extra": Object {
+        "topLevelAwait": false,
+      },
       "interpreter": null,
       "loc": SourceLocation {
         "end": Position {
@@ -2059,6 +2068,9 @@ Object {
       ],
       "directives": Array [],
       "end": 29,
+      "extra": Object {
+        "topLevelAwait": false,
+      },
       "interpreter": null,
       "loc": SourceLocation {
         "end": Position {
@@ -2211,6 +2223,9 @@ Object {
       ],
       "directives": Array [],
       "end": 20,
+      "extra": Object {
+        "topLevelAwait": false,
+      },
       "interpreter": null,
       "loc": SourceLocation {
         "end": Position {
@@ -2353,6 +2368,9 @@ Object {
       ],
       "directives": Array [],
       "end": 19,
+      "extra": Object {
+        "topLevelAwait": false,
+      },
       "interpreter": null,
       "loc": SourceLocation {
         "end": Position {
@@ -2505,6 +2523,9 @@ Object {
       ],
       "directives": Array [],
       "end": 20,
+      "extra": Object {
+        "topLevelAwait": false,
+      },
       "interpreter": null,
       "loc": SourceLocation {
         "end": Position {
@@ -4335,6 +4356,9 @@ export default Badge;
       ],
       "directives": Array [],
       "end": 507,
+      "extra": Object {
+        "topLevelAwait": false,
+      },
       "interpreter": null,
       "loc": SourceLocation {
         "end": Position {
@@ -6157,6 +6181,9 @@ export default Badge;
       ],
       "directives": Array [],
       "end": 507,
+      "extra": Object {
+        "topLevelAwait": false,
+      },
       "interpreter": null,
       "loc": SourceLocation {
         "end": Position {
@@ -6499,6 +6526,9 @@ Object {
       ],
       "directives": Array [],
       "end": 36,
+      "extra": Object {
+        "topLevelAwait": false,
+      },
       "interpreter": null,
       "loc": SourceLocation {
         "end": Position {
@@ -6681,6 +6711,9 @@ Object {
             ],
             "directives": Array [],
             "end": 35,
+            "extra": Object {
+              "topLevelAwait": false,
+            },
             "interpreter": null,
             "loc": SourceLocation {
               "end": Position {
@@ -7489,6 +7522,9 @@ Object {
             ],
             "directives": Array [],
             "end": 174,
+            "extra": Object {
+              "topLevelAwait": false,
+            },
             "interpreter": null,
             "loc": SourceLocation {
               "end": Position {
@@ -8571,6 +8607,9 @@ Object {
       ],
       "directives": Array [],
       "end": 245,
+      "extra": Object {
+        "topLevelAwait": false,
+      },
       "interpreter": null,
       "loc": SourceLocation {
         "end": Position {
@@ -8705,6 +8744,9 @@ Object {
       ],
       "directives": Array [],
       "end": 13,
+      "extra": Object {
+        "topLevelAwait": false,
+      },
       "interpreter": null,
       "loc": SourceLocation {
         "end": Position {
