@@ -123,6 +123,10 @@ describe(sut.name, () => {
       ['toLowerCase', 'toUpperCase'],
       ['trimEnd', 'trimStart'],
       ['min', 'max'],
+      ['getDate', 'getMonth'],
+      ['setDate', 'setMonth'],
+      ['getHours', 'getMinutes'],
+      ['setHours', 'setMinutes'],
     ]) {
       it(`should replace ${key} with ${value}`, () => {
         expectJSMutation(sut, `text.${key}();`, `text.${value}();`);

@@ -21,6 +21,10 @@ const replacements = new Map([
   ['trim', null],
   ['trimEnd', 'trimStart'],
   ['min', 'max'],
+  ['getDate', 'getMonth'],
+  ['setDate', 'setMonth'],
+  ['getHours', 'getMinutes'],
+  ['setHours', 'setMinutes'],
 ]);
 
 for (const [key, value] of Array.from(replacements)) {
