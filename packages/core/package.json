@@ -68,6 +68,7 @@
     "stryker": "./bin/stryker.js"
   },
   "dependencies": {
+    "@inquirer/prompts": "^5.3.6",
     "@stryker-mutator/api": "8.2.6",
     "@stryker-mutator/instrumenter": "8.2.6",
     "@stryker-mutator/util": "8.2.6",
@@ -80,7 +81,6 @@
     "file-url": "~4.0.0",
     "get-port": "~7.1.0",
     "glob": "~11.0.0",
-    "inquirer": "10.0.0",
     "lodash.groupby": "~4.6.0",
     "log4js": "~6.9.1",
     "minimatch": "~10.0.1",
