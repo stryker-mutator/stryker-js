@@ -4,13 +4,13 @@ import os from 'os';
 import sinon from 'sinon';
 import { expect } from 'chai';
 import type { execaCommand, Result } from 'execa';
-import inquirer from 'inquirer';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import type { resolveFromCwd } from '@stryker-mutator/util';
 import { PartialStrykerOptions } from '@stryker-mutator/api/core';
 
 import { coreTokens } from '../../../src/di/index.js';
 
+import { inquire } from '../../../src/initializer/inquire.js';
 import { AngularInitializer } from '../../../src/initializer/custom-initializers/angular-initializer.js';
 import { ReactInitializer } from '../../../src/initializer/custom-initializers/react-initializer.js';
 import { VueJsInitializer } from '../../../src/initializer/custom-initializers/vue-js-initializer.js';
@@ -21,10 +21,12 @@ import { CustomInitializerConfiguration } from '../../../src/initializer/custom-
 type ExecaBufferResult = Result<{ encoding: 'buffer' }>;
 
 describe('CustomInitializers', () => {
-  let inquirerPrompt: sinon.SinonStubbedMember<typeof inquirer.prompt>;
+  let selectStub: sinon.SinonStubbedMember<typeof inquire.select>;
+  let confirmStub: sinon.SinonStubbedMember<typeof inquire.confirm>;
 
   beforeEach(() => {
-    inquirerPrompt = sinon.stub(inquirer, 'prompt');
+    selectStub = sinon.stub(inquire, 'select');
+    confirmStub = sinon.stub(inquire, 'confirm');
   });
 
   describe(AngularInitializer.name, () => {
@@ -184,18 +186,16 @@ describe('CustomInitializers', () => {
     });
 
     it('should prompt for test runner choice', async () => {
-      inquirerPrompt.resolves({ testRunner: 'vitest' });
+      selectStub.resolves('vitest');
       await sut.createConfig();
-      sinon.assert.calledOnceWithExactly(inquirerPrompt, {
+      sinon.assert.calledOnceWithExactly(selectStub, {
         choices: [{ value: 'jest' }, { value: 'vitest' }],
         message: 'Which test runner are you using?',
-        name: 'testRunner',
-        type: 'select',
       });
     });
 
     it('should write vitest test runner when test runner choice is "vitest"', async () => {
-      inquirerPrompt.resolves({ testRunner: 'vitest' });
+      selectStub.resolves('vitest');
       const actualCustomInit = await sut.createConfig();
       const expected: CustomInitializerConfiguration = {
         config: {
@@ -209,19 +209,19 @@ describe('CustomInitializers', () => {
     });
 
     it('should prompt for native ESM when test runner choice is "jest"', async () => {
-      inquirerPrompt.resolves({ testRunner: 'jest', nativeEsm: false });
+      selectStub.resolves('jest');
+      confirmStub.resolves(false);
+
       await sut.createConfig();
-      sinon.assert.calledTwice(inquirerPrompt);
-      sinon.assert.calledWithExactly(inquirerPrompt, {
-        type: 'confirm',
-        name: 'nativeEsm',
+      sinon.assert.calledWithExactly(confirmStub, {
         message: 'Are you using native EcmaScript modules? (see https://jestjs.io/docs/ecmascript-modules)',
         default: true,
       });
     });
 
     it('should add --experimental-vm-modules when using native ESM with jest', async () => {
-      inquirerPrompt.resolves({ testRunner: 'jest', nativeEsm: true });
+      selectStub.resolves('jest');
+      confirmStub.resolves(true);
       const actualCustomInit = await sut.createConfig();
       const expected: CustomInitializerConfiguration = {
         config: {
@@ -236,7 +236,9 @@ describe('CustomInitializers', () => {
     });
 
     it('should not add --experimental-vm-modules when commonjs with jest', async () => {
-      inquirerPrompt.resolves({ testRunner: 'jest', nativeEsm: false });
+      selectStub.resolves('jest');
+      confirmStub.resolves(false);
+
       const actualCustomInit = await sut.createConfig();
       expect(actualCustomInit.config.testRunnerNodeArgs).undefined;
     });
@@ -247,10 +249,6 @@ describe('CustomInitializers', () => {
 
     beforeEach(() => {
       sut = testInjector.injector.injectClass(VueJsInitializer);
-      inquirerPrompt.resolves({
-        script: 'typescript',
-        testRunner: 'vitest',
-      });
     });
 
     it('should have the name "vue"', () => {

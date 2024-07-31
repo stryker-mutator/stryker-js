@@ -1,5 +1,4 @@
-import inquirer from 'inquirer';
-
+import { inquire } from '../inquire.js';
 import { CustomInitializer, CustomInitializerConfiguration } from './custom-initializer.js';
 
 const guideUrl = 'https://stryker-mutator.io/docs/stryker-js/guides/svelte';
@@ -11,16 +10,12 @@ export class SvelteInitializer implements CustomInitializer {
   public async createConfig(): Promise<CustomInitializerConfiguration> {
     const testRunnerChoices = [{ value: 'jest' }, { value: 'vitest' }];
     const testRunnerNodeArgs: string[] = [];
-    const { testRunner } = await inquirer.prompt<{ testRunner: string }>({
-      choices: testRunnerChoices,
+    const testRunner = await inquire.select({
       message: 'Which test runner are you using?',
-      name: 'testRunner',
-      type: 'select',
+      choices: testRunnerChoices,
     });
     if (testRunner === 'jest') {
-      const { nativeEsm } = await inquirer.prompt<{ nativeEsm: boolean }>({
-        type: 'confirm',
-        name: 'nativeEsm',
+      const nativeEsm = await inquire.confirm({
         message: 'Are you using native EcmaScript modules? (see https://jestjs.io/docs/ecmascript-modules)',
         default: true,
       });
