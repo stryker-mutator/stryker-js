@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.3.0](https://github.com/stryker-mutator/stryker-js/compare/v8.2.6...v8.3.0) (2024-08-01)
+
+### Bug Fixes
+
+- **babel:** update babel dependency to 7.25 ([#4916](https://github.com/stryker-mutator/stryker-js/issues/4916)) ([07e8088](https://github.com/stryker-mutator/stryker-js/commit/07e8088ad3face36e8fa44523b6dc6637a41e405))
+- **deps:** update babel monorepo to ~7.24.0 ([#4762](https://github.com/stryker-mutator/stryker-js/issues/4762)) ([0a5d446](https://github.com/stryker-mutator/stryker-js/commit/0a5d446e3326f8e1ef8c81e1e4c2556158b1ec45))
+
+### Features
+
+- **deps:** update dependencies ([#4894](https://github.com/stryker-mutator/stryker-js/issues/4894)) ([eb61333](https://github.com/stryker-mutator/stryker-js/commit/eb61333a8640edfb4c60dbe456d5192dc6b8eeb9))
+
 ## [8.2.6](https://github.com/stryker-mutator/stryker-js/compare/v8.2.5...v8.2.6) (2024-02-25)
 
 ### Bug Fixes
