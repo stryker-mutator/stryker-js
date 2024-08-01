@@ -7565,7 +7565,8 @@ exports[`parsers integration should be able to parse a ts file with more recent 
 Object {
   "format": "ts",
   "originFileName": "new-ts-features.ts",
-  "rawContent": "class Person {
+  "rawContent": "// @ts-nocheck
+class Person {
   #name = 'unknown';
 
   get name(): string {
@@ -7578,16 +7579,163 @@ Object {
     this.#name = value;
   }
 }
+
+
+// Explicit resource managment
+
+export function doSomeWork() {
+  using file = new TempFile('.some_temp_file');
+  // use file...
+  if (someCondition()) {
+    // do some more work...
+    return;
+  }
+}
+
+async function func() {
+  await using a = loggy('a');
+  await using b = loggy('b');
+  {
+    await using c = loggy('c');
+    await using d = loggy('d');
+  }
+  await using e = loggy('e');
+  return;
+  // Unreachable.
+  // Never created, never disposed.
+  await using f = loggy('f');
+}
 ",
   "root": Node {
-    "comments": Array [],
-    "end": 245,
+    "comments": Array [
+      Object {
+        "end": 14,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 14,
+            "index": 14,
+            "line": 1,
+          },
+          "filename": undefined,
+          "identifierName": undefined,
+          "start": Position {
+            "column": 0,
+            "index": 0,
+            "line": 1,
+          },
+        },
+        "start": 0,
+        "type": "CommentLine",
+        "value": " @ts-nocheck",
+      },
+      Object {
+        "end": 292,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 30,
+            "index": 292,
+            "line": 17,
+          },
+          "filename": undefined,
+          "identifierName": undefined,
+          "start": Position {
+            "column": 0,
+            "index": 262,
+            "line": 17,
+          },
+        },
+        "start": 262,
+        "type": "CommentLine",
+        "value": " Explicit resource managment",
+      },
+      Object {
+        "end": 389,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 16,
+            "index": 389,
+            "line": 21,
+          },
+          "filename": undefined,
+          "identifierName": undefined,
+          "start": Position {
+            "column": 2,
+            "index": 375,
+            "line": 21,
+          },
+        },
+        "start": 375,
+        "type": "CommentLine",
+        "value": " use file...",
+      },
+      Object {
+        "end": 442,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 27,
+            "index": 442,
+            "line": 23,
+          },
+          "filename": undefined,
+          "identifierName": undefined,
+          "start": Position {
+            "column": 4,
+            "index": 419,
+            "line": 23,
+          },
+        },
+        "start": 419,
+        "type": "CommentLine",
+        "value": " do some more work...",
+      },
+      Object {
+        "end": 675,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 17,
+            "index": 675,
+            "line": 37,
+          },
+          "filename": undefined,
+          "identifierName": undefined,
+          "start": Position {
+            "column": 2,
+            "index": 660,
+            "line": 37,
+          },
+        },
+        "start": 660,
+        "type": "CommentLine",
+        "value": " Unreachable.",
+      },
+      Object {
+        "end": 711,
+        "loc": SourceLocation {
+          "end": Position {
+            "column": 35,
+            "index": 711,
+            "line": 38,
+          },
+          "filename": undefined,
+          "identifierName": undefined,
+          "start": Position {
+            "column": 2,
+            "index": 678,
+            "line": 38,
+          },
+        },
+        "start": 678,
+        "type": "CommentLine",
+        "value": " Never created, never disposed.",
+      },
+    ],
+    "end": 744,
     "errors": Array [],
     "loc": SourceLocation {
       "end": Position {
         "column": 0,
-        "index": 245,
-        "line": 14,
+        "index": 744,
+        "line": 41,
       },
       "filename": undefined,
       "identifierName": undefined,
@@ -7603,77 +7751,77 @@ Object {
           "body": Node {
             "body": Array [
               Node {
-                "end": 35,
+                "end": 50,
                 "key": Node {
-                  "end": 22,
+                  "end": 37,
                   "id": Node {
-                    "end": 22,
+                    "end": 37,
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 7,
-                        "index": 22,
-                        "line": 2,
+                        "index": 37,
+                        "line": 3,
                       },
                       "filename": undefined,
                       "identifierName": "name",
                       "start": Position {
                         "column": 3,
-                        "index": 18,
-                        "line": 2,
+                        "index": 33,
+                        "line": 3,
                       },
                     },
                     "name": "name",
                     "range": Array [
-                      18,
-                      22,
+                      33,
+                      37,
                     ],
-                    "start": 18,
+                    "start": 33,
                     "type": "Identifier",
                   },
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 7,
-                      "index": 22,
-                      "line": 2,
+                      "index": 37,
+                      "line": 3,
                     },
                     "filename": undefined,
                     "identifierName": undefined,
                     "start": Position {
                       "column": 2,
-                      "index": 17,
-                      "line": 2,
+                      "index": 32,
+                      "line": 3,
                     },
                   },
                   "range": Array [
-                    17,
-                    22,
+                    32,
+                    37,
                   ],
-                  "start": 17,
+                  "start": 32,
                   "type": "PrivateName",
                 },
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 20,
-                    "index": 35,
-                    "line": 2,
+                    "index": 50,
+                    "line": 3,
                   },
                   "filename": undefined,
                   "identifierName": undefined,
                   "start": Position {
                     "column": 2,
-                    "index": 17,
-                    "line": 2,
+                    "index": 32,
+                    "line": 3,
                   },
                 },
                 "range": Array [
-                  17,
-                  35,
+                  32,
+                  50,
                 ],
-                "start": 17,
+                "start": 32,
                 "static": false,
                 "type": "ClassPrivateProperty",
                 "value": Node {
-                  "end": 34,
+                  "end": 49,
                   "extra": Object {
                     "raw": "'unknown'",
                     "rawValue": "unknown",
@@ -7681,22 +7829,22 @@ Object {
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 19,
-                      "index": 34,
-                      "line": 2,
+                      "index": 49,
+                      "line": 3,
                     },
                     "filename": undefined,
                     "identifierName": undefined,
                     "start": Position {
                       "column": 10,
-                      "index": 25,
-                      "line": 2,
+                      "index": 40,
+                      "line": 3,
                     },
                   },
                   "range": Array [
-                    25,
-                    34,
+                    40,
+                    49,
                   ],
-                  "start": 25,
+                  "start": 40,
                   "type": "StringLiteral",
                   "value": "unknown",
                 },
@@ -7708,239 +7856,239 @@ Object {
                     Node {
                       "argument": Node {
                         "computed": false,
-                        "end": 81,
+                        "end": 96,
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 21,
-                            "index": 81,
-                            "line": 5,
+                            "index": 96,
+                            "line": 6,
                           },
                           "filename": undefined,
                           "identifierName": undefined,
                           "start": Position {
                             "column": 11,
-                            "index": 71,
-                            "line": 5,
+                            "index": 86,
+                            "line": 6,
                           },
                         },
                         "object": Node {
-                          "end": 75,
+                          "end": 90,
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 15,
-                              "index": 75,
-                              "line": 5,
+                              "index": 90,
+                              "line": 6,
                             },
                             "filename": undefined,
                             "identifierName": undefined,
                             "start": Position {
                               "column": 11,
-                              "index": 71,
-                              "line": 5,
+                              "index": 86,
+                              "line": 6,
                             },
                           },
                           "range": Array [
-                            71,
-                            75,
+                            86,
+                            90,
                           ],
-                          "start": 71,
+                          "start": 86,
                           "type": "ThisExpression",
                         },
                         "property": Node {
-                          "end": 81,
+                          "end": 96,
                           "id": Node {
-                            "end": 81,
+                            "end": 96,
                             "loc": SourceLocation {
                               "end": Position {
                                 "column": 21,
-                                "index": 81,
-                                "line": 5,
+                                "index": 96,
+                                "line": 6,
                               },
                               "filename": undefined,
                               "identifierName": "name",
                               "start": Position {
                                 "column": 17,
-                                "index": 77,
-                                "line": 5,
+                                "index": 92,
+                                "line": 6,
                               },
                             },
                             "name": "name",
                             "range": Array [
-                              77,
-                              81,
+                              92,
+                              96,
                             ],
-                            "start": 77,
+                            "start": 92,
                             "type": "Identifier",
                           },
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 21,
-                              "index": 81,
-                              "line": 5,
+                              "index": 96,
+                              "line": 6,
                             },
                             "filename": undefined,
                             "identifierName": undefined,
                             "start": Position {
                               "column": 16,
-                              "index": 76,
-                              "line": 5,
+                              "index": 91,
+                              "line": 6,
                             },
                           },
                           "range": Array [
-                            76,
-                            81,
+                            91,
+                            96,
                           ],
-                          "start": 76,
+                          "start": 91,
                           "type": "PrivateName",
                         },
                         "range": Array [
-                          71,
-                          81,
+                          86,
+                          96,
                         ],
-                        "start": 71,
+                        "start": 86,
                         "type": "MemberExpression",
                       },
-                      "end": 82,
+                      "end": 97,
                       "loc": SourceLocation {
                         "end": Position {
                           "column": 22,
-                          "index": 82,
-                          "line": 5,
+                          "index": 97,
+                          "line": 6,
                         },
                         "filename": undefined,
                         "identifierName": undefined,
                         "start": Position {
                           "column": 4,
-                          "index": 64,
-                          "line": 5,
+                          "index": 79,
+                          "line": 6,
                         },
                       },
                       "range": Array [
-                        64,
-                        82,
+                        79,
+                        97,
                       ],
-                      "start": 64,
+                      "start": 79,
                       "type": "ReturnStatement",
                     },
                   ],
                   "directives": Array [],
-                  "end": 86,
+                  "end": 101,
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 3,
-                      "index": 86,
-                      "line": 6,
+                      "index": 101,
+                      "line": 7,
                     },
                     "filename": undefined,
                     "identifierName": undefined,
                     "start": Position {
                       "column": 21,
-                      "index": 58,
-                      "line": 4,
+                      "index": 73,
+                      "line": 5,
                     },
                   },
                   "range": Array [
-                    58,
-                    86,
+                    73,
+                    101,
                   ],
-                  "start": 58,
+                  "start": 73,
                   "type": "BlockStatement",
                 },
                 "computed": false,
-                "end": 86,
+                "end": 101,
                 "generator": false,
                 "id": null,
                 "key": Node {
-                  "end": 47,
+                  "end": 62,
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 10,
-                      "index": 47,
-                      "line": 4,
+                      "index": 62,
+                      "line": 5,
                     },
                     "filename": undefined,
                     "identifierName": "name",
                     "start": Position {
                       "column": 6,
-                      "index": 43,
-                      "line": 4,
+                      "index": 58,
+                      "line": 5,
                     },
                   },
                   "name": "name",
                   "range": Array [
-                    43,
-                    47,
+                    58,
+                    62,
                   ],
-                  "start": 43,
+                  "start": 58,
                   "type": "Identifier",
                 },
                 "kind": "get",
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 3,
-                    "index": 86,
-                    "line": 6,
+                    "index": 101,
+                    "line": 7,
                   },
                   "filename": undefined,
                   "identifierName": undefined,
                   "start": Position {
                     "column": 2,
-                    "index": 39,
-                    "line": 4,
+                    "index": 54,
+                    "line": 5,
                   },
                 },
                 "params": Array [],
                 "range": Array [
-                  39,
-                  86,
+                  54,
+                  101,
                 ],
                 "returnType": Node {
-                  "end": 57,
+                  "end": 72,
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 20,
-                      "index": 57,
-                      "line": 4,
+                      "index": 72,
+                      "line": 5,
                     },
                     "filename": undefined,
                     "identifierName": undefined,
                     "start": Position {
                       "column": 12,
-                      "index": 49,
-                      "line": 4,
+                      "index": 64,
+                      "line": 5,
                     },
                   },
                   "range": Array [
-                    49,
-                    57,
+                    64,
+                    72,
                   ],
-                  "start": 49,
+                  "start": 64,
                   "type": "TSTypeAnnotation",
                   "typeAnnotation": Node {
-                    "end": 57,
+                    "end": 72,
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 20,
-                        "index": 57,
-                        "line": 4,
+                        "index": 72,
+                        "line": 5,
                       },
                       "filename": undefined,
                       "identifierName": undefined,
                       "start": Position {
                         "column": 14,
-                        "index": 51,
-                        "line": 4,
+                        "index": 66,
+                        "line": 5,
                       },
                     },
                     "range": Array [
-                      51,
-                      57,
+                      66,
+                      72,
                     ],
-                    "start": 51,
+                    "start": 66,
                     "type": "TSStringKeyword",
                   },
                 },
-                "start": 39,
+                "start": 54,
                 "static": false,
                 "type": "ClassMethod",
               },
@@ -7956,7 +8104,7 @@ Object {
                             "argument": Node {
                               "arguments": Array [
                                 Node {
-                                  "end": 206,
+                                  "end": 221,
                                   "extra": Object {
                                     "raw": "'Name should be at least 2 characters long'",
                                     "rawValue": "Name should be at least 2 characters long",
@@ -7964,233 +8112,233 @@ Object {
                                   "loc": SourceLocation {
                                     "end": Position {
                                       "column": 65,
-                                      "index": 206,
-                                      "line": 9,
+                                      "index": 221,
+                                      "line": 10,
                                     },
                                     "filename": undefined,
                                     "identifierName": undefined,
                                     "start": Position {
                                       "column": 22,
-                                      "index": 163,
-                                      "line": 9,
+                                      "index": 178,
+                                      "line": 10,
                                     },
                                   },
                                   "range": Array [
-                                    163,
-                                    206,
+                                    178,
+                                    221,
                                   ],
-                                  "start": 163,
+                                  "start": 178,
                                   "type": "StringLiteral",
                                   "value": "Name should be at least 2 characters long",
                                 },
                               ],
                               "callee": Node {
-                                "end": 162,
+                                "end": 177,
                                 "loc": SourceLocation {
                                   "end": Position {
                                     "column": 21,
-                                    "index": 162,
-                                    "line": 9,
+                                    "index": 177,
+                                    "line": 10,
                                   },
                                   "filename": undefined,
                                   "identifierName": "Error",
                                   "start": Position {
                                     "column": 16,
-                                    "index": 157,
-                                    "line": 9,
+                                    "index": 172,
+                                    "line": 10,
                                   },
                                 },
                                 "name": "Error",
                                 "range": Array [
-                                  157,
-                                  162,
+                                  172,
+                                  177,
                                 ],
-                                "start": 157,
+                                "start": 172,
                                 "type": "Identifier",
                               },
-                              "end": 207,
+                              "end": 222,
                               "loc": SourceLocation {
                                 "end": Position {
                                   "column": 66,
-                                  "index": 207,
-                                  "line": 9,
+                                  "index": 222,
+                                  "line": 10,
                                 },
                                 "filename": undefined,
                                 "identifierName": undefined,
                                 "start": Position {
                                   "column": 12,
-                                  "index": 153,
-                                  "line": 9,
+                                  "index": 168,
+                                  "line": 10,
                                 },
                               },
                               "range": Array [
-                                153,
-                                207,
+                                168,
+                                222,
                               ],
-                              "start": 153,
+                              "start": 168,
                               "type": "NewExpression",
                             },
-                            "end": 208,
+                            "end": 223,
                             "loc": SourceLocation {
                               "end": Position {
                                 "column": 67,
-                                "index": 208,
-                                "line": 9,
+                                "index": 223,
+                                "line": 10,
                               },
                               "filename": undefined,
                               "identifierName": undefined,
                               "start": Position {
                                 "column": 6,
-                                "index": 147,
-                                "line": 9,
+                                "index": 162,
+                                "line": 10,
                               },
                             },
                             "range": Array [
-                              147,
-                              208,
+                              162,
+                              223,
                             ],
-                            "start": 147,
+                            "start": 162,
                             "type": "ThrowStatement",
                           },
                         ],
                         "directives": Array [],
-                        "end": 214,
+                        "end": 229,
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 5,
-                            "index": 214,
-                            "line": 10,
+                            "index": 229,
+                            "line": 11,
                           },
                           "filename": undefined,
                           "identifierName": undefined,
                           "start": Position {
                             "column": 24,
-                            "index": 139,
-                            "line": 8,
+                            "index": 154,
+                            "line": 9,
                           },
                         },
                         "range": Array [
-                          139,
-                          214,
+                          154,
+                          229,
                         ],
-                        "start": 139,
+                        "start": 154,
                         "type": "BlockStatement",
                       },
-                      "end": 214,
+                      "end": 229,
                       "loc": SourceLocation {
                         "end": Position {
                           "column": 5,
-                          "index": 214,
-                          "line": 10,
+                          "index": 229,
+                          "line": 11,
                         },
                         "filename": undefined,
                         "identifierName": undefined,
                         "start": Position {
                           "column": 4,
-                          "index": 119,
-                          "line": 8,
+                          "index": 134,
+                          "line": 9,
                         },
                       },
                       "range": Array [
-                        119,
-                        214,
+                        134,
+                        229,
                       ],
-                      "start": 119,
+                      "start": 134,
                       "test": Node {
-                        "end": 138,
+                        "end": 153,
                         "left": Node {
                           "computed": false,
-                          "end": 134,
+                          "end": 149,
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 19,
-                              "index": 134,
-                              "line": 8,
+                              "index": 149,
+                              "line": 9,
                             },
                             "filename": undefined,
                             "identifierName": undefined,
                             "start": Position {
                               "column": 7,
-                              "index": 122,
-                              "line": 8,
+                              "index": 137,
+                              "line": 9,
                             },
                           },
                           "object": Node {
-                            "end": 127,
+                            "end": 142,
                             "loc": SourceLocation {
                               "end": Position {
                                 "column": 12,
-                                "index": 127,
-                                "line": 8,
+                                "index": 142,
+                                "line": 9,
                               },
                               "filename": undefined,
                               "identifierName": "value",
                               "start": Position {
                                 "column": 7,
-                                "index": 122,
-                                "line": 8,
+                                "index": 137,
+                                "line": 9,
                               },
                             },
                             "name": "value",
                             "range": Array [
-                              122,
-                              127,
+                              137,
+                              142,
                             ],
-                            "start": 122,
+                            "start": 137,
                             "type": "Identifier",
                           },
                           "property": Node {
-                            "end": 134,
+                            "end": 149,
                             "loc": SourceLocation {
                               "end": Position {
                                 "column": 19,
-                                "index": 134,
-                                "line": 8,
+                                "index": 149,
+                                "line": 9,
                               },
                               "filename": undefined,
                               "identifierName": "length",
                               "start": Position {
                                 "column": 13,
-                                "index": 128,
-                                "line": 8,
+                                "index": 143,
+                                "line": 9,
                               },
                             },
                             "name": "length",
                             "range": Array [
-                              128,
-                              134,
+                              143,
+                              149,
                             ],
-                            "start": 128,
+                            "start": 143,
                             "type": "Identifier",
                           },
                           "range": Array [
-                            122,
-                            134,
+                            137,
+                            149,
                           ],
-                          "start": 122,
+                          "start": 137,
                           "type": "MemberExpression",
                         },
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 23,
-                            "index": 138,
-                            "line": 8,
+                            "index": 153,
+                            "line": 9,
                           },
                           "filename": undefined,
                           "identifierName": undefined,
                           "start": Position {
                             "column": 7,
-                            "index": 122,
-                            "line": 8,
+                            "index": 137,
+                            "line": 9,
                           },
                         },
                         "operator": "<",
                         "range": Array [
-                          122,
-                          138,
+                          137,
+                          153,
                         ],
                         "right": Node {
-                          "end": 138,
+                          "end": 153,
                           "extra": Object {
                             "raw": "2",
                             "rawValue": 2,
@@ -8198,415 +8346,2031 @@ Object {
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 23,
-                              "index": 138,
-                              "line": 8,
+                              "index": 153,
+                              "line": 9,
                             },
                             "filename": undefined,
                             "identifierName": undefined,
                             "start": Position {
                               "column": 22,
-                              "index": 137,
-                              "line": 8,
+                              "index": 152,
+                              "line": 9,
                             },
                           },
                           "range": Array [
-                            137,
-                            138,
+                            152,
+                            153,
                           ],
-                          "start": 137,
+                          "start": 152,
                           "type": "NumericLiteral",
                           "value": 2,
                         },
-                        "start": 122,
+                        "start": 137,
                         "type": "BinaryExpression",
                       },
                       "type": "IfStatement",
                     },
                     Node {
-                      "end": 238,
+                      "end": 253,
                       "expression": Node {
-                        "end": 237,
+                        "end": 252,
                         "left": Node {
                           "computed": false,
-                          "end": 229,
+                          "end": 244,
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 14,
-                              "index": 229,
-                              "line": 11,
+                              "index": 244,
+                              "line": 12,
                             },
                             "filename": undefined,
                             "identifierName": undefined,
                             "start": Position {
                               "column": 4,
-                              "index": 219,
-                              "line": 11,
+                              "index": 234,
+                              "line": 12,
                             },
                           },
                           "object": Node {
-                            "end": 223,
+                            "end": 238,
                             "loc": SourceLocation {
                               "end": Position {
                                 "column": 8,
-                                "index": 223,
-                                "line": 11,
+                                "index": 238,
+                                "line": 12,
                               },
                               "filename": undefined,
                               "identifierName": undefined,
                               "start": Position {
                                 "column": 4,
-                                "index": 219,
-                                "line": 11,
+                                "index": 234,
+                                "line": 12,
                               },
                             },
                             "range": Array [
-                              219,
-                              223,
+                              234,
+                              238,
                             ],
-                            "start": 219,
+                            "start": 234,
                             "type": "ThisExpression",
                           },
                           "property": Node {
-                            "end": 229,
+                            "end": 244,
                             "id": Node {
-                              "end": 229,
+                              "end": 244,
                               "loc": SourceLocation {
                                 "end": Position {
                                   "column": 14,
-                                  "index": 229,
-                                  "line": 11,
+                                  "index": 244,
+                                  "line": 12,
                                 },
                                 "filename": undefined,
                                 "identifierName": "name",
                                 "start": Position {
                                   "column": 10,
-                                  "index": 225,
-                                  "line": 11,
+                                  "index": 240,
+                                  "line": 12,
                                 },
                               },
                               "name": "name",
                               "range": Array [
-                                225,
-                                229,
+                                240,
+                                244,
                               ],
-                              "start": 225,
+                              "start": 240,
                               "type": "Identifier",
                             },
                             "loc": SourceLocation {
                               "end": Position {
                                 "column": 14,
-                                "index": 229,
-                                "line": 11,
+                                "index": 244,
+                                "line": 12,
                               },
                               "filename": undefined,
                               "identifierName": undefined,
                               "start": Position {
                                 "column": 9,
-                                "index": 224,
-                                "line": 11,
+                                "index": 239,
+                                "line": 12,
                               },
                             },
                             "range": Array [
-                              224,
-                              229,
+                              239,
+                              244,
                             ],
-                            "start": 224,
+                            "start": 239,
                             "type": "PrivateName",
                           },
                           "range": Array [
-                            219,
-                            229,
+                            234,
+                            244,
                           ],
-                          "start": 219,
+                          "start": 234,
                           "type": "MemberExpression",
                         },
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 22,
-                            "index": 237,
-                            "line": 11,
+                            "index": 252,
+                            "line": 12,
                           },
                           "filename": undefined,
                           "identifierName": undefined,
                           "start": Position {
                             "column": 4,
-                            "index": 219,
-                            "line": 11,
+                            "index": 234,
+                            "line": 12,
                           },
                         },
                         "operator": "=",
                         "range": Array [
-                          219,
-                          237,
+                          234,
+                          252,
                         ],
                         "right": Node {
-                          "end": 237,
+                          "end": 252,
                           "loc": SourceLocation {
                             "end": Position {
                               "column": 22,
-                              "index": 237,
-                              "line": 11,
+                              "index": 252,
+                              "line": 12,
                             },
                             "filename": undefined,
                             "identifierName": "value",
                             "start": Position {
                               "column": 17,
-                              "index": 232,
-                              "line": 11,
+                              "index": 247,
+                              "line": 12,
                             },
                           },
                           "name": "value",
                           "range": Array [
-                            232,
-                            237,
+                            247,
+                            252,
                           ],
-                          "start": 232,
+                          "start": 247,
                           "type": "Identifier",
                         },
-                        "start": 219,
+                        "start": 234,
                         "type": "AssignmentExpression",
                       },
                       "loc": SourceLocation {
                         "end": Position {
                           "column": 23,
-                          "index": 238,
-                          "line": 11,
+                          "index": 253,
+                          "line": 12,
                         },
                         "filename": undefined,
                         "identifierName": undefined,
                         "start": Position {
                           "column": 4,
-                          "index": 219,
-                          "line": 11,
+                          "index": 234,
+                          "line": 12,
                         },
                       },
                       "range": Array [
-                        219,
-                        238,
+                        234,
+                        253,
                       ],
-                      "start": 219,
+                      "start": 234,
                       "type": "ExpressionStatement",
                     },
                   ],
                   "directives": Array [],
-                  "end": 242,
+                  "end": 257,
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 3,
-                      "index": 242,
-                      "line": 12,
+                      "index": 257,
+                      "line": 13,
                     },
                     "filename": undefined,
                     "identifierName": undefined,
                     "start": Position {
                       "column": 26,
-                      "index": 113,
-                      "line": 7,
+                      "index": 128,
+                      "line": 8,
                     },
                   },
                   "range": Array [
-                    113,
-                    242,
+                    128,
+                    257,
                   ],
-                  "start": 113,
+                  "start": 128,
                   "type": "BlockStatement",
                 },
                 "computed": false,
-                "end": 242,
+                "end": 257,
                 "generator": false,
                 "id": null,
                 "key": Node {
-                  "end": 97,
+                  "end": 112,
                   "loc": SourceLocation {
                     "end": Position {
                       "column": 10,
-                      "index": 97,
-                      "line": 7,
+                      "index": 112,
+                      "line": 8,
                     },
                     "filename": undefined,
                     "identifierName": "name",
                     "start": Position {
                       "column": 6,
-                      "index": 93,
-                      "line": 7,
+                      "index": 108,
+                      "line": 8,
                     },
                   },
                   "name": "name",
                   "range": Array [
-                    93,
-                    97,
+                    108,
+                    112,
                   ],
-                  "start": 93,
+                  "start": 108,
                   "type": "Identifier",
                 },
                 "kind": "set",
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 3,
-                    "index": 242,
-                    "line": 12,
+                    "index": 257,
+                    "line": 13,
                   },
                   "filename": undefined,
                   "identifierName": undefined,
                   "start": Position {
                     "column": 2,
-                    "index": 89,
-                    "line": 7,
+                    "index": 104,
+                    "line": 8,
                   },
                 },
                 "params": Array [
                   Node {
-                    "end": 111,
+                    "end": 126,
                     "loc": SourceLocation {
                       "end": Position {
                         "column": 24,
-                        "index": 111,
-                        "line": 7,
+                        "index": 126,
+                        "line": 8,
                       },
                       "filename": undefined,
                       "identifierName": "value",
                       "start": Position {
                         "column": 11,
-                        "index": 98,
-                        "line": 7,
+                        "index": 113,
+                        "line": 8,
                       },
                     },
                     "name": "value",
                     "range": Array [
-                      98,
-                      111,
+                      113,
+                      126,
                     ],
-                    "start": 98,
+                    "start": 113,
                     "type": "Identifier",
                     "typeAnnotation": Node {
-                      "end": 111,
+                      "end": 126,
                       "loc": SourceLocation {
                         "end": Position {
                           "column": 24,
-                          "index": 111,
-                          "line": 7,
+                          "index": 126,
+                          "line": 8,
                         },
                         "filename": undefined,
                         "identifierName": undefined,
                         "start": Position {
                           "column": 16,
-                          "index": 103,
-                          "line": 7,
+                          "index": 118,
+                          "line": 8,
                         },
                       },
                       "range": Array [
-                        103,
-                        111,
+                        118,
+                        126,
                       ],
-                      "start": 103,
+                      "start": 118,
                       "type": "TSTypeAnnotation",
                       "typeAnnotation": Node {
-                        "end": 111,
+                        "end": 126,
                         "loc": SourceLocation {
                           "end": Position {
                             "column": 24,
-                            "index": 111,
-                            "line": 7,
+                            "index": 126,
+                            "line": 8,
                           },
                           "filename": undefined,
                           "identifierName": undefined,
                           "start": Position {
                             "column": 18,
-                            "index": 105,
-                            "line": 7,
+                            "index": 120,
+                            "line": 8,
                           },
                         },
                         "range": Array [
-                          105,
-                          111,
+                          120,
+                          126,
                         ],
-                        "start": 105,
+                        "start": 120,
                         "type": "TSStringKeyword",
                       },
                     },
                   },
                 ],
                 "range": Array [
-                  89,
-                  242,
+                  104,
+                  257,
                 ],
-                "start": 89,
+                "start": 104,
                 "static": false,
                 "type": "ClassMethod",
               },
             ],
-            "end": 244,
+            "end": 259,
             "loc": SourceLocation {
               "end": Position {
                 "column": 1,
-                "index": 244,
-                "line": 13,
+                "index": 259,
+                "line": 14,
               },
               "filename": undefined,
               "identifierName": undefined,
               "start": Position {
                 "column": 13,
-                "index": 13,
-                "line": 1,
+                "index": 28,
+                "line": 2,
               },
             },
             "range": Array [
-              13,
-              244,
+              28,
+              259,
             ],
-            "start": 13,
+            "start": 28,
             "type": "ClassBody",
           },
-          "end": 244,
+          "end": 259,
           "id": Node {
-            "end": 12,
+            "end": 27,
             "loc": SourceLocation {
               "end": Position {
                 "column": 12,
-                "index": 12,
-                "line": 1,
+                "index": 27,
+                "line": 2,
               },
               "filename": undefined,
               "identifierName": "Person",
               "start": Position {
                 "column": 6,
-                "index": 6,
-                "line": 1,
+                "index": 21,
+                "line": 2,
               },
             },
             "name": "Person",
             "range": Array [
-              6,
-              12,
+              21,
+              27,
             ],
-            "start": 6,
+            "start": 21,
             "type": "Identifier",
           },
+          "leadingComments": Array [
+            Object {
+              "end": 14,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 14,
+                  "index": 14,
+                  "line": 1,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 0,
+                  "index": 0,
+                  "line": 1,
+                },
+              },
+              "start": 0,
+              "type": "CommentLine",
+              "value": " @ts-nocheck",
+            },
+          ],
           "loc": SourceLocation {
             "end": Position {
               "column": 1,
-              "index": 244,
-              "line": 13,
+              "index": 259,
+              "line": 14,
             },
             "filename": undefined,
             "identifierName": undefined,
             "start": Position {
               "column": 0,
-              "index": 0,
-              "line": 1,
+              "index": 15,
+              "line": 2,
             },
           },
           "range": Array [
-            0,
-            244,
+            15,
+            259,
           ],
-          "start": 0,
+          "start": 15,
           "superClass": null,
+          "trailingComments": Array [
+            Object {
+              "end": 292,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 30,
+                  "index": 292,
+                  "line": 17,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 0,
+                  "index": 262,
+                  "line": 17,
+                },
+              },
+              "start": 262,
+              "type": "CommentLine",
+              "value": " Explicit resource managment",
+            },
+          ],
           "type": "ClassDeclaration",
+        },
+        Node {
+          "declaration": Node {
+            "async": false,
+            "body": Node {
+              "body": Array [
+                Node {
+                  "declarations": Array [
+                    Node {
+                      "end": 371,
+                      "id": Node {
+                        "end": 337,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 12,
+                            "index": 337,
+                            "line": 20,
+                          },
+                          "filename": undefined,
+                          "identifierName": "file",
+                          "start": Position {
+                            "column": 8,
+                            "index": 333,
+                            "line": 20,
+                          },
+                        },
+                        "name": "file",
+                        "range": Array [
+                          333,
+                          337,
+                        ],
+                        "start": 333,
+                        "type": "Identifier",
+                      },
+                      "init": Node {
+                        "arguments": Array [
+                          Node {
+                            "end": 370,
+                            "extra": Object {
+                              "raw": "'.some_temp_file'",
+                              "rawValue": ".some_temp_file",
+                            },
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 45,
+                                "index": 370,
+                                "line": 20,
+                              },
+                              "filename": undefined,
+                              "identifierName": undefined,
+                              "start": Position {
+                                "column": 28,
+                                "index": 353,
+                                "line": 20,
+                              },
+                            },
+                            "range": Array [
+                              353,
+                              370,
+                            ],
+                            "start": 353,
+                            "type": "StringLiteral",
+                            "value": ".some_temp_file",
+                          },
+                        ],
+                        "callee": Node {
+                          "end": 352,
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 27,
+                              "index": 352,
+                              "line": 20,
+                            },
+                            "filename": undefined,
+                            "identifierName": "TempFile",
+                            "start": Position {
+                              "column": 19,
+                              "index": 344,
+                              "line": 20,
+                            },
+                          },
+                          "name": "TempFile",
+                          "range": Array [
+                            344,
+                            352,
+                          ],
+                          "start": 344,
+                          "type": "Identifier",
+                        },
+                        "end": 371,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 46,
+                            "index": 371,
+                            "line": 20,
+                          },
+                          "filename": undefined,
+                          "identifierName": undefined,
+                          "start": Position {
+                            "column": 15,
+                            "index": 340,
+                            "line": 20,
+                          },
+                        },
+                        "range": Array [
+                          340,
+                          371,
+                        ],
+                        "start": 340,
+                        "type": "NewExpression",
+                      },
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 46,
+                          "index": 371,
+                          "line": 20,
+                        },
+                        "filename": undefined,
+                        "identifierName": undefined,
+                        "start": Position {
+                          "column": 8,
+                          "index": 333,
+                          "line": 20,
+                        },
+                      },
+                      "range": Array [
+                        333,
+                        371,
+                      ],
+                      "start": 333,
+                      "type": "VariableDeclarator",
+                    },
+                  ],
+                  "end": 372,
+                  "kind": "using",
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 47,
+                      "index": 372,
+                      "line": 20,
+                    },
+                    "filename": undefined,
+                    "identifierName": undefined,
+                    "start": Position {
+                      "column": 2,
+                      "index": 327,
+                      "line": 20,
+                    },
+                  },
+                  "range": Array [
+                    327,
+                    372,
+                  ],
+                  "start": 327,
+                  "trailingComments": Array [
+                    Object {
+                      "end": 389,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 16,
+                          "index": 389,
+                          "line": 21,
+                        },
+                        "filename": undefined,
+                        "identifierName": undefined,
+                        "start": Position {
+                          "column": 2,
+                          "index": 375,
+                          "line": 21,
+                        },
+                      },
+                      "start": 375,
+                      "type": "CommentLine",
+                      "value": " use file...",
+                    },
+                  ],
+                  "type": "VariableDeclaration",
+                },
+                Node {
+                  "alternate": null,
+                  "consequent": Node {
+                    "body": Array [
+                      Node {
+                        "argument": null,
+                        "end": 454,
+                        "leadingComments": Array [
+                          Object {
+                            "end": 442,
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 27,
+                                "index": 442,
+                                "line": 23,
+                              },
+                              "filename": undefined,
+                              "identifierName": undefined,
+                              "start": Position {
+                                "column": 4,
+                                "index": 419,
+                                "line": 23,
+                              },
+                            },
+                            "start": 419,
+                            "type": "CommentLine",
+                            "value": " do some more work...",
+                          },
+                        ],
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 11,
+                            "index": 454,
+                            "line": 24,
+                          },
+                          "filename": undefined,
+                          "identifierName": undefined,
+                          "start": Position {
+                            "column": 4,
+                            "index": 447,
+                            "line": 24,
+                          },
+                        },
+                        "range": Array [
+                          447,
+                          454,
+                        ],
+                        "start": 447,
+                        "type": "ReturnStatement",
+                      },
+                    ],
+                    "directives": Array [],
+                    "end": 458,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 3,
+                        "index": 458,
+                        "line": 25,
+                      },
+                      "filename": undefined,
+                      "identifierName": undefined,
+                      "start": Position {
+                        "column": 23,
+                        "index": 413,
+                        "line": 22,
+                      },
+                    },
+                    "range": Array [
+                      413,
+                      458,
+                    ],
+                    "start": 413,
+                    "type": "BlockStatement",
+                  },
+                  "end": 458,
+                  "leadingComments": Array [
+                    Object {
+                      "end": 389,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 16,
+                          "index": 389,
+                          "line": 21,
+                        },
+                        "filename": undefined,
+                        "identifierName": undefined,
+                        "start": Position {
+                          "column": 2,
+                          "index": 375,
+                          "line": 21,
+                        },
+                      },
+                      "start": 375,
+                      "type": "CommentLine",
+                      "value": " use file...",
+                    },
+                  ],
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 3,
+                      "index": 458,
+                      "line": 25,
+                    },
+                    "filename": undefined,
+                    "identifierName": undefined,
+                    "start": Position {
+                      "column": 2,
+                      "index": 392,
+                      "line": 22,
+                    },
+                  },
+                  "range": Array [
+                    392,
+                    458,
+                  ],
+                  "start": 392,
+                  "test": Node {
+                    "arguments": Array [],
+                    "callee": Node {
+                      "end": 409,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 19,
+                          "index": 409,
+                          "line": 22,
+                        },
+                        "filename": undefined,
+                        "identifierName": "someCondition",
+                        "start": Position {
+                          "column": 6,
+                          "index": 396,
+                          "line": 22,
+                        },
+                      },
+                      "name": "someCondition",
+                      "range": Array [
+                        396,
+                        409,
+                      ],
+                      "start": 396,
+                      "type": "Identifier",
+                    },
+                    "end": 411,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 21,
+                        "index": 411,
+                        "line": 22,
+                      },
+                      "filename": undefined,
+                      "identifierName": undefined,
+                      "start": Position {
+                        "column": 6,
+                        "index": 396,
+                        "line": 22,
+                      },
+                    },
+                    "range": Array [
+                      396,
+                      411,
+                    ],
+                    "start": 396,
+                    "type": "CallExpression",
+                  },
+                  "type": "IfStatement",
+                },
+              ],
+              "directives": Array [],
+              "end": 460,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 1,
+                  "index": 460,
+                  "line": 26,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 29,
+                  "index": 323,
+                  "line": 19,
+                },
+              },
+              "range": Array [
+                323,
+                460,
+              ],
+              "start": 323,
+              "type": "BlockStatement",
+            },
+            "end": 460,
+            "generator": false,
+            "id": Node {
+              "end": 320,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 26,
+                  "index": 320,
+                  "line": 19,
+                },
+                "filename": undefined,
+                "identifierName": "doSomeWork",
+                "start": Position {
+                  "column": 16,
+                  "index": 310,
+                  "line": 19,
+                },
+              },
+              "name": "doSomeWork",
+              "range": Array [
+                310,
+                320,
+              ],
+              "start": 310,
+              "type": "Identifier",
+            },
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 1,
+                "index": 460,
+                "line": 26,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 7,
+                "index": 301,
+                "line": 19,
+              },
+            },
+            "params": Array [],
+            "range": Array [
+              301,
+              460,
+            ],
+            "start": 301,
+            "type": "FunctionDeclaration",
+          },
+          "end": 460,
+          "exportKind": "value",
+          "leadingComments": Array [
+            Object {
+              "end": 292,
+              "loc": SourceLocation {
+                "end": Position {
+                  "column": 30,
+                  "index": 292,
+                  "line": 17,
+                },
+                "filename": undefined,
+                "identifierName": undefined,
+                "start": Position {
+                  "column": 0,
+                  "index": 262,
+                  "line": 17,
+                },
+              },
+              "start": 262,
+              "type": "CommentLine",
+              "value": " Explicit resource managment",
+            },
+          ],
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 1,
+              "index": 460,
+              "line": 26,
+            },
+            "filename": undefined,
+            "identifierName": undefined,
+            "start": Position {
+              "column": 0,
+              "index": 294,
+              "line": 19,
+            },
+          },
+          "range": Array [
+            294,
+            460,
+          ],
+          "source": null,
+          "specifiers": Array [],
+          "start": 294,
+          "type": "ExportNamedDeclaration",
+        },
+        Node {
+          "async": true,
+          "body": Node {
+            "body": Array [
+              Node {
+                "declarations": Array [
+                  Node {
+                    "end": 514,
+                    "id": Node {
+                      "end": 501,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 15,
+                          "index": 501,
+                          "line": 29,
+                        },
+                        "filename": undefined,
+                        "identifierName": "a",
+                        "start": Position {
+                          "column": 14,
+                          "index": 500,
+                          "line": 29,
+                        },
+                      },
+                      "name": "a",
+                      "range": Array [
+                        500,
+                        501,
+                      ],
+                      "start": 500,
+                      "type": "Identifier",
+                    },
+                    "init": Node {
+                      "arguments": Array [
+                        Node {
+                          "end": 513,
+                          "extra": Object {
+                            "raw": "'a'",
+                            "rawValue": "a",
+                          },
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 27,
+                              "index": 513,
+                              "line": 29,
+                            },
+                            "filename": undefined,
+                            "identifierName": undefined,
+                            "start": Position {
+                              "column": 24,
+                              "index": 510,
+                              "line": 29,
+                            },
+                          },
+                          "range": Array [
+                            510,
+                            513,
+                          ],
+                          "start": 510,
+                          "type": "StringLiteral",
+                          "value": "a",
+                        },
+                      ],
+                      "callee": Node {
+                        "end": 509,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 23,
+                            "index": 509,
+                            "line": 29,
+                          },
+                          "filename": undefined,
+                          "identifierName": "loggy",
+                          "start": Position {
+                            "column": 18,
+                            "index": 504,
+                            "line": 29,
+                          },
+                        },
+                        "name": "loggy",
+                        "range": Array [
+                          504,
+                          509,
+                        ],
+                        "start": 504,
+                        "type": "Identifier",
+                      },
+                      "end": 514,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 28,
+                          "index": 514,
+                          "line": 29,
+                        },
+                        "filename": undefined,
+                        "identifierName": undefined,
+                        "start": Position {
+                          "column": 18,
+                          "index": 504,
+                          "line": 29,
+                        },
+                      },
+                      "range": Array [
+                        504,
+                        514,
+                      ],
+                      "start": 504,
+                      "type": "CallExpression",
+                    },
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 28,
+                        "index": 514,
+                        "line": 29,
+                      },
+                      "filename": undefined,
+                      "identifierName": undefined,
+                      "start": Position {
+                        "column": 14,
+                        "index": 500,
+                        "line": 29,
+                      },
+                    },
+                    "range": Array [
+                      500,
+                      514,
+                    ],
+                    "start": 500,
+                    "type": "VariableDeclarator",
+                  },
+                ],
+                "end": 515,
+                "kind": "await using",
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 29,
+                    "index": 515,
+                    "line": 29,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 2,
+                    "index": 488,
+                    "line": 29,
+                  },
+                },
+                "range": Array [
+                  488,
+                  515,
+                ],
+                "start": 488,
+                "type": "VariableDeclaration",
+              },
+              Node {
+                "declarations": Array [
+                  Node {
+                    "end": 544,
+                    "id": Node {
+                      "end": 531,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 15,
+                          "index": 531,
+                          "line": 30,
+                        },
+                        "filename": undefined,
+                        "identifierName": "b",
+                        "start": Position {
+                          "column": 14,
+                          "index": 530,
+                          "line": 30,
+                        },
+                      },
+                      "name": "b",
+                      "range": Array [
+                        530,
+                        531,
+                      ],
+                      "start": 530,
+                      "type": "Identifier",
+                    },
+                    "init": Node {
+                      "arguments": Array [
+                        Node {
+                          "end": 543,
+                          "extra": Object {
+                            "raw": "'b'",
+                            "rawValue": "b",
+                          },
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 27,
+                              "index": 543,
+                              "line": 30,
+                            },
+                            "filename": undefined,
+                            "identifierName": undefined,
+                            "start": Position {
+                              "column": 24,
+                              "index": 540,
+                              "line": 30,
+                            },
+                          },
+                          "range": Array [
+                            540,
+                            543,
+                          ],
+                          "start": 540,
+                          "type": "StringLiteral",
+                          "value": "b",
+                        },
+                      ],
+                      "callee": Node {
+                        "end": 539,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 23,
+                            "index": 539,
+                            "line": 30,
+                          },
+                          "filename": undefined,
+                          "identifierName": "loggy",
+                          "start": Position {
+                            "column": 18,
+                            "index": 534,
+                            "line": 30,
+                          },
+                        },
+                        "name": "loggy",
+                        "range": Array [
+                          534,
+                          539,
+                        ],
+                        "start": 534,
+                        "type": "Identifier",
+                      },
+                      "end": 544,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 28,
+                          "index": 544,
+                          "line": 30,
+                        },
+                        "filename": undefined,
+                        "identifierName": undefined,
+                        "start": Position {
+                          "column": 18,
+                          "index": 534,
+                          "line": 30,
+                        },
+                      },
+                      "range": Array [
+                        534,
+                        544,
+                      ],
+                      "start": 534,
+                      "type": "CallExpression",
+                    },
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 28,
+                        "index": 544,
+                        "line": 30,
+                      },
+                      "filename": undefined,
+                      "identifierName": undefined,
+                      "start": Position {
+                        "column": 14,
+                        "index": 530,
+                        "line": 30,
+                      },
+                    },
+                    "range": Array [
+                      530,
+                      544,
+                    ],
+                    "start": 530,
+                    "type": "VariableDeclarator",
+                  },
+                ],
+                "end": 545,
+                "kind": "await using",
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 29,
+                    "index": 545,
+                    "line": 30,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 2,
+                    "index": 518,
+                    "line": 30,
+                  },
+                },
+                "range": Array [
+                  518,
+                  545,
+                ],
+                "start": 518,
+                "type": "VariableDeclaration",
+              },
+              Node {
+                "body": Array [
+                  Node {
+                    "declarations": Array [
+                      Node {
+                        "end": 580,
+                        "id": Node {
+                          "end": 567,
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 17,
+                              "index": 567,
+                              "line": 32,
+                            },
+                            "filename": undefined,
+                            "identifierName": "c",
+                            "start": Position {
+                              "column": 16,
+                              "index": 566,
+                              "line": 32,
+                            },
+                          },
+                          "name": "c",
+                          "range": Array [
+                            566,
+                            567,
+                          ],
+                          "start": 566,
+                          "type": "Identifier",
+                        },
+                        "init": Node {
+                          "arguments": Array [
+                            Node {
+                              "end": 579,
+                              "extra": Object {
+                                "raw": "'c'",
+                                "rawValue": "c",
+                              },
+                              "loc": SourceLocation {
+                                "end": Position {
+                                  "column": 29,
+                                  "index": 579,
+                                  "line": 32,
+                                },
+                                "filename": undefined,
+                                "identifierName": undefined,
+                                "start": Position {
+                                  "column": 26,
+                                  "index": 576,
+                                  "line": 32,
+                                },
+                              },
+                              "range": Array [
+                                576,
+                                579,
+                              ],
+                              "start": 576,
+                              "type": "StringLiteral",
+                              "value": "c",
+                            },
+                          ],
+                          "callee": Node {
+                            "end": 575,
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 25,
+                                "index": 575,
+                                "line": 32,
+                              },
+                              "filename": undefined,
+                              "identifierName": "loggy",
+                              "start": Position {
+                                "column": 20,
+                                "index": 570,
+                                "line": 32,
+                              },
+                            },
+                            "name": "loggy",
+                            "range": Array [
+                              570,
+                              575,
+                            ],
+                            "start": 570,
+                            "type": "Identifier",
+                          },
+                          "end": 580,
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 30,
+                              "index": 580,
+                              "line": 32,
+                            },
+                            "filename": undefined,
+                            "identifierName": undefined,
+                            "start": Position {
+                              "column": 20,
+                              "index": 570,
+                              "line": 32,
+                            },
+                          },
+                          "range": Array [
+                            570,
+                            580,
+                          ],
+                          "start": 570,
+                          "type": "CallExpression",
+                        },
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 30,
+                            "index": 580,
+                            "line": 32,
+                          },
+                          "filename": undefined,
+                          "identifierName": undefined,
+                          "start": Position {
+                            "column": 16,
+                            "index": 566,
+                            "line": 32,
+                          },
+                        },
+                        "range": Array [
+                          566,
+                          580,
+                        ],
+                        "start": 566,
+                        "type": "VariableDeclarator",
+                      },
+                    ],
+                    "end": 581,
+                    "kind": "await using",
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 31,
+                        "index": 581,
+                        "line": 32,
+                      },
+                      "filename": undefined,
+                      "identifierName": undefined,
+                      "start": Position {
+                        "column": 4,
+                        "index": 554,
+                        "line": 32,
+                      },
+                    },
+                    "range": Array [
+                      554,
+                      581,
+                    ],
+                    "start": 554,
+                    "type": "VariableDeclaration",
+                  },
+                  Node {
+                    "declarations": Array [
+                      Node {
+                        "end": 612,
+                        "id": Node {
+                          "end": 599,
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 17,
+                              "index": 599,
+                              "line": 33,
+                            },
+                            "filename": undefined,
+                            "identifierName": "d",
+                            "start": Position {
+                              "column": 16,
+                              "index": 598,
+                              "line": 33,
+                            },
+                          },
+                          "name": "d",
+                          "range": Array [
+                            598,
+                            599,
+                          ],
+                          "start": 598,
+                          "type": "Identifier",
+                        },
+                        "init": Node {
+                          "arguments": Array [
+                            Node {
+                              "end": 611,
+                              "extra": Object {
+                                "raw": "'d'",
+                                "rawValue": "d",
+                              },
+                              "loc": SourceLocation {
+                                "end": Position {
+                                  "column": 29,
+                                  "index": 611,
+                                  "line": 33,
+                                },
+                                "filename": undefined,
+                                "identifierName": undefined,
+                                "start": Position {
+                                  "column": 26,
+                                  "index": 608,
+                                  "line": 33,
+                                },
+                              },
+                              "range": Array [
+                                608,
+                                611,
+                              ],
+                              "start": 608,
+                              "type": "StringLiteral",
+                              "value": "d",
+                            },
+                          ],
+                          "callee": Node {
+                            "end": 607,
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 25,
+                                "index": 607,
+                                "line": 33,
+                              },
+                              "filename": undefined,
+                              "identifierName": "loggy",
+                              "start": Position {
+                                "column": 20,
+                                "index": 602,
+                                "line": 33,
+                              },
+                            },
+                            "name": "loggy",
+                            "range": Array [
+                              602,
+                              607,
+                            ],
+                            "start": 602,
+                            "type": "Identifier",
+                          },
+                          "end": 612,
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 30,
+                              "index": 612,
+                              "line": 33,
+                            },
+                            "filename": undefined,
+                            "identifierName": undefined,
+                            "start": Position {
+                              "column": 20,
+                              "index": 602,
+                              "line": 33,
+                            },
+                          },
+                          "range": Array [
+                            602,
+                            612,
+                          ],
+                          "start": 602,
+                          "type": "CallExpression",
+                        },
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 30,
+                            "index": 612,
+                            "line": 33,
+                          },
+                          "filename": undefined,
+                          "identifierName": undefined,
+                          "start": Position {
+                            "column": 16,
+                            "index": 598,
+                            "line": 33,
+                          },
+                        },
+                        "range": Array [
+                          598,
+                          612,
+                        ],
+                        "start": 598,
+                        "type": "VariableDeclarator",
+                      },
+                    ],
+                    "end": 613,
+                    "kind": "await using",
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 31,
+                        "index": 613,
+                        "line": 33,
+                      },
+                      "filename": undefined,
+                      "identifierName": undefined,
+                      "start": Position {
+                        "column": 4,
+                        "index": 586,
+                        "line": 33,
+                      },
+                    },
+                    "range": Array [
+                      586,
+                      613,
+                    ],
+                    "start": 586,
+                    "type": "VariableDeclaration",
+                  },
+                ],
+                "directives": Array [],
+                "end": 617,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 3,
+                    "index": 617,
+                    "line": 34,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 2,
+                    "index": 548,
+                    "line": 31,
+                  },
+                },
+                "range": Array [
+                  548,
+                  617,
+                ],
+                "start": 548,
+                "type": "BlockStatement",
+              },
+              Node {
+                "declarations": Array [
+                  Node {
+                    "end": 646,
+                    "id": Node {
+                      "end": 633,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 15,
+                          "index": 633,
+                          "line": 35,
+                        },
+                        "filename": undefined,
+                        "identifierName": "e",
+                        "start": Position {
+                          "column": 14,
+                          "index": 632,
+                          "line": 35,
+                        },
+                      },
+                      "name": "e",
+                      "range": Array [
+                        632,
+                        633,
+                      ],
+                      "start": 632,
+                      "type": "Identifier",
+                    },
+                    "init": Node {
+                      "arguments": Array [
+                        Node {
+                          "end": 645,
+                          "extra": Object {
+                            "raw": "'e'",
+                            "rawValue": "e",
+                          },
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 27,
+                              "index": 645,
+                              "line": 35,
+                            },
+                            "filename": undefined,
+                            "identifierName": undefined,
+                            "start": Position {
+                              "column": 24,
+                              "index": 642,
+                              "line": 35,
+                            },
+                          },
+                          "range": Array [
+                            642,
+                            645,
+                          ],
+                          "start": 642,
+                          "type": "StringLiteral",
+                          "value": "e",
+                        },
+                      ],
+                      "callee": Node {
+                        "end": 641,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 23,
+                            "index": 641,
+                            "line": 35,
+                          },
+                          "filename": undefined,
+                          "identifierName": "loggy",
+                          "start": Position {
+                            "column": 18,
+                            "index": 636,
+                            "line": 35,
+                          },
+                        },
+                        "name": "loggy",
+                        "range": Array [
+                          636,
+                          641,
+                        ],
+                        "start": 636,
+                        "type": "Identifier",
+                      },
+                      "end": 646,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 28,
+                          "index": 646,
+                          "line": 35,
+                        },
+                        "filename": undefined,
+                        "identifierName": undefined,
+                        "start": Position {
+                          "column": 18,
+                          "index": 636,
+                          "line": 35,
+                        },
+                      },
+                      "range": Array [
+                        636,
+                        646,
+                      ],
+                      "start": 636,
+                      "type": "CallExpression",
+                    },
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 28,
+                        "index": 646,
+                        "line": 35,
+                      },
+                      "filename": undefined,
+                      "identifierName": undefined,
+                      "start": Position {
+                        "column": 14,
+                        "index": 632,
+                        "line": 35,
+                      },
+                    },
+                    "range": Array [
+                      632,
+                      646,
+                    ],
+                    "start": 632,
+                    "type": "VariableDeclarator",
+                  },
+                ],
+                "end": 647,
+                "kind": "await using",
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 29,
+                    "index": 647,
+                    "line": 35,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 2,
+                    "index": 620,
+                    "line": 35,
+                  },
+                },
+                "range": Array [
+                  620,
+                  647,
+                ],
+                "start": 620,
+                "type": "VariableDeclaration",
+              },
+              Node {
+                "argument": null,
+                "end": 657,
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 9,
+                    "index": 657,
+                    "line": 36,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 2,
+                    "index": 650,
+                    "line": 36,
+                  },
+                },
+                "range": Array [
+                  650,
+                  657,
+                ],
+                "start": 650,
+                "trailingComments": Array [
+                  Object {
+                    "end": 675,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 17,
+                        "index": 675,
+                        "line": 37,
+                      },
+                      "filename": undefined,
+                      "identifierName": undefined,
+                      "start": Position {
+                        "column": 2,
+                        "index": 660,
+                        "line": 37,
+                      },
+                    },
+                    "start": 660,
+                    "type": "CommentLine",
+                    "value": " Unreachable.",
+                  },
+                  Object {
+                    "end": 711,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 35,
+                        "index": 711,
+                        "line": 38,
+                      },
+                      "filename": undefined,
+                      "identifierName": undefined,
+                      "start": Position {
+                        "column": 2,
+                        "index": 678,
+                        "line": 38,
+                      },
+                    },
+                    "start": 678,
+                    "type": "CommentLine",
+                    "value": " Never created, never disposed.",
+                  },
+                ],
+                "type": "ReturnStatement",
+              },
+              Node {
+                "declarations": Array [
+                  Node {
+                    "end": 740,
+                    "id": Node {
+                      "end": 727,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 15,
+                          "index": 727,
+                          "line": 39,
+                        },
+                        "filename": undefined,
+                        "identifierName": "f",
+                        "start": Position {
+                          "column": 14,
+                          "index": 726,
+                          "line": 39,
+                        },
+                      },
+                      "name": "f",
+                      "range": Array [
+                        726,
+                        727,
+                      ],
+                      "start": 726,
+                      "type": "Identifier",
+                    },
+                    "init": Node {
+                      "arguments": Array [
+                        Node {
+                          "end": 739,
+                          "extra": Object {
+                            "raw": "'f'",
+                            "rawValue": "f",
+                          },
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 27,
+                              "index": 739,
+                              "line": 39,
+                            },
+                            "filename": undefined,
+                            "identifierName": undefined,
+                            "start": Position {
+                              "column": 24,
+                              "index": 736,
+                              "line": 39,
+                            },
+                          },
+                          "range": Array [
+                            736,
+                            739,
+                          ],
+                          "start": 736,
+                          "type": "StringLiteral",
+                          "value": "f",
+                        },
+                      ],
+                      "callee": Node {
+                        "end": 735,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 23,
+                            "index": 735,
+                            "line": 39,
+                          },
+                          "filename": undefined,
+                          "identifierName": "loggy",
+                          "start": Position {
+                            "column": 18,
+                            "index": 730,
+                            "line": 39,
+                          },
+                        },
+                        "name": "loggy",
+                        "range": Array [
+                          730,
+                          735,
+                        ],
+                        "start": 730,
+                        "type": "Identifier",
+                      },
+                      "end": 740,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 28,
+                          "index": 740,
+                          "line": 39,
+                        },
+                        "filename": undefined,
+                        "identifierName": undefined,
+                        "start": Position {
+                          "column": 18,
+                          "index": 730,
+                          "line": 39,
+                        },
+                      },
+                      "range": Array [
+                        730,
+                        740,
+                      ],
+                      "start": 730,
+                      "type": "CallExpression",
+                    },
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 28,
+                        "index": 740,
+                        "line": 39,
+                      },
+                      "filename": undefined,
+                      "identifierName": undefined,
+                      "start": Position {
+                        "column": 14,
+                        "index": 726,
+                        "line": 39,
+                      },
+                    },
+                    "range": Array [
+                      726,
+                      740,
+                    ],
+                    "start": 726,
+                    "type": "VariableDeclarator",
+                  },
+                ],
+                "end": 741,
+                "kind": "await using",
+                "leadingComments": Array [
+                  Object {
+                    "end": 675,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 17,
+                        "index": 675,
+                        "line": 37,
+                      },
+                      "filename": undefined,
+                      "identifierName": undefined,
+                      "start": Position {
+                        "column": 2,
+                        "index": 660,
+                        "line": 37,
+                      },
+                    },
+                    "start": 660,
+                    "type": "CommentLine",
+                    "value": " Unreachable.",
+                  },
+                  Object {
+                    "end": 711,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 35,
+                        "index": 711,
+                        "line": 38,
+                      },
+                      "filename": undefined,
+                      "identifierName": undefined,
+                      "start": Position {
+                        "column": 2,
+                        "index": 678,
+                        "line": 38,
+                      },
+                    },
+                    "start": 678,
+                    "type": "CommentLine",
+                    "value": " Never created, never disposed.",
+                  },
+                ],
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 29,
+                    "index": 741,
+                    "line": 39,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 2,
+                    "index": 714,
+                    "line": 39,
+                  },
+                },
+                "range": Array [
+                  714,
+                  741,
+                ],
+                "start": 714,
+                "type": "VariableDeclaration",
+              },
+            ],
+            "directives": Array [],
+            "end": 743,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 1,
+                "index": 743,
+                "line": 40,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 22,
+                "index": 484,
+                "line": 28,
+              },
+            },
+            "range": Array [
+              484,
+              743,
+            ],
+            "start": 484,
+            "type": "BlockStatement",
+          },
+          "end": 743,
+          "generator": false,
+          "id": Node {
+            "end": 481,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 19,
+                "index": 481,
+                "line": 28,
+              },
+              "filename": undefined,
+              "identifierName": "func",
+              "start": Position {
+                "column": 15,
+                "index": 477,
+                "line": 28,
+              },
+            },
+            "name": "func",
+            "range": Array [
+              477,
+              481,
+            ],
+            "start": 477,
+            "type": "Identifier",
+          },
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 1,
+              "index": 743,
+              "line": 40,
+            },
+            "filename": undefined,
+            "identifierName": undefined,
+            "start": Position {
+              "column": 0,
+              "index": 462,
+              "line": 28,
+            },
+          },
+          "params": Array [],
+          "range": Array [
+            462,
+            743,
+          ],
+          "start": 462,
+          "type": "FunctionDeclaration",
         },
       ],
       "directives": Array [],
-      "end": 245,
+      "end": 744,
       "extra": Object {
         "topLevelAwait": false,
       },
@@ -8614,8 +10378,8 @@ Object {
       "loc": SourceLocation {
         "end": Position {
           "column": 0,
-          "index": 245,
-          "line": 14,
+          "index": 744,
+          "line": 41,
         },
         "filename": undefined,
         "identifierName": undefined,
@@ -8627,7 +10391,7 @@ Object {
       },
       "range": Array [
         0,
-        245,
+        744,
       ],
       "sourceType": "module",
       "start": 0,
@@ -8635,7 +10399,7 @@ Object {
     },
     "range": Array [
       0,
-      245,
+      744,
     ],
     "start": 0,
     "type": "File",

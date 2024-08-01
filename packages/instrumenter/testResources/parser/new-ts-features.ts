@@ -1,3 +1,4 @@
+// @ts-nocheck
 class Person {
   #name = 'unknown';
 
@@ -10,4 +11,30 @@ class Person {
     }
     this.#name = value;
   }
+}
+
+
+// Explicit resource managment
+
+export function doSomeWork() {
+  using file = new TempFile('.some_temp_file');
+  // use file...
+  if (someCondition()) {
+    // do some more work...
+    return;
+  }
+}
+
+async function func() {
+  await using a = loggy('a');
+  await using b = loggy('b');
+  {
+    await using c = loggy('c');
+    await using d = loggy('d');
+  }
+  await using e = loggy('e');
+  return;
+  // Unreachable.
+  // Never created, never disposed.
+  await using f = loggy('f');
 }
