@@ -24,7 +24,7 @@
     "@types/tap": "15.0.11",
     "@vitest/browser": "2.0.5",
     "ajv": "8.17.1",
-    "axios": "1.7.2",
+    "axios": "1.7.3",
     "chai": "5.1.1",
     "chai-as-promised": "8.0.0",
     "chai-jest-snapshot": "2.0.0",
