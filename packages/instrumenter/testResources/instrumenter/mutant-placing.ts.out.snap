@@ -50,5 +50,8 @@ function stryMutAct_9fa48(id) {
   stryMutAct_9fa48 = isActive;
   return isActive(id);
 }
-directoryFiles[stryMutAct_9fa48(\\"0\\") ? file[0] : (stryCov_9fa48(\\"0\\"), file[0].substr(1))] = file[1];"
+directoryFiles[stryMutAct_9fa48(\\"0\\") ? file[0] : (stryCov_9fa48(\\"0\\"), file[0].substr(1))] = file[1];
+
+// https://github.com/stryker-mutator/stryker-js/issues/4884
+stryMutAct_9fa48(\\"1\\") ? initialNodes[0].className = tiptiltState : (stryCov_9fa48(\\"1\\"), initialNodes.filter(stryMutAct_9fa48(\\"2\\") ? () => undefined : (stryCov_9fa48(\\"2\\"), n => stryMutAct_9fa48(\\"5\\") ? n.id !== 'tiptilt' : stryMutAct_9fa48(\\"4\\") ? false : stryMutAct_9fa48(\\"3\\") ? true : (stryCov_9fa48(\\"3\\", \\"4\\", \\"5\\"), n.id === (stryMutAct_9fa48(\\"6\\") ? \\"\\" : (stryCov_9fa48(\\"6\\"), 'tiptilt')))))[0].className = tiptiltState);"
 `;
