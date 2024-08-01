@@ -114,7 +114,7 @@ export class MochaTestRunner implements TestRunner {
     this.instrumenterContext.hitLimit = hitLimit;
     this.instrumenterContext.hitCount = hitLimit ? 0 : undefined;
     if (testFilter) {
-      const metaRegExp = testFilter.map((testId) => `(${escapeRegExp(testId)})`).join('|');
+      const metaRegExp = testFilter.map((testId) => `(^${escapeRegExp(testId)}$)`).join('|');
       const regex = new RegExp(metaRegExp);
       this.mocha.grep(regex);
     } else {
