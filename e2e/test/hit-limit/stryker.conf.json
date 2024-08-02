@@ -6,9 +6,10 @@
   "coverageAnalysis": "perTest",
   "karma": {
     "projectType": "custom",
-    "configFile": "karma.conf.js",
+    "configFile": "karma.conf.cjs",
     "config": {}
   },
+  "testRunnerNodeArgs": ["--experimental-vm-modules"],
   "concurrency": 1,
   "tap": {
     "testFiles": ["test/loop.tap.js"]

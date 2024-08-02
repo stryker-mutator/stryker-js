@@ -32,7 +32,7 @@ describe('Typescript checker on a project with project references', () => {
     return sut.init();
   });
 
-  it('should not write output to disk', async () => {
+  it('should not write output to disk', () => {
     expect(fs.existsSync(resolveTestResource('dist')), 'Output was written to disk!').false;
   });
 

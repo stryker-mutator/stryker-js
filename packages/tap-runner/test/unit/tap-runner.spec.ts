@@ -27,7 +27,7 @@ describe(TapTestRunner.name, () => {
   let forkStub: sinon.SinonStub;
   let tapParser: tap.Parser;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     childProcessMock = new ChildProcessMock();
     sinon.stub(TapParser, 'Parser').callsFake((options, onComplete) => {
       tapParser = new tap.Parser(options, onComplete);

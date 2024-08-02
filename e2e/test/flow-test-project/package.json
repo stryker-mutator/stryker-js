@@ -1,10 +1,11 @@
 {
   "name": "flow-jest-project",
   "version": "0.0.0",
+  "type": "module",
   "private": true,
   "description": "A module to test a flow project, see https://flow.org/",
   "scripts": {
-    "test:unit": "jest --testPathIgnorePatterns verify",
+    "test:unit": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --testPathIgnorePatterns verify",
     "test": "stryker run",
     "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   }

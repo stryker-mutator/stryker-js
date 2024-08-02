@@ -1,27 +1,27 @@
 #! /usr/bin/env node
-module.exports.add = function(num1, num2) {
+export function add(num1, num2) {
   return num1 + num2;
-};
+}
 
-module.exports.addOne = function(number) {
+export function addOne(number) {
   number++;
   return number;
-};
+}
 
-module.exports.negate = function(number) {
+export function negate(number) {
   return -number;
-};
+}
 
-module.exports.notCovered = function(number) {
+export function notCovered(number) {
   return number > 10;
-};
+}
 
-module.exports.isNegativeNumber = function(number) {
+export function isNegativeNumber(number) {
   var isNegative = false;
   if(number < 0){
     isNegative = true;
   }
   return isNegative;
-};
+}
 
 

@@ -130,6 +130,7 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
       assertions.expectKilled(runResult);
       expect(runResult.killedBy).deep.eq(['Add should be able to add two numbers']);
+      // eslint-disable-next-line no-control-regex
       expect(runResult.failureMessage.replace(/\x1B[[(?);]{0,2}(;?\d)*./g, ''))
         .contains('Expected: 7')
         .contains('Received: -3');

@@ -25,6 +25,7 @@ export class ReactScriptsJestConfigLoader implements JestConfigLoader {
     private readonly requireFromCwd: typeof requireResolve,
   ) {}
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   public async loadConfig(): Promise<Config.InitialOptions> {
     try {
       // Create the React configuration for Jest

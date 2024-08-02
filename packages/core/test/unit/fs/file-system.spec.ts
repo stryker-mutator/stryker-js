@@ -124,10 +124,9 @@ describe(FileSystem.name, () => {
 
   describe('dispose', () => {
     it('cleanup its own subscription', () => {
-      // eslint-disable-next-line @typescript-eslint/dot-notation
       expect(sut['todoSubject'].observed).true;
       sut.dispose();
-      // eslint-disable-next-line @typescript-eslint/dot-notation
+
       expect(sut['todoSubject'].observed).false;
     });
   });

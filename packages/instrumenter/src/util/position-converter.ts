@@ -50,12 +50,13 @@ export class PositionConverter {
       pos++;
       switch (ch) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-        case CharacterCodes.carriageReturn:
+        case CharacterCodes.carriageReturn: {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
           if (text.charCodeAt(pos) === CharacterCodes.lineFeed) {
             pos++;
           }
-        // falls through
+          // falls through
+        }
         // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
         case CharacterCodes.lineFeed:
           result.push(lineStart);

@@ -35,10 +35,10 @@ describe('The Stryker meta schema', () => {
   beforeEach(async () => {
     validator = await ajv.compileAsync(monoSchema);
   });
-  it('should validate a valid schema', async () => {
+  it('should validate a valid schema', () => {
     expect(validator(valid), ajv.errorsText(validator.errors)).true;
   });
-  it('should invalidate an invalid schema', async () => {
+  it('should invalidate an invalid schema', () => {
     expect(validator(invalid)).false;
     expect(validator.errors.sort(orderByInstancePath)).deep.eq(expectedErrors);
   });
@@ -131,14 +131,14 @@ describe('The Stryker meta schema', () => {
 describe('PartialStrykerOptions', () => {
   ['Node', 'Node16'].forEach((moduleMode) => {
     describe(`with --moduleResolution ${moduleMode}`, () => {
-      it('should validate a valid schema', async () => {
+      it('should validate a valid schema', () => {
         const diagnostics = tsc('--moduleResolution', moduleMode, '--module', moduleMode, 'valid.js');
         expect(diagnostics, String(diagnostics[0]?.messageText)).empty;
       });
-      it('should invalidate an invalid schema', async () => {
+      it('should invalidate an invalid schema', () => {
         const diagnostics = tsc('--moduleResolution', moduleMode, '--module', moduleMode, 'invalid.js');
         expect(diagnostics).not.empty;
-        // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
+
         expect(diagnostics.map(({ messageText }) => messageText).sort()).deep.eq([
           "Type 'string' is not assignable to type '(string | undefined)[]'.",
           "Type '{ name: string; }' is not assignable to type 'string'.",

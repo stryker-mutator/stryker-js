@@ -1,11 +1,11 @@
-import chai from 'chai';
+import { expect, util, Assertion } from 'chai';
 
-globalThis.expect = chai.expect;
-chai.util.addMethod(chai.Assertion.prototype, 'toEqual', function (expected) {
-  var obj = chai.util.flag(this, 'object');
-  new chai.Assertion(obj).to.deep.equal(expected);
+globalThis.expect = expect;
+util.addMethod(Assertion.prototype, 'toEqual', function (expected) {
+  var obj = util.flag(this, 'object');
+  new Assertion(obj).to.deep.equal(expected);
 });
-chai.util.addMethod(chai.Assertion.prototype, 'toBe', function (expected) {
-  var obj = chai.util.flag(this, 'object');
-  new chai.Assertion(obj).to.equal(expected);
+util.addMethod(Assertion.prototype, 'toBe', function (expected) {
+  var obj = util.flag(this, 'object');
+  new Assertion(obj).to.equal(expected);
 });

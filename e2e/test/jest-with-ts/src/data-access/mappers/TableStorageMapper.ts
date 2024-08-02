@@ -84,7 +84,7 @@ export default class TableStorageMapper<TModel extends object, TPartitionKeyFiel
   private toModel(entity: Entity<TModel, TPartitionKeyFields | TRowKeyFields>): Result<TModel> {
     const value = new this.ModelClass();
     this.ModelClass.identify(value, decodeKey(entity.PartitionKey._), decodeKey(entity.RowKey._));
-    this.ModelClass.persistedFields.forEach(field => (value[field] as any) = (entity as any)[field]._);
+    this.ModelClass.persistedFields.forEach(field => value[field] = (entity as any)[field]._);
     return {
       etag: entity['.metadata'].etag,
       model: value

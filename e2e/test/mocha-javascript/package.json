@@ -2,6 +2,7 @@
   "name": "mocha-javascript",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "description": "A module to perform an integration test",
   "osDescription": "See https://github.com/nodejs/node/issues/49947 (please remove \"os\" in the future)",
   "os": [

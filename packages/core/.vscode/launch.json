@@ -6,6 +6,7 @@
       "request": "launch",
       "name": "👽 Unit tests",
       "program": "${workspaceRoot}/../../node_modules/mocha/bin/_mocha",
+      "runtimeArgs": ["--enable-source-maps"],
       "args": [
         "--no-timeout",
         "--colors",
@@ -24,18 +25,11 @@
       "request": "launch",
       "name": "👽 Integration tests",
       "program": "${workspaceRoot}/../../node_modules/mocha/bin/_mocha",
-      "args": [
-        "--no-timeout",
-        "--colors",
-        "${workspaceRoot}/dist/test/integration/**/*.js"
-      ],
+      "runtimeArgs": ["--enable-source-maps"],
+      "args": ["--no-timeout", "--colors", "${workspaceRoot}/dist/test/integration/**/*.js"],
       "internalConsoleOptions": "openOnSessionStart",
-      "outFiles": [
-        "${workspaceRoot}/dist/**/*.js"
-      ],
-      "skipFiles": [
-        "<node_internals>/**"
-      ]
+      "outFiles": ["${workspaceRoot}/dist/**/*.js"],
+      "skipFiles": ["<node_internals>/**"]
     }
   ]
 }

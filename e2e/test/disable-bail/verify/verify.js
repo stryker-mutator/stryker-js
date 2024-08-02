@@ -45,9 +45,9 @@ async function arrangeActAssertBailWasDisabled(
   const result = await readMutationTestingJsonResultAsMetricsResult();
   const theMutant = result.systemUnderTestMetrics.childResults[0].file.mutants.find((mutant) => mutant.replacement === 'a - b');
   expect(theMutant.killedByTests).lengthOf(2);
-  // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
+
   const actualKilledBy = theMutant.killedByTests.map(({ name }) => name).sort();
-  // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
+
   expectedKilledBy.sort();
 
   expect(actualKilledBy).deep.eq(expectedKilledBy);

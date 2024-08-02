@@ -91,7 +91,7 @@ describe(MochaTestRunner.name, () => {
 
     it('should handle requires and collect root hooks', async () => {
       const requires = ['test/setup.js'];
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
+
       const expectedRootHooks = { beforeEach() {} };
       mochaOptionsLoaderMock.load.returns(createMochaOptions({ require: requires }));
       mochaAdapterMock.handleRequires.resolves(expectedRootHooks);
@@ -314,12 +314,12 @@ describe(MochaTestRunner.name, () => {
 
     it('should use `grep` to when the test filter is specified', async () => {
       await actMutantRun(factory.mutantRunOptions({ testFilter: ['foo should be bar', 'baz should be qux'] }));
-      expect(mocha.grep).calledWith(new RegExp('(foo should be bar)|(baz should be qux)'));
+      expect(mocha.grep).calledWith(new RegExp('(^foo should be bar$)|(^baz should be qux$)'));
     });
 
     it('should escape regex characters when filtering', async () => {
       await actMutantRun(factory.mutantRunOptions({ testFilter: ['should escape *.\\, but not /'] }));
-      expect(mocha.grep).calledWith(new RegExp('(should escape \\*\\.\\\\, but not /)'));
+      expect(mocha.grep).calledWith(new RegExp('(^should escape \\*\\.\\\\, but not /$)'));
     });
 
     it('should be able to report a killed mutant when a test fails', async () => {

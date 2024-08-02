@@ -12,7 +12,7 @@ describe('tokens', () => {
 });
 
 describe('commonTokens', () => {
-  function itShouldProvideToken<T extends keyof typeof commonTokens>(token: T) {
+  function itShouldProvideToken(token: keyof typeof commonTokens) {
     it(`should supply token "${token}" as "${token}"`, () => {
       expect(commonTokens[token]).eq(token);
     });

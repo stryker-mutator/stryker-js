@@ -1,5 +1,5 @@
 module.exports = {
   plugins: [
-    'transform-decorators-legacy'
+    'random-plugin-that-should-be-ignored'
   ]
 }

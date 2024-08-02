@@ -2,8 +2,7 @@
   "compilerOptions": {
     "strict": true,
     "target": "es2019",
-    "moduleResolution": "node",
-    "module": "commonjs",
+    "module": "NodeNext",
     "lib": ["es2019"],
     "composite": true,
     "declaration": true,

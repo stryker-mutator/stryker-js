@@ -2,6 +2,7 @@
   "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
   "packageManager": "npm",
   "testRunner": "mocha",
+  "testRunnerNodeArgs": ["--loader=ts-node/esm"],
   "concurrency": 1,
   "coverageAnalysis": "perTest",
   "reporters": ["json", "event-recorder", "html", "progress", "clear-text"],

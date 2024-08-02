@@ -316,7 +316,7 @@ describe(ClearTextReporter.name, () => {
           },
         });
       });
-      it('should report a killed mutant to debug', async () => {
+      it('should report a killed mutant to debug', () => {
         mutant.status = 'Killed';
         mutant.killedBy = ['1'];
         act(report);
@@ -326,7 +326,7 @@ describe(ClearTextReporter.name, () => {
         expect(testInjector.logger.debug).calledWith('Killed by: foo should be bar');
       });
 
-      it('should report a CompileError mutant to debug', async () => {
+      it('should report a CompileError mutant to debug', () => {
         mutant.status = 'CompileError';
         mutant.statusReason = 'could not call bar of undefined';
         act(report);
@@ -336,7 +336,7 @@ describe(ClearTextReporter.name, () => {
         expect(testInjector.logger.debug).calledWith('Error message: could not call bar of undefined');
       });
 
-      it('should report a NoCoverage mutant to stdout', async () => {
+      it('should report a NoCoverage mutant to stdout', () => {
         mutant.status = 'NoCoverage';
         act(report);
         expect(stdoutStub).calledWithMatch(sinon.match('[NoCoverage] Math'));
@@ -344,33 +344,33 @@ describe(ClearTextReporter.name, () => {
         expect(stdoutStub).calledWith(`${chalk.green('+   bar')}${os.EOL}`);
       });
 
-      it('should report a Survived mutant to stdout', async () => {
+      it('should report a Survived mutant to stdout', () => {
         mutant.status = 'Survived';
         act(report);
         expect(stdoutStub).calledWithMatch(sinon.match('[Survived] Math'));
       });
 
-      it('should not report a Survived mutant to stdout when reportMutants is not true', async () => {
+      it('should not report a Survived mutant to stdout when reportMutants is not true', () => {
         testInjector.options.clearTextReporter.reportMutants = false;
         mutant.status = 'Survived';
         act(report);
         expect(stdoutStub).not.calledWithMatch(sinon.match('[Survived] Math'));
       });
 
-      it('should not report a NoCoverage mutant to stdout when reportMutants is not true', async () => {
+      it('should not report a NoCoverage mutant to stdout when reportMutants is not true', () => {
         testInjector.options.clearTextReporter.reportMutants = false;
         mutant.status = 'NoCoverage';
         act(report);
         expect(stdoutStub).not.calledWithMatch(sinon.match('[NoCoverage] Math'));
       });
 
-      it('should report a Timeout mutant to stdout', async () => {
+      it('should report a Timeout mutant to stdout', () => {
         mutant.status = 'Timeout';
         act(report);
         expect(testInjector.logger.debug).calledWithMatch(sinon.match('[Timeout] Math'));
       });
 
-      it('should report the tests ran for a Survived mutant to stdout for "perTest" coverage analysis', async () => {
+      it('should report the tests ran for a Survived mutant to stdout for "perTest" coverage analysis', () => {
         mutant.coveredBy = ['1', '2', '3'];
         mutant.status = 'Survived';
         act(report);
@@ -380,7 +380,7 @@ describe(ClearTextReporter.name, () => {
         expect(stdoutStub).calledWithExactly(`    baz should be qux${os.EOL}`);
       });
 
-      it('should report the max tests to log and however many more tests', async () => {
+      it('should report the max tests to log and however many more tests', () => {
         testInjector.options.clearTextReporter.maxTestsToLog = 2;
         mutant.coveredBy = ['1', '2', '3'];
         mutant.status = 'Survived';
@@ -393,7 +393,7 @@ describe(ClearTextReporter.name, () => {
         expect(stdoutStub).calledWithExactly(`  and 1 more test!${os.EOL}`);
       });
 
-      it('should report that all tests have ran for a surviving mutant that is static', async () => {
+      it('should report that all tests have ran for a surviving mutant that is static', () => {
         testInjector.options.clearTextReporter.maxTestsToLog = 2;
         mutant.static = true;
         mutant.status = 'Survived';

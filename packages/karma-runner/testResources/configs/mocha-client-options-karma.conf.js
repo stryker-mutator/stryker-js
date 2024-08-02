@@ -1,6 +1,6 @@
 module.exports = function (config) {
   config.set({
-    frameworks: ['mocha', 'chai'],
+    frameworks: ['mocha'],
     browsers: ['ChromeHeadless'],
     files: [
       require.resolve('./mocha-client-options-echo-ui.spec.js')

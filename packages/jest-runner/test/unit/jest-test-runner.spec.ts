@@ -424,7 +424,7 @@ describe(JestTestRunner.name, () => {
         options.jest.config = { testRunner: 'jest-jasmine2' };
         const sut = await arrangeInitializedSut();
         await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'all' }));
-        // eslint-disable-next-line @typescript-eslint/prefer-destructuring
+
         const { jestConfig } = jestTestAdapterMock.run.getCall(0).args[0];
         expect(jestConfig).has.not.property('setupFilesAfterEnv');
       });
@@ -520,9 +520,9 @@ describe(JestTestRunner.name, () => {
 
     it('should set the node environment variable before calling jest in the dry run', async () => {
       const sut = createSut();
-      jestTestAdapterMock.run.callsFake(async () => {
+      jestTestAdapterMock.run.callsFake(() => {
         expect(process.env.NODE_ENV).to.equal('test');
-        return jestRunResult;
+        return Promise.resolve(jestRunResult);
       });
       await sut.dryRun(factory.dryRunOptions());
       expect(jestTestAdapterMock.run.calledOnce).to.be.true;
@@ -612,9 +612,9 @@ describe(JestTestRunner.name, () => {
   async function actMutantRun(option = factory.mutantRunOptions(), hitCount?: number) {
     const sut = createSut();
     await sut.init();
-    jestTestAdapterMock.run.callsFake(async () => {
+    jestTestAdapterMock.run.callsFake(() => {
       state.instrumenterContext.hitCount = hitCount;
-      return jestRunResult;
+      return Promise.resolve(jestRunResult);
     });
     const result = await sut.mutantRun(option);
     return result;

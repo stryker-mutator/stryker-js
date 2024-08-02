@@ -8,7 +8,7 @@ export function provideLogger(injector: Injector): LoggerProvider {
 }
 export type LoggerProvider = Injector<{ [commonTokens.getLogger]: LoggerFactoryMethod; [commonTokens.logger]: Logger }>;
 
-// eslint-disable-next-line @typescript-eslint/ban-types
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 function loggerFactory(getLoggerMethod: LoggerFactoryMethod, target: Function | undefined) {
   return getLoggerMethod(target ? target.name : 'UNKNOWN');
 }

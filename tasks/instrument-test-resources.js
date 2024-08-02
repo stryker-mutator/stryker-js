@@ -125,6 +125,7 @@ async function instrument(fromTo, globalNamespace = INSTRUMENTER_CONSTANTS.NAMES
     console.log(`✅ ${toFileName}`);
   });
 }
+
 main().catch((err) => {
   console.error(err);
   process.exitCode = 1;

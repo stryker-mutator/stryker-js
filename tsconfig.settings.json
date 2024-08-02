@@ -15,11 +15,7 @@
     "importHelpers": true,
     "noImplicitReturns": true,
     "skipLibCheck": true,
-    "types": [
-      "node"
-    ],
-    "lib": [
-      "es2022"
-    ]
+    "types": ["node"],
+    "lib": ["es2022"]
   }
 }

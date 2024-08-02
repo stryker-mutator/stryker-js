@@ -4,11 +4,11 @@
 module.exports = function (config) {
   config.set({
     basePath: '',
-    frameworks: ['chai', 'jasmine'],
+    frameworks: ['vite', 'jasmine'],
     files: [
-      { pattern: 'src/**/*.js', type: 'module' },
-      { pattern: 'spec/chai-setup.js', type: 'module' },
-      { pattern: 'spec/**/*.spec.js', type: 'module' },
+      { pattern: 'src/**/*.js', type: 'module', watched: false, served: false },
+      { pattern: 'spec/chai-setup.js', type: 'module', watched: false, served: false },
+      { pattern: 'spec/**/*.spec.js', type: 'module', watched: false, served: false },
     ],
     reporters: ['progress'],
     port: 9876,
@@ -18,5 +18,6 @@ module.exports = function (config) {
     browsers: ['ChromeHeadless'],
     singleRun: true,
     concurrency: Infinity,
+    vite: { config: { resolve: { alias: { '/base': '' } } } },
   });
 };

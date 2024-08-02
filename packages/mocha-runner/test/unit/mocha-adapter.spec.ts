@@ -45,7 +45,7 @@ describe(MochaAdapter.name, () => {
       collectFilesStub.returns(discoveredFiles);
     });
 
-    it('should mock away the `process.exit` method when calling the mocha function (unfortunate side effect)', async () => {
+    it('should mock away the `process.exit` method when calling the mocha function (unfortunate side effect)', () => {
       const originalProcessExit = process.exit;
       let stubbedProcessExit = process.exit;
       collectFilesStub.callsFake(() => (stubbedProcessExit = process.exit));

@@ -1,4 +1,4 @@
-import { InstrumenterContext, INSTRUMENTER_CONSTANTS, StrykerOptions } from '@stryker-mutator/api/core';
+import { InstrumenterContext, type INSTRUMENTER_CONSTANTS, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { I, escapeRegExp } from '@stryker-mutator/util';
@@ -50,11 +50,11 @@ export class MochaTestRunner implements TestRunner {
     this.instrumenterContext = global[globalNamespace] ?? (global[globalNamespace] = {});
   }
 
-  public async capabilities(): Promise<TestRunnerCapabilities> {
-    return {
+  public capabilities(): Promise<TestRunnerCapabilities> {
+    return Promise.resolve({
       // Mocha directly uses `import`, so reloading files once they are loaded is impossible
       reloadEnvironment: false,
-    };
+    });
   }
 
   public async init(): Promise<void> {
@@ -82,7 +82,8 @@ export class MochaTestRunner implements TestRunner {
     this.setIfDefined(mochaOptions.grep, this.mocha.grep);
     this.originalGrep = mochaOptions.grep;
 
-    // Bind beforeEach, so we can use that for per code coverage in dry run
+    // Bind beforeEach, so we can use that for perTest code coverage in dry run
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this;
     this.mocha.suite.beforeEach(function (this: Context) {
       self.beforeEach?.(this);
@@ -113,7 +114,7 @@ export class MochaTestRunner implements TestRunner {
     this.instrumenterContext.hitLimit = hitLimit;
     this.instrumenterContext.hitCount = hitLimit ? 0 : undefined;
     if (testFilter) {
-      const metaRegExp = testFilter.map((testId) => `(${escapeRegExp(testId)})`).join('|');
+      const metaRegExp = testFilter.map((testId) => `(^${escapeRegExp(testId)}$)`).join('|');
       const regex = new RegExp(metaRegExp);
       this.mocha.grep(regex);
     } else {
@@ -167,6 +168,7 @@ export class MochaTestRunner implements TestRunner {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   public async dispose(): Promise<void> {
     try {
       this.mocha?.dispose();

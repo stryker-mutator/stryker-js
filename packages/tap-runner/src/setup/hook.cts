@@ -9,8 +9,8 @@ const hitLimit = process.env[strykerHitLimit] ? +process.env[strykerHitLimit] : 
 global[strykerGlobalNamespace] = {};
 
 if (hitLimit) {
-  global[strykerGlobalNamespace]!.hitLimit = hitLimit;
-  global[strykerGlobalNamespace]!.hitCount = 0;
+  global[strykerGlobalNamespace].hitLimit = hitLimit;
+  global[strykerGlobalNamespace].hitCount = 0;
 }
 
 process.on('exit', finalCleanup);

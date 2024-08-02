@@ -4,9 +4,6 @@
   "concurrency": 1,
   "coverageAnalysis": "off",
   "reporters": ["json", "clear-text", "html", "event-recorder"],
-  "mochaOptions": {
-    "spec": ["test/**/*.js"]
-  },
   "fileLogLevel": "info",
   "plugins": [
     "@stryker-mutator/mocha-runner"

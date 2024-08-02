@@ -97,7 +97,7 @@ describe(PluginCreator.name, () => {
   });
 
   it('should throw if plugin is not recognized', () => {
-    // @ts-expect-error
+    // @ts-expect-error: Error plugin, to be expected
     const errorPlugin: ClassPlugin<PluginKind.Reporter, []> = {
       kind: PluginKind.Reporter,
       name: 'foo',

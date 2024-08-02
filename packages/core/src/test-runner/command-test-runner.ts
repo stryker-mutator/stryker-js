@@ -75,6 +75,7 @@ export class CommandTestRunner implements TestRunner {
         objectUtils
           .kill(childProcess.pid)
           .then(() => handleResolve(errorResult(error)))
+
           .catch(rej);
       });
       childProcess.on('exit', (code) => {

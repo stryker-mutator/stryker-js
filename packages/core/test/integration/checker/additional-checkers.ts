@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/require-await */
 import os from 'os';
 import fs from 'fs';
 

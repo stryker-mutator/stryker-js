@@ -1,4 +1,4 @@
-import { execaCommand } from 'execa';
+import type { execaCommand } from 'execa';
 import { Injector, tokens, commonTokens, PluginContext, PluginKind } from '@stryker-mutator/api/plugin';
 import { createInstrumenter, InstrumentResult } from '@stryker-mutator/instrumenter';
 import { StrykerOptions } from '@stryker-mutator/api/core';

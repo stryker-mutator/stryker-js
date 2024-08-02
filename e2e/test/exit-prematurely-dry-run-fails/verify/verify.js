@@ -1,9 +1,9 @@
 import { promises as fsPromises } from 'fs';
 
-import chai, { expect } from 'chai';
+import { use, expect } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
-chai.use(chaiAsPromised);
+use(chaiAsPromised);
 describe('Verify stryker has handled dry run failure correctly', () => {
   /**
    * @type {string}
@@ -12,13 +12,13 @@ describe('Verify stryker has handled dry run failure correctly', () => {
   before(async () => {
     strykerLog = await fsPromises.readFile('./stryker.log', 'utf8');
   });
-  it('should about failed tests in initial test run', async () => {
+  it('should about failed tests in initial test run', () => {
     expect(strykerLog).contains('There were failed tests in the initial test run');
   });
-  it('should log exactly which test failed and why', async () => {
+  it('should log exactly which test failed and why', () => {
     expect(strykerLog).contains('add 1 + 1 = 3... ? (this is the test that should fail)').contains('expected 2 to equal 3');
   });
-  it('should have exited with a non-zero exit code', async () => {
+  it('should have exited with a non-zero exit code', () => {
     // This line is added in package.json script if the process exited in an error.
     expect(strykerLog).contains('Exited with an error exit code');
   });

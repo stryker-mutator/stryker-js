@@ -1,12 +1,12 @@
 import 'source-map-support/register.js';
 import { testInjector } from '@stryker-mutator/test-helpers';
-import chai from 'chai';
+import { use } from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinonChai from 'sinon-chai';
 import sinon from 'sinon';
 
-chai.use(sinonChai);
-chai.use(chaiAsPromised);
+use(sinonChai);
+use(chaiAsPromised);
 
 /**
  * During integration testing we're creating many karma instances.

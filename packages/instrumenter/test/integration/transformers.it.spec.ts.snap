@@ -5384,6 +5384,9 @@ Object {
       ],
       "directives": Array [],
       "end": 18,
+      "extra": Object {
+        "topLevelAwait": false,
+      },
       "interpreter": null,
       "loc": SourceLocation {
         "end": Position {
@@ -10831,6 +10834,9 @@ Object {
       ],
       "directives": Array [],
       "end": 26,
+      "extra": Object {
+        "topLevelAwait": false,
+      },
       "interpreter": null,
       "loc": SourceLocation {
         "end": Position {
@@ -16246,6 +16252,9 @@ Object {
             ],
             "directives": Array [],
             "end": 18,
+            "extra": Object {
+              "topLevelAwait": false,
+            },
             "interpreter": null,
             "loc": SourceLocation {
               "end": Position {

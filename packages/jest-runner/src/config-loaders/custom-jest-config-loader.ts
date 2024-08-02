@@ -5,7 +5,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import type { Config } from '@jest/types';
-import { I, requireResolve } from '@stryker-mutator/util';
+import type { I, requireResolve } from '@stryker-mutator/util';
 
 import { JestRunnerOptionsWithStrykerOptions } from '../jest-runner-options-with-stryker-options.js';
 import { JestConfigWrapper } from '../utils/jest-config-wrapper.js';

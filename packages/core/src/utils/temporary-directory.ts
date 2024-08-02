@@ -55,7 +55,7 @@ export class TemporaryDirectory implements Disposable {
       this.log.debug('Deleting stryker temp directory %s', this.temporaryDirectory);
       try {
         await fileUtils.deleteDir(this.temporaryDirectory);
-      } catch (e) {
+      } catch {
         this.log.info(`Failed to delete stryker temp directory ${this.temporaryDirectory}`);
       }
     }

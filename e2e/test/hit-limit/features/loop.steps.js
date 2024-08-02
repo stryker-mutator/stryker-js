@@ -1,6 +1,6 @@
-const { Given, When, Then } = require('@cucumber/cucumber');
-const { loop } = require('../src/loop');
-const { expect } = require('chai');
+import { Given, When, Then } from '@cucumber/cucumber';
+import { loop } from '../src/loop.js';
+import { expect } from 'chai';
 
 Given('a sum function', function () {
   this.function = (n) => (this.result += n);

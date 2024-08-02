@@ -28,10 +28,14 @@ export class MochaAdapter {
     const originalProcessExit = process.exit;
     try {
       // process.exit unfortunate side effect: https://github.com/mochajs/mocha/blob/07ea8763c663bdd3fe1f8446cdb62dae233f4916/lib/cli/run-helpers.js#L174
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
+
       (process as any).exit = () => {};
       const files = LibWrapper.collectFiles!(options);
-      return files;
+      if (Array.isArray(files)) {
+        return files;
+      } else {
+        return files.files;
+      }
     } finally {
       process.exit = originalProcessExit;
     }

@@ -79,7 +79,7 @@ export class VitestTestRunner implements TestRunner {
   public async dryRun(): Promise<DryRunResult> {
     await this.fileCommunicator.setDryRun();
     const testResult = await this.run();
-    const mutantCoverage: MutantCoverage = await this.readMutantCoverage();
+    const mutantCoverage: MutantCoverage = this.readMutantCoverage();
     if (testResult.status === DryRunStatus.Complete) {
       return {
         status: testResult.status,
@@ -93,7 +93,7 @@ export class VitestTestRunner implements TestRunner {
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
     await this.fileCommunicator.setMutantRun(options);
     const dryRunResult = await this.run(options.testFilter);
-    const hitCount = await this.readHitCount();
+    const hitCount = this.readHitCount();
     const timeOut = determineHitLimitReached(hitCount, options.hitLimit);
     return toMutantRunResult(timeOut ?? dryRunResult);
   }
@@ -162,7 +162,7 @@ export class VitestTestRunner implements TestRunner {
     });
   }
 
-  private async readHitCount() {
+  private readHitCount() {
     const hitCounters: number[] = this.ctx!.state.getFiles()
       .map((file) => (file.meta as { hitCount?: number }).hitCount)
       .filter(notEmpty);
@@ -170,7 +170,7 @@ export class VitestTestRunner implements TestRunner {
     return hitCounters.reduce((acc, hitCount) => acc + hitCount, 0);
   }
 
-  private async readMutantCoverage(): Promise<MutantCoverage> {
+  private readMutantCoverage(): MutantCoverage {
     // Read coverage from all projects
     const coverages: MutantCoverage[] = [
       ...new Map(this.ctx!.state.getFiles().map((file) => [`${file.projectName}-${file.name}`, file] as const)).entries(),

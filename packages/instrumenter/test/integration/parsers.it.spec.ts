@@ -112,12 +112,10 @@ describe('parsers integration', () => {
    */
   function cleanFileName(ast: Ast, fileNameOverride: string) {
     ast.originFileName = fileNameOverride;
-    switch (ast.format) {
-      case AstFormat.Html:
-        ast.root.scripts.forEach((script) => {
-          script.originFileName = fileNameOverride;
-        });
-      default:
+    if (ast.format === AstFormat.Html) {
+      ast.root.scripts.forEach((script) => {
+        script.originFileName = fileNameOverride;
+      });
     }
   }
 });

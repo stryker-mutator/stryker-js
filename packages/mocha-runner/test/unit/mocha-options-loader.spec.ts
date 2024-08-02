@@ -122,7 +122,7 @@ describe(MochaOptionsLoader.name, () => {
       expect(testInjector.logger.debug).calledWith('Mocha < 6 detected. Using custom logic to parse mocha options');
     });
 
-    it('should log deprecated mocha version warning', async () => {
+    it('should log deprecated mocha version warning', () => {
       existsFileStub.returns(false);
       sut.load(options);
       expect(testInjector.logger.warn).calledWith(

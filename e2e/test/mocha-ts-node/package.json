@@ -1,6 +1,7 @@
 {
   "name": "mocha-ts-node",
   "description": "A test for mocha using ts-node (no transpiler) using mocha package config",
+  "type": "module",
   "scripts": {
     "test:unit": "mocha",
     "test": "stryker run",

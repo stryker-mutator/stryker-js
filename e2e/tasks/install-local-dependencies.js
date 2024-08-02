@@ -10,4 +10,4 @@ import { bootstrapLocalDependencies } from '../../helpers/bootstrap-local-depend
 const globs = process.argv.slice(2);
 bootstrapLocalDependencies(fileURLToPath(new URL('..', import.meta.url)), globs.length ? globs : undefined)
   .then(() => console.log('Installed local dependencies'))
-  .catch((err) => console.error(err));
+  .catch((/** @type {unknown}*/ err) => console.error(err));
