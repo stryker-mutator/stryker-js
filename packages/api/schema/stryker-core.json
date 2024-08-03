@@ -99,7 +99,7 @@
           "default": true
         },
         "skipFull": {
-          "description": "Indicates whether rows with 100% coverage are hidden in the score table.",
+          "description": "Indicates whether rows with 100% mutation score are hidden in the score table.",
           "type": "boolean",
           "default": false
         }
