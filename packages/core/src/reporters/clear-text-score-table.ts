@@ -114,7 +114,6 @@ export class ClearTextScoreTable {
     private readonly metricsResult: MetricsResult,
     private readonly options: StrykerOptions,
   ) {
-
     this.columns = [
       new FileColumn(metricsResult),
       new MutationScoreColumn(metricsResult, options.thresholds),
@@ -142,13 +141,12 @@ export class ClearTextScoreTable {
     return this.columns.map(toDraw).join('|') + '|';
   }
 
-  private drawValues(current = this.metricsResult, ancestorCount = 0): string[] {
-    let rows = current.childResults.flatMap((child) => this.drawValues(child, ancestorCount + 1));
-
-    if (ancestorCount > 0 || !this.options.clearTextReporter.skipFull) {
-        rows.unshift(this.drawRow((c) => c.drawTableCell(current, ancestorCount)));
+  private drawTableBody(current = this.metricsResult, ancestorCount = 0): string[] {
+    const rows: string[] = [];
+    if (!this.options.clearTextReporter.skipFull || current.metrics.mutationScore !== 100) {
+      rows.push(this.drawRow((c) => c.drawTableCell(current, ancestorCount)));
     }
-
+    rows.push(...current.childResults.flatMap((child) => this.drawTableBody(child, ancestorCount + 1)));
     return rows;
   }
 
@@ -156,6 +154,6 @@ export class ClearTextScoreTable {
    * Returns a string with the score results drawn in a table.
    */
   public draw(): string {
-    return [this.drawBorder(), this.drawHeader(), this.drawBorder(), this.drawValues().join(os.EOL), this.drawBorder()].join(os.EOL);
+    return [this.drawBorder(), this.drawHeader(), this.drawBorder(), this.drawTableBody().join(os.EOL), this.drawBorder()].join(os.EOL);
   }
 }

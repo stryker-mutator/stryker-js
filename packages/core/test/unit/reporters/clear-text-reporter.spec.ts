@@ -155,10 +155,7 @@ describe(ClearTextReporter.name, () => {
         thresholds: factory.mutationScoreThresholds({}),
       });
 
-      const serializedTable: string = stdoutStub.getCalls().pop()!.args[0];
-      const rows = serializedTable.split(os.EOL);
-
-      expect(rows).to.deep.eq([]);
+      sinon.assert.neverCalledWith(stdoutStub, sinon.match('-------'));
     });
 
     it('should show emojis in table with enableConsoleEmojis flag', () => {
