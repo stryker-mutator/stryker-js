@@ -96,7 +96,7 @@ Choose whether or not to clean the temp dir (which is ".stryker-tmp" inside the 
 
 ### `clearTextReporter` [`ClearTextOptions`]
 
-Default: `{ "allowColor": true, "allowEmojis": false, "logTests": true, "maxTestsToLog": 3, "reportTests": true, "reportMutants": true, "reportScoreTable": true }`<br />
+Default: `{ "allowColor": true, "allowEmojis": false, "logTests": true, "maxTestsToLog": 3, "reportTests": true, "reportMutants": true, "reportScoreTable": true, "skipFull": false }`<br />
 
 Config file:
 
@@ -109,12 +109,22 @@ Config file:
     "maxTestsToLog": 3,
     "reportTests": true,
     "reportMutants": true,
-    "reportScoreTable": true
+    "reportScoreTable": true,
+    "skipFull": false
   }
 }
 ```
 
 Settings for the `clear-text` reporter.
+
+- `allowColor`: "Indicates whether or not to use color coding in output.",
+- `allowEmojis`: Enable emojis in your clear text report (experimental).
+- `logTests`: Indicates whether or not to log which tests were executed for a given mutant.
+- `maxTestsToLog`: Indicates the maximum amount of test to log when `logTests` is enabled.
+- `reportTests`: Indicates whether or not to log all tests.
+- `reportMutants`: Indicates whether or not to log all mutants.
+- `reportScoreTable`: Indicates whether or not to log score table.
+- `skipFull`: Indicates whether rows with 100% mutation score are hidden in the score table.
 
 ### `concurrency` [`number`]
 

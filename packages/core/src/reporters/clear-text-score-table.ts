@@ -112,7 +112,7 @@ export class ClearTextScoreTable {
 
   constructor(
     private readonly metricsResult: MetricsResult,
-    options: StrykerOptions,
+    private readonly options: StrykerOptions,
   ) {
     this.columns = [
       new FileColumn(metricsResult),
@@ -141,16 +141,19 @@ export class ClearTextScoreTable {
     return this.columns.map(toDraw).join('|') + '|';
   }
 
-  private drawValues(current = this.metricsResult, ancestorCount = 0): string[] {
-    return [this.drawRow((c) => c.drawTableCell(current, ancestorCount))].concat(
-      current.childResults.flatMap((child) => this.drawValues(child, ancestorCount + 1)),
-    );
+  private drawTableBody(current = this.metricsResult, ancestorCount = 0): string[] {
+    const rows: string[] = [];
+    if (!this.options.clearTextReporter.skipFull || current.metrics.mutationScore !== 100) {
+      rows.push(this.drawRow((c) => c.drawTableCell(current, ancestorCount)));
+    }
+    rows.push(...current.childResults.flatMap((child) => this.drawTableBody(child, ancestorCount + 1)));
+    return rows;
   }
 
   /**
    * Returns a string with the score results drawn in a table.
    */
   public draw(): string {
-    return [this.drawBorder(), this.drawHeader(), this.drawBorder(), this.drawValues().join(os.EOL), this.drawBorder()].join(os.EOL);
+    return [this.drawBorder(), this.drawHeader(), this.drawBorder(), this.drawTableBody().join(os.EOL), this.drawBorder()].join(os.EOL);
   }
 }

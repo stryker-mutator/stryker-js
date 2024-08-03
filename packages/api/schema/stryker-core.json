@@ -97,6 +97,11 @@
           "description": "Indicates whether or not to log score table.",
           "type": "boolean",
           "default": true
+        },
+        "skipFull": {
+          "description": "Indicates whether rows with 100% mutation score are hidden in the score table.",
+          "type": "boolean",
+          "default": false
         }
       }
     },
