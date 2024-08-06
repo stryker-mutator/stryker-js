@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.4.0](https://github.com/stryker-mutator/stryker-js/compare/v8.3.0...v8.4.0) (2024-08-06)
+
+### Bug Fixes
+
+- **node-18:** revert changes to support node 18 again ([#4935](https://github.com/stryker-mutator/stryker-js/issues/4935)) ([42162bd](https://github.com/stryker-mutator/stryker-js/commit/42162bd36edd5a9f63beff10303259cfff709b0b))
+
+### Features
+
+- **clear-text-reporter:** Add "skipFull" option ([#4875](https://github.com/stryker-mutator/stryker-js/issues/4875)) ([da213ad](https://github.com/stryker-mutator/stryker-js/commit/da213ad70c437617f78fe2e9f175d15c07e1697b))
+
 # [8.3.0](https://github.com/stryker-mutator/stryker-js/compare/v8.2.6...v8.3.0) (2024-08-01)
 
 ### Bug Fixes

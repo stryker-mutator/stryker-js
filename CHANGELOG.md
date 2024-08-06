@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.4.0](https://github.com/stryker-mutator/stryker-js/compare/v8.3.0...v8.4.0) (2024-08-06)
+
+### Bug Fixes
+
+- **instrumenter:** support explicit resource management in TS ([#4928](https://github.com/stryker-mutator/stryker-js/issues/4928)) ([2bd046a](https://github.com/stryker-mutator/stryker-js/commit/2bd046a40262dee95ceccd874107d1f70918d905)), closes [#4876](https://github.com/stryker-mutator/stryker-js/issues/4876)
+- **mocha-runner:** properly restrict tests to run ([f9ef08e](https://github.com/stryker-mutator/stryker-js/commit/f9ef08e90d78800bfe226753f3ace612a83bef82))
+- **mutant placement:** don't place mutants inside assignment expression ([#4927](https://github.com/stryker-mutator/stryker-js/issues/4927)) ([4b8885c](https://github.com/stryker-mutator/stryker-js/commit/4b8885c06f84854ffa24e4c145a70231e9fa930a)), closes [#4884](https://github.com/stryker-mutator/stryker-js/issues/4884)
+- **node-18:** revert changes to support node 18 again ([#4935](https://github.com/stryker-mutator/stryker-js/issues/4935)) ([42162bd](https://github.com/stryker-mutator/stryker-js/commit/42162bd36edd5a9f63beff10303259cfff709b0b))
+
+### Features
+
+- **clear-text-reporter:** Add "skipFull" option ([#4875](https://github.com/stryker-mutator/stryker-js/issues/4875)) ([da213ad](https://github.com/stryker-mutator/stryker-js/commit/da213ad70c437617f78fe2e9f175d15c07e1697b))
+
 # [8.3.0](https://github.com/stryker-mutator/stryker-js/compare/v8.2.6...v8.3.0) (2024-08-01)
 
 ### Bug Fixes
