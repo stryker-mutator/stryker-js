@@ -6,7 +6,7 @@ import type { IRestResponse, RestClient } from 'typed-rest-client/RestClient.js'
 import { PackageInfo, PackageSummary } from './package-info.js';
 import { PromptOption } from './prompt-option.js';
 
-import { initializerTokens } from './index.js';
+import { getRegistry, initializerTokens } from './index.js';
 
 export interface NpmSearchResult {
   total: number;
@@ -65,7 +65,7 @@ export class NpmClient {
       const response = await this.innerNpmClient.get<NpmSearchResult>(path);
       return handleResult(path)(response);
     } catch (err) {
-      this.log.error(`Unable to reach 'https://registry.npmjs.com' (for query ${path}). Please check your internet connection.`, errorToString(err));
+      this.log.error(`Unable to reach '${getRegistry()}' (for query ${path}). Please check your internet connection.`, errorToString(err));
       const result: NpmSearchResult = {
         objects: [],
         total: 0,

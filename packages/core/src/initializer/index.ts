@@ -1,6 +1,6 @@
 import { createInjector } from 'typed-inject';
 import { RestClient } from 'typed-rest-client';
-import { execaCommand } from 'execa';
+import { execaCommand, execaSync } from 'execa';
 import { resolveFromCwd } from '@stryker-mutator/util';
 import { LogLevel } from '@stryker-mutator/api/core';
 
@@ -16,13 +16,34 @@ import { StrykerInquirer } from './stryker-inquirer.js';
 import { createInitializers } from './custom-initializers/index.js';
 import { GitignoreWriter } from './gitignore-writer.js';
 
-const NPM_REGISTRY = 'https://registry.npmjs.com';
+let currentRegistry: string | undefined;
+
+function getRegistry(): string {
+  if (!currentRegistry) {
+    if (process.env.npm_config_registry) {
+      currentRegistry = process.env.npm_config_registry;
+    } else if (process.env.npm_command) {
+      // if running inside npm and not having the registry than it's the default one
+      currentRegistry = 'https://registry.npmjs.com';
+    } else {
+      // Using global as when trying to get the registry inside npm workspace it would fail
+      const registry = execaSync('npm', ['config', 'get', '--global', 'registry'], {
+        stdout: 'pipe',
+        timeout: 20000,
+      });
+
+      currentRegistry = registry.stdout;
+    }
+  }
+
+  return currentRegistry;
+}
 
 export function initializerFactory(): StrykerInitializer {
   LogConfigurator.configureMainProcess(LogLevel.Information);
   return provideLogger(createInjector())
     .provideValue(initializerTokens.out, console.log)
-    .provideValue(initializerTokens.restClientNpm, new RestClient('npm', NPM_REGISTRY))
+    .provideValue(initializerTokens.restClientNpm, new RestClient('npm', getRegistry()))
     .provideClass(initializerTokens.npmClient, NpmClient)
     .provideClass(initializerTokens.configWriter, StrykerConfigWriter)
     .provideClass(initializerTokens.gitignoreWriter, GitignoreWriter)
@@ -33,4 +54,4 @@ export function initializerFactory(): StrykerInitializer {
     .injectClass(StrykerInitializer);
 }
 
-export { initializerTokens };
+export { initializerTokens, getRegistry };
