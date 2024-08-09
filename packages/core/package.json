@@ -82,7 +82,7 @@
     "get-port": "~7.1.0",
     "lodash.groupby": "~4.6.0",
     "log4js": "~6.9.1",
-    "minimatch": "~9.0.5",
+    "minimatch": "~10.0.0",
     "mutation-testing-elements": "3.2.0",
     "mutation-testing-metrics": "3.2.0",
     "mutation-testing-report-schema": "3.1.1",
