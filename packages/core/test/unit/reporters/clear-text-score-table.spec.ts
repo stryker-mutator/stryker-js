@@ -16,14 +16,15 @@ describe(ClearTextScoreTable.name, () => {
         [
           new MetricsResult(
             'child1',
-            [new MetricsResult('some/test/for/a/deep/file.js', [], factory.metrics({ mutationScore: 59.99 }))],
-            factory.metrics({ mutationScore: 60 }),
+            [new MetricsResult('some/test/for/a/deep/file.js', [], factory.metrics({ mutationScore: 59.99, mutationScoreBasedOnCoveredCode: 58.88 }))],
+            factory.metrics({ mutationScore: 60, mutationScoreBasedOnCoveredCode: 61 }),
           ),
         ],
         factory.metrics({
           compileErrors: 7,
           killed: 1,
           mutationScore: 80,
+          mutationScoreBasedOnCoveredCode: 81,
           noCoverage: 4,
           runtimeErrors: 4,
           survived: 3,
@@ -36,13 +37,13 @@ describe(ClearTextScoreTable.name, () => {
       const rows = table.split(os.EOL);
 
       expect(rows).to.deep.eq([
-        '-------------------------------|---------|----------|-----------|------------|----------|----------|',
-        'File                           | % score | # killed | # timeout | # survived | # no cov | # errors |',
-        '-------------------------------|---------|----------|-----------|------------|----------|----------|',
-        `All files                      |${chalk.green('   80.00 ')}|        1 |         2 |          3 |        4 |       11 |`,
-        ` child1                        |${chalk.yellow('   60.00 ')}|        0 |         0 |          0 |        0 |        0 |`,
-        `  some/test/for/a/deep/file.js |${chalk.red('   59.99 ')}|        0 |         0 |          0 |        0 |        0 |`,
-        '-------------------------------|---------|----------|-----------|------------|----------|----------|',
+        '-------------------------------|---------|--------------------|----------|-----------|------------|----------|----------|',
+        'File                           | % score | % score of covered | # killed | # timeout | # survived | # no cov | # errors |',
+        '-------------------------------|---------|--------------------|----------|-----------|------------|----------|----------|',
+        `All files                      |${chalk.green('   80.00 ')}|${chalk.green('              81.00 ')}|        1 |         2 |          3 |        4 |       11 |`,
+        ` child1                        |${chalk.yellow('   60.00 ')}|${chalk.yellow('              61.00 ')}|        0 |         0 |          0 |        0 |        0 |`,
+        `  some/test/for/a/deep/file.js |${chalk.red('   59.99 ')}|${chalk.red('              58.88 ')}|        0 |         0 |          0 |        0 |        0 |`,
+        '-------------------------------|---------|--------------------|----------|-----------|------------|----------|----------|',
       ]);
     });
 
@@ -59,7 +60,7 @@ describe(ClearTextScoreTable.name, () => {
       const table = sut.draw();
       const rows = table.split(os.EOL);
 
-      const killedColumnValues = rows.flatMap((row) => row.split('|').filter((_, i) => i === 2));
+      const killedColumnValues = rows.flatMap((row) => row.split('|').filter((_, i) => i === 3));
       killedColumnValues.forEach((val) => expect(stringWidth(val)).to.eq(12));
       expect(killedColumnValues[3]).to.eq(' 1000000000 ');
     });
@@ -102,6 +103,7 @@ describe(ClearTextScoreTable.name, () => {
       const sut = new ClearTextScoreTable(input, options);
 
       const table = sut.draw();
+      console.log(table);
 
       expect(table).contains(chalk.red('   49.99 '));
       expect(table).contains(chalk.green('   50.00 '));

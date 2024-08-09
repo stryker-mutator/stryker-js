@@ -95,6 +95,28 @@ class MutationScoreColumn extends Column {
   }
 }
 
+class MutationScoreBasedOnCoveredCodeColumn extends Column {
+  constructor(
+    rows: MetricsResult,
+    private readonly thresholds: MutationScoreThresholds,
+  ) {
+    super('% score of covered', (row) => (isNaN(row.metrics.mutationScoreBasedOnCoveredCode) ? 'n/a' : row.metrics.mutationScoreBasedOnCoveredCode.toFixed(2)), rows);
+  }
+  protected color(metricsResult: MetricsResult) {
+    const { mutationScoreBasedOnCoveredCode: score } = metricsResult.metrics;
+
+    if (isNaN(score)) {
+      return chalk.grey;
+    } else if (score >= this.thresholds.high) {
+      return chalk.green;
+    } else if (score >= this.thresholds.low) {
+      return chalk.yellow;
+    } else {
+      return chalk.red;
+    }
+  }
+}
+
 class FileColumn extends Column {
   constructor(rows: MetricsResult) {
     super('File', (row, ancestorCount) => spaces(ancestorCount) + (ancestorCount === 0 ? FILES_ROOT_NAME : row.name), rows);
@@ -117,6 +139,7 @@ export class ClearTextScoreTable {
     this.columns = [
       new FileColumn(metricsResult),
       new MutationScoreColumn(metricsResult, options.thresholds),
+      new MutationScoreBasedOnCoveredCodeColumn(metricsResult, options.thresholds),
       new Column(`${options.clearTextReporter.allowEmojis ? '✅' : '#'} killed`, (row) => row.metrics.killed.toString(), metricsResult),
       new Column(`${options.clearTextReporter.allowEmojis ? '⌛️' : '#'} timeout`, (row) => row.metrics.timeout.toString(), metricsResult),
       new Column(`${options.clearTextReporter.allowEmojis ? '👽' : '#'} survived`, (row) => row.metrics.survived.toString(), metricsResult),
