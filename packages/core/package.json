@@ -104,6 +104,6 @@
     "@types/progress": "2.0.7",
     "@types/semver": "7.5.8",
     "flatted": "3.3.1",
-    "glob": "10.4.5"
+    "glob": "11.0.0"
   }
 }

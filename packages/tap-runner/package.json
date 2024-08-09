@@ -51,7 +51,7 @@
   "dependencies": {
     "@stryker-mutator/api": "8.4.0",
     "@stryker-mutator/util": "8.4.0",
-    "glob": "~10.4.5",
+    "glob": "~11.0.0",
     "tap-parser": "~18.0.0",
     "tslib": "~2.6.3"
   },

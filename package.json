@@ -28,7 +28,7 @@
     "eslint-plugin-chai-friendly": "1.0.1",
     "eslint-plugin-prettier": "5.2.1",
     "execa": "9.3.0",
-    "glob": "10.4.5",
+    "glob": "11.0.0",
     "install-local": "3.0.1",
     "jasmine": "5.2.0",
     "jasmine-core": "5.2.0",
