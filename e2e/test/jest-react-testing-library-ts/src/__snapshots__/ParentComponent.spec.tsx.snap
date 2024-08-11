@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Parent Component should render correctly 1`] = `
+<DocumentFragment>
+  <div>
+    This is a parent component
+    <div
+      class="test"
+    >
+      Some Text
+    </div>
+  </div>
+</DocumentFragment>
+`;
