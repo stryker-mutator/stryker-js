@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`After running stryker on jest-react-enzyme-ts project should report expected scores 1`] = `
+Object {
+  "compileErrors": 0,
+  "ignored": 0,
+  "killed": 2,
+  "mutationScore": 100,
+  "mutationScoreBasedOnCoveredCode": 100,
+  "noCoverage": 0,
+  "pending": 0,
+  "runtimeErrors": 0,
+  "survived": 0,
+  "timeout": 0,
+  "totalCovered": 2,
+  "totalDetected": 2,
+  "totalInvalid": 0,
+  "totalMutants": 2,
+  "totalUndetected": 0,
+  "totalValid": 2,
+}
+`;

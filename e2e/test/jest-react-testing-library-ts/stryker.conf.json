@@ -4,7 +4,6 @@
   "testRunner": "jest",
   "tempDirName": "stryker-tmp",
   "concurrency": 2,
-  "coverageAnalysis": "off",
   "reporters": [
     "json",
     "event-recorder",
