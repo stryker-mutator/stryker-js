@@ -6,7 +6,7 @@ import type { IRestResponse, RestClient } from 'typed-rest-client/RestClient.js'
 import { PackageInfo, PackageSummary } from './package-info.js';
 import { PromptOption } from './prompt-option.js';
 
-import { getRegistry, initializerTokens } from './index.js';
+import { initializerTokens } from './index.js';
 
 export interface NpmSearchResult {
   total: number;
@@ -34,10 +34,11 @@ const handleResult =
   };
 
 export class NpmClient {
-  public static inject = tokens(commonTokens.logger, initializerTokens.restClientNpm);
+  public static inject = tokens(commonTokens.logger, initializerTokens.restClientNpm, initializerTokens.npmRegistry);
   constructor(
     private readonly log: Logger,
     private readonly innerNpmClient: RestClient,
+    private readonly npmRegistry: string,
   ) {}
 
   public getTestRunnerOptions(): Promise<PromptOption[]> {
@@ -65,7 +66,7 @@ export class NpmClient {
       const response = await this.innerNpmClient.get<NpmSearchResult>(path);
       return handleResult(path)(response);
     } catch (err) {
-      this.log.error(`Unable to reach '${getRegistry()}' (for query ${path}). Please check your internet connection.`, errorToString(err));
+      this.log.error(`Unable to reach '${this.npmRegistry}' (for query ${path}). Please check your internet connection.`, errorToString(err));
       const result: NpmSearchResult = {
         objects: [],
         total: 0,

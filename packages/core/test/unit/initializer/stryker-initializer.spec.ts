@@ -16,10 +16,11 @@ import { StrykerInitializer } from '../../../src/initializer/stryker-initializer
 import { StrykerInquirer } from '../../../src/initializer/stryker-inquirer.js';
 import { Mock } from '../../helpers/producers.js';
 import { GitignoreWriter } from '../../../src/initializer/gitignore-writer.js';
-import { SUPPORTED_CONFIG_FILE_NAMES } from '../../../src/config/config-file-formats.js';
+import { SUPPORTED_CONFIG_FILE_NAMES } from '../../../src/config/index.js';
 import { CustomInitializer, CustomInitializerConfiguration } from '../../../src/initializer/custom-initializers/custom-initializer.js';
 import { PackageInfo } from '../../../src/initializer/package-info.js';
 import { inquire } from '../../../src/initializer/inquire.js';
+import { createNpmRegistryClient, getRegistry } from '../../../src/initializer/npm-registry.js';
 
 describe(StrykerInitializer.name, () => {
   let sut: StrykerInitializer;
@@ -55,7 +56,8 @@ describe(StrykerInitializer.name, () => {
     syncBuiltinESMExports();
     sut = testInjector.injector
       .provideValue(initializerTokens.out, out as unknown as typeof console.log)
-      .provideValue(initializerTokens.restClientNpm, npmRestClient)
+      .provideFactory(initializerTokens.npmRegistry, getRegistry)
+      .provideFactory(initializerTokens.restClientNpm, createNpmRegistryClient)
       .provideClass(initializerTokens.inquirer, StrykerInquirer)
       .provideClass(initializerTokens.npmClient, NpmClient)
       .provideValue(initializerTokens.customInitializers, customInitializers)
