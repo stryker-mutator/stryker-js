@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/cucumber-runner",
-  "version": "8.4.0",
+  "version": "8.5.0",
   "description": "A plugin to use the cucumber test runner in Stryker, the JavaScript mutation testing framework",
   "files": [
     "dist/schema",
@@ -47,17 +47,17 @@
   "license": "ISC",
   "devDependencies": {
     "@cucumber/cucumber": "10.8.0",
-    "@stryker-mutator/test-helpers": "8.4.0",
+    "@stryker-mutator/test-helpers": "8.5.0",
     "@types/semver": "7.5.8"
   },
   "peerDependencies": {
     "@cucumber/cucumber": ">=8.0.0",
-    "@stryker-mutator/core": "~8.4.0"
+    "@stryker-mutator/core": "~8.5.0"
   },
   "dependencies": {
     "@cucumber/messages": "^25.0.1",
-    "@stryker-mutator/api": "8.4.0",
-    "@stryker-mutator/util": "8.4.0",
+    "@stryker-mutator/api": "8.5.0",
+    "@stryker-mutator/util": "8.5.0",
     "semver": "^7.6.3"
   }
 }

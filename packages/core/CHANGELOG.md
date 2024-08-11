@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.5.0](https://github.com/stryker-mutator/stryker-js/compare/v8.4.0...v8.5.0) (2024-08-11)
+
+### Features
+
+- **html report:** support mutation coverage based on covered code ([cec0b95](https://github.com/stryker-mutator/stryker-js/commit/cec0b95f8364e458d3fc0d07d11655e695ebff60))
+
 # [8.4.0](https://github.com/stryker-mutator/stryker-js/compare/v8.3.0...v8.4.0) (2024-08-06)
 
 ### Bug Fixes
