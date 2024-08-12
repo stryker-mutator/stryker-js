@@ -1,6 +1,6 @@
 import { getRegistry } from '../../../src/initializer/npm-registry.js';
 import { expect } from 'chai';
-import log4js from 'log4js';
+import { testInjector } from '@stryker-mutator/test-helpers';
 
 const DEFAULT_REGISTRY = 'https://registry.npmjs.com';
 
@@ -26,7 +26,7 @@ describe('npm registry', () => {
 
       process.env.npm_command = 'value';
 
-      const registry = getRegistry(log4js.getLogger());
+      const registry = getRegistry(testInjector.logger);
 
       expect(registry).to.equal(DEFAULT_REGISTRY);
     });
@@ -36,7 +36,7 @@ describe('npm registry', () => {
 
       process.env.npm_command = 'value';
 
-      const registry = getRegistry(log4js.getLogger());
+      const registry = getRegistry(testInjector.logger);
 
       expect(registry).to.equal('foo');
     });
