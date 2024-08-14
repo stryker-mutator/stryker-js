@@ -116,21 +116,31 @@ describe(sut.name, () => {
       });
     }
 
-    for (const [key, value] of [
+    for (const [key, value, noReverse] of [
       ['endsWith', 'startsWith'],
       ['every', 'some'],
       ['toLocaleLowerCase', 'toLocaleUpperCase'],
       ['toLowerCase', 'toUpperCase'],
       ['trimEnd', 'trimStart'],
       ['min', 'max'],
+      ['setDate', 'setTime'],
+      ['setFullYear', 'setMonth'],
+      ['setHours', 'setMinutes'],
+      ['setSeconds', 'setMilliseconds'],
+      ['setUTCDate', 'setTime', true],
+      ['setUTCFullYear', 'setUTCMonth'],
+      ['setUTCHours', 'setUTCMinutes'],
+      ['setUTCSeconds', 'setUTCMilliseconds'],
     ]) {
       it(`should replace ${key} with ${value}`, () => {
         expectJSMutation(sut, `text.${key}();`, `text.${value}();`);
       });
 
-      it(`should replace ${value} with ${key}`, () => {
-        expectJSMutation(sut, `text.${value}();`, `text.${key}();`);
-      });
+      if (!noReverse) {
+        it(`should replace ${value} with ${key}`, () => {
+          expectJSMutation(sut, `text.${value}();`, `text.${key}();`);
+        });
+      }
     }
 
     for (const method of ['charAt', 'filter', 'reverse', 'slice', 'sort', 'substr', 'substring', 'trim']) {
