@@ -8,7 +8,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import typedRestClient, { type RestClient } from 'typed-rest-client/RestClient.js';
 
-import { fileUtils } from '../../../src/utils/file-utils.js';
+import { fileUtils } from '../../../src/utils/index.js';
 import { initializerTokens } from '../../../src/initializer/index.js';
 import { NpmClient, NpmSearchResult } from '../../../src/initializer/npm-client.js';
 import { StrykerConfigWriter } from '../../../src/initializer/stryker-config-writer.js';
@@ -20,7 +20,6 @@ import { SUPPORTED_CONFIG_FILE_NAMES } from '../../../src/config/index.js';
 import { CustomInitializer, CustomInitializerConfiguration } from '../../../src/initializer/custom-initializers/custom-initializer.js';
 import { PackageInfo } from '../../../src/initializer/package-info.js';
 import { inquire } from '../../../src/initializer/inquire.js';
-import { getRegistry } from '../../../src/initializer/npm-registry.js';
 
 describe(StrykerInitializer.name, () => {
   let sut: StrykerInitializer;
@@ -36,6 +35,7 @@ describe(StrykerInitializer.name, () => {
   let out: sinon.SinonStub;
   let customInitializers: CustomInitializer[];
   let customInitializerMock: Mock<CustomInitializer>;
+  const defaultNpmRegistry = 'https://registry.npmjs.com';
 
   beforeEach(() => {
     out = sinon.stub();
@@ -56,7 +56,7 @@ describe(StrykerInitializer.name, () => {
     syncBuiltinESMExports();
     sut = testInjector.injector
       .provideValue(initializerTokens.out, out as unknown as typeof console.log)
-      .provideValue(initializerTokens.npmRegistry, getRegistry(testInjector.logger))
+      .provideValue(initializerTokens.npmRegistry, defaultNpmRegistry)
       .provideValue(initializerTokens.restClientNpm, npmRestClient)
       .provideClass(initializerTokens.inquirer, StrykerInquirer)
       .provideClass(initializerTokens.npmClient, NpmClient)
@@ -430,7 +430,7 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
 
       expect(testInjector.logger.error).calledWith(
-        `Unable to reach '${getRegistry(testInjector.logger)}' (for query /-/v1/search?text=keywords:%40stryker-mutator%2Ftest-runner-plugin). Please check your internet connection.`,
+        `Unable to reach '${defaultNpmRegistry}' (for query /-/v1/search?text=keywords:%40stryker-mutator%2Ftest-runner-plugin). Please check your internet connection.`,
       );
       expect(fs.promises.writeFile).calledWith('stryker.config.json', sinon.match('"testRunner": "command"'));
     });
@@ -449,7 +449,7 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
 
       expect(testInjector.logger.error).calledWith(
-        `Unable to reach '${getRegistry(testInjector.logger)}' (for query /-/v1/search?text=keywords:%40stryker-mutator%2Freporter-plugin). Please check your internet connection.`,
+        `Unable to reach '${defaultNpmRegistry}' (for query /-/v1/search?text=keywords:%40stryker-mutator%2Freporter-plugin). Please check your internet connection.`,
       );
       expect(fs.promises.writeFile).called;
     });
