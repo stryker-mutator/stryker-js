@@ -3,6 +3,7 @@ export const checkerFactory = 'checkerFactory';
 export const checkerConcurrencyTokens = 'checkerConcurrencyTokens';
 export const disableTypeChecksHelper = 'disableTypeChecksHelper';
 export const execa = 'execa';
+export const execaSync = 'execaSync';
 export const dryRunResult = 'dryRunResult';
 export const mutants = 'mutants';
 export const mutantTestPlanner = 'mutantTestPlanner';

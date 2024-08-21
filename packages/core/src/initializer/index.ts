@@ -1,5 +1,5 @@
 import { createInjector } from 'typed-inject';
-import { execaCommand } from 'execa';
+import { execaCommand, execaCommandSync } from 'execa';
 import { resolveFromCwd } from '@stryker-mutator/util';
 import { LogLevel } from '@stryker-mutator/api/core';
 
@@ -20,14 +20,15 @@ export function initializerFactory(): StrykerInitializer {
   LogConfigurator.configureMainProcess(LogLevel.Information);
   return provideLogger(createInjector())
     .provideValue(initializerTokens.out, console.log)
+    .provideValue(coreTokens.execa, execaCommand)
+    .provideValue(coreTokens.execaSync, execaCommandSync)
+    .provideValue(coreTokens.resolveFromCwd, resolveFromCwd)
     .provideFactory(initializerTokens.npmRegistry, getRegistry)
     .provideFactory(initializerTokens.restClientNpm, createNpmRegistryClient)
     .provideClass(initializerTokens.npmClient, NpmClient)
     .provideClass(initializerTokens.configWriter, StrykerConfigWriter)
     .provideClass(initializerTokens.gitignoreWriter, GitignoreWriter)
     .provideClass(initializerTokens.inquirer, StrykerInquirer)
-    .provideValue(coreTokens.execa, execaCommand)
-    .provideValue(coreTokens.resolveFromCwd, resolveFromCwd)
     .provideFactory(initializerTokens.customInitializers, createInitializers)
     .injectClass(StrykerInitializer);
 }
