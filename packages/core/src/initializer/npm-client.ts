@@ -34,10 +34,11 @@ const handleResult =
   };
 
 export class NpmClient {
-  public static inject = tokens(commonTokens.logger, initializerTokens.restClientNpm);
+  public static inject = tokens(commonTokens.logger, initializerTokens.restClientNpm, initializerTokens.npmRegistry);
   constructor(
     private readonly log: Logger,
     private readonly innerNpmClient: RestClient,
+    private readonly npmRegistry: string,
   ) {}
 
   public getTestRunnerOptions(): Promise<PromptOption[]> {
@@ -65,7 +66,7 @@ export class NpmClient {
       const response = await this.innerNpmClient.get<NpmSearchResult>(path);
       return handleResult(path)(response);
     } catch (err) {
-      this.log.error(`Unable to reach 'https://registry.npmjs.com' (for query ${path}). Please check your internet connection.`, errorToString(err));
+      this.log.error(`Unable to reach '${this.npmRegistry}' (for query ${path}). Please check your internet connection.`, errorToString(err));
       const result: NpmSearchResult = {
         objects: [],
         total: 0,
