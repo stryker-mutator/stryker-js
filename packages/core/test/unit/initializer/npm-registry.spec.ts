@@ -11,7 +11,7 @@ describe('npm registry', () => {
     let oldNpmConfigRegistry: string | undefined;
     let oldNpmCommand: string | undefined;
 
-    before(() => {
+    beforeEach(() => {
       oldNpmConfigRegistry = process.env.npm_config_registry;
       oldNpmCommand = process.env.npm_command;
     });
@@ -52,8 +52,7 @@ describe('npm registry', () => {
 
       const registry = getRegistry(testInjector.logger, execaCommandSyncMock as unknown as typeof execaCommandSync);
 
-      sinon.assert.callCount(execaCommandSyncMock, 1);
-      sinon.assert.calledWith(execaCommandSyncMock, 'npm config get --global registry', {
+      sinon.assert.calledOnceWithExactly(execaCommandSyncMock, 'npm config get --global registry', {
         stdout: 'pipe',
         timeout: 20000,
       });
@@ -71,8 +70,7 @@ describe('npm registry', () => {
 
       const registry = getRegistry(testInjector.logger, execaCommandSyncMock as unknown as typeof execaCommandSync);
 
-      sinon.assert.callCount(execaCommandSyncMock, 1);
-      sinon.assert.calledWith(execaCommandSyncMock, 'npm config get --global registry', {
+      sinon.assert.calledOnceWithExactly(execaCommandSyncMock, 'npm config get --global registry', {
         stdout: 'pipe',
         timeout: 20000,
       });
