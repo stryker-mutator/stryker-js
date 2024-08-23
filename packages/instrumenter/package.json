@@ -59,6 +59,6 @@
     "@types/babel__core": "7.20.5",
     "@types/babel__generator": "7.6.8",
     "@types/estree": "1.0.5",
-    "svelte": "4.2.18"
+    "svelte": "4.2.19"
   }
 }
