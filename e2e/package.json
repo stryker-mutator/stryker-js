@@ -15,7 +15,7 @@
     "@sveltejs/kit": "2.5.24",
     "@sveltejs/vite-plugin-svelte": "3.1.2",
     "@testing-library/dom": "10.4.0",
-    "@testing-library/jest-dom": "6.4.8",
+    "@testing-library/jest-dom": "6.5.0",
     "@testing-library/react": "16.0.0",
     "@testing-library/svelte": "5.2.1",
     "@tsconfig/svelte": "5.0.4",
