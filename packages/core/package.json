@@ -92,7 +92,7 @@
     "semver": "^7.6.3",
     "source-map": "~0.7.4",
     "tree-kill": "~1.2.2",
-    "tslib": "2.6.3",
+    "tslib": "2.7.0",
     "typed-inject": "~4.0.0",
     "typed-rest-client": "~2.0.2"
   },
