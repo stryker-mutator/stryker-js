@@ -25,7 +25,7 @@
     "@types/react": "18.3.4",
     "@types/react-dom": "18.3.0",
     "@types/semver": "7.5.8",
-    "@types/tap": "15.0.11",
+    "@types/tap": "15.0.12",
     "@vitest/browser": "2.0.5",
     "ajv": "8.17.1",
     "axios": "1.7.5",
