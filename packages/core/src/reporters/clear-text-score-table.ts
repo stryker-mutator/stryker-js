@@ -24,17 +24,20 @@ const dots = (n: number) => repeat('.', n);
  * Represents a column in the clear text table
  */
 class Column {
-  protected width: number;
+  public width: number;
   private readonly emojiMatchInHeader: RegExpExecArray | null;
+  public group?: string;
 
   constructor(
     public header: string,
     public valueFactory: TableCellValueFactory,
     public rows: MetricsResult,
+    group?: string,
   ) {
     this.emojiMatchInHeader = emojiRe.exec(this.header);
     const maxContentSize = this.determineValueSize();
     this.width = this.pad(dots(maxContentSize)).length;
+    this.group = group;
   }
 
   private determineValueSize(row: MetricsResult = this.rows, ancestorCount = 0): number {
@@ -77,17 +80,27 @@ class MutationScoreColumn extends Column {
   constructor(
     rows: MetricsResult,
     private readonly thresholds: MutationScoreThresholds,
+    private readonly scoreType: 'total' | 'covered',
+    group?: string,
   ) {
-    super('% score', (row) => (isNaN(row.metrics.mutationScore) ? 'n/a' : row.metrics.mutationScore.toFixed(2)), rows);
+    super(
+      scoreType,
+      (row) => {
+        const score = scoreType === 'total' ? row.metrics.mutationScore : row.metrics.mutationScoreBasedOnCoveredCode;
+        return isNaN(score) ? 'n/a' : score.toFixed(2);
+      },
+      rows,
+      group,
+    );
   }
   protected color(metricsResult: MetricsResult) {
-    const { mutationScore: score } = metricsResult.metrics;
-
-    if (isNaN(score)) {
+    const { mutationScore: score, mutationScoreBasedOnCoveredCode: coveredScore } = metricsResult.metrics;
+    const scoreToUse = this.scoreType === 'total' ? score : coveredScore;
+    if (isNaN(scoreToUse)) {
       return chalk.grey;
-    } else if (score >= this.thresholds.high) {
+    } else if (scoreToUse >= this.thresholds.high) {
       return chalk.green;
-    } else if (score >= this.thresholds.low) {
+    } else if (scoreToUse >= this.thresholds.low) {
       return chalk.yellow;
     } else {
       return chalk.red;
@@ -104,11 +117,19 @@ class FileColumn extends Column {
   }
 }
 
+class GroupWithColumns {
+  constructor(
+    public groupName: string,
+    public columns: Column[],
+  ) {}
+}
+
 /**
  * Represents a clear text table for mutation score
  */
 export class ClearTextScoreTable {
   private readonly columns: Column[];
+  private readonly groupedColumns: Array<GroupWithColumns> = [];
 
   constructor(
     private readonly metricsResult: MetricsResult,
@@ -116,7 +137,8 @@ export class ClearTextScoreTable {
   ) {
     this.columns = [
       new FileColumn(metricsResult),
-      new MutationScoreColumn(metricsResult, options.thresholds),
+      new MutationScoreColumn(metricsResult, options.thresholds, 'total', '% Mutation score'),
+      new MutationScoreColumn(metricsResult, options.thresholds, 'covered', '% Mutation score'),
       new Column(`${options.clearTextReporter.allowEmojis ? '✅' : '#'} killed`, (row) => row.metrics.killed.toString(), metricsResult),
       new Column(`${options.clearTextReporter.allowEmojis ? '⌛️' : '#'} timeout`, (row) => row.metrics.timeout.toString(), metricsResult),
       new Column(`${options.clearTextReporter.allowEmojis ? '👽' : '#'} survived`, (row) => row.metrics.survived.toString(), metricsResult),
@@ -127,6 +149,45 @@ export class ClearTextScoreTable {
         metricsResult,
       ),
     ];
+
+    this.groupColumns();
+  }
+
+  private groupColumns() {
+    for (const column of this.columns) {
+      if (column.group) {
+        const group = this.groupedColumns.find((g) => g.groupName === column.group);
+        if (group) {
+          group.columns.push(column);
+        } else {
+          this.groupedColumns.push(new GroupWithColumns(column.group, [column]));
+        }
+      } else {
+        this.groupedColumns.push(new GroupWithColumns('', [column]));
+      }
+    }
+  }
+
+  private drawGroupHeader() {
+    const cells: string[] = [];
+    for (const currentGroup of this.groupedColumns) {
+      cells.push(
+        this.pad(
+          currentGroup.groupName,
+          currentGroup.columns.reduce((acc, column) => acc + column.width, 0),
+        ),
+      );
+    }
+
+    return `${cells.join('|')}|`;
+  }
+
+  private pad(text: string, width: number): string {
+    const padding = Math.max(0, width - stringWidth(text) - 2);
+    if (text.length >= width) {
+      return `${text} `;
+    }
+    return ` ${text}${' '.repeat(padding)} `;
   }
 
   private drawBorder() {
@@ -154,6 +215,13 @@ export class ClearTextScoreTable {
    * Returns a string with the score results drawn in a table.
    */
   public draw(): string {
-    return [this.drawBorder(), this.drawHeader(), this.drawBorder(), this.drawTableBody().join(os.EOL), this.drawBorder()].join(os.EOL);
+    return [
+      this.drawBorder(),
+      this.drawGroupHeader(),
+      this.drawHeader(),
+      this.drawBorder(),
+      this.drawTableBody().join(os.EOL),
+      this.drawBorder(),
+    ].join(os.EOL);
   }
 }
