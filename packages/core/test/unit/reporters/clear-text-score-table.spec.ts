@@ -8,7 +8,7 @@ import { MetricsResult } from 'mutation-testing-metrics';
 import { ClearTextScoreTable } from '../../../src/reporters/clear-text-score-table.js';
 import { stringWidth } from '../../../src/utils/string-utils.js';
 
-describe.only(ClearTextScoreTable.name, () => {
+describe(ClearTextScoreTable.name, () => {
   describe('draw', () => {
     it('should report the clear text table with correct values', () => {
       const metricsResult: MetricsResult = new MetricsResult(
@@ -66,7 +66,7 @@ describe.only(ClearTextScoreTable.name, () => {
       expect(killedColumnValues[2]).to.eq(' 1000000000 ');
     });
 
-    it.only('should color scores < low threshold in red, < high threshold in yellow and > high threshold in green', () => {
+    it('should color scores < low threshold in red, < high threshold in yellow and > high threshold in green', () => {
       const { options } = testInjector;
       options.thresholds = { high: 60, low: 50, break: 0 };
       const input: MetricsResult = factory.metricsResult({
