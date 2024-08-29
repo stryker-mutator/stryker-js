@@ -23,9 +23,9 @@ const determineContentWidth = (row: MetricsResult, valueFactory: TableCellValueF
 };
 
 /**
- * A base class for columns and column groups
+ * A base class for single columns and grouped columns
  */
-abstract class AbstractColumn {
+abstract class Column {
   /**
    * @param header The title of the column
    * @param netWidth The width of the column (excl 2 spaces padding)
@@ -66,7 +66,7 @@ abstract class AbstractColumn {
 /**
  * Represents a single column in the clear text table (no group)
  */
-class SingleColumn extends AbstractColumn {
+class SingleColumn extends Column {
   constructor(
     header: string,
     isFirstColumn: boolean,
@@ -127,7 +127,7 @@ class FileColumn extends SingleColumn {
   }
 }
 
-class GroupColumn extends AbstractColumn {
+class GroupColumn extends Column {
   columns: SingleColumn[];
   constructor(groupName: string, ...columns: SingleColumn[]) {
     // Calculate the width of the columns, use the `width`, since the gross width is included in this grouped column. Subtract 2 for the padding.
