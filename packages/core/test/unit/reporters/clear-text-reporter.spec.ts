@@ -47,7 +47,7 @@ describe(ClearTextReporter.name, () => {
       const serializedTable: string = stdoutStub.getCalls().pop()!.args[0];
       const rows = serializedTable.split(os.EOL);
       expect(rows).to.deep.eq([
-        '----------|--------|---------|----------|-----------|------------|----------|----------|',
+        '----------|------------------|----------|-----------|------------|----------|----------|',
         '          | % Mutation score |          |           |            |          |          |',
         'File      |  total | covered | # killed | # timeout | # survived | # no cov | # errors |',
         '----------|--------|---------|----------|-----------|------------|----------|----------|',
@@ -124,7 +124,7 @@ describe(ClearTextReporter.name, () => {
       const rows = serializedTable.split(os.EOL);
 
       expect(rows).to.deep.eq([
-        '----------|--------|---------|----------|-----------|------------|----------|----------|',
+        '----------|------------------|----------|-----------|------------|----------|----------|',
         '          | % Mutation score |          |           |            |          |          |',
         'File      |  total | covered | # killed | # timeout | # survived | # no cov | # errors |',
         '----------|--------|---------|----------|-----------|------------|----------|----------|',
@@ -213,13 +213,13 @@ describe(ClearTextReporter.name, () => {
       const rows = serializedTable.split(os.EOL);
 
       expect(rows).to.deep.eq([
-        '----------|-------|---------|----------|-----------|------------|----------|----------|',
-        '          |% Mutation score |          |           |            |          |          |',
-        'File      | total | covered | # killed | # timeout | # survived | # no cov | # errors |',
-        '----------|-------|---------|----------|-----------|------------|----------|----------|',
-        `All files |${chalk.grey('   n/a ')}|${chalk.grey('     n/a ')}|        0 |         0 |          0 |        0 |        0 |`,
-        ` file.js  |${chalk.grey('   n/a ')}|${chalk.grey('     n/a ')}|        0 |         0 |          0 |        0 |        0 |`,
-        '----------|-------|---------|----------|-----------|------------|----------|----------|',
+        '----------|------------------|----------|-----------|------------|----------|----------|',
+        '          | % Mutation score |          |           |            |          |          |',
+        'File      |  total | covered | # killed | # timeout | # survived | # no cov | # errors |',
+        '----------|--------|---------|----------|-----------|------------|----------|----------|',
+        `All files |${chalk.grey('    n/a ')}|${chalk.grey('     n/a ')}|        0 |         0 |          0 |        0 |        0 |`,
+        ` file.js  |${chalk.grey('    n/a ')}|${chalk.grey('     n/a ')}|        0 |         0 |          0 |        0 |        0 |`,
+        '----------|--------|---------|----------|-----------|------------|----------|----------|',
         '',
       ]);
     });
@@ -261,7 +261,7 @@ describe(ClearTextReporter.name, () => {
       const rows = serializedTable.split(os.EOL);
 
       expect(rows).to.deep.eq([
-        '----------|--------|---------|----------|-----------|------------|----------|----------|',
+        '----------|------------------|----------|-----------|------------|----------|----------|',
         '          | % Mutation score |          |           |            |          |          |',
         'File      |  total | covered | # killed | # timeout | # survived | # no cov | # errors |',
         '----------|--------|---------|----------|-----------|------------|----------|----------|',
