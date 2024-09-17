@@ -15,7 +15,7 @@ export function jestTestAdapterFactory(
   options: StrykerOptions,
   injector: Injector<JestPluginContext>,
 ): JestGreaterThan25TestAdapter | JestLessThan25TestAdapter {
-  const version = jestWrapper.getVersion();
+  const version = semver.coerce(jestWrapper.getVersion());
   log.debug('Detected Jest version %s', version);
   guardJestVersion(version, options, log);
 
