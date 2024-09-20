@@ -58,7 +58,7 @@
     "@stryker-mutator/test-helpers": "8.5.0",
     "@types/babel__core": "7.20.5",
     "@types/babel__generator": "7.6.8",
-    "@types/estree": "1.0.5",
+    "@types/estree": "1.0.6",
     "svelte": "4.2.19"
   }
 }
