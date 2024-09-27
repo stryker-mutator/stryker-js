@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { testInjector, factory, tick } from '@stryker-mutator/test-helpers';
+import { testInjector, factory, tick, createFakeTick } from '@stryker-mutator/test-helpers';
 import { Reporter } from '@stryker-mutator/api/report';
 import { TestRunner, MutantRunOptions, MutantRunResult, MutantRunStatus, CompleteDryRunResult, TestResult } from '@stryker-mutator/api/test-runner';
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
@@ -187,6 +187,7 @@ describe(MutationTestExecutor.name, () => {
     it('should group mutants buffered by time', async () => {
       // Arrange
       const clock = sinon.useFakeTimers();
+      const fakeTick = createFakeTick(clock);
       const plan = mutantRunPlan({ id: '1' });
       const plan2 = mutantRunPlan({ id: '2' });
       arrangeMutationTestReportHelper();
@@ -217,7 +218,8 @@ describe(MutationTestExecutor.name, () => {
       const onGoingAct = sut.execute();
 
       // Assert
-      await tick();
+      await fakeTick();
+
       // Assert that checker is called for the first 2 groups
       expect(checker.group).calledOnce;
       expect(checker.check).calledTwice;
@@ -226,7 +228,7 @@ describe(MutationTestExecutor.name, () => {
 
       // Assert first check resolved, now tick the clock 10s in the future
       clock.tick(10_001);
-      await tick();
+      await fakeTick();
       // Now the second grouping should have happened
       expect(checker.group).calledTwice;
       expect(checker.check).calledThrice;

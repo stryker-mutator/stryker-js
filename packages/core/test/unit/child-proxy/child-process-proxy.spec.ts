@@ -50,11 +50,9 @@ describe(ChildProcessProxy.name, () => {
   let childProcessMock: ChildProcessMock;
   let killStub: sinon.SinonStub;
   let logMock: Mock<Logger>;
-  let clock: sinon.SinonFakeTimers;
   const workerId = 5;
 
   beforeEach(() => {
-    clock = sinon.useFakeTimers();
     childProcessMock = new ChildProcessMock();
     forkStub = sinon.stub(childProcess, 'fork');
     killStub = sinon.stub(objectUtils, 'kill');
@@ -263,6 +261,7 @@ describe(ChildProcessProxy.name, () => {
 
     it('should proxy the message', async () => {
       // Arrange
+      const clock = sinon.useFakeTimers();
       receiveMessage({ kind: ParentMessageKind.Initialized });
       const workerResponse: ParentMessage = {
         correlationId: 0,
@@ -289,6 +288,7 @@ describe(ChildProcessProxy.name, () => {
 
     it('should use a unique correlation id for each call', async () => {
       // Arrange
+      const clock = sinon.useFakeTimers();
       receiveMessage({ kind: ParentMessageKind.Initialized });
 
       // Act
@@ -317,6 +317,7 @@ describe(ChildProcessProxy.name, () => {
 
     it('should resolve correct promises when receiving responses', async () => {
       // Arrange
+      const clock = sinon.useFakeTimers();
       receiveMessage({ kind: ParentMessageKind.Initialized });
       const delayedEcho = sut.proxy.say('echo');
       const delayedHello = sut.proxy.sayHello();
@@ -334,6 +335,7 @@ describe(ChildProcessProxy.name, () => {
 
     it('should resolve correct promises when receiving responses out-of-order', async () => {
       // Arrange
+      const clock = sinon.useFakeTimers();
       receiveMessage({ kind: ParentMessageKind.Initialized });
       const delayedEcho = sut.proxy.say('echo');
       const delayedHello = sut.proxy.sayHello();
@@ -368,8 +370,10 @@ describe(ChildProcessProxy.name, () => {
   });
 
   describe('dispose', () => {
+    let clock: sinon.SinonFakeTimers;
     beforeEach(() => {
       sut = createSut();
+      clock = sinon.useFakeTimers();
       receiveMessage({ kind: ParentMessageKind.Ready });
     });
 
