@@ -11,7 +11,6 @@ import { rules } from '../eslint.config.js';
 export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
-  // @ts-expect-error: Not all properties are typed
   eslintPluginPrettierRecommended,
   {
     languageOptions: {
