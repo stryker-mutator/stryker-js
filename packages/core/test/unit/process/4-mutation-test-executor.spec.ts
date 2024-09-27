@@ -187,6 +187,11 @@ describe(MutationTestExecutor.name, () => {
     it('should group mutants buffered by time', async () => {
       // Arrange
       const clock = sinon.useFakeTimers();
+      async function fakeTick() {
+        const onGoingTick = tick();
+        clock.tick(0);
+        await onGoingTick;
+      }
       const plan = mutantRunPlan({ id: '1' });
       const plan2 = mutantRunPlan({ id: '2' });
       arrangeMutationTestReportHelper();
@@ -217,7 +222,8 @@ describe(MutationTestExecutor.name, () => {
       const onGoingAct = sut.execute();
 
       // Assert
-      await tick();
+      await fakeTick();
+
       // Assert that checker is called for the first 2 groups
       expect(checker.group).calledOnce;
       expect(checker.check).calledTwice;
@@ -226,7 +232,7 @@ describe(MutationTestExecutor.name, () => {
 
       // Assert first check resolved, now tick the clock 10s in the future
       clock.tick(10_001);
-      await tick();
+      await fakeTick();
       // Now the second grouping should have happened
       expect(checker.group).calledTwice;
       expect(checker.check).calledThrice;
