@@ -54,6 +54,7 @@
     "generate": "node tasks/generate-json-schema-to-ts.js && node tasks/generate-mono-schema.js",
     "prebuild": "npm run generate",
     "build": "tsc -b",
+    "build:no-check": "npm run build -- --noCheck",
     "test": "lerna run test --stream --concurrency 2",
     "download-incremental-reports": "./tasks/download-incremental-reports.sh",
     "test:mutation:incremental": "lerna run stryker --stream --concurrency 1 -- --incremental",
