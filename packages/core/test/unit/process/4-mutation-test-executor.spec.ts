@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { testInjector, factory, tick } from '@stryker-mutator/test-helpers';
+import { testInjector, factory, tick, createFakeTick } from '@stryker-mutator/test-helpers';
 import { Reporter } from '@stryker-mutator/api/report';
 import { TestRunner, MutantRunOptions, MutantRunResult, MutantRunStatus, CompleteDryRunResult, TestResult } from '@stryker-mutator/api/test-runner';
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
@@ -187,11 +187,7 @@ describe(MutationTestExecutor.name, () => {
     it('should group mutants buffered by time', async () => {
       // Arrange
       const clock = sinon.useFakeTimers();
-      async function fakeTick() {
-        const onGoingTick = tick();
-        clock.tick(0);
-        await onGoingTick;
-      }
+      const fakeTick = createFakeTick(clock);
       const plan = mutantRunPlan({ id: '1' });
       const plan2 = mutantRunPlan({ id: '2' });
       arrangeMutationTestReportHelper();

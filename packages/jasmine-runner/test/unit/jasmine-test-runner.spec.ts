@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { factory, assertions, testInjector, tick } from '@stryker-mutator/test-helpers';
+import { factory, assertions, testInjector, createFakeTick } from '@stryker-mutator/test-helpers';
 import { TestStatus, CompleteDryRunResult, DryRunStatus, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
 import jasmine from 'jasmine';
 import { MutantCoverage } from '@stryker-mutator/api/core';
@@ -18,6 +18,7 @@ describe(JasmineTestRunner.name, () => {
   let jasmineEnvStub: sinon.SinonStubbedInstance<jasmine.Env>;
   let sut: JasmineTestRunner;
   let clock: sinon.SinonFakeTimers;
+  let fakeTick: ReturnType<typeof createFakeTick>;
 
   beforeEach(() => {
     jasmineStub = sinon.createStubInstance(jasmine);
@@ -25,6 +26,7 @@ describe(JasmineTestRunner.name, () => {
     jasmineStub.env = jasmineEnvStub as unknown as jasmine.Env;
     sinon.stub(helpers, 'createJasmine').returns(jasmineStub);
     clock = sinon.useFakeTimers();
+    fakeTick = createFakeTick(clock);
     jasmineEnvStub.addReporter.callsFake((rep: jasmine.CustomReporter) => (reporter = rep));
     testInjector.options.jasmineConfigFile = 'jasmineConfFile';
     sut = testInjector.injector.provideValue(pluginTokens.globalNamespace, '__stryker2__' as const).injectClass(JasmineTestRunner);
@@ -95,7 +97,7 @@ describe(JasmineTestRunner.name, () => {
 
       // Act
       const onGoingAct = sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '23' }), mutantActivation: 'static' }));
-      await tick();
+      await fakeTick();
 
       // Assert
       expect(global.__stryker2__?.activeMutant).eq('23');
@@ -119,7 +121,7 @@ describe(JasmineTestRunner.name, () => {
 
       // Act
       const onGoingAct = sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '23' }), mutantActivation: 'runtime' }));
-      await tick();
+      await fakeTick();
 
       // Assert
       expect(global.__stryker2__?.activeMutant).undefined;
