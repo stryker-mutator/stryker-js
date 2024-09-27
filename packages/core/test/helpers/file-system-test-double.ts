@@ -18,7 +18,7 @@ type Param<TMethod extends keyof I<FileSystem>, n extends number> = Parameters<F
 export class FileSystemTestDouble implements I<FileSystem> {
   public dirs = new Set<string>();
   constructor(public readonly files: Record<string, string> = Object.create(null)) {}
-  public async dispose(): Promise<void> {
+  public dispose(): void {
     // Idle, nothing to do here
   }
 
