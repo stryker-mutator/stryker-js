@@ -117,7 +117,7 @@ Config file:
 
 Settings for the `clear-text` reporter.
 
-- `allowColor`: "Indicates whether or not to use color coding in output.",
+- `allowColor`: Indicates whether or not to use color coding in output.
 - `allowEmojis`: Enable emojis in your clear text report (experimental).
 - `logTests`: Indicates whether or not to log which tests were executed for a given mutant.
 - `maxTestsToLog`: Indicates the maximum amount of test to log when `logTests` is enabled.
