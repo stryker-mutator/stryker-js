@@ -1,8 +1,9 @@
 name: CI
 
 on:
-  push: ~
   pull_request: ~
+  merge_group:
+  workflow_dispatch:
   schedule:
     - cron:  '0 12 * * *'
 
