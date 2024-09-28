@@ -78,20 +78,26 @@ export class AppComponent {
   normalOutput = output<string>({
     alias: 'normal-output'
   });
-  title = stryMutAct_9fa48(\\"20\\") ? \\"\\" : (stryCov_9fa48(\\"20\\"), 'angular-app');
+  inputFalseAlias = input(stryMutAct_9fa48(\\"20\\") ? {} : (stryCov_9fa48(\\"20\\"), {
+    alias: stryMutAct_9fa48(\\"21\\") ? \\"\\" : (stryCov_9fa48(\\"21\\"), 'this-is-actually-the-default-value')
+  }));
+  modelFalseAlias = model(stryMutAct_9fa48(\\"22\\") ? {} : (stryCov_9fa48(\\"22\\"), {
+    alias: stryMutAct_9fa48(\\"23\\") ? \\"\\" : (stryCov_9fa48(\\"23\\"), 'this-is-actually-the-default-value')
+  }));
+  title = stryMutAct_9fa48(\\"24\\") ? \\"\\" : (stryCov_9fa48(\\"24\\"), 'angular-app');
   public publicFunction(): void {
-    if (stryMutAct_9fa48(\\"21\\")) {
+    if (stryMutAct_9fa48(\\"25\\")) {
       {}
     } else {
-      stryCov_9fa48(\\"21\\");
-      const inputInsideFunction = input(stryMutAct_9fa48(\\"22\\") ? \\"Stryker was here!\\" : (stryCov_9fa48(\\"22\\"), ''), stryMutAct_9fa48(\\"23\\") ? {} : (stryCov_9fa48(\\"23\\"), {
-        alias: stryMutAct_9fa48(\\"24\\") ? \\"\\" : (stryCov_9fa48(\\"24\\"), 'input-inside-function')
+      stryCov_9fa48(\\"25\\");
+      const inputInsideFunction = input(stryMutAct_9fa48(\\"26\\") ? \\"Stryker was here!\\" : (stryCov_9fa48(\\"26\\"), ''), stryMutAct_9fa48(\\"27\\") ? {} : (stryCov_9fa48(\\"27\\"), {
+        alias: stryMutAct_9fa48(\\"28\\") ? \\"\\" : (stryCov_9fa48(\\"28\\"), 'input-inside-function')
       }));
-      const modelInsideFunction = model(stryMutAct_9fa48(\\"25\\") ? \\"Stryker was here!\\" : (stryCov_9fa48(\\"25\\"), ''), stryMutAct_9fa48(\\"26\\") ? {} : (stryCov_9fa48(\\"26\\"), {
-        alias: stryMutAct_9fa48(\\"27\\") ? \\"\\" : (stryCov_9fa48(\\"27\\"), 'model-inside-function')
+      const modelInsideFunction = model(stryMutAct_9fa48(\\"29\\") ? \\"Stryker was here!\\" : (stryCov_9fa48(\\"29\\"), ''), stryMutAct_9fa48(\\"30\\") ? {} : (stryCov_9fa48(\\"30\\"), {
+        alias: stryMutAct_9fa48(\\"31\\") ? \\"\\" : (stryCov_9fa48(\\"31\\"), 'model-inside-function')
       }));
-      const outputInsideFunction = output<string>(stryMutAct_9fa48(\\"28\\") ? {} : (stryCov_9fa48(\\"28\\"), {
-        alias: stryMutAct_9fa48(\\"29\\") ? \\"\\" : (stryCov_9fa48(\\"29\\"), 'output-inside-function')
+      const outputInsideFunction = output<string>(stryMutAct_9fa48(\\"32\\") ? {} : (stryCov_9fa48(\\"32\\"), {
+        alias: stryMutAct_9fa48(\\"33\\") ? \\"\\" : (stryCov_9fa48(\\"33\\"), 'output-inside-function')
       }));
     }
   }

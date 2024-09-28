@@ -18,6 +18,9 @@ export class AppComponent {
 
   normalOutput = output<string>({ alias: 'normal-output' });
 
+  inputFalseAlias = input({ alias: 'this-is-actually-the-default-value' });
+  modelFalseAlias = model({ alias: 'this-is-actually-the-default-value' });
+
   title = 'angular-app';
 
   public publicFunction(): void {
