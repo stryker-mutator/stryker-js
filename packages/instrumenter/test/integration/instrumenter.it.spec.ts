@@ -6,7 +6,7 @@ import chaiJestSnapshot from 'chai-jest-snapshot';
 
 import { NodePath } from '@babel/core';
 
-import { AngularIgnorer } from '../../src/frameworks/angular-ignore.js';
+import { AngularIgnorer } from '../../src/frameworks/angular-ignorer.js';
 import { createInstrumenter, File, Instrumenter } from '../../src/index.js';
 import { createInstrumenterOptions } from '../helpers/factories.js';
 import { resolveTestResource } from '../helpers/resolve-test-resource.js';
