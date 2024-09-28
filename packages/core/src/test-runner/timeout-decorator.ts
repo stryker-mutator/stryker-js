@@ -32,10 +32,7 @@ export class TimeoutDecorator extends TestRunnerDecorator {
     }
   }
 
-  private async run<TOptions extends { timeout: number }, TResult>(
-    options: TOptions,
-    actRun: () => Promise<TResult>,
-  ): Promise<TResult | typeof ExpirableTask.TimeoutExpired> {
+  private async run<TResult>(options: { timeout: number }, actRun: () => Promise<TResult>): Promise<TResult | typeof ExpirableTask.TimeoutExpired> {
     this.log.debug('Starting timeout timer (%s ms) for a test run', options.timeout);
     const result = await ExpirableTask.timeout(actRun(), options.timeout);
     if (result === ExpirableTask.TimeoutExpired) {

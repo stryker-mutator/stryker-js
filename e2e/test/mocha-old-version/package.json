@@ -7,6 +7,7 @@
   "scripts": {
     "pretest": "rimraf \"reports\"",
     "test": "stryker run",
+    "test:unit": "mocha",
     "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "localDependencies": {

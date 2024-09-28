@@ -128,16 +128,16 @@ describe(CommandTestRunner.name, () => {
     });
   });
 
-  async function actDryRun(sut: CommandTestRunner = createSut(), exitCode = 0, elapsedTimeMS = 0) {
+  function actDryRun(sut: CommandTestRunner = createSut(), exitCode = 0, elapsedTimeMS = 0) {
     const resultPromise = sut.dryRun();
     clock.tick(elapsedTimeMS);
-    await actTestProcessEnds(exitCode);
+    actTestProcessEnds(exitCode);
     return resultPromise;
   }
 
-  async function actMutantRun(sut: CommandTestRunner = createSut(), { exitCode = 0, activeMutantId = '0' }) {
+  function actMutantRun(sut: CommandTestRunner = createSut(), { exitCode = 0, activeMutantId = '0' }) {
     const resultPromise = sut.mutantRun({ activeMutant: factory.mutant({ id: activeMutantId }) });
-    await actTestProcessEnds(exitCode);
+    actTestProcessEnds(exitCode);
     return resultPromise;
   }
 
@@ -149,7 +149,7 @@ describe(CommandTestRunner.name, () => {
     return new CommandTestRunner(workingDir, strykerOptions);
   }
 
-  async function actTestProcessEnds(exitCode: number) {
+  function actTestProcessEnds(exitCode: number) {
     childProcessMock.emit('exit', exitCode);
   }
 });

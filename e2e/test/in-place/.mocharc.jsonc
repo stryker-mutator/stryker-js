@@ -1,4 +1,4 @@
 {
-    "require": "./test/helpers/testSetup.js",
+    "require": "./test/helpers/test-setup.js",
     "spec": ["test/unit/*.js"]
 }

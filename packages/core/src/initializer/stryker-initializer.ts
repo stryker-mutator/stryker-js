@@ -132,8 +132,10 @@ export class StrykerInitializer {
   }
 
   private async getBuildCommand(selectedTestRunner: PromptOption): Promise<PromptOption> {
-    const shouldSkipQuestion = selectedTestRunner.name === 'jest';
-    return this.inquirer.promptBuildCommand(shouldSkipQuestion);
+    if (selectedTestRunner.name !== 'jest') {
+      return this.inquirer.promptBuildCommand();
+    }
+    return { name: '', pkg: null };
   }
 
   private async selectReporters(): Promise<PromptOption[]> {
@@ -177,7 +179,7 @@ export class StrykerInitializer {
   }
 
   private async selectJsonConfigType(): Promise<boolean> {
-    return this.inquirer.promptJsonConfigType();
+    return this.inquirer.promptJsonConfigFormat();
   }
 
   private getSelectedNpmDependencies(selectedOptions: Array<PromptOption | null>): PackageInfo[] {
@@ -202,7 +204,7 @@ export class StrykerInitializer {
     this.out(cmd);
     try {
       childProcess.execSync(cmd, { stdio: [0, 1, 2] });
-    } catch (_) {
+    } catch {
       this.out(`An error occurred during installation, please try it yourself: "${cmd}"`);
     }
   }

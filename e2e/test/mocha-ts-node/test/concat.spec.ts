@@ -1,4 +1,4 @@
-import { concat } from '../src/concat';
+import { concat } from '../src/concat.js';
 import { expect } from 'chai';
 
 describe(concat.name, () => {

@@ -3,12 +3,13 @@
   "description": "e2e test for testing --ignoreStatic",
   "version": "0.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "test:cucumber": "cucumber-js",
     "test:jasmine": "jasmine --config=jasmine.json",
     "test:mocha": "mocha",
-    "test:jest": "jest",
-    "test:karma": "karma start",
+    "test:jest": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest",
+    "test:karma": "karma start karma.conf.cjs",
     "test:vitest": "vitest run",
     "test:tap": "tap spec/**/*.tap.js",
     "test": "mocha --no-config --no-package --timeout 0 verify/verify.js"

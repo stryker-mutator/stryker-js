@@ -22,7 +22,7 @@ export function findUnserializables(thing: unknown): UnserializableDescription[]
           reason: `Primitive type "${typeof thing}" has no JSON representation`,
         },
       ];
-    case 'object':
+    case 'object': {
       // Either a plain object, null, array or instance of a class
       if (thing === null) {
         return;
@@ -57,5 +57,6 @@ export function findUnserializables(thing: unknown): UnserializableDescription[]
           reason: `Value is an instance of "${protoClassName}", this detail will get lost in translation during serialization`,
         },
       ];
+    }
   }
 }

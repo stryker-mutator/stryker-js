@@ -13,8 +13,7 @@ module.exports = function (config) {
     singleRun: false,
     watch: true,
     frameworks: [
-      'mocha',
-      'chai'
+      'mocha'
     ],
     browsers: [
       'ChromeHeadless'

@@ -143,9 +143,15 @@ export class MutationTestExecutor {
       checkResult$,
       passedMutant$: passedMutant$.pipe(
         tap({
-          complete: async () => {
-            await this.checkerPool.dispose();
-            this.concurrencyTokenProvider.freeCheckers();
+          complete: () => {
+            this.checkerPool
+              .dispose()
+              .then(() => {
+                this.concurrencyTokenProvider.freeCheckers();
+              })
+              .catch((error) => {
+                this.log.error('An error occurred while disposing checkers: %s', error);
+              });
           },
         }),
       ),

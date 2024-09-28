@@ -1,5 +1,5 @@
-const { test } = require('tap');
-const { MyMath } = require('../src/math.js');
+import { test } from 'tap';
+import { MyMath } from '../src/math.js';
 
 test('MyMath', (t) => {
   // Bad practice, but on purpose. This makes for a hybrid mutant

@@ -1,10 +1,6 @@
 {
   "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
-  "reporters": [
-    "json",
-    "clear-text",
-    "event-recorder"
-  ],
+  "reporters": ["json", "clear-text", "event-recorder"],
   "concurrency": 2,
   "commandRunner": {
     "command": "npm run test:unit"

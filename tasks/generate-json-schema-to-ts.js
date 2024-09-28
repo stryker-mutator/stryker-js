@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 // @ts-check
 import { writeFile, mkdir, readFile } from 'fs/promises';
 import path from 'path';
@@ -49,6 +50,7 @@ async function generateAllSchemas() {
   const files = await glob('packages/!(core)/schema/*.json', { cwd: resolveFromParent() });
   await Promise.all(files.map((fileName) => generate(resolveFromParent(fileName))));
 }
+
 generateAllSchemas().catch((err) => {
   console.error('TS generation failed', err);
   process.exitCode = 1;
@@ -122,7 +124,7 @@ function preprocessProperties(inputProperties) {
  */
 function cleanExternalRef(inputSchema) {
   // node 12 doesn't support optional chain yet
-  // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
+
   if (inputSchema.$ref && inputSchema.$ref.startsWith('http')) {
     return {
       ...inputSchema,

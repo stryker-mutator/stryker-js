@@ -1,5 +1,5 @@
-const { test } = require('tap');
-const { add } = require('../src/math');
+import { test } from 'tap';
+import { add } from '../src/math.js';
 
 test(add.name, (t) => {
   // Both kill the same mutant

@@ -49,6 +49,7 @@ export const createClearTextReporterOptions = factoryMethod<ClearTextReporterOpt
   reportTests: true,
   reportMutants: true,
   reportScoreTable: true,
+  skipFull: false,
 }));
 
 export type ConcurrencyTokenProviderMock = sinon.SinonStubbedInstance<I<ConcurrencyTokenProvider>> & {
@@ -73,12 +74,14 @@ export function createTestRunnerPoolMock(): sinon.SinonStubbedInstance<I<Pool<Te
   };
 }
 
-export function createCheckerPoolMock(): sinon.SinonStubbedInstance<I<Pool<I<CheckerFacade>>>> {
-  return {
+export function createCheckerPoolMock() {
+  const pool: sinon.SinonStubbedInstance<I<Pool<I<CheckerFacade>>>> = {
     dispose: sinon.stub(),
     init: sinon.stub(),
     schedule: sinon.stub<any>(),
   };
+  pool.dispose.resolves();
+  return pool;
 }
 
 export const logger = (): sinon.SinonStubbedInstance<Logger> => {
@@ -141,6 +144,7 @@ export function createDirent(overrides?: Partial<CreateDirentOptions>): Dirent {
   return {
     isBlockDevice: dummy,
     isCharacterDevice: dummy,
+    parentPath: '',
     isDirectory: () => isDirectory,
     isFIFO: dummy,
     isFile: () => !isDirectory,

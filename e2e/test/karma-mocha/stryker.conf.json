@@ -4,8 +4,10 @@
   "reporters": ["json", "clear-text", "html", "event-recorder"],
   "karma": {
     "config": {
-      "frameworks": ["mocha", "chai"],
-      "files": ["src/*.js", "test/*.js"]
+      "frameworks": ["mocha", "vite"],
+      "files": [
+        { "pattern": "test/*.js", "served": false, "watched": false, "type": "module" }
+      ]
     }
   },
   "timeoutMS": 120000,

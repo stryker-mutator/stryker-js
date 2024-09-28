@@ -3,7 +3,7 @@
 exports[`Ignore static e2e test should work for cucumber 1`] = `
 Object {
   "compileErrors": 0,
-  "ignored": 8,
+  "ignored": 2,
   "killed": 2,
   "mutationScore": 100,
   "mutationScoreBasedOnCoveredCode": 100,
@@ -15,7 +15,7 @@ Object {
   "totalCovered": 2,
   "totalDetected": 2,
   "totalInvalid": 0,
-  "totalMutants": 10,
+  "totalMutants": 4,
   "totalUndetected": 0,
   "totalValid": 2,
 }
@@ -24,7 +24,7 @@ Object {
 exports[`Ignore static e2e test should work for jasmine 1`] = `
 Object {
   "compileErrors": 0,
-  "ignored": 7,
+  "ignored": 1,
   "killed": 2,
   "mutationScore": 66.66666666666666,
   "mutationScoreBasedOnCoveredCode": 66.66666666666666,
@@ -36,7 +36,7 @@ Object {
   "totalCovered": 3,
   "totalDetected": 2,
   "totalInvalid": 0,
-  "totalMutants": 10,
+  "totalMutants": 4,
   "totalUndetected": 1,
   "totalValid": 3,
 }
@@ -45,7 +45,7 @@ Object {
 exports[`Ignore static e2e test should work for jest 1`] = `
 Object {
   "compileErrors": 0,
-  "ignored": 7,
+  "ignored": 1,
   "killed": 3,
   "mutationScore": 100,
   "mutationScoreBasedOnCoveredCode": 100,
@@ -57,7 +57,7 @@ Object {
   "totalCovered": 3,
   "totalDetected": 3,
   "totalInvalid": 0,
-  "totalMutants": 10,
+  "totalMutants": 4,
   "totalUndetected": 0,
   "totalValid": 3,
 }
@@ -66,7 +66,7 @@ Object {
 exports[`Ignore static e2e test should work for karma 1`] = `
 Object {
   "compileErrors": 0,
-  "ignored": 7,
+  "ignored": 1,
   "killed": 3,
   "mutationScore": 100,
   "mutationScoreBasedOnCoveredCode": 100,
@@ -78,7 +78,7 @@ Object {
   "totalCovered": 3,
   "totalDetected": 3,
   "totalInvalid": 0,
-  "totalMutants": 10,
+  "totalMutants": 4,
   "totalUndetected": 0,
   "totalValid": 3,
 }
@@ -87,7 +87,7 @@ Object {
 exports[`Ignore static e2e test should work for mocha 1`] = `
 Object {
   "compileErrors": 0,
-  "ignored": 7,
+  "ignored": 1,
   "killed": 2,
   "mutationScore": 66.66666666666666,
   "mutationScoreBasedOnCoveredCode": 66.66666666666666,
@@ -99,7 +99,7 @@ Object {
   "totalCovered": 3,
   "totalDetected": 2,
   "totalInvalid": 0,
-  "totalMutants": 10,
+  "totalMutants": 4,
   "totalUndetected": 1,
   "totalValid": 3,
 }
@@ -108,7 +108,7 @@ Object {
 exports[`Ignore static e2e test should work for tap 1`] = `
 Object {
   "compileErrors": 0,
-  "ignored": 6,
+  "ignored": 0,
   "killed": 4,
   "mutationScore": 100,
   "mutationScoreBasedOnCoveredCode": 100,
@@ -120,7 +120,7 @@ Object {
   "totalCovered": 4,
   "totalDetected": 4,
   "totalInvalid": 0,
-  "totalMutants": 10,
+  "totalMutants": 4,
   "totalUndetected": 0,
   "totalValid": 4,
 }
@@ -129,7 +129,7 @@ Object {
 exports[`Ignore static e2e test should work for vitest 1`] = `
 Object {
   "compileErrors": 0,
-  "ignored": 7,
+  "ignored": 1,
   "killed": 2,
   "mutationScore": 66.66666666666666,
   "mutationScoreBasedOnCoveredCode": 66.66666666666666,
@@ -141,7 +141,7 @@ Object {
   "totalCovered": 3,
   "totalDetected": 2,
   "totalInvalid": 0,
-  "totalMutants": 10,
+  "totalMutants": 4,
   "totalUndetected": 1,
   "totalValid": 3,
 }

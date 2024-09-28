@@ -3,6 +3,42 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.5.0](https://github.com/stryker-mutator/stryker-js/compare/v8.4.0...v8.5.0) (2024-08-11)
+
+### Bug Fixes
+
+- **deps:** update dependency tap-parser to v18 ([#4942](https://github.com/stryker-mutator/stryker-js/issues/4942)) ([d5bc38e](https://github.com/stryker-mutator/stryker-js/commit/d5bc38e70573a7006ed47365e56870c4cd65cb29))
+
+### Features
+
+- **html report:** support mutation coverage based on covered code ([cec0b95](https://github.com/stryker-mutator/stryker-js/commit/cec0b95f8364e458d3fc0d07d11655e695ebff60))
+
+# [8.4.0](https://github.com/stryker-mutator/stryker-js/compare/v8.3.0...v8.4.0) (2024-08-06)
+
+### Bug Fixes
+
+- **instrumenter:** support explicit resource management in TS ([#4928](https://github.com/stryker-mutator/stryker-js/issues/4928)) ([2bd046a](https://github.com/stryker-mutator/stryker-js/commit/2bd046a40262dee95ceccd874107d1f70918d905)), closes [#4876](https://github.com/stryker-mutator/stryker-js/issues/4876)
+- **mocha-runner:** properly restrict tests to run ([f9ef08e](https://github.com/stryker-mutator/stryker-js/commit/f9ef08e90d78800bfe226753f3ace612a83bef82))
+- **mutant placement:** don't place mutants inside assignment expression ([#4927](https://github.com/stryker-mutator/stryker-js/issues/4927)) ([4b8885c](https://github.com/stryker-mutator/stryker-js/commit/4b8885c06f84854ffa24e4c145a70231e9fa930a)), closes [#4884](https://github.com/stryker-mutator/stryker-js/issues/4884)
+- **node-18:** revert changes to support node 18 again ([#4935](https://github.com/stryker-mutator/stryker-js/issues/4935)) ([42162bd](https://github.com/stryker-mutator/stryker-js/commit/42162bd36edd5a9f63beff10303259cfff709b0b))
+
+### Features
+
+- **clear-text-reporter:** Add "skipFull" option ([#4875](https://github.com/stryker-mutator/stryker-js/issues/4875)) ([da213ad](https://github.com/stryker-mutator/stryker-js/commit/da213ad70c437617f78fe2e9f175d15c07e1697b))
+
+# [8.3.0](https://github.com/stryker-mutator/stryker-js/compare/v8.2.6...v8.3.0) (2024-08-01)
+
+### Bug Fixes
+
+- **babel:** update babel dependency to 7.25 ([#4916](https://github.com/stryker-mutator/stryker-js/issues/4916)) ([07e8088](https://github.com/stryker-mutator/stryker-js/commit/07e8088ad3face36e8fa44523b6dc6637a41e405))
+- **deps:** update babel monorepo to ~7.24.0 ([#4762](https://github.com/stryker-mutator/stryker-js/issues/4762)) ([0a5d446](https://github.com/stryker-mutator/stryker-js/commit/0a5d446e3326f8e1ef8c81e1e4c2556158b1ec45))
+- **deps:** update mutation-testing-elements monorepo to v3.1.1 ([#4824](https://github.com/stryker-mutator/stryker-js/issues/4824)) ([03eed69](https://github.com/stryker-mutator/stryker-js/commit/03eed690b05766265706139fb3c3ae96ffad3f4b))
+- **mocha-runner:** compatibility with Mocha v10.5.1 and up ([#4885](https://github.com/stryker-mutator/stryker-js/issues/4885)) ([4cc43c8](https://github.com/stryker-mutator/stryker-js/commit/4cc43c854de85d8293d2878cb1c54091a5fe3adb))
+
+### Features
+
+- **deps:** update dependencies ([#4894](https://github.com/stryker-mutator/stryker-js/issues/4894)) ([eb61333](https://github.com/stryker-mutator/stryker-js/commit/eb61333a8640edfb4c60dbe456d5192dc6b8eeb9))
+
 ## [8.2.6](https://github.com/stryker-mutator/stryker-js/compare/v8.2.5...v8.2.6) (2024-02-25)
 
 ### Bug Fixes

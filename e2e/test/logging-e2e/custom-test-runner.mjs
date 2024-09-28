@@ -27,7 +27,7 @@ export const strykerPlugins = [
        * @param {import('@stryker-mutator/api/test-runner').DryRunOptions} options
        * @returns {Promise<import('@stryker-mutator/api/test-runner').DryRunResult>}
        */
-      async dryRun(options) {
+      dryRun(options) {
         if (this.logger.isTraceEnabled()) {
           this.logger.trace('trace %s', JSON.stringify(options));
         }
@@ -35,7 +35,7 @@ export const strykerPlugins = [
         this.logger.info('test info');
         this.logger.warn('test warn');
         this.logger.error('test error');
-        return { status: DryRunStatus.Complete, tests: [] };
+        return Promise.resolve({ status: DryRunStatus.Complete, tests: [] });
       }
 
       /**
@@ -44,6 +44,6 @@ export const strykerPlugins = [
       mutantRun() {
         throw new Error('Not implemented');
       }
-    }
+    },
   ),
 ];

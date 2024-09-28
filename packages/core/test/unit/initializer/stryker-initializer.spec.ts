@@ -5,11 +5,10 @@ import { syncBuiltinESMExports } from 'module';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { childProcessAsPromised, normalizeWhitespaces } from '@stryker-mutator/util';
 import { expect } from 'chai';
-import inquirer from 'inquirer';
 import sinon from 'sinon';
 import typedRestClient, { type RestClient } from 'typed-rest-client/RestClient.js';
 
-import { fileUtils } from '../../../src/utils/file-utils.js';
+import { fileUtils } from '../../../src/utils/index.js';
 import { initializerTokens } from '../../../src/initializer/index.js';
 import { NpmClient, NpmSearchResult } from '../../../src/initializer/npm-client.js';
 import { StrykerConfigWriter } from '../../../src/initializer/stryker-config-writer.js';
@@ -17,13 +16,16 @@ import { StrykerInitializer } from '../../../src/initializer/stryker-initializer
 import { StrykerInquirer } from '../../../src/initializer/stryker-inquirer.js';
 import { Mock } from '../../helpers/producers.js';
 import { GitignoreWriter } from '../../../src/initializer/gitignore-writer.js';
-import { SUPPORTED_CONFIG_FILE_NAMES } from '../../../src/config/config-file-formats.js';
+import { SUPPORTED_CONFIG_FILE_NAMES } from '../../../src/config/index.js';
 import { CustomInitializer, CustomInitializerConfiguration } from '../../../src/initializer/custom-initializers/custom-initializer.js';
 import { PackageInfo } from '../../../src/initializer/package-info.js';
+import { inquire } from '../../../src/initializer/inquire.js';
 
 describe(StrykerInitializer.name, () => {
   let sut: StrykerInitializer;
-  let inquirerPrompt: sinon.SinonStub;
+  let selectStub: sinon.SinonStubbedMember<typeof inquire.select>;
+  let inputStub: sinon.SinonStubbedMember<typeof inquire.input>;
+  let checkboxStub: sinon.SinonStubbedMember<typeof inquire.checkbox>;
   let childExecSync: sinon.SinonStub;
   let childExec: sinon.SinonStub;
   let fsWriteFile: sinon.SinonStubbedMember<typeof fs.promises.writeFile>;
@@ -33,6 +35,7 @@ describe(StrykerInitializer.name, () => {
   let out: sinon.SinonStub;
   let customInitializers: CustomInitializer[];
   let customInitializerMock: Mock<CustomInitializer>;
+  const defaultNpmRegistry = 'https://registry.npmjs.com';
 
   beforeEach(() => {
     out = sinon.stub();
@@ -42,7 +45,9 @@ describe(StrykerInitializer.name, () => {
       name: 'awesome-preset',
     };
     childExec = sinon.stub(childProcessAsPromised, 'exec');
-    inquirerPrompt = sinon.stub(inquirer, 'prompt');
+    selectStub = sinon.stub(inquire, 'select');
+    inputStub = sinon.stub(inquire, 'input');
+    checkboxStub = sinon.stub(inquire, 'checkbox');
     childExecSync = sinon.stub(childProcess, 'execSync');
     fsWriteFile = sinon.stub(fs.promises, 'writeFile');
     existsStub = sinon.stub(fileUtils, 'exists');
@@ -51,6 +56,7 @@ describe(StrykerInitializer.name, () => {
     syncBuiltinESMExports();
     sut = testInjector.injector
       .provideValue(initializerTokens.out, out as unknown as typeof console.log)
+      .provideValue(initializerTokens.npmRegistry, defaultNpmRegistry)
       .provideValue(initializerTokens.restClientNpm, npmRestClient)
       .provideClass(initializerTokens.inquirer, StrykerInquirer)
       .provideClass(initializerTokens.npmClient, NpmClient)
@@ -91,47 +97,28 @@ describe(StrykerInitializer.name, () => {
 
       await sut.initialize();
 
-      expect(inquirerPrompt).callCount(6);
-      const [
-        promptPreset,
-        promptTestRunner,
-        promptBuildCommand,
-        promptReporters,
-        promptPackageManagers,
-        promptConfigTypes,
-      ]: inquirer.ui.FetchedQuestion[] = [
-        inquirerPrompt.getCall(0).args[0],
-        inquirerPrompt.getCall(1).args[0],
-        inquirerPrompt.getCall(2).args[0],
-        inquirerPrompt.getCall(3).args[0],
-        inquirerPrompt.getCall(4).args[0],
-        inquirerPrompt.getCall(5).args[0],
-      ];
-
-      expect(promptPreset.type).to.eq('list');
-      expect(promptPreset.name).to.eq('preset');
-      expect(promptPreset.choices).to.deep.eq(['awesome-preset', new inquirer.Separator(), 'None/other']);
-      expect(promptTestRunner.type).to.eq('list');
-      expect(promptTestRunner.name).to.eq('testRunner');
-      expect(promptTestRunner.choices).to.deep.eq(['awesome', 'hyper', 'ghost', 'jest', new inquirer.Separator(), 'command']);
-      expect(promptBuildCommand.name).to.eq('buildCommand');
-      expect(promptReporters.type).to.eq('checkbox');
-      expect(promptReporters.choices).to.deep.eq(['dimension', 'mars', 'html', 'clear-text', 'progress', 'dashboard']);
-      expect(promptPackageManagers.type).to.eq('list');
-      expect(promptPackageManagers.choices).to.deep.eq(['npm', 'yarn', 'pnpm']);
-      expect(promptConfigTypes.type).to.eq('list');
-      expect(promptConfigTypes.choices).to.deep.eq(['JSON', 'JavaScript']);
+      sinon.assert.calledOnceWithExactly(inputStub, {
+        message:
+          'What build command should be executed just before running your tests? For example: "npm run build" or "tsc -b" (leave empty when this is not needed).',
+        default: 'none',
+      });
+      sinon.assert.callCount(selectStub, 4);
+      sinon.assert.calledWithExactly(selectStub, {
+        message:
+          'Which test runner do you want to use? If your test runner isn\'t listed here, you can choose "command" (it uses your `npm test` command, but will come with a big performance penalty)',
+        choices: [{ value: 'awesome' }, { value: 'hyper' }, { value: 'ghost' }, { value: 'jest' }, inquire.separator(), { value: 'command' }],
+      });
     });
 
     it('should immediately complete when a preset and package manager is chosen', async () => {
-      inquirerPrompt.resolves({
+      arrangeAnswers({
         packageManager: 'npm',
         preset: 'awesome-preset',
-        configType: 'JSON',
+        configFormat: 'JSON',
       });
       resolvePresetConfig();
       await sut.initialize();
-      expect(inquirerPrompt).callCount(3);
+      sinon.assert.callCount(selectStub, 3);
       expect(out).calledWith(
         'Done configuring stryker. Please review "stryker.config.json", you might need to configure your test runner correctly.',
       );
@@ -153,10 +140,10 @@ describe(StrykerInitializer.name, () => {
           "awesomeConf": "${config.awesomeConf}"
         };
         export default config;`;
-      inquirerPrompt.resolves({
+      arrangeAnswers({
         packageManager: 'npm',
         preset: 'awesome-preset',
-        configType: 'JavaScript',
+        configFormat: 'JavaScript',
       });
       await sut.initialize();
       expectStrykerConfWritten(expectedOutput);
@@ -167,10 +154,10 @@ describe(StrykerInitializer.name, () => {
       // Arrange
       const expectedError = new Error('Formatting fails');
       childExec.rejects(expectedError);
-      inquirerPrompt.resolves({
+      arrangeAnswers({
         packageManager: 'npm',
         preset: 'awesome-preset',
-        configType: 'JavaScript',
+        configFormat: 'JavaScript',
       });
       resolvePresetConfig();
 
@@ -184,10 +171,10 @@ describe(StrykerInitializer.name, () => {
 
     it('should correctly load dependencies from the preset', async () => {
       resolvePresetConfig({ dependencies: ['my-awesome-dependency', 'another-awesome-dependency'] });
-      inquirerPrompt.resolves({
+      arrangeAnswers({
         packageManager: 'npm',
         preset: 'awesome-preset',
-        configType: 'JSON',
+        configFormat: 'JSON',
       });
       await sut.initialize();
       expect(fsWriteFile).calledOnce;
@@ -196,33 +183,35 @@ describe(StrykerInitializer.name, () => {
 
     it('should correctly load configuration from a preset', async () => {
       resolvePresetConfig();
-      inquirerPrompt.resolves({
+      arrangeAnswers({
         packageManager: 'npm',
         preset: 'awesome-preset',
-        configType: 'JSON',
+        configFormat: 'JSON',
       });
       await sut.initialize();
-      expect(inquirerPrompt).callCount(3);
-      const [promptPreset, promptConfigType, promptPackageManager]: inquirer.ui.FetchedQuestion[] = [
-        inquirerPrompt.getCall(0).args[0],
-        inquirerPrompt.getCall(1).args[0],
-        inquirerPrompt.getCall(2).args[0],
-      ];
-      expect(promptPreset.type).to.eq('list');
-      expect(promptPreset.name).to.eq('preset');
-      expect(promptPreset.choices).to.deep.eq(['awesome-preset', new inquirer.Separator(), 'None/other']);
-      expect(promptConfigType.type).to.eq('list');
-      expect(promptConfigType.choices).to.deep.eq(['JSON', 'JavaScript']);
-      expect(promptPackageManager.type).to.eq('list');
-      expect(promptPackageManager.choices).to.deep.eq(['npm', 'yarn', 'pnpm']);
+      sinon.assert.callCount(selectStub, 3);
+      sinon.assert.calledWithExactly(selectStub, {
+        message: 'Are you using one of these frameworks? Then select a preset configuration.',
+        choices: [{ value: 'awesome-preset' }, inquire.separator(), { value: 'None/other' }],
+      });
+      sinon.assert.calledWithExactly(selectStub, {
+        choices: [{ value: 'JSON' }, { value: 'JavaScript' }],
+        default: 'JSON',
+        message: 'What file type do you want for your config file?',
+      });
+      sinon.assert.calledWithExactly(selectStub, {
+        choices: [{ value: 'npm' }, { value: 'yarn' }, { value: 'pnpm' }],
+        default: 'npm',
+        message: 'Which package manager do you want to use?',
+      });
     });
 
     it('should install any additional dependencies', async () => {
-      inquirerPrompt.resolves({
+      arrangeAnswers({
         packageManager: 'npm',
         reporters: ['dimension', 'mars'],
         testRunner: 'awesome',
-        configType: 'JSON',
+        configFormat: 'JSON',
       });
       await sut.initialize();
       expect(out).calledWith('Installing NPM dependencies...');
@@ -232,7 +221,7 @@ describe(StrykerInitializer.name, () => {
     });
 
     it('should install additional dependencies with pnpm', async () => {
-      inquirerPrompt.resolves({
+      arrangeAnswers({
         packageManager: 'pnpm',
         reporters: [],
         testRunner: 'awesome',
@@ -257,22 +246,22 @@ describe(StrykerInitializer.name, () => {
             "plugins": [ "@stryker-mutator/awesome-runner" ]
           };
           export default config;`;
-      inquirerPrompt.resolves({
+      arrangeAnswers({
         packageManager: 'pnpm',
         reporters: [],
         testRunner: 'awesome',
-        configType: 'JavaScript',
+        configFormat: 'JavaScript',
       });
       await sut.initialize();
       expectStrykerConfWritten(expectedOutput);
     });
 
     it('should configure testRunner, reporters, and packageManager', async () => {
-      inquirerPrompt.resolves({
+      arrangeAnswers({
         packageManager: 'npm',
         reporters: ['dimension', 'mars', 'progress'],
         testRunner: 'awesome',
-        configType: 'JSON',
+        configFormat: 'JSON',
       });
       await sut.initialize();
       expect(fsWriteFile).calledOnce;
@@ -286,11 +275,11 @@ describe(StrykerInitializer.name, () => {
     });
 
     it('should configure the additional settings from the plugins', async () => {
-      inquirerPrompt.resolves({
+      arrangeAnswers({
         packageManager: 'npm',
         reporters: [],
         testRunner: 'hyper',
-        configType: 'JSON',
+        configFormat: 'JSON',
       });
       await sut.initialize();
       expect(fs.promises.writeFile).calledWith('stryker.config.json', sinon.match('"someOtherSetting": "enabled"'));
@@ -298,11 +287,11 @@ describe(StrykerInitializer.name, () => {
     });
 
     it('should annotate the config file with the docs url', async () => {
-      inquirerPrompt.resolves({
+      arrangeAnswers({
         packageManager: 'npm',
         reporters: [],
         testRunner: 'hyper',
-        configType: 'JSON',
+        configFormat: 'JSON',
       });
       await sut.initialize();
       expect(fs.promises.writeFile).calledWith(
@@ -314,31 +303,29 @@ describe(StrykerInitializer.name, () => {
     });
 
     it('should not prompt for buildCommand if test runner is jest', async () => {
-      inquirerPrompt.resolves({
+      arrangeAnswers({
         packageManager: 'npm',
         reporters: ['dimension', 'mars', 'progress'],
         testRunner: 'jest',
-        configType: 'JSON',
+        configFormat: 'JSON',
         buildCommand: 'none',
       });
 
       await sut.initialize();
 
-      const promptBuildCommand = inquirerPrompt.getCalls().filter((call) => call.args[0].name === 'buildCommand');
-      expect(promptBuildCommand.length === 1);
-      expect(promptBuildCommand[0].args[0].when).to.be.false;
+      sinon.assert.notCalled(inputStub);
       expect(fs.promises.writeFile).calledWith(
         'stryker.config.json',
-        sinon.match((val) => !val.includes('"buildCommand": ')),
+        sinon.match((val) => !val.includes('buildCommand')),
       );
     });
 
     it('should not write "buildCommand" config option if empty buildCommand entered', async () => {
-      inquirerPrompt.resolves({
+      arrangeAnswers({
         packageManager: 'npm',
         reporters: [],
         testRunner: 'hyper',
-        configType: 'JSON',
+        configFormat: 'JSON',
         buildCommand: 'none',
       });
       await sut.initialize();
@@ -349,11 +336,11 @@ describe(StrykerInitializer.name, () => {
     });
 
     it('should save entered build command', async () => {
-      inquirerPrompt.resolves({
+      arrangeAnswers({
         packageManager: 'npm',
         reporters: [],
         testRunner: 'hyper',
-        configType: 'JSON',
+        configFormat: 'JSON',
         buildCommand: 'npm run build',
       });
       await sut.initialize();
@@ -361,11 +348,11 @@ describe(StrykerInitializer.name, () => {
     });
 
     it('should set "coverageAnalysis" to "off" when the command test runner is chosen', async () => {
-      inquirerPrompt.resolves({
+      arrangeAnswers({
         packageManager: 'npm',
         reporters: [],
         testRunner: 'command',
-        configType: 'JSON',
+        configFormat: 'JSON',
       });
       await sut.initialize();
       expect(fs.promises.writeFile).calledWith('stryker.config.json', sinon.match('"coverageAnalysis": "off"'));
@@ -374,11 +361,11 @@ describe(StrykerInitializer.name, () => {
     it('should reject with that error', () => {
       const expectedError = new Error('something');
       fsWriteFile.rejects(expectedError);
-      inquirerPrompt.resolves({
+      arrangeAnswers({
         packageManager: 'npm',
         reporters: [],
         testRunner: 'ghost',
-        configType: 'JSON',
+        configFormat: 'JSON',
       });
 
       return expect(sut.initialize()).to.eventually.be.rejectedWith(expectedError);
@@ -386,11 +373,11 @@ describe(StrykerInitializer.name, () => {
 
     it('should recover when install fails', async () => {
       childExecSync.throws('error');
-      inquirerPrompt.resolves({
+      arrangeAnswers({
         packageManager: 'npm',
         reporters: [],
         testRunner: 'ghost',
-        configType: 'JSON',
+        configFormat: 'JSON',
       });
 
       await sut.initialize();
@@ -400,11 +387,11 @@ describe(StrykerInitializer.name, () => {
     });
 
     it('should write not found if test runner homepage url as comment when not found', async () => {
-      inquirerPrompt.resolves({
+      arrangeAnswers({
         packageManager: 'npm',
         reporters: [],
         testRunner: 'hyper',
-        configType: 'JSON',
+        configFormat: 'JSON',
       });
       await sut.initialize();
       expect(fs.promises.writeFile).calledWith(
@@ -415,11 +402,11 @@ describe(StrykerInitializer.name, () => {
 
     it('should write URL if test runner homepage url as comment', async () => {
       stubPackageClient({ 'stryker-hyper-runner': { name: 'hyper' } }, 'https://url-to-hyper.com');
-      inquirerPrompt.resolves({
+      arrangeAnswers({
         packageManager: 'npm',
         reporters: [],
         testRunner: 'hyper',
-        configType: 'JSON',
+        configFormat: 'JSON',
       });
       await sut.initialize();
       expect(fs.promises.writeFile).calledWith(
@@ -434,16 +421,16 @@ describe(StrykerInitializer.name, () => {
       npmRestClient.get.withArgs('/-/v1/search?text=keywords:%40stryker-mutator%2Ftest-runner-plugin').rejects();
       stubReporters();
       stubPackageClient({ 'stryker-javascript': undefined, 'stryker-webpack': undefined });
-      inquirerPrompt.resolves({
+      arrangeAnswers({
         packageManager: 'npm',
         reporters: ['clear-text'],
-        configType: 'JSON',
+        configFormat: 'JSON',
       });
 
       await sut.initialize();
 
       expect(testInjector.logger.error).calledWith(
-        "Unable to reach 'https://registry.npmjs.com' (for query /-/v1/search?text=keywords:%40stryker-mutator%2Ftest-runner-plugin). Please check your internet connection.",
+        `Unable to reach '${defaultNpmRegistry}' (for query /-/v1/search?text=keywords:%40stryker-mutator%2Ftest-runner-plugin). Please check your internet connection.`,
       );
       expect(fs.promises.writeFile).calledWith('stryker.config.json', sinon.match('"testRunner": "command"'));
     });
@@ -451,18 +438,18 @@ describe(StrykerInitializer.name, () => {
     it('should log error and continue when fetching stryker reporters', async () => {
       stubTestRunners('stryker-awesome-runner');
       npmRestClient.get.withArgs('/-/v1/search?text=keywords:%40stryker-mutator%2Freporter-plugin').rejects();
-      inquirerPrompt.resolves({
+      arrangeAnswers({
         packageManager: 'npm',
         reporters: ['clear-text'],
         testRunner: 'awesome',
-        configType: 'JSON',
+        configFormat: 'JSON',
       });
       stubPackageClient({ 'stryker-awesome-runner': undefined, 'stryker-javascript': undefined, 'stryker-webpack': undefined });
 
       await sut.initialize();
 
       expect(testInjector.logger.error).calledWith(
-        "Unable to reach 'https://registry.npmjs.com' (for query /-/v1/search?text=keywords:%40stryker-mutator%2Freporter-plugin). Please check your internet connection.",
+        `Unable to reach '${defaultNpmRegistry}' (for query /-/v1/search?text=keywords:%40stryker-mutator%2Freporter-plugin). Please check your internet connection.`,
       );
       expect(fs.promises.writeFile).called;
     });
@@ -470,11 +457,11 @@ describe(StrykerInitializer.name, () => {
     it('should log warning and continue when fetching custom config', async () => {
       stubTestRunners('stryker-awesome-runner');
       stubReporters();
-      inquirerPrompt.resolves({
+      arrangeAnswers({
         packageManager: 'npm',
         reporters: ['clear-text'],
         testRunner: 'awesome',
-        configType: 'JSON',
+        configFormat: 'JSON',
       });
       npmRestClient.get.rejects();
 
@@ -545,19 +532,43 @@ describe(StrykerInitializer.name, () => {
     testRunner: string;
     reporters: string[];
     packageManager: string;
+    configFormat: 'JavaScript' | 'JSON';
+    buildCommand: string;
   }
 
+  type SelectOptions = Parameters<typeof inquire.select>[0];
+  type CheckboxOptions = Parameters<typeof inquire.checkbox>[0];
+  type InputOptions = Parameters<typeof inquire.input>[0];
+
   function arrangeAnswers(answerOverrides?: Partial<StrykerInitAnswers>) {
-    const answers: StrykerInitAnswers = Object.assign(
-      {
-        packageManager: 'yarn',
-        preset: null,
-        reporters: ['dimension', 'mars'],
-        testRunner: 'awesome',
-      },
-      answerOverrides,
-    );
-    inquirerPrompt.resolves(answers);
+    const answers: StrykerInitAnswers = {
+      packageManager: 'yarn',
+      preset: null,
+      reporters: ['dimension', 'mars'],
+      testRunner: 'awesome',
+      configFormat: 'JSON',
+      buildCommand: 'none',
+      ...answerOverrides,
+    };
+    selectStub
+      .withArgs(sinon.match((opt: SelectOptions) => opt.message.includes('Which test runner do you want to use?')))
+      .resolves(answers.testRunner);
+    selectStub.withArgs(sinon.match((opt: SelectOptions) => opt.message.includes('Are you using one of these frameworks?'))).resolves(answers.preset);
+
+    selectStub
+      .withArgs(sinon.match((opt: SelectOptions) => opt.message.includes('Which package manager do you want to use?')))
+      .resolves(answers.packageManager);
+    selectStub
+      .withArgs(sinon.match((opt: SelectOptions) => opt.message.includes('What file type do you want for your config file?')))
+      .resolves(answers.configFormat);
+
+    checkboxStub
+      .withArgs(sinon.match((opt: CheckboxOptions) => opt.message.includes('Which reporter(s) do you want to use?')))
+      .resolves(answers.reporters);
+
+    inputStub
+      .withArgs(sinon.match((opt: InputOptions) => opt.message.includes('What build command should be executed just before running your tests?')))
+      .resolves(answers.buildCommand);
   }
 
   function resolvePresetConfig(overrides?: Partial<CustomInitializerConfiguration>) {

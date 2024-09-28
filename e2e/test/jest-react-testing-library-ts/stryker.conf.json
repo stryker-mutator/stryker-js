@@ -1,0 +1,18 @@
+{
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "packageManager": "npm",
+  "testRunner": "jest",
+  "tempDirName": "stryker-tmp",
+  "concurrency": 2,
+  "reporters": [
+    "json",
+    "event-recorder",
+    "progress",
+    "clear-text",
+    "html"
+  ],
+  "jest": {
+    "projectType": "custom",
+    "configFile": "./jest.config.js"
+  }
+}

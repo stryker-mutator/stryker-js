@@ -6,11 +6,12 @@
     "test:unit": "jest",
     "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
+  "type": "module",
   "dependencies": {
-    "azure-storage": "^2.10.4"
+    "azure-storage": "^2.10.7"
   },
   "devDependencies": {
-    "@types/jest": "~27.0.3",
-    "@types/node": "^18.11.9"
+    "@types/jest": "~29.5.13",
+    "@types/node": "^22.7.4"
   }
 }

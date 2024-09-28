@@ -26,6 +26,7 @@ export class AngularProjectStarter implements ProjectStarter {
     private readonly requireFromCwd: typeof requireResolve,
   ) {}
 
+  // eslint-disable-next-line @typescript-eslint/require-await -- Any thrown errors need to be translated to rejections
   public async start(): Promise<StartedProject> {
     this.verifyAngularCliVersion();
     const { ngConfig } = (this.options as KarmaRunnerOptionsWithStrykerOptions).karma;
@@ -58,7 +59,7 @@ export class AngularProjectStarter implements ProjectStarter {
     const pkg = this.requireFromCwd('@angular/cli/package') as { version: string };
     const version = semver.coerce(pkg.version);
     if (!version || semver.lt(version, MIN_ANGULAR_CLI_VERSION)) {
-      throw new Error(`Your @angular/cli version (${version}) is not supported. Please install ${MIN_ANGULAR_CLI_VERSION} or higher`);
+      throw new Error(`Your @angular/cli version (${pkg.version}) is not supported. Please install ${MIN_ANGULAR_CLI_VERSION} or higher`);
     }
   }
 }
@@ -66,6 +67,8 @@ export class AngularProjectStarter implements ProjectStarter {
 function verifyNgTestArguments(ngTestArguments: string[]) {
   const prefixedArguments = ngTestArguments.filter((key) => key.trim().startsWith('-'));
   if (prefixedArguments.length > 0) {
-    throw new Error(`Don't prefix arguments with dashes ('-'). Stryker will do this automatically. Problematic arguments are ${prefixedArguments}.`);
+    throw new Error(
+      `Don't prefix arguments with dashes ('-'). Stryker will do this automatically. Problematic arguments are ${prefixedArguments.join(', ')}.`,
+    );
   }
 }

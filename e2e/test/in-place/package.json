@@ -4,6 +4,7 @@
   "private": true,
   "description": "A module to perform an integration test",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "pretest": "rimraf \"reports\"",
     "test": "mocha --no-config --no-package --timeout 0 verify/verify.js",

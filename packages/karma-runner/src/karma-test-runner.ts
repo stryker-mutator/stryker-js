@@ -56,7 +56,7 @@ export class KarmaTestRunner implements TestRunner {
   public async init(): Promise<void> {
     const version = semver.coerce(karma.VERSION);
     if (!version || semver.lt(version, MIN_KARMA_VERSION)) {
-      throw new Error(`Your karma version (${version}) is not supported. Please install ${MIN_KARMA_VERSION} or higher`);
+      throw new Error(`Your karma version (${karma.VERSION}) is not supported. Please install ${MIN_KARMA_VERSION} or higher`);
     }
     const browsersReadyPromise = StrykerReporter.instance.whenBrowsersReady();
     const { exitPromise } = await this.starter.start();

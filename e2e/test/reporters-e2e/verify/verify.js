@@ -74,7 +74,7 @@ describe('Verify stryker has ran correctly', () => {
     });
   });
 });
-const createTestsRegex = () => /All tests\s*AddSpec\.js\s*\s*✓ Add should be able to add two numbers \(killed 2\)/;
+const createTestsRegex = () => /All tests\s*add\.spec\.js\s*\s*✓ Add should be able to add two numbers \(killed 2\)/;
 const createNoCoverageMutantRegex = () => /\[NoCoverage\]/;
 const createSurvivedMutantRegex = () => /\[Survived\]/;
-const createClearTextTableSummaryRowRegex = () => /All files\s*\|\s*64\.00\s*\|\s*16\s*\|\s*0\s*\|\s*1\s*\|\s*8\s*\|\s*0\s*\|/;
+const createClearTextTableSummaryRowRegex = () => /All files\s*\|\s*64\.00\s*\|\s*94\.12\s*\|\s*16\s*\|\s*0\s*\|\s*1\s*\|\s*8\s*\|\s*0\s*\|/;

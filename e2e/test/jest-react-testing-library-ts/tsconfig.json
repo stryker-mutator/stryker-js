@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "NodeNext",
+    "isolatedModules": true,
+    "noEmit": true,
+    "types": ["@testing-library/jest-dom", "jest"],
+    "jsx": "react"
+  },
+  "include": ["src"]
+}

@@ -3,8 +3,9 @@
   "concurrency": 1,
   "reporters": ["json"],
   "disableBail": true,
+  "testRunnerNodeArgs": ["--experimental-vm-modules"],
   "karma": {
-    "configFile": "karma.conf.js"
+    "configFile": "karma.conf.cjs"
   },
   "tap": {
     "testFiles": ["test/*.tap.js"]

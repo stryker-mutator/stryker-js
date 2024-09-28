@@ -7,7 +7,6 @@ module.exports = function (config) {
       __dirname + '/test/mocha/*.js'
     ],
     frameworks: [
-      'chai',
       'mocha'
     ],
     browsers: [

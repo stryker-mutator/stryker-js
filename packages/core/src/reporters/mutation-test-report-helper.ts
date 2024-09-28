@@ -319,7 +319,6 @@ export class MutationTestReportHelper {
     ];
     return dependencies.map(discover).reduce<schema.Dependencies>((acc, dependency) => {
       if (dependency) {
-        // eslint-disable-next-line @typescript-eslint/prefer-destructuring
         acc[dependency[0]] = dependency[1];
       }
       return acc;

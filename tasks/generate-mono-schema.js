@@ -28,4 +28,5 @@ async function buildMonoSchema() {
   await writeFile(outFile, JSON.stringify(monoSchema, null, 2));
   console.info(`✅ Merged ${schemaFiles.length} schemas into ${path.relative(resolveFromParent(), outFile)}`);
 }
+
 buildMonoSchema().catch(console.error);

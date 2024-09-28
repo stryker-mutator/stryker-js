@@ -13,7 +13,7 @@ export const fileUtils = {
       await fs.promises.lstat(folderName);
       await this.deleteDir(folderName);
       return fs.promises.mkdir(folderName, { recursive: true });
-    } catch (e) {
+    } catch {
       return fs.promises.mkdir(folderName, { recursive: true });
     }
   },
@@ -82,7 +82,7 @@ export const fileUtils = {
    */
   async findNodeModulesList(basePath: string, tempDirName?: string): Promise<string[]> {
     const nodeModulesList: string[] = [];
-    const dirBfsQueue: string[] = ['.'] ?? [];
+    const dirBfsQueue: string[] = ['.'];
 
     let dir: string | undefined;
     while ((dir = dirBfsQueue.pop())) {

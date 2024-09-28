@@ -8,7 +8,7 @@ import { tapRunnerOptions } from '../helpers/factory.js';
 const cwd = process.cwd();
 
 describe('Running in an testy-looking-files project', () => {
-  beforeEach(async () => {
+  beforeEach(() => {
     const testPath = path.resolve('testResources', 'testy-looking-files');
     process.chdir(testPath);
   });
@@ -37,7 +37,6 @@ describe('Running in an testy-looking-files project', () => {
       'src/math.spec.js',
     ];
 
-    // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
     expect(files.sort()).deep.equals(expectedFiles.sort());
   });
 
@@ -48,7 +47,6 @@ describe('Running in an testy-looking-files project', () => {
     // Assert
     const expectedFiles = ['test/a.cjs', 'test/a.js', 'test/a.jsx', 'test/a.mjs', 'test/a.ts', 'test/a.tsx'];
 
-    // eslint-disable-next-line @typescript-eslint/require-array-sort-compare
     expect(files.sort()).deep.equals(expectedFiles.sort());
   });
 });

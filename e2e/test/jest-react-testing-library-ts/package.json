@@ -1,0 +1,24 @@
+{
+  "name": "jest-react-testing-library-ts",
+  "description": "A test for jest with react testing library and typescript",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "pretest": "rimraf \"reports\" \"stryker.log\"",
+    "test:unit": "jest src/*",
+    "test": "stryker run",
+    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

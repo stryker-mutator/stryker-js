@@ -46,7 +46,10 @@ export class ClearTextReporter implements Reporter {
     if (this.options.clearTextReporter.reportMutants) {
       this.reportMutants(metrics);
     }
-    if (this.options.clearTextReporter.reportScoreTable) {
+    if (
+      this.options.clearTextReporter.reportScoreTable &&
+      (!this.options.clearTextReporter.skipFull || metrics.systemUnderTestMetrics.childResults.some((x) => x.metrics.mutationScore !== 100))
+    ) {
       this.writeLine(new ClearTextScoreTable(metrics.systemUnderTestMetrics, this.options).draw());
     }
   }

@@ -59,7 +59,6 @@ describe(TimeoutDecorator.name, () => {
     itShouldProxyRequests(() => sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'all', timeout: 20 })), 'dryRun');
 
     it('should not handle timeouts premature', () => {
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       let resolve: (result: DryRunResult) => void = () => {};
       const expectedResult = factory.completeDryRunResult();
       testRunner1.dryRun.returns(new Promise<DryRunResult>((res) => (resolve = res)));
@@ -70,10 +69,7 @@ describe(TimeoutDecorator.name, () => {
     });
 
     it('should handle timeouts', async () => {
-      testRunner1.dryRun.returns(
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        new Promise<DryRunResult>(() => {}),
-      );
+      testRunner1.dryRun.returns(new Promise<DryRunResult>(() => {}));
       const runPromise = sut.dryRun(factory.dryRunOptions({ timeout: 20 }));
       clock.tick(20);
       const result = await runPromise;
@@ -89,7 +85,6 @@ describe(TimeoutDecorator.name, () => {
     itShouldProxyRequests(() => sut.mutantRun(factory.mutantRunOptions({ timeout: 20 })), 'mutantRun');
 
     it('should not handle timeouts premature', () => {
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       let resolve: (result: MutantRunResult) => void = () => {};
       const expectedResult = factory.killedMutantRunResult();
       testRunner1.mutantRun.returns(new Promise<MutantRunResult>((res) => (resolve = res)));
@@ -100,10 +95,7 @@ describe(TimeoutDecorator.name, () => {
     });
 
     it('should handle timeouts', async () => {
-      testRunner1.mutantRun.returns(
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        new Promise<MutantRunResult>(() => {}),
-      );
+      testRunner1.mutantRun.returns(new Promise<MutantRunResult>(() => {}));
       const runPromise = sut.mutantRun(factory.mutantRunOptions({ timeout: 20 }));
       clock.tick(20);
       const result = await runPromise;

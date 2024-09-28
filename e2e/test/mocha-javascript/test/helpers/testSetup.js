@@ -1,5 +1,6 @@
-exports.mochaHooks = {
+import { expect } from 'chai';
+export const mochaHooks = {
   beforeAll() {
-    global.expect = require('chai').expect;
+    global.expect = expect;
   }
 }

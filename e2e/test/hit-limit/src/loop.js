@@ -1,7 +1,7 @@
 /**
  * This loop will result in an infinite loop when Stryker mutates it.
  */
-function loop(n, action) {
+export function loop(n, action) {
   let goOn = true;
   while(goOn) {
     action(n);
@@ -10,8 +10,3 @@ function loop(n, action) {
   }
 }
 
-try{
-  if(module?.exports){
-    module.exports.loop = loop;
-  }
-} catch (err) { }

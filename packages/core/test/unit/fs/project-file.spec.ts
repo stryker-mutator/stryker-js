@@ -141,7 +141,7 @@ describe(ProjectFile.name, () => {
       expect(sut.hasChanges).false;
     });
 
-    it('should be true when content is overridden', async () => {
+    it('should be true when content is overridden', () => {
       const sut = createSut();
       sut.setContent('something');
       expect(sut.hasChanges).true;

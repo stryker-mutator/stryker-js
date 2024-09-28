@@ -1,11 +1,8 @@
-/* eslint-disable @typescript-eslint/no-shadow */
 /* eslint-disable no-var */
-/* eslint-disable @typescript-eslint/no-empty-interface */
-/* eslint-disable @typescript-eslint/unified-signatures */
+
 /* eslint-disable @typescript-eslint/ban-types */
-/* eslint-disable @typescript-eslint/method-signature-style */
+
 /* eslint-disable @typescript-eslint/sort-type-union-intersection-members */
-/* eslint-disable @typescript-eslint/explicit-member-accessibility */
 
 /**
  * Grabbed from https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/jasmine,

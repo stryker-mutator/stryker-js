@@ -21,10 +21,20 @@ const replacements = new Map([
   ['trim', null],
   ['trimEnd', 'trimStart'],
   ['min', 'max'],
+  ['setDate', 'setTime'],
+  ['setFullYear', 'setMonth'],
+  ['setHours', 'setMinutes'],
+  ['setSeconds', 'setMilliseconds'],
+  ['setUTCDate', 'setTime'],
+  ['setUTCFullYear', 'setUTCMonth'],
+  ['setUTCHours', 'setUTCMinutes'],
+  ['setUTCSeconds', 'setUTCMilliseconds'],
 ]);
 
+const noReverseRemplacements = ['getUTCDate', 'setUTCDate'];
+
 for (const [key, value] of Array.from(replacements)) {
-  if (value) {
+  if (value && !noReverseRemplacements.includes(key)) {
     replacements.set(value, key);
   }
 }

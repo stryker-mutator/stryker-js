@@ -1,5 +1,5 @@
-const { isEven } = require('../../src/IsEven');
-const { expect } = require('chai');
+import { isEven } from '../../src/IsEven.js';
+import { expect } from 'chai';
 
 describe('isEven', () => {
 

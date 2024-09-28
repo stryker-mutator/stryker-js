@@ -101,7 +101,7 @@ describe('typescript-helpers', () => {
             false,
           ),
         ).compilerOptions,
-      ).not.hasOwnProperty('declarationDir');
+      ).not.property('declarationDir');
       expect(
         JSON.parse(
           overrideOptions(
@@ -120,7 +120,7 @@ describe('typescript-helpers', () => {
             false,
           ),
         ).compilerOptions,
-      ).not.hasOwnProperty('declarationDir');
+      ).not.property('declarationDir');
     });
 
     it('should set --emitDeclarationOnly options when `--build` mode is on', () => {

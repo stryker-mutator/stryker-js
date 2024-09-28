@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.5.0](https://github.com/stryker-mutator/stryker-js/compare/v8.4.0...v8.5.0) (2024-08-11)
+
+**Note:** Version bump only for package @stryker-mutator/mocha-runner
+
+# [8.4.0](https://github.com/stryker-mutator/stryker-js/compare/v8.3.0...v8.4.0) (2024-08-06)
+
+### Bug Fixes
+
+- **mocha-runner:** properly restrict tests to run ([f9ef08e](https://github.com/stryker-mutator/stryker-js/commit/f9ef08e90d78800bfe226753f3ace612a83bef82))
+- **node-18:** revert changes to support node 18 again ([#4935](https://github.com/stryker-mutator/stryker-js/issues/4935)) ([42162bd](https://github.com/stryker-mutator/stryker-js/commit/42162bd36edd5a9f63beff10303259cfff709b0b))
+
+# [8.3.0](https://github.com/stryker-mutator/stryker-js/compare/v8.2.6...v8.3.0) (2024-08-01)
+
+### Bug Fixes
+
+- **mocha-runner:** compatibility with Mocha v10.5.1 and up ([#4885](https://github.com/stryker-mutator/stryker-js/issues/4885)) ([4cc43c8](https://github.com/stryker-mutator/stryker-js/commit/4cc43c854de85d8293d2878cb1c54091a5fe3adb))
+
+### Features
+
+- **deps:** update dependencies ([#4894](https://github.com/stryker-mutator/stryker-js/issues/4894)) ([eb61333](https://github.com/stryker-mutator/stryker-js/commit/eb61333a8640edfb4c60dbe456d5192dc6b8eeb9))
+
 ## [8.2.6](https://github.com/stryker-mutator/stryker-js/compare/v8.2.5...v8.2.6) (2024-02-25)
 
 **Note:** Version bump only for package @stryker-mutator/mocha-runner

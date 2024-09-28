@@ -54,7 +54,7 @@ describe(Pool.name, () => {
       const actualWorkers: Array<Required<Resource>> = [];
 
       // Act
-      const onGoingTask = lastValueFrom(sut.schedule(range(0, 3), async (worker) => actualWorkers.push(worker)));
+      const onGoingTask = lastValueFrom(sut.schedule(range(0, 3), (worker) => actualWorkers.push(worker)));
 
       // Assert
       expect(actualWorkers).lengthOf(0);

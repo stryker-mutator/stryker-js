@@ -50,12 +50,13 @@ export class ChildProcessProxyWorker {
         this.handleCall(message);
         this.removeAnyAdditionalMessageListeners(this.handleMessage);
         break;
-      case WorkerMessageKind.Dispose:
+      case WorkerMessageKind.Dispose: {
         const sendCompleted = () => {
           this.send({ kind: ParentMessageKind.DisposeCompleted });
         };
         LogConfigurator.shutdown().then(sendCompleted).catch(sendCompleted);
         break;
+      }
     }
   }
 
@@ -145,7 +146,9 @@ export class ChildProcessProxyWorker {
     const unhandledRejections: Array<Promise<unknown>> = [];
     process.on('unhandledRejection', (reason, promise) => {
       const unhandledPromiseId = unhandledRejections.push(promise);
-      this.log?.debug(`UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: ${unhandledPromiseId}): ${reason}`);
+      this.log?.debug(
+        `UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: ${unhandledPromiseId}): ${errorToString(reason)}`,
+      );
     });
     process.on('rejectionHandled', (promise) => {
       const unhandledPromiseId = unhandledRejections.indexOf(promise) + 1;

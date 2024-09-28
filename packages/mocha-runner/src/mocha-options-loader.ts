@@ -69,7 +69,7 @@ export class MochaOptionsLoader {
       return options;
     }
     switch (typeof options.opts) {
-      case 'undefined':
+      case 'undefined': {
         const defaultMochaOptsFileName = path.resolve(DEFAULT_MOCHA_OPTIONS.opts!);
         if (fs.existsSync(defaultMochaOptsFileName)) {
           return this.readMochaOptsFile(defaultMochaOptsFileName);
@@ -80,7 +80,8 @@ export class MochaOptionsLoader {
           );
           return {};
         }
-      case 'string':
+      }
+      case 'string': {
         const optsFileName = path.resolve(options.opts);
         if (fs.existsSync(optsFileName)) {
           return this.readMochaOptsFile(optsFileName);
@@ -88,6 +89,7 @@ export class MochaOptionsLoader {
           this.log.error(`Could not load opts from "${optsFileName}". Please make sure opts file exists.`);
           return {};
         }
+      }
       default:
         return {};
     }
@@ -122,13 +124,14 @@ export class MochaOptionsLoader {
             mochaRunnerOptions.ui = (this.parseNextString(args) as 'bdd' | 'exports' | 'qunit' | 'tdd') ?? DEFAULT_MOCHA_OPTIONS.ui!;
             break;
           case '--grep':
-          case '-g':
+          case '-g': {
             let arg = `${this.parseNextString(args)}`;
             if (arg.startsWith('/') && arg.endsWith('/')) {
               arg = arg.substring(1, arg.length - 1);
             }
             mochaRunnerOptions.grep = arg;
             break;
+          }
           default:
             this.log.debug(`Ignoring option "${args[0]}" as it is not supported.`);
             break;

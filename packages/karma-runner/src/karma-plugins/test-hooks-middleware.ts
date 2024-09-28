@@ -69,10 +69,11 @@ export class TestHooksMiddleware {
             return ${JSON.stringify(testFilter)}.indexOf(spec.id) !== -1;
           }})`;
           break;
-        case 'mocha':
+        case 'mocha': {
           const metaRegExp = testFilter.map((testId) => `(${escapeRegExpLiteral(testId)})`).join('|');
           this.currentTestHooks += `mocha.grep(/${metaRegExp}/)`;
           break;
+        }
         default:
       }
     }

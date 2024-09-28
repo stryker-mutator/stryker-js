@@ -2,14 +2,15 @@
   "name": "hit-limit",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "A e2e test project to verify the infinite loop prevention behavior in different test runner (hit limit)",
   "main": "index.js",
   "scripts": {
-    "test:jest": "jest",
+    "test:jest": "cross-env NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest",
     "test:cucumber": "cucumber-js",
     "test:mocha": "mocha",
     "test:jasmine": "jasmine",
-    "test:karma": "karma start",
+    "test:karma": "karma start karma.conf.cjs",
     "test:tap": "tap test/loop.tap.js",
     "test:vitest": "vitest run",
     "test": "mocha --no-config --no-package --timeout 0 verify/verify.js"
