@@ -35,6 +35,7 @@ The `npm init stryker` command also creates a `stryker.config.json` or `stryker.
     }
   },
   "reporters": ["progress", "clear-text", "html"],
+  "ignorers": ["angular"],
   "concurrency": 4,
   "concurrency_comment": "Recommended to use about half of your available cores when running stryker with angular"
 }
@@ -92,6 +93,7 @@ Create a `stryker.config.json` file with the following content:
     }
   },
   "testRunnerNodeArgs": ["--experimental-vm-modules"],
+  "ignorers": ["angular"],
   "reporters": [
     "progress",
     "clear-text",
@@ -118,7 +120,6 @@ Consider adding the Stryker TypeScript checker to increase mutation testing perf
    }
    ```
    If you experience issues, try setting the `tsconfigFile` option to `tsconfig.app.json`.
-
 
 ## Troubleshooting
 
