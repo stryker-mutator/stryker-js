@@ -25,7 +25,7 @@ As such, you should make sure you have the correct versions of its dependencies 
 - `@cucumber/cucumber`
 - `@stryker-mutator/core`
 
-You can find the [`peerDependencies` in @stryker-mutator/cucumber-runner's package.json file](https://github.com/stryker-mutator/stryker-js/blob/master/packages/cucumber-runner/package.json#L36).
+You can find the [`peerDependencies` in @stryker-mutator/cucumber-runner's package.json file](https://github.com/stryker-mutator/stryker-js/blob/HEAD/packages/cucumber-runner/package.json#L53-L56).
 
 ## Configuring
 

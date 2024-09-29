@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`instrumenter integration should be able to instrument an angular component 1`] = `
+exports[`instrumenter integration should be able to instrument an angular directive 1`] = `
 "function stryNS_9fa48() {
   var g = typeof globalThis === 'object' && globalThis && globalThis.Math === Math && globalThis || new Function(\\"return this\\")();
   var ns = g.__stryker__ || (g.__stryker__ = {});
@@ -47,7 +47,7 @@ function stryMutAct_9fa48(id) {
   stryMutAct_9fa48 = isActive;
   return isActive(id);
 }
-import { input, model, output, Component } from '@angular/core';
+import { input, model, output, Directive } from '@angular/core';
 const inputOutsideClass = input(stryMutAct_9fa48(\\"0\\") ? \\"Stryker was here!\\" : (stryCov_9fa48(\\"0\\"), ''), stryMutAct_9fa48(\\"1\\") ? {} : (stryCov_9fa48(\\"1\\"), {
   alias: stryMutAct_9fa48(\\"2\\") ? \\"\\" : (stryCov_9fa48(\\"2\\"), 'input-outside-class')
 }));
@@ -57,12 +57,10 @@ const modelOutsideClass = model(stryMutAct_9fa48(\\"3\\") ? \\"Stryker was here!
 const outputOutsideClass = output<string>(stryMutAct_9fa48(\\"6\\") ? {} : (stryCov_9fa48(\\"6\\"), {
   alias: stryMutAct_9fa48(\\"7\\") ? \\"\\" : (stryCov_9fa48(\\"7\\"), 'output-outside-class')
 }));
-@Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+@Directive({
+  selector: '[appDirective]'
 })
-export class AppComponent {
+export class AppDirective {
   normalInput = input(stryMutAct_9fa48(\\"8\\") ? \\"Stryker was here!\\" : (stryCov_9fa48(\\"8\\"), ''), {
     alias: 'normal-input'
   });
@@ -78,26 +76,19 @@ export class AppComponent {
   normalOutput = output<string>({
     alias: 'normal-output'
   });
-  inputFalseAlias = input(stryMutAct_9fa48(\\"20\\") ? {} : (stryCov_9fa48(\\"20\\"), {
-    alias: stryMutAct_9fa48(\\"21\\") ? \\"\\" : (stryCov_9fa48(\\"21\\"), 'this-is-actually-the-default-value')
-  }));
-  modelFalseAlias = model(stryMutAct_9fa48(\\"22\\") ? {} : (stryCov_9fa48(\\"22\\"), {
-    alias: stryMutAct_9fa48(\\"23\\") ? \\"\\" : (stryCov_9fa48(\\"23\\"), 'this-is-actually-the-default-value')
-  }));
-  title = stryMutAct_9fa48(\\"24\\") ? \\"\\" : (stryCov_9fa48(\\"24\\"), 'angular-app');
   public publicFunction(): void {
-    if (stryMutAct_9fa48(\\"25\\")) {
+    if (stryMutAct_9fa48(\\"20\\")) {
       {}
     } else {
-      stryCov_9fa48(\\"25\\");
-      const inputInsideFunction = input(stryMutAct_9fa48(\\"26\\") ? \\"Stryker was here!\\" : (stryCov_9fa48(\\"26\\"), ''), stryMutAct_9fa48(\\"27\\") ? {} : (stryCov_9fa48(\\"27\\"), {
-        alias: stryMutAct_9fa48(\\"28\\") ? \\"\\" : (stryCov_9fa48(\\"28\\"), 'input-inside-function')
+      stryCov_9fa48(\\"20\\");
+      const inputInsideFunction = input(stryMutAct_9fa48(\\"21\\") ? \\"Stryker was here!\\" : (stryCov_9fa48(\\"21\\"), ''), stryMutAct_9fa48(\\"22\\") ? {} : (stryCov_9fa48(\\"22\\"), {
+        alias: stryMutAct_9fa48(\\"23\\") ? \\"\\" : (stryCov_9fa48(\\"23\\"), 'input-inside-function')
       }));
-      const modelInsideFunction = model(stryMutAct_9fa48(\\"29\\") ? \\"Stryker was here!\\" : (stryCov_9fa48(\\"29\\"), ''), stryMutAct_9fa48(\\"30\\") ? {} : (stryCov_9fa48(\\"30\\"), {
-        alias: stryMutAct_9fa48(\\"31\\") ? \\"\\" : (stryCov_9fa48(\\"31\\"), 'model-inside-function')
+      const modelInsideFunction = model(stryMutAct_9fa48(\\"24\\") ? \\"Stryker was here!\\" : (stryCov_9fa48(\\"24\\"), ''), stryMutAct_9fa48(\\"25\\") ? {} : (stryCov_9fa48(\\"25\\"), {
+        alias: stryMutAct_9fa48(\\"26\\") ? \\"\\" : (stryCov_9fa48(\\"26\\"), 'model-inside-function')
       }));
-      const outputInsideFunction = output<string>(stryMutAct_9fa48(\\"32\\") ? {} : (stryCov_9fa48(\\"32\\"), {
-        alias: stryMutAct_9fa48(\\"33\\") ? \\"\\" : (stryCov_9fa48(\\"33\\"), 'output-inside-function')
+      const outputInsideFunction = output<string>(stryMutAct_9fa48(\\"27\\") ? {} : (stryCov_9fa48(\\"27\\"), {
+        alias: stryMutAct_9fa48(\\"28\\") ? \\"\\" : (stryCov_9fa48(\\"28\\"), 'output-inside-function')
       }));
     }
   }

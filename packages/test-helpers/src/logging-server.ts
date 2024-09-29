@@ -50,7 +50,7 @@ export class LoggingServer {
     } else {
       this.disposed = true;
       return new Promise((res, rej) => {
-        this.server.close((err?: Error | undefined) => {
+        this.server.close((err?: Error) => {
           if (err) {
             rej(err);
           } else {

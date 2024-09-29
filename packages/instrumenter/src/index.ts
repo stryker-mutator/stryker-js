@@ -1,3 +1,4 @@
+export * from './frameworks/index.js';
 export * from './create-instrumenter.js';
 export * from './instrumenter.js';
 export * from './instrument-result.js';

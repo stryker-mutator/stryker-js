@@ -1,8 +1,9 @@
 name: CI
 
 on:
-  push: ~
   pull_request: ~
+  merge_group:
+  workflow_dispatch:
   schedule:
     - cron:  '0 12 * * *'
 
@@ -33,7 +34,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Build
-        run: npm run build
+        run: npm run build:no-check
       - name: Download incremental reports
         run: npm run download-incremental-reports
         env:
@@ -60,7 +61,7 @@ jobs:
       # retry once, install on windows is flaky...
       run: npm ci || npm ci
     - name: Build packages
-      run: npm run build
+      run: npm run build:no-check
     - name: e2e install
       run: 'npm run e2e:install'
     - name: e2e lint

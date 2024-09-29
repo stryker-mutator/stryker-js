@@ -50,9 +50,9 @@
   "devDependencies": {
     "@stryker-mutator/test-helpers": "8.5.0",
     "@types/express": "4.17.21",
-    "@types/node": "20.16.5",
+    "@types/node": "20.16.10",
     "@types/semver": "7.5.8",
-    "jasmine-core": "5.2.0",
+    "jasmine-core": "5.3.0",
     "karma": "6.4.4",
     "karma-chai": "0.1.0",
     "karma-chrome-launcher": "3.2.0",
@@ -67,7 +67,7 @@
     "@stryker-mutator/util": "8.5.0",
     "decamelize": "~6.0.0",
     "semver": "~7.6.3",
-    "tslib": "~2.6.3"
+    "tslib": "~2.7.0"
   },
   "contributors": [
     "nicojs <jansennico@gmail.com>",

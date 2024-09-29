@@ -7,7 +7,8 @@ import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 // @ts-expect-error: No types available
 import pluginChaiFriendly from 'eslint-plugin-chai-friendly';
 
-export const rules = Object.freeze({
+/** @type {import('@typescript-eslint/utils').TSESLint.FlatConfig.Rules} */
+export const rules = {
   '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_*', ignoreRestSiblings: true, varsIgnorePattern: '^_' }],
 
   // fix - separate PR
@@ -22,11 +23,11 @@ export const rules = Object.freeze({
 
   // We don't care
   '@typescript-eslint/no-explicit-any': 'off',
-});
+};
+
 export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
-  // @ts-expect-error: Not all properties are typed
   eslintPluginPrettierRecommended,
   {
     languageOptions: {

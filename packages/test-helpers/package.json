@@ -26,12 +26,12 @@
   "dependencies": {
     "ajv": "~8.17.1",
     "flatted": "~3.3.1",
-    "mutation-testing-metrics": "3.2.0",
+    "mutation-testing-metrics": "3.3.0",
     "rxjs": "~7.8.1"
   },
   "devDependencies": {
     "@stryker-mutator/api": "8.5.0",
-    "@types/node": "20.16.5",
+    "@types/node": "20.16.10",
     "typed-inject": "4.0.0"
   }
 }
