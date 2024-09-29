@@ -52,7 +52,7 @@
     "@stryker-mutator/api": "8.5.0",
     "@stryker-mutator/util": "8.5.0",
     "glob": "~10.4.5",
-    "tap-parser": "~18.0.0",
+    "tap-parser": "~17.0.0",
     "tslib": "~2.7.0"
   },
   "devDependencies": {
