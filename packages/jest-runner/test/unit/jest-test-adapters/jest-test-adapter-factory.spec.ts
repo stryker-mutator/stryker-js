@@ -37,15 +37,28 @@ describe(jestTestAdapterFactory.name, () => {
     expect(testInjector.logger.debug).calledWith('Detected Jest version %s', '25.0.0');
   });
 
-  it('should return a JestGreaterThan25Adapter when the Jest version is higher or equal to 25.0.0', () => {
+  it('should return a JestGreaterThan25Adapter when the Jest version is greater or equal to 25.0.0', () => {
     jestWrapperMock.getVersion.returns('25.0.0');
     const testAdapter = act();
 
     expect(testAdapter).instanceOf(JestGreaterThan25TestAdapter);
   });
-  it('should return a JestLessThan25Adapter when the Jest version is higher or equal to 22.0.0, but less then 25 and coverage analysis is disabled', () => {
+  it('should return a JestGreaterThan25Adapter when the Jest version is an alpha version greater than 25.0.0', () => {
+    jestWrapperMock.getVersion.returns('30.0.0-alpha.6');
+    const testAdapter = act();
+
+    expect(testAdapter).instanceOf(JestGreaterThan25TestAdapter);
+  });
+  it('should return a JestLessThan25Adapter when the Jest version is greater or equal to 22.0.0, but less then 25 and coverage analysis is disabled', () => {
     testInjector.options.coverageAnalysis = 'off';
     jestWrapperMock.getVersion.returns('22.0.0');
+    const testAdapter = act();
+
+    expect(testAdapter).instanceOf(JestLessThan25TestAdapter);
+  });
+  it('should return a JestLessThan25Adapter when the Jest version is an alpha version greater than 22.0.0, lower than 25', () => {
+    testInjector.options.coverageAnalysis = 'off';
+    jestWrapperMock.getVersion.returns('23.0.0-alpha.6');
     const testAdapter = act();
 
     expect(testAdapter).instanceOf(JestLessThan25TestAdapter);
@@ -55,6 +68,12 @@ describe(jestTestAdapterFactory.name, () => {
     jestWrapperMock.getVersion.returns('21.0.0');
 
     expect(act).to.throw(Error, 'You need Jest version >= 22.0.0 to use the @stryker-mutator/jest-runner plugin, found 21.0.0');
+  });
+
+  it('should throw an error when the Jest version is an alpha version lower than 22.0.0', () => {
+    jestWrapperMock.getVersion.returns('21.0.0-alpha.6');
+
+    expect(act).to.throw(Error, 'You need Jest version >= 22.0.0 to use the @stryker-mutator/jest-runner plugin, found 21.0.0-alpha.6');
   });
 
   it('should throw an error when the Jest version is between 22 and 24, but coverage analysis is enabled', () => {
