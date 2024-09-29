@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.6.0](https://github.com/stryker-mutator/stryker-js/compare/v8.5.0...v8.6.0) (2024-09-29)
+
+### Features
+
+- **ignore:** add "angular" ignore plugin ([#4789](https://github.com/stryker-mutator/stryker-js/issues/4789)) ([5d792d8](https://github.com/stryker-mutator/stryker-js/commit/5d792d8ea061b0fbaf14c435ef969ccb946d8362))
+- **instrumenter:** add expression mutator for Date ([#4917](https://github.com/stryker-mutator/stryker-js/issues/4917)) ([#4918](https://github.com/stryker-mutator/stryker-js/issues/4918)) ([8207ef6](https://github.com/stryker-mutator/stryker-js/commit/8207ef63abe8c20013ee9f6098876222fe4253fc))
+
 # [8.5.0](https://github.com/stryker-mutator/stryker-js/compare/v8.4.0...v8.5.0) (2024-08-11)
 
 **Note:** Version bump only for package @stryker-mutator/instrumenter
