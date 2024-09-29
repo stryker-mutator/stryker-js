@@ -376,8 +376,18 @@ describe(JestTestRunner.name, () => {
         });
       });
 
-      it('should not add a set setupFile if testRunner is not specified and jest version >= 27 (circus test runner)', async () => {
+      it('should not add a setupFile if testRunner is not specified and jest version >= 27 (circus test runner)', async () => {
         jestWrapperMock.getVersion.returns('27.0.0');
+        options.jest.config = { testRunner: undefined };
+        const sut = await arrangeInitializedSut();
+        await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
+        expect(jestTestAdapterMock.run).calledWithMatch({
+          jestConfig: sinon.match({ setupFilesAfterEnv: undefined }),
+        });
+      });
+
+      it('should not add a setupFile if testRunner is not specified and jest is an alpha version >= 27 (circus test runner)', async () => {
+        jestWrapperMock.getVersion.returns('30.0.0-alpha.6');
         options.jest.config = { testRunner: undefined };
         const sut = await arrangeInitializedSut();
         await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));

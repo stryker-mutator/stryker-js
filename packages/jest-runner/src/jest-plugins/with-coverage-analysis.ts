@@ -18,7 +18,7 @@ const jestEnvironmentGenericFileName = fileURLToPath(new URL('./jest-environment
  */
 function getJestDefaults(jestWrapper: JestWrapper) {
   // New defaults since 27: https://jestjs.io/blog/2021/05/25/jest-27
-  if (semver.satisfies(jestWrapper.getVersion(), '>=27')) {
+  if (semver.satisfies(semver.coerce(jestWrapper.getVersion())!, '>=27')) {
     return {
       testRunner: 'jest-circus/runner',
       testEnvironment: 'node',
