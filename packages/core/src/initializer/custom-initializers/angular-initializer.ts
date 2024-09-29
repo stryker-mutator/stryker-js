@@ -40,6 +40,7 @@ export class AngularInitializer implements CustomInitializer {
       },
     },
     reporters: ['progress', 'clear-text', 'html'],
+    ignorers: ['angular'],
     concurrency: Math.floor(os.cpus().length / 2),
 
     concurrency_comment: 'Recommended to use about half of your available cores when running stryker with angular',

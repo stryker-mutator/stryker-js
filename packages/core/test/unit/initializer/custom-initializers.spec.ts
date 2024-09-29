@@ -76,6 +76,7 @@ describe('CustomInitializers', () => {
           },
         },
         reporters: ['progress', 'clear-text', 'html'],
+        ignorers: ['angular'],
         concurrency: 3,
         concurrency_comment: 'Recommended to use about half of your available cores when running stryker with angular',
         coverageAnalysis: 'perTest',
