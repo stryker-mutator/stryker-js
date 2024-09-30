@@ -15,7 +15,7 @@ export class CheckerWorker implements CheckerResource {
     this.innerCheckers = new Map(options.checkers.map((name) => [name, pluginCreator.create(PluginKind.Checker, name)]));
   }
   public async init(): Promise<void> {
-    for await (const [name, checker] of this.innerCheckers.entries()) {
+    for (const [name, checker] of this.innerCheckers.entries()) {
       try {
         await checker.init();
       } catch (error: unknown) {
