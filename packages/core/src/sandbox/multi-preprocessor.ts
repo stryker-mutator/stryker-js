@@ -6,7 +6,7 @@ export class MultiPreprocessor implements FilePreprocessor {
   constructor(private readonly preprocessors: FilePreprocessor[]) {}
 
   public async preprocess(project: Project): Promise<void> {
-    for await (const preprocessor of this.preprocessors) {
+    for (const preprocessor of this.preprocessors) {
       await preprocessor.preprocess(project);
     }
   }
