@@ -36,7 +36,7 @@
     "enzyme-to-json": "3.6.2",
     "execa": "9.4.0",
     "grunt": "1.6.1",
-    "jasmine": "5.3.1",
+    "jasmine": "5.4.0",
     "jasmine-core": "5.3.0",
     "jest": "29.7.0",
     "jest-environment-jsdom": "29.7.0",
