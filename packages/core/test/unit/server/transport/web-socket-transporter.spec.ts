@@ -22,12 +22,13 @@ describe(WebSocketTransporter.name, () => {
     logSpy.restore();
   });
 
-  after(() => {
+  afterEach(() => {
     clock.restore();
+    transporter.close();
   });
 
   it('should log the port when the server is listening', async () => {
-    new WebSocketTransporter(0);
+    const webSocketTransporter = new WebSocketTransporter(0);
 
     const logSpy = sinon.spy(console, 'log');
 
@@ -36,6 +37,7 @@ describe(WebSocketTransporter.name, () => {
 
     expect(logSpy).calledOnce;
     expect(logSpy.calledWith('Server is listening on port:', sinon.match.number)).to.be.true;
+    webSocketTransporter.close();
   });
 
   it('should emit connected event when a client connects', async () => {
@@ -108,7 +110,7 @@ describe(WebSocketTransporter.name, () => {
     const logSpy = sinon.spy(console, 'log');
 
     // Arrange
-    new WebSocketTransporter();
+    const webSocketTransporter = new WebSocketTransporter();
 
     // Act
     await clock.tickAsync(1);
@@ -117,6 +119,7 @@ describe(WebSocketTransporter.name, () => {
     expect(logSpy).calledOnce;
     expect(logSpy.firstCall.args[1] !== 0).to.be.true;
     expect(logSpy.calledWith('Server is listening on port:', sinon.match.number)).to.be.true;
+    webSocketTransporter.close();
   });
 
   async function getWebSocketConnection(): Promise<WebSocket> {

@@ -8,15 +8,16 @@ import {
   createJSONRPCRequest,
   createJSONRPCSuccessResponse,
 } from 'json-rpc-2.0';
-import { config, expect } from 'chai';
+import { expect } from 'chai';
 import { factory } from '@stryker-mutator/test-helpers';
 import { MutantResult, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
 import {
   ErrorCodes,
+  InitializeParams,
   InstrumentParams,
-  MutateParams,
-  MutatePartialResult,
+  MutationTestParams,
+  MutationTestPartialResult,
   MutationServerProtocolHandler,
   ProgressParams,
 } from '../../../src/server/index.js';
@@ -27,6 +28,7 @@ describe(MutationServerProtocolHandler.name, () => {
   let transporterMock: TransporterMock;
   let clock: sinon.SinonFakeTimers;
   let sendSpy: sinon.SinonSpy;
+  let initializeParams: InitializeParams;
 
   before(() => {
     clock = sinon.useFakeTimers();
@@ -36,6 +38,7 @@ describe(MutationServerProtocolHandler.name, () => {
     transporterMock = new TransporterMock();
     new MutationServerProtocolHandler(transporterMock);
     sendSpy = sinon.spy(transporterMock, 'send');
+    initializeParams = { clientInfo: { version: MutationServerProtocolHandler.protocolVersion } };
   });
 
   after(() => {
@@ -48,13 +51,13 @@ describe(MutationServerProtocolHandler.name, () => {
     sinon.replace(MutationTestMethod, 'runMutationTest', sinon.fake.resolves(mutationTestResult));
 
     // Create a JSON-RPC request
-    const mutateParams: MutateParams = {
+    const mutationTestParams: MutationTestParams = {
       globPatterns: ['foo'],
     };
-    const jsonRpcRequest = createJSONRPCRequest(1, 'mutate', mutateParams);
+    const jsonRpcRequest = createJSONRPCRequest(1, 'mutationTest', mutationTestParams);
     const runMutationRequest = JSON.stringify(jsonRpcRequest);
 
-    transporterMock.emit('message', JSON.stringify(createJSONRPCRequest(1, 'initialize', {})));
+    transporterMock.emit('message', JSON.stringify(createJSONRPCRequest(1, 'initialize', initializeParams)));
 
     // Act
     transporterMock.emit('message', runMutationRequest);
@@ -80,7 +83,7 @@ describe(MutationServerProtocolHandler.name, () => {
     const jsonRpcRequest = createJSONRPCRequest(1, 'instrument', instrumentParams);
     const runInstrumentationRequest = JSON.stringify(jsonRpcRequest);
 
-    transporterMock.emit('message', JSON.stringify(createJSONRPCRequest(1, 'initialize', {})));
+    transporterMock.emit('message', JSON.stringify(createJSONRPCRequest(1, 'initialize', initializeParams)));
 
     // Act
     transporterMock.emit('message', runInstrumentationRequest);
@@ -103,14 +106,14 @@ describe(MutationServerProtocolHandler.name, () => {
     const requestId = 2;
 
     // Create a JSON-RPC request
-    const mutateParams: MutateParams = {
+    const mutationTestParams: MutationTestParams = {
       globPatterns: ['foo', 'bar', 'baz'],
       partialResultToken,
     };
-    const jsonRpcRequest = createJSONRPCRequest(requestId, 'mutate', mutateParams);
+    const jsonRpcRequest = createJSONRPCRequest(requestId, 'mutationTest', mutationTestParams);
     const runMutationRequest = JSON.stringify(jsonRpcRequest);
 
-    transporterMock.emit('message', JSON.stringify(createJSONRPCRequest(1, 'initialize', {})));
+    transporterMock.emit('message', JSON.stringify(createJSONRPCRequest(1, 'initialize', initializeParams)));
 
     // Act
     transporterMock.emit('message', runMutationRequest);
@@ -118,7 +121,7 @@ describe(MutationServerProtocolHandler.name, () => {
     // Wait for event loop to finish before asserting
     await clock.tickAsync(1);
 
-    const progressNotificationParams: ProgressParams<MutatePartialResult> = {
+    const progressNotificationParams: ProgressParams<MutationTestPartialResult> = {
       token: partialResultToken,
       value: { mutants: [mutationTestResult] },
     };
@@ -178,9 +181,9 @@ describe(MutationServerProtocolHandler.name, () => {
     );
 
     // Act
-    transporterMock.emit('message', JSON.stringify(createJSONRPCRequest(1, 'initialize', {})));
+    transporterMock.emit('message', JSON.stringify(createJSONRPCRequest(1, 'initialize', initializeParams)));
     await clock.tickAsync(1);
-    transporterMock.emit('message', JSON.stringify(createJSONRPCRequest(2, 'initialize', {})));
+    transporterMock.emit('message', JSON.stringify(createJSONRPCRequest(2, 'initialize', initializeParams)));
     await clock.tickAsync(1);
 
     // Assert
@@ -190,7 +193,7 @@ describe(MutationServerProtocolHandler.name, () => {
 
   it('should use the stryker options from the initialize request in instrument run', async () => {
     // Arrange
-    transporterMock.emit('message', JSON.stringify(createJSONRPCRequest(1, 'initialize', { configUri: 'foo' })));
+    transporterMock.emit('message', JSON.stringify(createJSONRPCRequest(1, 'initialize', { configUri: 'foo', ...initializeParams })));
 
     // Create a JSON-RPC request
     const instrumentParams: InstrumentParams = {
@@ -220,14 +223,14 @@ describe(MutationServerProtocolHandler.name, () => {
 
   it('should use the stryker options from the initialize request in mutation run', async () => {
     // Arrange
-    transporterMock.emit('message', JSON.stringify(createJSONRPCRequest(1, 'initialize', { configUri: 'foo' })));
+    transporterMock.emit('message', JSON.stringify(createJSONRPCRequest(1, 'initialize', { ...initializeParams, configUri: 'foo' })));
 
     // Create a JSON-RPC request
-    const mutateParams: MutateParams = {
+    const mutationTestParams: MutationTestParams = {
       globPatterns: ['bar'],
     };
 
-    const jsonRpcRequest = createJSONRPCRequest(1, 'mutate', mutateParams);
+    const jsonRpcRequest = createJSONRPCRequest(1, 'mutationTest', mutationTestParams);
     const runMutationRequest = JSON.stringify(jsonRpcRequest);
 
     const fake = sinon.fake.resolves([]);

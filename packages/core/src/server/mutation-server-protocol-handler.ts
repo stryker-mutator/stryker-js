@@ -11,6 +11,8 @@ import {
 import { MutantResult, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { tokens } from 'typed-inject';
 
+import * as semver from 'semver';
+
 import { MutationTestMethod, InstrumentMethod } from './methods/index.js';
 import { Transporter } from './transport/index.js';
 import * as serverTokens from './server-tokens.js';
@@ -19,8 +21,8 @@ import {
   CancelNotification,
   ClientMethods,
   InstrumentParams,
-  MutateParams,
-  MutatePartialResult,
+  MutationTestParams,
+  MutationTestPartialResult,
   ProgressParams,
   ErrorCodes,
   ServerMethods,
@@ -33,6 +35,7 @@ import {
  */
 export class MutationServerProtocolHandler {
   public static readonly inject = tokens(serverTokens.transporter);
+  public static readonly protocolVersion = '0.0.1-alpha.1';
   private readonly serverAndClient: TypedJSONRPCServerAndClient<ServerMethods, ClientMethods>;
 
   // Map of request id to cancellation callback.
@@ -85,15 +88,37 @@ export class MutationServerProtocolHandler {
   }
 
   private setupServerMethods(): void {
-    this.serverAndClient.addMethodAdvanced('mutate', this.runMutationTestServerMethod.bind(this));
+    this.serverAndClient.addMethodAdvanced('mutationTest', this.runMutationTestServerMethod.bind(this));
     this.serverAndClient.addMethod('instrument', this.runInstrumentation.bind(this));
     this.serverAndClient.addMethod('initialize', this.initialize.bind(this));
   }
 
-  private async initialize(params: InitializeParams): Promise<typeof InitializeResult> {
+  private async initialize(params: InitializeParams): Promise<InitializeResult> {
+    if (!semver.valid(params.clientInfo.version, { loose: false })) {
+      throw new Error(`Invalid client version: ${params.clientInfo.version}`);
+    }
+
+    const serverRange = `^${MutationServerProtocolHandler.protocolVersion}`;
+    if (!semver.satisfies(params.clientInfo.version, serverRange, { includePrerelease: true })) {
+      throw new Error(`Client version ${params.clientInfo.version} is not supported. Please use a version ${serverRange}`);
+    }
+
     this.strykerOptionsOverwrite.configFile = params.configUri;
     this.initialized = true;
-    return {};
+
+    return {
+      serverInfo: {
+        version: MutationServerProtocolHandler.protocolVersion,
+      },
+      capabilities: {
+        mutationTestProvider: {
+          partialResults: true,
+        },
+        instrumentationProvider: {
+          partialResults: false,
+        },
+      },
+    };
   }
 
   private async runInstrumentation(params: InstrumentParams): Promise<MutantResult[]> {
@@ -106,7 +131,7 @@ export class MutationServerProtocolHandler {
   }
 
   private async runMutationTestServerMethod(jsonRPCRequest: JSONRPCRequest): Promise<JSONRPCResponse> {
-    const params = jsonRPCRequest.params as MutateParams;
+    const params = jsonRPCRequest.params as MutationTestParams;
 
     if (!jsonRPCRequest.id) {
       throw new Error('Request id is required.');
@@ -130,7 +155,7 @@ export class MutationServerProtocolHandler {
     try {
       if (partialResultToken) {
         await new MutationTestMethod().runMutationTestRealtime(options, signal, (result) => {
-          const progressParams: ProgressParams<MutatePartialResult> = { token: partialResultToken, value: { mutants: [result] } };
+          const progressParams: ProgressParams<MutationTestPartialResult> = { token: partialResultToken, value: { mutants: [result] } };
           this.serverAndClient.notify('progress', progressParams);
         });
       } else {

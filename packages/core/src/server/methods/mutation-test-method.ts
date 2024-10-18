@@ -18,7 +18,7 @@ export class MutationTestMethod {
 
   /**
    * Run a mutation test and get partial results via a callback.
-   * @param globPatterns  The glob patterns to mutate.
+   * @param globPatterns  The glob patterns to mutation test.
    * @param onMutantTested  A callback that is called when a mutant is tested.
    */
   public async runMutationTestRealtime(
@@ -89,7 +89,7 @@ export class MutationTestMethod {
 
   /**
    * Run a mutation test.
-   * @param globPatterns The glob patterns to mutate.
+   * @param globPatterns The glob patterns to mutation test.
    * @returns The mutant results.
    */
   public static async runMutationTest(abortSignal: AbortSignal, options: PartialStrykerOptions): Promise<MutantResult[]> {

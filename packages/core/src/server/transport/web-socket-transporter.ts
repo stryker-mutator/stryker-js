@@ -54,4 +54,8 @@ export class WebSocketTransporter extends EventEmitter<TransporterEvents> implem
       }
     });
   }
+
+  public close(): void {
+    this.webSocketServer.close();
+  }
 }
