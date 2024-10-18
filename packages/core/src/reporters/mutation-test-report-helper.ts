@@ -50,7 +50,7 @@ export class MutationTestReportHelper {
   ) {}
 
   public reportCheckFailed(mutant: MutantTestCoverage, checkResult: Exclude<CheckResult, PassedCheckResult>): MutantResult {
-    const location = this.toLocation(mutant.location);
+    const location = objectUtils.toSchemaLocation(mutant.location);
     return this.reportOne({
       ...mutant,
       status: this.checkStatusToResultStatus(checkResult.status),
@@ -60,7 +60,7 @@ export class MutationTestReportHelper {
   }
 
   public reportMutantStatus(mutant: MutantTestCoverage, status: MutantStatus): MutantResult {
-    const location = this.toLocation(mutant.location);
+    const location = objectUtils.toSchemaLocation(mutant.location);
     return this.reportOne({
       ...mutant,
       status,
@@ -69,7 +69,7 @@ export class MutationTestReportHelper {
   }
 
   public reportMutantRunResult(mutant: MutantTestCoverage, result: MutantRunResult): MutantResult {
-    const location = this.toLocation(mutant.location);
+    const location = objectUtils.toSchemaLocation(mutant.location);
 
     // Prune fields used for Stryker bookkeeping
     switch (result.status) {
@@ -269,20 +269,6 @@ export class MutationTestReportHelper {
       killedBy: remapTestIds(killedBy),
       coveredBy: remapTestIds(coveredBy),
       location,
-    };
-  }
-
-  private toLocation(location: Location): schema.Location {
-    return {
-      end: this.toPosition(location.end),
-      start: this.toPosition(location.start),
-    };
-  }
-
-  private toPosition(pos: Position): schema.Position {
-    return {
-      column: pos.column + 1, // convert from 0-based to 1-based
-      line: pos.line + 1,
     };
   }
 

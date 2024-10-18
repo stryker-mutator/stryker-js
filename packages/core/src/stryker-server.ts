@@ -4,10 +4,10 @@ import net from 'net';
 import { createInjector } from 'typed-inject';
 import { provideLogger } from './di/provide-logger.js';
 import { PrepareExecutor } from './process/1-prepare-executor.js';
-import { MutantInstrumenterExecutor } from './process/2-mutant-instrumenter-executor.js';
 import { createInstrumenter } from '@stryker-mutator/instrumenter';
 import { commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
 import { coreTokens } from './di/index.js';
+import { objectUtils } from './utils/object-utils.js';
 
 /**
  * An implementation of the mutation testing server protocol for StrykerJS.
@@ -56,6 +56,6 @@ export class StrykerServer {
     const filesToMutate = await Promise.all([...project.filesToMutate.values()].map((file) => file.toInstrumenterFile()));
     const ignorers = options.ignorers.map((name) => pluginCreator.create(PluginKind.Ignore, name));
     const instrumentResult = await instrumenter.instrument(filesToMutate, { ignorers, ...options.mutator });
-    return { mutants: instrumentResult.mutants };
+    return { mutants: instrumentResult.mutants.map((mutant) => ({ ...mutant, location: objectUtils.toSchemaLocation(mutant.location) })) };
   }
 }
