@@ -10,6 +10,7 @@ import { LogConfigurator } from './logging/index.js';
 import { Stryker } from './stryker.js';
 import { defaultOptions } from './config/index.js';
 import { strykerEngines, strykerVersion } from './stryker-package.js';
+import { StrykerServer } from './stryker-server.js';
 
 /**
  * Interpret a command line argument and add it to an object.
@@ -47,6 +48,11 @@ export class StrykerCli {
     private readonly argv: string[],
     private readonly program: Command = new Command(),
     private readonly runMutationTest = async (options: PartialStrykerOptions) => new Stryker(options).runMutationTest(),
+    private readonly runMutationTestingServer = async () => {
+      const server = new StrykerServer();
+      const port = await server.initialize();
+      console.log(JSON.stringify({ host: 'localhost', port }));
+    },
   ) {}
 
   public run(): void {
@@ -59,6 +65,7 @@ export class StrykerCli {
         `Possible commands:
         run: Run mutation testing
         init: Initialize Stryker for your project
+        runServer: Start the mutation testing server (implements the mutation testing server protocol)
 
         Optional location to a JSON or JavaScript config file as the last argument. If it's a JavaScript file, that file should export the config directly.`,
       )
@@ -210,6 +217,7 @@ export class StrykerCli {
     const commands = {
       init: () => initializerFactory().initialize(),
       run: () => this.runMutationTest(options),
+      runServer: () => this.runMutationTestingServer(),
     };
 
     if (Object.keys(commands).includes(this.command)) {
