@@ -1,4 +1,12 @@
-import { DiscoverParams, DiscoverResult, MutationTestParams, MutationTestPartialResult, rpcMethods } from './mtsp-schema.js';
+import {
+  DiscoverParams,
+  DiscoverResult,
+  ConfigureParams,
+  ConfigureResult,
+  MutationTestParams,
+  MutationTestPartialResult,
+  rpcMethods,
+} from './mtsp-schema.js';
 import { JSONRPCClient, JSONRPCServer, JSONRPCServerAndClient } from 'json-rpc-2.0';
 import net from 'net';
 import { createInjector } from 'typed-inject';
@@ -12,9 +20,7 @@ import { JsonRpcEventDeserializer } from './utils/json-rpc-event-deserializer.js
 import { Observable } from 'rxjs';
 import { schema } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
-import { MutantInstrumenterExecutor } from './process/2-mutant-instrumenter-executor.js';
-import { DryRunExecutor } from './process/3-dry-run-executor.js';
-import { MutationTestExecutor } from './process/4-mutation-test-executor.js';
+import { Stryker } from './stryker.js';
 
 /**
  * An implementation of the mutation testing server protocol for StrykerJS.
@@ -24,10 +30,11 @@ import { MutationTestExecutor } from './process/4-mutation-test-executor.js';
  */
 export class StrykerServer {
   #server?: net.Server;
+  #configFilePath?: string;
 
   constructor(private readonly injectorFactory = createInjector) {}
 
-  initialize(): Promise<number> {
+  start(): Promise<number> {
     return new Promise((resolve) => {
       this.#server = net.createServer((socket) => {
         const deserializer = new JsonRpcEventDeserializer();
@@ -68,6 +75,11 @@ export class StrykerServer {
     });
   }
 
+  configure(configureParams: ConfigureParams): ConfigureResult {
+    this.#configFilePath = configureParams.configFilePath;
+    return { version: '1' };
+  }
+
   async discover(discoverParams: DiscoverParams): Promise<DiscoverResult> {
     const rootInjector = this.injectorFactory();
     const loggerProvider = provideLogger(rootInjector).provideValue(coreTokens.reporterOverride, undefined);
@@ -92,37 +104,15 @@ export class StrykerServer {
           subscriber.next(mutant);
         },
       };
-      this.mutationTestRun(params, reporter)
+      const stryker = new Stryker(
+        { allowConsoleColors: false, configFile: this.#configFilePath, mutate: params.globPatterns },
+        this.injectorFactory,
+        reporter,
+      );
+      stryker
+        .runMutationTest()
         .then(() => subscriber.complete())
         .catch((error) => subscriber.error(error));
     });
-  }
-
-  private async mutationTestRun(params: MutationTestParams, reporter: Reporter) {
-    const rootInjector = this.injectorFactory();
-    const loggerProvider = provideLogger(rootInjector).provideValue(coreTokens.reporterOverride, reporter);
-
-    const prepareExecutor = loggerProvider.injectClass(PrepareExecutor);
-    const mutantInstrumenterInjector = await prepareExecutor.execute({ mutate: params.globPatterns });
-
-    try {
-      const mutantInstrumenter = mutantInstrumenterInjector.injectClass(MutantInstrumenterExecutor);
-      const dryRunExecutorInjector = await mutantInstrumenter.execute();
-
-      const dryRunExecutor = dryRunExecutorInjector.injectClass(DryRunExecutor);
-      const mutationRunExecutorInjector = await dryRunExecutor.execute();
-
-      const mutationRunExecutor = mutationRunExecutorInjector.injectClass(MutationTestExecutor);
-      const mutantResults = await mutationRunExecutor.execute();
-
-      return mutantResults;
-    } catch (error) {
-      if (mutantInstrumenterInjector.resolve(commonTokens.options).cleanTempDir !== 'always') {
-        const log = loggerProvider.resolve(commonTokens.getLogger)(StrykerServer.name);
-        log.debug('Not removing the temp dir because an error occurred');
-        mutantInstrumenterInjector.resolve(coreTokens.temporaryDirectory).removeDuringDisposal = false;
-      }
-      throw error;
-    }
   }
 }

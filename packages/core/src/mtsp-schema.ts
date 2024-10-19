@@ -1,13 +1,13 @@
 import * as schema from 'mutation-testing-report-schema/api';
 
-export interface InitializeParams {
+export interface ConfigureParams {
   /**
    * The (relative or absolute) path to mutation testing framework's config file to load.
    */
   configFilePath?: string;
 }
 
-export interface InitializeResult {
+export interface ConfigureResult {
   /**
    * The mutation testing server protocol major version that the client supports (major)
    * For example, "1"
@@ -40,7 +40,7 @@ export interface DiscoverResult {
 }
 
 export const rpcMethods = Object.freeze({
-  initialize: 'initialize',
+  configure: 'configure',
   discover: 'discover',
   mutationTest: 'mutationTest',
   reportMutationTestProgressNotification: 'reportMutationTestProgress',
