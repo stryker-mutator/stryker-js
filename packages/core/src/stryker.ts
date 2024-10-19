@@ -25,11 +25,11 @@ export class Stryker {
 
   public async runMutationTest(): Promise<MutantResult[]> {
     const rootInjector = this.injectorFactory();
-    const loggerProvider = provideLogger(rootInjector);
+    const prepareInjector = provideLogger(rootInjector).provideValue(coreTokens.reporterOverride, undefined);
 
     try {
       // 1. Prepare. Load Stryker configuration, load the input files and starts the logging server
-      const prepareExecutor = loggerProvider.injectClass(PrepareExecutor);
+      const prepareExecutor = prepareInjector.injectClass(PrepareExecutor);
       const mutantInstrumenterInjector = await prepareExecutor.execute(this.cliOptions);
 
       try {
@@ -48,14 +48,14 @@ export class Stryker {
         return mutantResults;
       } catch (error) {
         if (mutantInstrumenterInjector.resolve(commonTokens.options).cleanTempDir !== 'always') {
-          const log = loggerProvider.resolve(commonTokens.getLogger)(Stryker.name);
+          const log = prepareInjector.resolve(commonTokens.getLogger)(Stryker.name);
           log.debug('Not removing the temp dir because an error occurred');
           mutantInstrumenterInjector.resolve(coreTokens.temporaryDirectory).removeDuringDisposal = false;
         }
         throw error;
       }
     } catch (error) {
-      const log = loggerProvider.resolve(commonTokens.getLogger)(Stryker.name);
+      const log = prepareInjector.resolve(commonTokens.getLogger)(Stryker.name);
       const cause = retrieveCause(error);
       if (cause instanceof ConfigError) {
         log.error(cause.message);

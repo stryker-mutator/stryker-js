@@ -10,16 +10,21 @@ import { coreTokens, PluginCreator } from '../di/index.js';
 import { StrictReporter } from './strict-reporter.js';
 
 export class BroadcastReporter implements StrictReporter {
-  public static readonly inject = tokens(commonTokens.options, coreTokens.pluginCreator, commonTokens.logger);
+  public static readonly inject = tokens(commonTokens.options, coreTokens.pluginCreator, commonTokens.logger, coreTokens.reporterOverride);
 
   public readonly reporters: Record<string, Reporter>;
   constructor(
     private readonly options: StrykerOptions,
     private readonly pluginCreator: PluginCreator,
     private readonly log: Logger,
+    private readonly reporterOverride: Reporter | undefined,
   ) {
     this.reporters = {};
-    this.options.reporters.forEach((reporterName) => this.createReporter(reporterName));
+    if (this.reporterOverride) {
+      this.reporters['in-memory'] = this.reporterOverride;
+    } else {
+      this.options.reporters.forEach((reporterName) => this.createReporter(reporterName));
+    }
     this.logAboutReporters();
   }
 

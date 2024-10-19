@@ -1,21 +1,18 @@
-import { MutantResult } from '@stryker-mutator/api/core';
 import * as schema from 'mutation-testing-report-schema/api';
 
 export interface InitializeParams {
   /**
-   * The mutation testing server protocol version that the client supports (major.minor)
-   * For example, "1.0"
+   * The (relative or absolute) path to mutation testing framework's config file to load.
    */
-  version: string;
-
-  /**
-   * The URI of the mutation testing framework's config file to load.
-   */
-  configUri?: string;
+  configFilePath?: string;
 }
 
 export interface InitializeResult {
-  // Empty, can be extended in the future
+  /**
+   * The mutation testing server protocol major version that the client supports (major)
+   * For example, "1"
+   */
+  version: string;
 }
 
 export interface DiscoverParams {
@@ -25,8 +22,26 @@ export interface DiscoverParams {
   globPatterns?: string[];
 }
 
+export interface MutationTestParams {
+  /**
+   * The glob patterns to mutation test.
+   */
+  globPatterns?: string[];
+}
+
+export interface MutationTestPartialResult {
+  mutants: schema.MutantResult[];
+}
+
 type DiscoveredMutant = Pick<schema.MutantResult, 'id' | 'location' | 'description' | 'mutatorName' | 'replacement'>;
 
 export interface DiscoverResult {
   mutants: readonly DiscoveredMutant[];
 }
+
+export const rpcMethods = Object.freeze({
+  initialize: 'initialize',
+  discover: 'discover',
+  mutationTest: 'mutationTest',
+  reportMutationTestProgressNotification: 'reportMutationTestProgress',
+});
