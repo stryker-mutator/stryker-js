@@ -19,10 +19,14 @@ import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
 import { FileSystem, ProjectReader } from '../fs/index.js';
 
 import { MutantInstrumenterContext } from './index.js';
+import { Reporter } from '@stryker-mutator/api/report';
 
+export interface PrepareExecutorContext extends BaseContext {
+  [coreTokens.reporterOverride]?: Reporter;
+}
 export class PrepareExecutor {
-  public static readonly inject = tokens(commonTokens.injector);
-  constructor(private readonly injector: Injector<BaseContext>) {}
+  public static readonly inject = tokens(commonTokens.injector, coreTokens.reporterOverride);
+  constructor(private readonly injector: Injector<PrepareExecutorContext>) {}
 
   public async execute(cliOptions: PartialStrykerOptions): Promise<Injector<MutantInstrumenterContext>> {
     // greedy initialize, so the time starts immediately

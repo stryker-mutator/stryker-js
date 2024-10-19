@@ -6,13 +6,14 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 
 import { resolveFromRoot } from '../../helpers/test-utils.js';
 import { PrepareExecutor } from '../../../src/process/index.js';
+import { coreTokens } from '../../../src/di/index.js';
 
 describe(`${PrepareExecutor.name} integration test`, () => {
   it('should log about unknown properties in log file', async () => {
     const cliOptions: PartialStrykerOptions = {
       configFile: resolveFromRoot('testResources', 'options-validation', 'unknown-options.conf.json'),
     };
-    const sut = testInjector.injector.injectClass(PrepareExecutor);
+    const sut = testInjector.injector.provideValue(coreTokens.reporterOverride, undefined).injectClass(PrepareExecutor);
     await sut.execute(cliOptions);
     expect(testInjector.logger.warn).calledWithMatch(sinon.match('Unknown stryker config option "this is an unknown property"'));
   });

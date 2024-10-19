@@ -1,6 +1,6 @@
 import treeKill from 'tree-kill';
 import { StrykerError, KnownKeys } from '@stryker-mutator/util';
-import { WarningOptions } from '@stryker-mutator/api/core';
+import { Location, Position, schema, WarningOptions } from '@stryker-mutator/api/core';
 
 export const objectUtils = {
   /**
@@ -78,5 +78,29 @@ export const objectUtils = {
    */
   random(): number {
     return Math.ceil(Math.random() * 10000000);
+  },
+
+  /**
+   * Converts an internal StrykerJS 0-based location to a schema.Location (1-based).
+   * @param location the StrykerJS 0-based location
+   * @returns the schema.Location (1-based)
+   */
+  toSchemaLocation(location: Location): schema.Location {
+    return {
+      end: this.toSchemaPosition(location.end),
+      start: this.toSchemaPosition(location.start),
+    };
+  },
+
+  /**
+   * Converts an internal StrykerJS 0-based position to a schema.Position (1-based).
+   * @param pos the StrykerJS 0-based position
+   * @returns the schema.Position (1-based)
+   */
+  toSchemaPosition(pos: Position): schema.Position {
+    return {
+      column: pos.column + 1,
+      line: pos.line + 1,
+    };
   },
 };

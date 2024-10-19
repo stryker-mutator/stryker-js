@@ -21,6 +21,7 @@ export const testRunnerFactory = 'testRunnerFactory';
 export const testRunnerPool = 'testRunnerPool';
 export const testRunnerConcurrencyTokens = 'testRunnerConcurrencyTokens';
 export const reporter = 'reporter';
+export const reporterOverride = 'reporterOverride';
 export const pluginCreator = 'pluginCreator';
 export const pluginsByKind = 'pluginsByKind';
 export const validationSchema = 'validationSchema';

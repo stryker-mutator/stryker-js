@@ -70,5 +70,8 @@
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "json-rpc-2.0": "^1.7.0"
   }
 }
