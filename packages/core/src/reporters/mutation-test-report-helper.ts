@@ -312,7 +312,7 @@ export class MutationTestReportHelper {
   }
 }
 
-function normalizeReportFileName(fileName: string | undefined) {
+export function normalizeReportFileName(fileName: string | undefined) {
   if (fileName) {
     return normalizeFileName(path.relative(process.cwd(), fileName));
   }

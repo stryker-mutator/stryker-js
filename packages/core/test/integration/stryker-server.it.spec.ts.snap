@@ -1,0 +1,267 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`StrykerServer on a happy flow project should be able to discover mutants 1`] = `
+Object {
+  "files": Object {
+    "src/app.js": Object {
+      "mutants": Array [
+        Object {
+          "id": "0",
+          "location": Object {
+            "end": Object {
+              "column": 2,
+              "line": 4,
+            },
+            "start": Object {
+              "column": 29,
+              "line": 2,
+            },
+          },
+          "mutatorName": "BlockStatement",
+          "replacement": "{}",
+        },
+        Object {
+          "id": "1",
+          "location": Object {
+            "end": Object {
+              "column": 27,
+              "line": 3,
+            },
+            "start": Object {
+              "column": 10,
+              "line": 3,
+            },
+          },
+          "mutatorName": "StringLiteral",
+          "replacement": "\`\`",
+        },
+        Object {
+          "id": "2",
+          "location": Object {
+            "end": Object {
+              "column": 2,
+              "line": 8,
+            },
+            "start": Object {
+              "column": 27,
+              "line": 6,
+            },
+          },
+          "mutatorName": "BlockStatement",
+          "replacement": "{}",
+        },
+        Object {
+          "id": "3",
+          "location": Object {
+            "end": Object {
+              "column": 15,
+              "line": 7,
+            },
+            "start": Object {
+              "column": 10,
+              "line": 7,
+            },
+          },
+          "mutatorName": "ArithmeticOperator",
+          "replacement": "a - b",
+        },
+        Object {
+          "id": "4",
+          "location": Object {
+            "end": Object {
+              "column": 30,
+              "line": 10,
+            },
+            "start": Object {
+              "column": 23,
+              "line": 10,
+            },
+          },
+          "mutatorName": "StringLiteral",
+          "replacement": "\\"\\"",
+        },
+      ],
+    },
+    "src/index.html": Object {
+      "mutants": Array [
+        Object {
+          "id": "5",
+          "location": Object {
+            "end": Object {
+              "column": 29,
+              "line": 11,
+            },
+            "start": Object {
+              "column": 19,
+              "line": 11,
+            },
+          },
+          "mutatorName": "StringLiteral",
+          "replacement": "\`\`",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`StrykerServer on a happy flow project should be able to run mutation tests 1`] = `
+Array [
+  Object {
+    "files": Object {
+      "src/app.js": Object {
+        "mutants": Array [
+          Object {
+            "id": "0",
+            "location": Object {
+              "end": Object {
+                "column": 2,
+                "line": 4,
+              },
+              "start": Object {
+                "column": 29,
+                "line": 2,
+              },
+            },
+            "mutatorName": "BlockStatement",
+            "replacement": "{}",
+            "status": "Survived",
+            "testsCompleted": 1,
+          },
+        ],
+      },
+    },
+  },
+  Object {
+    "files": Object {
+      "src/app.js": Object {
+        "mutants": Array [
+          Object {
+            "id": "1",
+            "location": Object {
+              "end": Object {
+                "column": 27,
+                "line": 3,
+              },
+              "start": Object {
+                "column": 10,
+                "line": 3,
+              },
+            },
+            "mutatorName": "StringLiteral",
+            "replacement": "\`\`",
+            "status": "Survived",
+            "testsCompleted": 1,
+          },
+        ],
+      },
+    },
+  },
+  Object {
+    "files": Object {
+      "src/app.js": Object {
+        "mutants": Array [
+          Object {
+            "id": "2",
+            "killedBy": Array [
+              "all",
+            ],
+            "location": Object {
+              "end": Object {
+                "column": 2,
+                "line": 8,
+              },
+              "start": Object {
+                "column": 27,
+                "line": 6,
+              },
+            },
+            "mutatorName": "BlockStatement",
+            "replacement": "{}",
+            "status": "Killed",
+            "testsCompleted": 1,
+          },
+        ],
+      },
+    },
+  },
+  Object {
+    "files": Object {
+      "src/app.js": Object {
+        "mutants": Array [
+          Object {
+            "id": "3",
+            "killedBy": Array [
+              "all",
+            ],
+            "location": Object {
+              "end": Object {
+                "column": 15,
+                "line": 7,
+              },
+              "start": Object {
+                "column": 10,
+                "line": 7,
+              },
+            },
+            "mutatorName": "ArithmeticOperator",
+            "replacement": "a - b",
+            "status": "Killed",
+            "testsCompleted": 1,
+          },
+        ],
+      },
+    },
+  },
+  Object {
+    "files": Object {
+      "src/app.js": Object {
+        "mutants": Array [
+          Object {
+            "id": "4",
+            "location": Object {
+              "end": Object {
+                "column": 30,
+                "line": 10,
+              },
+              "start": Object {
+                "column": 23,
+                "line": 10,
+              },
+            },
+            "mutatorName": "StringLiteral",
+            "replacement": "\\"\\"",
+            "status": "Survived",
+            "testsCompleted": 1,
+          },
+        ],
+      },
+    },
+  },
+  Object {
+    "files": Object {
+      "src/index.html": Object {
+        "mutants": Array [
+          Object {
+            "id": "5",
+            "location": Object {
+              "end": Object {
+                "column": 29,
+                "line": 11,
+              },
+              "start": Object {
+                "column": 19,
+                "line": 11,
+              },
+            },
+            "mutatorName": "StringLiteral",
+            "replacement": "\`\`",
+            "status": "Survived",
+            "testsCompleted": 1,
+          },
+        ],
+      },
+    },
+  },
+]
+`;

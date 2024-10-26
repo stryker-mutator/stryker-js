@@ -4,9 +4,10 @@ import {
   ConfigureParams,
   ConfigureResult,
   MutationTestParams,
-  MutationTestPartialResult,
-  rpcMethods,
-} from './mtsp-schema.js';
+  MutationTestResult,
+  DiscoveredMutant,
+  DiscoveredFile,
+} from 'mutation-server-protocol';
 import { JSONRPCClient, JSONRPCServer, JSONRPCServerAndClient } from 'json-rpc-2.0';
 import net from 'net';
 import { createInjector } from 'typed-inject';
@@ -18,22 +19,43 @@ import { coreTokens } from './di/index.js';
 import { objectUtils } from './utils/object-utils.js';
 import { JsonRpcEventDeserializer } from './utils/json-rpc-event-deserializer.js';
 import { Observable } from 'rxjs';
-import { schema } from '@stryker-mutator/api/core';
+import { MutantResult, PartialStrykerOptions, schema } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
 import { Stryker } from './stryker.js';
+import { promisify } from 'util';
+import { normalizeReportFileName } from './reporters/mutation-test-report-helper.js';
+
+export const rpcMethods = Object.freeze({
+  configure: 'configure',
+  discover: 'discover',
+  mutationTest: 'mutationTest',
+  reportMutationTestProgressNotification: 'reportMutationTestProgress',
+});
 
 /**
  * An implementation of the mutation testing server protocol for StrykerJS.
  * - Methods: `initialize`, `discover`, `mutationTest`
  *
- * @see https://github.com/jaspervdveen/vscode-stryker/blob/main/docs/mutation-server-protocol.md
+ * @see https://github.com/stryker-mutator/editor-plugins/tree/main/packages/mutation-server-protocol#readme
  */
 export class StrykerServer {
   #server?: net.Server;
   #configFilePath?: string;
 
-  constructor(private readonly injectorFactory = createInjector) {}
+  /**
+   *
+   * @param cliOptions The cli options.
+   * @param injectorFactory The injector factory, for testing purposes only
+   */
+  constructor(
+    private readonly cliOptions: PartialStrykerOptions = {},
+    private readonly injectorFactory = createInjector,
+  ) {}
 
+  /**
+   * Starts the server and listens for incoming connections.
+   * @returns The port the server is listening on
+   */
   start(): Promise<number> {
     return new Promise((resolve) => {
       this.#server = net.createServer((socket) => {
@@ -47,17 +69,23 @@ export class StrykerServer {
           }),
         );
 
+        rpc.addMethod(rpcMethods.configure, this.configure.bind(this));
         rpc.addMethod(rpcMethods.discover, this.discover.bind(this));
         rpc.addMethod(rpcMethods.mutationTest, (params: MutationTestParams) => {
-          return new Promise<MutationTestPartialResult>((resolve, reject) => {
+          return new Promise<MutationTestResult>((resolve, reject) => {
             this.mutationTest(params).subscribe({
               next: (mutantResult) => {
+                const { fileName, ...mutant } = mutantResult;
                 rpc.client.notify(rpcMethods.reportMutationTestProgressNotification, {
-                  mutants: [mutantResult],
-                } satisfies MutationTestPartialResult);
+                  files: {
+                    [normalizeReportFileName(fileName)]: {
+                      mutants: [mutant],
+                    },
+                  },
+                } satisfies MutationTestResult);
               },
               error: reject,
-              complete: () => resolve({ mutants: [] }),
+              complete: () => resolve({ files: {} }),
             });
           });
         });
@@ -75,6 +103,12 @@ export class StrykerServer {
     });
   }
 
+  async stop(): Promise<void> {
+    if (this.#server) {
+      await promisify(this.#server?.close.bind(this.#server))();
+    }
+  }
+
   configure(configureParams: ConfigureParams): ConfigureResult {
     this.#configFilePath = configureParams.configFilePath;
     return { version: '1' };
@@ -85,7 +119,10 @@ export class StrykerServer {
     const loggerProvider = provideLogger(rootInjector).provideValue(coreTokens.reporterOverride, undefined);
 
     const prepareExecutor = loggerProvider.injectClass(PrepareExecutor);
-    const inj = await prepareExecutor.execute({ mutate: discoverParams.globPatterns });
+    const inj = await prepareExecutor.execute({
+      ...this.cliOptions,
+      ...this.#overrideMutate(discoverParams.files),
+    });
 
     const instrumenter = inj.injectFunction(createInstrumenter);
     const pluginCreator = inj.resolve(coreTokens.pluginCreator);
@@ -94,18 +131,29 @@ export class StrykerServer {
     const filesToMutate = await Promise.all([...project.filesToMutate.values()].map((file) => file.toInstrumenterFile()));
     const ignorers = options.ignorers.map((name) => pluginCreator.create(PluginKind.Ignore, name));
     const instrumentResult = await instrumenter.instrument(filesToMutate, { ignorers, ...options.mutator });
-    return { mutants: instrumentResult.mutants.map((mutant) => ({ ...mutant, location: objectUtils.toSchemaLocation(mutant.location) })) };
+    const mutants = instrumentResult.mutants.map((mutant) => ({ ...mutant, location: objectUtils.toSchemaLocation(mutant.location) }));
+    const mutantsByFile = mutants.reduce((acc, mutant) => {
+      const { fileName, ...discoveredMutant } = mutant;
+      const normalizedFileName = normalizeReportFileName(fileName);
+      const file = acc.get(normalizedFileName) ?? { mutants: [] };
+      file.mutants.push(discoveredMutant);
+      acc.set(normalizedFileName, file);
+      return acc;
+    }, new Map<string, DiscoveredFile>());
+    return {
+      files: Object.fromEntries(mutantsByFile.entries()),
+    };
   }
 
-  public mutationTest(params: MutationTestParams): Observable<schema.MutantResult> {
-    return new Observable<schema.MutantResult>((subscriber) => {
+  public mutationTest(params: MutationTestParams): Observable<MutantResult> {
+    return new Observable<MutantResult>((subscriber) => {
       const reporter: Reporter = {
         onMutantTested(mutant) {
           subscriber.next(mutant);
         },
       };
       const stryker = new Stryker(
-        { allowConsoleColors: false, configFile: this.#configFilePath, mutate: params.globPatterns },
+        { ...this.cliOptions, allowConsoleColors: false, configFile: this.#configFilePath, ...this.#overrideMutate(params.files) },
         this.injectorFactory,
         reporter,
       );
@@ -114,5 +162,12 @@ export class StrykerServer {
         .then(() => subscriber.complete())
         .catch((error) => subscriber.error(error));
     });
+  }
+
+  #filesToGlobPatterns(files: string[] | undefined): string[] | undefined {
+    return files?.map((file) => (file.endsWith('/') ? `${file}**/*` : file));
+  }
+  #overrideMutate(files?: string[]) {
+    return files ? { mutate: this.#filesToGlobPatterns(files) } : undefined;
   }
 }

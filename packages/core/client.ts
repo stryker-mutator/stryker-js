@@ -10,13 +10,16 @@ class Sender {
 
   constructor(socket: net.Socket) {
     const deserializer = new JsonRpcEventDeserializer();
+    const server = new JSONRPCServer();
+    const client = new JSONRPCClient((jsonRPCRequest) => {
+      console.log('Sending: ', jsonRPCRequest.id);
+      const content = Buffer.from(JSON.stringify(jsonRPCRequest));
+      socket.write(`Content-Length: ${content.byteLength}\r\n\r\n`);
+      socket.write(content);
+    });
     this.#client = new JSONRPCServerAndClient(
-      new JSONRPCServer(),
-      new JSONRPCClient((jsonRPCRequest) => {
-        const content = Buffer.from(JSON.stringify(jsonRPCRequest));
-        socket.write(`Content-Length: ${content.byteLength}\r\n\r\n`);
-        socket.write(content);
-      }),
+      server,
+      client,
     );
     socket.on('data', (data) => {
       for (const event of deserializer.deserialize(data)) {
@@ -58,12 +61,12 @@ console.log('start!');
 socket.connect(port, host);
 const sender = new Sender(socket);
 
-socket.on('close', function () {
+socket.on('close', () => {
   console.log('Connection closed');
 });
 const result = await sender.discover();
 console.log('Finished with', result.mutants.length, 'mutants');
-sender.mutationTest({ globPatterns: ['src/utils/json-rpc-event-deserializer.ts'] }).subscribe({
+sender.mutationTest({ files: ['src/utils/json-rpc-event-deserializer.ts'] }).subscribe({
   next: ({
     location: {
       start: { column, line },

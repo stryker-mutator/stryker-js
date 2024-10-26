@@ -50,8 +50,8 @@ export class StrykerCli {
     private readonly runMutationTest = async (options: PartialStrykerOptions) => new Stryker(options).runMutationTest(),
     private readonly runMutationTestingServer = async () => {
       const server = new StrykerServer();
-      const port = await server.configure();
-      console.log(JSON.stringify({ host: 'localhost', port }));
+      const port = await server.start();
+      console.log(JSON.stringify({ port }));
     },
   ) {}
 
