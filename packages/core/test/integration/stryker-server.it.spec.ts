@@ -7,7 +7,7 @@ import { JsonRpcEventDeserializer } from '../../src/utils/json-rpc-event-deseria
 import { ReplaySubject } from 'rxjs';
 import { expect } from 'chai';
 
-describe(StrykerServer.name, () => {
+describe.only(StrykerServer.name, () => {
   describe('on a happy flow project', () => {
     let sut: StrykerServer;
     let client: MutationServerClient;
@@ -111,7 +111,6 @@ class MutationServerClient {
 function cleanResults(results: MutationTestResult[]): MutationTestResult[] {
   return results.map((result) => ({
     files: Object.fromEntries(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       Object.entries(result.files).map(([key, value]) => [
         key,
         {
