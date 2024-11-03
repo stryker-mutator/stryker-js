@@ -39,42 +39,12 @@ Object {
           "id": "2",
           "location": Object {
             "end": Object {
-              "column": 2,
-              "line": 8,
-            },
-            "start": Object {
-              "column": 27,
-              "line": 6,
-            },
-          },
-          "mutatorName": "BlockStatement",
-          "replacement": "{}",
-        },
-        Object {
-          "id": "3",
-          "location": Object {
-            "end": Object {
-              "column": 15,
+              "column": 37,
               "line": 7,
             },
             "start": Object {
-              "column": 10,
-              "line": 7,
-            },
-          },
-          "mutatorName": "ArithmeticOperator",
-          "replacement": "a - b",
-        },
-        Object {
-          "id": "4",
-          "location": Object {
-            "end": Object {
               "column": 30,
-              "line": 10,
-            },
-            "start": Object {
-              "column": 23,
-              "line": 10,
+              "line": 7,
             },
           },
           "mutatorName": "StringLiteral",
@@ -85,7 +55,7 @@ Object {
     "src/index.html": Object {
       "mutants": Array [
         Object {
-          "id": "5",
+          "id": "3",
           "location": Object {
             "end": Object {
               "column": 29,
@@ -101,7 +71,47 @@ Object {
         },
       ],
     },
+    "src/math.js": Object {
+      "mutants": Array [
+        Object {
+          "id": "4",
+          "location": Object {
+            "end": Object {
+              "column": 2,
+              "line": 3,
+            },
+            "start": Object {
+              "column": 27,
+              "line": 1,
+            },
+          },
+          "mutatorName": "BlockStatement",
+          "replacement": "{}",
+        },
+        Object {
+          "id": "5",
+          "location": Object {
+            "end": Object {
+              "column": 15,
+              "line": 2,
+            },
+            "start": Object {
+              "column": 10,
+              "line": 2,
+            },
+          },
+          "mutatorName": "ArithmeticOperator",
+          "replacement": "a - b",
+        },
+      ],
+    },
   },
+}
+`;
+
+exports[`StrykerServer on a happy flow project should be able to discover mutants based on a list of files 1`] = `
+Object {
+  "files": Object {},
 }
 `;
 
@@ -163,70 +173,14 @@ Array [
         "mutants": Array [
           Object {
             "id": "2",
-            "killedBy": Array [
-              "all",
-            ],
             "location": Object {
               "end": Object {
-                "column": 2,
-                "line": 8,
-              },
-              "start": Object {
-                "column": 27,
-                "line": 6,
-              },
-            },
-            "mutatorName": "BlockStatement",
-            "replacement": "{}",
-            "status": "Killed",
-            "testsCompleted": 1,
-          },
-        ],
-      },
-    },
-  },
-  Object {
-    "files": Object {
-      "src/app.js": Object {
-        "mutants": Array [
-          Object {
-            "id": "3",
-            "killedBy": Array [
-              "all",
-            ],
-            "location": Object {
-              "end": Object {
-                "column": 15,
+                "column": 37,
                 "line": 7,
               },
               "start": Object {
-                "column": 10,
-                "line": 7,
-              },
-            },
-            "mutatorName": "ArithmeticOperator",
-            "replacement": "a - b",
-            "status": "Killed",
-            "testsCompleted": 1,
-          },
-        ],
-      },
-    },
-  },
-  Object {
-    "files": Object {
-      "src/app.js": Object {
-        "mutants": Array [
-          Object {
-            "id": "4",
-            "location": Object {
-              "end": Object {
                 "column": 30,
-                "line": 10,
-              },
-              "start": Object {
-                "column": 23,
-                "line": 10,
+                "line": 7,
               },
             },
             "mutatorName": "StringLiteral",
@@ -243,7 +197,7 @@ Array [
       "src/index.html": Object {
         "mutants": Array [
           Object {
-            "id": "5",
+            "id": "3",
             "location": Object {
               "end": Object {
                 "column": 29,
@@ -257,6 +211,62 @@ Array [
             "mutatorName": "StringLiteral",
             "replacement": "\`\`",
             "status": "Survived",
+            "testsCompleted": 1,
+          },
+        ],
+      },
+    },
+  },
+  Object {
+    "files": Object {
+      "src/math.js": Object {
+        "mutants": Array [
+          Object {
+            "id": "4",
+            "killedBy": Array [
+              "all",
+            ],
+            "location": Object {
+              "end": Object {
+                "column": 2,
+                "line": 3,
+              },
+              "start": Object {
+                "column": 27,
+                "line": 1,
+              },
+            },
+            "mutatorName": "BlockStatement",
+            "replacement": "{}",
+            "status": "Killed",
+            "testsCompleted": 1,
+          },
+        ],
+      },
+    },
+  },
+  Object {
+    "files": Object {
+      "src/math.js": Object {
+        "mutants": Array [
+          Object {
+            "id": "5",
+            "killedBy": Array [
+              "all",
+            ],
+            "location": Object {
+              "end": Object {
+                "column": 15,
+                "line": 2,
+              },
+              "start": Object {
+                "column": 10,
+                "line": 2,
+              },
+            },
+            "mutatorName": "ArithmeticOperator",
+            "replacement": "a - b",
+            "status": "Killed",
             "testsCompleted": 1,
           },
         ],

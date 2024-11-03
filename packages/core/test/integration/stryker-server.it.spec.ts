@@ -23,6 +23,10 @@ describe.only(StrykerServer.name, () => {
       expect(await client.discover()).matchSnapshot();
     });
 
+    it.only('should be able to discover mutants based on a list of files', async () => {
+      expect(await client.discover({ files: ['src/add.js'] })).matchSnapshot();
+    });
+
     it('should be able to run mutation tests', async () => {
       const results: MutationTestResult[] = [];
       client.mutationTestResult$.subscribe((result) => results.push(result));
