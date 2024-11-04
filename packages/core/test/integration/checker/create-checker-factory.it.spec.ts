@@ -34,7 +34,7 @@ describe(`${createCheckerFactory.name} integration`, () => {
     const port = await loggingServer.listen();
     loggingContext = { port, level: LogLevel.Trace };
     createSut = testInjector.injector
-      .provideValue(coreTokens.loggingContext, loggingContext)
+      .provideValue(coreTokens.loggingServerAddress, loggingContext)
       .provideValue(coreTokens.pluginModulePaths, pluginModulePaths)
       .provideClass(coreTokens.workerIdGenerator, IdGenerator)
       .injectFunction(createCheckerFactory);

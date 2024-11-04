@@ -45,7 +45,7 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
     alreadyDisposed = false;
     createSut = testInjector.injector
       .provideValue(coreTokens.sandbox, { workingDirectory: path.dirname(fileURLToPath(import.meta.url)) })
-      .provideValue(coreTokens.loggingContext, loggingContext)
+      .provideValue(coreTokens.loggingServerAddress, loggingContext)
       .provideValue(coreTokens.pluginModulePaths, pluginModulePaths)
       .provideClass(coreTokens.workerIdGenerator, IdGenerator)
       .injectFunction(createTestRunnerFactory);

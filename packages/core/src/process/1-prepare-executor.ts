@@ -19,10 +19,19 @@ import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
 import { FileSystem, ProjectReader } from '../fs/index.js';
 
 import { MutantInstrumenterContext } from './index.js';
+import { LoggingBackend } from '../logging-new/logging-backend.js';
+
+export interface PrepareExecutorContext extends BaseContext {
+  [coreTokens.loggingSink]: LoggingBackend;
+  [coreTokens.loggingServerAddress]: { port: number };
+}
 
 export class PrepareExecutor {
-  public static readonly inject = tokens(commonTokens.injector);
-  constructor(private readonly injector: Injector<BaseContext>) {}
+  public static readonly inject = tokens(commonTokens.injector, coreTokens.loggingSink);
+  constructor(
+    private readonly injector: Injector<PrepareExecutorContext>,
+    private readonly loggingBackend: LoggingBackend,
+  ) {}
 
   public async execute(cliOptions: PartialStrykerOptions): Promise<Injector<MutantInstrumenterContext>> {
     // greedy initialize, so the time starts immediately
@@ -30,6 +39,12 @@ export class PrepareExecutor {
 
     // Already configure the logger, so next classes can use
     LogConfigurator.configureMainProcess(cliOptions.logLevel, cliOptions.fileLogLevel, cliOptions.allowConsoleColors);
+    if (cliOptions.logLevel) {
+      this.loggingBackend.activeStdoutLevel = cliOptions.logLevel;
+    }
+    if (cliOptions.fileLogLevel) {
+      this.loggingBackend.activeFileLevel = cliOptions.fileLogLevel;
+    }
 
     // Read the config file
     const configReaderInjector = this.injector
@@ -54,7 +69,9 @@ export class PrepareExecutor {
     deepFreeze(options);
 
     // Final logging configuration, open the logging server
-    const loggingContext = await LogConfigurator.configureLoggingServer(options.logLevel, options.fileLogLevel, options.allowConsoleColors);
+    // const loggingContext = await LogConfigurator.configureLoggingServer(options.logLevel, options.fileLogLevel, options.allowConsoleColors);
+    this.loggingBackend.activeFileLevel = options.fileLogLevel;
+    this.loggingBackend.activeStdoutLevel = options.logLevel;
 
     // Resolve input files
     const projectFileReaderInjector = optionsValidatorInjector
@@ -76,7 +93,6 @@ export class PrepareExecutor {
         .provideClass(coreTokens.reporter, BroadcastReporter)
         .provideValue(coreTokens.timer, timer)
         .provideValue(coreTokens.project, project)
-        .provideValue(coreTokens.loggingContext, loggingContext)
         .provideValue(coreTokens.execa, execaCommand)
         .provideValue(coreTokens.process, process)
         .provideClass(coreTokens.unexpectedExitRegistry, UnexpectedExitHandler)

@@ -15,12 +15,13 @@ import { ChildProcessTestRunnerProxy } from './child-process-test-runner-proxy.j
 import { CommandTestRunner } from './command-test-runner.js';
 import { MaxTestRunnerReuseDecorator } from './max-test-runner-reuse-decorator.js';
 import { ReloadEnvironmentDecorator } from './reload-environment-decorator.js';
+import { minPriority } from '../logging-new/priority.js';
 
 createTestRunnerFactory.inject = tokens(
   commonTokens.options,
   commonTokens.fileDescriptions,
   coreTokens.sandbox,
-  coreTokens.loggingContext,
+  coreTokens.loggingServerAddress,
   commonTokens.getLogger,
   coreTokens.pluginModulePaths,
   coreTokens.workerIdGenerator,
@@ -29,7 +30,7 @@ export function createTestRunnerFactory(
   options: StrykerOptions,
   fileDescriptions: FileDescriptions,
   sandbox: Pick<Sandbox, 'workingDirectory'>,
-  loggingContext: LoggingClientContext,
+  { port }: { port: number },
   getLogger: LoggerFactoryMethod,
   pluginModulePaths: readonly string[],
   idGenerator: IdGenerator,
@@ -50,7 +51,7 @@ export function createTestRunnerFactory(
                         options,
                         fileDescriptions,
                         sandbox.workingDirectory,
-                        loggingContext,
+                        { port, level: minPriority(options.logLevel, options.fileLogLevel) },
                         pluginModulePaths,
                         getLogger(ChildProcessTestRunnerProxy.name),
                         idGenerator,

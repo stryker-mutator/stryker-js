@@ -140,7 +140,7 @@ describe(PrepareExecutor.name, () => {
     testInjector.options.allowConsoleColors = true;
     await sut.execute(cliOptions);
     expect(configureLoggingServerStub).calledWithExactly(LogLevel.Information, LogLevel.Trace, true);
-    expect(injectorMock.provideValue).calledWithExactly(coreTokens.loggingContext, expectedLoggingContext);
+    expect(injectorMock.provideValue).calledWithExactly(coreTokens.loggingServerAddress, expectedLoggingContext);
   });
 
   it('should resolve input files', async () => {
