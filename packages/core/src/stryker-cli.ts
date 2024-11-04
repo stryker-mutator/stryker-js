@@ -6,7 +6,6 @@ import { Command } from 'commander';
 import { MutantResult, DashboardOptions, ALL_REPORT_TYPES, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
 import { initializerFactory } from './initializer/index.js';
-import { LogConfigurator } from './logging/index.js';
 import { Stryker } from './stryker.js';
 import { defaultOptions } from './config/index.js';
 import { strykerEngines, strykerVersion } from './stryker-package.js';
@@ -192,7 +191,6 @@ export class StrykerCli {
 
     // Earliest opportunity to configure the log level based on the logLevel argument
     const options: PartialStrykerOptions = this.program.opts();
-    LogConfigurator.configureMainProcess(options.logLevel);
 
     // Cleanup commander state
     delete options.version;
@@ -208,7 +206,7 @@ export class StrykerCli {
     }
 
     const commands = {
-      init: () => initializerFactory().initialize(),
+      init: async () => (await initializerFactory()).initialize(),
       run: () => this.runMutationTest(options),
     };
 

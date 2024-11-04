@@ -5,7 +5,6 @@ import { deepFreeze } from '@stryker-mutator/util';
 import { execaCommand } from 'execa';
 
 import { ConfigReader } from '../config/config-reader.js';
-import { LogConfigurator } from '../logging/index.js';
 import { coreTokens, PluginCreator } from '../di/index.js';
 import { TemporaryDirectory } from '../utils/temporary-directory.js';
 import { ConfigError } from '../errors.js';
@@ -19,11 +18,11 @@ import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
 import { FileSystem, ProjectReader } from '../fs/index.js';
 
 import { MutantInstrumenterContext } from './index.js';
-import { LoggingBackend } from '../logging-new/logging-backend.js';
+import { LoggingBackend, LoggingServerAddress } from '../logging/index.js';
 
 export interface PrepareExecutorContext extends BaseContext {
   [coreTokens.loggingSink]: LoggingBackend;
-  [coreTokens.loggingServerAddress]: { port: number };
+  [coreTokens.loggingServerAddress]: LoggingServerAddress;
 }
 
 export class PrepareExecutor {
@@ -37,14 +36,8 @@ export class PrepareExecutor {
     // greedy initialize, so the time starts immediately
     const timer = new Timer();
 
-    // Already configure the logger, so next classes can use
-    LogConfigurator.configureMainProcess(cliOptions.logLevel, cliOptions.fileLogLevel, cliOptions.allowConsoleColors);
-    if (cliOptions.logLevel) {
-      this.loggingBackend.activeStdoutLevel = cliOptions.logLevel;
-    }
-    if (cliOptions.fileLogLevel) {
-      this.loggingBackend.activeFileLevel = cliOptions.fileLogLevel;
-    }
+    // Already configure the logger, so next classes can use them
+    this.loggingBackend.configure(cliOptions);
 
     // Read the config file
     const configReaderInjector = this.injector
@@ -68,10 +61,8 @@ export class PrepareExecutor {
     // Done reading config, deep freeze it so it won't change unexpectedly
     deepFreeze(options);
 
-    // Final logging configuration, open the logging server
-    // const loggingContext = await LogConfigurator.configureLoggingServer(options.logLevel, options.fileLogLevel, options.allowConsoleColors);
-    this.loggingBackend.activeFileLevel = options.fileLogLevel;
-    this.loggingBackend.activeStdoutLevel = options.logLevel;
+    // Final logging configuration, update the logging configuration with the latest results
+    this.loggingBackend.configure(options);
 
     // Resolve input files
     const projectFileReaderInjector = optionsValidatorInjector

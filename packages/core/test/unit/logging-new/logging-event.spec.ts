@@ -1,5 +1,5 @@
 import { LogLevel } from '@stryker-mutator/api/core';
-import { LoggingEvent } from '../../../src/logging-new/logging-event.js';
+import { LoggingEvent } from '../../../src/logging/logging-event.js';
 import { expect } from 'chai';
 import { escapeRegExp } from '@stryker-mutator/util';
 

@@ -6,6 +6,10 @@ import { Disposable } from '@stryker-mutator/api/plugin';
 import { promisify } from 'node:util';
 import { LogLevel } from '@stryker-mutator/api/core';
 
+export interface LoggingServerAddress {
+  port: number;
+}
+
 export const DELIMITER = '__STRYKER_CORE__';
 
 export class LoggingServer implements Disposable {
@@ -32,9 +36,9 @@ export class LoggingServer implements Disposable {
   }
 
   public listen() {
-    return new Promise<number>((res) => {
+    return new Promise<LoggingServerAddress>((res) => {
       this.#server.listen(() => {
-        res((this.#server.address() as net.AddressInfo).port);
+        res({ port: (this.#server.address() as net.AddressInfo).port });
       });
     });
   }

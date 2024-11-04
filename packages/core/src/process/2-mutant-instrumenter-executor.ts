@@ -7,7 +7,6 @@ import { I } from '@stryker-mutator/util';
 
 import { coreTokens, PluginCreator } from '../di/index.js';
 import { Sandbox } from '../sandbox/sandbox.js';
-import { LoggingClientContext } from '../logging/index.js';
 import { ConcurrencyTokenProvider, createCheckerPool } from '../concurrent/index.js';
 import { createCheckerFactory } from '../checker/index.js';
 import { createPreprocessor } from '../sandbox/index.js';

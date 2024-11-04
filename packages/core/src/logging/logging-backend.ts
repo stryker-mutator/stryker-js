@@ -1,10 +1,10 @@
 import fs from 'fs';
-import { LogLevel } from '@stryker-mutator/api/core';
+import { LogLevel, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { LoggingEvent } from './logging-event.js';
 import { Disposable } from 'typed-inject';
 import { promisify } from 'util';
 import { LoggingSink } from './logging-sink.js';
-import { logLevelPriority } from './priority.js';
+import { logLevelPriority, minPriority } from './priority.js';
 
 const LOG_FILE_NAME = 'stryker.log';
 
@@ -28,7 +28,27 @@ export class LoggingBackend implements LoggingSink, Disposable {
 
   isEnabled(level: LogLevel) {
     const priority = logLevelPriority[level];
-    return priority >= logLevelPriority[this.activeStdoutLevel] || priority >= logLevelPriority[this.activeFileLevel];
+    return priority >= this.priority;
+  }
+
+  get activeLogLevel() {
+    return minPriority(this.activeStdoutLevel, this.activeFileLevel);
+  }
+
+  get priority() {
+    return logLevelPriority[this.activeLogLevel];
+  }
+
+  configure({ logLevel, fileLogLevel, allowConsoleColors }: PartialStrykerOptions) {
+    if (logLevel) {
+      this.activeStdoutLevel = logLevel;
+    }
+    if (fileLogLevel) {
+      this.activeFileLevel = fileLogLevel;
+    }
+    if (allowConsoleColors !== undefined) {
+      this.showColors = allowConsoleColors;
+    }
   }
 
   #_fileStream?: fs.WriteStream;

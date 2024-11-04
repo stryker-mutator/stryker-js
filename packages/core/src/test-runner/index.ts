@@ -3,7 +3,7 @@ import { FileDescriptions, StrykerOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 
-import { LoggingClientContext } from '../logging/index.js';
+import { LoggingServerAddress } from '../logging/index.js';
 import { coreTokens } from '../di/index.js';
 import { Sandbox } from '../sandbox/sandbox.js';
 
@@ -15,7 +15,6 @@ import { ChildProcessTestRunnerProxy } from './child-process-test-runner-proxy.j
 import { CommandTestRunner } from './command-test-runner.js';
 import { MaxTestRunnerReuseDecorator } from './max-test-runner-reuse-decorator.js';
 import { ReloadEnvironmentDecorator } from './reload-environment-decorator.js';
-import { minPriority } from '../logging-new/priority.js';
 
 createTestRunnerFactory.inject = tokens(
   commonTokens.options,
@@ -30,7 +29,7 @@ export function createTestRunnerFactory(
   options: StrykerOptions,
   fileDescriptions: FileDescriptions,
   sandbox: Pick<Sandbox, 'workingDirectory'>,
-  { port }: { port: number },
+  loggingServerAddress: LoggingServerAddress,
   getLogger: LoggerFactoryMethod,
   pluginModulePaths: readonly string[],
   idGenerator: IdGenerator,
@@ -51,7 +50,7 @@ export function createTestRunnerFactory(
                         options,
                         fileDescriptions,
                         sandbox.workingDirectory,
-                        { port, level: minPriority(options.logLevel, options.fileLogLevel) },
+                        loggingServerAddress,
                         pluginModulePaths,
                         getLogger(ChildProcessTestRunnerProxy.name),
                         idGenerator,

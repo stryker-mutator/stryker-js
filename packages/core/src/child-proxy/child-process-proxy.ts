@@ -7,7 +7,7 @@ import { isErrnoException, Task, ExpirableTask, StrykerError } from '@stryker-mu
 import log4js from 'log4js';
 import { Disposable, InjectableClass, InjectionToken } from 'typed-inject';
 
-import { LoggingClientContext } from '../logging/index.js';
+import { LoggingServerAddress } from '../logging/index.js';
 import { objectUtils } from '../utils/object-utils.js';
 import { StringBuilder } from '../utils/string-builder.js';
 import { deserialize, padLeft, serialize } from '../utils/string-utils.js';
@@ -48,7 +48,7 @@ export class ChildProcessProxy<T> implements Disposable {
   private constructor(
     modulePath: string,
     namedExport: string,
-    loggingContext: LoggingClientContext,
+    loggingServerAddress: LoggingServerAddress,
     options: StrykerOptions,
     fileDescriptions: FileDescriptions,
     pluginModulePaths: readonly string[],
@@ -76,7 +76,7 @@ export class ChildProcessProxy<T> implements Disposable {
 
     this.initMessage = {
       kind: WorkerMessageKind.Init,
-      loggingContext,
+      loggingServerAddress,
       options,
       fileDescriptions,
       pluginModulePaths,
@@ -95,7 +95,7 @@ export class ChildProcessProxy<T> implements Disposable {
    */
   public static create<R, Tokens extends Array<InjectionToken<ChildProcessContext>>>(
     modulePath: string,
-    loggingContext: LoggingClientContext,
+    loggingServerAddress: LoggingServerAddress,
     options: StrykerOptions,
     fileDescriptions: FileDescriptions,
     pluginModulePaths: readonly string[],
@@ -107,7 +107,7 @@ export class ChildProcessProxy<T> implements Disposable {
     return new ChildProcessProxy(
       modulePath,
       injectableClass.name,
-      loggingContext,
+      loggingServerAddress,
       options,
       fileDescriptions,
       pluginModulePaths,

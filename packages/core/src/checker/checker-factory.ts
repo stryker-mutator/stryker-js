@@ -9,7 +9,7 @@ import { coreTokens } from '../di/index.js';
 import { CheckerChildProcessProxy } from './checker-child-process-proxy.js';
 import { CheckerFacade } from './checker-facade.js';
 import { CheckerRetryDecorator } from './checker-retry-decorator.js';
-import { minPriority } from '../logging-new/priority.js';
+import { LoggingServerAddress } from '../logging/index.js';
 
 createCheckerFactory.inject = tokens(
   commonTokens.options,
@@ -22,7 +22,7 @@ createCheckerFactory.inject = tokens(
 export function createCheckerFactory(
   options: StrykerOptions,
   fileDescriptions: FileDescriptions,
-  { port }: { port: number },
+  loggingServerAddress: LoggingServerAddress,
   pluginModulePaths: readonly string[],
   getLogger: LoggerFactoryMethod,
   idGenerator: IdGenerator,
@@ -31,14 +31,7 @@ export function createCheckerFactory(
     new CheckerFacade(
       () =>
         new CheckerRetryDecorator(
-          () =>
-            new CheckerChildProcessProxy(
-              options,
-              fileDescriptions,
-              pluginModulePaths,
-              { port, level: minPriority(options.logLevel, options.fileLogLevel) },
-              idGenerator,
-            ),
+          () => new CheckerChildProcessProxy(options, fileDescriptions, pluginModulePaths, loggingServerAddress, idGenerator),
           getLogger(CheckerRetryDecorator.name),
         ),
     );

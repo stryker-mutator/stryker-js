@@ -1,6 +1,6 @@
 import { FileDescriptions, StrykerOptions } from '@stryker-mutator/api/core';
 
-import { LoggingClientContext } from '../logging/index.js';
+import type { LoggingServerAddress } from '../logging/index.js';
 
 export enum WorkerMessageKind {
   Init,
@@ -44,7 +44,7 @@ export type ParentMessage =
 
 export interface InitMessage {
   kind: WorkerMessageKind.Init;
-  loggingContext: LoggingClientContext;
+  loggingServerAddress: LoggingServerAddress;
   options: StrykerOptions;
   fileDescriptions: FileDescriptions;
   pluginModulePaths: readonly string[];

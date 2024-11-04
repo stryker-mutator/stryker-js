@@ -4,10 +4,10 @@ import { LoggingSink } from './logging-sink.js';
 import { LoggerImpl } from './logger-impl.js';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { coreTokens } from '../di/index.js';
-import { LoggingServer } from './logging-server.js';
+import { LoggingServer, LoggingServerAddress } from './logging-server.js';
 import { LoggingBackend } from './logging-backend.js';
 import { LoggingClient } from './logging-client.js';
-import { LoggingClientContext } from '../logging/logging-client-context.js';
+import { LogLevel } from '@stryker-mutator/api/core';
 
 function getLoggerFactory(loggingSink: LoggingSink) {
   return (categoryName?: string): Logger => new LoggerImpl(categoryName ?? 'UNKNOWN', loggingSink);
@@ -30,15 +30,18 @@ provideLogging.inject = [coreTokens.loggingSink, commonTokens.injector] as const
 
 export async function provideLoggingBackend(injector: Injector) {
   const out = injector.provideClass(coreTokens.loggingSink, LoggingBackend).provideClass('loggingServer', LoggingServer);
-  const loggingPort = await out.resolve('loggingServer').listen();
-  return out.provideValue(coreTokens.loggingServerAddress, { port: loggingPort });
+  const loggingServerAddress = await out.resolve('loggingServer').listen();
+  return out.provideValue(coreTokens.loggingServerAddress, loggingServerAddress);
 }
 provideLoggingBackend.inject = [commonTokens.injector] as const;
 
 export type LoggingProvider = ReturnType<typeof provideLogging>;
 
-export async function provideLoggingClient(injector: Injector, loggingClientContext: LoggingClientContext) {
-  const out = injector.provideValue(coreTokens.loggingContext, loggingClientContext).provideClass(coreTokens.loggingSink, LoggingClient);
+export async function provideLoggingClient(injector: Injector, loggingServerAddress: LoggingServerAddress, activeLogLevel: LogLevel) {
+  const out = injector
+    .provideValue(coreTokens.loggingServerAddress, loggingServerAddress)
+    .provideValue(coreTokens.loggerActiveLevel, activeLogLevel)
+    .provideClass(coreTokens.loggingSink, LoggingClient);
   await out.resolve(coreTokens.loggingSink).openConnection();
   return out;
 }

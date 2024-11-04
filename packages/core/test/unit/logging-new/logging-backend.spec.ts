@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import fs, { WriteStream } from 'fs';
-import { LoggingBackend } from '../../../src/logging-new/logging-backend.js';
-import { LoggingEvent } from '../../../src/logging-new/logging-event.js';
+import { LoggingBackend } from '../../../src/logging/logging-backend.js';
+import { LoggingEvent } from '../../../src/logging/logging-event.js';
 import { LogLevel } from '@stryker-mutator/api/core';
 import { Writable } from 'stream';
 

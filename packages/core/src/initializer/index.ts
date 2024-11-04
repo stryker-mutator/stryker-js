@@ -1,11 +1,8 @@
 import { createInjector } from 'typed-inject';
 import { execaCommand, execaCommandSync } from 'execa';
 import { resolveFromCwd } from '@stryker-mutator/util';
-import { LogLevel } from '@stryker-mutator/api/core';
 
 import { coreTokens, provideLogger } from '../di/index.js';
-
-import { LogConfigurator } from '../logging/index.js';
 
 import * as initializerTokens from './initializer-tokens.js';
 import { NpmClient } from './npm-client.js';
@@ -15,10 +12,10 @@ import { StrykerInquirer } from './stryker-inquirer.js';
 import { createInitializers } from './custom-initializers/index.js';
 import { GitignoreWriter } from './gitignore-writer.js';
 import { createNpmRegistryClient, getRegistry } from './npm-registry.js';
+import { provideLoggingBackend } from '../logging/index.js';
 
-export function initializerFactory(): StrykerInitializer {
-  LogConfigurator.configureMainProcess(LogLevel.Information);
-  return provideLogger(createInjector())
+export async function initializerFactory(): Promise<StrykerInitializer> {
+  return provideLogger(await provideLoggingBackend(createInjector()))
     .provideValue(initializerTokens.out, console.log)
     .provideValue(coreTokens.execa, execaCommand)
     .provideValue(coreTokens.execaSync, execaCommandSync)

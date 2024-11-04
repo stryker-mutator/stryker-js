@@ -7,7 +7,7 @@ import { ExpirableTask } from '@stryker-mutator/util';
 
 import { ChildProcessCrashedError } from '../child-proxy/child-process-crashed-error.js';
 import { ChildProcessProxy } from '../child-proxy/child-process-proxy.js';
-import { LoggingClientContext } from '../logging/index.js';
+import { LoggingServerAddress } from '../logging/index.js';
 
 import { IdGenerator } from '../child-proxy/id-generator.js';
 
@@ -25,14 +25,14 @@ export class ChildProcessTestRunnerProxy implements TestRunner {
     options: StrykerOptions,
     fileDescriptions: FileDescriptions,
     sandboxWorkingDirectory: string,
-    loggingContext: LoggingClientContext,
+    loggingServerAddress: LoggingServerAddress,
     pluginModulePaths: readonly string[],
     private readonly log: Logger,
     idGenerator: IdGenerator,
   ) {
     this.worker = ChildProcessProxy.create(
       new URL('./child-process-test-runner-worker.js', import.meta.url).toString(),
-      loggingContext,
+      loggingServerAddress,
       options,
       fileDescriptions,
       pluginModulePaths,

@@ -1,7 +1,6 @@
 import net from 'net';
 import { Disposable } from '@stryker-mutator/api/plugin';
-import { LoggingSink } from './logging-sink.js';
-import { LoggingClientContext } from '../logging/logging-client-context.js';
+import { LoggingServerAddress, LoggingSink } from '../logging/index.js';
 import { LogLevel } from '@stryker-mutator/api/core';
 import { LoggingEvent } from './logging-event.js';
 import { promisify } from 'util';
@@ -12,12 +11,15 @@ import { coreTokens } from '../di/index.js';
 export class LoggingClient implements LoggingSink, Disposable {
   #socket?: net.Socket;
 
-  static readonly inject = [coreTokens.loggingContext] as const;
-  constructor(private loggingClientContext: LoggingClientContext) {}
+  static readonly inject = [coreTokens.loggerActiveLevel, coreTokens.loggingServerAddress] as const;
+  constructor(
+    private logLevel: LogLevel,
+    private loggingServerAddress: LoggingServerAddress,
+  ) {}
 
   openConnection() {
     return new Promise<void>((res, rej) => {
-      this.#socket = net.createConnection(this.loggingClientContext.port, 'localhost', () => {
+      this.#socket = net.createConnection(this.loggingServerAddress.port, 'localhost', () => {
         res();
       });
       this.#socket.on('error', (error) => {
@@ -37,7 +39,7 @@ export class LoggingClient implements LoggingSink, Disposable {
     }
   }
   isEnabled(level: LogLevel): boolean {
-    return logLevelPriority[level] >= logLevelPriority[this.loggingClientContext.level];
+    return logLevelPriority[level] >= logLevelPriority[this.logLevel];
   }
 
   async dispose(): Promise<void> {
