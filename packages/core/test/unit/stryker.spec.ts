@@ -6,7 +6,6 @@ import { PartialStrykerOptions, LogLevel, MutantResult } from '@stryker-mutator/
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 
-import { LogConfigurator } from '../../src/logging/index.js';
 import { Stryker } from '../../src/stryker.js';
 import { PrepareExecutor, MutantInstrumenterExecutor, DryRunExecutor, MutationTestExecutor, MutationTestContext } from '../../src/process/index.js';
 import { coreTokens } from '../../src/di/index.js';

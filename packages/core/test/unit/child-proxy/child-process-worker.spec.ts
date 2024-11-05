@@ -20,7 +20,6 @@ import {
   WorkerMessageKind,
   WorkResult,
 } from '../../../src/child-proxy/message-protocol.js';
-import { LogConfigurator, LoggingClientContext } from '../../../src/logging/index.js';
 import { serialize } from '../../../src/utils/string-utils.js';
 import { currentLogMock } from '../../helpers/log-mock.js';
 import { Mock } from '../../helpers/producers.js';

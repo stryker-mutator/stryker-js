@@ -11,7 +11,7 @@ import { frameworkPluginsFileUrl } from '@stryker-mutator/instrumenter';
 
 import { MutantInstrumenterContext, PrepareExecutor } from '../../../src/process/index.js';
 import { coreTokens, PluginLoader, LoadedPlugins } from '../../../src/di/index.js';
-import { LogConfigurator, LoggingClientContext } from '../../../src/logging/index.js';
+import { LoggingServerAddress } from '../../../src/logging/index.js';
 import { Project, ProjectReader } from '../../../src/fs/index.js';
 import { TemporaryDirectory } from '../../../src/utils/temporary-directory.js';
 import { ConfigError } from '../../../src/errors.js';
