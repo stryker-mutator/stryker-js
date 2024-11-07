@@ -19,10 +19,9 @@ export class LoggingClient implements LoggingSink, Disposable {
 
   openConnection() {
     return new Promise<void>((res, rej) => {
-      this.#socket = net.createConnection(this.loggingServerAddress.port, 'localhost', () => {
-        res();
-      });
+      this.#socket = net.createConnection(this.loggingServerAddress.port, 'localhost', res);
       this.#socket.on('error', (error) => {
+        console.error('Error occurred in logging client', error);
         rej(error);
       });
     });
@@ -34,7 +33,7 @@ export class LoggingClient implements LoggingSink, Disposable {
         `Cannot use the logging client before it is connected, please call '${LoggingClient.name}.prototype.${LoggingClient.prototype.openConnection.name}' first`,
       );
     }
-    if (this.isEnabled(event.level)) {
+    if (this.isEnabled(event.level) && this.#socket.writable) {
       this.#socket.write(JSON.stringify(event.serialize()) + DELIMITER);
     }
   }

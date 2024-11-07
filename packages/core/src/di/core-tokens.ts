@@ -16,6 +16,7 @@ export const timeOverheadMS = 'timeOverheadMS';
 export const loggingServerAddress = 'loggingServerAddress';
 export const loggerActiveLevel = 'loggerActiveLevel';
 export const loggingSink = 'loggingSink';
+export const loggingServer = 'loggingServer';
 export const mutationTestReportHelper = 'mutationTestReportHelper';
 export const sandbox = 'sandbox';
 export const concurrencyTokenProvider = 'concurrencyTokenProvider';

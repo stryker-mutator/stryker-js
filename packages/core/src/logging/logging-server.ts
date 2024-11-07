@@ -18,7 +18,7 @@ export class LoggingServer implements Disposable {
 
   constructor(private readonly loggingSink: LoggingSink) {
     this.#server = net.createServer((socket) => {
-      socket.setEncoding('utf8');
+      socket.setEncoding('utf-8');
       let dataSoFar = '';
       socket.on('data', (data: string) => {
         dataSoFar += data;

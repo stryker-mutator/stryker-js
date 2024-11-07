@@ -4,7 +4,7 @@ import { LoggerImpl } from '../../../src/logging/logger-impl.js';
 import { expect } from 'chai';
 import { LogLevel } from '@stryker-mutator/api/core';
 
-describe.only(LoggerImpl.name, () => {
+describe(LoggerImpl.name, () => {
   let loggingBackendMock: sinon.SinonStubbedInstance<LoggingSink>;
   let sut: LoggerImpl;
 

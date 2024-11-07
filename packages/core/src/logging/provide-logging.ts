@@ -29,8 +29,9 @@ export function provideLogging<T extends { [coreTokens.loggingSink]: LoggingSink
 provideLogging.inject = [coreTokens.loggingSink, commonTokens.injector] as const;
 
 export async function provideLoggingBackend(injector: Injector) {
-  const out = injector.provideClass(coreTokens.loggingSink, LoggingBackend).provideClass('loggingServer', LoggingServer);
-  const loggingServerAddress = await out.resolve('loggingServer').listen();
+  const out = injector.provideClass(coreTokens.loggingSink, LoggingBackend).provideClass(coreTokens.loggingServer, LoggingServer);
+  const loggingServer = out.resolve(coreTokens.loggingServer);
+  const loggingServerAddress = await loggingServer.listen();
   return out.provideValue(coreTokens.loggingServerAddress, loggingServerAddress);
 }
 provideLoggingBackend.inject = [commonTokens.injector] as const;
