@@ -11,14 +11,15 @@ import { PrepareExecutor, MutantInstrumenterExecutor, DryRunExecutor, MutationTe
 import { coreTokens } from '../../src/di/index.js';
 import { ConfigError } from '../../src/errors.js';
 import { TemporaryDirectory } from '../../src/utils/temporary-directory.js';
+import { LoggingServer } from '../../src/logging/logging-server.js';
 
 describe(Stryker.name, () => {
   let sut: Stryker;
-  let shutdownLoggingStub: sinon.SinonStub;
-  let injectorMock: sinon.SinonStubbedInstance<typedInject.Injector<MutationTestContext>>;
+  let injectorMock: sinon.SinonStubbedInstance<typedInject.Injector<MutationTestContext & { [coreTokens.loggingServer]: LoggingServer }>>;
   let cliOptions: PartialStrykerOptions;
   let mutantResults: MutantResult[];
   let loggerMock: sinon.SinonStubbedInstance<Logger>;
+  let loggingServerMock: sinon.SinonStubbedInstance<LoggingServer>;
   let temporaryDirectoryMock: sinon.SinonStubbedInstance<TemporaryDirectory>;
   let getLoggerStub: sinon.SinonStub;
 
@@ -31,6 +32,7 @@ describe(Stryker.name, () => {
     injectorMock = factory.injector();
     loggerMock = factory.logger();
     getLoggerStub = sinon.stub();
+    loggingServerMock = sinon.createStubInstance(LoggingServer);
     mutantResults = [];
     temporaryDirectoryMock = sinon.createStubInstance(TemporaryDirectory);
     prepareExecutorMock = sinon.createStubInstance(PrepareExecutor);
@@ -52,7 +54,9 @@ describe(Stryker.name, () => {
       .withArgs(coreTokens.temporaryDirectory)
       .returns(temporaryDirectoryMock)
       .withArgs(commonTokens.options)
-      .returns(testInjector.options);
+      .returns(testInjector.options)
+      .withArgs(coreTokens.loggingServer)
+      .returns(loggingServerMock);
     getLoggerStub.returns(loggerMock);
 
     prepareExecutorMock.execute.resolves(injectorMock as typedInject.Injector<MutationTestContext>);
@@ -61,7 +65,6 @@ describe(Stryker.name, () => {
     mutationTestExecutorMock.execute.resolves(mutantResults);
 
     cliOptions = {};
-    shutdownLoggingStub = sinon.stub(LogConfigurator, 'shutdown');
   });
 
   describe('runMutationTest()', () => {
@@ -72,6 +75,10 @@ describe(Stryker.name, () => {
     it('should execute the preparations', async () => {
       await sut.runMutationTest();
       expect(prepareExecutorMock.execute).calledOnce;
+    });
+    it('should start the logging server', async () => {
+      await sut.runMutationTest();
+      sinon.assert.calledWithExactly(loggingServerMock.listen);
     });
     it('should execute the mutant instrumenter', async () => {
       await sut.runMutationTest();
@@ -189,20 +196,10 @@ describe(Stryker.name, () => {
       expect(injectorMock.dispose).called;
     });
 
-    it('should shut down the logging server', async () => {
-      await sut.runMutationTest();
-      expect(shutdownLoggingStub).called;
-    });
-
     it('should dispose the injector when actual mutation testing rejects', async () => {
       mutationTestExecutorMock.execute.rejects(new Error('Expected error for testing'));
       await expect(sut.runMutationTest()).rejected;
       expect(injectorMock.dispose).called;
-    });
-    it('should shut down the logging server when actual mutation testing rejects', async () => {
-      mutationTestExecutorMock.execute.rejects(new Error('Expected error for testing'));
-      await expect(sut.runMutationTest()).rejected;
-      expect(shutdownLoggingStub).called;
     });
   });
 });

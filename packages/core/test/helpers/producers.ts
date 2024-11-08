@@ -2,7 +2,6 @@ import { CpuInfo } from 'os';
 import type { Dirent } from 'fs';
 
 import { ClearTextReporterOptions, Location, Mutant, schema } from '@stryker-mutator/api/core';
-import { Logger } from 'log4js';
 import sinon from 'sinon';
 import { ReplaySubject } from 'rxjs';
 import { TestRunner } from '@stryker-mutator/api/test-runner';
@@ -12,6 +11,8 @@ import { Pool, ConcurrencyTokenProvider } from '../../src/concurrent/index.js';
 import { CheckerFacade } from '../../src/checker/index.js';
 import { FileSystem } from '../../src/fs/file-system.js';
 import { TSConfig } from '../../src/sandbox/ts-config-preprocessor.js';
+import { LoggingSink } from '../../src/logging/logging-sink.js';
+import { Logger } from '@stryker-mutator/api/logging';
 
 export type Mutable<T> = {
   -readonly [K in keyof T]: T[K];
@@ -109,6 +110,13 @@ export const logger = (): sinon.SinonStubbedInstance<Logger> => {
     trace: sinon.stub(),
     warn: sinon.stub(),
   } as sinon.SinonStubbedInstance<Logger>;
+};
+
+export const loggingSink = (): sinon.SinonStubbedInstance<LoggingSink> => {
+  return {
+    log: sinon.stub(),
+    isEnabled: sinon.stub(),
+  };
 };
 
 export function createCpuInfo(overrides?: Partial<CpuInfo>): CpuInfo {

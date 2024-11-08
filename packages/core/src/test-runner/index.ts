@@ -35,16 +35,22 @@ export function createTestRunnerFactory(
   idGenerator: IdGenerator,
 ): () => TestRunner {
   if (CommandTestRunner.is(options.testRunner)) {
-    return () => new RetryRejectedDecorator(() => new TimeoutDecorator(() => new CommandTestRunner(sandbox.workingDirectory, options)));
+    return () =>
+      new RetryRejectedDecorator(
+        getLogger(RetryRejectedDecorator.name),
+        () => new TimeoutDecorator(getLogger(TimeoutDecorator.name), () => new CommandTestRunner(sandbox.workingDirectory, options)),
+      );
   } else {
     return () =>
       new RetryRejectedDecorator(
+        getLogger(RetryRejectedDecorator.name),
         () =>
           new ReloadEnvironmentDecorator(
             () =>
               new MaxTestRunnerReuseDecorator(
                 () =>
                   new TimeoutDecorator(
+                    getLogger(TimeoutDecorator.name),
                     () =>
                       new ChildProcessTestRunnerProxy(
                         options,
@@ -52,7 +58,7 @@ export function createTestRunnerFactory(
                         sandbox.workingDirectory,
                         loggingServerAddress,
                         pluginModulePaths,
-                        getLogger(ChildProcessTestRunnerProxy.name),
+                        getLogger,
                         idGenerator,
                       ),
                   ),

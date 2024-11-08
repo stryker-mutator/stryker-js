@@ -10,7 +10,7 @@ import {
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { factory } from '@stryker-mutator/test-helpers';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
 
 import { TimeoutDecorator } from '../../../src/test-runner/timeout-decorator.js';
 
@@ -28,7 +28,7 @@ describe(TimeoutDecorator.name, () => {
     testRunner1 = factory.testRunner();
     testRunner2 = factory.testRunner();
     availableTestRunners = [testRunner1, testRunner2];
-    sut = new TimeoutDecorator(() => availableTestRunners.shift() ?? expect.fail('test runners are empty'));
+    sut = new TimeoutDecorator(testInjector.logger, () => availableTestRunners.shift() ?? expect.fail('test runners are empty'));
   });
 
   afterEach(() => sandbox.restore());

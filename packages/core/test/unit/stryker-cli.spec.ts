@@ -7,17 +7,9 @@ import { guardMinimalNodeVersion, StrykerCli } from '../../src/stryker-cli.js';
 
 describe(StrykerCli.name, () => {
   let runMutationTestingStub: sinon.SinonStub;
-  let configureLoggerStub: sinon.SinonStub;
 
   beforeEach(() => {
     runMutationTestingStub = sinon.stub();
-    configureLoggerStub = sinon.stub(LogConfigurator, 'configureMainProcess');
-  });
-
-  it('should configure the logger with argument', () => {
-    runMutationTestingStub.resolves();
-    actRun(['--logLevel', 'error']);
-    expect(configureLoggerStub).calledWith('error');
   });
 
   it('should accept a config file as last argument', () => {

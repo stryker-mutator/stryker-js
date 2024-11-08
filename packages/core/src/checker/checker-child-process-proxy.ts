@@ -10,6 +10,7 @@ import { IdGenerator } from '../child-proxy/id-generator.js';
 import { CheckerWorker } from './checker-worker.js';
 import { CheckerResource } from './checker-resource.js';
 import { LoggingServerAddress } from '../logging/index.js';
+import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 
 export class CheckerChildProcessProxy implements CheckerResource, Disposable, Resource {
   private readonly childProcess: ChildProcessProxy<CheckerWorker>;
@@ -19,6 +20,7 @@ export class CheckerChildProcessProxy implements CheckerResource, Disposable, Re
     fileDescriptions: FileDescriptions,
     pluginModulePaths: readonly string[],
     loggingServerAddress: LoggingServerAddress,
+    getLogger: LoggerFactoryMethod,
     idGenerator: IdGenerator,
   ) {
     this.childProcess = ChildProcessProxy.create(
@@ -30,6 +32,7 @@ export class CheckerChildProcessProxy implements CheckerResource, Disposable, Re
       process.cwd(),
       CheckerWorker,
       options.checkerNodeArgs,
+      getLogger,
       idGenerator,
     );
   }

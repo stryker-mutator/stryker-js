@@ -18,10 +18,10 @@ import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
 import { FileSystem, ProjectReader } from '../fs/index.js';
 
 import { MutantInstrumenterContext } from './index.js';
-import { LoggingBackend, LoggingServerAddress } from '../logging/index.js';
+import { LoggingBackend, LoggingServerAddress, LoggingSink } from '../logging/index.js';
 
 export interface PrepareExecutorContext extends BaseContext {
-  [coreTokens.loggingSink]: LoggingBackend;
+  [coreTokens.loggingSink]: LoggingSink;
   [coreTokens.loggingServerAddress]: LoggingServerAddress;
 }
 
