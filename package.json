@@ -13,7 +13,7 @@
     "@types/istanbul": "0.4.34",
     "@types/karma": "6.3.9",
     "@types/mocha": "10.0.9",
-    "@types/node": "20.17.2",
+    "@types/node": "20.17.6",
     "@types/sinon": "17.0.3",
     "@types/sinon-chai": "4.0.0",
     "@types/source-map-support": "0.5.10",
