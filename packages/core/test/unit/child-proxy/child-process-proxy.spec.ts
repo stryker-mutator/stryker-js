@@ -3,9 +3,8 @@ import { EventEmitter } from 'events';
 import os from 'os';
 import { fileURLToPath, URL } from 'url';
 
-import { FileDescriptions, LogLevel, StrykerOptions } from '@stryker-mutator/api/core';
-import { Logger } from '@stryker-mutator/api/logging';
-import { factory, tick } from '@stryker-mutator/test-helpers';
+import { FileDescriptions, StrykerOptions } from '@stryker-mutator/api/core';
+import { factory, testInjector, tick } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
@@ -19,19 +18,16 @@ import {
   WorkerMessage,
   WorkerMessageKind,
 } from '../../../src/child-proxy/message-protocol.js';
-import { LoggingClientContext } from '../../../src/logging/index.js';
+import type { LoggingServerAddress } from '../../../src/logging/index.js';
 import * as stringUtils from '../../../src/utils/string-utils.js';
 import { objectUtils } from '../../../src/utils/object-utils.js';
 import { OutOfMemoryError } from '../../../src/child-proxy/out-of-memory-error.js';
-import { currentLogMock } from '../../helpers/log-mock.js';
-import { Mock } from '../../helpers/producers.js';
 
 import { IdGenerator } from '../../../src/child-proxy/id-generator.js';
 
 import { HelloClass } from './hello-class.js';
 
-const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({
-  level: LogLevel.Fatal,
+const LOGGING_ADDRESS: LoggingServerAddress = Object.freeze({
   port: 4200,
 });
 
@@ -49,7 +45,6 @@ describe(ChildProcessProxy.name, () => {
   let forkStub: sinon.SinonStub;
   let childProcessMock: ChildProcessMock;
   let killStub: sinon.SinonStub;
-  let logMock: Mock<Logger>;
   const workerId = 5;
 
   beforeEach(() => {
@@ -57,7 +52,6 @@ describe(ChildProcessProxy.name, () => {
     forkStub = sinon.stub(childProcess, 'fork');
     killStub = sinon.stub(objectUtils, 'kill');
     forkStub.returns(childProcessMock);
-    logMock = currentLogMock();
     idGeneratorStub = sinon.createStubInstance(IdGenerator);
     idGeneratorStub.next.returns(workerId);
   });
@@ -87,12 +81,12 @@ describe(ChildProcessProxy.name, () => {
     it('should log the exec arguments and require name', () => {
       // Act
       createSut({
-        loggingContext: LOGGING_CONTEXT,
+        loggingServerAddress: LOGGING_ADDRESS,
         execArgv: ['--cpu-prof', '--inspect'],
         idGenerator: idGeneratorStub,
       });
       // Assert
-      expect(logMock.debug).calledWith(
+      expect(testInjector.logger.debug).calledWith(
         'Started %s in worker process %s with pid %s %s',
         'HelloClass',
         workerId.toString(),
@@ -119,7 +113,7 @@ describe(ChildProcessProxy.name, () => {
     it('should send init message to child process when the Ready message is received', () => {
       const expectedMessage: InitMessage = {
         kind: WorkerMessageKind.Init,
-        loggingContext: LOGGING_CONTEXT,
+        loggingServerAddress: LOGGING_ADDRESS,
         options: factory.strykerOptions({ testRunner: 'Hello' }),
         fileDescriptions: { 'foo.js': { mutate: true } },
         pluginModulePaths: ['foo'],
@@ -128,7 +122,7 @@ describe(ChildProcessProxy.name, () => {
         workingDirectory: 'workingDirectory',
       };
       createSut({
-        loggingContext: LOGGING_CONTEXT,
+        loggingServerAddress: LOGGING_ADDRESS,
         options: expectedMessage.options,
         requirePath: expectedMessage.modulePath,
         workingDir: expectedMessage.workingDirectory,
@@ -152,14 +146,14 @@ describe(ChildProcessProxy.name, () => {
       childProcessMock.stdout.emit('data', 'bar');
       childProcessMock.stderr.emit('data', 'foo');
       actClose(23, 'SIGTERM');
-      expect(logMock.warn).calledWithMatch(
+      expect(testInjector.logger.warn).calledWithMatch(
         `Child process [pid ${childProcessMock.pid}] exited unexpectedly with exit code 23 (SIGTERM). Last part of stdout and stderr was:${os.EOL}\tfoo${os.EOL}\tbar`,
       );
     });
 
     it('should log that no stdout was available when stdout and stderr are empty', () => {
       actClose(23, 'SIGTERM');
-      expect(logMock.warn).calledWith(
+      expect(testInjector.logger.warn).calledWith(
         `Child process [pid ${childProcessMock.pid}] exited unexpectedly with exit code 23 (SIGTERM). Stdout and stderr were empty.`,
       );
     });
@@ -169,7 +163,7 @@ describe(ChildProcessProxy.name, () => {
       childProcessMock.stderr.emit('data', 'baz');
       childProcessMock.stdout.emit('data', 'bar');
       actClose(23, 'SIGTERM');
-      expect(logMock.warn).calledWith(
+      expect(testInjector.logger.warn).calledWith(
         `Child process [pid ${childProcessMock.pid}] exited unexpectedly with exit code 23 (SIGTERM). Last part of stdout and stderr was:${os.EOL}\tbaz${os.EOL}\tfoobar`,
       );
     });
@@ -429,7 +423,7 @@ describe(ChildProcessProxy.name, () => {
 
 function createSut({
   requirePath = 'foobar',
-  loggingContext = LOGGING_CONTEXT,
+  loggingServerAddress = LOGGING_ADDRESS,
   options = {},
   workingDir = 'workingDir',
   fileDescriptions = { 'foo.js': { mutate: true } },
@@ -438,7 +432,7 @@ function createSut({
   idGenerator = idGeneratorStub,
 }: {
   requirePath?: string;
-  loggingContext?: LoggingClientContext;
+  loggingServerAddress?: LoggingServerAddress;
   options?: Partial<StrykerOptions>;
   workingDir?: string;
   fileDescriptions?: FileDescriptions;
@@ -448,13 +442,14 @@ function createSut({
 } = {}): ChildProcessProxy<HelloClass> {
   return ChildProcessProxy.create(
     requirePath,
-    loggingContext,
+    loggingServerAddress,
     factory.strykerOptions(options),
     fileDescriptions,
     pluginModulePaths,
     workingDir,
     HelloClass,
     execArgv,
+    testInjector.getLogger,
     idGenerator,
   );
 }

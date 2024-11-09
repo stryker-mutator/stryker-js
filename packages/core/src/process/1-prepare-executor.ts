@@ -5,7 +5,6 @@ import { deepFreeze } from '@stryker-mutator/util';
 import { execaCommand } from 'execa';
 
 import { ConfigReader } from '../config/config-reader.js';
-import { LogConfigurator } from '../logging/index.js';
 import { coreTokens, PluginCreator } from '../di/index.js';
 import { TemporaryDirectory } from '../utils/temporary-directory.js';
 import { ConfigError } from '../errors.js';
@@ -19,17 +18,26 @@ import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
 import { FileSystem, ProjectReader } from '../fs/index.js';
 
 import { MutantInstrumenterContext } from './index.js';
+import { LoggingBackend, LoggingServerAddress, LoggingSink } from '../logging/index.js';
+
+export interface PrepareExecutorContext extends BaseContext {
+  [coreTokens.loggingSink]: LoggingSink;
+  [coreTokens.loggingServerAddress]: LoggingServerAddress;
+}
 
 export class PrepareExecutor {
-  public static readonly inject = tokens(commonTokens.injector);
-  constructor(private readonly injector: Injector<BaseContext>) {}
+  public static readonly inject = tokens(commonTokens.injector, coreTokens.loggingSink);
+  constructor(
+    private readonly injector: Injector<PrepareExecutorContext>,
+    private readonly loggingBackend: LoggingBackend,
+  ) {}
 
   public async execute(cliOptions: PartialStrykerOptions): Promise<Injector<MutantInstrumenterContext>> {
     // greedy initialize, so the time starts immediately
     const timer = new Timer();
 
-    // Already configure the logger, so next classes can use
-    LogConfigurator.configureMainProcess(cliOptions.logLevel, cliOptions.fileLogLevel, cliOptions.allowConsoleColors);
+    // Already configure the logger, so next classes can use them
+    this.loggingBackend.configure(cliOptions);
 
     // Read the config file
     const configReaderInjector = this.injector
@@ -53,8 +61,8 @@ export class PrepareExecutor {
     // Done reading config, deep freeze it so it won't change unexpectedly
     deepFreeze(options);
 
-    // Final logging configuration, open the logging server
-    const loggingContext = await LogConfigurator.configureLoggingServer(options.logLevel, options.fileLogLevel, options.allowConsoleColors);
+    // Final logging configuration, update the logging configuration with the latest results
+    this.loggingBackend.configure(options);
 
     // Resolve input files
     const projectFileReaderInjector = optionsValidatorInjector
@@ -76,7 +84,6 @@ export class PrepareExecutor {
         .provideClass(coreTokens.reporter, BroadcastReporter)
         .provideValue(coreTokens.timer, timer)
         .provideValue(coreTokens.project, project)
-        .provideValue(coreTokens.loggingContext, loggingContext)
         .provideValue(coreTokens.execa, execaCommand)
         .provideValue(coreTokens.process, process)
         .provideClass(coreTokens.unexpectedExitRegistry, UnexpectedExitHandler)

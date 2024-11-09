@@ -1,12 +1,11 @@
 import { MutantResult, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { createInjector } from 'typed-inject';
-
 import { commonTokens } from '@stryker-mutator/api/plugin';
 
-import { LogConfigurator } from './logging/index.js';
 import { PrepareExecutor, MutantInstrumenterExecutor, DryRunExecutor, MutationTestExecutor } from './process/index.js';
-import { coreTokens, provideLogger } from './di/index.js';
+import { coreTokens } from './di/index.js';
 import { retrieveCause, ConfigError } from './errors.js';
+import { provideLogging, provideLoggingBackend } from './logging/index.js';
 
 /**
  * The main Stryker class.
@@ -25,7 +24,7 @@ export class Stryker {
 
   public async runMutationTest(): Promise<MutantResult[]> {
     const rootInjector = this.injectorFactory();
-    const loggerProvider = provideLogger(rootInjector);
+    const loggerProvider = provideLogging(await provideLoggingBackend(rootInjector));
 
     try {
       // 1. Prepare. Load Stryker configuration, load the input files and starts the logging server
@@ -72,7 +71,6 @@ export class Stryker {
       throw cause;
     } finally {
       await rootInjector.dispose();
-      await LogConfigurator.shutdown();
     }
   }
 }

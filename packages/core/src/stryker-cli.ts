@@ -6,7 +6,6 @@ import { Command } from 'commander';
 import { MutantResult, DashboardOptions, ALL_REPORT_TYPES, PartialStrykerOptions } from '@stryker-mutator/api/core';
 
 import { initializerFactory } from './initializer/index.js';
-import { LogConfigurator } from './logging/index.js';
 import { Stryker } from './stryker.js';
 import { defaultOptions } from './config/index.js';
 import { strykerEngines, strykerVersion } from './stryker-package.js';
@@ -146,7 +145,7 @@ export class StrykerCli {
       )
       .option(
         '--fileLogLevel <level>',
-        `Set the log4js log level for the "stryker.log" file. Possible values: fatal, error, warn, info, debug, trace and off. Default is "${defaultOptions.fileLogLevel}"`,
+        `Set the log level for the "stryker.log" file. Possible values: fatal, error, warn, info, debug, trace and off. Default is "${defaultOptions.fileLogLevel}"`,
       )
       .option('--allowConsoleColors <true/false>', 'Indicates whether or not Stryker should use colors in console.', parseBoolean)
       .option(
@@ -192,7 +191,6 @@ export class StrykerCli {
 
     // Earliest opportunity to configure the log level based on the logLevel argument
     const options: PartialStrykerOptions = this.program.opts();
-    LogConfigurator.configureMainProcess(options.logLevel);
 
     // Cleanup commander state
     delete options.version;
@@ -208,7 +206,7 @@ export class StrykerCli {
     }
 
     const commands = {
-      init: () => initializerFactory().initialize(),
+      init: async () => (await initializerFactory()).initialize(),
       run: () => this.runMutationTest(options),
     };
 

@@ -1,8 +1,6 @@
 import path from 'path';
 import { URL } from 'url';
 
-import { LogLevel } from '@stryker-mutator/api/core';
-import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, PluginKind, Plugin } from '@stryker-mutator/api/plugin';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
@@ -20,31 +18,30 @@ import {
   WorkerMessageKind,
   WorkResult,
 } from '../../../src/child-proxy/message-protocol.js';
-import { LogConfigurator, LoggingClientContext } from '../../../src/logging/index.js';
 import { serialize } from '../../../src/utils/string-utils.js';
-import { currentLogMock } from '../../helpers/log-mock.js';
-import { Mock } from '../../helpers/producers.js';
 import { coreTokens, PluginLoader, LoadedPlugins } from '../../../src/di/index.js';
+import { LoggingServerAddress } from '../../../src/logging/index.js';
 
 import { HelloClass } from './hello-class.js';
+import { LoggingClient } from '../../../src/logging/logging-client.js';
+import { LogLevel } from '@stryker-mutator/api/core';
 
-const LOGGING_CONTEXT: LoggingClientContext = Object.freeze({ port: 4200, level: LogLevel.Fatal });
+const LOGGING_ADDRESS: LoggingServerAddress = Object.freeze({ port: 4200 });
 
 interface PrivateContext extends ChildProcessContext {
   [coreTokens.pluginsByKind]: PluginLoader;
+  [coreTokens.loggingSink]: LoggingClient;
 }
 
 describe(ChildProcessProxyWorker.name, () => {
   let processOnStub: sinon.SinonStub;
   let processSendStub: sinon.SinonStub;
   let processListenersStub: sinon.SinonStub;
-  let configureChildProcessStub: sinon.SinonStub;
   let processRemoveListenerStub: sinon.SinonStub;
   let injectorMock: sinon.SinonStubbedInstance<Injector<PrivateContext>>;
   let pluginLoaderMock: sinon.SinonStubbedInstance<PluginLoader>;
   let processChdirStub: sinon.SinonStub;
   let createInjectorStub: sinon.SinonStubbedMember<typeof createInjector>;
-  let logMock: Mock<Logger>;
   let originalProcessSend: typeof process.send;
   let processes: NodeJS.MessageListener[];
   let loadedPlugins: LoadedPlugins;
@@ -55,10 +52,11 @@ describe(ChildProcessProxyWorker.name, () => {
     injectorMock = factory.injector();
     createInjectorStub = sinon.stub();
     createInjectorStub.returns(injectorMock);
+    injectorMock.resolve.withArgs(coreTokens.loggingSink).returns(sinon.createStubInstance(LoggingClient));
+    injectorMock.resolve.withArgs(commonTokens.getLogger).returns(testInjector.getLogger);
     pluginLoaderMock = sinon.createStubInstance(PluginLoader);
     injectorMock.injectClass.withArgs(PluginLoader).returns(pluginLoaderMock).withArgs(HelloClass).returns(new HelloClass(testInjector.options));
     processes = [];
-    logMock = currentLogMock();
     processOnStub = sinon.stub(process, 'on');
     processListenersStub = sinon.stub(process, 'listeners');
     processListenersStub.returns(processes);
@@ -77,7 +75,6 @@ describe(ChildProcessProxyWorker.name, () => {
     originalProcessSend = process.send;
     process.send = processSendStub;
     processChdirStub = sinon.stub(process, 'chdir');
-    configureChildProcessStub = sinon.stub(LogConfigurator, 'configureChildProcess');
   });
 
   afterEach(() => {
@@ -95,10 +92,11 @@ describe(ChildProcessProxyWorker.name, () => {
 
     beforeEach(() => {
       sut = new ChildProcessProxyWorker(createInjectorStub);
-      const options = factory.strykerOptions({ testRunner: 'fooBar' });
+
+      const options = factory.strykerOptions({ testRunner: 'fooBar', fileLogLevel: LogLevel.Error, logLevel: LogLevel.Information });
       initMessage = {
         kind: WorkerMessageKind.Init,
-        loggingContext: LOGGING_CONTEXT,
+        loggingServerAddress: LOGGING_ADDRESS,
         options,
         fileDescriptions: { 'foo.js': { mutate: true } },
         pluginModulePaths,
@@ -118,14 +116,14 @@ describe(ChildProcessProxyWorker.name, () => {
     it('should change the current working directory', async () => {
       await processOnMessage(initMessage);
       const fullWorkingDir = path.resolve(workingDir);
-      expect(logMock.debug).calledWith(`Changing current working directory for this process to ${fullWorkingDir}`);
+      expect(testInjector.logger.debug).calledWith(`Changing current working directory for this process to ${fullWorkingDir}`);
       expect(processChdirStub).calledWith(fullWorkingDir);
     });
 
     it("should not change the current working directory if it didn't change", async () => {
       initMessage.workingDirectory = process.cwd();
       await processOnMessage(initMessage);
-      expect(logMock.debug).not.called;
+      expect(testInjector.logger.debug).not.called;
       expect(processChdirStub).not.called;
     });
 
@@ -152,20 +150,22 @@ describe(ChildProcessProxyWorker.name, () => {
 
     it('should set global log level', () => {
       processOnStub.callArgWith(1, serialize(initMessage));
-      expect(configureChildProcessStub).calledWith(LOGGING_CONTEXT);
+      sinon.assert.calledWithExactly(injectorMock.provideValue, coreTokens.loggerActiveLevel, LogLevel.Information);
     });
 
     it('should handle unhandledRejection events', async () => {
       await processOnMessage(initMessage);
       const error = new Error('foobar');
       processOnStub.withArgs('unhandledRejection').callArgWith(1, error);
-      expect(logMock.debug).calledWith(`UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 1): ${errorToString(error)}`);
+      expect(testInjector.logger.debug).calledWith(
+        `UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 1): ${errorToString(error)}`,
+      );
     });
 
     it('should handle rejectionHandled events', async () => {
       await processOnMessage(initMessage);
       processOnStub.withArgs('rejectionHandled').callArgWith(1);
-      expect(logMock.debug).calledWith('PromiseRejectionHandledWarning: Promise rejection was handled asynchronously (rejection id: 0)');
+      expect(testInjector.logger.debug).calledWith('PromiseRejectionHandledWarning: Promise rejection was handled asynchronously (rejection id: 0)');
     });
 
     describe('on worker message', () => {

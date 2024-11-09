@@ -3,7 +3,7 @@ import { FileDescriptions, StrykerOptions } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 
-import { LoggingClientContext } from '../logging/index.js';
+import { LoggingServerAddress } from '../logging/index.js';
 import { coreTokens } from '../di/index.js';
 import { Sandbox } from '../sandbox/sandbox.js';
 
@@ -20,7 +20,7 @@ createTestRunnerFactory.inject = tokens(
   commonTokens.options,
   commonTokens.fileDescriptions,
   coreTokens.sandbox,
-  coreTokens.loggingContext,
+  coreTokens.loggingServerAddress,
   commonTokens.getLogger,
   coreTokens.pluginModulePaths,
   coreTokens.workerIdGenerator,
@@ -29,30 +29,36 @@ export function createTestRunnerFactory(
   options: StrykerOptions,
   fileDescriptions: FileDescriptions,
   sandbox: Pick<Sandbox, 'workingDirectory'>,
-  loggingContext: LoggingClientContext,
+  loggingServerAddress: LoggingServerAddress,
   getLogger: LoggerFactoryMethod,
   pluginModulePaths: readonly string[],
   idGenerator: IdGenerator,
 ): () => TestRunner {
   if (CommandTestRunner.is(options.testRunner)) {
-    return () => new RetryRejectedDecorator(() => new TimeoutDecorator(() => new CommandTestRunner(sandbox.workingDirectory, options)));
+    return () =>
+      new RetryRejectedDecorator(
+        getLogger(RetryRejectedDecorator.name),
+        () => new TimeoutDecorator(getLogger(TimeoutDecorator.name), () => new CommandTestRunner(sandbox.workingDirectory, options)),
+      );
   } else {
     return () =>
       new RetryRejectedDecorator(
+        getLogger(RetryRejectedDecorator.name),
         () =>
           new ReloadEnvironmentDecorator(
             () =>
               new MaxTestRunnerReuseDecorator(
                 () =>
                   new TimeoutDecorator(
+                    getLogger(TimeoutDecorator.name),
                     () =>
                       new ChildProcessTestRunnerProxy(
                         options,
                         fileDescriptions,
                         sandbox.workingDirectory,
-                        loggingContext,
+                        loggingServerAddress,
                         pluginModulePaths,
-                        getLogger(ChildProcessTestRunnerProxy.name),
+                        getLogger,
                         idGenerator,
                       ),
                   ),

@@ -4,10 +4,9 @@ import { fileURLToPath, URL } from 'url';
 
 import { FileDescriptions, StrykerOptions } from '@stryker-mutator/api/core';
 import { isErrnoException, Task, ExpirableTask, StrykerError } from '@stryker-mutator/util';
-import log4js from 'log4js';
 import { Disposable, InjectableClass, InjectionToken } from 'typed-inject';
 
-import { LoggingClientContext } from '../logging/index.js';
+import { LoggingServerAddress } from '../logging/index.js';
 import { objectUtils } from '../utils/object-utils.js';
 import { StringBuilder } from '../utils/string-builder.js';
 import { deserialize, padLeft, serialize } from '../utils/string-utils.js';
@@ -17,6 +16,7 @@ import { InitMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMes
 import { OutOfMemoryError } from './out-of-memory-error.js';
 import { ChildProcessContext } from './child-process-proxy-worker.js';
 import { IdGenerator } from './id-generator.js';
+import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 
 type Func<TS extends any[], R> = (...args: TS) => R;
 
@@ -39,7 +39,7 @@ export class ChildProcessProxy<T> implements Disposable {
   private fatalError: StrykerError | undefined;
   private readonly workerTasks = new Map<number, Task>();
   private workerTaskCounter = 0;
-  private readonly log = log4js.getLogger(ChildProcessProxy.name);
+  private readonly log;
   private readonly stdoutBuilder = new StringBuilder();
   private readonly stderrBuilder = new StringBuilder();
   private isDisposed = false;
@@ -48,11 +48,12 @@ export class ChildProcessProxy<T> implements Disposable {
   private constructor(
     modulePath: string,
     namedExport: string,
-    loggingContext: LoggingClientContext,
+    loggingServerAddress: LoggingServerAddress,
     options: StrykerOptions,
     fileDescriptions: FileDescriptions,
     pluginModulePaths: readonly string[],
     workingDirectory: string,
+    logger: Logger,
     execArgv: string[],
     idGenerator: IdGenerator,
   ) {
@@ -63,6 +64,7 @@ export class ChildProcessProxy<T> implements Disposable {
       env: { STRYKER_MUTATOR_WORKER: workerId, ...process.env },
     });
     this.initTask = new Task();
+    this.log = logger;
     this.log.debug(
       'Started %s in worker process %s with pid %s %s',
       namedExport,
@@ -76,7 +78,7 @@ export class ChildProcessProxy<T> implements Disposable {
 
     this.initMessage = {
       kind: WorkerMessageKind.Init,
-      loggingContext,
+      loggingServerAddress,
       options,
       fileDescriptions,
       pluginModulePaths,
@@ -95,23 +97,25 @@ export class ChildProcessProxy<T> implements Disposable {
    */
   public static create<R, Tokens extends Array<InjectionToken<ChildProcessContext>>>(
     modulePath: string,
-    loggingContext: LoggingClientContext,
+    loggingServerAddress: LoggingServerAddress,
     options: StrykerOptions,
     fileDescriptions: FileDescriptions,
     pluginModulePaths: readonly string[],
     workingDirectory: string,
     injectableClass: InjectableClass<ChildProcessContext, R, Tokens>,
     execArgv: string[],
+    getLogger: LoggerFactoryMethod,
     idGenerator: IdGenerator,
   ): ChildProcessProxy<R> {
     return new ChildProcessProxy(
       modulePath,
       injectableClass.name,
-      loggingContext,
+      loggingServerAddress,
       options,
       fileDescriptions,
       pluginModulePaths,
       workingDirectory,
+      getLogger(ChildProcessProxy.name),
       execArgv,
       idGenerator,
     );
@@ -203,9 +207,7 @@ export class ChildProcessProxy<T> implements Disposable {
     const handleData = (builder: StringBuilder) => (data: Buffer | string) => {
       const output = data.toString();
       builder.append(output);
-      if (this.log.isTraceEnabled()) {
-        this.log.trace(output);
-      }
+      this.log.trace(output);
     };
 
     if (this.worker.stdout) {

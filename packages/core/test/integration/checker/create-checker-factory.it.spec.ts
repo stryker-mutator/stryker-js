@@ -1,22 +1,23 @@
 import fs from 'fs';
 import { URL } from 'url';
 
-import { LogLevel } from '@stryker-mutator/api/core';
-import { factory, LoggingServer, testInjector } from '@stryker-mutator/test-helpers';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 
 import { CheckerFacade, createCheckerFactory } from '../../../src/checker/index.js';
 import { coreTokens } from '../../../src/di/index.js';
-import { LoggingClientContext } from '../../../src/logging/index.js';
+import type { LoggingServerAddress } from '../../../src/logging/index.js';
+import { LoggingServer } from '../../../src/logging/logging-server.js';
 
 import { IdGenerator } from '../../../src/child-proxy/id-generator.js';
 
 import { TwoTimesTheCharm } from './additional-checkers.js';
+import { loggingSink } from '../../helpers/producers.js';
 
 describe(`${createCheckerFactory.name} integration`, () => {
   let createSut: () => CheckerFacade;
-  let loggingContext: LoggingClientContext;
+  let loggingServerAddress: LoggingServerAddress;
   let sut: CheckerFacade;
   let loggingServer: LoggingServer;
   let pluginModulePaths: string[];
@@ -30,11 +31,10 @@ describe(`${createCheckerFactory.name} integration`, () => {
   beforeEach(async () => {
     // Make sure there is a logging server listening
     pluginModulePaths = [new URL('./additional-checkers.js', import.meta.url).toString()];
-    loggingServer = new LoggingServer();
-    const port = await loggingServer.listen();
-    loggingContext = { port, level: LogLevel.Trace };
+    loggingServer = new LoggingServer(loggingSink());
+    loggingServerAddress = await loggingServer.listen();
     createSut = testInjector.injector
-      .provideValue(coreTokens.loggingContext, loggingContext)
+      .provideValue(coreTokens.loggingServerAddress, loggingServerAddress)
       .provideValue(coreTokens.pluginModulePaths, pluginModulePaths)
       .provideClass(coreTokens.workerIdGenerator, IdGenerator)
       .injectFunction(createCheckerFactory);

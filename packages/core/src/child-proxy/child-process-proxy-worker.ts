@@ -2,23 +2,25 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 import { errorToString } from '@stryker-mutator/util';
-import log4js from 'log4js';
 import { createInjector } from 'typed-inject';
 import { commonTokens, PluginContext, Injector } from '@stryker-mutator/api/plugin';
 
-import { LogConfigurator } from '../logging/index.js';
 import { deserialize, serialize } from '../utils/string-utils.js';
-import { coreTokens, provideLogger, PluginCreator } from '../di/index.js';
+import { coreTokens, PluginCreator } from '../di/index.js';
 import { PluginLoader } from '../di/plugin-loader.js';
 
 import { CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind, InitMessage } from './message-protocol.js';
+import { provideLogging, provideLoggingClient } from '../logging/provide-logging.js';
+import { Logger } from '@stryker-mutator/api/logging';
+import { minPriority } from '../logging/priority.js';
 
 export interface ChildProcessContext extends PluginContext {
   [coreTokens.pluginCreator]: PluginCreator;
 }
 
 export class ChildProcessProxyWorker {
-  private log?: log4js.Logger;
+  private log?: Logger;
+  private injector;
 
   public realSubject: any;
 
@@ -29,6 +31,7 @@ export class ChildProcessProxyWorker {
     // Start listening before sending the spawned message
     process.on('message', this.handleMessage);
     this.send({ kind: ParentMessageKind.Ready });
+    this.injector = this.injectorFactory();
   }
 
   private send(value: ParentMessage) {
@@ -54,7 +57,7 @@ export class ChildProcessProxyWorker {
         const sendCompleted = () => {
           this.send({ kind: ParentMessageKind.DisposeCompleted });
         };
-        LogConfigurator.shutdown().then(sendCompleted).catch(sendCompleted);
+        this.injector.dispose().then(sendCompleted).catch(sendCompleted);
         break;
       }
     }
@@ -62,14 +65,15 @@ export class ChildProcessProxyWorker {
 
   private async handleInit(message: InitMessage) {
     try {
-      LogConfigurator.configureChildProcess(message.loggingContext);
-      this.log = log4js.getLogger(ChildProcessProxyWorker.name);
       this.handlePromiseRejections();
 
       // Load plugins in the child process
-      const pluginInjector = provideLogger(this.injectorFactory())
+      const pluginInjector = provideLogging(
+        await provideLoggingClient(this.injector, message.loggingServerAddress, minPriority(message.options.logLevel, message.options.fileLogLevel)),
+      )
         .provideValue(commonTokens.options, message.options)
         .provideValue(commonTokens.fileDescriptions, message.fileDescriptions);
+      this.log = pluginInjector.resolve(commonTokens.getLogger)(ChildProcessProxyWorker.name);
       const pluginLoader = pluginInjector.injectClass(PluginLoader);
       const { pluginsByKind } = await pluginLoader.load(message.pluginModulePaths);
       const injector: Injector<ChildProcessContext> = pluginInjector
