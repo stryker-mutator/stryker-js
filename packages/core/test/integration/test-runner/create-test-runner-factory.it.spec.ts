@@ -2,28 +2,29 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
 
+import sinon from 'sinon';
 import { expect } from 'chai';
-import log4js from 'log4js';
-import { lastValueFrom, toArray } from 'rxjs';
 import { LogLevel } from '@stryker-mutator/api/core';
-import { LoggingServer, testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
+import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
 import { DryRunStatus } from '@stryker-mutator/api/test-runner';
 
-import { LoggingClientContext } from '../../../src/logging/index.js';
+import { LoggingServerAddress, LoggingSink } from '../../../src/logging/index.js';
 import { createTestRunnerFactory } from '../../../src/test-runner/index.js';
 import { sleep } from '../../helpers/test-utils.js';
 import { coreTokens } from '../../../src/di/index.js';
 import { TestRunnerResource } from '../../../src/concurrent/index.js';
-
 import { IdGenerator } from '../../../src/child-proxy/id-generator.js';
+import { LoggingServer } from '../../../src/logging/logging-server.js';
 
 import { additionalTestRunnersFileUrl, CounterTestRunner } from './additional-test-runners.js';
+import { loggingSink } from '../../helpers/producers.js';
+import { LoggingEvent } from '../../../src/logging/logging-event.js';
 
 describe(`${createTestRunnerFactory.name} integration`, () => {
   let createSut: () => TestRunnerResource;
   let sut: TestRunnerResource;
-  let loggingContext: LoggingClientContext;
-
+  let loggingServerAddress: LoggingServerAddress;
+  let loggingSinkMock: sinon.SinonStubbedInstance<LoggingSink>;
   let loggingServer: LoggingServer;
   let alreadyDisposed: boolean;
   const pluginModulePaths = Object.freeze([additionalTestRunnersFileUrl]);
@@ -36,16 +37,17 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
 
   beforeEach(async () => {
     // Make sure there is a logging server listening
-    loggingServer = new LoggingServer();
-    const port = await loggingServer.listen();
-    loggingContext = { port, level: LogLevel.Trace };
+    loggingSinkMock = loggingSink();
+    loggingServer = new LoggingServer(loggingSinkMock);
+    loggingServerAddress = await loggingServer.listen();
+    testInjector.options.logLevel = LogLevel.Debug;
     testInjector.options.someRegex = /someRegex/;
     testInjector.options.testRunner = 'karma';
     testInjector.options.maxTestRunnerReuse = 0;
     alreadyDisposed = false;
     createSut = testInjector.injector
       .provideValue(coreTokens.sandbox, { workingDirectory: path.dirname(fileURLToPath(import.meta.url)) })
-      .provideValue(coreTokens.loggingContext, loggingContext)
+      .provideValue(coreTokens.loggingServerAddress, loggingServerAddress)
       .provideValue(coreTokens.pluginModulePaths, pluginModulePaths)
       .provideClass(coreTokens.workerIdGenerator, IdGenerator)
       .injectFunction(createTestRunnerFactory);
@@ -158,20 +160,19 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
   });
 
   it('should handle asynchronously handled promise rejections from the underlying test runner', async () => {
-    const logEvents = lastValueFrom(loggingServer.event$.pipe(toArray()));
     await arrangeSut('async-promise-rejection-handler');
     await actDryRun();
     await sut.dispose?.();
     alreadyDisposed = true;
-    await loggingServer.dispose();
-    const actualLogEvents = await logEvents;
-    expect(
-      actualLogEvents.find(
-        (logEvent) =>
-          log4js.levels.DEBUG.isEqualTo(logEvent.level) &&
-          logEvent.data.toString().includes('UnhandledPromiseRejectionWarning: Unhandled promise rejection'),
-      ),
-    ).ok;
+    sinon.assert.calledWithMatch(
+      loggingSinkMock.log,
+      sinon.match((actualEvent: LoggingEvent) => {
+        return (
+          actualEvent.data.toString().includes('UnhandledPromiseRejectionWarning: Unhandled promise rejection') &&
+          actualEvent.level === LogLevel.Debug
+        );
+      }),
+    );
   });
 
   it('should restart the worker after it has exceeded the maxTestRunnerReuse', async () => {

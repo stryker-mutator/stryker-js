@@ -5,13 +5,12 @@ import { JSONSchema7 } from 'json-schema';
 import { Injector } from 'typed-inject';
 import { expect } from 'chai';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
-import { PartialStrykerOptions, LogLevel } from '@stryker-mutator/api/core';
-import { BaseContext } from '@stryker-mutator/api/plugin';
+import { PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { frameworkPluginsFileUrl } from '@stryker-mutator/instrumenter';
 
-import { MutantInstrumenterContext, PrepareExecutor } from '../../../src/process/index.js';
+import { MutantInstrumenterContext, PrepareExecutor, PrepareExecutorContext } from '../../../src/process/index.js';
 import { coreTokens, PluginLoader, LoadedPlugins } from '../../../src/di/index.js';
-import { LogConfigurator, LoggingClientContext } from '../../../src/logging/index.js';
+import { LoggingBackend } from '../../../src/logging/index.js';
 import { Project, ProjectReader } from '../../../src/fs/index.js';
 import { TemporaryDirectory } from '../../../src/utils/temporary-directory.js';
 import { ConfigError } from '../../../src/errors.js';
@@ -20,7 +19,7 @@ import { BroadcastReporter, reporterPluginsFileUrl } from '../../../src/reporter
 import { UnexpectedExitHandler } from '../../../src/unexpected-exit-handler.js';
 import { FileSystemTestDouble } from '../../helpers/file-system-test-double.js';
 
-interface AllContext extends MutantInstrumenterContext {
+interface AllContext extends MutantInstrumenterContext, PrepareExecutorContext {
   [coreTokens.validationSchema]: unknown;
   [coreTokens.optionsValidator]: OptionsValidator;
   [coreTokens.pluginsByKind]: PluginLoader;
@@ -31,9 +30,8 @@ describe(PrepareExecutor.name, () => {
   let configReaderMock: sinon.SinonStubbedInstance<ConfigReader>;
   let pluginLoaderMock: sinon.SinonStubbedInstance<PluginLoader>;
   let metaSchemaBuilderMock: sinon.SinonStubbedInstance<MetaSchemaBuilder>;
-  let configureMainProcessStub: sinon.SinonStub;
   let optionsValidatorMock: sinon.SinonStubbedInstance<OptionsValidator>;
-  let configureLoggingServerStub: sinon.SinonStub;
+  let loggingBackendMock: sinon.SinonStubbedInstance<LoggingBackend>;
   let injectorMock: sinon.SinonStubbedInstance<Injector<AllContext>>;
   let projectReaderMock: sinon.SinonStubbedInstance<ProjectReader>;
   let project: Project;
@@ -45,17 +43,16 @@ describe(PrepareExecutor.name, () => {
     const fsTestDouble = new FileSystemTestDouble({ 'index.js': 'console.log("hello world");' });
     project = new Project(fsTestDouble, fsTestDouble.toFileDescriptions());
     cliOptions = {};
+    loggingBackendMock = sinon.createStubInstance(LoggingBackend);
     configReaderMock = sinon.createStubInstance(ConfigReader);
     configReaderMock.readConfig.resolves(testInjector.options);
     metaSchemaBuilderMock = sinon.createStubInstance(MetaSchemaBuilder);
-    configureMainProcessStub = sinon.stub(LogConfigurator, 'configureMainProcess');
     pluginLoaderMock = sinon.createStubInstance(PluginLoader);
     loadedPlugins = { pluginModulePaths: [], pluginsByKind: new Map(), schemaContributions: [] };
     pluginLoaderMock.load.resolves(loadedPlugins);
     temporaryDirectoryMock = sinon.createStubInstance(TemporaryDirectory);
     projectReaderMock = sinon.createStubInstance(ProjectReader);
     optionsValidatorMock = sinon.createStubInstance(OptionsValidator);
-    configureLoggingServerStub = sinon.stub(LogConfigurator, 'configureLoggingServer');
     injectorMock = factory.injector() as unknown as sinon.SinonStubbedInstance<Injector<AllContext>>;
     injectorMock.resolve.withArgs(coreTokens.temporaryDirectory).returns(temporaryDirectoryMock);
     injectorMock.injectClass
@@ -70,7 +67,7 @@ describe(PrepareExecutor.name, () => {
       .withArgs(ProjectReader)
       .returns(projectReaderMock);
     projectReaderMock.read.resolves(project);
-    sut = new PrepareExecutor(injectorMock as Injector<BaseContext>);
+    sut = new PrepareExecutor(injectorMock as Injector<PrepareExecutorContext>, loggingBackendMock);
   });
 
   it('should provide the cliOptions to the config reader', async () => {
@@ -124,23 +121,9 @@ describe(PrepareExecutor.name, () => {
     sinon.assert.calledWithExactly(optionsValidatorMock.validate, testInjector.options, true);
   });
 
-  it('should configure logging for the main process', async () => {
+  it('should configure the logging backend', async () => {
     await sut.execute(cliOptions);
-    expect(configureMainProcessStub).calledOnce;
-  });
-
-  it('should configure the logging server', async () => {
-    const expectedLoggingContext: LoggingClientContext = {
-      level: LogLevel.Fatal,
-      port: 1337,
-    };
-    configureLoggingServerStub.resolves(expectedLoggingContext);
-    testInjector.options.logLevel = LogLevel.Information;
-    testInjector.options.fileLogLevel = LogLevel.Trace;
-    testInjector.options.allowConsoleColors = true;
-    await sut.execute(cliOptions);
-    expect(configureLoggingServerStub).calledWithExactly(LogLevel.Information, LogLevel.Trace, true);
-    expect(injectorMock.provideValue).calledWithExactly(coreTokens.loggingContext, expectedLoggingContext);
+    sinon.assert.calledWithExactly(loggingBackendMock.configure, testInjector.options);
   });
 
   it('should resolve input files', async () => {
@@ -157,12 +140,6 @@ describe(PrepareExecutor.name, () => {
   it('should provide the UnexpectedExitRegister', async () => {
     await sut.execute(cliOptions);
     sinon.assert.calledWithExactly(injectorMock.provideClass, coreTokens.unexpectedExitRegistry, UnexpectedExitHandler);
-  });
-
-  it('should reject when logging server rejects', async () => {
-    const expectedError = Error('expected error');
-    configureLoggingServerStub.rejects(expectedError);
-    await expect(sut.execute(cliOptions)).rejectedWith(expectedError);
   });
 
   it('should reject when input file globbing results in a rejection', async () => {

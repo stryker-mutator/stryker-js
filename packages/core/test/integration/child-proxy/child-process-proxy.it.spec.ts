@@ -2,29 +2,27 @@ import path from 'path';
 import { URL } from 'url';
 
 import { FileDescriptions, LogLevel } from '@stryker-mutator/api/core';
-import { Logger } from '@stryker-mutator/api/logging';
-import { testInjector, LoggingServer } from '@stryker-mutator/test-helpers';
+import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import log4js from 'log4js';
-import { filter } from 'rxjs/operators';
-import { Task } from '@stryker-mutator/util';
 
 import { ChildProcessCrashedError } from '../../../src/child-proxy/child-process-crashed-error.js';
 import { ChildProcessProxy } from '../../../src/child-proxy/child-process-proxy.js';
 import { OutOfMemoryError } from '../../../src/child-proxy/out-of-memory-error.js';
-import { currentLogMock } from '../../helpers/log-mock.js';
-import { Mock } from '../../helpers/producers.js';
+import { loggingSink } from '../../helpers/producers.js';
 import { sleep } from '../../helpers/test-utils.js';
+import { LoggingServer } from '../../../src/logging/logging-server.js';
+import type { LoggingSink } from '../../../src/logging/index.js';
 
 import { IdGenerator } from '../../../src/child-proxy/id-generator.js';
 
 import { Echo } from './echo.js';
+import sinon from 'sinon';
 
 describe(ChildProcessProxy.name, () => {
   let sut: ChildProcessProxy<Echo>;
   let loggingServer: LoggingServer;
-  let log: Mock<Logger>;
   let fileDescriptions: FileDescriptions;
+  let loggingSinkMock: sinon.SinonStubbedInstance<LoggingSink>;
   const testRunnerName = 'echoRunner';
   const workingDir = '..';
   const idGenerator: IdGenerator = new IdGenerator();
@@ -34,14 +32,15 @@ describe(ChildProcessProxy.name, () => {
       'src/foo.js': { mutate: true },
       'src/foo.spec.js': { mutate: false },
     };
-    loggingServer = new LoggingServer();
-    const port = await loggingServer.listen();
+    loggingSinkMock = loggingSink();
+    testInjector.options.logLevel = LogLevel.Debug;
+    loggingServer = new LoggingServer(loggingSinkMock);
+    const loggingServerAddress = await loggingServer.listen();
     testInjector.options.testRunner = testRunnerName;
-    log = currentLogMock();
     idGenerator.next();
     sut = ChildProcessProxy.create(
       new URL('./echo.js', import.meta.url).toString(),
-      { port, level: LogLevel.Debug },
+      loggingServerAddress,
       testInjector.options,
       fileDescriptions,
       [],
@@ -51,6 +50,7 @@ describe(ChildProcessProxy.name, () => {
         '--no-warnings', // test if node args are forwarded with this setting, see https://nodejs.org/api/cli.html#cli_no_warnings
         '--max-old-space-size=32', // reduce the amount of time we have to wait on the OOM test
       ],
+      testInjector.getLogger,
       idGenerator,
     );
   });
@@ -98,23 +98,26 @@ describe(ChildProcessProxy.name, () => {
   });
 
   it('should be able to log on debug when LogLevel.Debug is allowed', async () => {
-    const logEventTask = new Task<log4js.LoggingEvent>();
-    loggingServer.event$.pipe(filter((event) => event.categoryName === Echo.name)).subscribe(logEventTask.resolve.bind(logEventTask));
     await sut.proxy.debug('test message');
-    const logger = await logEventTask.promise;
-    expect(logger.categoryName).eq(Echo.name);
-    expect(logger.data).deep.eq(['test message']);
+    await sleep(); // Give the logging server some time to process the message
+    const actualLoggingEventCalls = loggingSinkMock.log.getCalls().filter((call) => call.args[0].categoryName === Echo.name);
+    expect(actualLoggingEventCalls).lengthOf(1);
+    const actualLoggingEvent = actualLoggingEventCalls[0].args[0];
+    expect(actualLoggingEvent.data).deep.eq(['test message']);
+    expect(actualLoggingEvent.level).eq(LogLevel.Debug);
+    expect(actualLoggingEvent.categoryName).eq(Echo.name);
   });
 
   it('should not log on trace if LogLevel.Debug is allowed as min log level', async () => {
-    const logEventTask = new Task<log4js.LoggingEvent>();
-    loggingServer.event$.pipe(filter((event) => event.categoryName === Echo.name)).subscribe(logEventTask.resolve.bind(logEventTask));
     await sut.proxy.trace('foo');
     await sut.proxy.debug('bar');
-    const logger = await logEventTask.promise;
-    expect(logger.categoryName).eq(Echo.name);
-    expect(logger.data).deep.eq(['bar']);
-    expect(toLogLevel(logger.level)).eq(LogLevel.Debug);
+    await sleep(); // Give the logging server some time to process the message
+    const actualLoggingEventCalls = loggingSinkMock.log.getCalls().filter((call) => call.args[0].categoryName === Echo.name);
+    expect(actualLoggingEventCalls).lengthOf(1);
+    const actualLoggingEvent = actualLoggingEventCalls[0].args[0];
+    expect(actualLoggingEvent.data).deep.eq(['bar']);
+    expect(actualLoggingEvent.level).eq(LogLevel.Debug);
+    expect(actualLoggingEvent.categoryName).eq(Echo.name);
   });
 
   it('should reject when the child process exits', () => {
@@ -127,7 +130,7 @@ describe(ChildProcessProxy.name, () => {
     // Give nodejs the chance to flush the stdout and stderr buffers
     await sleep(10);
     await expect(sut.proxy.exit(12)).rejected;
-    const call = log.warn.getCall(0);
+    const call = testInjector.logger.warn.getCall(0);
     expect(call.args[0]).matches(
       /Child process \[pid \d+\] exited unexpectedly with exit code 12 \(without signal\)\. Last part of stdout and stderr was/g,
     );
@@ -145,10 +148,3 @@ describe(ChildProcessProxy.name, () => {
     await expect(sut.proxy.memoryLeak()).rejectedWith(OutOfMemoryError);
   });
 });
-
-function toLogLevel(level: log4js.Level) {
-  const levelName = (level as any).levelStr.toLowerCase();
-  return [LogLevel.Debug, LogLevel.Error, LogLevel.Fatal, LogLevel.Information, LogLevel.Off, LogLevel.Trace, LogLevel.Warning].find(
-    (logLevel) => logLevel === levelName,
-  );
-}

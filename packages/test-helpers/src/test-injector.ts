@@ -9,6 +9,7 @@ import * as factory from './factory.js';
 class TestInjector {
   public options!: StrykerOptions;
   public logger!: sinon.SinonStubbedInstance<Logger>;
+  public getLogger!: sinon.SinonStub<[string?], Logger>;
   public injector!: Injector<PluginContext>;
   public fileDescriptions!: FileDescriptions;
 
@@ -16,8 +17,10 @@ class TestInjector {
     this.fileDescriptions = Object.create(null);
     this.options = factory.strykerOptions();
     this.logger = factory.logger();
+    this.getLogger = sinon.stub();
+    this.getLogger.returns(this.logger);
     this.injector = createInjector()
-      .provideValue(commonTokens.getLogger, () => this.logger)
+      .provideValue(commonTokens.getLogger, this.getLogger)
       .provideValue(commonTokens.logger, this.logger)
       .provideValue(commonTokens.options, this.options)
       .provideValue(commonTokens.fileDescriptions, this.fileDescriptions);

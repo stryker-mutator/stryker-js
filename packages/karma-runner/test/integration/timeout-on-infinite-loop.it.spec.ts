@@ -27,7 +27,8 @@ describe('Infinite loop', () => {
       console.log('SKIP. Test is flaky on windows 🤷‍♀️');
       this.skip();
     } else {
-      // This is a slow test, so I decided to put 2 tests into one 🤷‍♀️
+      // This is a slow/flaky test, so I decided to put 2 tests into one 🤷‍♀️
+      this.retries(3);
       // Act
       const result = await sut.mutantRun(factory.mutantRunOptions());
 

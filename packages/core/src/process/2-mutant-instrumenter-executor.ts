@@ -7,7 +7,6 @@ import { I } from '@stryker-mutator/util';
 
 import { coreTokens, PluginCreator } from '../di/index.js';
 import { Sandbox } from '../sandbox/sandbox.js';
-import { LoggingClientContext } from '../logging/index.js';
 import { ConcurrencyTokenProvider, createCheckerPool } from '../concurrent/index.js';
 import { createCheckerFactory } from '../checker/index.js';
 import { createPreprocessor } from '../sandbox/index.js';
@@ -22,7 +21,6 @@ import { DryRunContext } from './3-dry-run-executor.js';
 export interface MutantInstrumenterContext extends PluginContext {
   [commonTokens.options]: StrykerOptions;
   [coreTokens.project]: Project;
-  [coreTokens.loggingContext]: LoggingClientContext;
   [coreTokens.reporter]: Required<Reporter>;
   [coreTokens.timer]: I<Timer>;
   [coreTokens.temporaryDirectory]: I<TemporaryDirectory>;
@@ -32,6 +30,7 @@ export interface MutantInstrumenterContext extends PluginContext {
   [coreTokens.pluginModulePaths]: readonly string[];
   [coreTokens.fs]: I<FileSystem>;
   [coreTokens.pluginCreator]: PluginCreator;
+  [coreTokens.loggingServerAddress]: { port: number };
 }
 
 export class MutantInstrumenterExecutor {

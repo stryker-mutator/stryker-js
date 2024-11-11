@@ -81,7 +81,6 @@
     "file-url": "~4.0.0",
     "get-port": "~7.1.0",
     "lodash.groupby": "~4.6.0",
-    "log4js": "~6.9.1",
     "minimatch": "~9.0.5",
     "mutation-server-protocol": "^0.2.0",
     "mutation-testing-elements": "3.3.0",
@@ -101,10 +100,9 @@
     "@stryker-mutator/test-helpers": "8.6.0",
     "@types/diff-match-patch": "1.0.36",
     "@types/lodash.groupby": "4.6.9",
-    "@types/node": "20.16.12",
+    "@types/node": "20.17.6",
     "@types/progress": "2.0.7",
     "@types/semver": "7.5.8",
-    "flatted": "3.3.1",
     "glob": "10.4.5"
   }
 }

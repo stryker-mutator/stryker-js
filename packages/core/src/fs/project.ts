@@ -49,7 +49,6 @@ export class Project {
               force ? '. Force mode is activated, all mutants will be retested' : ''
             }`
           : '';
-
         log.info(`Found ${this.filesToMutate.size} of ${this.files.size} file(s) to be mutated${incrementalInfo}.`);
       } else {
         const msg =
