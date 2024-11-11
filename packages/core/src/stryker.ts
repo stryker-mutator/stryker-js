@@ -32,7 +32,7 @@ export class Stryker {
     );
 
     try {
-      // 1. Prepare. Load Stryker configuration, load the input files and starts the logging server
+      // 1. Prepare. Load Stryker configuration, load the input files
       const prepareExecutor = prepareInjector.injectClass(PrepareExecutor);
       const mutantInstrumenterInjector = await prepareExecutor.execute(this.cliOptions);
 

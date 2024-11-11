@@ -19,10 +19,9 @@ import { FileSystem, ProjectReader } from '../fs/index.js';
 
 import { MutantInstrumenterContext } from './index.js';
 import { Reporter } from '@stryker-mutator/api/report';
-import { LoggingBackend, LoggingServerAddress, LoggingSink } from '../logging/index.js';
+import { LoggingBackend, LoggingServerAddress } from '../logging/index.js';
 
 export interface PrepareExecutorContext extends BaseContext {
-  [coreTokens.loggingSink]: LoggingSink;
   [coreTokens.loggingServerAddress]: LoggingServerAddress;
 }
 
@@ -30,7 +29,7 @@ export interface PrepareExecutorContext extends BaseContext {
   [coreTokens.reporterOverride]?: Reporter;
 }
 export class PrepareExecutor {
-  public static readonly inject = tokens(commonTokens.injector, coreTokens.loggingSink, coreTokens.reporterOverride);
+  public static readonly inject = tokens(commonTokens.injector, coreTokens.loggingSink);
   constructor(
     private readonly injector: Injector<PrepareExecutorContext>,
     private readonly loggingBackend: LoggingBackend,

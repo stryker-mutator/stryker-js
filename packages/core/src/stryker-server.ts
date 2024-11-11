@@ -5,25 +5,24 @@ import {
   ConfigureResult,
   MutationTestParams,
   MutationTestResult,
-  DiscoveredMutant,
   DiscoveredFile,
 } from 'mutation-server-protocol';
 import { JSONRPCClient, JSONRPCServer, JSONRPCServerAndClient } from 'json-rpc-2.0';
 import net from 'net';
-import { createInjector } from 'typed-inject';
-import { provideLogger } from './di/provide-logger.js';
-import { PrepareExecutor } from './process/1-prepare-executor.js';
+import { createInjector, Injector } from 'typed-inject';
+import { PrepareExecutor, PrepareExecutorContext } from './process/1-prepare-executor.js';
 import { createInstrumenter } from '@stryker-mutator/instrumenter';
-import { commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
+import { BaseContext, commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
 import { coreTokens } from './di/index.js';
 import { objectUtils } from './utils/object-utils.js';
 import { JsonRpcEventDeserializer } from './utils/json-rpc-event-deserializer.js';
 import { Observable } from 'rxjs';
-import { MutantResult, PartialStrykerOptions, schema } from '@stryker-mutator/api/core';
+import { MutantResult, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
 import { Stryker } from './stryker.js';
 import { promisify } from 'util';
 import { normalizeReportFileName } from './reporters/mutation-test-report-helper.js';
+import { LoggingBackendProvider, provideLogging, provideLoggingBackend } from './logging/provide-logging.js';
 
 export const rpcMethods = Object.freeze({
   configure: 'configure',
@@ -41,6 +40,7 @@ export const rpcMethods = Object.freeze({
 export class StrykerServer {
   #server?: net.Server;
   #configFilePath?: string;
+  #loggingBackendProvider?: LoggingBackendProvider;
 
   /**
    *
@@ -53,10 +53,29 @@ export class StrykerServer {
   ) {}
 
   /**
+   * Creates a new injector based on the #loggingBackendProvider injector.
+   * The #loggingBackendProvider cannot be used directly to provide more stuff, because it has a different lifecycle
+   * @returns an injector that can provide logging functionality
+   */
+  #createInjector() {
+    if (!this.#loggingBackendProvider) {
+      throw new Error('Logging backend provider not initialized');
+    }
+    const injector = this.injectorFactory();
+    return provideLogging(
+      injector
+        .provideValue(coreTokens.loggingServerAddress, this.#loggingBackendProvider.resolve(coreTokens.loggingServerAddress))
+        .provideValue(coreTokens.loggingSink, this.#loggingBackendProvider.resolve(coreTokens.loggingSink))
+        .provideValue(coreTokens.loggingServer, this.#loggingBackendProvider.resolve(coreTokens.loggingServer)),
+    );
+  }
+
+  /**
    * Starts the server and listens for incoming connections.
    * @returns The port the server is listening on
    */
-  start(): Promise<number> {
+  async start(): Promise<number> {
+    this.#loggingBackendProvider = await provideLoggingBackend(this.injectorFactory());
     return new Promise((resolve) => {
       this.#server = net.createServer((socket) => {
         const deserializer = new JsonRpcEventDeserializer();
@@ -104,9 +123,12 @@ export class StrykerServer {
   }
 
   async stop(): Promise<void> {
+    await this.#loggingBackendProvider?.dispose();
     if (this.#server) {
       await promisify(this.#server?.close.bind(this.#server))();
     }
+    this.#server = undefined;
+    this.#loggingBackendProvider = undefined;
   }
 
   configure(configureParams: ConfigureParams): ConfigureResult {
@@ -115,10 +137,9 @@ export class StrykerServer {
   }
 
   async discover(discoverParams: DiscoverParams): Promise<DiscoverResult> {
-    const rootInjector = this.injectorFactory();
-    const loggerProvider = provideLogger(rootInjector).provideValue(coreTokens.reporterOverride, undefined);
+    const rootInjector = this.#createInjector();
 
-    const prepareExecutor = loggerProvider.injectClass(PrepareExecutor);
+    const prepareExecutor = rootInjector.injectClass(PrepareExecutor);
     const inj = await prepareExecutor.execute({
       ...this.cliOptions,
       ...this.#overrideMutate(discoverParams.files),
