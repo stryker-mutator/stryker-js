@@ -71,12 +71,4 @@ export const objectUtils = {
       }
     });
   },
-
-  /**
-   * Creates a random integer number.
-   * @returns A random integer.
-   */
-  random(): number {
-    return Math.ceil(Math.random() * 10000000);
-  },
 };
