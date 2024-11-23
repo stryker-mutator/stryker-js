@@ -25,7 +25,7 @@ describe(Sandbox.name, () => {
   let unexpectedExitHandlerMock: sinon.SinonStubbedInstance<I<UnexpectedExitHandler>>;
   let moveDirectoryRecursiveSyncStub: sinon.SinonStub;
   let fsTestDouble: FileSystemTestDouble;
-  const SANDBOX_WORKING_DIR = '.stryker-tmp/sandbox-123';
+  const SANDBOX_WORKING_DIR = path.join('.stryker-tmp', 'sandbox-123');
 
   beforeEach(() => {
     temporaryDirectoryMock = sinon.createStubInstance(TemporaryDirectory);
