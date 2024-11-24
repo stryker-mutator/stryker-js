@@ -25,12 +25,11 @@ describe(Sandbox.name, () => {
   let unexpectedExitHandlerMock: sinon.SinonStubbedInstance<I<UnexpectedExitHandler>>;
   let moveDirectoryRecursiveSyncStub: sinon.SinonStub;
   let fsTestDouble: FileSystemTestDouble;
-  const SANDBOX_WORKING_DIR = path.resolve('.stryker-tmp/sandbox-123');
-  const BACKUP_DIR = 'backup-123';
+  const SANDBOX_WORKING_DIR = path.join('.stryker-tmp', 'sandbox-123');
 
   beforeEach(() => {
     temporaryDirectoryMock = sinon.createStubInstance(TemporaryDirectory);
-    temporaryDirectoryMock.getRandomDirectory.withArgs('sandbox').returns(SANDBOX_WORKING_DIR).withArgs('backup').returns(BACKUP_DIR);
+    sinon.stub(temporaryDirectoryMock, 'path').value(SANDBOX_WORKING_DIR);
     symlinkJunctionStub = sinon.stub(fileUtils, 'symlinkJunction');
     findNodeModulesListStub = sinon.stub(fileUtils, 'findNodeModulesList');
     moveDirectoryRecursiveSyncStub = sinon.stub(fileUtils, 'moveDirectoryRecursiveSync');
@@ -66,13 +65,6 @@ describe(Sandbox.name, () => {
     describe('with inPlace = false', () => {
       beforeEach(() => {
         testInjector.options.inPlace = false;
-      });
-
-      it('should have created a sandbox folder', async () => {
-        const sut = createSut();
-        await sut.init();
-        expect(temporaryDirectoryMock.getRandomDirectory).calledWith('sandbox');
-        expect(temporaryDirectoryMock.createDirectory).calledWith(SANDBOX_WORKING_DIR);
       });
 
       it('should copy regular input files', async () => {
@@ -113,13 +105,6 @@ describe(Sandbox.name, () => {
         testInjector.options.inPlace = true;
       });
 
-      it('should have created a backup directory', async () => {
-        const sut = createSut();
-        await sut.init();
-        expect(temporaryDirectoryMock.getRandomDirectory).calledWith('backup');
-        expect(temporaryDirectoryMock.createDirectory).calledWith(BACKUP_DIR);
-      });
-
       it('should not override the current file if no changes were detected', async () => {
         fsTestDouble.files[path.resolve('a', 'b.txt')] = 'b content';
         const sut = createSut();
@@ -150,7 +135,7 @@ describe(Sandbox.name, () => {
         fsTestDouble.files[fileName] = originalContent;
         const project = new Project(fsTestDouble, { [fileName]: { mutate: true } });
         project.files.get(fileName)!.setContent(mutatedContent);
-        const expectedBackupFileName = path.join(path.join(BACKUP_DIR, 'a'), 'b.js');
+        const expectedBackupFileName = path.join(path.join(SANDBOX_WORKING_DIR, 'a'), 'b.js');
 
         // Act
         const sut = createSut(project);
@@ -169,7 +154,7 @@ describe(Sandbox.name, () => {
         fsTestDouble.files[fileName] = originalContent;
         const project = new Project(fsTestDouble, { [fileName]: { mutate: true } });
         project.files.get(fileName)!.setContent(mutatedContent);
-        const expectedBackupFileName = path.join(path.join(BACKUP_DIR, 'a'), 'b.js');
+        const expectedBackupFileName = path.join(path.join(SANDBOX_WORKING_DIR, 'a'), 'b.js');
 
         // Act
         const sut = createSut(project);
@@ -280,7 +265,7 @@ describe(Sandbox.name, () => {
       testInjector.options.inPlace = true;
       const sut = createSut();
       sut.dispose();
-      expect(moveDirectoryRecursiveSyncStub).calledWith(BACKUP_DIR, process.cwd());
+      sinon.assert.calledWithExactly(moveDirectoryRecursiveSyncStub, SANDBOX_WORKING_DIR, process.cwd());
     });
 
     it('should recover from the backup dir if stryker exits unexpectedly while inPlace = true', () => {
@@ -288,8 +273,8 @@ describe(Sandbox.name, () => {
       const errorStub = sinon.stub(console, 'error');
       createSut();
       unexpectedExitHandlerMock.registerHandler.callArg(0);
-      expect(moveDirectoryRecursiveSyncStub).calledWith(BACKUP_DIR, process.cwd());
-      expect(errorStub).calledWith(`Detecting unexpected exit, recovering original files from ${BACKUP_DIR}`);
+      expect(moveDirectoryRecursiveSyncStub).calledWith(SANDBOX_WORKING_DIR, process.cwd());
+      expect(errorStub).calledWith(`Detecting unexpected exit, recovering original files from ${SANDBOX_WORKING_DIR}`);
     });
   });
 
@@ -307,25 +292,6 @@ describe(Sandbox.name, () => {
       expect(sut.workingDirectory).eq(process.cwd());
     });
   });
-
-  // describe(Sandbox.prototype.sandboxFileFor.name, () => {
-  //   it('should return the sandbox file if exists', async () => {
-  //     const originalFileName = path.resolve('src/foo.js');
-  //     fsTestDouble.push(new File(originalFileName, ''));
-  //     const sut = createSut();
-  //     await sut.init();
-  //     const actualSandboxFile = sut.sandboxFileFor(originalFileName);
-  //     expect(actualSandboxFile).eq(path.join(SANDBOX_WORKING_DIR, 'src/foo.js'));
-  //   });
-
-  //   it("should throw when the sandbox file doesn't exists", async () => {
-  //     const notExistingFile = 'src/bar.js';
-  //     fsTestDouble.push(new File(path.resolve('src/foo.js'), ''));
-  //     const sut = createSut();
-  //     await sut.init();
-  //     expect(() => sut.sandboxFileFor(notExistingFile)).throws('Cannot find sandbox file for src/bar.js');
-  //   });
-  // });
 
   describe(Sandbox.prototype.originalFileFor.name, () => {
     it('should remap the file to the original', async () => {

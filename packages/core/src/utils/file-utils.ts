@@ -4,17 +4,16 @@ import fs from 'fs';
 import { isErrnoException } from '@stryker-mutator/util';
 
 export const fileUtils = {
-  deleteDir(dir: string): Promise<void> {
-    return fs.promises.rm(dir, { recursive: true, force: true });
-  },
-
-  async cleanFolder(folderName: string): Promise<string | undefined> {
+  /**
+   * Cleans the dir by creating it.
+   */
+  async cleanDir(dirName: string): Promise<string | undefined> {
     try {
-      await fs.promises.lstat(folderName);
-      await this.deleteDir(folderName);
-      return fs.promises.mkdir(folderName, { recursive: true });
+      await fs.promises.lstat(dirName);
+      await fs.promises.rm(dirName, { recursive: true, force: true });
+      return fs.promises.mkdir(dirName, { recursive: true });
     } catch {
-      return fs.promises.mkdir(folderName, { recursive: true });
+      return fs.promises.mkdir(dirName, { recursive: true });
     }
   },
 

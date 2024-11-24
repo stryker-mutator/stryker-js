@@ -13,7 +13,7 @@ describe('fileUtils', () => {
     const to = path.resolve(os.tmpdir(), 'moveDirectoryRecursiveSyncTo');
 
     afterEach(async () => {
-      await Promise.all([fileUtils.deleteDir(from), fileUtils.deleteDir(to)]);
+      await Promise.all([fsPromises.rm(from, { recursive: true, force: true }), fsPromises.rm(to, { recursive: true, force: true })]);
     });
 
     it('should override target files', async () => {

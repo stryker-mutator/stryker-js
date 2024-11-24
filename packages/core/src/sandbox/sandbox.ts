@@ -23,14 +23,10 @@ export class Sandbox implements Disposable {
    * Either an actual sandbox directory, or the cwd when running in --inPlace mode
    */
   public readonly workingDirectory: string;
-  /**
+  /**11
    * The backup directory when running in --inPlace mode
    */
   private readonly backupDirectory: string = '';
-  /**
-   * The sandbox dir or the backup dir when running in `--inPlace` mode
-   */
-  private readonly tempDirectory: string;
 
   public static readonly inject = tokens(
     commonTokens.options,
@@ -41,32 +37,32 @@ export class Sandbox implements Disposable {
     coreTokens.unexpectedExitRegistry,
   );
 
+  /**
+   * @param temporaryDirectory The sandbox dir or the backup dir when running in `--inPlace` mode
+   */
   constructor(
     private readonly options: StrykerOptions,
     private readonly log: Logger,
-    private readonly temporaryDirectory: I<TemporaryDirectory>,
+    temporaryDirectory: I<TemporaryDirectory>,
     private readonly project: Project,
     private readonly execCommand: typeof execaCommand,
     unexpectedExitHandler: I<UnexpectedExitHandler>,
   ) {
     if (options.inPlace) {
       this.workingDirectory = process.cwd();
-      this.backupDirectory = temporaryDirectory.getRandomDirectory('backup');
-      this.tempDirectory = this.backupDirectory;
+      this.backupDirectory = temporaryDirectory.path;
       this.log.info(
         'In place mode is enabled, Stryker will be overriding YOUR files. Find your backup at: %s',
         path.relative(process.cwd(), this.backupDirectory),
       );
-      unexpectedExitHandler.registerHandler(this.dispose.bind(this, true));
+      unexpectedExitHandler.registerHandler(this.dispose.bind(this, /* unexpected */ true));
     } else {
-      this.workingDirectory = temporaryDirectory.getRandomDirectory('sandbox');
-      this.tempDirectory = this.workingDirectory;
+      this.workingDirectory = temporaryDirectory.path;
       this.log.debug('Creating a sandbox for files in %s', this.workingDirectory);
     }
   }
 
   public async init(): Promise<void> {
-    await this.temporaryDirectory.createDirectory(this.tempDirectory);
     await this.fillSandbox();
     await this.runBuildCommand();
     await this.symlinkNodeModulesIfNeeded();
@@ -81,7 +77,7 @@ export class Sandbox implements Disposable {
   }
 
   public originalFileFor(sandboxFileName: string): string {
-    return path.resolve(sandboxFileName).replace(this.workingDirectory, process.cwd());
+    return path.resolve(sandboxFileName).replace(path.resolve(this.workingDirectory), process.cwd());
   }
 
   private async fillSandbox(): Promise<void> {

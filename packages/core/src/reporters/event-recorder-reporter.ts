@@ -21,7 +21,7 @@ export class EventRecorderReporter implements StrictReporter {
     private readonly log: Logger,
     private readonly options: StrykerOptions,
   ) {
-    this.createBaseFolderTask = fileUtils.cleanFolder(this.options.eventReporter.baseDir);
+    this.createBaseFolderTask = fileUtils.cleanDir(this.options.eventReporter.baseDir);
   }
 
   private writeToFile(methodName: keyof Reporter, data: any) {
