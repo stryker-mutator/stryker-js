@@ -10,7 +10,7 @@
     "@babel/plugin-proposal-pipeline-operator": "7.24.7",
     "@babel/preset-env": "7.25.4",
     "@babel/preset-flow": "7.24.7",
-    "@cucumber/cucumber": "11.0.1",
+    "@cucumber/cucumber": "11.1.0",
     "@sveltejs/adapter-auto": "3.3.1",
     "@sveltejs/kit": "2.7.7",
     "@sveltejs/vite-plugin-svelte": "3.1.2",
