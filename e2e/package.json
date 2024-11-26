@@ -30,7 +30,7 @@
     "ajv": "8.17.1",
     "axios": "1.7.8",
     "chai": "5.1.2",
-    "chai-as-promised": "8.0.0",
+    "chai-as-promised": "8.0.1",
     "chai-jest-snapshot": "2.0.0",
     "cross-env": "7.0.3",
     "enzyme-to-json": "3.6.2",
