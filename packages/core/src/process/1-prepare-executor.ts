@@ -23,11 +23,9 @@ import { LoggingBackend, LoggingServerAddress } from '../logging/index.js';
 
 export interface PrepareExecutorContext extends BaseContext {
   [coreTokens.loggingServerAddress]: LoggingServerAddress;
-}
-
-export interface PrepareExecutorContext extends BaseContext {
   [coreTokens.reporterOverride]?: Reporter;
 }
+
 export class PrepareExecutor {
   public static readonly inject = tokens(commonTokens.injector, coreTokens.loggingSink);
   constructor(

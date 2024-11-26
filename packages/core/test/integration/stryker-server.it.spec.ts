@@ -7,7 +7,7 @@ import { JsonRpcEventDeserializer } from '../../src/utils/json-rpc-event-deseria
 import { ReplaySubject } from 'rxjs';
 import { expect } from 'chai';
 
-describe.only(StrykerServer.name, () => {
+describe(StrykerServer.name, () => {
   describe('on a happy flow project', () => {
     let sut: StrykerServer;
     let client: MutationServerClient;
@@ -19,11 +19,16 @@ describe.only(StrykerServer.name, () => {
       client = await MutationServerClient.create(port);
     });
 
+    afterEach(async () => {
+      await client.end();
+      await sut.stop();
+    });
+
     it('should be able to discover mutants', async () => {
       expect(await client.discover()).matchSnapshot();
     });
 
-    it.only('should be able to discover mutants based on a list of files', async () => {
+    it('should be able to discover mutants based on a list of files', async () => {
       expect(await client.discover({ files: ['src/add.js'] })).matchSnapshot();
     });
 
@@ -31,17 +36,27 @@ describe.only(StrykerServer.name, () => {
       const results: MutationTestResult[] = [];
       client.mutationTestResult$.subscribe((result) => results.push(result));
       const finalResult = await client.mutationTest();
-      expect(finalResult).deep.eq({ files: {} } satisfies MutationTestResult);
+      assertEmptyMutationTestResult(finalResult);
       const cleanedResults = cleanResults(results);
       expect(results).lengthOf(6);
       expect(cleanedResults).matchSnapshot();
     });
 
-    afterEach(async () => {
-      await client.end();
-      await sut.stop();
+    it('should be able to run mutation tests twice in parallel', async () => {
+      const results: MutationTestResult[] = [];
+      client.mutationTestResult$.subscribe((result) => results.push(result));
+      const [first, second] = await Promise.all([client.mutationTest({ files: ['src/app.js'] }), client.mutationTest({ files: ['src/math.js'] })]);
+      assertEmptyMutationTestResult(first);
+      assertEmptyMutationTestResult(second);
+      const cleanedResults = cleanResults(results.sort((a, b) => Object.keys(a.files)[0].localeCompare(Object.keys(b.files)[0])));
+      expect(cleanedResults).lengthOf(5);
+      expect(cleanedResults).matchSnapshot();
     });
   });
+
+  function assertEmptyMutationTestResult(actualResult: MutationTestResult) {
+    expect(actualResult).deep.eq({ files: {} } satisfies MutationTestResult);
+  }
 });
 
 class MutationServerClient {

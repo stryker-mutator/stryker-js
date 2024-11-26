@@ -31,6 +31,8 @@ export const rpcMethods = Object.freeze({
   reportMutationTestProgressNotification: 'reportMutationTestProgress',
 });
 
+const STRYKER_SERVER_NOT_STARTED = "Stryker server isn't started yet, please call `start` first";
+const STRYKER_SERVER_ALREADY_STARTED = 'Server already started';
 /**
  * An implementation of the mutation testing server protocol for StrykerJS.
  * - Methods: `initialize`, `discover`, `mutationTest`
@@ -40,7 +42,12 @@ export const rpcMethods = Object.freeze({
 export class StrykerServer {
   #server?: net.Server;
   #configFilePath?: string;
+  /**
+   * Keep track of the logging backend provider, so we can share the logging server between calls.
+   * New injectors for discover or mutation test tasks.
+   */
   #loggingBackendProvider?: LoggingBackendProvider;
+  #rootInjector?: Injector;
 
   /**
    *
@@ -53,29 +60,15 @@ export class StrykerServer {
   ) {}
 
   /**
-   * Creates a new injector based on the #loggingBackendProvider injector.
-   * The #loggingBackendProvider cannot be used directly to provide more stuff, because it has a different lifecycle
-   * @returns an injector that can provide logging functionality
-   */
-  #createInjector() {
-    if (!this.#loggingBackendProvider) {
-      throw new Error('Logging backend provider not initialized');
-    }
-    const injector = this.injectorFactory();
-    return provideLogging(
-      injector
-        .provideValue(coreTokens.loggingServerAddress, this.#loggingBackendProvider.resolve(coreTokens.loggingServerAddress))
-        .provideValue(coreTokens.loggingSink, this.#loggingBackendProvider.resolve(coreTokens.loggingSink))
-        .provideValue(coreTokens.loggingServer, this.#loggingBackendProvider.resolve(coreTokens.loggingServer)),
-    );
-  }
-
-  /**
    * Starts the server and listens for incoming connections.
    * @returns The port the server is listening on
    */
   async start(): Promise<number> {
-    this.#loggingBackendProvider = await provideLoggingBackend(this.injectorFactory());
+    if (this.#rootInjector) {
+      throw new Error(STRYKER_SERVER_ALREADY_STARTED);
+    }
+    this.#rootInjector = this.injectorFactory();
+    this.#loggingBackendProvider = await provideLoggingBackend(this.#rootInjector);
     return new Promise((resolve) => {
       this.#server = net.createServer((socket) => {
         const deserializer = new JsonRpcEventDeserializer();
@@ -123,9 +116,9 @@ export class StrykerServer {
   }
 
   async stop(): Promise<void> {
-    await this.#loggingBackendProvider?.dispose();
+    await this.#rootInjector?.dispose();
     if (this.#server) {
-      await promisify(this.#server?.close.bind(this.#server))();
+      await promisify(this.#server.close.bind(this.#server))();
     }
     this.#server = undefined;
     this.#loggingBackendProvider = undefined;
@@ -137,49 +130,58 @@ export class StrykerServer {
   }
 
   async discover(discoverParams: DiscoverParams): Promise<DiscoverResult> {
-    const rootInjector = this.#createInjector();
+    if (!this.#loggingBackendProvider) {
+      throw new Error(STRYKER_SERVER_NOT_STARTED);
+    }
+    const discoverInjector = provideLogging(this.#loggingBackendProvider);
+    try {
+      const prepareExecutor = discoverInjector.injectClass(PrepareExecutor);
+      const inj = await prepareExecutor.execute({
+        ...this.cliOptions,
+        ...this.#overrideMutate(discoverParams.files),
+      });
 
-    const prepareExecutor = rootInjector.injectClass(PrepareExecutor);
-    const inj = await prepareExecutor.execute({
-      ...this.cliOptions,
-      ...this.#overrideMutate(discoverParams.files),
-    });
-
-    const instrumenter = inj.injectFunction(createInstrumenter);
-    const pluginCreator = inj.resolve(coreTokens.pluginCreator);
-    const options = inj.resolve(commonTokens.options);
-    const project = inj.resolve(coreTokens.project);
-    const filesToMutate = await Promise.all([...project.filesToMutate.values()].map((file) => file.toInstrumenterFile()));
-    const ignorers = options.ignorers.map((name) => pluginCreator.create(PluginKind.Ignore, name));
-    const instrumentResult = await instrumenter.instrument(filesToMutate, { ignorers, ...options.mutator });
-    const mutants = instrumentResult.mutants.map((mutant) => ({ ...mutant, location: objectUtils.toSchemaLocation(mutant.location) }));
-    const mutantsByFile = mutants.reduce((acc, mutant) => {
-      const { fileName, ...discoveredMutant } = mutant;
-      const normalizedFileName = normalizeReportFileName(fileName);
-      const file = acc.get(normalizedFileName) ?? { mutants: [] };
-      file.mutants.push(discoveredMutant);
-      acc.set(normalizedFileName, file);
-      return acc;
-    }, new Map<string, DiscoveredFile>());
-    return {
-      files: Object.fromEntries(mutantsByFile.entries()),
-    };
+      const instrumenter = inj.injectFunction(createInstrumenter);
+      const pluginCreator = inj.resolve(coreTokens.pluginCreator);
+      const options = inj.resolve(commonTokens.options);
+      const project = inj.resolve(coreTokens.project);
+      const filesToMutate = await Promise.all([...project.filesToMutate.values()].map((file) => file.toInstrumenterFile()));
+      const ignorers = options.ignorers.map((name) => pluginCreator.create(PluginKind.Ignore, name));
+      const instrumentResult = await instrumenter.instrument(filesToMutate, { ignorers, ...options.mutator });
+      const mutants = instrumentResult.mutants.map((mutant) => ({ ...mutant, location: objectUtils.toSchemaLocation(mutant.location) }));
+      const mutantsByFile = mutants.reduce((acc, mutant) => {
+        const { fileName, ...discoveredMutant } = mutant;
+        const normalizedFileName = normalizeReportFileName(fileName);
+        const file = acc.get(normalizedFileName) ?? { mutants: [] };
+        file.mutants.push(discoveredMutant);
+        acc.set(normalizedFileName, file);
+        return acc;
+      }, new Map<string, DiscoveredFile>());
+      return {
+        files: Object.fromEntries(mutantsByFile.entries()),
+      };
+    } finally {
+      await discoverInjector.dispose();
+    }
   }
 
   public mutationTest(params: MutationTestParams): Observable<MutantResult> {
     return new Observable<MutantResult>((subscriber) => {
+      if (!this.#loggingBackendProvider) {
+        throw new Error(STRYKER_SERVER_NOT_STARTED);
+      }
       const reporter: Reporter = {
         onMutantTested(mutant) {
           subscriber.next(mutant);
         },
       };
-      const stryker = new Stryker(
-        { ...this.cliOptions, allowConsoleColors: false, configFile: this.#configFilePath, ...this.#overrideMutate(params.files) },
-        this.injectorFactory,
-        reporter,
-      );
-      stryker
-        .runMutationTest()
+
+      Stryker.run(provideLogging(this.#loggingBackendProvider).provideValue(coreTokens.reporterOverride, reporter), {
+        ...this.cliOptions,
+        allowConsoleColors: false,
+        configFile: this.#configFilePath,
+        ...this.#overrideMutate(params.files),
+      })
         .then(() => subscriber.complete())
         .catch((error) => subscriber.error(error));
     });
