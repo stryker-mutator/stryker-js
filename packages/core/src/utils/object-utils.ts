@@ -73,14 +73,6 @@ export const objectUtils = {
   },
 
   /**
-   * Creates a random integer number.
-   * @returns A random integer.
-   */
-  random(): number {
-    return Math.ceil(Math.random() * 10000000);
-  },
-
-  /**
    * Converts an internal StrykerJS 0-based location to a schema.Location (1-based).
    * @param location the StrykerJS 0-based location
    * @returns the schema.Location (1-based)

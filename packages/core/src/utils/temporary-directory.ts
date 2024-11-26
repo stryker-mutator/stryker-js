@@ -6,57 +6,55 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Disposable } from 'typed-inject';
 
-import { fileUtils } from './file-utils.js';
-import { objectUtils } from './object-utils.js';
-
 export class TemporaryDirectory implements Disposable {
-  private readonly temporaryDirectory: string;
-  private isInitialized = false;
+  #temporaryDirectory?: string;
   public removeDuringDisposal: boolean;
 
   public static readonly inject = tokens(commonTokens.logger, commonTokens.options);
   constructor(
     private readonly log: Logger,
-    options: StrykerOptions,
+    private readonly options: StrykerOptions,
   ) {
-    this.temporaryDirectory = path.resolve(options.tempDirName);
     this.removeDuringDisposal = Boolean(options.cleanTempDir);
   }
 
   public async initialize(): Promise<void> {
-    this.log.debug('Using temp directory "%s"', this.temporaryDirectory);
-    await fs.promises.mkdir(this.temporaryDirectory, { recursive: true });
-    this.isInitialized = true;
+    const parent = path.resolve(this.options.tempDirName);
+    await fs.promises.mkdir(parent, { recursive: true });
+    this.#temporaryDirectory = await fs.promises.mkdtemp(path.join(parent, this.options.inPlace ? 'backup-' : 'sandbox-'));
+    this.log.debug('Using temp directory "%s"', this.#temporaryDirectory);
   }
 
-  public getRandomDirectory(prefix: string): string {
-    return path.resolve(this.temporaryDirectory, `${prefix}${objectUtils.random()}`);
-  }
-
-  /**
-   * Creates a new random directory with the specified prefix.
-   * @returns The path to the directory.
-   */
-  public async createDirectory(name: string): Promise<void> {
-    if (!this.isInitialized) {
-      throw new Error('initialize() was not called!');
+  get path() {
+    if (!this.#temporaryDirectory) {
+      this.#throwNotInitialized();
     }
-    await fs.promises.mkdir(path.resolve(this.temporaryDirectory, name), { recursive: true });
+    return this.#temporaryDirectory;
+  }
+
+  #throwNotInitialized(): never {
+    throw new Error('initialize() was not called!');
   }
 
   /**
    * Deletes the Stryker-temp directory
    */
   public async dispose(): Promise<void> {
-    if (!this.isInitialized) {
-      throw new Error('initialize() was not called!');
-    }
-    if (this.removeDuringDisposal) {
-      this.log.debug('Deleting stryker temp directory %s', this.temporaryDirectory);
+    if (this.removeDuringDisposal && this.#temporaryDirectory) {
+      this.log.debug('Deleting stryker temp directory %s', this.#temporaryDirectory);
       try {
-        await fileUtils.deleteDir(this.temporaryDirectory);
+        await fs.promises.rm(this.#temporaryDirectory, { recursive: true, force: true });
       } catch {
-        this.log.info(`Failed to delete stryker temp directory ${this.temporaryDirectory}`);
+        this.log.info(`Failed to delete stryker temp directory ${this.#temporaryDirectory}`);
+      }
+      const lingeringDirectories = await fs.promises.readdir(this.options.tempDirName);
+      if (!lingeringDirectories.length) {
+        try {
+          await fs.promises.rmdir(this.options.tempDirName);
+        } catch (e) {
+          // It's not THAT important, maybe another StrykerJS process started in the meantime.
+          this.log.debug(`Failed to clean temp ${path.basename(this.options.tempDirName)}`, e);
+        }
       }
     }
   }
