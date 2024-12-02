@@ -79,6 +79,7 @@
     "emoji-regex": "~10.4.0",
     "execa": "~9.4.0",
     "file-url": "~4.0.0",
+    "json-rpc-2.0": "^1.7.0",
     "lodash.groupby": "~4.6.0",
     "minimatch": "~9.0.5",
     "mutation-server-protocol": "^0.2.0",
