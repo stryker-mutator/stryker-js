@@ -21,10 +21,7 @@ function loggerFactory(getLogger: LoggerFactoryMethod, target: Function | undefi
 loggerFactory.inject = [commonTokens.getLogger, commonTokens.target] as const;
 
 export function provideLogging<T extends { [coreTokens.loggingSink]: LoggingSink }>(injector: Injector<T>) {
-  return injector
-    .provideFactory(commonTokens.getLogger, getLoggerFactory)
-    .provideFactory(commonTokens.logger, loggerFactory, Scope.Transient)
-    .provideClass('loggingServer', LoggingServer);
+  return injector.provideFactory(commonTokens.getLogger, getLoggerFactory).provideFactory(commonTokens.logger, loggerFactory, Scope.Transient);
 }
 provideLogging.inject = [coreTokens.loggingSink, commonTokens.injector] as const;
 
@@ -35,8 +32,7 @@ export async function provideLoggingBackend(injector: Injector) {
   return out.provideValue(coreTokens.loggingServerAddress, loggingServerAddress);
 }
 provideLoggingBackend.inject = [commonTokens.injector] as const;
-
-export type LoggingProvider = ReturnType<typeof provideLogging>;
+export type LoggingBackendProvider = Awaited<ReturnType<typeof provideLoggingBackend>>;
 
 export async function provideLoggingClient(injector: Injector, loggingServerAddress: LoggingServerAddress, activeLogLevel: LogLevel) {
   const out = injector
