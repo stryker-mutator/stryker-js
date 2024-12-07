@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.7.0](https://github.com/stryker-mutator/stryker-js/compare/v8.6.0...v8.7.0) (2024-12-06)
+
+### Bug Fixes
+
+- support mocha v11 ([#5141](https://github.com/stryker-mutator/stryker-js/issues/5141)) ([ede4255](https://github.com/stryker-mutator/stryker-js/commit/ede42556a0ed6b3b605039e3b1690810299a6768))
+
 # [8.6.0](https://github.com/stryker-mutator/stryker-js/compare/v8.5.0...v8.6.0) (2024-09-29)
 
 ### Bug Fixes

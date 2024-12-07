@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.7.0](https://github.com/stryker-mutator/stryker-js/compare/v8.6.0...v8.7.0) (2024-12-06)
+
+### Features
+
+- **logging:** remove dependency on log4js ([#5111](https://github.com/stryker-mutator/stryker-js/issues/5111)) ([276ffd8](https://github.com/stryker-mutator/stryker-js/commit/276ffd83bd7f63920144998a1e110aac27f19ac5))
+
 # [8.6.0](https://github.com/stryker-mutator/stryker-js/compare/v8.5.0...v8.6.0) (2024-09-29)
 
 ### Bug Fixes

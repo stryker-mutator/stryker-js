@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [8.7.0](https://github.com/stryker-mutator/stryker-js/compare/v8.6.0...v8.7.0) (2024-12-06)
+
+### Bug Fixes
+
+- **deps:** update dependency mutation-testing-elements to v3.4.0 ([#5138](https://github.com/stryker-mutator/stryker-js/issues/5138)) ([32001dd](https://github.com/stryker-mutator/stryker-js/commit/32001ddade1398b2a5e5a2d4af6230949d4e064d))
+
+### Features
+
+- **logging:** remove dependency on log4js ([#5111](https://github.com/stryker-mutator/stryker-js/issues/5111)) ([276ffd8](https://github.com/stryker-mutator/stryker-js/commit/276ffd83bd7f63920144998a1e110aac27f19ac5))
+- **temp-dir:** allow multiple instances to share the same temp-dir ([#5120](https://github.com/stryker-mutator/stryker-js/issues/5120)) ([d15453e](https://github.com/stryker-mutator/stryker-js/commit/d15453edfdad85b25ff55d46bd7333227226f540)), closes [#5086](https://github.com/stryker-mutator/stryker-js/issues/5086)
+
 # [8.6.0](https://github.com/stryker-mutator/stryker-js/compare/v8.5.0...v8.6.0) (2024-09-29)
 
 ### Bug Fixes
