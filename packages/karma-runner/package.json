@@ -67,7 +67,7 @@
     "@stryker-mutator/util": "8.7.1",
     "decamelize": "~6.0.0",
     "semver": "~7.6.3",
-    "tslib": "~2.7.0"
+    "tslib": "~2.8.0"
   },
   "contributors": [
     "nicojs <jansennico@gmail.com>",

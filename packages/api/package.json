@@ -59,7 +59,7 @@
   "dependencies": {
     "mutation-testing-metrics": "3.3.0",
     "mutation-testing-report-schema": "3.3.0",
-    "tslib": "~2.7.0",
+    "tslib": "~2.8.0",
     "typed-inject": "~4.0.0"
   },
   "devDependencies": {
