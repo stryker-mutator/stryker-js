@@ -60,4 +60,17 @@ describe(deepMerge.name, () => {
     const expected: Foo = { foo: '1' };
     expect(foo).deep.eq(expected);
   });
+
+  it('should prevent prototype pollution', () => {
+    // Arrange
+    const someObj = {};
+
+    // Act
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    deepMerge(someObj, JSON.parse('{"__proto__":{"pollutedKey":123}}'));
+
+    // Assert
+    // @ts-expect-error This polluted key shouldn't be there, that's the point
+    expect({}.__proto__.pollutedKey).undefined;
+  });
 });
