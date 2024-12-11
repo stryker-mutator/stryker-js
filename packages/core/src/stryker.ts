@@ -5,7 +5,7 @@ import { commonTokens } from '@stryker-mutator/api/plugin';
 import { PrepareExecutor, MutantInstrumenterExecutor, DryRunExecutor, MutationTestExecutor, PrepareExecutorContext } from './process/index.js';
 import { coreTokens } from './di/index.js';
 import { retrieveCause, ConfigError } from './errors.js';
-import { LoggingBackend, provideLogging, provideLoggingBackend } from './logging/index.js';
+import { LoggingBackend, provideLoggingBackend } from './logging/index.js';
 
 type MutationRunContext = PrepareExecutorContext & {
   [coreTokens.loggingSink]: LoggingBackend;
@@ -29,7 +29,7 @@ export class Stryker {
   public async runMutationTest(): Promise<MutantResult[]> {
     const rootInjector = this.injectorFactory();
     try {
-      const prepareInjector = provideLogging(await provideLoggingBackend(rootInjector)).provideValue(coreTokens.reporterOverride, undefined);
+      const prepareInjector = (await provideLoggingBackend(rootInjector)).provideValue(coreTokens.reporterOverride, undefined);
       return await Stryker.run(prepareInjector, this.cliOptions);
     } finally {
       await rootInjector.dispose();

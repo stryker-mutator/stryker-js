@@ -10,9 +10,9 @@ import {
 import { JSONRPCClient, JSONRPCServer, JSONRPCServerAndClient } from 'json-rpc-2.0';
 import net from 'net';
 import { createInjector, Injector } from 'typed-inject';
-import { PrepareExecutor, PrepareExecutorContext } from './process/1-prepare-executor.js';
+import { PrepareExecutor } from './process/1-prepare-executor.js';
 import { createInstrumenter } from '@stryker-mutator/instrumenter';
-import { BaseContext, commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
+import { commonTokens, PluginKind } from '@stryker-mutator/api/plugin';
 import { coreTokens } from './di/index.js';
 import { objectUtils } from './utils/object-utils.js';
 import { JsonRpcEventDeserializer } from './utils/json-rpc-event-deserializer.js';
@@ -22,7 +22,7 @@ import { Reporter } from '@stryker-mutator/api/report';
 import { Stryker } from './stryker.js';
 import { promisify } from 'util';
 import { normalizeReportFileName } from './reporters/mutation-test-report-helper.js';
-import { LoggingBackendProvider, provideLogging, provideLoggingBackend } from './logging/provide-logging.js';
+import { LoggingBackendProvider, provideLoggingBackend } from './logging/provide-logging.js';
 
 export const rpcMethods = Object.freeze({
   configure: 'configure',
@@ -133,9 +133,9 @@ export class StrykerServer {
     if (!this.#loggingBackendProvider) {
       throw new Error(STRYKER_SERVER_NOT_STARTED);
     }
-    const discoverInjector = provideLogging(this.#loggingBackendProvider);
+    const discoverInjector = provideLogging(this.#loggingBackendProvider.);
     try {
-      const prepareExecutor = discoverInjector.injectClass(PrepareExecutor);
+      const prepareExecutor = this.#loggingBackendProvider.injectClass(PrepareExecutor);
       const inj = await prepareExecutor.execute({
         ...this.cliOptions,
         ...this.#overrideMutate(discoverParams.files),

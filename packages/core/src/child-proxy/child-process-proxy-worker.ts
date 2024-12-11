@@ -10,7 +10,7 @@ import { coreTokens, PluginCreator } from '../di/index.js';
 import { PluginLoader } from '../di/plugin-loader.js';
 
 import { CallMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind, InitMessage } from './message-protocol.js';
-import { provideLogging, provideLoggingClient } from '../logging/provide-logging.js';
+import { provideLoggingClient } from '../logging/provide-logging.js';
 import { Logger } from '@stryker-mutator/api/logging';
 import { minPriority } from '../logging/priority.js';
 
@@ -68,8 +68,8 @@ export class ChildProcessProxyWorker {
       this.handlePromiseRejections();
 
       // Load plugins in the child process
-      const pluginInjector = provideLogging(
-        await provideLoggingClient(this.injector, message.loggingServerAddress, minPriority(message.options.logLevel, message.options.fileLogLevel)),
+      const pluginInjector = (
+        await provideLoggingClient(this.injector, message.loggingServerAddress, minPriority(message.options.logLevel, message.options.fileLogLevel))
       )
         .provideValue(commonTokens.options, message.options)
         .provideValue(commonTokens.fileDescriptions, message.fileDescriptions);
@@ -87,7 +87,7 @@ export class ChildProcessProxyWorker {
         this.log.debug(`Changing current working directory for this process to ${workingDir}`);
         process.chdir(workingDir);
       }
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+
       this.realSubject = injector.injectClass(RealSubjectClass);
       this.send({ kind: ParentMessageKind.Initialized });
     } catch (err) {
