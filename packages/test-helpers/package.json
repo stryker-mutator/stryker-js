@@ -1,7 +1,7 @@
 {
   "name": "@stryker-mutator/test-helpers",
   "private": true,
-  "version": "8.7.0",
+  "version": "8.7.1",
   "description": "A helper package for testing",
   "exports": {
     ".": {
@@ -28,7 +28,7 @@
     "mutation-testing-metrics": "3.3.0"
   },
   "devDependencies": {
-    "@stryker-mutator/api": "8.7.0",
+    "@stryker-mutator/api": "8.7.1",
     "@types/node": "20.17.9",
     "typed-inject": "4.0.0"
   }
