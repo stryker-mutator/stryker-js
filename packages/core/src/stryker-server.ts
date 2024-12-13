@@ -133,9 +133,9 @@ export class StrykerServer {
     if (!this.#loggingBackendProvider) {
       throw new Error(STRYKER_SERVER_NOT_STARTED);
     }
-    const discoverInjector = provideLogging(this.#loggingBackendProvider.);
+    const discoverInjector = this.#loggingBackendProvider.createChildInjector();
     try {
-      const prepareExecutor = this.#loggingBackendProvider.injectClass(PrepareExecutor);
+      const prepareExecutor = discoverInjector.injectClass(PrepareExecutor);
       const inj = await prepareExecutor.execute({
         ...this.cliOptions,
         ...this.#overrideMutate(discoverParams.files),
@@ -176,7 +176,7 @@ export class StrykerServer {
         },
       };
 
-      Stryker.run(provideLogging(this.#loggingBackendProvider).provideValue(coreTokens.reporterOverride, reporter), {
+      Stryker.run(this.#loggingBackendProvider.provideValue(coreTokens.reporterOverride, reporter), {
         ...this.cliOptions,
         allowConsoleColors: false,
         configFile: this.#configFilePath,

@@ -60,7 +60,7 @@
     "mutation-testing-metrics": "3.3.0",
     "mutation-testing-report-schema": "3.3.0",
     "tslib": "~2.7.0",
-    "typed-inject": "~4.0.0"
+    "typed-inject": "~5.0.0"
   },
   "devDependencies": {
     "@types/node": "20.17.9"
