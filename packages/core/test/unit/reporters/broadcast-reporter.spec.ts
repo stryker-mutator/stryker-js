@@ -172,8 +172,11 @@ describe(BroadcastReporter.name, () => {
     });
   });
 
-  function createSut() {
-    return testInjector.injector.provideValue(coreTokens.pluginCreator, pluginCreatorMock).injectClass(BroadcastReporter);
+  function createSut(reporterOverride?: Reporter) {
+    return testInjector.injector
+      .provideValue(coreTokens.pluginCreator, pluginCreatorMock)
+      .provideValue(coreTokens.reporterOverride, reporterOverride)
+      .injectClass(BroadcastReporter);
   }
 
   function captureTTY() {
