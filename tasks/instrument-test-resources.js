@@ -101,6 +101,17 @@ async function main() {
     },
     '__stryker2__',
   );
+  await instrument(
+    {
+      './packages/vitest-runner/testResources/vi-mock/components/Counter.orig.tsx':
+        './packages/vitest-runner/testResources/vi-mock/components/Counter.tsx',
+      './packages/vitest-runner/testResources/vi-mock/components/Product.orig.tsx':
+        './packages/vitest-runner/testResources/vi-mock/components/Product.tsx',
+      './packages/vitest-runner/testResources/vi-mock/components/Discount.orig.tsx':
+        './packages/vitest-runner/testResources/vi-mock/components/Discount.tsx',
+    },
+    '__stryker2__',
+  );
 }
 
 /**
