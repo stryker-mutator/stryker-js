@@ -377,4 +377,32 @@ describe('VitestRunner integration', () => {
       ]);
     });
   });
+
+  describe('using vi.mock to mock a module', () => {
+    beforeEach(async () => {
+      sandbox = new TempTestDirectorySandbox('vi-mock');
+      await sandbox.init();
+    });
+
+    it('should be able to mock a module', async () => {
+      await sut.init();
+      const runResult = await sut.dryRun();
+      assertions.expectCompleted(runResult);
+      expect(runResult.tests).lengthOf(3);
+      assertions.expectTestResults(runResult, [
+        {
+          id: 'components/Counter.test.tsx#Counter increments',
+          status: TestStatus.Success,
+        },
+        {
+          id: "components/Product.test.tsx#Product doesn't render the discount when 0",
+          status: TestStatus.Success,
+        },
+        {
+          id: 'components/Product.test.tsx#Product should render the discount',
+          status: TestStatus.Success,
+        },
+      ]);
+    });
+  });
 });
