@@ -16,6 +16,7 @@ describe(`${PrepareExecutor.name} integration test`, () => {
       configFile: resolveFromRoot('testResources', 'options-validation', 'unknown-options.conf.json'),
     };
     const sut = testInjector.injector
+      .provideValue(coreTokens.reporterOverride, undefined)
       .provideValue(coreTokens.loggingSink, sinon.createStubInstance(LoggingBackend))
       .provideValue(coreTokens.loggingServerAddress, { port: 4200 } satisfies LoggingServerAddress)
       .injectClass(PrepareExecutor);
