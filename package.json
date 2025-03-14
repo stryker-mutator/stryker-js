@@ -29,7 +29,7 @@
     "eslint": "9.13.0",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-chai-friendly": "1.0.1",
-    "eslint-plugin-prettier": "5.2.1",
+    "eslint-plugin-prettier": "5.2.3",
     "execa": "9.4.1",
     "glob": "10.4.5",
     "install-local": "3.0.1",
