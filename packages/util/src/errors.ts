@@ -17,6 +17,7 @@ export function errorToString(error: unknown): string {
       return message;
     }
   }
+  // eslint-disable-next-line @typescript-eslint/no-base-to-string -- Ignore as error is most likely a string. Don't use JSON.stringify as circular graphs could cause an error
   return String(error);
 }
 

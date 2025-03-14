@@ -137,6 +137,10 @@
     "liveServer.settings.multiRootWorkspaceName": "typescript-checker"
   },
   "extensions": {
-    "recommendations": ["dbaeumer.vscode-eslint", "EditorConfig.EditorConfig"]
+    "recommendations": [
+      "dbaeumer.vscode-eslint",
+      "EditorConfig.EditorConfig",
+      "esbenp.prettier-vscode"
+    ]
   }
 }

@@ -212,6 +212,7 @@ export class JestTestRunner implements TestRunner {
   }
 
   private collectSerializableErrorText(error?: jest.TestResult.SerializableError): string | undefined {
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string -- Ignore as code is most likely a string. Don't use JSON.stringify as circular graphs could cause an error
     return error && `${error.code ? `${String(error.code)} ` : ''}${error.message} ${error.stack}`;
   }
 
