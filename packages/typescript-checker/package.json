@@ -48,7 +48,7 @@
   "dependencies": {
     "@stryker-mutator/api": "8.7.1",
     "@stryker-mutator/util": "8.7.1",
-    "semver": "~7.6.3"
+    "semver": "~7.7.0"
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "8.7.1",
