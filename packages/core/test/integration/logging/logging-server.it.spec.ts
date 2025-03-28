@@ -45,7 +45,7 @@ describe('Logging server integration', () => {
         }
         await sleep();
         attempt++;
-      };
+      }
     }
   });
 });
