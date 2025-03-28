@@ -390,6 +390,7 @@ export function injector<T = unknown>(): sinon.SinonStubbedInstance<Injector<T>>
     provideFactory: sinon.stub<any>(),
     provideValue: sinon.stub<any>(),
     resolve: sinon.stub<any>(),
+    createChildInjector: sinon.stub(),
   };
   injectorMock.provideClass.returnsThis();
   injectorMock.provideFactory.returnsThis();
