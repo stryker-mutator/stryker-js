@@ -136,17 +136,17 @@ describe(TestHooksMiddleware.name, () => {
       next = sinon.stub() as unknown as NextFunction;
     });
 
-    it('should pass through normal requests', () => {
+    it('should pass through normal requests', async () => {
       request.url = '/karma/base.js';
-      sut.handler(request, response, next);
+      await sut.handler(request, response, next);
       expect(next).called;
       expect(response.writeHead).not.called;
     });
 
-    it('should pass serve "currentTestHooks" when called with the correct url', () => {
+    it('should pass serve "currentTestHooks" when called with the correct url', async () => {
       sut.currentTestHooks = 'foo test hooks';
       request.url = `/absolute${path.basename(TEST_HOOKS_FILE_NAME)}?foo=bar`;
-      sut.handler(request, response, next);
+      await sut.handler(request, response, next);
       expect(next).not.called;
       expect(response.writeHead).calledWith(200, {
         'Cache-Control': 'no-cache',

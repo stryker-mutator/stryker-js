@@ -151,7 +151,7 @@ export class MathComponent extends HTMLElement {
           {}
         } else {
           stryCov_9fa48("43");
-          this.#operator = (value as Operator);
+          this.#operator = value as Operator;
         }
       } else {
         if (stryMutAct_9fa48("44")) {

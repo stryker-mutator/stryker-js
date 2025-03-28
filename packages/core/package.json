@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/core",
-  "version": "8.7.0",
+  "version": "8.7.1",
   "description": "The extendable JavaScript mutation testing framework",
   "type": "module",
   "files": [
@@ -68,16 +68,16 @@
     "stryker": "./bin/stryker.js"
   },
   "dependencies": {
-    "@inquirer/prompts": "^6.0.0",
-    "@stryker-mutator/api": "8.7.0",
-    "@stryker-mutator/instrumenter": "8.7.0",
-    "@stryker-mutator/util": "8.7.0",
+    "@inquirer/prompts": "^7.0.0",
+    "@stryker-mutator/api": "8.7.1",
+    "@stryker-mutator/instrumenter": "8.7.1",
+    "@stryker-mutator/util": "8.7.1",
     "ajv": "~8.17.1",
     "chalk": "~5.3.0",
     "commander": "~12.1.0",
     "diff-match-patch": "1.0.5",
     "emoji-regex": "~10.4.0",
-    "execa": "~9.4.0",
+    "execa": "~9.5.0",
     "file-url": "~4.0.0",
     "json-rpc-2.0": "^1.7.0",
     "lodash.groupby": "~4.6.0",
@@ -92,17 +92,17 @@
     "semver": "^7.6.3",
     "source-map": "~0.7.4",
     "tree-kill": "~1.2.2",
-    "tslib": "2.7.0",
+    "tslib": "2.8.1",
     "typed-inject": "~5.0.0",
     "typed-rest-client": "~2.1.0"
   },
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "8.7.0",
+    "@stryker-mutator/test-helpers": "8.7.1",
     "@types/diff-match-patch": "1.0.36",
     "@types/lodash.groupby": "4.6.9",
-    "@types/node": "20.17.9",
+    "@types/node": "20.17.28",
     "@types/progress": "2.0.7",
-    "@types/semver": "7.5.8",
+    "@types/semver": "7.7.0",
     "glob": "10.4.5"
   }
 }

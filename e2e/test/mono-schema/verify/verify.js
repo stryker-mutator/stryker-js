@@ -133,6 +133,7 @@ describe('PartialStrykerOptions', () => {
     describe(`with --moduleResolution ${moduleMode}`, () => {
       it('should validate a valid schema', () => {
         const diagnostics = tsc('--moduleResolution', moduleMode, '--module', moduleMode, 'valid.js');
+        // eslint-disable-next-line @typescript-eslint/no-base-to-string -- Ignore as messageText is a string.
         expect(diagnostics, String(diagnostics[0]?.messageText)).empty;
       });
       it('should invalidate an invalid schema', () => {

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [8.7.1](https://github.com/stryker-mutator/stryker-js/compare/v8.7.0...v8.7.1) (2024-12-11)
+
+### Bug Fixes
+
+- **util:** prevent prototype pollution in deepMerge ([#5144](https://github.com/stryker-mutator/stryker-js/issues/5144)) ([f7b34bf](https://github.com/stryker-mutator/stryker-js/commit/f7b34bfbbde33e45bc213a2f6058bf0c5bf6bce7))
+
 # [8.7.0](https://github.com/stryker-mutator/stryker-js/compare/v8.6.0...v8.7.0) (2024-12-06)
 
 ### Bug Fixes
