@@ -87,10 +87,12 @@ describe(LoggingServer.name, () => {
     const [eventName, errorCallback] = client.on.getCall(1).args;
     expect(eventName).eq('error');
     (errorCallback as (error: Error) => void)(error);
-    sinon.assert.calledWith(
-      loggingSinkMock.log,
-      LoggingEvent.create(LoggingServer.name, LogLevel.Debug, ['An worker log process hung up unexpectedly', error]),
-    );
+
+    const actualErrorLogEvent = loggingSinkMock.log.getCall(0).args[0];
+    expect(actualErrorLogEvent.categoryName).eq(LoggingServer.name);
+    expect(actualErrorLogEvent.level).eq(LogLevel.Debug);
+    expect(actualErrorLogEvent.data[0]).eq('An worker log process hung up unexpectedly');
+    expect(actualErrorLogEvent.data[1]).eq(error);
   });
 
   function connectClient() {
