@@ -59,7 +59,7 @@
     "@stryker-mutator/test-helpers": "8.7.1",
     "@types/node": "22.13.14",
     "ava": "6.2.0",
-    "tap": "20.0.3"
+    "tap": "21.1.0"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "~8.7.0"
