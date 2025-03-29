@@ -25,7 +25,7 @@
   "license": "ISC",
   "dependencies": {
     "ajv": "~8.17.1",
-    "mutation-testing-metrics": "3.3.0"
+    "mutation-testing-metrics": "3.5.1"
   },
   "devDependencies": {
     "@stryker-mutator/api": "8.7.1",
