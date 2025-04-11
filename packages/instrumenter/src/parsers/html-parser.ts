@@ -7,7 +7,7 @@ import { ParseError } from './parse-error.js';
 
 const TSX_SCRIPT_TYPES = Object.freeze(['tsx', 'text/tsx']);
 const TS_SCRIPT_TYPES = Object.freeze(['ts', 'text/typescript', 'typescript']);
-const JS_SCRIPT_TYPES = Object.freeze(['js', 'text/javascript', 'javascript']);
+const JS_SCRIPT_TYPES = Object.freeze(['js', 'text/javascript', 'javascript', 'module']);
 
 /*
 The parser implementation in this file is heavily based on prettier's html parser
