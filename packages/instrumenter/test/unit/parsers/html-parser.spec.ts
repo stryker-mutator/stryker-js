@@ -86,6 +86,7 @@ describe('html-parser', () => {
       { actualType: 'javascript', expectedType: AstFormat.JS },
       { actualType: 'JavaScript', expectedType: AstFormat.JS },
       { actualType: 'text/javascript', expectedType: AstFormat.JS },
+      { actualType: 'module', expectedType: AstFormat.JS },
       { actualType: 'js', expectedType: AstFormat.JS },
       { actualType: 'ts', expectedType: AstFormat.TS },
       { actualType: 'typescript', expectedType: AstFormat.TS },
