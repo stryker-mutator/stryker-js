@@ -2,7 +2,7 @@ import path from 'path';
 
 import { BaseTestResult, TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
 import type { RunMode, TaskState } from 'vitest';
-import { ResolvedConfig, RunnerTestCase, RunnerTestSuite } from 'vitest/node';
+import { RunnerTestCase, RunnerTestSuite } from 'vitest/node';
 import { MutantCoverage } from '@stryker-mutator/api/core';
 
 function convertTaskStateToTestStatus(taskState: TaskState | undefined, testMode: RunMode): TestStatus {
@@ -73,24 +73,6 @@ export function collectTestsFromSuite(suite: RunnerTestSuite): RunnerTestCase[] 
       return [];
     }
   });
-}
-
-export function addToInlineDeps(config: ResolvedConfig, matcher: RegExp): void {
-  switch (typeof config.deps?.inline) {
-    case 'undefined':
-      config.deps = { inline: [matcher] };
-      break;
-    case 'object':
-      config.deps.inline.push(matcher);
-      break;
-    case 'boolean':
-      if (!config.deps.inline) {
-        config.deps.inline = [matcher];
-      }
-      break;
-    default:
-      config.deps.inline satisfies never;
-  }
 }
 
 // Stryker disable all: the function toTestId will be stringified at runtime which will cause problems when mutated.

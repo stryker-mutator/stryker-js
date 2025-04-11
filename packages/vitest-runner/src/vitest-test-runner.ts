@@ -15,7 +15,7 @@ import {
 import { escapeRegExp, notEmpty } from '@stryker-mutator/util';
 
 import { vitestWrapper, Vitest } from './vitest-wrapper.js';
-import { convertTestToTestResult, fromTestId, collectTestsFromSuite, addToInlineDeps, normalizeCoverage } from './vitest-helpers.js';
+import { convertTestToTestResult, fromTestId, collectTestsFromSuite, normalizeCoverage } from './vitest-helpers.js';
 import { FileCommunicator } from './file-communicator.js';
 import { VitestRunnerOptionsWithStrykerOptions } from './vitest-runner-options-with-stryker-options.js';
 
@@ -63,13 +63,8 @@ export class VitestTestRunner implements TestRunner {
       onConsoleLog: () => false,
     });
 
-    // The vitest setup file needs to be inlined
-    // See https://github.com/vitest-dev/vitest/issues/3403#issuecomment-1554057966
-    const vitestSetupMatcher = new RegExp(escapeRegExp(this.fileCommunicator.vitestSetup));
-    addToInlineDeps(this.ctx.config, vitestSetupMatcher);
     this.ctx.projects.forEach((project) => {
       project.config.setupFiles = [this.fileCommunicator.vitestSetup, ...project.config.setupFiles];
-      addToInlineDeps(project.config, vitestSetupMatcher);
     });
     if (this.log.isDebugEnabled()) {
       this.log.debug(`vitest final config: ${JSON.stringify(this.ctx.config, null, 2)}`);
