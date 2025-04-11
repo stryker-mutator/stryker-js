@@ -1,7 +1,8 @@
 import path from 'path';
 
 import { BaseTestResult, TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
-import type { RunMode, Suite, TaskState, Test, ResolvedConfig } from 'vitest';
+import type { RunMode, TaskState } from 'vitest';
+import { ResolvedConfig, RunnerTestCase, RunnerTestSuite } from 'vitest/node';
 import { MutantCoverage } from '@stryker-mutator/api/core';
 
 function convertTaskStateToTestStatus(taskState: TaskState | undefined, testMode: RunMode): TestStatus {
@@ -21,7 +22,7 @@ function convertTaskStateToTestStatus(taskState: TaskState | undefined, testMode
   return TestStatus.Failed;
 }
 
-export function convertTestToTestResult(test: Test): TestResult {
+export function convertTestToTestResult(test: RunnerTestCase): TestResult {
   const status = convertTaskStateToTestStatus(test.result?.state, test.mode);
   const baseTestResult: BaseTestResult = {
     id: normalizeTestId(toRawTestId(test)),
@@ -62,7 +63,7 @@ export function normalizeCoverage(rawCoverage: MutantCoverage): MutantCoverage {
   };
 }
 
-export function collectTestsFromSuite(suite: Suite): Test[] {
+export function collectTestsFromSuite(suite: RunnerTestSuite): RunnerTestCase[] {
   return suite.tasks.flatMap((task) => {
     if (task.type === 'suite') {
       return collectTestsFromSuite(task);
@@ -96,7 +97,7 @@ export function addToInlineDeps(config: ResolvedConfig, matcher: RegExp): void {
 
 // Note: this function is used in code and copied to the mutated environment so the naming convention will always be the same.
 // It can not use external resource because those will not be available in the mutated environment.
-export function collectTestName({ name, suite }: { name: string; suite?: Suite }): string {
+export function collectTestName({ name, suite }: { name: string; suite?: RunnerTestSuite }): string {
   const nameParts = [name];
   let currentSuite = suite;
   while (currentSuite) {
@@ -106,7 +107,7 @@ export function collectTestName({ name, suite }: { name: string; suite?: Suite }
   return nameParts.join(' ').trim();
 }
 
-export function toRawTestId(test: Test): string {
+export function toRawTestId(test: RunnerTestCase): string {
   return `${test.file?.filepath ?? 'unknown.js'}#${collectTestName(test)}`;
 }
 // Stryker restore all
