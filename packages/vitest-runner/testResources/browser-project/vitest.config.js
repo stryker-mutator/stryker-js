@@ -8,6 +8,7 @@ export default defineConfig({
       instances: [
         {
           browser: 'chromium',
+          screenshotFailures: false,
         },
       ],
       provider: 'playwright',
