@@ -27,7 +27,7 @@
     "concurrently": "9.1.2",
     "cross-env": "7.0.3",
     "eslint": "9.24.0",
-    "eslint-config-prettier": "10.1.1",
+    "eslint-config-prettier": "10.1.2",
     "eslint-plugin-chai-friendly": "1.0.1",
     "eslint-plugin-prettier": "5.2.6",
     "execa": "9.5.2",
