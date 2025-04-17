@@ -16,6 +16,12 @@ describe('parsers integration', () => {
     expect(actual).to.matchSnapshot();
   });
 
+  it('should allow to parse html with module script tags', async () => {
+    const actual = await actAssertHtml('index-module.html');
+    expect(actual.root.scripts).lengthOf(2);
+    expect(actual).to.matchSnapshot();
+  });
+
   it('should allow to parse a *.vue file', async () => {
     const actual = await actAssertHtml('App.vue');
     expect(actual.format).eq(AstFormat.Html);
