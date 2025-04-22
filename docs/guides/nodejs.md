@@ -14,7 +14,7 @@ There are multiple scenarios of transpiling code when running your tests.
 * **Just-in-time**  
   Use [`ts-node`](https://www.npmjs.com/package/ts-node) or [`@babel/register`](https://babeljs.io/docs/en/babel-register/) as a just-in-time compiler to compile your code on the fly.
 
-Both scenarios are supported, however using just-in-time transpiling during mutation testing is not recommended because it means running the compiler a large number of times. Since [Stryker uses mutation switching](https://stryker-mutator.io/blog/announcing-stryker-4-mutation-switching), compiling only once is preferred. Don't worry; this guide will help you configuring Stryker correctly.
+Both scenarios are supported, however using just-in-time transpiling during mutation testing is not recommended because it means running the compiler a large number of times. Since [Stryker uses mutation switching](https://stryker-mutator.io/blog/announcing-stryker-4-mutation-switching/), compiling only once is preferred. Don't worry; this guide will help you configuring Stryker correctly.
 
 If you manage your code's compilation through a `tsconfig.json` file, this guide ensures that your TypeScript code uses that configuration.
 
