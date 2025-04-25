@@ -19,8 +19,8 @@
   "scripts": {
     "test": "c8 npm run test:all",
     "test:all": "npm run test:unit && npm run test:integration",
-    "test:unit": "mocha 'dist/test/unit/**/*.js'",
-    "test:integration": "mocha --no-timeout 'dist/test/integration/**/*.js'",
+    "test:unit": "mocha \"dist/test/unit/**/*.js\"",
+    "test:integration": "mocha --no-timeout \"dist/test/integration/**/*.js\"",
     "stryker": "node ../core/bin/stryker.js run"
   },
   "repository": {
@@ -55,7 +55,7 @@
     "@stryker-mutator/core": "~8.7.0"
   },
   "dependencies": {
-    "@cucumber/messages": "^26.0.0",
+    "@cucumber/messages": "^27.0.0",
     "@stryker-mutator/api": "8.7.1",
     "@stryker-mutator/util": "8.7.1",
     "semver": "^7.6.3"

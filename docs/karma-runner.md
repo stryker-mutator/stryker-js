@@ -53,14 +53,14 @@ Specify which kind of project you're using. This determines which command is use
 
 Default: `undefined`
 
-Specify a ['karma.conf.js' file](http://karma-runner.github.io/2.0/config/configuration-file.html) to be loaded.
+Specify a ['karma.conf.js' file](https://karma-runner.github.io/2.0/config/configuration-file.html) to be loaded.
 Options specified directly in your stryker.config.js file using `karma.config` will overrule options in your karma.conf.js file.
 
 ### `karma.config` [`object`]
 
 Default: `undefined`
 
-Specify [karma configuration options](http://karma-runner.github.io/2.0/config/configuration-file.html) directly.
+Specify [karma configuration options](https://karma-runner.github.io/2.0/config/configuration-file.html) directly.
 Options specified here will overrule any options in your karma.conf.js file.
 
 ### `karma.ngConfig.testArguments` [`object`]

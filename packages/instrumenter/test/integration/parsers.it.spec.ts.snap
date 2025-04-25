@@ -6573,6 +6573,839 @@ Object {
 }
 `;
 
+exports[`parsers integration should allow to parse html with module script tags 1`] = `
+Object {
+  "format": "html",
+  "originFileName": "index-module.html",
+  "rawContent": "<!DOCTYPE html>
+<html lang=\\"en\\">
+<head>
+    <meta charset=\\"UTF-8\\">
+    <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1.0\\">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        alert('hello there');
+    </script>
+
+    <script type=\\"module\\">
+        function fib(n) {
+          if (n == 0 || n == 1) {
+            return n;
+          } else {
+            return (f(n-1) + f(n-2));
+          }
+        }
+    </script>
+    <script type=\\"text/template\\">
+        this should be ignored
+    </script>
+</body>
+</html>",
+  "root": Object {
+    "scripts": Array [
+      Object {
+        "format": "js",
+        "offset": Object {
+          "column": 197,
+          "line": 8,
+        },
+        "originFileName": "index-module.html",
+        "rawContent": "
+        alert('hello there');
+    ",
+        "root": Node {
+          "comments": Array [],
+          "end": 232,
+          "errors": Array [],
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 4,
+              "index": 35,
+              "line": 3,
+            },
+            "filename": undefined,
+            "identifierName": undefined,
+            "start": Position {
+              "column": 0,
+              "index": 0,
+              "line": 1,
+            },
+          },
+          "program": Node {
+            "body": Array [
+              Node {
+                "end": 30,
+                "expression": Node {
+                  "arguments": Array [
+                    Node {
+                      "end": 28,
+                      "extra": Object {
+                        "raw": "'hello there'",
+                        "rawValue": "hello there",
+                      },
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 27,
+                          "index": 28,
+                          "line": 2,
+                        },
+                        "filename": undefined,
+                        "identifierName": undefined,
+                        "start": Position {
+                          "column": 14,
+                          "index": 15,
+                          "line": 2,
+                        },
+                      },
+                      "start": 15,
+                      "type": "StringLiteral",
+                      "value": "hello there",
+                    },
+                  ],
+                  "callee": Node {
+                    "end": 14,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 13,
+                        "index": 14,
+                        "line": 2,
+                      },
+                      "filename": undefined,
+                      "identifierName": "alert",
+                      "start": Position {
+                        "column": 8,
+                        "index": 9,
+                        "line": 2,
+                      },
+                    },
+                    "name": "alert",
+                    "start": 9,
+                    "type": "Identifier",
+                  },
+                  "end": 29,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 28,
+                      "index": 29,
+                      "line": 2,
+                    },
+                    "filename": undefined,
+                    "identifierName": undefined,
+                    "start": Position {
+                      "column": 8,
+                      "index": 9,
+                      "line": 2,
+                    },
+                  },
+                  "start": 9,
+                  "type": "CallExpression",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 29,
+                    "index": 30,
+                    "line": 2,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 8,
+                    "index": 9,
+                    "line": 2,
+                  },
+                },
+                "start": 9,
+                "type": "ExpressionStatement",
+              },
+            ],
+            "directives": Array [],
+            "end": 35,
+            "extra": Object {
+              "topLevelAwait": false,
+            },
+            "interpreter": null,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 4,
+                "index": 35,
+                "line": 3,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 0,
+                "index": 0,
+                "line": 1,
+              },
+            },
+            "sourceType": "module",
+            "start": 0,
+            "type": "Program",
+          },
+          "start": 197,
+          "type": "File",
+        },
+      },
+      Object {
+        "format": "js",
+        "offset": Object {
+          "column": 269,
+          "line": 12,
+        },
+        "originFileName": "index-module.html",
+        "rawContent": "
+        function fib(n) {
+          if (n == 0 || n == 1) {
+            return n;
+          } else {
+            return (f(n-1) + f(n-2));
+          }
+        }
+    ",
+        "root": Node {
+          "comments": Array [],
+          "end": 435,
+          "errors": Array [],
+          "loc": SourceLocation {
+            "end": Position {
+              "column": 4,
+              "index": 166,
+              "line": 9,
+            },
+            "filename": undefined,
+            "identifierName": undefined,
+            "start": Position {
+              "column": 0,
+              "index": 0,
+              "line": 1,
+            },
+          },
+          "program": Node {
+            "body": Array [
+              Node {
+                "async": false,
+                "body": Node {
+                  "body": Array [
+                    Node {
+                      "alternate": Node {
+                        "body": Array [
+                          Node {
+                            "argument": Node {
+                              "end": 137,
+                              "extra": Object {
+                                "parenStart": 121,
+                                "parenthesized": true,
+                              },
+                              "left": Node {
+                                "arguments": Array [
+                                  Node {
+                                    "end": 127,
+                                    "left": Node {
+                                      "end": 125,
+                                      "loc": SourceLocation {
+                                        "end": Position {
+                                          "column": 23,
+                                          "index": 125,
+                                          "line": 6,
+                                        },
+                                        "filename": undefined,
+                                        "identifierName": "n",
+                                        "start": Position {
+                                          "column": 22,
+                                          "index": 124,
+                                          "line": 6,
+                                        },
+                                      },
+                                      "name": "n",
+                                      "start": 124,
+                                      "type": "Identifier",
+                                    },
+                                    "loc": SourceLocation {
+                                      "end": Position {
+                                        "column": 25,
+                                        "index": 127,
+                                        "line": 6,
+                                      },
+                                      "filename": undefined,
+                                      "identifierName": undefined,
+                                      "start": Position {
+                                        "column": 22,
+                                        "index": 124,
+                                        "line": 6,
+                                      },
+                                    },
+                                    "operator": "-",
+                                    "right": Node {
+                                      "end": 127,
+                                      "extra": Object {
+                                        "raw": "1",
+                                        "rawValue": 1,
+                                      },
+                                      "loc": SourceLocation {
+                                        "end": Position {
+                                          "column": 25,
+                                          "index": 127,
+                                          "line": 6,
+                                        },
+                                        "filename": undefined,
+                                        "identifierName": undefined,
+                                        "start": Position {
+                                          "column": 24,
+                                          "index": 126,
+                                          "line": 6,
+                                        },
+                                      },
+                                      "start": 126,
+                                      "type": "NumericLiteral",
+                                      "value": 1,
+                                    },
+                                    "start": 124,
+                                    "type": "BinaryExpression",
+                                  },
+                                ],
+                                "callee": Node {
+                                  "end": 123,
+                                  "loc": SourceLocation {
+                                    "end": Position {
+                                      "column": 21,
+                                      "index": 123,
+                                      "line": 6,
+                                    },
+                                    "filename": undefined,
+                                    "identifierName": "f",
+                                    "start": Position {
+                                      "column": 20,
+                                      "index": 122,
+                                      "line": 6,
+                                    },
+                                  },
+                                  "name": "f",
+                                  "start": 122,
+                                  "type": "Identifier",
+                                },
+                                "end": 128,
+                                "loc": SourceLocation {
+                                  "end": Position {
+                                    "column": 26,
+                                    "index": 128,
+                                    "line": 6,
+                                  },
+                                  "filename": undefined,
+                                  "identifierName": undefined,
+                                  "start": Position {
+                                    "column": 20,
+                                    "index": 122,
+                                    "line": 6,
+                                  },
+                                },
+                                "start": 122,
+                                "type": "CallExpression",
+                              },
+                              "loc": SourceLocation {
+                                "end": Position {
+                                  "column": 35,
+                                  "index": 137,
+                                  "line": 6,
+                                },
+                                "filename": undefined,
+                                "identifierName": undefined,
+                                "start": Position {
+                                  "column": 20,
+                                  "index": 122,
+                                  "line": 6,
+                                },
+                              },
+                              "operator": "+",
+                              "right": Node {
+                                "arguments": Array [
+                                  Node {
+                                    "end": 136,
+                                    "left": Node {
+                                      "end": 134,
+                                      "loc": SourceLocation {
+                                        "end": Position {
+                                          "column": 32,
+                                          "index": 134,
+                                          "line": 6,
+                                        },
+                                        "filename": undefined,
+                                        "identifierName": "n",
+                                        "start": Position {
+                                          "column": 31,
+                                          "index": 133,
+                                          "line": 6,
+                                        },
+                                      },
+                                      "name": "n",
+                                      "start": 133,
+                                      "type": "Identifier",
+                                    },
+                                    "loc": SourceLocation {
+                                      "end": Position {
+                                        "column": 34,
+                                        "index": 136,
+                                        "line": 6,
+                                      },
+                                      "filename": undefined,
+                                      "identifierName": undefined,
+                                      "start": Position {
+                                        "column": 31,
+                                        "index": 133,
+                                        "line": 6,
+                                      },
+                                    },
+                                    "operator": "-",
+                                    "right": Node {
+                                      "end": 136,
+                                      "extra": Object {
+                                        "raw": "2",
+                                        "rawValue": 2,
+                                      },
+                                      "loc": SourceLocation {
+                                        "end": Position {
+                                          "column": 34,
+                                          "index": 136,
+                                          "line": 6,
+                                        },
+                                        "filename": undefined,
+                                        "identifierName": undefined,
+                                        "start": Position {
+                                          "column": 33,
+                                          "index": 135,
+                                          "line": 6,
+                                        },
+                                      },
+                                      "start": 135,
+                                      "type": "NumericLiteral",
+                                      "value": 2,
+                                    },
+                                    "start": 133,
+                                    "type": "BinaryExpression",
+                                  },
+                                ],
+                                "callee": Node {
+                                  "end": 132,
+                                  "loc": SourceLocation {
+                                    "end": Position {
+                                      "column": 30,
+                                      "index": 132,
+                                      "line": 6,
+                                    },
+                                    "filename": undefined,
+                                    "identifierName": "f",
+                                    "start": Position {
+                                      "column": 29,
+                                      "index": 131,
+                                      "line": 6,
+                                    },
+                                  },
+                                  "name": "f",
+                                  "start": 131,
+                                  "type": "Identifier",
+                                },
+                                "end": 137,
+                                "loc": SourceLocation {
+                                  "end": Position {
+                                    "column": 35,
+                                    "index": 137,
+                                    "line": 6,
+                                  },
+                                  "filename": undefined,
+                                  "identifierName": undefined,
+                                  "start": Position {
+                                    "column": 29,
+                                    "index": 131,
+                                    "line": 6,
+                                  },
+                                },
+                                "start": 131,
+                                "type": "CallExpression",
+                              },
+                              "start": 122,
+                              "type": "BinaryExpression",
+                            },
+                            "end": 139,
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 37,
+                                "index": 139,
+                                "line": 6,
+                              },
+                              "filename": undefined,
+                              "identifierName": undefined,
+                              "start": Position {
+                                "column": 12,
+                                "index": 114,
+                                "line": 6,
+                              },
+                            },
+                            "start": 114,
+                            "type": "ReturnStatement",
+                          },
+                        ],
+                        "directives": Array [],
+                        "end": 151,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 11,
+                            "index": 151,
+                            "line": 7,
+                          },
+                          "filename": undefined,
+                          "identifierName": undefined,
+                          "start": Position {
+                            "column": 17,
+                            "index": 100,
+                            "line": 5,
+                          },
+                        },
+                        "start": 100,
+                        "type": "BlockStatement",
+                      },
+                      "consequent": Node {
+                        "body": Array [
+                          Node {
+                            "argument": Node {
+                              "end": 81,
+                              "loc": SourceLocation {
+                                "end": Position {
+                                  "column": 20,
+                                  "index": 81,
+                                  "line": 4,
+                                },
+                                "filename": undefined,
+                                "identifierName": "n",
+                                "start": Position {
+                                  "column": 19,
+                                  "index": 80,
+                                  "line": 4,
+                                },
+                              },
+                              "name": "n",
+                              "start": 80,
+                              "type": "Identifier",
+                            },
+                            "end": 82,
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 21,
+                                "index": 82,
+                                "line": 4,
+                              },
+                              "filename": undefined,
+                              "identifierName": undefined,
+                              "start": Position {
+                                "column": 12,
+                                "index": 73,
+                                "line": 4,
+                              },
+                            },
+                            "start": 73,
+                            "type": "ReturnStatement",
+                          },
+                        ],
+                        "directives": Array [],
+                        "end": 94,
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 11,
+                            "index": 94,
+                            "line": 5,
+                          },
+                          "filename": undefined,
+                          "identifierName": undefined,
+                          "start": Position {
+                            "column": 32,
+                            "index": 59,
+                            "line": 3,
+                          },
+                        },
+                        "start": 59,
+                        "type": "BlockStatement",
+                      },
+                      "end": 151,
+                      "loc": SourceLocation {
+                        "end": Position {
+                          "column": 11,
+                          "index": 151,
+                          "line": 7,
+                        },
+                        "filename": undefined,
+                        "identifierName": undefined,
+                        "start": Position {
+                          "column": 10,
+                          "index": 37,
+                          "line": 3,
+                        },
+                      },
+                      "start": 37,
+                      "test": Node {
+                        "end": 57,
+                        "left": Node {
+                          "end": 47,
+                          "left": Node {
+                            "end": 42,
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 15,
+                                "index": 42,
+                                "line": 3,
+                              },
+                              "filename": undefined,
+                              "identifierName": "n",
+                              "start": Position {
+                                "column": 14,
+                                "index": 41,
+                                "line": 3,
+                              },
+                            },
+                            "name": "n",
+                            "start": 41,
+                            "type": "Identifier",
+                          },
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 20,
+                              "index": 47,
+                              "line": 3,
+                            },
+                            "filename": undefined,
+                            "identifierName": undefined,
+                            "start": Position {
+                              "column": 14,
+                              "index": 41,
+                              "line": 3,
+                            },
+                          },
+                          "operator": "==",
+                          "right": Node {
+                            "end": 47,
+                            "extra": Object {
+                              "raw": "0",
+                              "rawValue": 0,
+                            },
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 20,
+                                "index": 47,
+                                "line": 3,
+                              },
+                              "filename": undefined,
+                              "identifierName": undefined,
+                              "start": Position {
+                                "column": 19,
+                                "index": 46,
+                                "line": 3,
+                              },
+                            },
+                            "start": 46,
+                            "type": "NumericLiteral",
+                            "value": 0,
+                          },
+                          "start": 41,
+                          "type": "BinaryExpression",
+                        },
+                        "loc": SourceLocation {
+                          "end": Position {
+                            "column": 30,
+                            "index": 57,
+                            "line": 3,
+                          },
+                          "filename": undefined,
+                          "identifierName": undefined,
+                          "start": Position {
+                            "column": 14,
+                            "index": 41,
+                            "line": 3,
+                          },
+                        },
+                        "operator": "||",
+                        "right": Node {
+                          "end": 57,
+                          "left": Node {
+                            "end": 52,
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 25,
+                                "index": 52,
+                                "line": 3,
+                              },
+                              "filename": undefined,
+                              "identifierName": "n",
+                              "start": Position {
+                                "column": 24,
+                                "index": 51,
+                                "line": 3,
+                              },
+                            },
+                            "name": "n",
+                            "start": 51,
+                            "type": "Identifier",
+                          },
+                          "loc": SourceLocation {
+                            "end": Position {
+                              "column": 30,
+                              "index": 57,
+                              "line": 3,
+                            },
+                            "filename": undefined,
+                            "identifierName": undefined,
+                            "start": Position {
+                              "column": 24,
+                              "index": 51,
+                              "line": 3,
+                            },
+                          },
+                          "operator": "==",
+                          "right": Node {
+                            "end": 57,
+                            "extra": Object {
+                              "raw": "1",
+                              "rawValue": 1,
+                            },
+                            "loc": SourceLocation {
+                              "end": Position {
+                                "column": 30,
+                                "index": 57,
+                                "line": 3,
+                              },
+                              "filename": undefined,
+                              "identifierName": undefined,
+                              "start": Position {
+                                "column": 29,
+                                "index": 56,
+                                "line": 3,
+                              },
+                            },
+                            "start": 56,
+                            "type": "NumericLiteral",
+                            "value": 1,
+                          },
+                          "start": 51,
+                          "type": "BinaryExpression",
+                        },
+                        "start": 41,
+                        "type": "LogicalExpression",
+                      },
+                      "type": "IfStatement",
+                    },
+                  ],
+                  "directives": Array [],
+                  "end": 161,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 9,
+                      "index": 161,
+                      "line": 8,
+                    },
+                    "filename": undefined,
+                    "identifierName": undefined,
+                    "start": Position {
+                      "column": 24,
+                      "index": 25,
+                      "line": 2,
+                    },
+                  },
+                  "start": 25,
+                  "type": "BlockStatement",
+                },
+                "end": 161,
+                "generator": false,
+                "id": Node {
+                  "end": 21,
+                  "loc": SourceLocation {
+                    "end": Position {
+                      "column": 20,
+                      "index": 21,
+                      "line": 2,
+                    },
+                    "filename": undefined,
+                    "identifierName": "fib",
+                    "start": Position {
+                      "column": 17,
+                      "index": 18,
+                      "line": 2,
+                    },
+                  },
+                  "name": "fib",
+                  "start": 18,
+                  "type": "Identifier",
+                },
+                "loc": SourceLocation {
+                  "end": Position {
+                    "column": 9,
+                    "index": 161,
+                    "line": 8,
+                  },
+                  "filename": undefined,
+                  "identifierName": undefined,
+                  "start": Position {
+                    "column": 8,
+                    "index": 9,
+                    "line": 2,
+                  },
+                },
+                "params": Array [
+                  Node {
+                    "end": 23,
+                    "loc": SourceLocation {
+                      "end": Position {
+                        "column": 22,
+                        "index": 23,
+                        "line": 2,
+                      },
+                      "filename": undefined,
+                      "identifierName": "n",
+                      "start": Position {
+                        "column": 21,
+                        "index": 22,
+                        "line": 2,
+                      },
+                    },
+                    "name": "n",
+                    "start": 22,
+                    "type": "Identifier",
+                  },
+                ],
+                "start": 9,
+                "type": "FunctionDeclaration",
+              },
+            ],
+            "directives": Array [],
+            "end": 166,
+            "extra": Object {
+              "topLevelAwait": false,
+            },
+            "interpreter": null,
+            "loc": SourceLocation {
+              "end": Position {
+                "column": 4,
+                "index": 166,
+                "line": 9,
+              },
+              "filename": undefined,
+              "identifierName": undefined,
+              "start": Position {
+                "column": 0,
+                "index": 0,
+                "line": 1,
+              },
+            },
+            "sourceType": "module",
+            "start": 0,
+            "type": "Program",
+          },
+          "start": 269,
+          "type": "File",
+        },
+      },
+    ],
+  },
+}
+`;
+
 exports[`parsers integration should allow to parse html with script tags 1`] = `
 Object {
   "format": "html",

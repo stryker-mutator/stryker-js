@@ -25,11 +25,11 @@
   "license": "ISC",
   "dependencies": {
     "ajv": "~8.17.1",
-    "mutation-testing-metrics": "3.3.0"
+    "mutation-testing-metrics": "3.5.1"
   },
   "devDependencies": {
     "@stryker-mutator/api": "8.7.1",
-    "@types/node": "20.17.28",
-    "typed-inject": "4.0.0"
+    "@types/node": "22.15.2",
+    "typed-inject": "5.0.0"
   }
 }
