@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'fs';
 
 import { assertions, factory, TempTestDirectorySandbox, testInjector } from '@stryker-mutator/test-helpers';
 import { TestStatus } from '@stryker-mutator/api/test-runner';
@@ -170,6 +171,28 @@ describe('VitestRunner in browser mode', () => {
       assertions.expectKilled(runResult);
       expect(runResult.killedBy).deep.eq([test3]);
       expect(runResult.failureMessage).contains('42 - 2 = undefined');
+    });
+
+    // See issue https://github.com/stryker-mutator/stryker-js/issues/5242
+    it("shouldn't take a screenshot on test failure", async () => {
+      // Arrange
+      const screenshotPath = path.join(sandbox.tmpDir, 'src/__screenshots__/math.component.spec.ts/my-math-should-support-simple-subtraction-1.png');
+
+      // Act
+      const runResult = await sut.mutantRun(
+        factory.mutantRunOptions({
+          activeMutant: factory.mutant({ id: '14' }), // Static mutant
+          sandboxFileName,
+          mutantActivation: 'static',
+          testFilter: [test3],
+        }),
+      );
+
+      // Assert
+      assertions.expectKilled(runResult);
+      expect(runResult.killedBy).deep.eq([test3]);
+      expect(runResult.failureMessage).contains('42 - 2 = undefined');
+      expect(fs.existsSync(screenshotPath)).to.be.false;
     });
   });
 });
