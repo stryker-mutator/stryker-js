@@ -68,7 +68,8 @@ describe('Coverage analysis', () => {
     });
     it('should provide expected in browser mode', async () => {
       strykerOptions.vitest = { configFile: 'vitest.browser.config.js' };
-      await actAssertPerTest();
+      // Vitest has a race condition, can be anywhere between 10 and 12 (should be 10)
+      await actAssertPerTest(10, 12);
     });
   });
 
@@ -160,8 +161,9 @@ describe('Coverage analysis', () => {
     });
   }
 
-  /** @param {number} expectedTestCount */
-  async function actAssertPerTest(expectedTestCount = 10) {
+  /** @param {number} expectedTestCountMin */
+  /** @param {number} expectedTestCountMax */
+  async function actAssertPerTest(expectedTestCountMin = 10, expectedTestCountMax = expectedTestCountMin) {
     // Arrange
     strykerOptions.coverageAnalysis = 'perTest';
     const stryker = new Stryker(strykerOptions);
@@ -175,6 +177,7 @@ describe('Coverage analysis', () => {
      */
     const expectedMetricsResult = { noCoverage: 2, survived: 1, killed: 8, mutationScore: 72.72727272727273 };
     expect(metricsResult.metrics).deep.include(expectedMetricsResult);
-    expect(testsRan).eq(expectedTestCount);
+    expect(testsRan).gte(expectedTestCountMin);
+    expect(testsRan).lte(expectedTestCountMax);
   }
 });
