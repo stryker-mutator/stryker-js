@@ -34,7 +34,7 @@
     "glob": "10.4.5",
     "install-local": "3.0.1",
     "jasmine": "5.7.0",
-    "jasmine-core": "5.6.0",
+    "jasmine-core": "5.7.0",
     "json-schema-to-typescript": "15.0.4",
     "lerna": "8.2.2",
     "minimatch": "9.0.5",
