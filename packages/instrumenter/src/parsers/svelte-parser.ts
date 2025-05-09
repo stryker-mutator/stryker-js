@@ -1,4 +1,4 @@
-import type { BaseNode, Program, Expression } from 'estree';
+import type { BaseNode, Program } from 'estree';
 import type { AST } from 'svelte/compiler';
 
 import { notEmpty } from '@stryker-mutator/util';
@@ -53,7 +53,7 @@ export async function parse(text: string, fileName: string, context: ParserConte
   const svelteAst = svelteParse(replacedCode, { filename: fileName });
 
   const moduleScriptRange = getModuleScriptRange(svelteAst);
-  const templateRanges = await getTemplateScriptRanges(svelteAst);
+  const templateRanges = getTemplateScriptRanges(svelteAst);
   const { remappedModuleScriptRange, remappedScriptRanges } = remapScriptLocations(replacedCode, scriptMap, moduleScriptRange, templateRanges);
 
   const [moduleScript, ...additionalScripts] = await Promise.all([
@@ -86,7 +86,7 @@ export async function parse(text: string, fileName: string, context: ParserConte
     return { replacedCode: result.code, scriptMap: map };
   }
 
-  async function getTemplateScriptRanges(ast: Record<string, any>): Promise<TemplateRange[]> {
+  function getTemplateScriptRanges(ast: Record<string, any>): TemplateRange[] {
     const ranges: TemplateRange[] = [];
 
     if (ast.instance) {
@@ -94,8 +94,7 @@ export async function parse(text: string, fileName: string, context: ParserConte
       ranges.push({ start, end, isExpression: false });
     }
 
-
-
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     walk(ast.html, {
       enter(n) {
         const node = n as any;
@@ -104,6 +103,7 @@ export async function parse(text: string, fileName: string, context: ParserConte
           ranges.push({ start: textContentNode.start, end: textContentNode.end, isExpression: false });
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         const templateExpression = collectTemplateExpression(node);
         if (templateExpression) {
           const { start, end } = templateExpression;
@@ -184,7 +184,7 @@ function remapScriptLocations(
   return { remappedModuleScriptRange: newModuleScriptRange, remappedScriptRanges: newScriptRanges.filter((range) => range !== newModuleScriptRange) };
 }
 
-function collectTemplateExpression(node: {type: string, expression: (BaseNode & Range)}): (BaseNode & Range) | undefined {
+function collectTemplateExpression(node: { type: string; expression: BaseNode & Range }): (BaseNode & Range) | undefined {
   switch (node.type) {
     case 'MustacheTag':
     case 'RawMustacheTag':
