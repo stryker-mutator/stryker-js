@@ -53,7 +53,7 @@
     "postinstall": "playwright install chromium",
     "lint": "eslint",
     "lint:fix": "npm run lint -- --fix",
-    "clean": "rimraf --glob \"packages/*/{.nyc_output,reports,coverage,src-generated,*.tsbuildinfo,.stryker-tmp,dist,testResources/tmp}\" \"packages/core/schema/stryker-schema.json\"",
+    "clean": "rimraf --glob \"packages/*/{.nyc_output,reports,coverage,src-generated,*.tsbuildinfo,.stryker-tmp,dist,testResources/tmp}\" \"e2e/test/*/{.stryker-tmp,.stryker-tmp-2}\" \"packages/core/schema/stryker-schema.json\"",
     "generate": "node tasks/generate-json-schema-to-ts.js && node tasks/generate-mono-schema.js",
     "prebuild": "npm run generate",
     "build": "tsc -b",
