@@ -15,7 +15,7 @@ import {
 import { escapeRegExp, notEmpty } from '@stryker-mutator/util';
 
 import { vitestWrapper, Vitest } from './vitest-wrapper.js';
-import { convertTestToTestResult, fromTestId, collectTestsFromSuite, addToInlineDeps, normalizeCoverage } from './vitest-helpers.js';
+import { convertTestToTestResult, fromTestId, collectTestsFromSuite, normalizeCoverage } from './vitest-helpers.js';
 import { FileCommunicator } from './file-communicator.js';
 import { VitestRunnerOptionsWithStrykerOptions } from './vitest-runner-options-with-stryker-options.js';
 
@@ -63,14 +63,9 @@ export class VitestTestRunner implements TestRunner {
       onConsoleLog: () => false,
     });
 
-    // The vitest setup file needs to be inlined
-    // See https://github.com/vitest-dev/vitest/issues/3403#issuecomment-1554057966
-    const vitestSetupMatcher = new RegExp(escapeRegExp(this.fileCommunicator.vitestSetup));
-    addToInlineDeps(this.ctx.config, vitestSetupMatcher);
     this.ctx.config.browser.screenshotFailures = false;
     this.ctx.projects.forEach((project) => {
       project.config.setupFiles = [this.fileCommunicator.vitestSetup, ...project.config.setupFiles];
-      addToInlineDeps(project.config, vitestSetupMatcher);
     });
     if (this.log.isDebugEnabled()) {
       this.log.debug(`vitest final config: ${JSON.stringify(this.ctx.config, null, 2)}`);
@@ -155,7 +150,7 @@ export class VitestTestRunner implements TestRunner {
     // We need to invalidate the module cache for the vitest setup file
     // See https://github.com/vitest-dev/vitest/issues/3409#issuecomment-1555884513
     this.ctx!.projects.forEach((project) => {
-      const { moduleGraph } = project.server;
+      const { moduleGraph } = project.vite;
       const module = moduleGraph.getModuleById(this.fileCommunicator.vitestSetup);
       if (module) {
         moduleGraph.invalidateModule(module);
@@ -211,7 +206,6 @@ export class VitestTestRunner implements TestRunner {
   public async dispose(): Promise<void> {
     await this.fileCommunicator.dispose();
     await this.ctx?.close();
-    await this.ctx?.closingPromise;
   }
 }
 

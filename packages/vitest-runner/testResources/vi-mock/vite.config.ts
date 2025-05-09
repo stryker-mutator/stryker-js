@@ -12,7 +12,12 @@ export default defineConfig({
     browser: {
       headless: true,
       enabled: true,
-      name: 'chromium',
+      instances: [
+        {
+          browser: 'chromium',
+          screenshotFailures: false,
+        },
+      ],
       provider: 'playwright',
     },
   },
