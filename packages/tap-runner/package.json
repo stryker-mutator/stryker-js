@@ -19,8 +19,8 @@
   "scripts": {
     "test": "c8 npm run test:all",
     "test:all": "npm run test:unit && npm run test:integration",
-    "test:unit": "mocha 'dist/test/unit/**/*.js'",
-    "test:integration": "mocha --no-timeout 'dist/test/integration/**/*.js'",
+    "test:unit": "mocha \"dist/test/unit/**/*.js\"",
+    "test:integration": "mocha --no-timeout \"dist/test/integration/**/*.js\"",
     "stryker": "node ../core/bin/stryker.js run"
   },
   "repository": {
@@ -57,8 +57,8 @@
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "8.7.1",
-    "@types/node": "22.14.0",
-    "ava": "6.2.0",
+    "@types/node": "22.15.15",
+    "ava": "6.3.0",
     "tap": "20.0.3"
   },
   "peerDependencies": {

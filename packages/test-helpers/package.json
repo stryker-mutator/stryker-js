@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "@stryker-mutator/api": "8.7.1",
-    "@types/node": "22.14.0",
-    "typed-inject": "4.0.0"
+    "@types/node": "22.15.15",
+    "typed-inject": "5.0.0"
   }
 }

@@ -27,7 +27,7 @@ The configuration below contains a good starting point for Angular projects.
 You may have to change some paths or config settings like the selected browsers.
 We highly suggest using a headless browser when testing using stryker.
 
-Coverage analysis with [@stryker-mutator/jasmine-framework](http://npmjs.com/package/@stryker-mutator/jasmine-framework) is unfortunately not supported as of right now.
+Coverage analysis with [@stryker-mutator/jasmine-framework](https://npmjs.com/package/@stryker-mutator/jasmine-framework) is unfortunately not supported as of right now.
 
 ```js
 module.exports = function (config) {

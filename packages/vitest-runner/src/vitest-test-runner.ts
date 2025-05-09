@@ -63,6 +63,7 @@ export class VitestTestRunner implements TestRunner {
       onConsoleLog: () => false,
     });
 
+    this.ctx.config.browser.screenshotFailures = false;
     this.ctx.projects.forEach((project) => {
       project.config.setupFiles = [this.fileCommunicator.vitestSetup, ...project.config.setupFiles];
     });

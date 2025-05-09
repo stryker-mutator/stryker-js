@@ -130,7 +130,7 @@ Type 'any[][]' is not assignable to type 'ComponentData[]'.
 
 **Solution**:
 
-To solve that, you need to add a [typescript-checker plugin](https://stryker-mutator.io/docs/stryker-js/typescript-checker/#configuring) to StrykerJS. Install it with `npm install --save-dev @stryker-mutator/typescript-checker` and then add the following options to your stryker's config file:
+To solve that, you need to add a [typescript-checker plugin](./typescript-checker.md#configuring) to StrykerJS. Install it with `npm install --save-dev @stryker-mutator/typescript-checker` and then add the following options to your stryker's config file:
 ```
 {
   "checkers": ["typescript"],
@@ -228,7 +228,7 @@ There are two solutions for this problem.
     import {} from "../FileUnderTest";
     ```
 
-2. Deactivate the usage of this Jest feature by setting `--findRelatedTests` to `false`. See [documentation](https://stryker-mutator.io/docs/stryker-js/jest-runner/#jestenablefindrelatedtests-boolean).
+2. Deactivate the usage of this Jest feature by setting `--findRelatedTests` to `false`. See [documentation](./jest-runner.md#jestenablefindrelatedtests-boolean).
 
 ### Error when running Stryker with the TypeScript checker: no watcher is registered.
 

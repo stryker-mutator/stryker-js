@@ -19,8 +19,8 @@
     "start": "tsc -w",
     "test": "c8 npm run test:all",
     "test:all": "npm run test:unit && npm run test:integration",
-    "test:unit": "mocha 'dist/test/unit/**/*.js'",
-    "test:integration": "mocha --timeout 60000 'dist/test/integration/**/*.js'",
+    "test:unit": "mocha \"dist/test/unit/**/*.js\"",
+    "test:integration": "mocha --timeout 60000 \"dist/test/integration/**/*.js\"",
     "stryker": "node bin/stryker.js run"
   },
   "repository": {
@@ -74,7 +74,7 @@
     "@stryker-mutator/util": "8.7.1",
     "ajv": "~8.17.1",
     "chalk": "~5.4.0",
-    "commander": "~12.1.0",
+    "commander": "~13.1.0",
     "diff-match-patch": "1.0.5",
     "emoji-regex": "~10.4.0",
     "execa": "~9.5.0",
@@ -91,14 +91,14 @@
     "source-map": "~0.7.4",
     "tree-kill": "~1.2.2",
     "tslib": "2.8.1",
-    "typed-inject": "~4.0.0",
+    "typed-inject": "~5.0.0",
     "typed-rest-client": "~2.1.0"
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "8.7.1",
     "@types/diff-match-patch": "1.0.36",
     "@types/lodash.groupby": "4.6.9",
-    "@types/node": "22.14.0",
+    "@types/node": "22.15.15",
     "@types/progress": "2.0.7",
     "@types/semver": "7.7.0",
     "glob": "10.4.5"
