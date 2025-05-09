@@ -67,6 +67,7 @@ export class VitestTestRunner implements TestRunner {
     // See https://github.com/vitest-dev/vitest/issues/3403#issuecomment-1554057966
     const vitestSetupMatcher = new RegExp(escapeRegExp(this.fileCommunicator.vitestSetup));
     addToInlineDeps(this.ctx.config, vitestSetupMatcher);
+    this.ctx.config.browser.screenshotFailures = false;
     this.ctx.projects.forEach((project) => {
       project.config.setupFiles = [this.fileCommunicator.vitestSetup, ...project.config.setupFiles];
       addToInlineDeps(project.config, vitestSetupMatcher);

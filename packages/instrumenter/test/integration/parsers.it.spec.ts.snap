@@ -208,6 +208,7 @@ export default {
           "program": Node {
             "body": Array [
               Node {
+                "attributes": Array [],
                 "end": 45,
                 "loc": SourceLocation {
                   "end": Position {
@@ -292,6 +293,7 @@ export default {
                 "type": "ImportDeclaration",
               },
               Node {
+                "attributes": Array [],
                 "end": 97,
                 "loc": SourceLocation {
                   "end": Position {
@@ -1182,6 +1184,7 @@ export class AppComponent {
     "program": Node {
       "body": Array [
         Node {
+          "attributes": Array [],
           "end": 42,
           "importKind": "value",
           "loc": SourceLocation {
@@ -1309,6 +1312,7 @@ export class AppComponent {
           "type": "ImportDeclaration",
         },
         Node {
+          "attributes": Array [],
           "declaration": Node {
             "body": Node {
               "body": Array [
@@ -2123,6 +2127,7 @@ Object {
     "program": Node {
       "body": Array [
         Node {
+          "attributes": Array [],
           "declaration": Node {
             "body": Node {
               "body": Array [],
@@ -2285,6 +2290,7 @@ Object {
     "program": Node {
       "body": Array [
         Node {
+          "attributes": Array [],
           "declaration": Node {
             "body": Node {
               "body": Array [],
@@ -2423,6 +2429,7 @@ Object {
     "program": Node {
       "body": Array [
         Node {
+          "attributes": Array [],
           "declaration": Node {
             "body": Node {
               "body": Array [],
@@ -2617,6 +2624,7 @@ export default Badge;
     "program": Node {
       "body": Array [
         Node {
+          "attributes": Array [],
           "end": 26,
           "loc": SourceLocation {
             "end": Position {
@@ -2701,6 +2709,7 @@ export default Badge;
           "type": "ImportDeclaration",
         },
         Node {
+          "attributes": Array [],
           "end": 62,
           "loc": SourceLocation {
             "end": Position {
@@ -4442,6 +4451,7 @@ export default Badge;
     "program": Node {
       "body": Array [
         Node {
+          "attributes": Array [],
           "end": 26,
           "loc": SourceLocation {
             "end": Position {
@@ -4526,6 +4536,7 @@ export default Badge;
           "type": "ImportDeclaration",
         },
         Node {
+          "attributes": Array [],
           "end": 62,
           "loc": SourceLocation {
             "end": Position {
@@ -9630,6 +9641,7 @@ async function func() {
           "type": "ClassDeclaration",
         },
         Node {
+          "attributes": Array [],
           "declaration": Node {
             "async": false,
             "body": Node {
