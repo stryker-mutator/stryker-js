@@ -372,7 +372,6 @@ export default {
                     },
                     "local": Node {
                       "end": 69,
-                      "extra": undefined,
                       "loc": SourceLocation {
                         "end": Position {
                           "column": 23,
@@ -521,7 +520,6 @@ export default {
                             "type": "ObjectProperty",
                             "value": Node {
                               "end": 152,
-                              "extra": undefined,
                               "loc": SourceLocation {
                                 "end": Position {
                                   "column": 20,
@@ -1277,7 +1275,6 @@ export class AppComponent {
               },
               "local": Node {
                 "end": 18,
-                "extra": undefined,
                 "loc": SourceLocation {
                   "end": Position {
                     "column": 18,
@@ -3223,7 +3220,6 @@ export default Badge;
                                 "type": "ObjectProperty",
                                 "value": Node {
                                   "end": 207,
-                                  "extra": undefined,
                                   "loc": SourceLocation {
                                     "end": Position {
                                       "column": 9,
@@ -5050,7 +5046,6 @@ export default Badge;
                                 "type": "ObjectProperty",
                                 "value": Node {
                                   "end": 207,
-                                  "extra": undefined,
                                   "loc": SourceLocation {
                                     "end": Position {
                                       "column": 9,

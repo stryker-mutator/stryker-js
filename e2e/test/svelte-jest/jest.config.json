@@ -1,8 +1,16 @@
 {
   "transform": {
-    "^.+\\.svelte$": "svelte-jester"
+    "^.+\\.svelte(\\.(js|ts))?$": "svelte-jester"
   },
-  "moduleFileExtensions": ["svelte", "js"],
+  "moduleFileExtensions": [
+    "svelte",
+    "js"
+  ],
   "testEnvironment": "jsdom",
-  "extensionsToTreatAsEsm": [".svelte"]
+  "extensionsToTreatAsEsm": [
+    ".svelte"
+  ],
+  "transformIgnorePatterns": [
+    "/node_modules/(?!@testing-library/svelte/)"
+  ]
 }
