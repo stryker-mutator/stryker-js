@@ -70,6 +70,7 @@ export class VitestTestRunner implements TestRunner {
     this.ctx.config.browser.screenshotFailures = false;
     this.ctx.projects.forEach((project) => {
       project.config.setupFiles = [this.fileCommunicator.vitestSetup, ...project.config.setupFiles];
+      project.config.browser.screenshotFailures = false;
       addToInlineDeps(project.config, vitestSetupMatcher);
     });
     if (this.log.isDebugEnabled()) {
@@ -214,7 +215,6 @@ export class VitestTestRunner implements TestRunner {
   public async dispose(): Promise<void> {
     await this.fileCommunicator.dispose();
     await this.ctx?.close();
-    await this.ctx?.closingPromise;
   }
 }
 
