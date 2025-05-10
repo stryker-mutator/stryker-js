@@ -9,7 +9,6 @@ const mode = inject('mode');
 
 const ns = globalThis[globalNamespace] || (globalThis[globalNamespace] = {});
 ns.hitLimit = inject('hitLimit');
-debugger;
 
 if (mode === 'mutant') {
   beforeAll(() => {
