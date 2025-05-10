@@ -25,7 +25,7 @@ describe('VitestRunner in browser mode', () => {
 
     sandbox = new TempTestDirectorySandbox('browser-project', { soft: true });
     await sandbox.init();
-    sandboxFileName = path.resolve(sandbox.tmpDir, 'src/heading.component.ts');
+    sandboxFileName = path.resolve(sandbox.tmpDir, 'src/math.component.ts');
     await sut.init();
   });
   afterEach(async () => {
@@ -137,9 +137,10 @@ describe('VitestRunner in browser mode', () => {
 
     it('should be able to survive after killing mutant', async () => {
       // Arrange
-      await sut.mutantRun(
+      const initResult = await sut.mutantRun(
         factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '50' }), mutantActivation: 'runtime', testFilter: [test3], sandboxFileName }),
       );
+      assertions.expectKilled(initResult);
 
       // Act
       const runResult = await sut.mutantRun(
@@ -153,6 +154,28 @@ describe('VitestRunner in browser mode', () => {
 
       // Assert
       assertions.expectSurvived(runResult);
+      expect(runResult.nrOfTests).eq(1);
+    });
+
+    it('should be able to kill after survive mutant', async () => {
+      // Arrange
+      const initResult = await sut.mutantRun(
+        factory.mutantRunOptions({
+          activeMutant: factory.mutant({ id: '48' }), // Should survive
+          sandboxFileName,
+          mutantActivation: 'runtime',
+          testFilter: [test2],
+        }),
+      );
+      assertions.expectSurvived(initResult);
+
+      // Act
+      const runResult = await sut.mutantRun(
+        factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '50' }), mutantActivation: 'runtime', testFilter: [test3], sandboxFileName }),
+      );
+
+      // Assert
+      assertions.expectKilled(runResult);
       expect(runResult.nrOfTests).eq(1);
     });
 
