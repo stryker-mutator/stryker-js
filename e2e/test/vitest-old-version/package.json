@@ -20,6 +20,6 @@
     "@stryker-mutator/util": "../../../packages/util"
   },
   "devDependencies": {
-    "vitest": "0.31.2"
+    "vitest": "^2.0.0"
   }
 }
