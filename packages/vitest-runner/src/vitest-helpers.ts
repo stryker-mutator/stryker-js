@@ -4,6 +4,7 @@ import { BaseTestResult, TestResult, TestStatus } from '@stryker-mutator/api/tes
 import type { RunMode, TaskState } from 'vitest';
 import { RunnerTestCase, RunnerTestSuite } from 'vitest/node';
 import { MutantCoverage } from '@stryker-mutator/api/core';
+import { collectTestName, toRawTestId } from './test-helpers.js';
 
 function convertTaskStateToTestStatus(taskState: TaskState | undefined, testMode: RunMode): TestStatus {
   if (testMode === 'skip') {
@@ -74,22 +75,3 @@ export function collectTestsFromSuite(suite: RunnerTestSuite): RunnerTestCase[] 
     }
   });
 }
-
-// Stryker disable all: the function toTestId will be stringified at runtime which will cause problems when mutated.
-
-// Note: this function is used in code and copied to the mutated environment so the naming convention will always be the same.
-// It can not use external resource because those will not be available in the mutated environment.
-export function collectTestName({ name, suite }: { name: string; suite?: RunnerTestSuite }): string {
-  const nameParts = [name];
-  let currentSuite = suite;
-  while (currentSuite) {
-    nameParts.unshift(currentSuite.name);
-    currentSuite = currentSuite.suite;
-  }
-  return nameParts.join(' ').trim();
-}
-
-export function toRawTestId(test: RunnerTestCase): string {
-  return `${test.file?.filepath ?? 'unknown.js'}#${collectTestName(test)}`;
-}
-// Stryker restore all

@@ -1,24 +1,10 @@
-import path from 'path';
-
 import { expect } from 'chai';
 import { TestStatus } from '@stryker-mutator/api/test-runner';
 
-import { normalizeFileName } from '@stryker-mutator/util';
-
-import { collectTestsFromSuite, convertTestToTestResult, fromTestId, toRawTestId } from '../../src/vitest-helpers.js';
-import { createSuite, createVitestFile, createVitestTest } from '../util/factories.js';
+import { collectTestsFromSuite, convertTestToTestResult, fromTestId } from '../../src/vitest-helpers.js';
+import { createSuite, createVitestTest } from '../util/factories.js';
 
 describe('vitest-helpers', () => {
-  describe(toRawTestId.name, () => {
-    it('should return correct testId', () => {
-      // Using normalizeFileName here mimics the behavior of vitest on windows: using forward slashes
-      const filePath = normalizeFileName(path.resolve('src', 'file.js'));
-      const test = createVitestTest({ file: createVitestFile({ filepath: filePath }) });
-      const result = toRawTestId(test);
-      expect(result).to.be.equal(`${filePath}#suite test1`);
-    });
-  });
-
   describe(fromTestId.name, () => {
     it('should return correct file and test name', () => {
       const { file, test } = fromTestId('file.js#test1');

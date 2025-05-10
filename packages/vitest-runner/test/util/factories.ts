@@ -18,6 +18,7 @@ export function createVitestMock(): sinon.SinonStubbedInstance<Vitest> {
     },
     projects: [] as Vitest['projects'],
     start: sinon.stub(),
+    provide: sinon.stub(),
   } as sinon.SinonStubbedInstance<Vitest>;
 }
 

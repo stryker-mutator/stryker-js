@@ -43,4 +43,11 @@ describe(VitestTestRunner.name, () => {
 
     expect(process.env.NODE_ENV).to.equal('test');
   });
+  it('should set the VITEST environment variable to test in init', async () => {
+    delete process.env.VITEST;
+
+    await sut.init();
+
+    expect(process.env.VITEST).to.equal('1');
+  });
 });

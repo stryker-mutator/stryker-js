@@ -16,24 +16,25 @@ import { escapeRegExp, notEmpty } from '@stryker-mutator/util';
 
 import { vitestWrapper, Vitest } from './vitest-wrapper.js';
 import { convertTestToTestResult, fromTestId, collectTestsFromSuite, normalizeCoverage } from './vitest-helpers.js';
-import { FileCommunicator } from './file-communicator.js';
 import { VitestRunnerOptionsWithStrykerOptions } from './vitest-runner-options-with-stryker-options.js';
+import { fileURLToPath } from 'url';
 
 type StrykerNamespace = '__stryker__' | '__stryker2__';
+const STRYKER_SETUP = fileURLToPath(new URL('./stryker-setup.js', import.meta.url));
 
 export class VitestTestRunner implements TestRunner {
   public static inject = [commonTokens.options, commonTokens.logger, 'globalNamespace'] as const;
   private ctx?: Vitest;
-  private readonly fileCommunicator: FileCommunicator;
+  // private readonly fileCommunicator: FileCommunicator;
   private readonly options: VitestRunnerOptionsWithStrykerOptions;
 
   constructor(
     options: StrykerOptions,
     private readonly log: Logger,
-    globalNamespace: StrykerNamespace,
+    private globalNamespace: StrykerNamespace,
   ) {
     this.options = options as VitestRunnerOptionsWithStrykerOptions;
-    this.fileCommunicator = new FileCommunicator(globalNamespace);
+    // this.fileCommunicator = new FileCommunicator(globalNamespace);
   }
 
   public capabilities(): TestRunnerCapabilities {
@@ -62,10 +63,11 @@ export class VitestTestRunner implements TestRunner {
       bail: this.options.disableBail ? 0 : 1,
       onConsoleLog: () => false,
     });
-
+    this.ctx.provide('globalNamespace', this.globalNamespace);
     this.ctx.config.browser.screenshotFailures = false;
     this.ctx.projects.forEach((project) => {
-      project.config.setupFiles = [this.fileCommunicator.vitestSetup, ...project.config.setupFiles];
+      project.config.setupFiles = [STRYKER_SETUP, ...project.config.setupFiles];
+      project.config.browser.screenshotFailures = false;
     });
     if (this.log.isDebugEnabled()) {
       this.log.debug(`vitest final config: ${JSON.stringify(this.ctx.config, null, 2)}`);
@@ -73,9 +75,10 @@ export class VitestTestRunner implements TestRunner {
   }
 
   public async dryRun(): Promise<DryRunResult> {
-    await this.fileCommunicator.setDryRun();
+    this.ctx!.provide('mode', 'dry-run');
+
     const testResult = await this.run();
-    const mutantCoverage: MutantCoverage = this.readMutantCoverage();
+    const mutantCoverage = this.readMutantCoverage();
     if (testResult.status === DryRunStatus.Complete) {
       return {
         status: testResult.status,
@@ -87,7 +90,10 @@ export class VitestTestRunner implements TestRunner {
   }
 
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
-    await this.fileCommunicator.setMutantRun(options);
+    this.ctx!.provide('mode', 'mutant');
+    this.ctx!.provide('hitLimit', options.hitLimit);
+    this.ctx!.provide('mutantActivation', options.mutantActivation);
+    this.ctx!.provide('activeMutant', options.activeMutant.id);
     const dryRunResult = await this.run(options.testFilter);
     const hitCount = this.readHitCount();
     const timeOut = determineHitLimitReached(hitCount, options.hitLimit);
@@ -141,21 +147,6 @@ export class VitestTestRunner implements TestRunner {
     // Clear the state from the previous run
     // Note that this is kind of a hack, see https://github.com/vitest-dev/vitest/discussions/3017#discussioncomment-5901751
     this.ctx!.state.filesMap.clear();
-
-    // Since we:
-    // 1. are reusing the same vitest instance
-    // 2. have changed the vitest setup file contents (see FileCommunicator.setMutantRun)
-    // 3. the vitest setup file is inlined (see VitestTestRunner.init)
-    // 4. we're not using the vitest watch mode
-    // We need to invalidate the module cache for the vitest setup file
-    // See https://github.com/vitest-dev/vitest/issues/3409#issuecomment-1555884513
-    this.ctx!.projects.forEach((project) => {
-      const { moduleGraph } = project.vite;
-      const module = moduleGraph.getModuleById(this.fileCommunicator.vitestSetup);
-      if (module) {
-        moduleGraph.invalidateModule(module);
-      }
-    });
   }
 
   private readHitCount() {
@@ -204,7 +195,7 @@ export class VitestTestRunner implements TestRunner {
   }
 
   public async dispose(): Promise<void> {
-    await this.fileCommunicator.dispose();
+    // await this.fileCommunicator.dispose();
     await this.ctx?.close();
   }
 }
