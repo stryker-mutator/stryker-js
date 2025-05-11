@@ -141,6 +141,9 @@ export class VitestTestRunner implements TestRunner {
   private setEnv() {
     // Set node environment for issues like these: https://github.com/stryker-mutator/stryker-js/issues/4289
     process.env.NODE_ENV = 'test';
+    // Set vitest environment to signal that we are running in vitest
+    // as some plugins only initiate when this is set: https://github.com/testing-library/svelte-testing-library/blob/6096f05e805cf55474f52f303562f4013785d25f/src/vite.js#L20
+    process.env.VITEST = '1';
   }
 
   private resetContext() {
