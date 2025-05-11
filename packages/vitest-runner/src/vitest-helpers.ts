@@ -1,7 +1,8 @@
 import path from 'path';
 
 import { BaseTestResult, TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
-import type { RunMode, RunnerTestSuite, TaskState, RunnerTestCase } from 'vitest';
+import type { RunMode, TaskState } from 'vitest';
+import { RunnerTestCase, RunnerTestSuite } from 'vitest/node';
 import { MutantCoverage } from '@stryker-mutator/api/core';
 import { collectTestName, toRawTestId } from './test-helpers.js';
 

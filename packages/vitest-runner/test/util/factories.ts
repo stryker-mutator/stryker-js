@@ -1,6 +1,5 @@
 import sinon from 'sinon';
-import { Vitest } from 'vitest/node';
-import type { RunnerTestFile, RunnerTestSuite, RunnerTestCase } from 'vitest';
+import type { RunnerTestCase, RunnerTestFile, RunnerTestSuite, Vitest } from 'vitest/node';
 
 type ResolvedConfig = Vitest['config'];
 type ResolvedBrowserOptions = ResolvedConfig['browser'];
