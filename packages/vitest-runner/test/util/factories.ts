@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import { RunnerTestCase, RunnerTestFile, RunnerTestSuite, Vitest } from 'vitest/node';
+import type { RunnerTestCase, RunnerTestFile, RunnerTestSuite, Vitest } from 'vitest/node';
 
 type ResolvedConfig = Vitest['config'];
 type ResolvedBrowserOptions = ResolvedConfig['browser'];
@@ -59,9 +59,10 @@ export function createVitestTest(overrides?: Partial<RunnerTestCase>): RunnerTes
     name: 'test1',
     meta: {},
     mode: 'run',
+    timeout: 0,
     context: {} as any,
     file: createVitestFile(),
-    timeout: 0,
     ...overrides,
   };
 }
+
