@@ -1,4 +1,5 @@
 import path from 'path';
+import type { Dirent } from 'fs';
 
 import { MutateDescription, MutationRange } from '@stryker-mutator/api/core';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
@@ -496,7 +497,11 @@ describe(ProjectReader.name, () => {
     } else {
       fsMock.readdir
         .withArgs(fullName, sinon.match.object)
-        .resolves(Object.entries(dirEntry).map(([name, value]) => createDirent({ name, isDirectory: typeof value !== 'string' })));
+        .resolves(
+          Object.entries(dirEntry).map(
+            ([name, value]) => createDirent({ name, isDirectory: typeof value !== 'string' }) as unknown as Dirent<Buffer<ArrayBufferLike>>,
+          ),
+        );
       Object.entries(dirEntry).map(([name, value]) => stubFileSystem(value, path.resolve(fullName, name)));
     }
     fsMock.readFile.rejects(factory.fileNotFoundError());

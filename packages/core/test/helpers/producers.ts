@@ -142,7 +142,7 @@ interface CreateDirentOptions {
   name: string;
   isDirectory: boolean;
 }
-export function createDirent(overrides?: Partial<CreateDirentOptions>): Dirent {
+export function createDirent(overrides?: Partial<CreateDirentOptions>): Dirent<string> {
   const { name, isDirectory } = {
     name: 'foo',
     isDirectory: true,
