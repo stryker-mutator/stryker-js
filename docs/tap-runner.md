@@ -59,10 +59,11 @@ Specify [glob expressions](./config-file.md#glob-patterns) to your test files. B
 | Version | Changes                                                   |
 | ------- | --------------------------------------------------------- |
 | 7.1     | Add `{{hookFile}}` and `{{testFile}}` placeholder support |
+| 9.0     | Changed default to include `--test-reporter=tap`          |
 
 </details>
 
-Default: `["-r", "{{hookFile}}", "{{testFile}}"]`
+Default: `["--test-reporter=tap", "-r", "{{hookFile}}", "{{testFile}}"]`
 
 Specify node arguments to be used when running the tests. You can use the following placeholders:
 
