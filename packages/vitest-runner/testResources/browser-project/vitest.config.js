@@ -5,14 +5,9 @@ export default defineConfig({
     globals: true,
     browser: {
       enabled: true,
-      instances: [
-        {
-          browser: 'chromium',
-          screenshotFailures: false,
-        },
-      ],
       provider: 'playwright',
       headless: true,
+      instances: [{ browser: 'chromium' }],
     },
     root: '.',
   },
