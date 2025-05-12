@@ -25,7 +25,6 @@ const STRYKER_SETUP = fileURLToPath(new URL('./stryker-setup.js', import.meta.ur
 export class VitestTestRunner implements TestRunner {
   public static inject = [commonTokens.options, commonTokens.logger, 'globalNamespace'] as const;
   private ctx?: Vitest;
-  // private readonly fileCommunicator: FileCommunicator;
   private readonly options: VitestRunnerOptionsWithStrykerOptions;
 
   constructor(
@@ -34,7 +33,6 @@ export class VitestTestRunner implements TestRunner {
     private globalNamespace: StrykerNamespace,
   ) {
     this.options = options as VitestRunnerOptionsWithStrykerOptions;
-    // this.fileCommunicator = new FileCommunicator(globalNamespace);
   }
 
   public capabilities(): TestRunnerCapabilities {
@@ -198,7 +196,6 @@ export class VitestTestRunner implements TestRunner {
   }
 
   public async dispose(): Promise<void> {
-    // await this.fileCommunicator.dispose();
     await this.ctx?.close();
   }
 }
