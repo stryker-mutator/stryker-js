@@ -1,5 +1,5 @@
-import type { BaseNode, Node, Program } from 'estree';
-import type { Ast as InternalSvelteAst, TemplateNode, Text } from 'svelte/types/compiler/interfaces';
+import type { BaseNode, Program } from 'estree';
+import type { AST } from 'svelte/compiler';
 
 import { notEmpty } from '@stryker-mutator/util';
 
@@ -30,10 +30,22 @@ interface ScriptTag {
 type RangedProgram = Program & Range;
 const MIN_SVELTE_VERSION = '>=3.30';
 export async function parse(text: string, fileName: string, context: ParserContext): Promise<SvelteAst> {
-  const { parse: svelteParse, walk, preprocess, VERSION } = await import('svelte/compiler');
+  const { parse: svelteParse, preprocess, VERSION } = await import('svelte/compiler');
+  let walk: typeof import('estree-walker').walk;
 
   if (!satisfies(VERSION, MIN_SVELTE_VERSION)) {
     throw new Error(`Svelte version ${VERSION} not supported. Expected: ${MIN_SVELTE_VERSION} (processing file ${fileName})`);
+  }
+  /*
+    Allow instrumentation of Svelte 5 projects without dropping support for Svelte 4.
+    Due to the way Svelte 5 is structured, we can no longer use the typings from Svelte 4, even though
+    we use the legacy AST. The full Svelte 5 migration should update these typings to use the new AST.
+  */
+  if (satisfies(VERSION, '>=5')) {
+    ({ walk } = await import(import.meta.resolve('estree-walker', import.meta.resolve('svelte'))));
+  } else {
+    // Svelte 4
+    ({ walk } = await import('svelte/compiler'));
   }
 
   const positionConverter = new PositionConverter(text);
@@ -74,7 +86,7 @@ export async function parse(text: string, fileName: string, context: ParserConte
     return { replacedCode: result.code, scriptMap: map };
   }
 
-  function getTemplateScriptRanges(ast: InternalSvelteAst): TemplateRange[] {
+  function getTemplateScriptRanges(ast: Record<string, any>): TemplateRange[] {
     const ranges: TemplateRange[] = [];
 
     if (ast.instance) {
@@ -82,14 +94,16 @@ export async function parse(text: string, fileName: string, context: ParserConte
       ranges.push({ start, end, isExpression: false });
     }
 
-    walk(ast.html as Node, {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    walk(ast.html, {
       enter(n) {
-        const node = n as TemplateNode;
+        const node = n as any;
         if (node.type === 'Element' && node.name === 'script' && node.children?.[0].type === 'Text') {
-          const textContentNode = node.children[0] as Text;
+          const textContentNode = node.children[0] as AST.Text;
           ranges.push({ start: textContentNode.start, end: textContentNode.end, isExpression: false });
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         const templateExpression = collectTemplateExpression(node);
         if (templateExpression) {
           const { start, end } = templateExpression;
@@ -121,7 +135,7 @@ export async function parse(text: string, fileName: string, context: ParserConte
   }
 }
 
-function getModuleScriptRange(svelteAst: InternalSvelteAst): TemplateRange | undefined {
+function getModuleScriptRange(svelteAst: Record<string, any>): TemplateRange | undefined {
   if (svelteAst.module) {
     const script = svelteAst.module.content as RangedProgram;
     return { start: script.start, end: script.end, isExpression: false };
@@ -170,7 +184,7 @@ function remapScriptLocations(
   return { remappedModuleScriptRange: newModuleScriptRange, remappedScriptRanges: newScriptRanges.filter((range) => range !== newModuleScriptRange) };
 }
 
-function collectTemplateExpression(node: TemplateNode): (BaseNode & Range) | undefined {
+function collectTemplateExpression(node: { type: string; expression: BaseNode & Range }): (BaseNode & Range) | undefined {
   switch (node.type) {
     case 'MustacheTag':
     case 'RawMustacheTag':
