@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs, { Dirent } from 'fs';
 
 import { expect } from 'chai';
 
@@ -46,7 +46,8 @@ describe(FileSystem.name, () => {
     });
 
     it('should forward "readdir"', async () => {
-      const stub = sinon.stub(fs.promises, 'readdir');
+      // @ts-expect-error The incorrect overload is chosen by default
+      const stub: sinon.SinonStub<[string, { withFileTypes: true }], Promise<Dirent<string>[]>> = sinon.stub(fs.promises, 'readdir');
       const expectedResult = [createDirent()];
       stub.resolves(expectedResult);
       const actualResult = await sut.readdir('bar', { withFileTypes: true });
