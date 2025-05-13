@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/karma-runner",
-  "version": "8.7.1",
+  "version": "9.0.0",
   "description": "A plugin to use the karma test runner in Stryker, the JavaScript mutation testing framework",
   "files": [
     "dist/schema",
@@ -48,7 +48,7 @@
   },
   "homepage": "https://stryker-mutator.io/docs/stryker-js/karma-runner",
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "8.7.1",
+    "@stryker-mutator/test-helpers": "9.0.0",
     "@types/express": "5.0.1",
     "@types/node": "22.15.17",
     "@types/semver": "7.7.0",
@@ -60,11 +60,11 @@
     "karma-mocha": "2.0.1"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "~8.7.0"
+    "@stryker-mutator/core": "~9.0.0"
   },
   "dependencies": {
-    "@stryker-mutator/api": "8.7.1",
-    "@stryker-mutator/util": "8.7.1",
+    "@stryker-mutator/api": "9.0.0",
+    "@stryker-mutator/util": "9.0.0",
     "decamelize": "~6.0.0",
     "semver": "~7.7.0",
     "tslib": "~2.8.0"

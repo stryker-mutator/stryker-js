@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.0.0](https://github.com/stryker-mutator/stryker-js/compare/v8.7.1...v9.0.0) (2025-05-13)
+
+### Features
+
+- **node:** drop support for node 18 ([#5290](https://github.com/stryker-mutator/stryker-js/issues/5290)) ([307ef79](https://github.com/stryker-mutator/stryker-js/commit/307ef79f009b75eaa58b2824be20b352ab5fd340))
+
+### BREAKING CHANGES
+
+- **node:** Node 18 is no longer supported, please use Node 20 or higher
+
 ## [8.7.1](https://github.com/stryker-mutator/stryker-js/compare/v8.7.0...v8.7.1) (2024-12-11)
 
 **Note:** Version bump only for package @stryker-mutator/jasmine-runner
