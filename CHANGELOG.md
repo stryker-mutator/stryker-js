@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.0.1](https://github.com/stryker-mutator/stryker-js/compare/v9.0.0...v9.0.1) (2025-05-14)
+
+### Bug Fixes
+
+- **vitest:** copy stryker setup locally to support browser mode ([#5306](https://github.com/stryker-mutator/stryker-js/issues/5306)) ([309eb5b](https://github.com/stryker-mutator/stryker-js/commit/309eb5bb328998d6b9eb89f263dd4f7b1be95c61))
+
 # [9.0.0](https://github.com/stryker-mutator/stryker-js/compare/v8.7.1...v9.0.0) (2025-05-13)
 
 ### Bug Fixes
