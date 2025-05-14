@@ -1,7 +1,9 @@
-import { MutantCoverage } from '@stryker-mutator/api/core';
-import { MutantActivation } from '@stryker-mutator/api/test-runner';
-import { beforeEach, afterAll, beforeAll, afterEach, inject } from 'vitest';
-import { toRawTestId } from './test-helpers.js';
+import type { MutantCoverage } from '@stryker-mutator/api/core';
+import type { MutantActivation } from '@stryker-mutator/api/test-runner';
+import { beforeEach, afterAll, beforeAll, afterEach, inject, RunnerTestSuite, RunnerTestCase } from 'vitest';
+
+// This file is copied to the sandbox dir, don't import anything local!
+// See https://github.com/stryker-mutator/stryker-js/issues/5305
 
 const globalNamespace = inject('globalNamespace');
 const mutantActivation = inject('mutantActivation');
@@ -40,6 +42,22 @@ if (mode === 'mutant') {
     suite.meta.mutantCoverage = ns.mutantCoverage;
   });
 }
+
+// Stryker disable all: this file is copied to the sandbox dir
+function collectTestName({ name, suite }: { name: string; suite?: RunnerTestSuite }): string {
+  const nameParts = [name];
+  let currentSuite = suite;
+  while (currentSuite) {
+    nameParts.unshift(currentSuite.name);
+    currentSuite = currentSuite.suite;
+  }
+  return nameParts.join(' ').trim();
+}
+
+function toRawTestId(test: RunnerTestCase): string {
+  return `${test.file?.filepath ?? 'unknown.js'}#${collectTestName(test)}`;
+}
+// Stryker restore all
 
 declare module 'vitest' {
   interface ProvidedContext {

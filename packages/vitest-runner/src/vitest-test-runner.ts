@@ -1,3 +1,6 @@
+import { fileURLToPath } from 'url';
+import path from 'path';
+import fs from 'fs';
 import { CoverageData, INSTRUMENTER_CONSTANTS, MutantCoverage, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
@@ -17,7 +20,6 @@ import { escapeRegExp, notEmpty } from '@stryker-mutator/util';
 import { vitestWrapper, Vitest } from './vitest-wrapper.js';
 import { convertTestToTestResult, fromTestId, collectTestsFromSuite, normalizeCoverage } from './vitest-helpers.js';
 import { VitestRunnerOptionsWithStrykerOptions } from './vitest-runner-options-with-stryker-options.js';
-import { fileURLToPath } from 'url';
 
 type StrykerNamespace = '__stryker__' | '__stryker2__';
 const STRYKER_SETUP = fileURLToPath(new URL('./stryker-setup.js', import.meta.url));
@@ -26,6 +28,7 @@ export class VitestTestRunner implements TestRunner {
   public static inject = [commonTokens.options, commonTokens.logger, 'globalNamespace'] as const;
   private ctx?: Vitest;
   private readonly options: VitestRunnerOptionsWithStrykerOptions;
+  private localSetupFile = path.resolve(`./stryker-setup-${process.env.STRYKER_MUTATOR_WORKER_ID ?? 0}.js`);
 
   constructor(
     options: StrykerOptions,
@@ -41,6 +44,8 @@ export class VitestTestRunner implements TestRunner {
 
   public async init(): Promise<void> {
     this.setEnv();
+    await fs.promises.copyFile(STRYKER_SETUP, this.localSetupFile);
+
     this.ctx = await vitestWrapper.createVitest('test', {
       config: this.options.vitest?.configFile,
       // @ts-expect-error threads got renamed to "pool: threads" in vitest 1.0.0
@@ -64,7 +69,7 @@ export class VitestTestRunner implements TestRunner {
     this.ctx.provide('globalNamespace', this.globalNamespace);
     this.ctx.config.browser.screenshotFailures = false;
     this.ctx.projects.forEach((project) => {
-      project.config.setupFiles = [STRYKER_SETUP, ...project.config.setupFiles];
+      project.config.setupFiles = [this.localSetupFile, ...project.config.setupFiles];
       project.config.browser.screenshotFailures = false;
     });
     if (this.log.isDebugEnabled()) {
@@ -197,6 +202,7 @@ export class VitestTestRunner implements TestRunner {
 
   public async dispose(): Promise<void> {
     await this.ctx?.close();
+    await fs.promises.rm(this.localSetupFile, { force: true });
   }
 }
 
