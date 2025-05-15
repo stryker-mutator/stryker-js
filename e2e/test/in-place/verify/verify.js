@@ -11,7 +11,10 @@ import { expectMetricsJsonToMatchSnapshot } from '../../../helpers.js';
 
 use(chaiAsPromised);
 
-const rootResolve = path.resolve.bind(path, fileURLToPath(new URL('..', import.meta.url)));
+const rootResolve = path.resolve.bind(
+  path,
+  fileURLToPath(new URL('..', import.meta.url)),
+);
 
 describe('in place', () => {
   /**
@@ -25,12 +28,18 @@ describe('in place', () => {
     originalAddJSContent = await readAddJS();
   });
   afterEach(async () => {
-    await fsPromises.rm(rootResolve('reports'), { force: true, recursive: true });
+    await fsPromises.rm(rootResolve('reports'), {
+      force: true,
+      recursive: true,
+    });
     await fsPromises.rm(rootResolve('.lock'), { force: true, recursive: true });
   });
   it('should reset files after a successful run', async () => {
     execaSync('stryker', ['run']);
-    const addJSContent = await fsPromises.readFile(rootResolve('src', 'add.js'), 'utf-8');
+    const addJSContent = await fsPromises.readFile(
+      rootResolve('src', 'add.js'),
+      'utf-8',
+    );
     expect(addJSContent).eq(originalAddJSContent);
   });
   it('should report correct score', async () => {
@@ -41,7 +50,10 @@ describe('in place', () => {
     // Arrange
     let addJSMutatedContent;
     await fsPromises.writeFile(rootResolve('.lock'), ''); // this will lock the test run completion
-    const onGoingStrykerRun = execa('node', [path.resolve('..', '..', 'node_modules', '.bin', 'stryker'), 'run']);
+    const onGoingStrykerRun = execa('node', [
+      path.resolve('..', '..', 'node_modules', '.bin', 'stryker'),
+      'run',
+    ]);
     onGoingStrykerRun.stdout.on('data', (data) => {
       if (data.toString().includes('Starting initial test run')) {
         readAddJS()

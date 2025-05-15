@@ -1,5 +1,10 @@
 // @ts-check
-import { declareClassPlugin, PluginKind, tokens, commonTokens } from '@stryker-mutator/api/plugin';
+import {
+  declareClassPlugin,
+  PluginKind,
+  tokens,
+  commonTokens,
+} from '@stryker-mutator/api/plugin';
 import { DryRunStatus } from '@stryker-mutator/api/test-runner';
 
 export const strykerPlugins = [

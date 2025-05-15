@@ -22,4 +22,10 @@ export class CoverageAnalysisReporter {
     this.report = report;
   }
 }
-export const strykerPlugins = [declareClassPlugin(PluginKind.Reporter, 'coverageAnalysis', CoverageAnalysisReporter)];
+export const strykerPlugins = [
+  declareClassPlugin(
+    PluginKind.Reporter,
+    'coverageAnalysis',
+    CoverageAnalysisReporter,
+  ),
+];

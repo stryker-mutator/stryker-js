@@ -1,7 +1,10 @@
 // @ts-check
 import { expect } from 'chai';
 
-import { expectMetricsJsonToMatchSnapshot, readMutationTestingJsonResult } from '../../../helpers.js';
+import {
+  expectMetricsJsonToMatchSnapshot,
+  readMutationTestingJsonResult,
+} from '../../../helpers.js';
 
 /** @param {number} n */
 function pad(n) {

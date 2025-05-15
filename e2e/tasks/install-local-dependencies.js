@@ -8,6 +8,9 @@ import { bootstrapLocalDependencies } from '../../helpers/bootstrap-local-depend
  * Example: `npm run install-local-dependencies -- test/jest-with-ts/package.json`
  */
 const globs = process.argv.slice(2);
-bootstrapLocalDependencies(fileURLToPath(new URL('..', import.meta.url)), globs.length ? globs : undefined)
+bootstrapLocalDependencies(
+  fileURLToPath(new URL('..', import.meta.url)),
+  globs.length ? globs : undefined,
+)
   .then(() => console.log('Installed local dependencies'))
   .catch((/** @type {unknown}*/ err) => console.error(err));

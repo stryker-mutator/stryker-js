@@ -1,6 +1,9 @@
 import fs from 'fs';
 
-import { expectMetricsJsonToMatchSnapshot, execStryker } from '../../../helpers.js';
+import {
+  expectMetricsJsonToMatchSnapshot,
+  execStryker,
+} from '../../../helpers.js';
 
 describe('esm', () => {
   beforeEach(async () => {
@@ -18,7 +21,9 @@ describe('esm', () => {
   });
 
   it('should be supported in the jest runner', async () => {
-    execStryker('stryker run --testRunner jest --testRunnerNodeArgs "--experimental-vm-modules"');
+    execStryker(
+      'stryker run --testRunner jest --testRunnerNodeArgs "--experimental-vm-modules"',
+    );
     await assertStrykerRanCorrectly();
   });
 
