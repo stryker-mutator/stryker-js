@@ -13,7 +13,10 @@ describe('fileUtils', () => {
     const to = path.resolve(os.tmpdir(), 'moveDirectoryRecursiveSyncTo');
 
     afterEach(async () => {
-      await Promise.all([fsPromises.rm(from, { recursive: true, force: true }), fsPromises.rm(to, { recursive: true, force: true })]);
+      await Promise.all([
+        fsPromises.rm(from, { recursive: true, force: true }),
+        fsPromises.rm(to, { recursive: true, force: true }),
+      ]);
     });
 
     it('should override target files', async () => {
@@ -71,7 +74,9 @@ describe('fileUtils', () => {
     });
   });
 
-  async function readDirRecursive(dir: string): Promise<Record<string, string>> {
+  async function readDirRecursive(
+    dir: string,
+  ): Promise<Record<string, string>> {
     const fileNames = await glob('**/*', { cwd: dir, nodir: true });
     const files = Object.fromEntries(
       await Promise.all(

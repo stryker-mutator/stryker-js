@@ -24,7 +24,9 @@ describe(GitignoreWriter.name, () => {
     fsExistsSync = sinon.stub(fs, 'existsSync');
     fsReadFile = sinon.stub(fs.promises, 'readFile');
     syncBuiltinESMExports();
-    sut = testInjector.injector.provideValue(initializerTokens.out, out as unknown as typeof console.log).injectClass(GitignoreWriter);
+    sut = testInjector.injector
+      .provideValue(initializerTokens.out, out as unknown as typeof console.log)
+      .injectClass(GitignoreWriter);
   });
 
   describe('addStrykerTempFolder', () => {
@@ -47,7 +49,10 @@ describe(GitignoreWriter.name, () => {
         await sut.addStrykerTempFolder();
 
         // Assert
-        expect(fsAppendFile).calledWithExactly(GITIGNORE_FILE, `${os.EOL}# stryker temp files${os.EOL}.stryker-tmp${os.EOL}`);
+        expect(fsAppendFile).calledWithExactly(
+          GITIGNORE_FILE,
+          `${os.EOL}# stryker temp files${os.EOL}.stryker-tmp${os.EOL}`,
+        );
       });
 
       it('should output a message to inform the user that the .gitignore file has been changed', async () => {
@@ -58,7 +63,9 @@ describe(GitignoreWriter.name, () => {
         await sut.addStrykerTempFolder();
 
         // Assert
-        expect(out).calledWithExactly('Note: Your .gitignore file has been updated to include recommended git ignore patterns for Stryker');
+        expect(out).calledWithExactly(
+          'Note: Your .gitignore file has been updated to include recommended git ignore patterns for Stryker',
+        );
       });
 
       it("should not append the stryker gitignore configuration if it's already present", async () => {
@@ -83,7 +90,9 @@ describe(GitignoreWriter.name, () => {
         await sut.addStrykerTempFolder();
 
         // Assert
-        expect(out).calledWithExactly('No .gitignore file could be found. Please add the following to your .gitignore file: *.stryker-tmp');
+        expect(out).calledWithExactly(
+          'No .gitignore file could be found. Please add the following to your .gitignore file: *.stryker-tmp',
+        );
       });
     });
   });

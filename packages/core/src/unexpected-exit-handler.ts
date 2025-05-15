@@ -9,7 +9,9 @@ export class UnexpectedExitHandler implements Disposable {
   private readonly unexpectedExitHandlers: ExitHandler[] = [];
 
   public static readonly inject = [coreTokens.process] as const;
-  constructor(private readonly process: Pick<NodeJS.Process, 'exit' | 'off' | 'on'>) {
+  constructor(
+    private readonly process: Pick<NodeJS.Process, 'exit' | 'off' | 'on'>,
+  ) {
     process.on('exit', this.handleExit);
     signals.forEach((signal) => process.on(signal, this.processSignal));
   }

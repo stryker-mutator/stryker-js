@@ -10,7 +10,10 @@ describe('Mocha file resolving integration', () => {
   it('should resolve test files while respecting "files", "spec", "extension" and "exclude" properties', () => {
     const configLoader = createConfigLoader();
     process.chdir(resolveTestDir());
-    const options: MochaRunnerWithStrykerOptions = { ...testInjector.options, mochaOptions: {} };
+    const options: MochaRunnerWithStrykerOptions = {
+      ...testInjector.options,
+      mochaOptions: {},
+    };
     const mochaOptions = configLoader.load(options);
     const mochaAdapter = testInjector.injector.injectClass(MochaAdapter);
     const files = mochaAdapter.collectFiles(mochaOptions);

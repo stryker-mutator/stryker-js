@@ -16,7 +16,11 @@ export const updateOperatorMutator: NodeMutator = {
 
   *mutate(path) {
     if (path.isUpdateExpression()) {
-      yield types.updateExpression(UpdateOperators[path.node.operator], deepCloneNode(path.node.argument), path.node.prefix);
+      yield types.updateExpression(
+        UpdateOperators[path.node.operator],
+        deepCloneNode(path.node.argument),
+        path.node.prefix,
+      );
     }
   },
 };

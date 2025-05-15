@@ -38,7 +38,11 @@ export function createTestRunnerFactory(
     return () =>
       new RetryRejectedDecorator(
         getLogger(RetryRejectedDecorator.name),
-        () => new TimeoutDecorator(getLogger(TimeoutDecorator.name), () => new CommandTestRunner(sandbox.workingDirectory, options)),
+        () =>
+          new TimeoutDecorator(
+            getLogger(TimeoutDecorator.name),
+            () => new CommandTestRunner(sandbox.workingDirectory, options),
+          ),
       );
   } else {
     return () =>

@@ -36,7 +36,10 @@ export function expectAst(actual: types.File, assertion: AstExpectation): void {
 export function parseJS(code: string): types.File {
   // Wrap the AST in a `new File`, so `nodePath.buildCodeFrameError` works
   // https://github.com/babel/babel/issues/11889
-  const { ast } = new File({ filename: 'foo.js' }, { code, ast: parseSync(code) });
+  const { ast } = new File(
+    { filename: 'foo.js' },
+    { code, ast: parseSync(code) },
+  );
   return ast;
 }
 
@@ -50,14 +53,22 @@ export function parseTS(code: string, fileName = 'example.ts'): types.File {
       ast: parseSync(code, {
         presets: [require.resolve('@babel/preset-typescript')],
         filename: fileName,
-        plugins: [[require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }]],
+        plugins: [
+          [
+            require.resolve('@babel/plugin-proposal-decorators'),
+            { legacy: true },
+          ],
+        ],
       }),
     },
   );
   return ast;
 }
 
-export function findNodePath<T = types.Node>(ast: types.File, searchQuery: (nodePath: NodePath) => boolean): NodePath<T> {
+export function findNodePath<T = types.Node>(
+  ast: types.File,
+  searchQuery: (nodePath: NodePath) => boolean,
+): NodePath<T> {
   let theNode: NodePath<T> | undefined;
   traverse(ast, {
     noScope: true,
@@ -71,6 +82,8 @@ export function findNodePath<T = types.Node>(ast: types.File, searchQuery: (node
   if (theNode) {
     return theNode;
   } else {
-    throw new Error(`Cannot find node ${searchQuery.toString()} in ${generate(ast).code}`);
+    throw new Error(
+      `Cannot find node ${searchQuery.toString()} in ${generate(ast).code}`,
+    );
   }
 }

@@ -43,13 +43,25 @@ describe('statementMutantPlacer', () => {
   describe(statementMutantPlacer.place.name, () => {
     function arrangeSingleMutant() {
       const ast = parseJS('const foo = a + b');
-      const statement = findNodePath<babel.types.VariableDeclaration>(ast, (p) => p.isVariableDeclaration());
-      const nodeToMutate = findNodePath<babel.types.BinaryExpression>(ast, (p) => p.isBinaryExpression());
+      const statement = findNodePath<babel.types.VariableDeclaration>(
+        ast,
+        (p) => p.isVariableDeclaration(),
+      );
+      const nodeToMutate = findNodePath<babel.types.BinaryExpression>(
+        ast,
+        (p) => p.isBinaryExpression(),
+      );
       const mutant = new Mutant('1', 'file.js', nodeToMutate.node, {
-        replacement: types.binaryExpression('>>>', types.identifier('bar'), types.identifier('baz')),
+        replacement: types.binaryExpression(
+          '>>>',
+          types.identifier('bar'),
+          types.identifier('baz'),
+        ),
         mutatorName: 'fooMutator',
       });
-      const appliedMutants = new Map([[mutant, mutant.applied(statement.node)]]);
+      const appliedMutants = new Map([
+        [mutant, mutant.applied(statement.node)],
+      ]);
       return { statement, appliedMutants, ast };
     }
 
@@ -62,19 +74,34 @@ describe('statementMutantPlacer', () => {
       const actualCode = normalizeWhitespaces(generate(ast).code);
 
       // Assert
-      expect(actualCode).contains(normalizeWhitespaces('if (stryMutAct_9fa48("1")) { const foo = bar >>> baz; } else '));
+      expect(actualCode).contains(
+        normalizeWhitespaces(
+          'if (stryMutAct_9fa48("1")) { const foo = bar >>> baz; } else ',
+        ),
+      );
     });
 
     it('should keep block statements in tact', () => {
       // Arrange
       const ast = parseJS('function add(a, b) { return a + b; }');
-      const statement = findNodePath<babel.types.BlockStatement>(ast, (p) => p.isBlockStatement());
-      const originalNodePath = findNodePath<babel.types.BinaryExpression>(ast, (p) => p.isBinaryExpression());
+      const statement = findNodePath<babel.types.BlockStatement>(ast, (p) =>
+        p.isBlockStatement(),
+      );
+      const originalNodePath = findNodePath<babel.types.BinaryExpression>(
+        ast,
+        (p) => p.isBinaryExpression(),
+      );
       const mutant = createMutant({
         original: originalNodePath.node,
-        replacement: types.binaryExpression('>>>', types.identifier('a'), types.identifier('b')),
+        replacement: types.binaryExpression(
+          '>>>',
+          types.identifier('a'),
+          types.identifier('b'),
+        ),
       });
-      const appliedMutants = new Map([[mutant, mutant.applied(statement.node)]]);
+      const appliedMutants = new Map([
+        [mutant, mutant.applied(statement.node)],
+      ]);
 
       // Act
       statementMutantPlacer.place(statement, appliedMutants);
@@ -101,12 +128,24 @@ describe('statementMutantPlacer', () => {
     it('should be able to place multiple mutants', () => {
       // Arrange
       const ast = parseJS('const foo = a + b');
-      const statement = findNodePath<babel.types.VariableDeclaration>(ast, (p) => p.isVariableDeclaration());
-      const binaryExpression = findNodePath<babel.types.BinaryExpression>(ast, (p) => p.isBinaryExpression());
-      const fooIdentifier = findNodePath<babel.types.Identifier>(ast, (p) => p.isIdentifier());
+      const statement = findNodePath<babel.types.VariableDeclaration>(
+        ast,
+        (p) => p.isVariableDeclaration(),
+      );
+      const binaryExpression = findNodePath<babel.types.BinaryExpression>(
+        ast,
+        (p) => p.isBinaryExpression(),
+      );
+      const fooIdentifier = findNodePath<babel.types.Identifier>(ast, (p) =>
+        p.isIdentifier(),
+      );
       const mutants = [
         new Mutant('52', 'file.js', binaryExpression.node, {
-          replacement: types.binaryExpression('>>>', types.identifier('bar'), types.identifier('baz')),
+          replacement: types.binaryExpression(
+            '>>>',
+            types.identifier('bar'),
+            types.identifier('baz'),
+          ),
           mutatorName: 'fooMutator',
         }),
         new Mutant('659', 'file.js', fooIdentifier.node, {

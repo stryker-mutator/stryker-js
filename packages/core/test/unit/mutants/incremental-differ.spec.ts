@@ -109,9 +109,18 @@ class ScenarioBuilder {
   public testCoverage = new TestCoverageTestDouble();
   public sut?: IncrementalDiffer;
 
-  public withMathProjectExample({ mutantState: mutantStatus = 'Killed', isStatic = false } = {}): this {
+  public withMathProjectExample({
+    mutantState: mutantStatus = 'Killed',
+    isStatic = false,
+  } = {}): this {
     this.mutants.push(
-      createMutant({ id: this.mutantId, fileName: srcAdd, replacement: '-', mutatorName: 'min-replacement', location: loc(1, 11, 1, 12) }),
+      createMutant({
+        id: this.mutantId,
+        fileName: srcAdd,
+        replacement: '-',
+        mutatorName: 'min-replacement',
+        location: loc(1, 11, 1, 12),
+      }),
     );
     this.incrementalFiles[srcAdd] = factory.mutationTestReportSchemaFileResult({
       mutants: [
@@ -129,13 +138,20 @@ class ScenarioBuilder {
       ],
       source: srcAddContent,
     });
-    this.incrementalTestFiles[testAdd] = factory.mutationTestReportSchemaTestFile({
-      tests: [{ id: this.oldSpecId, name: 'add(2, 0) = 2' }],
-      source: testAddContent,
-    });
+    this.incrementalTestFiles[testAdd] =
+      factory.mutationTestReportSchemaTestFile({
+        tests: [{ id: this.oldSpecId, name: 'add(2, 0) = 2' }],
+        source: testAddContent,
+      });
     this.currentFiles.set(srcAdd, srcAddContent);
     this.currentFiles.set(testAdd, testAddContent);
-    this.testCoverage.addTest(factory.testResult({ id: this.newTestId, fileName: testAdd, name: 'add(2, 0) = 2' }));
+    this.testCoverage.addTest(
+      factory.testResult({
+        id: this.newTestId,
+        fileName: testAdd,
+        name: 'add(2, 0) = 2',
+      }),
+    );
 
     if (isStatic) {
       this.testCoverage.hasCoverage = true;
@@ -147,7 +163,9 @@ class ScenarioBuilder {
   }
 
   public withoutTestCoverage(): this {
-    Object.keys(this.incrementalTestFiles).forEach((testFile) => delete this.incrementalTestFiles[testFile]);
+    Object.keys(this.incrementalTestFiles).forEach(
+      (testFile) => delete this.incrementalTestFiles[testFile],
+    );
     this.testCoverage.clear();
     this.testCoverage.hasCoverage = false;
     return this;
@@ -164,7 +182,10 @@ class ScenarioBuilder {
     if (includeEnd) {
       this.incrementalTestFiles[testAdd].tests[0].location.end = pos(6, 5);
     }
-    [...this.testCoverage.forMutant(this.mutantId)!][0].startPosition = pos(4, 2);
+    [...this.testCoverage.forMutant(this.mutantId)!][0].startPosition = pos(
+      4,
+      2,
+    );
     return this;
   }
 
@@ -195,8 +216,14 @@ class ScenarioBuilder {
   }
 
   public withRemovedLinesAboveMutant(...lines: string[]): this {
-    this.incrementalFiles[srcAdd].source = `${lines.join('\n')}\n${srcAddContent}`;
-    this.incrementalFiles[srcAdd].mutants[0].location = loc(1 + lines.length, 11, 1 + lines.length, 12);
+    this.incrementalFiles[srcAdd].source =
+      `${lines.join('\n')}\n${srcAddContent}`;
+    this.incrementalFiles[srcAdd].mutants[0].location = loc(
+      1 + lines.length,
+      11,
+      1 + lines.length,
+      12,
+    );
     return this;
   }
 
@@ -246,7 +273,11 @@ class ScenarioBuilder {
 
   public withSecondTest({ located }: { located: boolean }): this {
     this.currentFiles.set(testAdd, testAddContentTwoTests);
-    const secondTest = factory.testResult({ id: 'spec2', fileName: testAdd, name: 'add(45, -3) = 42' });
+    const secondTest = factory.testResult({
+      id: 'spec2',
+      fileName: testAdd,
+      name: 'add(45, -3) = 42',
+    });
     if (located) {
       secondTest.startPosition = pos(7, 2);
     }
@@ -255,10 +286,16 @@ class ScenarioBuilder {
     return this;
   }
 
-  public withSecondTestInIncrementalReport({ isKillingTest = false } = {}): this {
+  public withSecondTestInIncrementalReport({
+    isKillingTest = false,
+  } = {}): this {
     this.currentFiles.set(testAdd, testAddContentTwoTests);
     this.incrementalTestFiles[testAdd].tests.unshift(
-      factory.mutationTestReportSchemaTestDefinition({ id: 'spec2', name: 'add(45, -3) = 42', location: loc(7, 0) }),
+      factory.mutationTestReportSchemaTestDefinition({
+        id: 'spec2',
+        name: 'add(45, -3) = 42',
+        location: loc(7, 0),
+      }),
     );
     if (isKillingTest) {
       this.incrementalFiles[srcAdd].mutants[0].killedBy = ['spec2'];
@@ -272,16 +309,26 @@ class ScenarioBuilder {
   public withTestGeneration(): this {
     this.currentFiles.set(testAdd, testAddContentWithTestGeneration);
     const generateTest = (id: string, a: number, b: number, answer: number) =>
-      factory.testResult({ id, fileName: testAdd, name: `add(${a}, ${b}) = ${answer}`, startPosition: pos(8, 3) });
+      factory.testResult({
+        id,
+        fileName: testAdd,
+        name: `add(${a}, ${b}) = ${answer}`,
+        startPosition: pos(8, 3),
+      });
 
     this.testCoverage.clear();
-    this.testCoverage.addTest(generateTest('spec1', 1, 1, 2), generateTest('spec2', 1, 2, 3), generateTest('spec3', 2, 2, 4));
+    this.testCoverage.addTest(
+      generateTest('spec1', 1, 1, 2),
+      generateTest('spec2', 1, 2, 3),
+      generateTest('spec3', 2, 2, 4),
+    );
     this.testCoverage.addCoverage(this.mutantId, ['spec1', 'spec2', 'spec3']);
     return this;
   }
 
   public withTestGenerationIncrementalReport(): this {
-    this.incrementalTestFiles[testAdd].source = testAddContentWithTestGeneration;
+    this.incrementalTestFiles[testAdd].source =
+      testAddContentWithTestGeneration;
     const generateTest = (id: string, a: number, b: number, answer: number) =>
       factory.mutationTestReportSchemaTestDefinition({
         id,
@@ -291,43 +338,103 @@ class ScenarioBuilder {
     while (this.incrementalTestFiles[testAdd].tests.shift()) {
       // clear all tests
     }
-    this.incrementalTestFiles[testAdd].tests.push(generateTest('spec4', 1, 1, 2), generateTest('spec5', 1, 2, 3), generateTest('spec6', 2, 2, 4));
-    this.incrementalFiles[srcAdd].mutants[0].coveredBy = ['spec4', 'spec5', 'spec6'];
+    this.incrementalTestFiles[testAdd].tests.push(
+      generateTest('spec4', 1, 1, 2),
+      generateTest('spec5', 1, 2, 3),
+      generateTest('spec6', 2, 2, 4),
+    );
+    this.incrementalFiles[srcAdd].mutants[0].coveredBy = [
+      'spec4',
+      'spec5',
+      'spec6',
+    ];
     this.incrementalFiles[srcAdd].mutants[0].killedBy = ['spec4'];
     return this;
   }
 
   public withTestGenerationAndAdditionalTest(): this {
-    this.currentFiles.set(testAdd, testAddContentWithTestGenerationAndAdditionalTest);
-    const createAddWithTestGenerationTestResult = (a: number, b: number, answer: number) =>
-      factory.testResult({ id: `spec${a}`, fileName: testAdd, name: `should result in ${answer} for ${a} and ${b}`, startPosition: pos(5, 4) });
+    this.currentFiles.set(
+      testAdd,
+      testAddContentWithTestGenerationAndAdditionalTest,
+    );
+    const createAddWithTestGenerationTestResult = (
+      a: number,
+      b: number,
+      answer: number,
+    ) =>
+      factory.testResult({
+        id: `spec${a}`,
+        fileName: testAdd,
+        name: `should result in ${answer} for ${a} and ${b}`,
+        startPosition: pos(5, 4),
+      });
 
     this.testCoverage.clear();
-    this.testCoverage.addTest(factory.testResult({ id: 'new-spec-2', fileName: testAdd, name: 'should have name "add"', startPosition: pos(9, 2) }));
+    this.testCoverage.addTest(
+      factory.testResult({
+        id: 'new-spec-2',
+        fileName: testAdd,
+        name: 'should have name "add"',
+        startPosition: pos(9, 2),
+      }),
+    );
     const gen1 = createAddWithTestGenerationTestResult(40, 2, 42);
     const gen2 = createAddWithTestGenerationTestResult(45, -3, 42);
     this.testCoverage.addTest(gen1, gen2);
-    this.testCoverage.addCoverage(this.mutantId, ['new-spec-2', gen1.id, gen2.id]);
+    this.testCoverage.addCoverage(this.mutantId, [
+      'new-spec-2',
+      gen1.id,
+      gen2.id,
+    ]);
     return this;
   }
 
   public withUpdatedTestGenerationAndAdditionalTest(): this {
-    this.currentFiles.set(testAdd, testAddContentWithTestGenerationAndAdditionalTestUpdated);
-    const createAddWithTestGenerationTestResult = (a: number, b: number, answer: number) =>
-      factory.testResult({ id: `spec${a}`, fileName: testAdd, name: `should result in ${answer} for ${a} and ${b}`, startPosition: pos(5, 4) });
+    this.currentFiles.set(
+      testAdd,
+      testAddContentWithTestGenerationAndAdditionalTestUpdated,
+    );
+    const createAddWithTestGenerationTestResult = (
+      a: number,
+      b: number,
+      answer: number,
+    ) =>
+      factory.testResult({
+        id: `spec${a}`,
+        fileName: testAdd,
+        name: `should result in ${answer} for ${a} and ${b}`,
+        startPosition: pos(5, 4),
+      });
 
     this.testCoverage.clear();
-    this.testCoverage.addTest(factory.testResult({ id: 'new-spec-2', fileName: testAdd, name: 'should have name "add"', startPosition: pos(9, 2) }));
+    this.testCoverage.addTest(
+      factory.testResult({
+        id: 'new-spec-2',
+        fileName: testAdd,
+        name: 'should have name "add"',
+        startPosition: pos(9, 2),
+      }),
+    );
     const gen1 = createAddWithTestGenerationTestResult(40, 2, 42);
     const gen2 = createAddWithTestGenerationTestResult(45, -3, 42);
     this.testCoverage.addTest(gen1, gen2);
-    this.testCoverage.addCoverage(this.mutantId, ['new-spec-2', gen1.id, gen2.id]);
+    this.testCoverage.addCoverage(this.mutantId, [
+      'new-spec-2',
+      gen1.id,
+      gen2.id,
+    ]);
     return this;
   }
 
   public withTestGenerationAndAdditionalTestIncrementalReport(): this {
-    this.incrementalTestFiles[testAdd].source = testAddContentWithTestGenerationAndAdditionalTest;
-    const createAddWithTestGenerationTestDefinition = (id: string, a: number, b: number, answer: number) =>
+    this.incrementalTestFiles[testAdd].source =
+      testAddContentWithTestGenerationAndAdditionalTest;
+    const createAddWithTestGenerationTestDefinition = (
+      id: string,
+      a: number,
+      b: number,
+      answer: number,
+    ) =>
       factory.mutationTestReportSchemaTestDefinition({
         id,
         name: `should result in ${answer} for ${a} and ${b}`,
@@ -337,7 +444,11 @@ class ScenarioBuilder {
       // clear all tests
     }
     this.incrementalTestFiles[testAdd].tests.push(
-      factory.mutationTestReportSchemaTestDefinition({ id: 'spec3', name: 'should have name "add"', location: loc(9, 2) }),
+      factory.mutationTestReportSchemaTestDefinition({
+        id: 'spec3',
+        name: 'should have name "add"',
+        location: loc(9, 2),
+      }),
       createAddWithTestGenerationTestDefinition('spec4', 40, 2, 42),
       createAddWithTestGenerationTestDefinition('spec5', 45, -3, 42),
     );
@@ -351,7 +462,12 @@ class ScenarioBuilder {
       .split('\n')
       .map((line, nr) => (nr === 1 ? `${text}${line}` : line))
       .join('\n');
-    this.incrementalFiles[srcAdd].mutants[0].location = loc(1, 11 + text.length, 1, 12 + text.length);
+    this.incrementalFiles[srcAdd].mutants[0].location = loc(
+      1,
+      11 + text.length,
+      1,
+      12 + text.length,
+    );
     return this;
   }
 
@@ -391,26 +507,32 @@ class ScenarioBuilder {
   }
 
   public withSecondSourceAndTestFileInIncrementalReport(): this {
-    this.incrementalTestFiles[testMultiply] = factory.mutationTestReportSchemaTestFile({
-      source: testMultiplyContent,
-      tests: [
-        factory.mutationTestReportSchemaTestDefinition({ id: 'spec-3', location: loc(4, 2), name: 'multiply should result in 42 for 2 and 21' }),
-      ],
-    });
-    this.incrementalFiles[srcMultiply] = factory.mutationTestReportSchemaFileResult({
-      mutants: [
-        factory.mutationTestReportSchemaMutantResult({
-          id: 'mut-3',
-          coveredBy: ['spec-3'],
-          killedBy: ['spec-3'],
-          replacement: '/',
-          testsCompleted: 1,
-          status: 'Killed',
-          location: loc(1, 11, 1, 12),
-        }),
-      ],
-      source: srcMultiplyContent,
-    });
+    this.incrementalTestFiles[testMultiply] =
+      factory.mutationTestReportSchemaTestFile({
+        source: testMultiplyContent,
+        tests: [
+          factory.mutationTestReportSchemaTestDefinition({
+            id: 'spec-3',
+            location: loc(4, 2),
+            name: 'multiply should result in 42 for 2 and 21',
+          }),
+        ],
+      });
+    this.incrementalFiles[srcMultiply] =
+      factory.mutationTestReportSchemaFileResult({
+        mutants: [
+          factory.mutationTestReportSchemaMutantResult({
+            id: 'mut-3',
+            coveredBy: ['spec-3'],
+            killedBy: ['spec-3'],
+            replacement: '/',
+            testsCompleted: 1,
+            status: 'Killed',
+            location: loc(1, 11, 1, 12),
+          }),
+        ],
+        source: srcMultiplyContent,
+      });
     return this;
   }
 
@@ -434,7 +556,9 @@ class ScenarioBuilder {
     this.incrementalTestFiles[''] = this.incrementalTestFiles[testAdd];
     delete this.incrementalTestFiles[testAdd];
     this.testCoverage.clear();
-    this.testCoverage.addTest(factory.testResult({ id: this.newTestId, name: 'add(2, 0) = 2' }));
+    this.testCoverage.addTest(
+      factory.testResult({ id: this.newTestId, name: 'add(2, 0) = 2' }),
+    );
     this.testCoverage.addCoverage(this.mutantId, [this.newTestId]);
     return this;
   }
@@ -487,7 +611,9 @@ describe(IncrementalDiffer.name, () => {
 
     it('should not reuse when the mutant was ignored', () => {
       // Arrange
-      const actualDiff = new ScenarioBuilder().withMathProjectExample({ mutantState: 'Ignored' }).act();
+      const actualDiff = new ScenarioBuilder()
+        .withMathProjectExample({ mutantState: 'Ignored' })
+        .act();
 
       // Assert
       const [actualMutant] = actualDiff;
@@ -519,79 +645,121 @@ describe(IncrementalDiffer.name, () => {
     });
 
     it("should identify that a mutant hasn't changed if lines got added above", () => {
-      const actualDiff = new ScenarioBuilder().withMathProjectExample().withAddedLinesAboveMutant("import path from 'path';", '', '').act();
+      const actualDiff = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withAddedLinesAboveMutant("import path from 'path';", '', '')
+        .act();
       expect(actualDiff[0].status).eq('Killed');
     });
 
     it("should identify that a mutant hasn't changed if characters got added before", () => {
-      const actualDiff = new ScenarioBuilder().withMathProjectExample().withAddedTextBeforeMutant("/* text added this shouldn't matter */").act();
+      const actualDiff = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withAddedTextBeforeMutant("/* text added this shouldn't matter */")
+        .act();
       expect(actualDiff[0].status).eq('Killed');
     });
 
     it("should identify that a mutant hasn't changed if lines got removed above", () => {
-      const actualDiff = new ScenarioBuilder().withMathProjectExample().withRemovedLinesAboveMutant('import path from "path";', '').act();
+      const actualDiff = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withRemovedLinesAboveMutant('import path from "path";', '')
+        .act();
       expect(actualDiff[0].status).eq('Killed');
     });
 
     it("should identify that a mutant hasn't changed if characters got removed before", () => {
-      const actualDiff = new ScenarioBuilder().withMathProjectExample().withRemovedTextBeforeMutant("/* text removed, this shouldn't matter*/").act();
+      const actualDiff = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withRemovedTextBeforeMutant("/* text removed, this shouldn't matter*/")
+        .act();
       expect(actualDiff[0].status).eq('Killed');
     });
 
     it('should not reuse the status of a mutant in changed text', () => {
-      const actualDiff = new ScenarioBuilder().withMathProjectExample().withChangedMutantText('*').act();
+      const actualDiff = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withChangedMutantText('*')
+        .act();
       expect(actualDiff[0].status).undefined;
     });
 
     it('should reuse the status when there is no test coverage', () => {
-      const actualDiff = new ScenarioBuilder().withMathProjectExample().withoutTestCoverage().act();
+      const actualDiff = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withoutTestCoverage()
+        .act();
       expect(actualDiff[0].status).eq('Killed');
     });
 
     it('should reuse the status when there is a test with empty file name', () => {
-      const actualDiff = new ScenarioBuilder().withMathProjectExample().withEmptyFileNameTestFile().act();
+      const actualDiff = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withEmptyFileNameTestFile()
+        .act();
       expect(actualDiff[0].status).eq('Killed');
     });
 
     it('should not copy the status if the mutant came from a different mutator', () => {
-      const scenario = new ScenarioBuilder().withMathProjectExample().withDifferentMutator('max-replacement');
+      const scenario = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withDifferentMutator('max-replacement');
       const actualDiff = scenario.act();
       expect(actualDiff[0]).deep.eq(scenario.mutants[0]);
     });
 
     it('should not copy the status if the mutant has a different replacement', () => {
-      const scenario = new ScenarioBuilder().withMathProjectExample().withDifferentReplacement('other replacement');
+      const scenario = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withDifferentReplacement('other replacement');
       const actualDiff = scenario.act();
       expect(actualDiff[0]).deep.eq(scenario.mutants[0]);
     });
 
     it('should not copy the status if the mutant has a different location', () => {
-      const scenario = new ScenarioBuilder().withMathProjectExample().withDifferentMutantLocation();
+      const scenario = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withDifferentMutantLocation();
       const actualDiff = scenario.act();
       expect(actualDiff[0]).deep.eq(scenario.mutants[0]);
     });
 
     it('should not copy the status if the mutant has a different file name', () => {
-      const scenario = new ScenarioBuilder().withMathProjectExample().withDifferentFileName('src/some-other-file.js');
+      const scenario = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withDifferentFileName('src/some-other-file.js');
       const actualDiff = scenario.act();
       expect(actualDiff).deep.eq(scenario.mutants);
     });
 
     it('should collect 1 added mutant and 1 removed mutant if the mutant changed', () => {
-      const scenario = new ScenarioBuilder().withMathProjectExample().withChangedMutantText('*');
+      const scenario = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withChangedMutantText('*');
       scenario.act();
-      expect(scenario.sut!.mutantStatisticsCollector!.changesByFile).lengthOf(1);
-      const changes = scenario.sut!.mutantStatisticsCollector!.changesByFile.get(srcAdd)!;
+      expect(scenario.sut!.mutantStatisticsCollector!.changesByFile).lengthOf(
+        1,
+      );
+      const changes =
+        scenario.sut!.mutantStatisticsCollector!.changesByFile.get(srcAdd)!;
       expect(changes).property('added', 1);
       expect(changes).property('removed', 1);
     });
 
     it('should collect the removed mutants if the file got removed', () => {
-      const scenario = new ScenarioBuilder().withMathProjectExample().withDifferentFileName('src/some-other-file.js');
+      const scenario = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withDifferentFileName('src/some-other-file.js');
       scenario.act();
-      expect(scenario.sut!.mutantStatisticsCollector!.changesByFile).lengthOf(2);
-      const changesOldFile = scenario.sut!.mutantStatisticsCollector!.changesByFile.get('src/some-other-file.js')!;
-      const changesNewFile = scenario.sut!.mutantStatisticsCollector!.changesByFile.get(srcAdd)!;
+      expect(scenario.sut!.mutantStatisticsCollector!.changesByFile).lengthOf(
+        2,
+      );
+      const changesOldFile =
+        scenario.sut!.mutantStatisticsCollector!.changesByFile.get(
+          'src/some-other-file.js',
+        )!;
+      const changesNewFile =
+        scenario.sut!.mutantStatisticsCollector!.changesByFile.get(srcAdd)!;
       expect(changesNewFile).property('added', 1);
       expect(changesNewFile).property('removed', 0);
       expect(changesOldFile).property('added', 0);
@@ -599,19 +767,27 @@ describe(IncrementalDiffer.name, () => {
     });
 
     it('should collect 1 added mutant and 1 removed mutant if a mutant changed', () => {
-      const scenario = new ScenarioBuilder().withMathProjectExample().withChangedMutantText('*');
+      const scenario = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withChangedMutantText('*');
       scenario.act();
-      expect(scenario.sut!.mutantStatisticsCollector!.changesByFile).lengthOf(1);
-      const changes = scenario.sut!.mutantStatisticsCollector!.changesByFile.get(srcAdd)!;
+      expect(scenario.sut!.mutantStatisticsCollector!.changesByFile).lengthOf(
+        1,
+      );
+      const changes =
+        scenario.sut!.mutantStatisticsCollector!.changesByFile.get(srcAdd)!;
       expect(changes).property('added', 1);
       expect(changes).property('removed', 1);
     });
 
     it('should log an incremental report', () => {
-      const scenario = new ScenarioBuilder().withMathProjectExample().withChangedMutantText('*');
+      const scenario = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withChangedMutantText('*');
       testInjector.logger.isInfoEnabled.returns(true);
       scenario.act();
-      const { mutantStatisticsCollector, testStatisticsCollector } = scenario.sut!;
+      const { mutantStatisticsCollector, testStatisticsCollector } =
+        scenario.sut!;
       sinon.assert.calledWithExactly(
         testInjector.logger.info,
         `Incremental report:\n\tMutants:\t${mutantStatisticsCollector!.createTotalsReport()}` +
@@ -621,7 +797,9 @@ describe(IncrementalDiffer.name, () => {
     });
 
     it('should not log test diff when there is no test coverage', () => {
-      const scenario = new ScenarioBuilder().withMathProjectExample().withoutTestCoverage();
+      const scenario = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withoutTestCoverage();
       testInjector.logger.isInfoEnabled.returns(true);
       scenario.act();
       const { mutantStatisticsCollector } = scenario.sut!;
@@ -634,7 +812,9 @@ describe(IncrementalDiffer.name, () => {
     });
 
     it('should log a detailed incremental report', () => {
-      const scenario = new ScenarioBuilder().withMathProjectExample().withChangedMutantText('*');
+      const scenario = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withChangedMutantText('*');
       testInjector.logger.isDebugEnabled.returns(true);
       scenario.act();
       const { mutantStatisticsCollector } = scenario.sut!;
@@ -648,7 +828,9 @@ describe(IncrementalDiffer.name, () => {
     });
 
     it('should not log if logLevel "info" or "debug" aren\'t enabled', () => {
-      const scenario = new ScenarioBuilder().withMathProjectExample().withChangedMutantText('*');
+      const scenario = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withChangedMutantText('*');
       testInjector.logger.isInfoEnabled.returns(false);
       testInjector.logger.isDebugEnabled.returns(false);
       scenario.act();
@@ -659,7 +841,10 @@ describe(IncrementalDiffer.name, () => {
 
   describe('test changes', () => {
     it('should identify that a mutant state can be reused when no tests changed', () => {
-      const actualDiff = new ScenarioBuilder().withMathProjectExample().withTestFile().act();
+      const actualDiff = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withTestFile()
+        .act();
       expect(actualDiff[0].status).eq('Killed');
     });
 
@@ -741,17 +926,27 @@ describe(IncrementalDiffer.name, () => {
     // See #3909
     it('should close locations for tests on the same location in the incremental report when they are the last tests', () => {
       // Test cases can generate tests, make sure the correct end position is chosen in those cases
-      const actualDiff = new ScenarioBuilder().withMathProjectExample().withTestGeneration().withTestGenerationIncrementalReport().act();
+      const actualDiff = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withTestGeneration()
+        .withTestGenerationIncrementalReport()
+        .act();
       expect(actualDiff[0].status).eq('Killed');
     });
 
     it('should identify that a non-"Killed" state can be reused when a test is removed', () => {
-      const actualDiff = new ScenarioBuilder().withMathProjectExample({ mutantState: 'Survived' }).withSecondTestInIncrementalReport().act();
+      const actualDiff = new ScenarioBuilder()
+        .withMathProjectExample({ mutantState: 'Survived' })
+        .withSecondTestInIncrementalReport()
+        .act();
       expect(actualDiff[0].status).eq('Survived');
     });
 
     it('should identify that a non-"Killed" state cannot be reused when a test is added', () => {
-      const actualDiff = new ScenarioBuilder().withMathProjectExample({ mutantState: 'Survived' }).withSecondTest({ located: false }).act();
+      const actualDiff = new ScenarioBuilder()
+        .withMathProjectExample({ mutantState: 'Survived' })
+        .withSecondTest({ located: false })
+        .act();
       expect(actualDiff[0].status).undefined;
     });
 
@@ -775,7 +970,9 @@ describe(IncrementalDiffer.name, () => {
     });
 
     it('should identify that a "Killed" state for a static mutant (no covering tests) can be reused when the killing test didn\'t change', () => {
-      const actualDiff = new ScenarioBuilder().withMathProjectExample({ mutantState: 'Killed', isStatic: true }).act();
+      const actualDiff = new ScenarioBuilder()
+        .withMathProjectExample({ mutantState: 'Killed', isStatic: true })
+        .act();
       expect(actualDiff[0].status).eq('Killed');
     });
 
@@ -794,14 +991,20 @@ describe(IncrementalDiffer.name, () => {
     });
 
     it('should collect a removed test', () => {
-      const scenario = new ScenarioBuilder().withMathProjectExample().withRemovedTestFile();
+      const scenario = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withRemovedTestFile();
       scenario.act();
       const actualCollector = scenario.sut!.testStatisticsCollector!;
       expect(actualCollector.changesByFile).lengthOf(1);
       const changes = actualCollector.changesByFile.get(testAdd)!;
       expect(changes).property('added', 0);
       expect(changes).property('removed', 1);
-      sinon.assert.calledWithExactly(testInjector.logger.debug, 'Test file removed: %s', testAdd);
+      sinon.assert.calledWithExactly(
+        testInjector.logger.debug,
+        'Test file removed: %s',
+        testAdd,
+      );
     });
 
     it('should collect an added and removed test when a test changes', () => {
@@ -821,7 +1024,10 @@ describe(IncrementalDiffer.name, () => {
 
   describe('with history', () => {
     it('should keep historic mutants in other files', () => {
-      const scenario = new ScenarioBuilder().withMathProjectExample().withSecondSourceAndTestFileInIncrementalReport().withSecondSourceFile();
+      const scenario = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withSecondSourceAndTestFileInIncrementalReport()
+        .withSecondSourceFile();
       const mutants = scenario.act();
       expect(mutants).lengthOf(2);
       const [, actualMutant] = mutants;
@@ -836,31 +1042,50 @@ describe(IncrementalDiffer.name, () => {
         .withSecondSourceFile()
         .withSecondTestFile();
       const mutants = scenario.act();
-      const actualTest = scenario.testCoverage.testsById.get(`${testMultiply}@4:2\nmultiply should result in 42 for 2 and 21`)!;
+      const actualTest = scenario.testCoverage.testsById.get(
+        `${testMultiply}@4:2\nmultiply should result in 42 for 2 and 21`,
+      )!;
       expect(actualTest).ok;
       expect(actualTest.fileName).eq(path.resolve(testMultiply));
       expect(actualTest.name).eq('multiply should result in 42 for 2 and 21');
       expect(actualTest.startPosition).deep.eq(pos(4, 2));
-      expect(scenario.testCoverage.forMutant(mutants[1].id)).deep.eq(new Set([actualTest]));
+      expect(scenario.testCoverage.forMutant(mutants[1].id)).deep.eq(
+        new Set([actualTest]),
+      );
     });
 
     it('should not keep historic mutants when they are inside of a mutated file', () => {
-      testInjector.fileDescriptions[path.resolve(srcMultiply)] = { mutate: true };
-      const scenario = new ScenarioBuilder().withMathProjectExample().withSecondSourceAndTestFileInIncrementalReport().withSecondSourceFile();
+      testInjector.fileDescriptions[path.resolve(srcMultiply)] = {
+        mutate: true,
+      };
+      const scenario = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withSecondSourceAndTestFileInIncrementalReport()
+        .withSecondSourceFile();
       const mutants = scenario.act();
       expect(mutants).lengthOf(1);
     });
 
     it('should not keep historic mutants when they are inside of a mutated scope of a file', () => {
-      testInjector.fileDescriptions[path.resolve(srcMultiply)] = { mutate: [loc(1, 11, 1, 12), loc(2, 2, 2, 3)] };
-      const scenario = new ScenarioBuilder().withMathProjectExample().withSecondSourceAndTestFileInIncrementalReport().withSecondSourceFile();
+      testInjector.fileDescriptions[path.resolve(srcMultiply)] = {
+        mutate: [loc(1, 11, 1, 12), loc(2, 2, 2, 3)],
+      };
+      const scenario = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withSecondSourceAndTestFileInIncrementalReport()
+        .withSecondSourceFile();
       const mutants = scenario.act();
       expect(mutants).lengthOf(1);
     });
 
     it('should keep historic mutants when they are outside of a mutated scope of a file', () => {
-      testInjector.fileDescriptions[path.resolve(srcMultiply)] = { mutate: [loc(1, 9, 1, 10), loc(2, 11, 2, 12)] };
-      const scenario = new ScenarioBuilder().withMathProjectExample().withSecondSourceAndTestFileInIncrementalReport().withSecondSourceFile();
+      testInjector.fileDescriptions[path.resolve(srcMultiply)] = {
+        mutate: [loc(1, 9, 1, 10), loc(2, 11, 2, 12)],
+      };
+      const scenario = new ScenarioBuilder()
+        .withMathProjectExample()
+        .withSecondSourceAndTestFileInIncrementalReport()
+        .withSecondSourceFile();
       const mutants = scenario.act();
       expect(mutants).lengthOf(2);
     });

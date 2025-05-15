@@ -16,7 +16,12 @@ function isString(maybeString: unknown): maybeString is string {
 }
 
 export class ReactScriptsJestConfigLoader implements JestConfigLoader {
-  public static inject = tokens(commonTokens.logger, pluginTokens.resolve, pluginTokens.processEnv, pluginTokens.requireFromCwd);
+  public static inject = tokens(
+    commonTokens.logger,
+    pluginTokens.resolve,
+    pluginTokens.processEnv,
+    pluginTokens.requireFromCwd,
+  );
 
   constructor(
     private readonly log: Logger,
@@ -32,7 +37,11 @@ export class ReactScriptsJestConfigLoader implements JestConfigLoader {
       const { config, reactScriptsLocation } = this.createJestConfig();
       // Make sure that any jest environment plugins (i.e. jest-environment-jsdom) is loaded from the react-script module
       state.resolveFromDirectory = reactScriptsLocation;
-      config.watchPlugins = config.watchPlugins?.filter(isString).map((watchPlugin) => this.resolve(watchPlugin, { paths: [reactScriptsLocation] }));
+      config.watchPlugins = config.watchPlugins
+        ?.filter(isString)
+        .map((watchPlugin) =>
+          this.resolve(watchPlugin, { paths: [reactScriptsLocation] }),
+        );
       this.setEnv();
 
       return config;
@@ -53,16 +62,28 @@ export class ReactScriptsJestConfigLoader implements JestConfigLoader {
     return arg.code !== undefined;
   }
 
-  private createJestConfig(): { reactScriptsLocation: string; config: Config.InitialOptions } {
-    const createReactJestConfig = this.requireFromCwd('react-scripts/scripts/utils/createJestConfig') as (
+  private createJestConfig(): {
+    reactScriptsLocation: string;
+    config: Config.InitialOptions;
+  } {
+    const createReactJestConfig = this.requireFromCwd(
+      'react-scripts/scripts/utils/createJestConfig',
+    ) as (
       resolve: (thing: string) => string,
       rootDir: string,
       isEjecting: boolean,
     ) => Config.InitialOptions;
-    const reactScriptsLocation = path.join(this.resolve('react-scripts/package.json'), '..');
+    const reactScriptsLocation = path.join(
+      this.resolve('react-scripts/package.json'),
+      '..',
+    );
     return {
       reactScriptsLocation,
-      config: createReactJestConfig((relativePath) => path.join(reactScriptsLocation, relativePath), process.cwd(), false),
+      config: createReactJestConfig(
+        (relativePath) => path.join(reactScriptsLocation, relativePath),
+        process.cwd(),
+        false,
+      ),
     };
   }
   private setEnv() {

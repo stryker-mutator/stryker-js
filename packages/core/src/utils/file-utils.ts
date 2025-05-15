@@ -79,7 +79,10 @@ export const fileUtils = {
    * returns the first occurrence of the node_modules, or null of none could be found.
    * @param basePath starting point
    */
-  async findNodeModulesList(basePath: string, tempDirName?: string): Promise<string[]> {
+  async findNodeModulesList(
+    basePath: string,
+    tempDirName?: string,
+  ): Promise<string[]> {
     const nodeModulesList: string[] = [];
     const dirBfsQueue: string[] = ['.'];
 
@@ -95,8 +98,13 @@ export const fileUtils = {
       }
 
       const parentDir = dir;
-      const filesWithType = await fs.promises.readdir(path.join(basePath, dir), { withFileTypes: true });
-      const dirs = filesWithType.filter((file) => file.isDirectory()).map((childDir) => path.join(parentDir, childDir.name));
+      const filesWithType = await fs.promises.readdir(
+        path.join(basePath, dir),
+        { withFileTypes: true },
+      );
+      const dirs = filesWithType
+        .filter((file) => file.isDirectory())
+        .map((childDir) => path.join(parentDir, childDir.name));
       dirBfsQueue.push(...dirs);
     }
 

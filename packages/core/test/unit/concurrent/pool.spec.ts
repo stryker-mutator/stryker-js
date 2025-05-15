@@ -9,7 +9,9 @@ import { Pool, Resource } from '../../../src/concurrent/index.js';
 describe(Pool.name, () => {
   let worker1: sinon.SinonStubbedInstance<Required<Resource>>;
   let worker2: sinon.SinonStubbedInstance<Required<Resource>>;
-  let genericWorkerForAllSubsequentCreates: sinon.SinonStubbedInstance<Required<Resource>>;
+  let genericWorkerForAllSubsequentCreates: sinon.SinonStubbedInstance<
+    Required<Resource>
+  >;
   let createWorkerStub: sinon.SinonStub;
   let concurrencyTokenSubject: ReplaySubject<number>;
   let sut: Pool<Required<Resource>>;
@@ -28,15 +30,25 @@ describe(Pool.name, () => {
   });
 
   function arrangeWorkers() {
-    createWorkerStub.returns(genericWorkerForAllSubsequentCreates).onCall(0).returns(worker1).onCall(1).returns(worker2);
+    createWorkerStub
+      .returns(genericWorkerForAllSubsequentCreates)
+      .onCall(0)
+      .returns(worker1)
+      .onCall(1)
+      .returns(worker2);
   }
 
   function createSut() {
-    return new Pool<Required<Resource>>(createWorkerStub, concurrencyTokenSubject);
+    return new Pool<Required<Resource>>(
+      createWorkerStub,
+      concurrencyTokenSubject,
+    );
   }
 
   function setConcurrency(n: number) {
-    range(0, n).subscribe(concurrencyTokenSubject.next.bind(concurrencyTokenSubject));
+    range(0, n).subscribe(
+      concurrencyTokenSubject.next.bind(concurrencyTokenSubject),
+    );
   }
 
   describe('schedule', () => {
@@ -49,12 +61,16 @@ describe(Pool.name, () => {
       const initWorker3Task = new Task<void>();
       worker1.init.returns(initWorker1Task.promise);
       worker2.init.returns(initWorker2Task.promise);
-      genericWorkerForAllSubsequentCreates.init.returns(initWorker3Task.promise);
+      genericWorkerForAllSubsequentCreates.init.returns(
+        initWorker3Task.promise,
+      );
       sut = createSut();
       const actualWorkers: Array<Required<Resource>> = [];
 
       // Act
-      const onGoingTask = lastValueFrom(sut.schedule(range(0, 3), (worker) => actualWorkers.push(worker)));
+      const onGoingTask = lastValueFrom(
+        sut.schedule(range(0, 3), (worker) => actualWorkers.push(worker)),
+      );
 
       // Assert
       expect(actualWorkers).lengthOf(0);
@@ -101,8 +117,12 @@ describe(Pool.name, () => {
       sut = createSut();
 
       // Act
-      const firstResult = await lastValueFrom(sut.schedule(range(0, 2), (worker) => worker).pipe(toArray()));
-      const secondResult = await lastValueFrom(sut.schedule(range(0, 2), (worker) => worker).pipe(toArray()));
+      const firstResult = await lastValueFrom(
+        sut.schedule(range(0, 2), (worker) => worker).pipe(toArray()),
+      );
+      const secondResult = await lastValueFrom(
+        sut.schedule(range(0, 2), (worker) => worker).pipe(toArray()),
+      );
 
       // Assert
       await sut.dispose();
@@ -150,13 +170,20 @@ describe(Pool.name, () => {
       let maxNrOfParallelTasks = 0;
       const countParallelTasks = async () => {
         nrOfParallelTasks++;
-        maxNrOfParallelTasks = Math.max(nrOfParallelTasks, maxNrOfParallelTasks);
+        maxNrOfParallelTasks = Math.max(
+          nrOfParallelTasks,
+          maxNrOfParallelTasks,
+        );
         await tick();
         nrOfParallelTasks--;
       };
 
       // Act
-      await lastValueFrom(sut.schedule(range(0, 3), countParallelTasks).pipe(mergeWith(sut.schedule(range(3, 3), countParallelTasks))));
+      await lastValueFrom(
+        sut
+          .schedule(range(0, 3), countParallelTasks)
+          .pipe(mergeWith(sut.schedule(range(3, 3), countParallelTasks))),
+      );
       await sut.dispose();
 
       // Assert
@@ -228,7 +255,9 @@ describe(Pool.name, () => {
       setConcurrency(2);
       const actualWorkers: Array<Required<Resource>> = [];
       sut = createSut();
-      const onGoingScheduledWork = lastValueFrom(sut.schedule(range(0, 2), (worker) => actualWorkers.push(worker)));
+      const onGoingScheduledWork = lastValueFrom(
+        sut.schedule(range(0, 2), (worker) => actualWorkers.push(worker)),
+      );
 
       // Act
       const timeoutResult = await ExpirableTask.timeout(sut.init(), 20);
@@ -302,7 +331,9 @@ describe(Pool.name, () => {
       sut = createSut();
 
       // Act
-      const resultPromise = lastValueFrom(sut.schedule(range(0, 2), (worker) => worker).pipe(toArray()));
+      const resultPromise = lastValueFrom(
+        sut.schedule(range(0, 2), (worker) => worker).pipe(toArray()),
+      );
       task.resolve();
       await sut.dispose();
       task2.resolve();
@@ -325,7 +356,9 @@ describe(Pool.name, () => {
       sut = createSut();
 
       // Act
-      const actualWorkers = lastValueFrom(sut.schedule(range(0, 3), (worker) => worker).pipe(toArray()));
+      const actualWorkers = lastValueFrom(
+        sut.schedule(range(0, 3), (worker) => worker).pipe(toArray()),
+      );
       const disposePromise = sut.dispose();
       task.resolve();
       task2.resolve();

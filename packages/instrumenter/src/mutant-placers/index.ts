@@ -5,4 +5,8 @@ import { switchCaseMutantPlacer } from './switch-case-mutant-placer.js';
 
 export * from './mutant-placer.js';
 export * from './throw-placement-error.js';
-export const allMutantPlacers: readonly MutantPlacer[] = Object.freeze([expressionMutantPlacer, statementMutantPlacer, switchCaseMutantPlacer]);
+export const allMutantPlacers: readonly MutantPlacer[] = Object.freeze([
+  expressionMutantPlacer,
+  statementMutantPlacer,
+  switchCaseMutantPlacer,
+]);

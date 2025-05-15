@@ -6,11 +6,16 @@ import { ResourceDecorator } from '../concurrent/index.js';
 import { CheckerResource } from './checker-resource.js';
 
 function toMap(mutantRunPlans: MutantRunPlan[]) {
-  return new Map<string, MutantRunPlan>(mutantRunPlans.map((mutant) => [mutant.mutant.id, mutant]));
+  return new Map<string, MutantRunPlan>(
+    mutantRunPlans.map((mutant) => [mutant.mutant.id, mutant]),
+  );
 }
 
 export class CheckerFacade extends ResourceDecorator<CheckerResource> {
-  public async check(checkerName: string, mutantRunPlans: MutantRunPlan[]): Promise<Array<[MutantRunPlan, CheckResult]>> {
+  public async check(
+    checkerName: string,
+    mutantRunPlans: MutantRunPlan[],
+  ): Promise<Array<[MutantRunPlan, CheckResult]>> {
     const innerCheckerResult = Object.entries(
       await this.innerResource.check(
         checkerName,
@@ -35,7 +40,9 @@ export class CheckerFacade extends ResourceDecorator<CheckerResource> {
 
     if (mutantRunPlans.length > results.length) {
       const resultIds = new Set(results.map(([{ mutant }]) => mutant.id));
-      const missingIds = mutantRunPlans.map(({ mutant }) => mutant.id).filter((id) => !resultIds.has(id));
+      const missingIds = mutantRunPlans
+        .map(({ mutant }) => mutant.id)
+        .filter((id) => !resultIds.has(id));
       throw new Error(
         `Checker "${checkerName}" was missing check results for mutant ids "${missingIds.join(',')}", while Stryker asked to check them`,
       );
@@ -44,7 +51,10 @@ export class CheckerFacade extends ResourceDecorator<CheckerResource> {
     return results;
   }
 
-  public async group(checkerName: string, mutantRunPlans: MutantRunPlan[]): Promise<MutantRunPlan[][]> {
+  public async group(
+    checkerName: string,
+    mutantRunPlans: MutantRunPlan[],
+  ): Promise<MutantRunPlan[][]> {
     const mutantIdGroups = await this.innerResource.group(
       checkerName,
       mutantRunPlans.map((mr) => mr.mutant),
@@ -68,7 +78,9 @@ export class CheckerFacade extends ResourceDecorator<CheckerResource> {
       }),
     );
     if (mutantRunPlans.length > groupedMutantIds.size) {
-      const missingIds = mutantRunPlans.map(({ mutant }) => mutant.id).filter((id) => !groupedMutantIds.has(id));
+      const missingIds = mutantRunPlans
+        .map(({ mutant }) => mutant.id)
+        .filter((id) => !groupedMutantIds.has(id));
       throw new Error(
         `Checker "${checkerName}" was missing group results for mutant ids "${missingIds.join(',')}", while Stryker asked to group them!`,
       );

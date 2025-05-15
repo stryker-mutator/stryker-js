@@ -2,7 +2,14 @@ import { URL } from 'url';
 
 import { FileDescriptions, StrykerOptions } from '@stryker-mutator/api/core';
 import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
-import { TestRunner, DryRunOptions, MutantRunOptions, MutantRunResult, DryRunResult, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
+import {
+  TestRunner,
+  DryRunOptions,
+  MutantRunOptions,
+  MutantRunResult,
+  DryRunResult,
+  TestRunnerCapabilities,
+} from '@stryker-mutator/api/test-runner';
 import { ExpirableTask } from '@stryker-mutator/util';
 
 import { ChildProcessCrashedError } from '../child-proxy/child-process-crashed-error.js';
@@ -32,7 +39,10 @@ export class ChildProcessTestRunnerProxy implements TestRunner {
   ) {
     this.log = getLogger(ChildProcessTestRunnerProxy.name);
     this.worker = ChildProcessProxy.create(
-      new URL('./child-process-test-runner-worker.js', import.meta.url).toString(),
+      new URL(
+        './child-process-test-runner-worker.js',
+        import.meta.url,
+      ).toString(),
       loggingServerAddress,
       options,
       fileDescriptions,

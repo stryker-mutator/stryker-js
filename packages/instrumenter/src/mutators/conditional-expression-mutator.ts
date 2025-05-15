@@ -4,7 +4,18 @@ import { deepCloneNode } from '../util/index.js';
 
 import { NodeMutator } from './node-mutator.js';
 
-const booleanOperators = Object.freeze(['!=', '!==', '&&', '<', '<=', '==', '===', '>', '>=', '||']);
+const booleanOperators = Object.freeze([
+  '!=',
+  '!==',
+  '&&',
+  '<',
+  '<=',
+  '==',
+  '===',
+  '>',
+  '>=',
+  '||',
+]);
 
 const { types } = babel;
 
@@ -54,7 +65,12 @@ function isTestOfLoop(path: NodePath): boolean {
   if (!parentPath) {
     return false;
   }
-  return (parentPath.isForStatement() || parentPath.isWhileStatement() || parentPath.isDoWhileStatement()) && parentPath.node.test === path.node;
+  return (
+    (parentPath.isForStatement() ||
+      parentPath.isWhileStatement() ||
+      parentPath.isDoWhileStatement()) &&
+    parentPath.node.test === path.node
+  );
 }
 
 function isTestOfCondition(path: NodePath): boolean {
@@ -62,9 +78,15 @@ function isTestOfCondition(path: NodePath): boolean {
   if (!parentPath) {
     return false;
   }
-  return parentPath.isIfStatement() /*|| parentPath.isConditionalExpression()*/ && parentPath.node.test === path.node;
+  return (
+    parentPath.isIfStatement() /*|| parentPath.isConditionalExpression()*/ &&
+    parentPath.node.test === path.node
+  );
 }
 
 function isBooleanExpression(path: NodePath) {
-  return (path.isBinaryExpression() || path.isLogicalExpression()) && booleanOperators.includes(path.node.operator);
+  return (
+    (path.isBinaryExpression() || path.isLogicalExpression()) &&
+    booleanOperators.includes(path.node.operator)
+  );
 }

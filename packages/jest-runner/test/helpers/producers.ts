@@ -1,5 +1,13 @@
-import type { TestResult, AggregatedResult, AssertionResult, SerializableError } from '@jest/test-result';
-import type { EnvironmentContext, JestEnvironmentConfig } from '@jest/environment';
+import type {
+  TestResult,
+  AggregatedResult,
+  AssertionResult,
+  SerializableError,
+} from '@jest/test-result';
+import type {
+  EnvironmentContext,
+  JestEnvironmentConfig,
+} from '@jest/environment';
 import { Circus, Config } from '@jest/types';
 import { factory } from '@stryker-mutator/test-helpers';
 
@@ -7,11 +15,17 @@ import { JestOptions } from '../../src-generated/jest-runner-options.js';
 import { JestRunResult } from '../../src/jest-run-result.js';
 import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options.js';
 
-export const createJestRunnerOptionsWithStrykerOptions = (overrides?: Partial<JestOptions>): JestRunnerOptionsWithStrykerOptions => {
-  return factory.strykerWithPluginOptions({ jest: createJestOptions(overrides) });
+export const createJestRunnerOptionsWithStrykerOptions = (
+  overrides?: Partial<JestOptions>,
+): JestRunnerOptionsWithStrykerOptions => {
+  return factory.strykerWithPluginOptions({
+    jest: createJestOptions(overrides),
+  });
 };
 
-export const createJestOptions = (overrides?: Partial<JestOptions>): JestOptions => {
+export const createJestOptions = (
+  overrides?: Partial<JestOptions>,
+): JestOptions => {
   return {
     enableFindRelatedTests: true,
     projectType: 'custom',
@@ -19,7 +33,9 @@ export const createJestOptions = (overrides?: Partial<JestOptions>): JestOptions
   };
 };
 
-export function createAssertionResult(overrides?: Partial<AssertionResult>): AssertionResult {
+export function createAssertionResult(
+  overrides?: Partial<AssertionResult>,
+): AssertionResult {
   return {
     ancestorTitles: [],
     failureMessages: [],
@@ -33,7 +49,9 @@ export function createAssertionResult(overrides?: Partial<AssertionResult>): Ass
   };
 }
 
-export function createJestRunResult(overrides?: Partial<JestRunResult>): JestRunResult {
+export function createJestRunResult(
+  overrides?: Partial<JestRunResult>,
+): JestRunResult {
   return {
     globalConfig: createGlobalConfig(),
     results: createJestAggregatedResult(),
@@ -41,7 +59,9 @@ export function createJestRunResult(overrides?: Partial<JestRunResult>): JestRun
   };
 }
 
-export function createJestConfigArgv(overrides?: Partial<Config.Argv>): Config.Argv {
+export function createJestConfigArgv(
+  overrides?: Partial<Config.Argv>,
+): Config.Argv {
   return {
     $0: 'stryker',
     _: [''],
@@ -49,7 +69,9 @@ export function createJestConfigArgv(overrides?: Partial<Config.Argv>): Config.A
   };
 }
 
-export function createJestAggregatedResult(overrides?: Partial<AggregatedResult>): AggregatedResult {
+export function createJestAggregatedResult(
+  overrides?: Partial<AggregatedResult>,
+): AggregatedResult {
   return {
     numFailedTestSuites: 0,
     numFailedTests: 0,
@@ -86,7 +108,9 @@ export function createJestAggregatedResult(overrides?: Partial<AggregatedResult>
   };
 }
 
-export function createJestTestResult(overrides?: Partial<TestResult>): TestResult {
+export function createJestTestResult(
+  overrides?: Partial<TestResult>,
+): TestResult {
   return {
     leaks: false,
     numFailingTests: 0,
@@ -116,7 +140,9 @@ export function createJestTestResult(overrides?: Partial<TestResult>): TestResul
   } as TestResult; // Do this cast to prevent breaking builds when unused options are added
 }
 
-export function createSerializableError(overrides?: Partial<SerializableError>): SerializableError {
+export function createSerializableError(
+  overrides?: Partial<SerializableError>,
+): SerializableError {
   return {
     message: 'message',
     stack: 'stack',
@@ -172,7 +198,9 @@ export const createGlobalConfig = (): Config.GlobalConfig =>
     collectCoverage: false,
   }) as Config.GlobalConfig; // Do this cast to prevent breaking builds when unused options are added
 
-export const createEnvironmentContext = (overrides?: Partial<EnvironmentContext>): EnvironmentContext =>
+export const createEnvironmentContext = (
+  overrides?: Partial<EnvironmentContext>,
+): EnvironmentContext =>
   ({
     testPath: 'foo.js',
     ...overrides,
@@ -189,24 +217,35 @@ export const createProjectConfig = (): Config.ProjectConfig =>
     testEnvironmentOptions: {},
   }) as Config.ProjectConfig; // Do this cast to prevent breaking builds when unused options are added
 
-export const createCircusDescribeBlock = (overrides?: Partial<Circus.DescribeBlock>): Circus.DescribeBlock =>
+export const createCircusDescribeBlock = (
+  overrides?: Partial<Circus.DescribeBlock>,
+): Circus.DescribeBlock =>
   ({
     name: 'ROOT_SUITE',
     ...overrides,
   }) as Circus.DescribeBlock; // Do this cast to prevent breaking builds when unused options are added
 
-export const createCircusTestEntry = (overrides?: Partial<Circus.TestEntry>): Circus.TestEntry =>
+export const createCircusTestEntry = (
+  overrides?: Partial<Circus.TestEntry>,
+): Circus.TestEntry =>
   ({
     name: 'should be bar',
-    parent: createCircusDescribeBlock({ name: 'foo', parent: createCircusDescribeBlock() }),
+    parent: createCircusDescribeBlock({
+      name: 'foo',
+      parent: createCircusDescribeBlock(),
+    }),
     ...overrides,
   }) as Circus.TestEntry; // Do this casts to prevent breaking builds when unused options are added
 
-export const createCircusTestStartEvent = (test = createCircusTestEntry()): Circus.Event => ({
+export const createCircusTestStartEvent = (
+  test = createCircusTestEntry(),
+): Circus.Event => ({
   name: 'test_start',
   test,
 });
-export const createCircusTestDoneEvent = (test = createCircusTestEntry()): Circus.Event => ({
+export const createCircusTestDoneEvent = (
+  test = createCircusTestEntry(),
+): Circus.Event => ({
   name: 'test_done',
   test,
 });

@@ -8,5 +8,11 @@ export function sleep(ms = 0): Promise<unknown> {
 }
 
 export function resolveFromRoot(...pathSegments: string[]): string {
-  return path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..', ...pathSegments);
+  return path.resolve(
+    path.dirname(fileURLToPath(import.meta.url)),
+    '..',
+    '..',
+    '..',
+    ...pathSegments,
+  );
 }

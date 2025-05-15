@@ -16,7 +16,16 @@ describe(LoggerImpl.name, () => {
     sut = new LoggerImpl('category', loggingBackendMock);
   });
 
-  ([LogLevel.Debug, LogLevel.Error, LogLevel.Fatal, LogLevel.Information, LogLevel.Trace, LogLevel.Warning] as const).forEach((level) => {
+  (
+    [
+      LogLevel.Debug,
+      LogLevel.Error,
+      LogLevel.Fatal,
+      LogLevel.Information,
+      LogLevel.Trace,
+      LogLevel.Warning,
+    ] as const
+  ).forEach((level) => {
     function capitalize<T extends string>(s: T): Capitalize<T> {
       return (s.charAt(0).toUpperCase() + s.slice(1)) as Capitalize<T>;
     }
@@ -28,7 +37,11 @@ describe(LoggerImpl.name, () => {
     it(`should log to the logging backend when logging ${level}`, () => {
       const expectedError = new Error('error message');
       sut[level]('message', 'arg1', 'arg2', expectedError);
-      expect(loggingBackendMock.log).calledWithMatch({ level, categoryName: 'category', data: ['message', 'arg1', 'arg2', expectedError] });
+      expect(loggingBackendMock.log).calledWithMatch({
+        level,
+        categoryName: 'category',
+        data: ['message', 'arg1', 'arg2', expectedError],
+      });
     });
   });
 });

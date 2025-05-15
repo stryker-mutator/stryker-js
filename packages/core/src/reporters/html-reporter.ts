@@ -19,7 +19,10 @@ export class HtmlReporter implements Reporter {
     private readonly log: Logger,
   ) {}
 
-  public static readonly inject = tokens(commonTokens.options, commonTokens.logger);
+  public static readonly inject = tokens(
+    commonTokens.options,
+    commonTokens.logger,
+  );
 
   public onMutationTestReportReady(report: schema.MutationTestResult): void {
     this.mainPromise = this.generateReport(report);
@@ -33,13 +36,20 @@ export class HtmlReporter implements Reporter {
     this.log.debug(`Using file "${this.options.htmlReporter.fileName}"`);
     const html = await createReportHtml(report);
     await reporterUtil.writeFile(this.options.htmlReporter.fileName, html);
-    this.log.info(`Your report can be found at: ${fileUrl(path.resolve(this.options.htmlReporter.fileName))}`);
+    this.log.info(
+      `Your report can be found at: ${fileUrl(path.resolve(this.options.htmlReporter.fileName))}`,
+    );
   }
 }
 
-async function createReportHtml(report: schema.MutationTestResult): Promise<string> {
+async function createReportHtml(
+  report: schema.MutationTestResult,
+): Promise<string> {
   const require = createRequire(import.meta.url);
-  const scriptContent = await fs.promises.readFile(require.resolve('mutation-testing-elements/dist/mutation-test-elements.js'), 'utf-8');
+  const scriptContent = await fs.promises.readFile(
+    require.resolve('mutation-testing-elements/dist/mutation-test-elements.js'),
+    'utf-8',
+  );
 
   return `<!DOCTYPE html>
   <html>

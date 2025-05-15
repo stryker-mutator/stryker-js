@@ -8,7 +8,12 @@ export class JestGreaterThan25TestAdapter implements JestTestAdapter {
   public static readonly inject = [pluginTokens.jestWrapper] as const;
   constructor(private readonly jestWrapper: JestWrapper) {}
 
-  public async run({ jestConfig, fileNamesUnderTest, testNamePattern, testLocationInResults }: RunSettings): Promise<JestRunResult> {
+  public async run({
+    jestConfig,
+    fileNamesUnderTest,
+    testNamePattern,
+    testLocationInResults,
+  }: RunSettings): Promise<JestRunResult> {
     const config = JSON.stringify(jestConfig);
     const result = await this.jestWrapper.runCLI(
       {

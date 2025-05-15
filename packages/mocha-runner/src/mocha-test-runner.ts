@@ -1,4 +1,8 @@
-import { InstrumenterContext, type INSTRUMENTER_CONSTANTS, StrykerOptions } from '@stryker-mutator/api/core';
+import {
+  InstrumenterContext,
+  type INSTRUMENTER_CONSTANTS,
+  StrykerOptions,
+} from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { I, escapeRegExp } from '@stryker-mutator/util';
@@ -47,7 +51,8 @@ export class MochaTestRunner implements TestRunner {
     globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__',
   ) {
     StrykerMochaReporter.log = log;
-    this.instrumenterContext = global[globalNamespace] ?? (global[globalNamespace] = {});
+    this.instrumenterContext =
+      global[globalNamespace] ?? (global[globalNamespace] = {});
   }
 
   public capabilities(): Promise<TestRunnerCapabilities> {
@@ -58,7 +63,9 @@ export class MochaTestRunner implements TestRunner {
   }
 
   public async init(): Promise<void> {
-    const mochaOptions = this.loader.load(this.options as MochaRunnerWithStrykerOptions);
+    const mochaOptions = this.loader.load(
+      this.options as MochaRunnerWithStrykerOptions,
+    );
     const testFileNames = this.mochaAdapter.collectFiles(mochaOptions);
     let rootHooks: RootHookObject | undefined;
     if (mochaOptions.require) {
@@ -77,7 +84,10 @@ export class MochaTestRunner implements TestRunner {
     this.mocha.cleanReferencesAfterRun(false);
     testFileNames.forEach((fileName) => this.mocha.addFile(fileName));
 
-    this.setIfDefined(mochaOptions['async-only'], (asyncOnly) => asyncOnly && this.mocha.asyncOnly());
+    this.setIfDefined(
+      mochaOptions['async-only'],
+      (asyncOnly) => asyncOnly && this.mocha.asyncOnly(),
+    );
     this.setIfDefined(mochaOptions.ui, this.mocha.ui);
     this.setIfDefined(mochaOptions.grep, this.mocha.grep);
     this.originalGrep = mochaOptions.grep;
@@ -96,39 +106,63 @@ export class MochaTestRunner implements TestRunner {
     }
   }
 
-  public async dryRun({ coverageAnalysis, disableBail }: DryRunOptions): Promise<DryRunResult> {
+  public async dryRun({
+    coverageAnalysis,
+    disableBail,
+  }: DryRunOptions): Promise<DryRunResult> {
     if (coverageAnalysis === 'perTest') {
       this.beforeEach = (context) => {
-        this.instrumenterContext.currentTestId = context.currentTest?.fullTitle();
+        this.instrumenterContext.currentTestId =
+          context.currentTest?.fullTitle();
       };
     }
     const runResult = await this.run(disableBail);
-    if (runResult.status === DryRunStatus.Complete && coverageAnalysis !== 'off') {
+    if (
+      runResult.status === DryRunStatus.Complete &&
+      coverageAnalysis !== 'off'
+    ) {
       runResult.mutantCoverage = this.instrumenterContext.mutantCoverage;
     }
     delete this.beforeEach;
     return runResult;
   }
 
-  public async mutantRun({ activeMutant, testFilter, disableBail, hitLimit, mutantActivation }: MutantRunOptions): Promise<MutantRunResult> {
+  public async mutantRun({
+    activeMutant,
+    testFilter,
+    disableBail,
+    hitLimit,
+    mutantActivation,
+  }: MutantRunOptions): Promise<MutantRunResult> {
     this.instrumenterContext.hitLimit = hitLimit;
     this.instrumenterContext.hitCount = hitLimit ? 0 : undefined;
     if (testFilter) {
-      const metaRegExp = testFilter.map((testId) => `(^${escapeRegExp(testId)}$)`).join('|');
+      const metaRegExp = testFilter
+        .map((testId) => `(^${escapeRegExp(testId)}$)`)
+        .join('|');
       const regex = new RegExp(metaRegExp);
       this.mocha.grep(regex);
     } else {
       this.setIfDefined(this.originalGrep, this.mocha.grep);
     }
-    const dryRunResult = await this.run(disableBail, activeMutant.id, mutantActivation);
+    const dryRunResult = await this.run(
+      disableBail,
+      activeMutant.id,
+      mutantActivation,
+    );
     return toMutantRunResult(dryRunResult);
   }
 
-  public async run(disableBail: boolean, activeMutantId?: string, mutantActivation?: MutantActivation): Promise<DryRunResult> {
+  public async run(
+    disableBail: boolean,
+    activeMutantId?: string,
+    mutantActivation?: MutantActivation,
+  ): Promise<DryRunResult> {
     setBail(!disableBail, this.mocha.suite);
     try {
       if (!this.loadedEnv) {
-        this.instrumenterContext.activeMutant = mutantActivation === 'static' ? activeMutantId : undefined;
+        this.instrumenterContext.activeMutant =
+          mutantActivation === 'static' ? activeMutantId : undefined;
         // Loading files Async is needed to support native esm modules
         // See https://mochajs.org/api/mocha#loadFilesAsync
         await this.mocha.loadFilesAsync();
@@ -138,7 +172,10 @@ export class MochaTestRunner implements TestRunner {
       await this.runMocha();
       const reporter = StrykerMochaReporter.currentInstance;
       if (reporter) {
-        const timeoutResult = determineHitLimitReached(this.instrumenterContext.hitCount, this.instrumenterContext.hitLimit);
+        const timeoutResult = determineHitLimitReached(
+          this.instrumenterContext.hitCount,
+          this.instrumenterContext.hitLimit,
+        );
         if (timeoutResult) {
           return timeoutResult;
         }

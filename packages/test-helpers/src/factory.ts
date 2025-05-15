@@ -15,8 +15,18 @@ import {
   MutantEarlyResultPlan,
 } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { DryRunCompletedEvent, MutationTestingPlanReadyEvent, Reporter, RunTiming } from '@stryker-mutator/api/report';
-import { calculateMutationTestMetrics, Metrics, MetricsResult, MutationTestMetricsResult } from 'mutation-testing-metrics';
+import {
+  DryRunCompletedEvent,
+  MutationTestingPlanReadyEvent,
+  Reporter,
+  RunTiming,
+} from '@stryker-mutator/api/report';
+import {
+  calculateMutationTestMetrics,
+  Metrics,
+  MetricsResult,
+  MutationTestMetricsResult,
+} from 'mutation-testing-metrics';
 import sinon from 'sinon';
 import { Injector } from 'typed-inject';
 import {
@@ -39,7 +49,12 @@ import {
   TestResult,
   TestRunnerCapabilities,
 } from '@stryker-mutator/api/test-runner';
-import { Checker, CheckResult, CheckStatus, FailedCheckResult } from '@stryker-mutator/api/check';
+import {
+  Checker,
+  CheckResult,
+  CheckStatus,
+  FailedCheckResult,
+} from '@stryker-mutator/api/check';
 
 const Ajv = ajvModule.default;
 const ajv = new Ajv({ useDefaults: true, strict: false });
@@ -47,10 +62,14 @@ const ajv = new Ajv({ useDefaults: true, strict: false });
 /**
  * This validator will fill in the defaults of stryker options as registered in the schema.
  */
-function strykerOptionsValidator(overrides: Partial<StrykerOptions>): asserts overrides is StrykerOptions {
+function strykerOptionsValidator(
+  overrides: Partial<StrykerOptions>,
+): asserts overrides is StrykerOptions {
   const ajvValidator = ajv.compile(strykerCoreSchema);
   if (!ajvValidator(overrides)) {
-    throw new Error('Unknown stryker options ' + ajv.errorsText(ajvValidator.errors));
+    throw new Error(
+      'Unknown stryker options ' + ajv.errorsText(ajvValidator.errors),
+    );
   }
 }
 
@@ -65,10 +84,14 @@ export const PNG_BASE64_ENCODED =
  * @param defaults
  */
 function factoryMethod<T>(defaultsFactory: () => T) {
-  return (overrides?: Partial<T>): T => Object.assign({}, defaultsFactory(), overrides);
+  return (overrides?: Partial<T>): T =>
+    Object.assign({}, defaultsFactory(), overrides);
 }
 
-export const location = factoryMethod<Location>(() => ({ start: { line: 0, column: 0 }, end: { line: 0, column: 0 } }));
+export const location = factoryMethod<Location>(() => ({
+  start: { line: 0, column: 0 },
+  end: { line: 0, column: 0 },
+}));
 
 export const warningOptions = factoryMethod<WarningOptions>(() => ({
   unknownOptions: true,
@@ -77,18 +100,51 @@ export const warningOptions = factoryMethod<WarningOptions>(() => ({
   slow: true,
 }));
 
-export const killedMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
-  mutantResult({ ...overrides, status: 'Killed', killedBy: ['45'], testsCompleted: 2 });
-export const survivedMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
-  mutantResult({ ...overrides, status: 'Survived', killedBy: ['45'], testsCompleted: 2 });
-export const timeoutMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
-  mutantResult({ ...overrides, status: 'Timeout', statusReason: 'expected error' });
-export const runtimeErrorMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
-  mutantResult({ ...overrides, status: 'RuntimeError', statusReason: 'expected error' });
-export const ignoredMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
-  mutantResult({ ...overrides, status: 'Ignored', statusReason: 'Ignored by "fooMutator" in excludedMutations' });
-export const noCoverageMutantResult = (overrides?: Partial<Omit<MutantResult, 'status'>>): MutantResult =>
-  mutantResult({ ...overrides, status: 'NoCoverage' });
+export const killedMutantResult = (
+  overrides?: Partial<Omit<MutantResult, 'status'>>,
+): MutantResult =>
+  mutantResult({
+    ...overrides,
+    status: 'Killed',
+    killedBy: ['45'],
+    testsCompleted: 2,
+  });
+export const survivedMutantResult = (
+  overrides?: Partial<Omit<MutantResult, 'status'>>,
+): MutantResult =>
+  mutantResult({
+    ...overrides,
+    status: 'Survived',
+    killedBy: ['45'],
+    testsCompleted: 2,
+  });
+export const timeoutMutantResult = (
+  overrides?: Partial<Omit<MutantResult, 'status'>>,
+): MutantResult =>
+  mutantResult({
+    ...overrides,
+    status: 'Timeout',
+    statusReason: 'expected error',
+  });
+export const runtimeErrorMutantResult = (
+  overrides?: Partial<Omit<MutantResult, 'status'>>,
+): MutantResult =>
+  mutantResult({
+    ...overrides,
+    status: 'RuntimeError',
+    statusReason: 'expected error',
+  });
+export const ignoredMutantResult = (
+  overrides?: Partial<Omit<MutantResult, 'status'>>,
+): MutantResult =>
+  mutantResult({
+    ...overrides,
+    status: 'Ignored',
+    statusReason: 'Ignored by "fooMutator" in excludedMutations',
+  });
+export const noCoverageMutantResult = (
+  overrides?: Partial<Omit<MutantResult, 'status'>>,
+): MutantResult => mutantResult({ ...overrides, status: 'NoCoverage' });
 
 export const mutantResult = factoryMethod<MutantResult>(() => ({
   id: '256',
@@ -103,49 +159,56 @@ export const mutantResult = factoryMethod<MutantResult>(() => ({
   static: false,
 }));
 
-export const mutationTestReportSchemaMutantResult = factoryMethod<schema.MutantResult>(() => ({
-  id: '256',
-  location: location(),
-  mutatedLines: '',
-  mutatorName: '',
-  originalLines: '',
-  range: [0, 0],
-  replacement: '',
-  sourceFilePath: '',
-  status: 'Killed',
-  testsRan: [''],
-}));
+export const mutationTestReportSchemaMutantResult =
+  factoryMethod<schema.MutantResult>(() => ({
+    id: '256',
+    location: location(),
+    mutatedLines: '',
+    mutatorName: '',
+    originalLines: '',
+    range: [0, 0],
+    replacement: '',
+    sourceFilePath: '',
+    status: 'Killed',
+    testsRan: [''],
+  }));
 
-export const mutationTestReportSchemaFileResult = factoryMethod<schema.FileResult>(() => ({
-  language: 'javascript',
-  mutants: [mutationTestReportSchemaMutantResult()],
-  source: 'export function add (a, b) { return a + b; }',
-}));
+export const mutationTestReportSchemaFileResult =
+  factoryMethod<schema.FileResult>(() => ({
+    language: 'javascript',
+    mutants: [mutationTestReportSchemaMutantResult()],
+    source: 'export function add (a, b) { return a + b; }',
+  }));
 
-export const mutationTestReportSchemaTestFile = factoryMethod<schema.TestFile>(() => ({
-  tests: [],
-  source: '',
-}));
-
-export const mutationTestReportSchemaTestDefinition = factoryMethod<schema.TestDefinition>(() => ({
-  id: '4',
-  name: 'foo should be bar',
-}));
-
-export const mutationTestReportSchemaMutationTestResult = factoryMethod<schema.MutationTestResult>(() => ({
-  files: {
-    'fileA.js': mutationTestReportSchemaFileResult(),
-  },
-  schemaVersion: '1',
-  thresholds: {
-    high: 81,
-    low: 19,
-  },
-}));
-
-export const mutationTestMetricsResult = factoryMethod<MutationTestMetricsResult>(() =>
-  calculateMutationTestMetrics(mutationTestReportSchemaMutationTestResult()),
+export const mutationTestReportSchemaTestFile = factoryMethod<schema.TestFile>(
+  () => ({
+    tests: [],
+    source: '',
+  }),
 );
+
+export const mutationTestReportSchemaTestDefinition =
+  factoryMethod<schema.TestDefinition>(() => ({
+    id: '4',
+    name: 'foo should be bar',
+  }));
+
+export const mutationTestReportSchemaMutationTestResult =
+  factoryMethod<schema.MutationTestResult>(() => ({
+    files: {
+      'fileA.js': mutationTestReportSchemaFileResult(),
+    },
+    schemaVersion: '1',
+    thresholds: {
+      high: 81,
+      low: 19,
+    },
+  }));
+
+export const mutationTestMetricsResult =
+  factoryMethod<MutationTestMetricsResult>(() =>
+    calculateMutationTestMetrics(mutationTestReportSchemaMutationTestResult()),
+  );
 
 export const mutant = factoryMethod<Mutant>(() => ({
   id: '42',
@@ -174,7 +237,9 @@ export const metrics = factoryMethod<Metrics>(() => ({
   totalValid: 0,
 }));
 
-export const metricsResult = factoryMethod<MetricsResult>(() => new MetricsResult('', [], metrics({})));
+export const metricsResult = factoryMethod<MetricsResult>(
+  () => new MetricsResult('', [], metrics({})),
+);
 
 export function logger(): sinon.SinonStubbedInstance<Logger> {
   return {
@@ -193,7 +258,9 @@ export function logger(): sinon.SinonStubbedInstance<Logger> {
   };
 }
 
-export function testRunner(index = 0): sinon.SinonStubbedInstance<Required<TestRunner> & { index: number }> {
+export function testRunner(
+  index = 0,
+): sinon.SinonStubbedInstance<Required<TestRunner> & { index: number }> {
   return {
     index,
     capabilities: sinon.stub(),
@@ -280,32 +347,40 @@ export const timeoutDryRunResult = factoryMethod<TimeoutDryRunResult>(() => ({
   status: DryRunStatus.Timeout,
 }));
 
-export const killedMutantRunResult = factoryMethod<KilledMutantRunResult>(() => ({
-  status: MutantRunStatus.Killed,
-  killedBy: ['spec1'],
-  failureMessage: 'foo should be bar',
-  nrOfTests: 1,
-}));
+export const killedMutantRunResult = factoryMethod<KilledMutantRunResult>(
+  () => ({
+    status: MutantRunStatus.Killed,
+    killedBy: ['spec1'],
+    failureMessage: 'foo should be bar',
+    nrOfTests: 1,
+  }),
+);
 
-export const survivedMutantRunResult = factoryMethod<SurvivedMutantRunResult>(() => ({
-  status: MutantRunStatus.Survived,
-  nrOfTests: 2,
-}));
+export const survivedMutantRunResult = factoryMethod<SurvivedMutantRunResult>(
+  () => ({
+    status: MutantRunStatus.Survived,
+    nrOfTests: 2,
+  }),
+);
 
-export const timeoutMutantRunResult = factoryMethod<TimeoutMutantRunResult>(() => ({
-  status: MutantRunStatus.Timeout,
-}));
+export const timeoutMutantRunResult = factoryMethod<TimeoutMutantRunResult>(
+  () => ({
+    status: MutantRunStatus.Timeout,
+  }),
+);
 
 export const errorMutantRunResult = factoryMethod<ErrorMutantRunResult>(() => ({
   status: MutantRunStatus.Error,
   errorMessage: 'Cannot find foo of undefined',
 }));
 
-export const mutationScoreThresholds = factoryMethod<MutationScoreThresholds>(() => ({
-  break: null,
-  high: 80,
-  low: 60,
-}));
+export const mutationScoreThresholds = factoryMethod<MutationScoreThresholds>(
+  () => ({
+    break: null,
+    high: 80,
+    low: 60,
+  }),
+);
 
 export const strykerOptions = factoryMethod<StrykerOptions>(() => {
   const options: Partial<StrykerOptions> = {};
@@ -313,7 +388,9 @@ export const strykerOptions = factoryMethod<StrykerOptions>(() => {
   return options;
 });
 
-export const strykerWithPluginOptions = <T>(pluginOptions: T): StrykerOptions & T => {
+export const strykerWithPluginOptions = <T>(
+  pluginOptions: T,
+): StrykerOptions & T => {
   return { ...strykerOptions(), ...pluginOptions };
 };
 
@@ -325,7 +402,9 @@ export const ALL_REPORTER_EVENTS: Array<keyof Reporter> = [
   'wrapUp',
 ];
 
-export function reporter(name = 'fooReporter'): sinon.SinonStubbedInstance<Required<Reporter>> {
+export function reporter(
+  name = 'fooReporter',
+): sinon.SinonStubbedInstance<Required<Reporter>> {
   const reporters = { name } as any;
   ALL_REPORTER_EVENTS.forEach((event) => (reporters[event] = sinon.stub()));
   return reporters;
@@ -341,7 +420,9 @@ export const mutantTestCoverage = factoryMethod<MutantTestCoverage>(() => ({
   location: location(),
 }));
 
-export const ignoredMutantTestCoverage = factoryMethod<MutantTestCoverage & { status: 'Ignored' }>(() => ({
+export const ignoredMutantTestCoverage = factoryMethod<
+  MutantTestCoverage & { status: 'Ignored' }
+>(() => ({
   status: 'Ignored',
   coveredBy: undefined,
   fileName: '',
@@ -359,21 +440,26 @@ export const mutantRunPlan = factoryMethod<MutantRunPlan>(() => ({
   runOptions: mutantRunOptions(),
 }));
 
-export const mutantEarlyResultPlan = factoryMethod<MutantEarlyResultPlan>(() => ({
-  plan: PlanKind.EarlyResult,
-  mutant: { ...mutantTestCoverage(), status: 'Ignored' },
-}));
+export const mutantEarlyResultPlan = factoryMethod<MutantEarlyResultPlan>(
+  () => ({
+    plan: PlanKind.EarlyResult,
+    mutant: { ...mutantTestCoverage(), status: 'Ignored' },
+  }),
+);
 
-export const mutationTestingPlanReadyEvent = factoryMethod<MutationTestingPlanReadyEvent>(() => ({
-  mutantPlans: [mutantRunPlan()],
-}));
+export const mutationTestingPlanReadyEvent =
+  factoryMethod<MutationTestingPlanReadyEvent>(() => ({
+    mutantPlans: [mutantRunPlan()],
+  }));
 
 export const runTiming = factoryMethod<RunTiming>(() => ({
   net: 1000,
   overhead: 765,
 }));
 
-export const testRunnerCapabilities = factoryMethod<TestRunnerCapabilities>(() => ({ reloadEnvironment: false }));
+export const testRunnerCapabilities = factoryMethod<TestRunnerCapabilities>(
+  () => ({ reloadEnvironment: false }),
+);
 
 export const dryRunCompletedEvent = factoryMethod<DryRunCompletedEvent>(() => ({
   result: completeDryRunResult(),
@@ -381,7 +467,9 @@ export const dryRunCompletedEvent = factoryMethod<DryRunCompletedEvent>(() => ({
   capabilities: testRunnerCapabilities(),
 }));
 
-export function injector<T = unknown>(): sinon.SinonStubbedInstance<Injector<T>> {
+export function injector<T = unknown>(): sinon.SinonStubbedInstance<
+  Injector<T>
+> {
   const injectorMock: sinon.SinonStubbedInstance<Injector<T>> = {
     dispose: sinon.stub(),
     injectClass: sinon.stub<any>(),

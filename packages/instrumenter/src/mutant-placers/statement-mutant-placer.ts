@@ -1,6 +1,9 @@
 import babel, { type types } from '@babel/core';
 
-import { mutantTestExpression, mutationCoverageSequenceExpression } from '../util/syntax-helpers.js';
+import {
+  mutantTestExpression,
+  mutationCoverageSequenceExpression,
+} from '../util/syntax-helpers.js';
 
 import { MutantPlacer } from './mutant-placer.js';
 
@@ -17,12 +20,20 @@ export const statementMutantPlacer: MutantPlacer<types.Statement> = {
   },
   place(path, appliedMutants) {
     let statement: types.Statement = t.blockStatement([
-      t.expressionStatement(mutationCoverageSequenceExpression(appliedMutants.keys())),
+      t.expressionStatement(
+        mutationCoverageSequenceExpression(appliedMutants.keys()),
+      ),
       ...(path.isBlockStatement() ? path.node.body : [path.node]),
     ]);
     for (const [mutant, appliedMutant] of appliedMutants) {
-      statement = t.ifStatement(mutantTestExpression(mutant.id), t.blockStatement([appliedMutant]), statement);
+      statement = t.ifStatement(
+        mutantTestExpression(mutant.id),
+        t.blockStatement([appliedMutant]),
+        statement,
+      );
     }
-    path.replaceWith(path.isBlockStatement() ? t.blockStatement([statement]) : statement);
+    path.replaceWith(
+      path.isBlockStatement() ? t.blockStatement([statement]) : statement,
+    );
   },
 };

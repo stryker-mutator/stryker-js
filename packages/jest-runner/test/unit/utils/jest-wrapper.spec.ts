@@ -4,28 +4,42 @@ import type { requireResolve } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { determineResolveFromDirectory, JestWrapper } from '../../../src/utils/index.js';
-import { createJestConfigArgv, createJestRunnerOptionsWithStrykerOptions, createJestRunResult } from '../../helpers/producers.js';
+import {
+  determineResolveFromDirectory,
+  JestWrapper,
+} from '../../../src/utils/index.js';
+import {
+  createJestConfigArgv,
+  createJestRunnerOptionsWithStrykerOptions,
+  createJestRunResult,
+} from '../../helpers/producers.js';
 
 describe(determineResolveFromDirectory.name, () => {
   it('should resolve "react-scripts" when project type is "create-react-app"', () => {
     // Arrange
     const resolveStub = sinon.stub<[string], string>();
     resolveStub.returns('node_modules/react-scripts/package.json');
-    const options = createJestRunnerOptionsWithStrykerOptions({ projectType: 'create-react-app' });
+    const options = createJestRunnerOptionsWithStrykerOptions({
+      projectType: 'create-react-app',
+    });
 
     // Act
     const actualDir = determineResolveFromDirectory(options, resolveStub);
 
     // Assert
-    sinon.assert.calledOnceWithExactly(resolveStub, 'react-scripts/package.json');
+    sinon.assert.calledOnceWithExactly(
+      resolveStub,
+      'react-scripts/package.json',
+    );
     expect(actualDir).eq(path.join('node_modules', 'react-scripts'));
   });
 
   it('should resolve to cwd when project type is "custom"', () => {
     // Arrange
     const resolveStub = sinon.stub<[string], string>();
-    const options = createJestRunnerOptionsWithStrykerOptions({ projectType: 'custom' });
+    const options = createJestRunnerOptionsWithStrykerOptions({
+      projectType: 'custom',
+    });
 
     // Act
     const actualDir = determineResolveFromDirectory(options, resolveStub);
@@ -67,7 +81,9 @@ describe(JestWrapper.name, () => {
 
     const actualResult = await sut.runCLI(expectedArgv, ['.']);
 
-    sinon.assert.calledOnceWithExactly(jestModuleMock.runCLI, expectedArgv, ['.']);
+    sinon.assert.calledOnceWithExactly(jestModuleMock.runCLI, expectedArgv, [
+      '.',
+    ]);
     expect(actualResult).eq(expectedResult);
   });
 });

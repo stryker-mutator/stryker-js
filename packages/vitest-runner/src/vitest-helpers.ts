@@ -1,12 +1,19 @@
 import path from 'path';
 
-import { BaseTestResult, TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
+import {
+  BaseTestResult,
+  TestResult,
+  TestStatus,
+} from '@stryker-mutator/api/test-runner';
 import type { RunMode, TaskState } from 'vitest';
 import { RunnerTestCase, RunnerTestSuite } from 'vitest/node';
 import { MutantCoverage } from '@stryker-mutator/api/core';
 import { collectTestName, toRawTestId } from './test-helpers.js';
 
-function convertTaskStateToTestStatus(taskState: TaskState | undefined, testMode: RunMode): TestStatus {
+function convertTaskStateToTestStatus(
+  taskState: TaskState | undefined,
+  testMode: RunMode,
+): TestStatus {
   if (testMode === 'skip') {
     return TestStatus.Skipped;
   }
@@ -35,7 +42,8 @@ export function convertTestToTestResult(test: RunnerTestCase): TestResult {
     return {
       ...baseTestResult,
       status,
-      failureMessage: test.result?.errors?.[0]?.message ?? 'StrykerJS: Unknown test failure',
+      failureMessage:
+        test.result?.errors?.[0]?.message ?? 'StrykerJS: Unknown test failure',
     };
   } else {
     return {
@@ -58,13 +66,18 @@ export function normalizeTestId(id: string): string {
 export function normalizeCoverage(rawCoverage: MutantCoverage): MutantCoverage {
   return {
     perTest: Object.fromEntries(
-      Object.entries(rawCoverage.perTest).map(([rawTestId, coverageData]) => [normalizeTestId(rawTestId), coverageData] as const),
+      Object.entries(rawCoverage.perTest).map(
+        ([rawTestId, coverageData]) =>
+          [normalizeTestId(rawTestId), coverageData] as const,
+      ),
     ),
     static: rawCoverage.static,
   };
 }
 
-export function collectTestsFromSuite(suite: RunnerTestSuite): RunnerTestCase[] {
+export function collectTestsFromSuite(
+  suite: RunnerTestSuite,
+): RunnerTestCase[] {
   return suite.tasks.flatMap((task) => {
     if (task.type === 'suite') {
       return collectTestsFromSuite(task);

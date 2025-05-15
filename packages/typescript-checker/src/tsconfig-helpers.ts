@@ -5,14 +5,17 @@ import semver from 'semver';
 
 // Override some compiler options that have to do with code quality. When mutating, we're not interested in the resulting code quality
 // See https://github.com/stryker-mutator/stryker-js/issues/391 for more info
-const COMPILER_OPTIONS_OVERRIDES: Readonly<Partial<ts.CompilerOptions>> = Object.freeze({
-  allowUnreachableCode: true,
-  noUnusedLocals: false,
-  noUnusedParameters: false,
-});
+const COMPILER_OPTIONS_OVERRIDES: Readonly<Partial<ts.CompilerOptions>> =
+  Object.freeze({
+    allowUnreachableCode: true,
+    noUnusedLocals: false,
+    noUnusedParameters: false,
+  });
 
 // When we're running in 'single-project' mode, we can safely disable emit
-const NO_EMIT_OPTIONS_FOR_SINGLE_PROJECT: Readonly<Partial<ts.CompilerOptions>> = Object.freeze({
+const NO_EMIT_OPTIONS_FOR_SINGLE_PROJECT: Readonly<
+  Partial<ts.CompilerOptions>
+> = Object.freeze({
   noEmit: true,
   incremental: false, // incremental and composite off: https://github.com/microsoft/TypeScript/issues/36917
   tsBuildInfoFile: undefined,
@@ -20,7 +23,9 @@ const NO_EMIT_OPTIONS_FOR_SINGLE_PROJECT: Readonly<Partial<ts.CompilerOptions>> 
 });
 
 // When we're running in 'project references' mode, we need to enable declaration output
-const LOW_EMIT_OPTIONS_FOR_PROJECT_REFERENCES: Readonly<Partial<ts.CompilerOptions>> = Object.freeze({
+const LOW_EMIT_OPTIONS_FOR_PROJECT_REFERENCES: Readonly<
+  Partial<ts.CompilerOptions>
+> = Object.freeze({
   emitDeclarationOnly: true,
   noEmit: false,
   declarationMap: true,
@@ -29,7 +34,9 @@ const LOW_EMIT_OPTIONS_FOR_PROJECT_REFERENCES: Readonly<Partial<ts.CompilerOptio
 
 export function guardTSVersion(version = ts.version): void {
   if (!semver.satisfies(version, '>=3.6', { includePrerelease: true })) {
-    throw new Error(`@stryker-mutator/typescript-checker only supports typescript@3.6 or higher. Found typescript@${version}`);
+    throw new Error(
+      `@stryker-mutator/typescript-checker only supports typescript@3.6 or higher. Found typescript@${version}`,
+    );
   }
 }
 
@@ -42,7 +49,9 @@ export function determineBuildModeEnabled(tsconfigFileName: string): boolean {
   if (!tsconfigFile) {
     throw new Error(`File "${tsconfigFileName}" not found!`);
   }
-  const useProjectReferences = 'references' in ts.parseConfigFileTextToJson(tsconfigFileName, tsconfigFile).config;
+  const useProjectReferences =
+    'references' in
+    ts.parseConfigFileTextToJson(tsconfigFileName, tsconfigFile).config;
   return useProjectReferences;
 }
 
@@ -51,14 +60,23 @@ export function determineBuildModeEnabled(tsconfigFileName: string): boolean {
  * @param parsedConfig The parsed config file
  * @param useBuildMode whether or not `--build` mode is used
  */
-export function overrideOptions(parsedConfig: { config?: any }, useBuildMode: boolean): string {
+export function overrideOptions(
+  parsedConfig: { config?: any },
+  useBuildMode: boolean,
+): string {
   const compilerOptions = {
     ...parsedConfig.config?.compilerOptions,
     ...COMPILER_OPTIONS_OVERRIDES,
-    ...(useBuildMode ? LOW_EMIT_OPTIONS_FOR_PROJECT_REFERENCES : NO_EMIT_OPTIONS_FOR_SINGLE_PROJECT),
+    ...(useBuildMode
+      ? LOW_EMIT_OPTIONS_FOR_PROJECT_REFERENCES
+      : NO_EMIT_OPTIONS_FOR_SINGLE_PROJECT),
   };
 
-  if (!useBuildMode && compilerOptions.declarationDir !== undefined && compilerOptions.declarationDir !== null) {
+  if (
+    !useBuildMode &&
+    compilerOptions.declarationDir !== undefined &&
+    compilerOptions.declarationDir !== null
+  ) {
     // because composite and/or declaration was disabled in non-build mode, we have to disable declarationDir as well
     // otherwise, error TS5069: Option 'declarationDir' cannot be specified without specifying option 'declaration' or option 'composite'.
     delete compilerOptions.declarationDir;
@@ -84,10 +102,14 @@ export function overrideOptions(parsedConfig: { config?: any }, useBuildMode: bo
  * @param parsedConfig The parsed config file
  * @param fromDirName The directory where to resolve from
  */
-export function retrieveReferencedProjects(parsedConfig: { config?: any }, fromDirName: string): string[] {
+export function retrieveReferencedProjects(
+  parsedConfig: { config?: any },
+  fromDirName: string,
+): string[] {
   if (Array.isArray(parsedConfig.config?.references)) {
-    return parsedConfig.config?.references.map((reference: ts.ProjectReference) =>
-      path.resolve(fromDirName, ts.resolveProjectReferencePath(reference)),
+    return parsedConfig.config?.references.map(
+      (reference: ts.ProjectReference) =>
+        path.resolve(fromDirName, ts.resolveProjectReferencePath(reference)),
     );
   }
   return [];

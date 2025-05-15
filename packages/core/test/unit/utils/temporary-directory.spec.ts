@@ -30,26 +30,36 @@ describe(TemporaryDirectory.name, () => {
   });
 
   function createSut(options?: Partial<StrykerOptions>): TemporaryDirectory {
-    return testInjector.injector.provideValue(commonTokens.options, factory.strykerOptions(options)).injectClass(TemporaryDirectory);
+    return testInjector.injector
+      .provideValue(commonTokens.options, factory.strykerOptions(options))
+      .injectClass(TemporaryDirectory);
   }
 
   describe(TemporaryDirectory.prototype.initialize.name, () => {
     it('should create the .stryker-tmp directory', async () => {
       const sut = createSut();
       await sut.initialize();
-      sinon.assert.calledWithExactly(mkdirStub, path.resolve(tempDirName), { recursive: true });
+      sinon.assert.calledWithExactly(mkdirStub, path.resolve(tempDirName), {
+        recursive: true,
+      });
     });
 
     it('should create a sandbox directory', async () => {
       const sut = createSut();
       await sut.initialize();
-      sinon.assert.calledWithExactly(mkdtempStub, path.resolve(tempDirName, 'sandbox-'));
+      sinon.assert.calledWithExactly(
+        mkdtempStub,
+        path.resolve(tempDirName, 'sandbox-'),
+      );
     });
 
     it('should create a backup directory when `inPlace` is set', async () => {
       const sut = createSut({ inPlace: true });
       await sut.initialize();
-      sinon.assert.calledWithExactly(mkdtempStub, path.resolve(tempDirName, 'backup-'));
+      sinon.assert.calledWithExactly(
+        mkdtempStub,
+        path.resolve(tempDirName, 'backup-'),
+      );
     });
   });
 
@@ -72,7 +82,10 @@ describe(TemporaryDirectory.name, () => {
       const sut = createSut({ cleanTempDir: true });
       await sut.initialize();
       await sut.dispose();
-      sinon.assert.calledWithExactly(rmStub, sandboxPath, { recursive: true, force: true });
+      sinon.assert.calledWithExactly(rmStub, sandboxPath, {
+        recursive: true,
+        force: true,
+      });
     });
 
     it("should remove the dir if cleanTempDir option is 'always'", async () => {
@@ -80,7 +93,10 @@ describe(TemporaryDirectory.name, () => {
       const sut = createSut({ cleanTempDir: 'always' });
       await sut.initialize();
       await sut.dispose();
-      sinon.assert.calledWithExactly(rmStub, sandboxPath, { recursive: true, force: true });
+      sinon.assert.calledWithExactly(rmStub, sandboxPath, {
+        recursive: true,
+        force: true,
+      });
     });
 
     it('should not remove the dir if cleanTempDir option is enabled', async () => {
@@ -123,14 +139,20 @@ describe(TemporaryDirectory.name, () => {
       const expectedError = new Error('foo bar');
       rmdirStub.rejects(expectedError);
       await sut.dispose();
-      sinon.assert.calledWithExactly(testInjector.logger.debug, 'Failed to clean temp .stryker-tmp', expectedError);
+      sinon.assert.calledWithExactly(
+        testInjector.logger.debug,
+        'Failed to clean temp .stryker-tmp',
+        expectedError,
+      );
     });
 
     it("should not remove the parent directory if it isn't empty", async () => {
       const sut = createSut();
       await sut.initialize();
       rmStub.resolves();
-      readdirStub.resolves(['sandbox-798'] as unknown as fs.Dirent<Buffer<ArrayBufferLike>>[]);
+      readdirStub.resolves(['sandbox-798'] as unknown as fs.Dirent<
+        Buffer<ArrayBufferLike>
+      >[]);
       await sut.dispose();
       sinon.assert.notCalled(rmdirStub);
     });

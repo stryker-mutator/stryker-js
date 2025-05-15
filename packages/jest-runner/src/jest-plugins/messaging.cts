@@ -1,5 +1,8 @@
 // @ts-expect-error Can't import the types somehow, because the file is a common js file
-import type { CoverageAnalysis, InstrumenterContext } from '@stryker-mutator/api/core';
+import type {
+  CoverageAnalysis,
+  InstrumenterContext,
+} from '@stryker-mutator/api/core';
 
 class State {
   public instrumenterContext!: InstrumenterContext;

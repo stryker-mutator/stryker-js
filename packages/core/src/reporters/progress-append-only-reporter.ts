@@ -7,7 +7,9 @@ import { ProgressKeeper } from './progress-keeper.js';
 export class ProgressAppendOnlyReporter extends ProgressKeeper {
   private intervalReference?: NodeJS.Timeout;
 
-  public onMutationTestingPlanReady(event: MutationTestingPlanReadyEvent): void {
+  public onMutationTestingPlanReady(
+    event: MutationTestingPlanReadyEvent,
+  ): void {
     super.onMutationTestingPlanReady(event);
     if (event.mutantPlans.length) {
       this.intervalReference = setInterval(() => this.render(), 10000);

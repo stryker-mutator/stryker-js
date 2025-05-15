@@ -1,6 +1,9 @@
 import babel, { type NodePath } from '@babel/core';
 
-import { mutantTestExpression, mutationCoverageSequenceExpression } from '../util/syntax-helpers.js';
+import {
+  mutantTestExpression,
+  mutationCoverageSequenceExpression,
+} from '../util/syntax-helpers.js';
 
 import { MutantPlacer } from './mutant-placer.js';
 
@@ -14,9 +17,17 @@ const { types } = babel;
  * becomes
  * const a = function a() {}
  */
-function classOrFunctionExpressionNamedIfNeeded(path: NodePath<babel.types.Expression>): babel.types.Expression | undefined {
-  if ((path.isFunctionExpression() || path.isClassExpression()) && !path.node.id) {
-    if (path.parentPath.isVariableDeclarator() && types.isIdentifier(path.parentPath.node.id)) {
+function classOrFunctionExpressionNamedIfNeeded(
+  path: NodePath<babel.types.Expression>,
+): babel.types.Expression | undefined {
+  if (
+    (path.isFunctionExpression() || path.isClassExpression()) &&
+    !path.node.id
+  ) {
+    if (
+      path.parentPath.isVariableDeclarator() &&
+      types.isIdentifier(path.parentPath.node.id)
+    ) {
       path.node.id = path.parentPath.node.id;
       return path.node;
     } else if (
@@ -39,13 +50,21 @@ function classOrFunctionExpressionNamedIfNeeded(path: NodePath<babel.types.Expre
  * becomes
  * const a = (() => { const a = () => {}; return a; })()
  */
-function arrowFunctionExpressionNamedIfNeeded(path: NodePath<babel.types.Expression>): babel.types.Expression | undefined {
-  if (path.isArrowFunctionExpression() && path.parentPath.isVariableDeclarator() && types.isIdentifier(path.parentPath.node.id)) {
+function arrowFunctionExpressionNamedIfNeeded(
+  path: NodePath<babel.types.Expression>,
+): babel.types.Expression | undefined {
+  if (
+    path.isArrowFunctionExpression() &&
+    path.parentPath.isVariableDeclarator() &&
+    types.isIdentifier(path.parentPath.node.id)
+  ) {
     return types.callExpression(
       types.arrowFunctionExpression(
         [],
         types.blockStatement([
-          types.variableDeclaration('const', [types.variableDeclarator(path.parentPath.node.id, path.node)]),
+          types.variableDeclaration('const', [
+            types.variableDeclarator(path.parentPath.node.id, path.node),
+          ]),
           types.returnStatement(path.parentPath.node.id),
         ]),
       ),
@@ -55,8 +74,14 @@ function arrowFunctionExpressionNamedIfNeeded(path: NodePath<babel.types.Express
   return;
 }
 
-function nameIfAnonymous(path: NodePath<babel.types.Expression>): babel.types.Expression {
-  return classOrFunctionExpressionNamedIfNeeded(path) ?? arrowFunctionExpressionNamedIfNeeded(path) ?? path.node;
+function nameIfAnonymous(
+  path: NodePath<babel.types.Expression>,
+): babel.types.Expression {
+  return (
+    classOrFunctionExpressionNamedIfNeeded(path) ??
+    arrowFunctionExpressionNamedIfNeeded(path) ??
+    path.node
+  );
 }
 
 function isMemberOrCallOrNonNullExpression(path: NodePath) {
@@ -65,14 +90,26 @@ function isMemberOrCallOrNonNullExpression(path: NodePath) {
 
 function isMemberOrNonNullExpression(
   path: NodePath,
-): path is NodePath<babel.types.MemberExpression | babel.types.OptionalMemberExpression | babel.types.TSNonNullExpression> {
+): path is NodePath<
+  | babel.types.MemberExpression
+  | babel.types.OptionalMemberExpression
+  | babel.types.TSNonNullExpression
+> {
   return isMemberExpression(path) || path.isTSNonNullExpression();
 }
-function isMemberExpression(path: NodePath): path is NodePath<babel.types.MemberExpression | babel.types.OptionalMemberExpression> {
+function isMemberExpression(
+  path: NodePath,
+): path is NodePath<
+  babel.types.MemberExpression | babel.types.OptionalMemberExpression
+> {
   return path.isMemberExpression() || path.isOptionalMemberExpression();
 }
 
-function isCallExpression(path: NodePath): path is NodePath<babel.types.CallExpression | babel.types.OptionalCallExpression> {
+function isCallExpression(
+  path: NodePath,
+): path is NodePath<
+  babel.types.CallExpression | babel.types.OptionalCallExpression
+> {
   return path.isCallExpression() || path.isOptionalCallExpression();
 }
 
@@ -113,7 +150,8 @@ function isValidExpression(path: NodePath<babel.types.Expression>) {
   function isPartOfChain() {
     return (
       isMemberOrCallOrNonNullExpression(path) &&
-      ((isMemberExpression(parent) && !(parent.node.computed && parent.node.property === path.node)) ||
+      ((isMemberExpression(parent) &&
+        !(parent.node.computed && parent.node.property === path.node)) ||
         parent.isTSNonNullExpression() ||
         (isCallExpression(parent) && parent.node.callee === path.node))
     );
@@ -154,11 +192,18 @@ export const expressionMutantPlacer = {
     let expression = nameIfAnonymous(path);
 
     // Add the mutation coverage expression
-    expression = mutationCoverageSequenceExpression(appliedMutants.keys(), expression);
+    expression = mutationCoverageSequenceExpression(
+      appliedMutants.keys(),
+      expression,
+    );
 
     // Now apply the mutants
     for (const [mutant, appliedMutant] of appliedMutants) {
-      expression = types.conditionalExpression(mutantTestExpression(mutant.id), appliedMutant, expression);
+      expression = types.conditionalExpression(
+        mutantTestExpression(mutant.id),
+        appliedMutant,
+        expression,
+      );
     }
     path.replaceWith(expression);
   },

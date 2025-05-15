@@ -1,5 +1,14 @@
-import { StrykerOptions, PartialStrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
-import { BaseContext, commonTokens, Injector, tokens } from '@stryker-mutator/api/plugin';
+import {
+  StrykerOptions,
+  PartialStrykerOptions,
+  strykerCoreSchema,
+} from '@stryker-mutator/api/core';
+import {
+  BaseContext,
+  commonTokens,
+  Injector,
+  tokens,
+} from '@stryker-mutator/api/plugin';
 import { frameworkPluginsFileUrl } from '@stryker-mutator/instrumenter';
 import { deepFreeze } from '@stryker-mutator/util';
 import { execaCommand } from 'execa';
@@ -18,7 +27,11 @@ import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
 import { FileSystem, ProjectReader } from '../fs/index.js';
 
 import { MutantInstrumenterContext } from './index.js';
-import { LoggingBackend, LoggingServerAddress, LoggingSink } from '../logging/index.js';
+import {
+  LoggingBackend,
+  LoggingServerAddress,
+  LoggingSink,
+} from '../logging/index.js';
 
 export interface PrepareExecutorContext extends BaseContext {
   [coreTokens.loggingSink]: LoggingSink;
@@ -26,13 +39,18 @@ export interface PrepareExecutorContext extends BaseContext {
 }
 
 export class PrepareExecutor {
-  public static readonly inject = tokens(commonTokens.injector, coreTokens.loggingSink);
+  public static readonly inject = tokens(
+    commonTokens.injector,
+    coreTokens.loggingSink,
+  );
   constructor(
     private readonly injector: Injector<PrepareExecutorContext>,
     private readonly loggingBackend: LoggingBackend,
   ) {}
 
-  public async execute(cliOptions: PartialStrykerOptions): Promise<Injector<MutantInstrumenterContext>> {
+  public async execute(
+    cliOptions: PartialStrykerOptions,
+  ): Promise<Injector<MutantInstrumenterContext>> {
     // greedy initialize, so the time starts immediately
     const timer = new Timer();
 
@@ -48,14 +66,26 @@ export class PrepareExecutor {
 
     // Load plugins
     const pluginLoader = configReaderInjector.injectClass(PluginLoader);
-    const pluginDescriptors = [...options.plugins, frameworkPluginsFileUrl, reporterPluginsFileUrl, ...options.appendPlugins];
+    const pluginDescriptors = [
+      ...options.plugins,
+      frameworkPluginsFileUrl,
+      reporterPluginsFileUrl,
+      ...options.appendPlugins,
+    ];
     const loadedPlugins = await pluginLoader.load(pluginDescriptors);
 
     // Revalidate the options with plugin schema additions
-    const metaSchemaBuilder = configReaderInjector.injectClass(MetaSchemaBuilder);
-    const metaSchema = metaSchemaBuilder.buildMetaSchema(loadedPlugins.schemaContributions);
-    const optionsValidatorInjector = configReaderInjector.provideValue(coreTokens.validationSchema, metaSchema);
-    const validator: OptionsValidator = optionsValidatorInjector.injectClass(OptionsValidator);
+    const metaSchemaBuilder =
+      configReaderInjector.injectClass(MetaSchemaBuilder);
+    const metaSchema = metaSchemaBuilder.buildMetaSchema(
+      loadedPlugins.schemaContributions,
+    );
+    const optionsValidatorInjector = configReaderInjector.provideValue(
+      coreTokens.validationSchema,
+      metaSchema,
+    );
+    const validator: OptionsValidator =
+      optionsValidatorInjector.injectClass(OptionsValidator);
     validator.validate(options, true);
 
     // Done reading config, deep freeze it so it won't change unexpectedly
@@ -70,13 +100,17 @@ export class PrepareExecutor {
       .provideClass(coreTokens.temporaryDirectory, TemporaryDirectory)
       .provideClass(coreTokens.fs, FileSystem)
       .provideValue(coreTokens.pluginsByKind, loadedPlugins.pluginsByKind);
-    const project = await projectFileReaderInjector.injectClass(ProjectReader).read();
+    const project = await projectFileReaderInjector
+      .injectClass(ProjectReader)
+      .read();
 
     if (project.isEmpty) {
       throw new ConfigError('No input files found.');
     } else {
       // Done preparing, finish up and return
-      await projectFileReaderInjector.resolve(coreTokens.temporaryDirectory).initialize();
+      await projectFileReaderInjector
+        .resolve(coreTokens.temporaryDirectory)
+        .initialize();
       return projectFileReaderInjector
         .provideValue(coreTokens.project, project)
         .provideValue(commonTokens.fileDescriptions, project.fileDescriptions)
@@ -87,7 +121,10 @@ export class PrepareExecutor {
         .provideValue(coreTokens.execa, execaCommand)
         .provideValue(coreTokens.process, process)
         .provideClass(coreTokens.unexpectedExitRegistry, UnexpectedExitHandler)
-        .provideValue(coreTokens.pluginModulePaths, loadedPlugins.pluginModulePaths);
+        .provideValue(
+          coreTokens.pluginModulePaths,
+          loadedPlugins.pluginModulePaths,
+        );
     }
   }
 }

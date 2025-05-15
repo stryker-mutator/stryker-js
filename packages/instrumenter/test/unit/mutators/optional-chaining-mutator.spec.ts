@@ -22,7 +22,13 @@ describe(sut.name, () => {
     expectJSMutation(sut, 'qux()?.map()', 'qux().map()');
   });
   it('should mutate an optional chain', () => {
-    expectJSMutation(sut, 'foo?.bar?.()?.[0]', 'foo.bar?.()?.[0]', 'foo?.bar()?.[0]', 'foo?.bar?.()[0]');
+    expectJSMutation(
+      sut,
+      'foo?.bar?.()?.[0]',
+      'foo.bar?.()?.[0]',
+      'foo?.bar()?.[0]',
+      'foo?.bar?.()[0]',
+    );
   });
   it('should not mutate the non-optional parts of a chain', () => {
     expectJSMutation(sut, 'foo.bar()?.[0]', 'foo.bar()[0]');

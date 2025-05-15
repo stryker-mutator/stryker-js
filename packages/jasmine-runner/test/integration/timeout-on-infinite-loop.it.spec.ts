@@ -1,7 +1,15 @@
-import { testInjector, factory, assertions, TempTestDirectorySandbox } from '@stryker-mutator/test-helpers';
+import {
+  testInjector,
+  factory,
+  assertions,
+  TempTestDirectorySandbox,
+} from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { createJasmineTestRunnerFactory, JasmineTestRunner } from '../../src/index.js';
+import {
+  createJasmineTestRunnerFactory,
+  JasmineTestRunner,
+} from '../../src/index.js';
 
 describe('Infinite loop', () => {
   let sut: JasmineTestRunner;
@@ -10,7 +18,9 @@ describe('Infinite loop', () => {
   beforeEach(async () => {
     sandbox = new TempTestDirectorySandbox('infinite-loop-instrumented');
     await sandbox.init();
-    sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
+    sut = testInjector.injector.injectFunction(
+      createJasmineTestRunnerFactory('__stryker2__'),
+    );
   });
   afterEach(async () => {
     await sandbox.dispose();

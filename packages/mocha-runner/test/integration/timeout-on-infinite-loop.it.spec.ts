@@ -1,10 +1,18 @@
 import path from 'path';
 
-import { testInjector, factory, assertions, TempTestDirectorySandbox } from '@stryker-mutator/test-helpers';
+import {
+  testInjector,
+  factory,
+  assertions,
+  TempTestDirectorySandbox,
+} from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { createMochaOptions } from '../helpers/factories.js';
-import { createMochaTestRunnerFactory, MochaTestRunner } from '../../src/index.js';
+import {
+  createMochaTestRunnerFactory,
+  MochaTestRunner,
+} from '../../src/index.js';
 
 describe('Infinite loop', () => {
   let sut: MochaTestRunner;
@@ -15,7 +23,9 @@ describe('Infinite loop', () => {
     await sandbox.init();
     const spec = [path.resolve(sandbox.tmpDir, 'infinite-loop.spec.js')];
     testInjector.options.mochaOptions = createMochaOptions({ spec });
-    sut = testInjector.injector.injectFunction(createMochaTestRunnerFactory('__stryker2__'));
+    sut = testInjector.injector.injectFunction(
+      createMochaTestRunnerFactory('__stryker2__'),
+    );
     await sut.init();
   });
 
@@ -28,7 +38,9 @@ describe('Infinite loop', () => {
     // Arrange
     const options = factory.mutantRunOptions({
       activeMutant: factory.mutantTestCoverage({ id: '20' }),
-      testFilter: ['should be able to break out of an infinite loop with a hit counter'],
+      testFilter: [
+        'should be able to break out of an infinite loop with a hit counter',
+      ],
       hitLimit: 10,
     });
 
@@ -44,7 +56,9 @@ describe('Infinite loop', () => {
     const firstResult = await sut.mutantRun(
       factory.mutantRunOptions({
         activeMutant: factory.mutantTestCoverage({ id: '20' }),
-        testFilter: ['should be able to break out of an infinite loop with a hit counter'],
+        testFilter: [
+          'should be able to break out of an infinite loop with a hit counter',
+        ],
         hitLimit: 10,
       }),
     );
@@ -52,7 +66,9 @@ describe('Infinite loop', () => {
       factory.mutantRunOptions({
         // 23 is a 'normal' mutant that should be killed
         activeMutant: factory.mutantTestCoverage({ id: '23' }),
-        testFilter: ['should be able to break out of an infinite loop with a hit counter'],
+        testFilter: [
+          'should be able to break out of an infinite loop with a hit counter',
+        ],
         hitLimit: 10,
       }),
     );

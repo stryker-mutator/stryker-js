@@ -8,7 +8,10 @@ import sinon from 'sinon';
 import { errorToString, Task } from '@stryker-mutator/util';
 import type { createInjector, Injector } from 'typed-inject';
 
-import { ChildProcessContext, ChildProcessProxyWorker } from '../../../src/child-proxy/child-process-proxy-worker.js';
+import {
+  ChildProcessContext,
+  ChildProcessProxyWorker,
+} from '../../../src/child-proxy/child-process-proxy-worker.js';
 import {
   CallMessage,
   InitMessage,
@@ -19,7 +22,11 @@ import {
   WorkResult,
 } from '../../../src/child-proxy/message-protocol.js';
 import { serialize } from '../../../src/utils/string-utils.js';
-import { coreTokens, PluginLoader, LoadedPlugins } from '../../../src/di/index.js';
+import {
+  coreTokens,
+  PluginLoader,
+  LoadedPlugins,
+} from '../../../src/di/index.js';
 import { LoggingServerAddress } from '../../../src/logging/index.js';
 
 import { HelloClass } from './hello-class.js';
@@ -52,10 +59,18 @@ describe(ChildProcessProxyWorker.name, () => {
     injectorMock = factory.injector();
     createInjectorStub = sinon.stub();
     createInjectorStub.returns(injectorMock);
-    injectorMock.resolve.withArgs(coreTokens.loggingSink).returns(sinon.createStubInstance(LoggingClient));
-    injectorMock.resolve.withArgs(commonTokens.getLogger).returns(testInjector.getLogger);
+    injectorMock.resolve
+      .withArgs(coreTokens.loggingSink)
+      .returns(sinon.createStubInstance(LoggingClient));
+    injectorMock.resolve
+      .withArgs(commonTokens.getLogger)
+      .returns(testInjector.getLogger);
     pluginLoaderMock = sinon.createStubInstance(PluginLoader);
-    injectorMock.injectClass.withArgs(PluginLoader).returns(pluginLoaderMock).withArgs(HelloClass).returns(new HelloClass(testInjector.options));
+    injectorMock.injectClass
+      .withArgs(PluginLoader)
+      .returns(pluginLoaderMock)
+      .withArgs(HelloClass)
+      .returns(new HelloClass(testInjector.options));
     processes = [];
     processOnStub = sinon.stub(process, 'on');
     processListenersStub = sinon.stub(process, 'listeners');
@@ -66,7 +81,16 @@ describe(ChildProcessProxyWorker.name, () => {
     loadedPlugins = {
       pluginModulePaths,
       pluginsByKind: new Map<PluginKind, Array<Plugin<PluginKind>>>([
-        [PluginKind.Reporter, [{ kind: PluginKind.Reporter, name: 'rep', factory: factory.reporter }]],
+        [
+          PluginKind.Reporter,
+          [
+            {
+              kind: PluginKind.Reporter,
+              name: 'rep',
+              factory: factory.reporter,
+            },
+          ],
+        ],
       ]),
       schemaContributions: [],
     };
@@ -93,7 +117,11 @@ describe(ChildProcessProxyWorker.name, () => {
     beforeEach(() => {
       sut = new ChildProcessProxyWorker(createInjectorStub);
 
-      const options = factory.strykerOptions({ testRunner: 'fooBar', fileLogLevel: LogLevel.Error, logLevel: LogLevel.Information });
+      const options = factory.strykerOptions({
+        testRunner: 'fooBar',
+        fileLogLevel: LogLevel.Error,
+        logLevel: LogLevel.Information,
+      });
       initMessage = {
         kind: WorkerMessageKind.Init,
         loggingServerAddress: LOGGING_ADDRESS,
@@ -109,14 +137,24 @@ describe(ChildProcessProxyWorker.name, () => {
     it('should create the correct real instance', async () => {
       await processOnMessage(initMessage);
       expect(sut.realSubject).instanceOf(HelloClass);
-      sinon.assert.calledWithExactly(injectorMock.provideValue, commonTokens.options, initMessage.options);
-      sinon.assert.calledWithExactly(injectorMock.provideValue, coreTokens.pluginsByKind, loadedPlugins.pluginsByKind);
+      sinon.assert.calledWithExactly(
+        injectorMock.provideValue,
+        commonTokens.options,
+        initMessage.options,
+      );
+      sinon.assert.calledWithExactly(
+        injectorMock.provideValue,
+        coreTokens.pluginsByKind,
+        loadedPlugins.pluginsByKind,
+      );
     });
 
     it('should change the current working directory', async () => {
       await processOnMessage(initMessage);
       const fullWorkingDir = path.resolve(workingDir);
-      expect(testInjector.logger.debug).calledWith(`Changing current working directory for this process to ${fullWorkingDir}`);
+      expect(testInjector.logger.debug).calledWith(
+        `Changing current working directory for this process to ${fullWorkingDir}`,
+      );
       expect(processChdirStub).calledWith(fullWorkingDir);
     });
 
@@ -129,7 +167,9 @@ describe(ChildProcessProxyWorker.name, () => {
 
     it('should send "init_done"', async () => {
       await processOnMessage(initMessage);
-      const expectedWorkerResponse: ParentMessage = { kind: ParentMessageKind.Initialized };
+      const expectedWorkerResponse: ParentMessage = {
+        kind: ParentMessageKind.Initialized,
+      };
       expect(processSendStub).calledWith(serialize(expectedWorkerResponse));
     });
 
@@ -150,7 +190,11 @@ describe(ChildProcessProxyWorker.name, () => {
 
     it('should set global log level', () => {
       processOnStub.callArgWith(1, serialize(initMessage));
-      sinon.assert.calledWithExactly(injectorMock.provideValue, coreTokens.loggerActiveLevel, LogLevel.Information);
+      sinon.assert.calledWithExactly(
+        injectorMock.provideValue,
+        coreTokens.loggerActiveLevel,
+        LogLevel.Information,
+      );
     });
 
     it('should handle unhandledRejection events', async () => {
@@ -165,11 +209,16 @@ describe(ChildProcessProxyWorker.name, () => {
     it('should handle rejectionHandled events', async () => {
       await processOnMessage(initMessage);
       processOnStub.withArgs('rejectionHandled').callArgWith(1);
-      expect(testInjector.logger.debug).calledWith('PromiseRejectionHandledWarning: Promise rejection was handled asynchronously (rejection id: 0)');
+      expect(testInjector.logger.debug).calledWith(
+        'PromiseRejectionHandledWarning: Promise rejection was handled asynchronously (rejection id: 0)',
+      );
     });
 
     describe('on worker message', () => {
-      async function actAndAssert(workerMessage: CallMessage, expectedResult: WorkResult) {
+      async function actAndAssert(
+        workerMessage: CallMessage,
+        expectedResult: WorkResult,
+      ) {
         // Act
         await processOnMessage(initMessage);
 
@@ -178,15 +227,24 @@ describe(ChildProcessProxyWorker.name, () => {
         expect(processSendStub).calledWith(serialize(expectedResult));
       }
 
-      async function actAndAssertRejection(workerMessage: CallMessage, expectedError: string) {
+      async function actAndAssertRejection(
+        workerMessage: CallMessage,
+        expectedError: string,
+      ) {
         // Act
         await processOnMessage(initMessage);
 
         await processOnMessage(workerMessage);
         // Assert
-        expect(processSendStub).calledWithMatch(`"correlationId":${workerMessage.correlationId.toString()}`);
-        expect(processSendStub).calledWithMatch(`"kind":${ParentMessageKind.CallRejection.toString()}`);
-        expect(processSendStub).calledWithMatch(`"error":"Error: ${expectedError}`);
+        expect(processSendStub).calledWithMatch(
+          `"correlationId":${workerMessage.correlationId.toString()}`,
+        );
+        expect(processSendStub).calledWithMatch(
+          `"kind":${ParentMessageKind.CallRejection.toString()}`,
+        );
+        expect(processSendStub).calledWithMatch(
+          `"error":"Error: ${expectedError}`,
+        );
       }
 
       it('should send the result', async () => {

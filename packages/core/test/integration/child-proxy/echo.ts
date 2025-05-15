@@ -3,7 +3,11 @@ import { FileDescriptions, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 
 export class Echo {
-  public static inject = tokens(commonTokens.logger, commonTokens.options, commonTokens.fileDescriptions);
+  public static inject = tokens(
+    commonTokens.logger,
+    commonTokens.options,
+    commonTokens.fileDescriptions,
+  );
 
   public readonly testRunnerName: string;
 

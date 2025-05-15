@@ -16,8 +16,20 @@ describe(ClearTextScoreTable.name, () => {
         [
           new MetricsResult(
             'child1',
-            [new MetricsResult('some/test/for/a/deep/file.js', [], factory.metrics({ mutationScore: 59.99, mutationScoreBasedOnCoveredCode: 58 }))],
-            factory.metrics({ mutationScore: 60, mutationScoreBasedOnCoveredCode: 62 }),
+            [
+              new MetricsResult(
+                'some/test/for/a/deep/file.js',
+                [],
+                factory.metrics({
+                  mutationScore: 59.99,
+                  mutationScoreBasedOnCoveredCode: 58,
+                }),
+              ),
+            ],
+            factory.metrics({
+              mutationScore: 60,
+              mutationScoreBasedOnCoveredCode: 62,
+            }),
           ),
         ],
         factory.metrics({
@@ -61,7 +73,9 @@ describe(ClearTextScoreTable.name, () => {
       const table = sut.draw();
       let rows = table.split(os.EOL);
       rows = rows.slice(2);
-      const killedColumnValues = rows.flatMap((row) => row.split('|').filter((_, i) => i === 3));
+      const killedColumnValues = rows.flatMap((row) =>
+        row.split('|').filter((_, i) => i === 3),
+      );
       killedColumnValues.forEach((val) => expect(stringWidth(val)).to.eq(12));
       expect(killedColumnValues[2]).to.eq(' 1000000000 ');
     });
@@ -71,11 +85,21 @@ describe(ClearTextScoreTable.name, () => {
       options.thresholds = { high: 60, low: 50, break: 0 };
       const input: MetricsResult = factory.metricsResult({
         childResults: [
-          factory.metricsResult({ metrics: factory.metrics({ mutationScore: 60.0 }) }),
-          factory.metricsResult({ metrics: factory.metrics({ mutationScore: 59.99 }) }),
-          factory.metricsResult({ metrics: factory.metrics({ mutationScore: 50.01 }) }),
-          factory.metricsResult({ metrics: factory.metrics({ mutationScore: 50.0 }) }),
-          factory.metricsResult({ metrics: factory.metrics({ mutationScore: 49.99 }) }),
+          factory.metricsResult({
+            metrics: factory.metrics({ mutationScore: 60.0 }),
+          }),
+          factory.metricsResult({
+            metrics: factory.metrics({ mutationScore: 59.99 }),
+          }),
+          factory.metricsResult({
+            metrics: factory.metrics({ mutationScore: 50.01 }),
+          }),
+          factory.metricsResult({
+            metrics: factory.metrics({ mutationScore: 50.0 }),
+          }),
+          factory.metricsResult({
+            metrics: factory.metrics({ mutationScore: 49.99 }),
+          }),
         ],
         metrics: factory.metrics({ mutationScore: 60.01 }),
       });
@@ -95,8 +119,12 @@ describe(ClearTextScoreTable.name, () => {
       options.thresholds = { high: 60, low: 50, break: 0 };
       const input: MetricsResult = factory.metricsResult({
         childResults: [
-          factory.metricsResult({ metrics: factory.metrics({ mutationScore: 50.0 }) }),
-          factory.metricsResult({ metrics: factory.metrics({ mutationScore: 49.99 }) }),
+          factory.metricsResult({
+            metrics: factory.metrics({ mutationScore: 50.0 }),
+          }),
+          factory.metricsResult({
+            metrics: factory.metrics({ mutationScore: 49.99 }),
+          }),
         ],
         metrics: factory.metrics({ mutationScore: 50.01 }),
       });

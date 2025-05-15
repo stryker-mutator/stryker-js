@@ -12,17 +12,33 @@ describe('tap-helper', () => {
     });
 
     it('should replace {{hookFile}} and {{testFile}} in the arguments', () => {
-      const result = buildArguments(['--file={{hookFile}}', '--test={{testFile}}'], 'hook.js', 'test.js');
+      const result = buildArguments(
+        ['--file={{hookFile}}', '--test={{testFile}}'],
+        'hook.js',
+        'test.js',
+      );
 
       // Assert
       expect(result).deep.eq(['--file=hook.js', '--test=test.js']);
     });
 
     it('should be able to replace multiple occurrences of template variables', () => {
-      const result = buildArguments(['{{hookFile}}', '--{{hookFile}}={{hookFile}}', '--{{testFile}}={{testFile}}'], 'hook.js', 'test.js');
+      const result = buildArguments(
+        [
+          '{{hookFile}}',
+          '--{{hookFile}}={{hookFile}}',
+          '--{{testFile}}={{testFile}}',
+        ],
+        'hook.js',
+        'test.js',
+      );
 
       // Assert
-      expect(result).deep.eq(['hook.js', '--hook.js=hook.js', '--test.js=test.js']);
+      expect(result).deep.eq([
+        'hook.js',
+        '--hook.js=hook.js',
+        '--test.js=test.js',
+      ]);
     });
   });
 });

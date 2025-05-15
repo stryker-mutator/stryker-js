@@ -39,7 +39,10 @@ export const objectUtils = {
     }
   },
 
-  isWarningEnabled(warningType: KnownKeys<WarningOptions>, warningOptions: WarningOptions | boolean): boolean {
+  isWarningEnabled(
+    warningType: KnownKeys<WarningOptions>,
+    warningOptions: WarningOptions | boolean,
+  ): boolean {
     if (typeof warningOptions === 'boolean') {
       return warningOptions;
     } else {

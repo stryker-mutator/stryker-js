@@ -1,10 +1,21 @@
 import fs from 'fs';
 
-import { tempTapOutputFileName, strykerDryRun, strykerHitLimit, strykerNamespace } from './env.cjs';
+import {
+  tempTapOutputFileName,
+  strykerDryRun,
+  strykerHitLimit,
+  strykerNamespace,
+} from './env.cjs';
 
-const strykerGlobalNamespace = (process.env[strykerNamespace] as '__stryker__' | '__stryker2__' | undefined) ?? '__stryker__';
+const strykerGlobalNamespace =
+  (process.env[strykerNamespace] as
+    | '__stryker__'
+    | '__stryker2__'
+    | undefined) ?? '__stryker__';
 const dryRun = process.env[strykerDryRun] === 'true';
-const hitLimit = process.env[strykerHitLimit] ? +process.env[strykerHitLimit] : undefined;
+const hitLimit = process.env[strykerHitLimit]
+  ? +process.env[strykerHitLimit]
+  : undefined;
 
 global[strykerGlobalNamespace] = {};
 
@@ -25,5 +36,8 @@ function finalCleanup() {
   if (!dryRun) {
     delete global[strykerGlobalNamespace]!.mutantCoverage;
   }
-  fs.writeFileSync(tempTapOutputFileName(process.pid), JSON.stringify(global[strykerGlobalNamespace]));
+  fs.writeFileSync(
+    tempTapOutputFileName(process.pid),
+    JSON.stringify(global[strykerGlobalNamespace]),
+  );
 }

@@ -13,7 +13,11 @@ describe(sut.name, () => {
   });
 
   it('should empty an object declaration of all properties', () => {
-    expectJSMutation(sut, 'const o = { foo: "bar", baz: "qux" }', 'const o = {}');
+    expectJSMutation(
+      sut,
+      'const o = { foo: "bar", baz: "qux" }',
+      'const o = {}',
+    );
   });
 
   it('should empty string object keys', () => {

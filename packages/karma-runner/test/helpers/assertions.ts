@@ -1,4 +1,10 @@
-import { CompleteDryRunResult, TestStatus, SkippedTestResult, FailedTestResult, SuccessTestResult } from '@stryker-mutator/api/test-runner';
+import {
+  CompleteDryRunResult,
+  TestStatus,
+  SkippedTestResult,
+  FailedTestResult,
+  SuccessTestResult,
+} from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
 
 export type TimelessTestResult =
@@ -9,7 +15,10 @@ export type TimelessTestResult =
 /**
  * Compares test results without comparing the time it took to run them
  */
-export function expectTestResults(result: CompleteDryRunResult, expectedTestResults: TimelessTestResult[]): void {
+export function expectTestResults(
+  result: CompleteDryRunResult,
+  expectedTestResults: TimelessTestResult[],
+): void {
   const actualTestResults: TimelessTestResult[] = result.tests.map((test) => {
     const { timeSpentMs, ...timeless } = test;
     if (timeless.status === TestStatus.Failed) {
@@ -19,7 +28,9 @@ export function expectTestResults(result: CompleteDryRunResult, expectedTestResu
   });
   expect(actualTestResults).to.have.length(expectedTestResults.length);
   expectedTestResults.forEach((expectedTestResult) => {
-    const actualTestResult = actualTestResults.find((test) => test.name === expectedTestResult.name);
+    const actualTestResult = actualTestResults.find(
+      (test) => test.name === expectedTestResult.name,
+    );
     expect(actualTestResult).deep.eq(expectedTestResult);
   });
 }

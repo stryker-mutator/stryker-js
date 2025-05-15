@@ -28,11 +28,17 @@ describe('instrumenter integration', () => {
   });
   it('should be able to instrument an angular component', async () => {
     const angularIgnore = testInjector.injector.injectClass(AngularIgnorer);
-    await arrangeAndActAssert('app.component.ts', createInstrumenterOptions({ ignorers: [angularIgnore] }));
+    await arrangeAndActAssert(
+      'app.component.ts',
+      createInstrumenterOptions({ ignorers: [angularIgnore] }),
+    );
   });
   it('should be able to instrument an angular directive', async () => {
     const angularIgnore = testInjector.injector.injectClass(AngularIgnorer);
-    await arrangeAndActAssert('app.directive.ts', createInstrumenterOptions({ ignorers: [angularIgnore] }));
+    await arrangeAndActAssert(
+      'app.directive.ts',
+      createInstrumenterOptions({ ignorers: [angularIgnore] }),
+    );
   });
   it('should be able to instrument a lit-html file', async () => {
     await arrangeAndActAssert('lit-html-sample.ts');
@@ -56,7 +62,10 @@ describe('instrumenter integration', () => {
     await arrangeAndActAssert('shebang.js');
   });
   it('should not place excluded mutations', async () => {
-    await arrangeAndActAssert('excluded-mutations.js', createInstrumenterOptions({ excludedMutations: ['ArithmeticOperator'] }));
+    await arrangeAndActAssert(
+      'excluded-mutations.js',
+      createInstrumenterOptions({ excludedMutations: ['ArithmeticOperator'] }),
+    );
   });
   it('should not place disabled mutants', async () => {
     await arrangeAndActAssert('disabled.js');
@@ -94,7 +103,10 @@ describe('instrumenter integration', () => {
       await arrangeAndActAssert('type-definitions.ts');
     });
     it('should not produce mutants for flow-types', async () => {
-      await arrangeAndActAssert('flow-typed.js', createInstrumenterOptions({ plugins: ['flow'] }));
+      await arrangeAndActAssert(
+        'flow-typed.js',
+        createInstrumenterOptions({ plugins: ['flow'] }),
+      );
     });
     it('should not produce mutants for a TS declaration file', async () => {
       await arrangeAndActAssert('ts-declarations.ts');
@@ -140,7 +152,10 @@ describe('instrumenter integration', () => {
     });
   });
 
-  async function arrangeAndActAssert(file: Omit<File, 'content'> | string, options = createInstrumenterOptions()) {
+  async function arrangeAndActAssert(
+    file: Omit<File, 'content'> | string,
+    options = createInstrumenterOptions(),
+  ) {
     if (typeof file === 'string') {
       file = {
         name: file,
@@ -148,9 +163,14 @@ describe('instrumenter integration', () => {
       };
     }
     file.name = resolveTestResource('instrumenter', file.name);
-    const result = await sut.instrument([{ ...file, content: await fsPromises.readFile(file.name, 'utf-8') }], options);
+    const result = await sut.instrument(
+      [{ ...file, content: await fsPromises.readFile(file.name, 'utf-8') }],
+      options,
+    );
     expect(result.files).lengthOf(1);
-    chaiJestSnapshot.setFilename(resolveTestResource('instrumenter', `${file.name}.out.snap`));
+    chaiJestSnapshot.setFilename(
+      resolveTestResource('instrumenter', `${file.name}.out.snap`),
+    );
     expect(result.files[0].content).matchSnapshot();
   }
 

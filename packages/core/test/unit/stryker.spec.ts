@@ -2,12 +2,22 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import * as typedInject from 'typed-inject';
-import { PartialStrykerOptions, LogLevel, MutantResult } from '@stryker-mutator/api/core';
+import {
+  PartialStrykerOptions,
+  LogLevel,
+  MutantResult,
+} from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 
 import { Stryker } from '../../src/stryker.js';
-import { PrepareExecutor, MutantInstrumenterExecutor, DryRunExecutor, MutationTestExecutor, MutationTestContext } from '../../src/process/index.js';
+import {
+  PrepareExecutor,
+  MutantInstrumenterExecutor,
+  DryRunExecutor,
+  MutationTestExecutor,
+  MutationTestContext,
+} from '../../src/process/index.js';
 import { coreTokens } from '../../src/di/index.js';
 import { ConfigError } from '../../src/errors.js';
 import { TemporaryDirectory } from '../../src/utils/temporary-directory.js';
@@ -15,7 +25,11 @@ import { LoggingServer } from '../../src/logging/logging-server.js';
 
 describe(Stryker.name, () => {
   let sut: Stryker;
-  let injectorMock: sinon.SinonStubbedInstance<typedInject.Injector<MutationTestContext & { [coreTokens.loggingServer]: LoggingServer }>>;
+  let injectorMock: sinon.SinonStubbedInstance<
+    typedInject.Injector<
+      MutationTestContext & { [coreTokens.loggingServer]: LoggingServer }
+    >
+  >;
   let cliOptions: PartialStrykerOptions;
   let mutantResults: MutantResult[];
   let loggerMock: sinon.SinonStubbedInstance<Logger>;
@@ -36,7 +50,9 @@ describe(Stryker.name, () => {
     mutantResults = [];
     temporaryDirectoryMock = sinon.createStubInstance(TemporaryDirectory);
     prepareExecutorMock = sinon.createStubInstance(PrepareExecutor);
-    mutantInstrumenterExecutorMock = sinon.createStubInstance(MutantInstrumenterExecutor);
+    mutantInstrumenterExecutorMock = sinon.createStubInstance(
+      MutantInstrumenterExecutor,
+    );
     dryRunExecutorMock = sinon.createStubInstance(DryRunExecutor);
     mutationTestExecutorMock = sinon.createStubInstance(MutationTestExecutor);
     injectorMock.injectClass
@@ -59,9 +75,15 @@ describe(Stryker.name, () => {
       .returns(loggingServerMock);
     getLoggerStub.returns(loggerMock);
 
-    prepareExecutorMock.execute.resolves(injectorMock as typedInject.Injector<MutationTestContext>);
-    mutantInstrumenterExecutorMock.execute.resolves(injectorMock as typedInject.Injector<MutationTestContext>);
-    dryRunExecutorMock.execute.resolves(injectorMock as typedInject.Injector<MutationTestContext>);
+    prepareExecutorMock.execute.resolves(
+      injectorMock as typedInject.Injector<MutationTestContext>,
+    );
+    mutantInstrumenterExecutorMock.execute.resolves(
+      injectorMock as typedInject.Injector<MutationTestContext>,
+    );
+    dryRunExecutorMock.execute.resolves(
+      injectorMock as typedInject.Injector<MutationTestContext>,
+    );
     mutationTestExecutorMock.execute.resolves(mutantResults);
 
     cliOptions = {};
@@ -69,7 +91,10 @@ describe(Stryker.name, () => {
 
   describe('runMutationTest()', () => {
     beforeEach(() => {
-      sut = new Stryker(cliOptions, () => injectorMock as typedInject.Injector<MutationTestContext>);
+      sut = new Stryker(
+        cliOptions,
+        () => injectorMock as typedInject.Injector<MutationTestContext>,
+      );
     });
 
     it('should execute the preparations', async () => {
@@ -136,19 +161,28 @@ describe(Stryker.name, () => {
       const expectedError = new Error('expected error for testing');
       prepareExecutorMock.execute.rejects(expectedError);
       await expect(sut.runMutationTest()).rejected;
-      expect(loggerMock.error).calledWith('Unexpected error occurred while running Stryker', expectedError);
+      expect(loggerMock.error).calledWith(
+        'Unexpected error occurred while running Stryker',
+        expectedError,
+      );
     });
 
     it('should disable `removeDuringDisposal` on the temp dir when dry run rejects', async () => {
-      dryRunExecutorMock.execute.rejects(new Error('expected error for testing'));
+      dryRunExecutorMock.execute.rejects(
+        new Error('expected error for testing'),
+      );
       await expect(sut.runMutationTest()).rejected;
       expect(getLoggerStub).calledWith('Stryker');
-      expect(loggerMock.debug).calledWith('Not removing the temp dir because an error occurred');
+      expect(loggerMock.debug).calledWith(
+        'Not removing the temp dir because an error occurred',
+      );
       expect(temporaryDirectoryMock.removeDuringDisposal).false;
     });
 
     it('should not disable `removeDuringDisposal` on the temp dir when dry run rejects and cleanTempDir is set to `always`', async () => {
-      dryRunExecutorMock.execute.rejects(new Error('expected error for testing'));
+      dryRunExecutorMock.execute.rejects(
+        new Error('expected error for testing'),
+      );
       testInjector.options.cleanTempDir = 'always';
       await expect(sut.runMutationTest()).rejected;
       expect(temporaryDirectoryMock.removeDuringDisposal).not.false;
@@ -159,7 +193,10 @@ describe(Stryker.name, () => {
       dryRunExecutorMock.execute.rejects(expectedError);
       await expect(sut.runMutationTest()).rejected;
       expect(getLoggerStub).calledWith('Stryker');
-      expect(loggerMock.error).calledWith('Unexpected error occurred while running Stryker', expectedError);
+      expect(loggerMock.error).calledWith(
+        'Unexpected error occurred while running Stryker',
+        expectedError,
+      );
     });
 
     it('should log a help message when log level "trace" is not enabled', async () => {
@@ -197,7 +234,9 @@ describe(Stryker.name, () => {
     });
 
     it('should dispose the injector when actual mutation testing rejects', async () => {
-      mutationTestExecutorMock.execute.rejects(new Error('Expected error for testing'));
+      mutationTestExecutorMock.execute.rejects(
+        new Error('Expected error for testing'),
+      );
       await expect(sut.runMutationTest()).rejected;
       expect(injectorMock.dispose).called;
     });

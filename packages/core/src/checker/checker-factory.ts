@@ -31,7 +31,15 @@ export function createCheckerFactory(
     new CheckerFacade(
       () =>
         new CheckerRetryDecorator(
-          () => new CheckerChildProcessProxy(options, fileDescriptions, pluginModulePaths, loggingServerAddress, getLogger, idGenerator),
+          () =>
+            new CheckerChildProcessProxy(
+              options,
+              fileDescriptions,
+              pluginModulePaths,
+              loggingServerAddress,
+              getLogger,
+              idGenerator,
+            ),
           getLogger(CheckerRetryDecorator.name),
         ),
     );

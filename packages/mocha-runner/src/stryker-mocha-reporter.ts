@@ -1,5 +1,10 @@
 import { Logger } from '@stryker-mutator/api/logging';
-import { FailedTestResult, TestResult, SuccessTestResult, TestStatus } from '@stryker-mutator/api/test-runner';
+import {
+  FailedTestResult,
+  TestResult,
+  SuccessTestResult,
+  TestStatus,
+} from '@stryker-mutator/api/test-runner';
 import { I } from '@stryker-mutator/util';
 
 import { Timer } from './timer.js';
@@ -55,12 +60,18 @@ export class StrykerMochaReporter {
       };
       this.tests.push(result);
       if (StrykerMochaReporter.log?.isTraceEnabled()) {
-        StrykerMochaReporter.log?.trace(`Test failed: ${test.fullTitle()}. Error: ${err.message}`);
+        StrykerMochaReporter.log?.trace(
+          `Test failed: ${test.fullTitle()}. Error: ${err.message}`,
+        );
       }
     });
 
     this.runner.on('end', () => {
-      StrykerMochaReporter.log?.debug('Mocha test run completed: %s/%s passed', this.passedCount, this.tests.length);
+      StrykerMochaReporter.log?.debug(
+        'Mocha test run completed: %s/%s passed',
+        this.passedCount,
+        this.tests.length,
+      );
     });
   }
 }

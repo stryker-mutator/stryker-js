@@ -5,7 +5,12 @@ import { Minimatch } from 'minimatch';
 import ajvModule, { ValidateFunction } from 'ajv';
 import { StrykerOptions, strykerCoreSchema } from '@stryker-mutator/api/core';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { noopLogger, findUnserializables, Immutable, deepFreeze } from '@stryker-mutator/util';
+import {
+  noopLogger,
+  findUnserializables,
+  Immutable,
+  deepFreeze,
+} from '@stryker-mutator/util';
 import { Logger } from '@stryker-mutator/api/logging';
 import type { JSONSchema7 } from 'json-schema';
 
@@ -31,7 +36,10 @@ const ajv = new Ajv({
 export class OptionsValidator {
   private readonly validateFn: ValidateFunction;
 
-  public static readonly inject = tokens(coreTokens.validationSchema, commonTokens.logger);
+  public static readonly inject = tokens(
+    coreTokens.validationSchema,
+    commonTokens.logger,
+  );
 
   constructor(
     private readonly schema: JSONSchema7,
@@ -46,7 +54,10 @@ export class OptionsValidator {
    * @param options The stryker options to validate
    * @param mark Wether or not to log warnings on unknown properties or unserializable properties
    */
-  public validate(options: Record<string, unknown>, mark = false): asserts options is StrykerOptions {
+  public validate(
+    options: Record<string, unknown>,
+    mark = false,
+  ): asserts options is StrykerOptions {
     this.removeDeprecatedOptions(options);
     this.schemaValidate(options);
     this.customValidation(options);
@@ -91,12 +102,15 @@ export class OptionsValidator {
     }
     if (Array.isArray(rawOptions.files)) {
       const ignorePatternsName = optionsPath('ignorePatterns');
-      const isString = (uncertain: unknown): uncertain is string => typeof uncertain === 'string';
+      const isString = (uncertain: unknown): uncertain is string =>
+        typeof uncertain === 'string';
       const files = rawOptions.files.filter(isString);
       const newIgnorePatterns: string[] = [
         '**',
         ...files.map((filePattern) =>
-          filePattern.startsWith(IGNORE_PATTERN_CHARACTER) ? filePattern.substr(1) : `${IGNORE_PATTERN_CHARACTER}${filePattern}`,
+          filePattern.startsWith(IGNORE_PATTERN_CHARACTER)
+            ? filePattern.substr(1)
+            : `${IGNORE_PATTERN_CHARACTER}${filePattern}`,
         ),
       ];
       delete rawOptions.files;
@@ -105,8 +119,15 @@ export class OptionsValidator {
           newIgnorePatterns,
         )}. See https://stryker-mutator.io/docs/stryker-js/configuration/#ignorepatterns-string`,
       );
-      const existingIgnorePatterns = Array.isArray(rawOptions[ignorePatternsName]) ? (rawOptions[ignorePatternsName] as unknown[]) : [];
-      rawOptions[ignorePatternsName] = [...newIgnorePatterns, ...existingIgnorePatterns];
+      const existingIgnorePatterns = Array.isArray(
+        rawOptions[ignorePatternsName],
+      )
+        ? (rawOptions[ignorePatternsName] as unknown[])
+        : [];
+      rawOptions[ignorePatternsName] = [
+        ...newIgnorePatterns,
+        ...existingIgnorePatterns,
+      ];
     }
     // @ts-expect-error jest.enableBail
     if (rawOptions.jest?.enableBail !== undefined) {
@@ -130,7 +151,10 @@ export class OptionsValidator {
       // @ts-expect-error htmlReporter.baseDir
       if (!rawOptions.htmlReporter.fileName) {
         // @ts-expect-error htmlReporter.baseDir
-        rawOptions.htmlReporter.fileName = path.join(String(rawOptions.htmlReporter.baseDir), 'index.html');
+        rawOptions.htmlReporter.fileName = path.join(
+          String(rawOptions.htmlReporter.baseDir),
+          'index.html',
+        );
       }
       // @ts-expect-error htmlReporter.baseDir
       delete rawOptions.htmlReporter.baseDir;
@@ -140,11 +164,18 @@ export class OptionsValidator {
   private customValidation(options: StrykerOptions) {
     const additionalErrors: string[] = [];
     if (options.thresholds.high < options.thresholds.low) {
-      additionalErrors.push('Config option "thresholds.high" should be higher than "thresholds.low".');
+      additionalErrors.push(
+        'Config option "thresholds.high" should be higher than "thresholds.low".',
+      );
     }
     if (options.maxConcurrentTestRunners !== Number.MAX_SAFE_INTEGER) {
-      this.log.warn('DEPRECATED. Use of "maxConcurrentTestRunners" is deprecated. Please use "concurrency" instead.');
-      if (!options.concurrency && options.maxConcurrentTestRunners < os.cpus().length - 1) {
+      this.log.warn(
+        'DEPRECATED. Use of "maxConcurrentTestRunners" is deprecated. Please use "concurrency" instead.',
+      );
+      if (
+        !options.concurrency &&
+        options.maxConcurrentTestRunners < os.cpus().length - 1
+      ) {
         options.concurrency = options.maxConcurrentTestRunners;
       }
     }
@@ -170,7 +201,15 @@ export class OptionsValidator {
             `Config option "mutate[${index}]" is invalid. Cannot combine a glob expression with a mutation range in "${mutateString}".`,
           );
         } else {
-          const [_, _fileName, mutationRange, startLine, _startColumn, endLine, _endColumn] = match;
+          const [
+            _,
+            _fileName,
+            mutationRange,
+            startLine,
+            _startColumn,
+            endLine,
+            _endColumn,
+          ] = match;
           const start = parseInt(startLine, 10);
           const end = parseInt(endLine, 10);
           if (start < 1) {
@@ -202,7 +241,9 @@ export class OptionsValidator {
   private throwErrorIfNeeded(errors: string[]) {
     if (errors.length > 0) {
       throw new ConfigError(
-        errors.length === 1 ? 'Please correct this configuration error and try again.' : 'Please correct these configuration errors and try again.',
+        errors.length === 1
+          ? 'Please correct this configuration error and try again.'
+          : 'Please correct these configuration errors and try again.',
       );
     }
   }
@@ -224,7 +265,9 @@ export class OptionsValidator {
 
       if (excessPropertyNames.length) {
         excessPropertyNames.forEach((excessPropertyName) => {
-          this.log.warn(`Unknown stryker config option "${excessPropertyName}".`);
+          this.log.warn(
+            `Unknown stryker config option "${excessPropertyName}".`,
+          );
         });
 
         this.log.warn(`Possible causes:
@@ -238,7 +281,9 @@ export class OptionsValidator {
   }
 
   private markUnserializableOptions(options: StrykerOptions) {
-    if (objectUtils.isWarningEnabled('unserializableOptions', options.warnings)) {
+    if (
+      objectUtils.isWarningEnabled('unserializableOptions', options.warnings)
+    ) {
       const unserializables = findUnserializables(options);
       if (unserializables) {
         unserializables.forEach((unserializable) =>
@@ -248,7 +293,9 @@ export class OptionsValidator {
             }. Any test runner or checker worker processes might not receive this value as intended.`,
           ),
         );
-        this.log.warn(`(disable ${optionsPath('warnings', 'unserializableOptions')} to ignore this warning)`);
+        this.log.warn(
+          `(disable ${optionsPath('warnings', 'unserializableOptions')} to ignore this warning)`,
+        );
       }
     }
   }
@@ -256,9 +303,14 @@ export class OptionsValidator {
 
 export function createDefaultOptions(): StrykerOptions {
   const options: Record<string, unknown> = {};
-  const validator: OptionsValidator = new OptionsValidator(strykerCoreSchema, noopLogger);
+  const validator: OptionsValidator = new OptionsValidator(
+    strykerCoreSchema,
+    noopLogger,
+  );
   validator.validate(options);
   return options;
 }
 
-export const defaultOptions: Immutable<StrykerOptions> = deepFreeze(createDefaultOptions());
+export const defaultOptions: Immutable<StrykerOptions> = deepFreeze(
+  createDefaultOptions(),
+);

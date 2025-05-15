@@ -1,7 +1,10 @@
 import net from 'net';
 import sinon from 'sinon';
 import { testInjector } from '@stryker-mutator/test-helpers';
-import { LoggingServer, LoggingServerAddress } from '../../../src/logging/logging-server.js';
+import {
+  LoggingServer,
+  LoggingServerAddress,
+} from '../../../src/logging/logging-server.js';
 import { LoggingSink } from '../../../src/logging/index.js';
 import { coreTokens } from '../../../src/di/index.js';
 import { expect } from 'chai';
@@ -21,7 +24,9 @@ describe(LoggingServer.name, () => {
     };
     serverMock = sinon.createStubInstance(net.Server);
     createServerStub = sinon.stub(net, 'createServer').returns(serverMock);
-    sut = testInjector.injector.provideValue(coreTokens.loggingSink, loggingSinkMock).injectClass(LoggingServer);
+    sut = testInjector.injector
+      .provideValue(coreTokens.loggingSink, loggingSinkMock)
+      .injectClass(LoggingServer);
   });
 
   it('should return the port when listen is called', async () => {
@@ -44,7 +49,9 @@ describe(LoggingServer.name, () => {
     const serializedLogEvent = JSON.stringify(logEvent.serialize());
     const [eventName, receiveCallback] = client.on.getCall(0).args;
     expect(eventName).eq('data');
-    (receiveCallback as (data: string) => void)(`${serializedLogEvent}__STRYKER_CORE__`);
+    (receiveCallback as (data: string) => void)(
+      `${serializedLogEvent}__STRYKER_CORE__`,
+    );
     sinon.assert.calledWith(loggingSinkMock.log, logEvent);
   });
 
@@ -76,7 +83,9 @@ describe(LoggingServer.name, () => {
     const serializedLogEvent2 = JSON.stringify(logEvent2.serialize());
     const [eventName, receiveCallback] = client.on.getCall(0).args;
     expect(eventName).eq('data');
-    (receiveCallback as (data: string) => void)(`${serializedLogEvent1}__STRYKER_CORE__${serializedLogEvent2}__STRYKER_CORE__`);
+    (receiveCallback as (data: string) => void)(
+      `${serializedLogEvent1}__STRYKER_CORE__${serializedLogEvent2}__STRYKER_CORE__`,
+    );
     sinon.assert.calledWith(loggingSinkMock.log, logEvent1);
     sinon.assert.calledWith(loggingSinkMock.log, logEvent2);
   });
@@ -91,7 +100,9 @@ describe(LoggingServer.name, () => {
     const actualErrorLogEvent = loggingSinkMock.log.getCall(0).args[0];
     expect(actualErrorLogEvent.categoryName).eq(LoggingServer.name);
     expect(actualErrorLogEvent.level).eq(LogLevel.Debug);
-    expect(actualErrorLogEvent.data[0]).eq('An worker log process hung up unexpectedly');
+    expect(actualErrorLogEvent.data[0]).eq(
+      'An worker log process hung up unexpectedly',
+    );
     expect(actualErrorLogEvent.data[1]).eq(error);
   });
 

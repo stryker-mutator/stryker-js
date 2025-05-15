@@ -37,24 +37,33 @@ describe(findUnserializables.name, () => {
 
   describe('path', () => {
     it('should be provided in a shallow object', () => {
-      expect(findUnserializables({ symbol: Symbol(42) })?.[0].path).deep.eq(['symbol']);
+      expect(findUnserializables({ symbol: Symbol(42) })?.[0].path).deep.eq([
+        'symbol',
+      ]);
     });
 
     it('should be provided in a deep object', () => {
-      expect(findUnserializables({ obj: { symbol: Symbol(42) } })?.[0].path).deep.eq(['obj', 'symbol']);
+      expect(
+        findUnserializables({ obj: { symbol: Symbol(42) } })?.[0].path,
+      ).deep.eq(['obj', 'symbol']);
     });
 
     it('should be provided in a shallow array', () => {
       expect(findUnserializables([Symbol(42)])?.[0].path).deep.eq(['0']);
     });
     it('should be provided in a deep array', () => {
-      expect(findUnserializables(['a', [Symbol(42)]])?.[0].path).deep.eq(['1', '0']);
+      expect(findUnserializables(['a', [Symbol(42)]])?.[0].path).deep.eq([
+        '1',
+        '0',
+      ]);
     });
   });
 
   describe('reason', () => {
     it('should be provided for an unserializable primitive value', () => {
-      expect(findUnserializables(BigInt(42))?.[0].reason).eq('Primitive type "bigint" has no JSON representation');
+      expect(findUnserializables(BigInt(42))?.[0].reason).eq(
+        'Primitive type "bigint" has no JSON representation',
+      );
     });
     it('should be provided for a class instance', () => {
       expect(findUnserializables(new (class Person {})())?.[0].reason).eq(
@@ -77,7 +86,9 @@ describe(findUnserializables.name, () => {
       );
     });
     it('should be provided for unserializable numbers', () => {
-      expect(findUnserializables(NaN)?.[0].reason).eq('Number value `NaN` has no JSON representation');
+      expect(findUnserializables(NaN)?.[0].reason).eq(
+        'Number value `NaN` has no JSON representation',
+      );
     });
   });
 });

@@ -19,7 +19,11 @@ import { FilePreprocessor } from './file-preprocessor.js';
  * @see https://github.com/stryker-mutator/stryker-js/issues/2438
  */
 export class DisableTypeChecksPreprocessor implements FilePreprocessor {
-  public static readonly inject = tokens(commonTokens.logger, commonTokens.options, coreTokens.disableTypeChecksHelper);
+  public static readonly inject = tokens(
+    commonTokens.logger,
+    commonTokens.options,
+    coreTokens.disableTypeChecksHelper,
+  );
   constructor(
     private readonly log: Logger,
     private readonly options: StrykerOptions,
@@ -33,10 +37,18 @@ export class DisableTypeChecksPreprocessor implements FilePreprocessor {
       objectUtils.map(project.files, async (file, name) => {
         if (matcher.matches(path.resolve(name))) {
           try {
-            const { content } = await this.impl(await file.toInstrumenterFile(), { plugins: this.options.mutator.plugins });
+            const { content } = await this.impl(
+              await file.toInstrumenterFile(),
+              { plugins: this.options.mutator.plugins },
+            );
             file.setContent(content);
           } catch (err) {
-            if (objectUtils.isWarningEnabled('preprocessorErrors', this.options.warnings)) {
+            if (
+              objectUtils.isWarningEnabled(
+                'preprocessorErrors',
+                this.options.warnings,
+              )
+            ) {
               warningLogged = true;
               this.log.warn(
                 `Unable to disable type checking for file "${name}". Shouldn't type checking be disabled for this file? Consider configuring a more restrictive "${optionsPath(
@@ -50,7 +62,9 @@ export class DisableTypeChecksPreprocessor implements FilePreprocessor {
       }),
     );
     if (warningLogged) {
-      this.log.warn(`(disable "${optionsPath('warnings', 'preprocessorErrors')}" to ignore this warning`);
+      this.log.warn(
+        `(disable "${optionsPath('warnings', 'preprocessorErrors')}" to ignore this warning`,
+      );
     }
   }
 }

@@ -40,7 +40,12 @@ export type ParentMessage =
   | InitRejectionResult
   | RejectionResult
   | WorkResult
-  | { kind: ParentMessageKind.DisposeCompleted | ParentMessageKind.Initialized | ParentMessageKind.Ready };
+  | {
+      kind:
+        | ParentMessageKind.DisposeCompleted
+        | ParentMessageKind.Initialized
+        | ParentMessageKind.Ready;
+    };
 
 export interface InitMessage {
   kind: WorkerMessageKind.Init;

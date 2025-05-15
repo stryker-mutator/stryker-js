@@ -16,7 +16,9 @@ describe(ConfigReader.name, () => {
   let sut: ConfigReader;
   let existsStub: sinon.SinonStubbedMember<(typeof fileUtils)['exists']>;
   let readFileStub: sinon.SinonStubbedMember<(typeof fs.promises)['readFile']>;
-  let importModuleStub: sinon.SinonStubbedMember<(typeof fileUtils)['importModule']>;
+  let importModuleStub: sinon.SinonStubbedMember<
+    (typeof fileUtils)['importModule']
+  >;
   let optionsValidatorMock: sinon.SinonStubbedInstance<OptionsValidator>;
 
   beforeEach(() => {
@@ -25,12 +27,17 @@ describe(ConfigReader.name, () => {
     readFileStub = sinon.stub(fs.promises, 'readFile');
     importModuleStub = sinon.stub(fileUtils, 'importModule');
     syncBuiltinESMExports();
-    sut = testInjector.injector.provideValue(coreTokens.optionsValidator, optionsValidatorMock).injectClass(ConfigReader);
+    sut = testInjector.injector
+      .provideValue(coreTokens.optionsValidator, optionsValidatorMock)
+      .injectClass(ConfigReader);
   });
 
   it('should be able to read config from a custom JSON file', async () => {
     // Arrange
-    const expectedOptions = { testRunner: 'my-runner', configFile: 'file.json' };
+    const expectedOptions = {
+      testRunner: 'my-runner',
+      configFile: 'file.json',
+    };
     existsStub.withArgs('file.json').resolves(true);
     readFileStub.resolves(JSON.stringify(expectedOptions));
 
@@ -38,7 +45,10 @@ describe(ConfigReader.name, () => {
     const result = await sut.readConfig({ configFile: 'file.json' });
 
     // Assert
-    sinon.assert.calledWithExactly(optionsValidatorMock.validate, expectedOptions);
+    sinon.assert.calledWithExactly(
+      optionsValidatorMock.validate,
+      expectedOptions,
+    );
     sinon.assert.calledWithExactly(readFileStub, 'file.json', 'utf-8');
     expect(result).deep.eq(expectedOptions);
     expect(testInjector.logger.warn).not.called;
@@ -49,18 +59,28 @@ describe(ConfigReader.name, () => {
     const expectedOptions = { testRunner: 'my-runner', configFile: 'file.js' };
     existsStub.withArgs('file.js').resolves(true);
     readFileStub.resolves(JSON.stringify(expectedOptions));
-    importModuleStub.withArgs(pathToFileURL(path.resolve('file.js')).toString()).resolves({ default: expectedOptions });
+    importModuleStub
+      .withArgs(pathToFileURL(path.resolve('file.js')).toString())
+      .resolves({ default: expectedOptions });
 
     // Act
     const result = await sut.readConfig({ configFile: 'file.js' });
 
     // Assert
-    sinon.assert.calledWithExactly(optionsValidatorMock.validate, expectedOptions);
+    sinon.assert.calledWithExactly(
+      optionsValidatorMock.validate,
+      expectedOptions,
+    );
     expect(result).deep.eq(expectedOptions);
     expect(testInjector.logger.warn).not.called;
   });
 
-  ['stryker.conf', '.stryker.conf', 'stryker.config', '.stryker.config'].forEach((base) => {
+  [
+    'stryker.conf',
+    '.stryker.conf',
+    'stryker.config',
+    '.stryker.config',
+  ].forEach((base) => {
     it(`should load ${base}.json file by default`, async () => {
       // Arrange
       const expectedOptions = { testRunner: 'my-runner' };
@@ -71,7 +91,10 @@ describe(ConfigReader.name, () => {
       const result = await sut.readConfig({});
 
       // Assert
-      sinon.assert.calledWithExactly(optionsValidatorMock.validate, expectedOptions);
+      sinon.assert.calledWithExactly(
+        optionsValidatorMock.validate,
+        expectedOptions,
+      );
       expect(result).deep.eq(expectedOptions);
     });
 
@@ -82,13 +105,18 @@ describe(ConfigReader.name, () => {
         const expectedOptions = { testRunner: 'my-runner' };
         existsStub.withArgs(strykerConfFile).resolves(true);
         readFileStub.resolves(JSON.stringify(expectedOptions));
-        importModuleStub.withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString()).resolves({ default: expectedOptions });
+        importModuleStub
+          .withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString())
+          .resolves({ default: expectedOptions });
 
         // Act
         const result = await sut.readConfig({});
 
         // Assert
-        sinon.assert.calledWithExactly(optionsValidatorMock.validate, expectedOptions);
+        sinon.assert.calledWithExactly(
+          optionsValidatorMock.validate,
+          expectedOptions,
+        );
         expect(result).deep.eq(expectedOptions);
       });
     });
@@ -105,23 +133,37 @@ describe(ConfigReader.name, () => {
     // Assert
     expect(importModuleStub).not.called;
     expect(readFileStub).not.called;
-    sinon.assert.calledWithExactly(testInjector.logger.info, 'No config file specified. Running with command line arguments.');
-    sinon.assert.calledWithExactly(testInjector.logger.info, 'Use `stryker init` command to generate your config file.');
-    sinon.assert.calledWithExactly(optionsValidatorMock.validate, expectedOptions);
+    sinon.assert.calledWithExactly(
+      testInjector.logger.info,
+      'No config file specified. Running with command line arguments.',
+    );
+    sinon.assert.calledWithExactly(
+      testInjector.logger.info,
+      'Use `stryker init` command to generate your config file.',
+    );
+    sinon.assert.calledWithExactly(
+      optionsValidatorMock.validate,
+      expectedOptions,
+    );
     expect(result).deep.eq(expectedOptions);
   });
 
   it('should override loaded config with cli options (cli takes precedence)', async () => {
     // Arrange
     existsStub.withArgs('stryker.conf.json').resolves(true);
-    readFileStub.resolves(JSON.stringify({ testRunner: 'my-runner', concurrency: 3 }));
+    readFileStub.resolves(
+      JSON.stringify({ testRunner: 'my-runner', concurrency: 3 }),
+    );
 
     // Act
     const result = await sut.readConfig({ concurrency: 2 });
 
     // Assert
     const expectedOptions = { testRunner: 'my-runner', concurrency: 2 };
-    sinon.assert.calledWithExactly(optionsValidatorMock.validate, expectedOptions);
+    sinon.assert.calledWithExactly(
+      optionsValidatorMock.validate,
+      expectedOptions,
+    );
     expect(result).deep.eq(expectedOptions);
   });
 
@@ -129,15 +171,25 @@ describe(ConfigReader.name, () => {
     // Arrange
     const strykerConfFile = 'stryker.conf.js';
     existsStub.withArgs(strykerConfFile).resolves(true);
-    importModuleStub.withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString()).resolves({ default: 42 });
+    importModuleStub
+      .withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString())
+      .resolves({ default: 42 });
 
     // Act & assert
     const error = await expect(sut.readConfig({})).rejectedWith(
       'Invalid config file "stryker.conf.js". Default export of config file must be an object!',
     );
     expect(error).instanceOf(ConfigError);
-    sinon.assert.calledWithMatch(testInjector.logger.fatal, sinon.match('Invalid config file. It must export an object, found a "number"!'));
-    sinon.assert.calledWithMatch(testInjector.logger.fatal, sinon.match('Example of how a config file should look:'));
+    sinon.assert.calledWithMatch(
+      testInjector.logger.fatal,
+      sinon.match(
+        'Invalid config file. It must export an object, found a "number"!',
+      ),
+    );
+    sinon.assert.calledWithMatch(
+      testInjector.logger.fatal,
+      sinon.match('Example of how a config file should look:'),
+    );
   });
 
   it('should throw when the .json config could not be read', async () => {
@@ -152,7 +204,9 @@ describe(ConfigReader.name, () => {
 
   it("should throw when the explicit config file doesn't exist", async () => {
     existsStub.resolves(false);
-    const error = await expect(sut.readConfig({ configFile: 'foo.conf.js' })).rejectedWith('Invalid config file "foo.conf.js". File does not exist!');
+    const error = await expect(
+      sut.readConfig({ configFile: 'foo.conf.js' }),
+    ).rejectedWith('Invalid config file "foo.conf.js". File does not exist!');
     expect(error).instanceOf(ConfigError);
   });
 
@@ -160,7 +214,9 @@ describe(ConfigReader.name, () => {
     const syntaxError = new Error('SyntaxError');
     existsStub.withArgs('stryker.conf.js').resolves(true);
     importModuleStub.rejects(syntaxError);
-    const error = await expect(sut.readConfig({})).rejectedWith('Invalid config file "stryker.conf.js". Error during import.');
+    const error = await expect(sut.readConfig({})).rejectedWith(
+      'Invalid config file "stryker.conf.js". Error during import.',
+    );
     expect(error).instanceOf(ConfigError);
     expect((error as ConfigError).innerError).eq(syntaxError);
   });
@@ -170,11 +226,13 @@ describe(ConfigReader.name, () => {
       // Arrange
       const strykerConfFile = 'stryker.conf.js';
       existsStub.withArgs(strykerConfFile).resolves(true);
-      importModuleStub.withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString()).resolves({
-        default: () => {
-          /* idle */
-        },
-      });
+      importModuleStub
+        .withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString())
+        .resolves({
+          default: () => {
+            /* idle */
+          },
+        });
 
       // Act & assert
       const error = await expect(sut.readConfig({})).rejectedWith(
@@ -193,14 +251,20 @@ describe(ConfigReader.name, () => {
       // Arrange
       const strykerConfFile = 'stryker.conf.js';
       existsStub.withArgs(strykerConfFile).resolves(true);
-      importModuleStub.withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString()).resolves({ pi: 3.14, foo: 'bar' });
+      importModuleStub
+        .withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString())
+        .resolves({ pi: 3.14, foo: 'bar' });
 
       // Act & assert
-      const error = await expect(sut.readConfig({})).rejectedWith('Invalid config file "stryker.conf.js". Config file must have a default export!');
+      const error = await expect(sut.readConfig({})).rejectedWith(
+        'Invalid config file "stryker.conf.js". Config file must have a default export!',
+      );
       expect(error).instanceOf(ConfigError);
       sinon.assert.calledWithMatch(
         testInjector.logger.fatal,
-        sinon.match('Invalid config file. It is missing a default export. Found named export(s): "pi", "foo".'),
+        sinon.match(
+          'Invalid config file. It is missing a default export. Found named export(s): "pi", "foo".',
+        ),
       );
     });
 
@@ -208,13 +272,19 @@ describe(ConfigReader.name, () => {
       // Arrange
       const strykerConfFile = 'stryker.conf.js';
       existsStub.withArgs(strykerConfFile).resolves(true);
-      importModuleStub.withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString()).resolves({});
+      importModuleStub
+        .withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString())
+        .resolves({});
 
       // Act & assert
-      await expect(sut.readConfig({})).rejectedWith('Invalid config file "stryker.conf.js". Config file must have a default export!');
+      await expect(sut.readConfig({})).rejectedWith(
+        'Invalid config file "stryker.conf.js". Config file must have a default export!',
+      );
       sinon.assert.calledWithMatch(
         testInjector.logger.fatal,
-        sinon.match("Invalid config file. It is missing a default export. In fact, it didn't export anything"),
+        sinon.match(
+          "Invalid config file. It is missing a default export. In fact, it didn't export anything",
+        ),
       );
     });
 
@@ -222,13 +292,17 @@ describe(ConfigReader.name, () => {
       // Arrange
       const strykerConfFile = 'stryker.conf.js';
       existsStub.withArgs(strykerConfFile).resolves(true);
-      importModuleStub.withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString()).resolves(42);
+      importModuleStub
+        .withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString())
+        .resolves(42);
 
       // Act & assert
       await expect(sut.readConfig({})).rejected;
       sinon.assert.calledWithMatch(
         testInjector.logger.fatal,
-        sinon.match("Invalid config file. It is missing a default export. In fact, it didn't export anything"),
+        sinon.match(
+          "Invalid config file. It is missing a default export. In fact, it didn't export anything",
+        ),
       );
     });
 
@@ -238,25 +312,34 @@ describe(ConfigReader.name, () => {
       readFileStub.resolves('{ not: "json" }');
 
       // Act & assert
-      const error = await expect(sut.readConfig({})).rejectedWith('Invalid config file "stryker.conf.json". File contains invalid JSON');
+      const error = await expect(sut.readConfig({})).rejectedWith(
+        'Invalid config file "stryker.conf.json". File contains invalid JSON',
+      );
 
       // Assert
       expect(error).instanceOf(ConfigError);
-      expect(((error as ConfigError).innerError as Error).message).matches(/JSON at position 2/);
+      expect(((error as ConfigError).innerError as Error).message).matches(
+        /JSON at position 2/,
+      );
     });
 
     it('should the final configuration to debug', async () => {
       // Arrange
       testInjector.logger.isDebugEnabled.returns(true);
       existsStub.withArgs('stryker.conf.json').resolves(true);
-      readFileStub.resolves(JSON.stringify({ testRunner: 'my-runner', concurrency: 3 }));
+      readFileStub.resolves(
+        JSON.stringify({ testRunner: 'my-runner', concurrency: 3 }),
+      );
 
       // Act
       await sut.readConfig({ concurrency: 2 });
 
       // Assert
       const expectedOptions = { testRunner: 'my-runner', concurrency: 2 };
-      sinon.assert.calledWithExactly(testInjector.logger.debug, `Loaded config: ${JSON.stringify(expectedOptions, null, 2)}`);
+      sinon.assert.calledWithExactly(
+        testInjector.logger.debug,
+        `Loaded config: ${JSON.stringify(expectedOptions, null, 2)}`,
+      );
     });
 
     it('should not log final configuration to debug when debug logging is not enabled', async () => {
@@ -267,21 +350,29 @@ describe(ConfigReader.name, () => {
       await sut.readConfig({ concurrency: 2 });
 
       // Assert
-      sinon.assert.neverCalledWithMatch(testInjector.logger.debug, sinon.match('Loaded config:'));
+      sinon.assert.neverCalledWithMatch(
+        testInjector.logger.debug,
+        sinon.match('Loaded config:'),
+      );
     });
 
     it('should log the file it is reading to debug', async () => {
       existsStub.withArgs('stryker.conf.json').resolves(true);
       readFileStub.resolves('{}');
       await sut.readConfig({ concurrency: 2 });
-      sinon.assert.calledWithExactly(testInjector.logger.debug, 'Loading config from stryker.conf.json');
+      sinon.assert.calledWithExactly(
+        testInjector.logger.debug,
+        'Loading config from stryker.conf.json',
+      );
     });
 
     it('should log a warning when the loaded config was empty', async () => {
       // Arrange
       const strykerConfFile = 'foo.conf.js';
       existsStub.withArgs(strykerConfFile).resolves(true);
-      importModuleStub.withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString()).resolves({ default: {} });
+      importModuleStub
+        .withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString())
+        .resolves({ default: {} });
 
       // Act
       await sut.readConfig({ configFile: 'foo.conf.js' });
@@ -289,7 +380,9 @@ describe(ConfigReader.name, () => {
       // Assert
       sinon.assert.calledWithMatch(
         testInjector.logger.warn,
-        sinon.match('Stryker options were empty. Did you forget to export options from foo.conf.js?'),
+        sinon.match(
+          'Stryker options were empty. Did you forget to export options from foo.conf.js?',
+        ),
       );
     });
 
@@ -297,7 +390,9 @@ describe(ConfigReader.name, () => {
       // Arrange
       const strykerConfFile = 'foo.conf.js';
       existsStub.withArgs(strykerConfFile).resolves(true);
-      importModuleStub.withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString()).resolves({ default: null });
+      importModuleStub
+        .withArgs(pathToFileURL(path.resolve(strykerConfFile)).toString())
+        .resolves({ default: null });
 
       // Act
       await sut.readConfig({ configFile: 'foo.conf.js' });
@@ -305,7 +400,9 @@ describe(ConfigReader.name, () => {
       // Assert
       sinon.assert.calledWithMatch(
         testInjector.logger.warn,
-        sinon.match('Stryker options were empty. Did you forget to export options from foo.conf.js?'),
+        sinon.match(
+          'Stryker options were empty. Did you forget to export options from foo.conf.js?',
+        ),
       );
     });
   });

@@ -1,13 +1,17 @@
 export class Timer {
   private readonly start: Date;
-  private readonly markers: Record<string, Date | undefined> = Object.create(null);
+  private readonly markers: Record<string, Date | undefined> =
+    Object.create(null);
 
   constructor(private readonly now = () => new Date()) {
     this.start = this.now();
   }
   public humanReadableElapsed(sinceMarker?: string): string {
     const elapsedSeconds = this.elapsedSeconds(sinceMarker);
-    return Timer.humanReadableElapsedMinutes(elapsedSeconds) + Timer.humanReadableElapsedSeconds(elapsedSeconds);
+    return (
+      Timer.humanReadableElapsedMinutes(elapsedSeconds) +
+      Timer.humanReadableElapsedSeconds(elapsedSeconds)
+    );
   }
 
   public elapsedSeconds(sinceMarker?: string): number {

@@ -1,16 +1,33 @@
 import path from 'path';
 
-import { testInjector, factory, assertions, TempTestDirectorySandbox } from '@stryker-mutator/test-helpers';
-import { TestResult, CompleteDryRunResult, TestStatus } from '@stryker-mutator/api/test-runner';
+import {
+  testInjector,
+  factory,
+  assertions,
+  TempTestDirectorySandbox,
+} from '@stryker-mutator/test-helpers';
+import {
+  TestResult,
+  CompleteDryRunResult,
+  TestStatus,
+} from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
 
 import { createMochaOptions } from '../helpers/factories.js';
-import { createMochaTestRunnerFactory, MochaTestRunner } from '../../src/index.js';
+import {
+  createMochaTestRunnerFactory,
+  MochaTestRunner,
+} from '../../src/index.js';
 
-const countTests = (runResult: CompleteDryRunResult, predicate: (result: TestResult) => boolean) => runResult.tests.filter(predicate).length;
+const countTests = (
+  runResult: CompleteDryRunResult,
+  predicate: (result: TestResult) => boolean,
+) => runResult.tests.filter(predicate).length;
 
-const countSucceeded = (runResult: CompleteDryRunResult) => countTests(runResult, (t) => t.status === TestStatus.Success);
-const countFailed = (runResult: CompleteDryRunResult) => countTests(runResult, (t) => t.status === TestStatus.Failed);
+const countSucceeded = (runResult: CompleteDryRunResult) =>
+  countTests(runResult, (t) => t.status === TestStatus.Success);
+const countFailed = (runResult: CompleteDryRunResult) =>
+  countTests(runResult, (t) => t.status === TestStatus.Failed);
 
 describe('Running a sample project', () => {
   let sut: MochaTestRunner;
@@ -18,7 +35,9 @@ describe('Running a sample project', () => {
   let sandbox: TempTestDirectorySandbox;
 
   function createSut() {
-    return testInjector.injector.injectFunction(createMochaTestRunnerFactory('__stryker2__'));
+    return testInjector.injector.injectFunction(
+      createMochaTestRunnerFactory('__stryker2__'),
+    );
   }
 
   beforeEach(async () => {
@@ -46,9 +65,14 @@ describe('Running a sample project', () => {
     it('should report completed tests', async () => {
       const runResult = await sut.dryRun(factory.dryRunOptions());
       assertions.expectCompleted(runResult);
-      expect(countSucceeded(runResult)).to.be.eq(5, 'Succeeded tests did not match');
+      expect(countSucceeded(runResult)).to.be.eq(
+        5,
+        'Succeeded tests did not match',
+      );
       expect(countFailed(runResult)).to.be.eq(0, 'Failed tests did not match');
-      runResult.tests.forEach((t) => expect(t.timeSpentMs).to.be.greaterThan(-1).and.to.be.lessThan(1000));
+      runResult.tests.forEach((t) =>
+        expect(t.timeSpentMs).to.be.greaterThan(-1).and.to.be.lessThan(1000),
+      );
     });
 
     it('should report test files', async () => {
@@ -85,7 +109,9 @@ describe('Running a sample project', () => {
     });
 
     it('should report all failures with disableBail = true', async () => {
-      const runResult = await sut.dryRun(factory.dryRunOptions({ disableBail: true }));
+      const runResult = await sut.dryRun(
+        factory.dryRunOptions({ disableBail: true }),
+      );
       assertions.expectCompleted(runResult);
       expect(countFailed(runResult)).to.be.eq(2);
     });
@@ -101,9 +127,14 @@ describe('Running a sample project', () => {
     it('should report no completed tests', async () => {
       const runResult = await sut.dryRun(factory.dryRunOptions());
       assertions.expectCompleted(runResult);
-      expect(countSucceeded(runResult)).to.be.eq(0, 'Succeeded tests did not match');
+      expect(countSucceeded(runResult)).to.be.eq(
+        0,
+        'Succeeded tests did not match',
+      );
       expect(countFailed(runResult)).to.be.eq(0, 'Failed tests did not match');
-      runResult.tests.forEach((t) => expect(t.timeSpentMs).to.be.greaterThan(-1).and.to.be.lessThan(1000));
+      runResult.tests.forEach((t) =>
+        expect(t.timeSpentMs).to.be.greaterThan(-1).and.to.be.lessThan(1000),
+      );
     });
   });
 });

@@ -42,27 +42,40 @@ function isEmpty(path: NodePath<babel.types.BlockStatement>) {
  * @see https://github.com/stryker-mutator/stryker-js/issues/2314
  * @see https://github.com/stryker-mutator/stryker-js/issues/2474
  */
-function isInvalidConstructorBody(blockStatement: NodePath<babel.types.BlockStatement>): boolean {
+function isInvalidConstructorBody(
+  blockStatement: NodePath<babel.types.BlockStatement>,
+): boolean {
   return Boolean(
     blockStatement.parentPath.isClassMethod() &&
       blockStatement.parentPath.node.kind === 'constructor' &&
-      (containsTSParameterProperties(blockStatement.parentPath) || containsInitializedClassProperties(blockStatement.parentPath)) &&
+      (containsTSParameterProperties(blockStatement.parentPath) ||
+        containsInitializedClassProperties(blockStatement.parentPath)) &&
       hasSuperExpression(blockStatement),
   );
 }
 
-function containsTSParameterProperties(constructor: NodePath<babel.types.ClassMethod>): boolean {
-  return constructor.node.params.some((param) => types.isTSParameterProperty(param));
-}
-
-function containsInitializedClassProperties(constructor: NodePath<babel.types.ClassMethod>): boolean {
-  return (
-    constructor.parentPath.isClassBody() &&
-    constructor.parentPath.node.body.some((classMember) => types.isClassProperty(classMember) && classMember.value)
+function containsTSParameterProperties(
+  constructor: NodePath<babel.types.ClassMethod>,
+): boolean {
+  return constructor.node.params.some((param) =>
+    types.isTSParameterProperty(param),
   );
 }
 
-function hasSuperExpression(constructor: NodePath<babel.types.BlockStatement>): boolean {
+function containsInitializedClassProperties(
+  constructor: NodePath<babel.types.ClassMethod>,
+): boolean {
+  return (
+    constructor.parentPath.isClassBody() &&
+    constructor.parentPath.node.body.some(
+      (classMember) => types.isClassProperty(classMember) && classMember.value,
+    )
+  );
+}
+
+function hasSuperExpression(
+  constructor: NodePath<babel.types.BlockStatement>,
+): boolean {
   let hasSuper = false;
   constructor.traverse({
     Super(path) {

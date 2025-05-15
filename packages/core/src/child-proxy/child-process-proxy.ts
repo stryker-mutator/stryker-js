@@ -3,7 +3,12 @@ import os from 'os';
 import { fileURLToPath, URL } from 'url';
 
 import { FileDescriptions, StrykerOptions } from '@stryker-mutator/api/core';
-import { isErrnoException, Task, ExpirableTask, StrykerError } from '@stryker-mutator/util';
+import {
+  isErrnoException,
+  Task,
+  ExpirableTask,
+  StrykerError,
+} from '@stryker-mutator/util';
 import { Disposable, InjectableClass, InjectionToken } from 'typed-inject';
 
 import { LoggingServerAddress } from '../logging/index.js';
@@ -12,7 +17,13 @@ import { StringBuilder } from '../utils/string-builder.js';
 import { deserialize, padLeft, serialize } from '../utils/string-utils.js';
 
 import { ChildProcessCrashedError } from './child-process-crashed-error.js';
-import { InitMessage, ParentMessage, ParentMessageKind, WorkerMessage, WorkerMessageKind } from './message-protocol.js';
+import {
+  InitMessage,
+  ParentMessage,
+  ParentMessageKind,
+  WorkerMessage,
+  WorkerMessageKind,
+} from './message-protocol.js';
 import { OutOfMemoryError } from './out-of-memory-error.js';
 import { ChildProcessContext } from './child-process-proxy-worker.js';
 import { IdGenerator } from './id-generator.js';
@@ -23,7 +34,11 @@ type Func<TS extends any[], R> = (...args: TS) => R;
 type PromisifiedFunc<TS extends any[], R> = (...args: TS) => Promise<R>;
 
 export type Promisified<T> = {
-  [K in keyof T]: T[K] extends PromisifiedFunc<any, any> ? T[K] : T[K] extends Func<infer TS, infer R> ? PromisifiedFunc<TS, R> : () => Promise<T[K]>;
+  [K in keyof T]: T[K] extends PromisifiedFunc<any, any>
+    ? T[K]
+    : T[K] extends Func<infer TS, infer R>
+      ? PromisifiedFunc<TS, R>
+      : () => Promise<T[K]>;
 };
 
 const BROKEN_PIPE_ERROR_CODE = 'EPIPE';
@@ -58,11 +73,16 @@ export class ChildProcessProxy<T> implements Disposable {
     idGenerator: IdGenerator,
   ) {
     const workerId = idGenerator.next().toString();
-    this.worker = childProcess.fork(fileURLToPath(new URL('./child-process-proxy-worker.js', import.meta.url)), {
-      silent: true,
-      execArgv,
-      env: { STRYKER_MUTATOR_WORKER: workerId, ...process.env },
-    });
+    this.worker = childProcess.fork(
+      fileURLToPath(
+        new URL('./child-process-proxy-worker.js', import.meta.url),
+      ),
+      {
+        silent: true,
+        execArgv,
+        env: { STRYKER_MUTATOR_WORKER: workerId, ...process.env },
+      },
+    );
     this.initTask = new Task();
     this.log = logger;
     this.log.debug(
@@ -95,7 +115,10 @@ export class ChildProcessProxy<T> implements Disposable {
   /**
    * @description Creates a proxy where each function of the object created using the constructorFunction arg is ran inside of a child process
    */
-  public static create<R, Tokens extends Array<InjectionToken<ChildProcessContext>>>(
+  public static create<
+    R,
+    Tokens extends Array<InjectionToken<ChildProcessContext>>,
+  >(
     modulePath: string,
     loggingServerAddress: LoggingServerAddress,
     options: StrykerOptions,
@@ -183,7 +206,9 @@ export class ChildProcessProxy<T> implements Disposable {
           this.workerTasks.delete(message.correlationId);
           break;
         case ParentMessageKind.CallRejection:
-          this.workerTasks.get(message.correlationId)!.reject(new StrykerError(message.error));
+          this.workerTasks
+            .get(message.correlationId)!
+            .reject(new StrykerError(message.error));
           this.workerTasks.delete(message.correlationId);
           break;
         case ParentMessageKind.DisposeCompleted:
@@ -228,7 +253,9 @@ export class ChildProcessProxy<T> implements Disposable {
   }
 
   private reportError(error: Error) {
-    const onGoingWorkerTasks = [...this.workerTasks.values()].filter((task) => !task.isCompleted);
+    const onGoingWorkerTasks = [...this.workerTasks.values()].filter(
+      (task) => !task.isCompleted,
+    );
     if (!this.initTask.isCompleted) {
       onGoingWorkerTasks.push(this.initTask);
     }
@@ -243,7 +270,9 @@ export class ChildProcessProxy<T> implements Disposable {
     if (processOutOfMemory()) {
       const oom = new OutOfMemoryError(this.worker.pid, code);
       this.fatalError = oom;
-      this.log.warn(`Child process [pid ${oom.pid}] ran out of memory. Stdout and stderr are logged on debug level.`);
+      this.log.warn(
+        `Child process [pid ${oom.pid}] ran out of memory. Stdout and stderr are logged on debug level.`,
+      );
       this.log.debug(stdoutAndStderr());
     } else {
       this.fatalError = new ChildProcessCrashedError(
@@ -258,7 +287,10 @@ export class ChildProcessProxy<T> implements Disposable {
     this.reportError(this.fatalError);
 
     function processOutOfMemory() {
-      return output.includes('JavaScript heap out of memory') || output.includes('FatalProcessOutOfMemory');
+      return (
+        output.includes('JavaScript heap out of memory') ||
+        output.includes('FatalProcessOutOfMemory')
+      );
     }
 
     function stdoutAndStderr() {
@@ -272,9 +304,18 @@ export class ChildProcessProxy<T> implements Disposable {
 
   private readonly handleError = (error: Error) => {
     if (this.innerProcessIsCrashed(error)) {
-      this.log.warn(`Child process [pid ${this.worker.pid}] has crashed. See other warning messages for more info.`, error);
+      this.log.warn(
+        `Child process [pid ${this.worker.pid}] has crashed. See other warning messages for more info.`,
+        error,
+      );
       this.reportError(
-        new ChildProcessCrashedError(this.worker.pid, `Child process [pid ${this.worker.pid}] has crashed`, undefined, undefined, error),
+        new ChildProcessCrashedError(
+          this.worker.pid,
+          `Child process [pid ${this.worker.pid}] has crashed`,
+          undefined,
+          undefined,
+          error,
+        ),
       );
     } else {
       this.reportError(error);
@@ -282,7 +323,11 @@ export class ChildProcessProxy<T> implements Disposable {
   };
 
   private innerProcessIsCrashed(error: Error) {
-    return isErrnoException(error) && (error.code === BROKEN_PIPE_ERROR_CODE || error.code === IPC_CHANNEL_CLOSED_ERROR_CODE);
+    return (
+      isErrnoException(error) &&
+      (error.code === BROKEN_PIPE_ERROR_CODE ||
+        error.code === IPC_CHANNEL_CLOSED_ERROR_CODE)
+    );
   }
 
   public async dispose(): Promise<void> {

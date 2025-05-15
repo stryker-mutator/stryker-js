@@ -53,11 +53,19 @@ describe(sut.name, () => {
   });
 
   it('should mutate the expression of a do statement', () => {
-    expectJSMutation(sut, 'do { console.log(); } while(a < b);', 'do { console.log(); } while(false);');
+    expectJSMutation(
+      sut,
+      'do { console.log(); } while(a < b);',
+      'do { console.log(); } while(false);',
+    );
   });
 
   it('should mutate the condition of a for statement', () => {
-    expectJSMutation(sut, 'for(let i=0;i<10; i++) { console.log(); }', 'for(let i=0;false; i++) { console.log(); }');
+    expectJSMutation(
+      sut,
+      'for(let i=0;i<10; i++) { console.log(); }',
+      'for(let i=0;false; i++) { console.log(); }',
+    );
   });
 
   it('should mutate the condition of a for statement without a condition', () => {
@@ -115,7 +123,12 @@ describe(sut.name, () => {
   });
 
   it('should mutate an expression to `true` and `false`', () => {
-    expectJSMutation(sut, 'if (something) { a++ }', 'if (true) { a++ }', 'if (false) { a++ }');
+    expectJSMutation(
+      sut,
+      'if (something) { a++ }',
+      'if (true) { a++ }',
+      'if (false) { a++ }',
+    );
   });
 
   it('should remove all cases one at a time', () => {
@@ -138,6 +151,10 @@ describe(sut.name, () => {
   });
 
   it('should mutate the expression of a while statement', () => {
-    expectJSMutation(sut, 'while(a < b) { console.log(); }', 'while(false) { console.log(); }');
+    expectJSMutation(
+      sut,
+      'while(a < b) { console.log(); }',
+      'while(false) { console.log(); }',
+    );
   });
 });

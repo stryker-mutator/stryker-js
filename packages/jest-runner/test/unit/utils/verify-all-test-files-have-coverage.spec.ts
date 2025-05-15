@@ -11,8 +11,12 @@ describe(verifyAllTestFilesHaveCoverage.name, () => {
     const result = verifyAllTestFilesHaveCoverage(
       producers.createJestAggregatedResult({
         testResults: [
-          producers.createJestTestResult({ testFilePath: path.resolve('foo.spec.js') }),
-          producers.createJestTestResult({ testFilePath: path.resolve('bar.spec.js') }),
+          producers.createJestTestResult({
+            testFilePath: path.resolve('foo.spec.js'),
+          }),
+          producers.createJestTestResult({
+            testFilePath: path.resolve('bar.spec.js'),
+          }),
         ],
       }),
       new Set([path.resolve('foo.spec.js'), path.resolve('bar.spec.js')]),
@@ -24,10 +28,18 @@ describe(verifyAllTestFilesHaveCoverage.name, () => {
     const result = verifyAllTestFilesHaveCoverage(
       producers.createJestAggregatedResult({
         testResults: [
-          producers.createJestTestResult({ testFilePath: path.resolve('foo.spec.js') }),
-          producers.createJestTestResult({ testFilePath: path.resolve('bar.spec.js') }),
-          producers.createJestTestResult({ testFilePath: path.resolve('baz.spec.js') }),
-          producers.createJestTestResult({ testFilePath: path.resolve('qux.spec.js') }),
+          producers.createJestTestResult({
+            testFilePath: path.resolve('foo.spec.js'),
+          }),
+          producers.createJestTestResult({
+            testFilePath: path.resolve('bar.spec.js'),
+          }),
+          producers.createJestTestResult({
+            testFilePath: path.resolve('baz.spec.js'),
+          }),
+          producers.createJestTestResult({
+            testFilePath: path.resolve('qux.spec.js'),
+          }),
         ],
       }),
       new Set([path.resolve('bar.spec.js')]),
@@ -46,11 +58,21 @@ You probably configured a test environment in jest that is not reporting code co
     const result = verifyAllTestFilesHaveCoverage(
       producers.createJestAggregatedResult({
         testResults: [
-          producers.createJestTestResult({ testFilePath: path.resolve('foo.spec.js') }),
-          producers.createJestTestResult({ testFilePath: path.resolve('bar.spec.js') }),
-          producers.createJestTestResult({ testFilePath: path.resolve('baz.spec.js') }),
-          producers.createJestTestResult({ testFilePath: path.resolve('qux.spec.js') }),
-          producers.createJestTestResult({ testFilePath: path.resolve('quux.spec.js') }),
+          producers.createJestTestResult({
+            testFilePath: path.resolve('foo.spec.js'),
+          }),
+          producers.createJestTestResult({
+            testFilePath: path.resolve('bar.spec.js'),
+          }),
+          producers.createJestTestResult({
+            testFilePath: path.resolve('baz.spec.js'),
+          }),
+          producers.createJestTestResult({
+            testFilePath: path.resolve('qux.spec.js'),
+          }),
+          producers.createJestTestResult({
+            testFilePath: path.resolve('quux.spec.js'),
+          }),
         ],
       }),
       new Set([path.resolve('bar.spec.js')]),

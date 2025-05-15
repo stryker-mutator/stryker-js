@@ -1,9 +1,18 @@
 import path from 'path';
 import { createRequire } from 'module';
 
-import { StrykerOptions, INSTRUMENTER_CONSTANTS, CoverageAnalysis } from '@stryker-mutator/api/core';
+import {
+  StrykerOptions,
+  INSTRUMENTER_CONSTANTS,
+  CoverageAnalysis,
+} from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
+import {
+  commonTokens,
+  Injector,
+  PluginContext,
+  tokens,
+} from '@stryker-mutator/api/plugin';
 import {
   TestRunner,
   MutantRunOptions,
@@ -25,17 +34,29 @@ import type * as jestTestResult from '@jest/test-result';
 import { JestOptions } from '../src-generated/jest-runner-options.js';
 
 import { jestTestAdapterFactory } from './jest-test-adapters/index.js';
-import { JestTestAdapter, RunSettings } from './jest-test-adapters/jest-test-adapter.js';
+import {
+  JestTestAdapter,
+  RunSettings,
+} from './jest-test-adapters/jest-test-adapter.js';
 import { JestConfigLoader } from './config-loaders/jest-config-loader.js';
 import { withCoverageAnalysis, withHitLimit } from './jest-plugins/index.js';
 import { pluginTokens } from './plugin-di.js';
 import { configLoaderFactory } from './config-loaders/index.js';
 import { JestRunnerOptionsWithStrykerOptions } from './jest-runner-options-with-stryker-options.js';
 import { JEST_OVERRIDE_OPTIONS } from './jest-override-options.js';
-import { determineResolveFromDirectory, JestConfigWrapper, JestWrapper, verifyAllTestFilesHaveCoverage } from './utils/index.js';
+import {
+  determineResolveFromDirectory,
+  JestConfigWrapper,
+  JestWrapper,
+  verifyAllTestFilesHaveCoverage,
+} from './utils/index.js';
 import { state } from './jest-plugins/messaging.cjs';
 
-export function createJestTestRunnerFactory(namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE): {
+export function createJestTestRunnerFactory(
+  namespace:
+    | typeof INSTRUMENTER_CONSTANTS.NAMESPACE
+    | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE,
+): {
   (injector: Injector<PluginContext>): JestTestRunner;
   inject: ['$injector'];
 } {
@@ -43,7 +64,10 @@ export function createJestTestRunnerFactory(namespace: typeof INSTRUMENTER_CONST
   function jestTestRunnerFactory(injector: Injector<PluginContext>) {
     return injector
       .provideValue(pluginTokens.resolve, createRequire(process.cwd()).resolve)
-      .provideFactory(pluginTokens.resolveFromDirectory, determineResolveFromDirectory)
+      .provideFactory(
+        pluginTokens.resolveFromDirectory,
+        determineResolveFromDirectory,
+      )
       .provideValue(pluginTokens.requireFromCwd, requireResolve)
       .provideValue(pluginTokens.processEnv, process.env)
       .provideClass(pluginTokens.jestWrapper, JestWrapper)
@@ -78,13 +102,17 @@ export class JestTestRunner implements TestRunner {
     private readonly jestTestAdapter: JestTestAdapter,
     private readonly configLoader: JestConfigLoader,
     private readonly jestWrapper: JestWrapper,
-    private readonly globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__',
+    private readonly globalNamespace:
+      | typeof INSTRUMENTER_CONSTANTS.NAMESPACE
+      | '__stryker2__',
   ) {
     this.jestOptions = (options as JestRunnerOptionsWithStrykerOptions).jest;
     // Get enableFindRelatedTests from stryker jest options or default to true
     this.enableFindRelatedTests = this.jestOptions.enableFindRelatedTests;
     if (this.enableFindRelatedTests) {
-      this.log.debug('Running jest with --findRelatedTests flag. Set jest.enableFindRelatedTests to false to run all tests on every mutant.');
+      this.log.debug(
+        'Running jest with --findRelatedTests flag. Set jest.enableFindRelatedTests to false to run all tests on every mutant.',
+      );
     } else {
       this.log.debug(
         'Running jest without --findRelatedTests flag. Set jest.enableFindRelatedTests to true to run only relevant tests on every mutant.',
@@ -94,23 +122,39 @@ export class JestTestRunner implements TestRunner {
 
   public async init(): Promise<void> {
     const configFromFile = await this.configLoader.loadConfig();
-    this.jestConfig = this.mergeConfigSettings(configFromFile, this.jestOptions || {});
+    this.jestConfig = this.mergeConfigSettings(
+      configFromFile,
+      this.jestOptions || {},
+    );
   }
 
   public capabilities(): TestRunnerCapabilities {
     return { reloadEnvironment: true };
   }
 
-  public async dryRun({ coverageAnalysis, files }: Pick<DryRunOptions, 'coverageAnalysis' | 'files'>): Promise<DryRunResult> {
+  public async dryRun({
+    coverageAnalysis,
+    files,
+  }: Pick<DryRunOptions, 'coverageAnalysis' | 'files'>): Promise<DryRunResult> {
     state.coverageAnalysis = coverageAnalysis;
     const fileNamesUnderTest = this.enableFindRelatedTests ? files : undefined;
     const { dryRunResult, jestResult } = await this.run({
       fileNamesUnderTest,
-      jestConfig: this.configForDryRun(fileNamesUnderTest, coverageAnalysis, this.jestWrapper),
+      jestConfig: this.configForDryRun(
+        fileNamesUnderTest,
+        coverageAnalysis,
+        this.jestWrapper,
+      ),
       testLocationInResults: true,
     });
-    if (dryRunResult.status === DryRunStatus.Complete && coverageAnalysis !== 'off') {
-      const errorMessage = verifyAllTestFilesHaveCoverage(jestResult, state.testFilesWithStrykerEnvironment);
+    if (
+      dryRunResult.status === DryRunStatus.Complete &&
+      coverageAnalysis !== 'off'
+    ) {
+      const errorMessage = verifyAllTestFilesHaveCoverage(
+        jestResult,
+        state.testFilesWithStrykerEnvironment,
+      );
       if (errorMessage) {
         return {
           status: DryRunStatus.Error,
@@ -123,12 +167,22 @@ export class JestTestRunner implements TestRunner {
     return dryRunResult;
   }
 
-  public async mutantRun({ activeMutant, sandboxFileName, testFilter, disableBail, hitLimit }: MutantRunOptions): Promise<MutantRunResult> {
-    const fileNameUnderTest = this.enableFindRelatedTests ? sandboxFileName : undefined;
+  public async mutantRun({
+    activeMutant,
+    sandboxFileName,
+    testFilter,
+    disableBail,
+    hitLimit,
+  }: MutantRunOptions): Promise<MutantRunResult> {
+    const fileNameUnderTest = this.enableFindRelatedTests
+      ? sandboxFileName
+      : undefined;
     state.coverageAnalysis = 'off';
     let testNamePattern: string | undefined;
     if (testFilter) {
-      testNamePattern = testFilter.map((testId) => `(${escapeRegExp(testId)})`).join('|');
+      testNamePattern = testFilter
+        .map((testId) => `(${escapeRegExp(testId)})`)
+        .join('|');
     }
     state.instrumenterContext.hitLimit = hitLimit;
     state.instrumenterContext.hitCount = hitLimit ? 0 : undefined;
@@ -136,10 +190,15 @@ export class JestTestRunner implements TestRunner {
     try {
       // Use process.env to set the active mutant.
       // We could use `state.strykerStatic.activeMutant`, but that only works with the `StrykerEnvironment` mixin, which is optional
-      process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE] = activeMutant.id.toString();
+      process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE] =
+        activeMutant.id.toString();
       const { dryRunResult } = await this.run({
         fileNamesUnderTest: fileNameUnderTest ? [fileNameUnderTest] : undefined,
-        jestConfig: this.configForMutantRun(fileNameUnderTest, hitLimit, this.jestWrapper),
+        jestConfig: this.configForMutantRun(
+          fileNameUnderTest,
+          hitLimit,
+          this.jestWrapper,
+        ),
         testNamePattern,
       });
       return toMutantRunResult(dryRunResult, disableBail);
@@ -154,7 +213,11 @@ export class JestTestRunner implements TestRunner {
     coverageAnalysis: CoverageAnalysis,
     jestWrapper: JestWrapper,
   ): jest.Config.InitialOptions {
-    return withCoverageAnalysis(this.configWithRoots(fileNamesUnderTest), coverageAnalysis, jestWrapper);
+    return withCoverageAnalysis(
+      this.configWithRoots(fileNamesUnderTest),
+      coverageAnalysis,
+      jestWrapper,
+    );
   }
 
   private configForMutantRun(
@@ -162,17 +225,26 @@ export class JestTestRunner implements TestRunner {
     hitLimit: number | undefined,
     jestWrapper: JestWrapper,
   ): jest.Config.InitialOptions {
-    return withHitLimit(this.configWithRoots(fileNameUnderTest ? [fileNameUnderTest] : undefined), hitLimit, jestWrapper);
+    return withHitLimit(
+      this.configWithRoots(fileNameUnderTest ? [fileNameUnderTest] : undefined),
+      hitLimit,
+      jestWrapper,
+    );
   }
 
-  private configWithRoots(fileNamesUnderTest: string[] | undefined): jest.Config.InitialOptions {
+  private configWithRoots(
+    fileNamesUnderTest: string[] | undefined,
+  ): jest.Config.InitialOptions {
     let config: jest.Config.InitialOptions;
 
     if (fileNamesUnderTest && this.jestConfig.roots) {
       // Make sure the file under test lives inside one of the roots
       config = {
         ...this.jestConfig,
-        roots: [...this.jestConfig.roots, ...new Set(fileNamesUnderTest.map((file) => path.dirname(file)))],
+        roots: [
+          ...this.jestConfig.roots,
+          ...new Set(fileNamesUnderTest.map((file) => path.dirname(file))),
+        ],
       };
     } else {
       config = this.jestConfig;
@@ -180,23 +252,36 @@ export class JestTestRunner implements TestRunner {
     return config;
   }
 
-  private async run(settings: RunSettings): Promise<{ dryRunResult: DryRunResult; jestResult: jestTestResult.AggregatedResult }> {
+  private async run(settings: RunSettings): Promise<{
+    dryRunResult: DryRunResult;
+    jestResult: jestTestResult.AggregatedResult;
+  }> {
     this.setEnv();
     if (this.log.isTraceEnabled()) {
       this.log.trace('Invoking Jest with config %s', JSON.stringify(settings));
     }
     const { results } = await this.jestTestAdapter.run(settings);
-    return { dryRunResult: this.collectRunResult(results), jestResult: results };
+    return {
+      dryRunResult: this.collectRunResult(results),
+      jestResult: results,
+    };
   }
 
-  private collectRunResult(results: jestTestResult.AggregatedResult): DryRunResult {
-    const timeoutResult = determineHitLimitReached(state.instrumenterContext.hitCount, state.instrumenterContext.hitLimit);
+  private collectRunResult(
+    results: jestTestResult.AggregatedResult,
+  ): DryRunResult {
+    const timeoutResult = determineHitLimitReached(
+      state.instrumenterContext.hitCount,
+      state.instrumenterContext.hitLimit,
+    );
     if (timeoutResult) {
       return timeoutResult;
     }
     if (results.numRuntimeErrorTestSuites) {
       const errorMessage = results.testResults
-        .map((testSuite) => this.collectSerializableErrorText(testSuite.testExecError))
+        .map((testSuite) =>
+          this.collectSerializableErrorText(testSuite.testExecError),
+        )
         .filter(notEmpty)
         .join(', ');
       return {
@@ -211,9 +296,13 @@ export class JestTestRunner implements TestRunner {
     }
   }
 
-  private collectSerializableErrorText(error?: jest.TestResult.SerializableError): string | undefined {
-    // eslint-disable-next-line @typescript-eslint/no-base-to-string -- Ignore as code is most likely a string. Don't use JSON.stringify as circular graphs could cause an error
-    return error && `${error.code ? `${String(error.code)} ` : ''}${error.message} ${error.stack}`;
+  private collectSerializableErrorText(
+    error?: jest.TestResult.SerializableError,
+  ): string | undefined {
+    return (
+      error &&
+      `${error.code ? `${String(error.code)} ` : ''}${error.message} ${error.stack}`
+    );
   }
 
   private setEnv() {
@@ -223,7 +312,9 @@ export class JestTestRunner implements TestRunner {
     process.env.NODE_ENV = 'test';
   }
 
-  private processTestResults(suiteResults: jestTestResult.TestResult[]): TestResult[] {
+  private processTestResults(
+    suiteResults: jestTestResult.TestResult[],
+  ): TestResult[] {
     const testResults: TestResult[] = [];
 
     for (const suiteResult of suiteResults) {
@@ -269,7 +360,10 @@ export class JestTestRunner implements TestRunner {
     return testResults;
   }
 
-  private mergeConfigSettings(configFromFile: jest.Config.InitialOptions, options: JestOptions): jest.Config.InitialOptions {
+  private mergeConfigSettings(
+    configFromFile: jest.Config.InitialOptions,
+    options: JestOptions,
+  ): jest.Config.InitialOptions {
     const config = (options.config ?? {}) as jest.Config.InitialOptions;
     const stringify = (obj: unknown) => JSON.stringify(obj, null, 2);
     this.log.debug(

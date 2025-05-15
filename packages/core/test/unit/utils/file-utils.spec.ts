@@ -32,7 +32,9 @@ describe('fileUtils', () => {
     });
     it("should create the dir if it doesn't exist", async () => {
       await fileUtils.symlinkJunction('a', path.resolve('b', 'c'));
-      expect(fs.promises.mkdir).calledWith(path.resolve('b'), { recursive: true });
+      expect(fs.promises.mkdir).calledWith(path.resolve('b'), {
+        recursive: true,
+      });
     });
   });
 
@@ -47,11 +49,20 @@ describe('fileUtils', () => {
 
     it('should return node_modules array in subDirectory of `basePath`', async () => {
       const basePath = path.resolve('.');
-      const expectedNodeModulesList = [path.join('a', 'b', 'node_modules'), path.join('a', 'b', 'c', 'node_modules')];
+      const expectedNodeModulesList = [
+        path.join('a', 'b', 'node_modules'),
+        path.join('a', 'b', 'c', 'node_modules'),
+      ];
       readdirStub.withArgs(path.resolve(basePath)).resolves(wrapDirs(['a']));
-      readdirStub.withArgs(path.resolve(basePath, 'a')).resolves(wrapDirs(['b']));
-      readdirStub.withArgs(path.resolve(basePath, 'a', 'b')).resolves(wrapDirs(['c', 'node_modules']));
-      readdirStub.withArgs(path.resolve(basePath, 'a', 'b', 'c')).resolves(wrapDirs(['node_modules']));
+      readdirStub
+        .withArgs(path.resolve(basePath, 'a'))
+        .resolves(wrapDirs(['b']));
+      readdirStub
+        .withArgs(path.resolve(basePath, 'a', 'b'))
+        .resolves(wrapDirs(['c', 'node_modules']));
+      readdirStub
+        .withArgs(path.resolve(basePath, 'a', 'b', 'c'))
+        .resolves(wrapDirs(['node_modules']));
       const actual = await fileUtils.findNodeModulesList(basePath);
       expect(actual).deep.eq(expectedNodeModulesList);
     });

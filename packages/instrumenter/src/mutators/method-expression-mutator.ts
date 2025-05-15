@@ -48,7 +48,13 @@ export const methodExpressionMutator: NodeMutator = {
     }
 
     const { callee } = path.node;
-    if (!(types.isMemberExpression(callee) || types.isOptionalMemberExpression(callee)) || !types.isIdentifier(callee.property)) {
+    if (
+      !(
+        types.isMemberExpression(callee) ||
+        types.isOptionalMemberExpression(callee)
+      ) ||
+      !types.isIdentifier(callee.property)
+    ) {
       return;
     }
 
@@ -64,14 +70,30 @@ export const methodExpressionMutator: NodeMutator = {
     }
 
     // Replace the method expression. I.e. `foo.toLowerCase()` => `foo.toUpperCase`
-    const nodeArguments = path.node.arguments.map((argumentNode) => deepCloneNode(argumentNode));
+    const nodeArguments = path.node.arguments.map((argumentNode) =>
+      deepCloneNode(argumentNode),
+    );
 
     const mutatedCallee = types.isMemberExpression(callee)
-      ? types.memberExpression(deepCloneNode(callee.object), types.identifier(newName), false, callee.optional)
-      : types.optionalMemberExpression(deepCloneNode(callee.object), types.identifier(newName), false, callee.optional);
+      ? types.memberExpression(
+          deepCloneNode(callee.object),
+          types.identifier(newName),
+          false,
+          callee.optional,
+        )
+      : types.optionalMemberExpression(
+          deepCloneNode(callee.object),
+          types.identifier(newName),
+          false,
+          callee.optional,
+        );
 
     yield types.isCallExpression(path.node)
       ? types.callExpression(mutatedCallee, nodeArguments)
-      : types.optionalCallExpression(mutatedCallee, nodeArguments, path.node.optional);
+      : types.optionalCallExpression(
+          mutatedCallee,
+          nodeArguments,
+          path.node.optional,
+        );
   },
 };

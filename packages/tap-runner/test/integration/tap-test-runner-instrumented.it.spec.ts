@@ -1,5 +1,10 @@
 import { expect } from 'chai';
-import { assertions, factory, TempTestDirectorySandbox, testInjector } from '@stryker-mutator/test-helpers';
+import {
+  assertions,
+  factory,
+  TempTestDirectorySandbox,
+  testInjector,
+} from '@stryker-mutator/test-helpers';
 
 import { createTapTestRunnerFactory, TapTestRunner } from '../../src/index.js';
 import { TapRunnerOptionsWithStrykerOptions } from '../../src/tap-runner-options-with-stryker-options.js';
@@ -12,8 +17,11 @@ describe('Running in an example project', () => {
   beforeEach(async () => {
     sandbox = new TempTestDirectorySandbox('example-instrumented');
     await sandbox.init();
-    (testInjector.options as TapRunnerOptionsWithStrykerOptions).tap = tapRunnerOptions();
-    sut = testInjector.injector.injectFunction(createTapTestRunnerFactory('__stryker2__'));
+    (testInjector.options as TapRunnerOptionsWithStrykerOptions).tap =
+      tapRunnerOptions();
+    sut = testInjector.injector.injectFunction(
+      createTapTestRunnerFactory('__stryker2__'),
+    );
     await sut.init();
   });
   afterEach(async () => {
@@ -23,12 +31,17 @@ describe('Running in an example project', () => {
   it('should be able run on an instrumented file', async () => {
     // Act
     await sut.dryRun(factory.dryRunOptions({}));
-    const mutantRunOptions = factory.mutantRunOptions({ hitLimit: 10, activeMutant: factory.mutant({ id: '1' }) });
+    const mutantRunOptions = factory.mutantRunOptions({
+      hitLimit: 10,
+      activeMutant: factory.mutant({ id: '1' }),
+    });
     const run = await sut.mutantRun(mutantRunOptions);
 
     // Assert
     assertions.expectKilled(run);
-    expect(run.failureMessage).eq('Adding two numbers > Adding 10 and 5 equal to 15: Adding 10 and 5 equal to 15');
+    expect(run.failureMessage).eq(
+      'Adding two numbers > Adding 10 and 5 equal to 15: Adding 10 and 5 equal to 15',
+    );
   });
 
   it('should report coverage on dryRun', async () => {
@@ -61,7 +74,10 @@ describe('Running in an example project', () => {
 
   it('should be able to determine hit limit', async () => {
     // Act
-    const mutantRunOptions = factory.mutantRunOptions({ hitLimit: 10, activeMutant: factory.mutant({ id: '7' }) });
+    const mutantRunOptions = factory.mutantRunOptions({
+      hitLimit: 10,
+      activeMutant: factory.mutant({ id: '7' }),
+    });
     await sut.dryRun(factory.dryRunOptions({}));
     const run = await sut.mutantRun(mutantRunOptions);
 

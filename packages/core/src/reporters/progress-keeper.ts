@@ -1,5 +1,15 @@
-import { MutantResult, MutantRunPlan, MutantTestPlan, PlanKind } from '@stryker-mutator/api/core';
-import { DryRunCompletedEvent, MutationTestingPlanReadyEvent, Reporter, RunTiming } from '@stryker-mutator/api/report';
+import {
+  MutantResult,
+  MutantRunPlan,
+  MutantTestPlan,
+  PlanKind,
+} from '@stryker-mutator/api/core';
+import {
+  DryRunCompletedEvent,
+  MutationTestingPlanReadyEvent,
+  Reporter,
+  RunTiming,
+} from '@stryker-mutator/api/report';
 import { TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
 
 import { Timer } from '../utils/timer.js';
@@ -18,7 +28,10 @@ export abstract class ProgressKeeper implements Reporter {
     ticks: 0,
   };
 
-  public onDryRunCompleted({ timing, capabilities }: DryRunCompletedEvent): void {
+  public onDryRunCompleted({
+    timing,
+    capabilities,
+  }: DryRunCompletedEvent): void {
     this.timing = timing;
     this.capabilities = capabilities;
   }
@@ -27,19 +40,27 @@ export abstract class ProgressKeeper implements Reporter {
    * An event emitted when the mutant test plan is calculated.
    * @param event The mutant test plan ready event
    */
-  public onMutationTestingPlanReady({ mutantPlans }: MutationTestingPlanReadyEvent): void {
+  public onMutationTestingPlanReady({
+    mutantPlans,
+  }: MutationTestingPlanReadyEvent): void {
     this.timer = new Timer();
     this.ticksByMutantId = new Map(
       mutantPlans.filter(isRunPlan).map(({ netTime, mutant, runOptions }) => {
         let ticks = netTime;
-        if (!this.capabilities.reloadEnvironment && runOptions.reloadEnvironment) {
+        if (
+          !this.capabilities.reloadEnvironment &&
+          runOptions.reloadEnvironment
+        ) {
           ticks += this.timing.overhead;
         }
         return [mutant.id, ticks];
       }),
     );
     this.progress.mutants = this.ticksByMutantId.size;
-    this.progress.total = [...this.ticksByMutantId.values()].reduce((acc, n) => acc + n, 0);
+    this.progress.total = [...this.ticksByMutantId.values()].reduce(
+      (acc, n) => acc + n,
+      0,
+    );
   }
 
   public onMutantTested(result: MutantResult): number {
@@ -62,7 +83,10 @@ export abstract class ProgressKeeper implements Reporter {
   }
 
   protected getEtc(): string {
-    const totalSecondsLeft = Math.floor((this.timer.elapsedSeconds() / this.progress.ticks) * (this.progress.total - this.progress.ticks));
+    const totalSecondsLeft = Math.floor(
+      (this.timer.elapsedSeconds() / this.progress.ticks) *
+        (this.progress.total - this.progress.ticks),
+    );
 
     if (isFinite(totalSecondsLeft) && totalSecondsLeft > 0) {
       return this.formatTime(totalSecondsLeft);

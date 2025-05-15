@@ -31,21 +31,51 @@ export class LoggerImpl implements Logger {
     return this.#loggingBackend.isEnabled(LogLevel.Fatal);
   }
   trace(message: string, ...args: any[]): void {
-    this.#loggingBackend.log(LoggingEvent.create(this.#categoryName, LogLevel.Trace, [message, ...args]));
+    this.#loggingBackend.log(
+      LoggingEvent.create(this.#categoryName, LogLevel.Trace, [
+        message,
+        ...args,
+      ]),
+    );
   }
   debug(message: string, ...args: any[]): void {
-    this.#loggingBackend.log(LoggingEvent.create(this.#categoryName, LogLevel.Debug, [message, ...args]));
+    this.#loggingBackend.log(
+      LoggingEvent.create(this.#categoryName, LogLevel.Debug, [
+        message,
+        ...args,
+      ]),
+    );
   }
   info(message: string, ...args: any[]): void {
-    this.#loggingBackend.log(LoggingEvent.create(this.#categoryName, LogLevel.Information, [message, ...args]));
+    this.#loggingBackend.log(
+      LoggingEvent.create(this.#categoryName, LogLevel.Information, [
+        message,
+        ...args,
+      ]),
+    );
   }
   warn(message: string, ...args: any[]): void {
-    this.#loggingBackend.log(LoggingEvent.create(this.#categoryName, LogLevel.Warning, [message, ...args]));
+    this.#loggingBackend.log(
+      LoggingEvent.create(this.#categoryName, LogLevel.Warning, [
+        message,
+        ...args,
+      ]),
+    );
   }
   error(message: string, ...args: any[]): void {
-    this.#loggingBackend.log(LoggingEvent.create(this.#categoryName, LogLevel.Error, [message, ...args]));
+    this.#loggingBackend.log(
+      LoggingEvent.create(this.#categoryName, LogLevel.Error, [
+        message,
+        ...args,
+      ]),
+    );
   }
   fatal(message: string, ...args: any[]): void {
-    this.#loggingBackend.log(LoggingEvent.create(this.#categoryName, LogLevel.Fatal, [message, ...args]));
+    this.#loggingBackend.log(
+      LoggingEvent.create(this.#categoryName, LogLevel.Fatal, [
+        message,
+        ...args,
+      ]),
+    );
   }
 }

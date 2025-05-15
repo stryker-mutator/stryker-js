@@ -20,7 +20,10 @@ export class JsonReporter implements Reporter {
     private readonly log: Logger,
   ) {}
 
-  public static readonly inject = tokens(commonTokens.options, commonTokens.logger);
+  public static readonly inject = tokens(
+    commonTokens.options,
+    commonTokens.logger,
+  );
 
   public onMutationTestReportReady(report: schema.MutationTestResult): void {
     this.mainPromise = this.generateReport(report);
@@ -33,7 +36,10 @@ export class JsonReporter implements Reporter {
   private async generateReport(report: schema.MutationTestResult) {
     const filePath = path.normalize(this.options.jsonReporter.fileName);
     this.log.debug(`Using relative path ${filePath}`);
-    await reporterUtil.writeFile(path.resolve(filePath), JSON.stringify(report, null, INDENTION_LEVEL));
+    await reporterUtil.writeFile(
+      path.resolve(filePath),
+      JSON.stringify(report, null, INDENTION_LEVEL),
+    );
     this.log.info(`Your report can be found at: ${fileUrl(filePath)}`);
   }
 }

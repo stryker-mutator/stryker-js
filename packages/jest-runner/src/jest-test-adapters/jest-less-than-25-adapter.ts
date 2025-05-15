@@ -12,7 +12,12 @@ export class JestLessThan25TestAdapter implements JestTestAdapter {
   public static readonly inject = [pluginTokens.jestWrapper] as const;
   constructor(private readonly jestWrapper: JestWrapper) {}
 
-  public run({ jestConfig, fileNamesUnderTest, testNamePattern, testLocationInResults }: RunSettings): Promise<JestRunResult> {
+  public run({
+    jestConfig,
+    fileNamesUnderTest,
+    testNamePattern,
+    testLocationInResults,
+  }: RunSettings): Promise<JestRunResult> {
     const config = JSON.stringify(jestConfig);
     return this.jestWrapper.runCLI(
       {

@@ -30,7 +30,13 @@ export class ScriptFile {
 
   private getOffset(pos: Position): number {
     if (!this.sourceFile) {
-      this.sourceFile = ts.createSourceFile(this.fileName, this.content, ts.ScriptTarget.Latest, false, undefined);
+      this.sourceFile = ts.createSourceFile(
+        this.fileName,
+        this.content,
+        ts.ScriptTarget.Latest,
+        false,
+        undefined,
+      );
     }
     return this.sourceFile.getPositionOfLineAndCharacter(pos.line, pos.column);
   }

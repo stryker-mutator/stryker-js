@@ -22,9 +22,21 @@ describe(sut.name, () => {
     });
 
     it('should mutate a template string referencing another variable', () => {
-      expectJSMutation(sut, 'const a = 10; const b = `${a} mutations`;', 'const a = 10; const b = ``;');
-      expectJSMutation(sut, 'const a = 10; const b = `mutations: ${a}`;', 'const a = 10; const b = ``;');
-      expectJSMutation(sut, 'const a = 10; const b = `mutations: ${a} out of 10`;', 'const a = 10; const b = ``;');
+      expectJSMutation(
+        sut,
+        'const a = 10; const b = `${a} mutations`;',
+        'const a = 10; const b = ``;',
+      );
+      expectJSMutation(
+        sut,
+        'const a = 10; const b = `mutations: ${a}`;',
+        'const a = 10; const b = ``;',
+      );
+      expectJSMutation(
+        sut,
+        'const a = 10; const b = `mutations: ${a} out of 10`;',
+        'const a = 10; const b = ``;',
+      );
     });
 
     it('should mutate empty strings', () => {
@@ -50,8 +62,17 @@ describe(sut.name, () => {
     });
 
     it('should mutate template literals in symbols with descriptions', () => {
-      expectJSMutation(sut, 'const a = Symbol(`foo`);', 'const a = Symbol(``);');
-      expectJSMutation(sut, "const a = Symbol('foo' + 'bar');", 'const a = Symbol(\'foo\' + "");', 'const a = Symbol("" + \'bar\');');
+      expectJSMutation(
+        sut,
+        'const a = Symbol(`foo`);',
+        'const a = Symbol(``);',
+      );
+      expectJSMutation(
+        sut,
+        "const a = Symbol('foo' + 'bar');",
+        'const a = Symbol(\'foo\' + "");',
+        'const a = Symbol("" + \'bar\');',
+      );
     });
   });
 
@@ -79,7 +100,11 @@ describe(sut.name, () => {
 
   describe('type declarations', () => {
     it('should not mutate type declarations', () => {
-      expectJSMutation(sut, 'const a: "hello" = "hello";', 'const a: "hello" = "";');
+      expectJSMutation(
+        sut,
+        'const a: "hello" = "hello";',
+        'const a: "hello" = "";',
+      );
       expectJSMutation(sut, 'const a: Record<"id", number> = { id: 10 }');
     });
 
@@ -88,22 +113,39 @@ describe(sut.name, () => {
 
   describe('object properties', () => {
     it('should not mutate inside object property keys', () => {
-      expectJSMutation(sut, 'const { className, "aria-label": label } = props;');
+      expectJSMutation(
+        sut,
+        'const { className, "aria-label": label } = props;',
+      );
     });
     it('should not mutate inside object property keys', () => {
-      expectJSMutation(sut, 'const foo = { className, ["aria-label"]: label };');
+      expectJSMutation(
+        sut,
+        'const foo = { className, ["aria-label"]: label };',
+      );
     });
     it('should still mutate inside object property values', () => {
-      expectJSMutation(sut, 'const foo = { bar: "baz" };', 'const foo = { bar: "" };');
+      expectJSMutation(
+        sut,
+        'const foo = { bar: "baz" };',
+        'const foo = { bar: "" };',
+      );
     });
     it('should not mutate class property keys', () => {
       expectJSMutation(sut, 'class Foo { "baz-bar" = 4; }');
     });
     it('should not mutate method names', () => {
-      expectJSMutation(sut, 'const watchers = {"category.type"(categoryType) { }}');
+      expectJSMutation(
+        sut,
+        'const watchers = {"category.type"(categoryType) { }}',
+      );
     });
     it('should mutate class property values', () => {
-      expectJSMutation(sut, 'class Foo { bar = "4"; }', 'class Foo { bar = ""; }');
+      expectJSMutation(
+        sut,
+        'class Foo { bar = "4"; }',
+        'class Foo { bar = ""; }',
+      );
     });
   });
 

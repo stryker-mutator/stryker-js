@@ -27,7 +27,9 @@ describe(EventRecorderReporter.name, () => {
       });
 
       it('should clean the baseFolder', () => {
-        expect(fileUtils.cleanDir).to.have.been.calledWith('reports/mutation/events');
+        expect(fileUtils.cleanDir).to.have.been.calledWith(
+          'reports/mutation/events',
+        );
       });
 
       const arrangeActAssertEvent = (eventName: keyof Reporter) => {
@@ -50,18 +52,24 @@ describe(EventRecorderReporter.name, () => {
             beforeEach(() => writeFileStub.rejects(expectedError));
             arrange();
 
-            it('should reject `wrapUp`', () => expect(writeFileRejection).to.be.eq(expectedError));
+            it('should reject `wrapUp`', () =>
+              expect(writeFileRejection).to.be.eq(expectedError));
           });
 
           describe('when writeFile is successful', () => {
             arrange();
             it('should writeFile', () =>
-              expect(fs.promises.writeFile).to.have.been.calledWith(sinon.match(RegExp(`.*0000\\d-${eventName}\\.json`)), JSON.stringify(expected)));
+              expect(fs.promises.writeFile).to.have.been.calledWith(
+                sinon.match(RegExp(`.*0000\\d-${eventName}\\.json`)),
+                JSON.stringify(expected),
+              ));
           });
         });
       };
 
-      factory.ALL_REPORTER_EVENTS.filter((event) => event !== 'wrapUp').forEach(arrangeActAssertEvent);
+      factory.ALL_REPORTER_EVENTS.filter((event) => event !== 'wrapUp').forEach(
+        arrangeActAssertEvent,
+      );
     });
 
     describe('and cleanFolder results in a rejection', () => {

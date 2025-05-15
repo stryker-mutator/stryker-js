@@ -36,28 +36,36 @@ export class Task<T = void> {
 /**
  * A task that can expire after the given time.
  */
-export class ExpirableTask<T = void> extends Task<T | typeof ExpirableTask.TimeoutExpired> {
-  public static readonly TimeoutExpired: unique symbol = Symbol('TimeoutExpired');
+export class ExpirableTask<T = void> extends Task<
+  T | typeof ExpirableTask.TimeoutExpired
+> {
+  public static readonly TimeoutExpired: unique symbol =
+    Symbol('TimeoutExpired');
 
   constructor(timeoutMS: number) {
     super();
     this._promise = ExpirableTask.timeout(this._promise, timeoutMS);
   }
 
-  public static timeout<K>(promise: Promise<K>, ms: number): Promise<K | typeof ExpirableTask.TimeoutExpired> {
-    const sleep = new Promise<K | typeof ExpirableTask.TimeoutExpired>((res, rej) => {
-      const timer = setTimeout(() => res(ExpirableTask.TimeoutExpired), ms);
-      promise
-        .then((result) => {
-          clearTimeout(timer);
-          res(result);
-        })
-        .catch((error: unknown) => {
-          clearTimeout(timer);
-          // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
-          rej(error);
-        });
-    });
+  public static timeout<K>(
+    promise: Promise<K>,
+    ms: number,
+  ): Promise<K | typeof ExpirableTask.TimeoutExpired> {
+    const sleep = new Promise<K | typeof ExpirableTask.TimeoutExpired>(
+      (res, rej) => {
+        const timer = setTimeout(() => res(ExpirableTask.TimeoutExpired), ms);
+        promise
+          .then((result) => {
+            clearTimeout(timer);
+            res(result);
+          })
+          .catch((error: unknown) => {
+            clearTimeout(timer);
+            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
+            rej(error);
+          });
+      },
+    );
     return sleep;
   }
 }

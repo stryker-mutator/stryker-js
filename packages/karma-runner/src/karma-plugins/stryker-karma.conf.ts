@@ -3,11 +3,19 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
-import type { Config, ConfigOptions, ClientOptions, InlinePluginType } from 'karma';
+import type {
+  Config,
+  ConfigOptions,
+  ClientOptions,
+  InlinePluginType,
+} from 'karma';
 import { noopLogger, requireResolve } from '@stryker-mutator/util';
 
 import { StrykerReporter, strykerReporterFactory } from './stryker-reporter.js';
-import { TestHooksMiddleware, TEST_HOOKS_FILE_NAME } from './test-hooks-middleware.js';
+import {
+  TestHooksMiddleware,
+  TEST_HOOKS_FILE_NAME,
+} from './test-hooks-middleware.js';
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -27,14 +35,20 @@ function setDefaultOptions(config: Config) {
   });
 }
 
-async function setUserKarmaConfigFile(config: Config, log: Logger, requireFromCwd: typeof requireResolve) {
+async function setUserKarmaConfigFile(
+  config: Config,
+  log: Logger,
+  requireFromCwd: typeof requireResolve,
+) {
   if (globalSettings.karmaConfigFile) {
     const configFileName = path.resolve(globalSettings.karmaConfigFile);
     log.debug('Importing config from "%s"', configFileName);
     try {
       const userConfig = requireFromCwd(configFileName);
       if (typeof userConfig !== 'function') {
-        throw new TypeError(`Karma config file "${configFileName}" should export a function! Found: ${typeof userConfig}`);
+        throw new TypeError(
+          `Karma config file "${configFileName}" should export a function! Found: ${typeof userConfig}`,
+        );
       }
       await userConfig(config);
       config.configFile = configFileName; // override config to ensure karma is as user-like as possible
@@ -111,14 +125,19 @@ function setBasePath(config: Config) {
   if (!config.basePath) {
     // We need to set the base path, so karma won't use this file to base everything of
     if (globalSettings.karmaConfigFile) {
-      config.basePath = path.resolve(path.dirname(globalSettings.karmaConfigFile));
+      config.basePath = path.resolve(
+        path.dirname(globalSettings.karmaConfigFile),
+      );
     } else {
       config.basePath = process.cwd();
     }
   }
 }
 
-function addPlugin(karmaConfig: ConfigOptions, karmaPlugin: Record<string, InlinePluginType> | string) {
+function addPlugin(
+  karmaConfig: ConfigOptions,
+  karmaPlugin: Record<string, InlinePluginType> | string,
+) {
   karmaConfig.plugins = karmaConfig.plugins ?? ['karma-*'];
   karmaConfig.plugins.push(karmaPlugin);
 }
@@ -132,13 +151,25 @@ function configureTestHooksMiddleware(config: Config) {
   // Add test run middleware file
   config.files = config.files ?? [];
 
-  config.files.unshift({ pattern: TEST_HOOKS_FILE_NAME, included: true, watched: false, served: false, nocache: true }); // Add a custom hooks file to provide hooks
-  const middleware: string[] = config.beforeMiddleware ?? (config.beforeMiddleware = []);
+  config.files.unshift({
+    pattern: TEST_HOOKS_FILE_NAME,
+    included: true,
+    watched: false,
+    served: false,
+    nocache: true,
+  }); // Add a custom hooks file to provide hooks
+  const middleware: string[] =
+    config.beforeMiddleware ?? (config.beforeMiddleware = []);
   middleware.unshift(TestHooksMiddleware.name);
 
   TestHooksMiddleware.instance.configureTestFramework(config.frameworks);
 
-  addPlugin(config, { [`middleware:${TestHooksMiddleware.name}`]: ['value', TestHooksMiddleware.instance.handler] });
+  addPlugin(config, {
+    [`middleware:${TestHooksMiddleware.name}`]: [
+      'value',
+      TestHooksMiddleware.instance.handler,
+    ],
+  });
 }
 
 function configureStrykerMutantCoverageAdapter(config: Config) {
@@ -154,7 +185,9 @@ function configureStrykerMutantCoverageAdapter(config: Config) {
 }
 
 function configureStrykerReporter(config: Config) {
-  addPlugin(config, { [`reporter:${StrykerReporter.name}`]: ['factory', strykerReporterFactory] });
+  addPlugin(config, {
+    [`reporter:${StrykerReporter.name}`]: ['factory', strykerReporterFactory],
+  });
   if (!config.reporters) {
     config.reporters = [];
   }
@@ -175,7 +208,10 @@ const globalSettings: GlobalSettings = {
   disableBail: false,
 };
 
-export async function configureKarma(config: Config, requireFromCwd = requireResolve): Promise<void> {
+export async function configureKarma(
+  config: Config,
+  requireFromCwd = requireResolve,
+): Promise<void> {
   const log = globalSettings.getLogger(path.basename(filename));
   setDefaultOptions(config);
   await setUserKarmaConfigFile(config, log, requireFromCwd);

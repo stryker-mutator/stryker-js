@@ -21,7 +21,8 @@ export class TestCoverageTestDouble implements I<TestCoverage> {
   }
   public addCoverage(mutantId: number | string, testIds: string[]): void {
     this.hasCoverage = true;
-    const testResultSet = this.testsByMutantId.get(mutantId.toString()) ?? new Set();
+    const testResultSet =
+      this.testsByMutantId.get(mutantId.toString()) ?? new Set();
     this.testsByMutantId.set(mutantId.toString(), testResultSet);
     for (const testId of testIds) {
       const test = this.testsById.get(testId);

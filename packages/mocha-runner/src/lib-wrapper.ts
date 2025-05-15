@@ -12,7 +12,11 @@ const mochaRoot = path.dirname(require.resolve('mocha/package.json'));
 
 const runHelpers = require(`${mochaRoot}/lib/cli/run-helpers`);
 
-let collectFiles: ((options: MochaOptions) => string[] | { files: string[]; unmatchedFiles: string[] }) | undefined;
+let collectFiles:
+  | ((
+      options: MochaOptions,
+    ) => string[] | { files: string[]; unmatchedFiles: string[] })
+  | undefined;
 
 /*
  * If read, object containing parsed arguments
@@ -20,10 +24,16 @@ let collectFiles: ((options: MochaOptions) => string[] | { files: string[]; unma
  * @see https://mochajs.org/api/module-lib_cli_options.html#.loadOptions
  */
 
-const loadOptions: (argv?: string[] | string) => Record<string, any> | undefined = require(`${mochaRoot}/lib/cli/options`).loadOptions;
+const loadOptions: (
+  argv?: string[] | string,
+) => Record<string, any> | undefined = require(
+  `${mochaRoot}/lib/cli/options`,
+).loadOptions;
 
-const handleRequires: (requires?: string[]) => Promise<RootHookObject> = runHelpers.handleRequires;
-const loadRootHooks: ((rootHooks: any) => Promise<any>) | undefined = runHelpers.loadRootHooks; // loadRootHooks is available since mocha v7.2 and removed again in 8.0
+const handleRequires: (requires?: string[]) => Promise<RootHookObject> =
+  runHelpers.handleRequires;
+const loadRootHooks: ((rootHooks: any) => Promise<any>) | undefined =
+  runHelpers.loadRootHooks; // loadRootHooks is available since mocha v7.2 and removed again in 8.0
 
 collectFiles = runHelpers.handleFiles;
 if (!collectFiles) {

@@ -1,7 +1,17 @@
 import { errorToString } from '@stryker-mutator/util';
-import { TestRunner, DryRunOptions, MutantRunOptions, DryRunResult, MutantRunResult } from '@stryker-mutator/api/test-runner';
+import {
+  TestRunner,
+  DryRunOptions,
+  MutantRunOptions,
+  DryRunResult,
+  MutantRunResult,
+} from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
-import { factory, assertions, testInjector } from '@stryker-mutator/test-helpers';
+import {
+  factory,
+  assertions,
+  testInjector,
+} from '@stryker-mutator/test-helpers';
 
 import { ChildProcessCrashedError } from '../../../src/child-proxy/child-process-crashed-error.js';
 import { OutOfMemoryError } from '../../../src/child-proxy/out-of-memory-error.js';
@@ -12,14 +22,19 @@ describe(RetryRejectedDecorator.name, () => {
   let sut: RetryRejectedDecorator;
   let testRunner1: sinon.SinonStubbedInstance<Required<TestRunner>>;
   let testRunner2: sinon.SinonStubbedInstance<Required<TestRunner>>;
-  let availableTestRunners: Array<sinon.SinonStubbedInstance<Required<TestRunner>>>;
+  let availableTestRunners: Array<
+    sinon.SinonStubbedInstance<Required<TestRunner>>
+  >;
   const crashedError = new ChildProcessCrashedError(42, '');
 
   beforeEach(() => {
     testRunner1 = factory.testRunner();
     testRunner2 = factory.testRunner();
     availableTestRunners = [testRunner1, testRunner2];
-    sut = new RetryRejectedDecorator(testInjector.logger, () => availableTestRunners.shift() ?? factory.testRunner());
+    sut = new RetryRejectedDecorator(
+      testInjector.logger,
+      () => availableTestRunners.shift() ?? factory.testRunner(),
+    );
   });
 
   it('should not override `init`', () => {
@@ -54,13 +69,20 @@ describe(RetryRejectedDecorator.name, () => {
 
   function describeRun<T extends keyof RunOptionsByMethod>(
     runMethod: T,
-    act: (sut: RetryRejectedDecorator, options: RunOptionsByMethod[T]) => Promise<RunResultByMethod[T]>,
+    act: (
+      sut: RetryRejectedDecorator,
+      options: RunOptionsByMethod[T],
+    ) => Promise<RunResultByMethod[T]>,
     optionsFactory: () => RunOptionsByMethod[T],
-    resultFactory: () => ReturnType<TestRunner[T]> extends Promise<infer R> ? R : never,
+    resultFactory: () => ReturnType<TestRunner[T]> extends Promise<infer R>
+      ? R
+      : never,
   ) {
     describe(runMethod, () => {
       let options: RunOptionsByMethod[T];
-      let expectedResult: ReturnType<TestRunner[T]> extends Promise<infer R> ? R : never;
+      let expectedResult: ReturnType<TestRunner[T]> extends Promise<infer R>
+        ? R
+        : never;
 
       beforeEach(() => {
         options = optionsFactory();

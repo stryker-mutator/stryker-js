@@ -15,7 +15,9 @@ describe(MaxTestRunnerReuseDecorator.name, () => {
   });
 
   const getSut = (maxTestRunnerReuse: number) => {
-    const sut = new MaxTestRunnerReuseDecorator(() => testRunner, { maxTestRunnerReuse: maxTestRunnerReuse });
+    const sut = new MaxTestRunnerReuseDecorator(() => testRunner, {
+      maxTestRunnerReuse: maxTestRunnerReuse,
+    });
     sinon.spy(sut, 'dispose');
     return sut;
   };
@@ -25,7 +27,9 @@ describe(MaxTestRunnerReuseDecorator.name, () => {
   });
 
   it('should override `dispose`', () => {
-    expect(getSut(1).dispose).to.not.be.eq(TestRunnerDecorator.prototype.dispose);
+    expect(getSut(1).dispose).to.not.be.eq(
+      TestRunnerDecorator.prototype.dispose,
+    );
   });
 
   it('should not override `dryRun`', () => {

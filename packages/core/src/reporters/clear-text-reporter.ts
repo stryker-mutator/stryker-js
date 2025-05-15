@@ -5,7 +5,15 @@ import { schema, Position, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
-import { MetricsResult, MutantModel, TestModel, MutationTestMetricsResult, TestFileModel, TestMetrics, TestStatus } from 'mutation-testing-metrics';
+import {
+  MetricsResult,
+  MutantModel,
+  TestModel,
+  MutationTestMetricsResult,
+  TestFileModel,
+  TestMetrics,
+  TestStatus,
+} from 'mutation-testing-metrics';
 import { tokens } from 'typed-inject';
 
 import { getEmojiForStatus, plural } from '../utils/string-utils.js';
@@ -37,7 +45,10 @@ export class ClearTextReporter implements Reporter {
     }
   }
 
-  public onMutationTestReportReady(_report: schema.MutationTestResult, metrics: MutationTestMetricsResult): void {
+  public onMutationTestReportReady(
+    _report: schema.MutationTestResult,
+    metrics: MutationTestMetricsResult,
+  ): void {
     this.writeLine();
 
     if (this.options.clearTextReporter.reportTests) {
@@ -48,9 +59,17 @@ export class ClearTextReporter implements Reporter {
     }
     if (
       this.options.clearTextReporter.reportScoreTable &&
-      (!this.options.clearTextReporter.skipFull || metrics.systemUnderTestMetrics.childResults.some((x) => x.metrics.mutationScore !== 100))
+      (!this.options.clearTextReporter.skipFull ||
+        metrics.systemUnderTestMetrics.childResults.some(
+          (x) => x.metrics.mutationScore !== 100,
+        ))
     ) {
-      this.writeLine(new ClearTextScoreTable(metrics.systemUnderTestMetrics, this.options).draw());
+      this.writeLine(
+        new ClearTextScoreTable(
+          metrics.systemUnderTestMetrics,
+          this.options,
+        ).draw(),
+      );
     }
   }
 
@@ -63,7 +82,10 @@ export class ClearTextReporter implements Reporter {
     };
 
     if (metrics.testMetrics) {
-      const reportTests = (currentResult: MetricsResult<TestFileModel, TestMetrics>, depth = 0) => {
+      const reportTests = (
+        currentResult: MetricsResult<TestFileModel, TestMetrics>,
+        depth = 0,
+      ) => {
         const nameParts: string[] = [currentResult.name];
         while (!currentResult.file && currentResult.childResults.length === 1) {
           [currentResult] = currentResult.childResults;
@@ -73,7 +95,9 @@ export class ClearTextReporter implements Reporter {
         currentResult.file?.tests.forEach((test) => {
           switch (test.status) {
             case TestStatus.Killing:
-              this.writeLine(`${indent(depth + 1)}${this.color('greenBright', '✓')} ${formatTestLine(test, `killed ${test.killedMutants?.length}`)}`);
+              this.writeLine(
+                `${indent(depth + 1)}${this.color('greenBright', '✓')} ${formatTestLine(test, `killed ${test.killedMutants?.length}`)}`,
+              );
               break;
             case TestStatus.Covering:
               this.writeLine(
@@ -81,17 +105,23 @@ export class ClearTextReporter implements Reporter {
               );
               break;
             case TestStatus.NotCovering:
-              this.writeLine(`${indent(depth + 1)}${this.color('redBright', '✘')} ${formatTestLine(test, 'covered 0')}`);
+              this.writeLine(
+                `${indent(depth + 1)}${this.color('redBright', '✘')} ${formatTestLine(test, 'covered 0')}`,
+              );
               break;
           }
         });
-        currentResult.childResults.forEach((childResult) => reportTests(childResult, depth + 1));
+        currentResult.childResults.forEach((childResult) =>
+          reportTests(childResult, depth + 1),
+        );
       };
       reportTests(metrics.testMetrics);
     }
   }
 
-  private reportMutants({ systemUnderTestMetrics }: MutationTestMetricsResult): void {
+  private reportMutants({
+    systemUnderTestMetrics,
+  }: MutationTestMetricsResult): void {
     this.writeLine();
     let totalTests = 0;
 
@@ -117,17 +147,26 @@ export class ClearTextReporter implements Reporter {
       });
     };
     reportMutants(systemUnderTestMetrics.childResults);
-    this.writeLine(`Ran ${(totalTests / systemUnderTestMetrics.metrics.totalMutants).toFixed(2)} tests per mutant on average.`);
+    this.writeLine(
+      `Ran ${(totalTests / systemUnderTestMetrics.metrics.totalMutants).toFixed(2)} tests per mutant on average.`,
+    );
   }
 
   private statusLabel(mutant: MutantModel): string {
     const { status } = mutant;
-    return this.options.clearTextReporter.allowEmojis ? `${getEmojiForStatus(status)} ${status}` : status.toString();
+    return this.options.clearTextReporter.allowEmojis
+      ? `${getEmojiForStatus(status)} ${status}`
+      : status.toString();
   }
 
-  private reportMutantResult(result: MutantModel, logImplementation: (input: string) => void): void {
+  private reportMutantResult(
+    result: MutantModel,
+    logImplementation: (input: string) => void,
+  ): void {
     logImplementation(`[${this.statusLabel(result)}] ${result.mutatorName}`);
-    logImplementation(this.colorSourceFileAndLocation(result.fileName, result.location.start));
+    logImplementation(
+      this.colorSourceFileAndLocation(result.fileName, result.location.start),
+    );
 
     result
       .getOriginalLines()
@@ -151,14 +190,24 @@ export class ClearTextReporter implements Reporter {
       }
     } else if (result.status === 'Killed' && result.killedByTests?.length) {
       logImplementation(`Killed by: ${result.killedByTests[0].name}`);
-    } else if (result.status === 'RuntimeError' || result.status === 'CompileError') {
+    } else if (
+      result.status === 'RuntimeError' ||
+      result.status === 'CompileError'
+    ) {
       logImplementation(`Error message: ${result.statusReason}`);
     }
     logImplementation('');
   }
 
-  private colorSourceFileAndLocation(fileName: string, position: Position): string {
-    return [this.color('cyan', fileName), this.color('yellow', position.line), this.color('yellow', position.column)].join(':');
+  private colorSourceFileAndLocation(
+    fileName: string,
+    position: Position,
+  ): string {
+    return [
+      this.color('cyan', fileName),
+      this.color('yellow', position.line),
+      this.color('yellow', position.column),
+    ].join(':');
   }
 
   private color(color: Color, ...text: unknown[]) {
@@ -168,12 +217,18 @@ export class ClearTextReporter implements Reporter {
     return text.join('');
   }
 
-  private logExecutedTests(tests: TestModel[], logImplementation: (input: string) => void) {
+  private logExecutedTests(
+    tests: TestModel[],
+    logImplementation: (input: string) => void,
+  ) {
     if (!this.options.clearTextReporter.logTests) {
       return;
     }
 
-    const testCount = Math.min(this.options.clearTextReporter.maxTestsToLog, tests.length);
+    const testCount = Math.min(
+      this.options.clearTextReporter.maxTestsToLog,
+      tests.length,
+    );
 
     if (testCount > 0) {
       logImplementation('Tests ran:');

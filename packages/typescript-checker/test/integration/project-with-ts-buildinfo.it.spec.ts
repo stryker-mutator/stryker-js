@@ -23,7 +23,9 @@ const resolveTestResource = path.resolve.bind(
 
 describe('project-with-ts-buildinfo', () => {
   it('should load project on init', async () => {
-    (testInjector.options as TypescriptCheckerOptionsWithStrykerOptions).typescriptChecker = { prioritizePerformanceOverAccuracy: true };
+    (
+      testInjector.options as TypescriptCheckerOptionsWithStrykerOptions
+    ).typescriptChecker = { prioritizePerformanceOverAccuracy: true };
     testInjector.options.tsconfigFile = resolveTestResource('tsconfig.json');
     const sut = testInjector.injector.injectFunction(createTypescriptChecker);
     const group = await sut.group([createMutant('src/index.ts', '', '')]);
@@ -32,10 +34,19 @@ describe('project-with-ts-buildinfo', () => {
 });
 
 const fileContents = Object.freeze({
-  ['src/index.ts']: fs.readFileSync(resolveTestResource('src', 'index.ts'), 'utf8'),
+  ['src/index.ts']: fs.readFileSync(
+    resolveTestResource('src', 'index.ts'),
+    'utf8',
+  ),
 });
 
-function createMutant(fileName: 'src/index.ts', findText: string, replacement: string, id = '42', offset = 0): Mutant {
+function createMutant(
+  fileName: 'src/index.ts',
+  findText: string,
+  replacement: string,
+  id = '42',
+  offset = 0,
+): Mutant {
   const lines = fileContents[fileName].split(os.EOL);
   const lineNumber = lines.findIndex((l) => l.includes(findText));
   if (lineNumber === -1) {

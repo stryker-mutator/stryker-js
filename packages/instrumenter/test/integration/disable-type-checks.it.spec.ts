@@ -21,11 +21,20 @@ describe(`${disableTypeChecks.name} integration`, () => {
     await arrangeAndActAssert('vue-tsx-sample.vue');
   });
 
-  async function arrangeAndActAssert(fileName: string, options = createInstrumenterOptions()) {
+  async function arrangeAndActAssert(
+    fileName: string,
+    options = createInstrumenterOptions(),
+  ) {
     const fullFileName = resolveTestResource('disable-type-checks', fileName);
-    const file: File = { name: fullFileName, content: await fsPromises.readFile(fullFileName, 'utf-8'), mutate: true };
+    const file: File = {
+      name: fullFileName,
+      content: await fsPromises.readFile(fullFileName, 'utf-8'),
+      mutate: true,
+    };
     const result = await disableTypeChecks(file, options);
-    chaiJestSnapshot.setFilename(resolveTestResource('disable-type-checks', `${fileName}.out.snap`));
+    chaiJestSnapshot.setFilename(
+      resolveTestResource('disable-type-checks', `${fileName}.out.snap`),
+    );
     expect(result.content).matchSnapshot();
   }
 });

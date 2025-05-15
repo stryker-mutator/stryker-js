@@ -1,4 +1,7 @@
-import { CompleteDryRunResult, TestRunnerCapabilities } from '../test-runner/index.js';
+import {
+  CompleteDryRunResult,
+  TestRunnerCapabilities,
+} from '../test-runner/index.js';
 
 export interface DryRunCompletedEvent {
   result: CompleteDryRunResult;

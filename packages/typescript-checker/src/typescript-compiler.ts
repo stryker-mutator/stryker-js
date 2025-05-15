@@ -36,8 +36,14 @@ export type SourceFiles = Map<
 >;
 const FILE_CHANGE_DETECTED_DIAGNOSTIC_CODE = 6032;
 
-export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCreator {
-  public static inject = tokens(commonTokens.logger, commonTokens.options, pluginTokens.fs);
+export class TypescriptCompiler
+  implements ITypescriptCompiler, IFileRelationCreator
+{
+  public static inject = tokens(
+    commonTokens.logger,
+    commonTokens.options,
+    pluginTokens.fs,
+  );
 
   private readonly allTSConfigFiles: Set<string>;
   private readonly tsconfigFile: string;
@@ -111,7 +117,9 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
         },
       },
       (...args) => {
-        const program = ts.createEmitAndSemanticDiagnosticsBuilderProgram(...args);
+        const program = ts.createEmitAndSemanticDiagnosticsBuilderProgram(
+          ...args,
+        );
         if (this._nodes.size) {
           return program;
         }
@@ -124,14 +132,21 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
               imports: new Set(
                 program
                   .getAllDependencies(file)
-                  .filter((importFile) => !importFile.includes('/node_modules/') && file.fileName !== importFile)
+                  .filter(
+                    (importFile) =>
+                      !importFile.includes('/node_modules/') &&
+                      file.fileName !== importFile,
+                  )
                   .flatMap((importFile) => this.resolveTSInputFile(importFile)),
               ),
             });
           });
 
         function filterDependency(file: ts.SourceFile) {
-          if (file.fileName.endsWith('.d.ts') || file.fileName.includes('node_modules')) {
+          if (
+            file.fileName.endsWith('.d.ts') ||
+            file.fileName.includes('node_modules')
+          ) {
             return false;
           }
 
@@ -155,7 +170,11 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
       },
     );
 
-    const compiler = ts.createSolutionBuilderWithWatch(host, [this.tsconfigFile], {});
+    const compiler = ts.createSolutionBuilderWithWatch(
+      host,
+      [this.tsconfigFile],
+      {},
+    );
     compiler.build();
     return await this.check([]);
   }
@@ -195,7 +214,9 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
         }
 
         const importFileNames = [...file.imports];
-        node.children = importFileNames.map((importName) => this._nodes.get(importName)!).filter((n) => n != undefined);
+        node.children = importFileNames
+          .map((importName) => this._nodes.get(importName)!)
+          .filter((n) => n != undefined);
       }
 
       // set parents
@@ -232,7 +253,10 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
       return dependencyFileName;
     }
 
-    const sourceMapFileName = path.resolve(path.dirname(dependencyFileName), sourceMappingURL);
+    const sourceMapFileName = path.resolve(
+      path.dirname(dependencyFileName),
+      sourceMappingURL,
+    );
     const sourceMap = this.fs.getFile(sourceMapFileName);
     if (!sourceMap) {
       this.log.warn(`Could not find sourcemap ${sourceMapFileName}`);
@@ -243,18 +267,27 @@ export class TypescriptCompiler implements ITypescriptCompiler, IFileRelationCre
 
     if (sources?.length === 1) {
       const [sourcePath] = sources;
-      return toPosixFileName(path.resolve(path.dirname(sourceMapFileName), sourcePath));
+      return toPosixFileName(
+        path.resolve(path.dirname(sourceMapFileName), sourcePath),
+      );
     }
 
     return dependencyFileName;
   }
 
-  private adjustTSConfigFile(fileName: string, content: string, buildModeEnabled: boolean) {
+  private adjustTSConfigFile(
+    fileName: string,
+    content: string,
+    buildModeEnabled: boolean,
+  ) {
     const parsedConfig = ts.parseConfigFileTextToJson(fileName, content);
     if (parsedConfig.error) {
       return content; // let the ts compiler deal with this error
     } else {
-      for (const referencedProject of retrieveReferencedProjects(parsedConfig, path.dirname(fileName))) {
+      for (const referencedProject of retrieveReferencedProjects(
+        parsedConfig,
+        path.dirname(fileName),
+      )) {
         this.allTSConfigFiles.add(referencedProject);
       }
       return overrideOptions(parsedConfig, buildModeEnabled);

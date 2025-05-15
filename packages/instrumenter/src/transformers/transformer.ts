@@ -17,7 +17,11 @@ import { transformSvelte } from './svelte-transformer.js';
  * @param mutantCollector the mutant collector that will be used to register and administer mutants
  * @param transformerContext the options used during transforming
  */
-export function transform(ast: Ast, mutantCollector: I<MutantCollector>, transformerContext: Omit<TransformerContext, 'transform'>): void {
+export function transform(
+  ast: Ast,
+  mutantCollector: I<MutantCollector>,
+  transformerContext: Omit<TransformerContext, 'transform'>,
+): void {
   const context: TransformerContext = {
     ...transformerContext,
     transform,
@@ -36,7 +40,11 @@ export function transform(ast: Ast, mutantCollector: I<MutantCollector>, transfo
   }
 }
 
-export type AstTransformer<T extends AstFormat> = (ast: AstByFormat[T], mutantCollector: I<MutantCollector>, context: TransformerContext) => void;
+export type AstTransformer<T extends AstFormat> = (
+  ast: AstByFormat[T],
+  mutantCollector: I<MutantCollector>,
+  context: TransformerContext,
+) => void;
 
 export interface TransformerContext {
   transform: AstTransformer<AstFormat>;

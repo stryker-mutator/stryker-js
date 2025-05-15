@@ -11,7 +11,9 @@ import type { LoggingServerAddress } from '../../../src/logging/index.js';
 import { IdGenerator } from '../../../src/child-proxy/id-generator.js';
 
 describe(CheckerChildProcessProxy.name, () => {
-  let childProcessProxyCreateStub: sinon.SinonStubbedMember<typeof ChildProcessProxy.create>;
+  let childProcessProxyCreateStub: sinon.SinonStubbedMember<
+    typeof ChildProcessProxy.create
+  >;
   let loggingServerAddress: LoggingServerAddress;
   let fileDescriptions: FileDescriptions;
   let idGeneratorStub: sinon.SinonStubbedInstance<IdGenerator>;
@@ -39,7 +41,10 @@ describe(CheckerChildProcessProxy.name, () => {
       createSut();
       sinon.assert.calledWithExactly(
         childProcessProxyCreateStub,
-        new URL('../../../src/checker/checker-worker.js', import.meta.url).toString(),
+        new URL(
+          '../../../src/checker/checker-worker.js',
+          import.meta.url,
+        ).toString(),
         loggingServerAddress,
         testInjector.options,
         fileDescriptions,

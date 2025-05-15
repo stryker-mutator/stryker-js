@@ -1,4 +1,8 @@
-import type { JestEnvironment, EnvironmentContext, JestEnvironmentConfig } from '@jest/environment';
+import type {
+  JestEnvironment,
+  EnvironmentContext,
+  JestEnvironmentConfig,
+} from '@jest/environment';
 import type { Circus } from '@jest/types';
 // @ts-expect-error see https://github.com/microsoft/TypeScript/issues/49721#issuecomment-1319854183
 import type { InstrumenterContext } from '@stryker-mutator/api/core';
@@ -21,7 +25,9 @@ function fullName(test: Circus.TestEntry): string {
 
 const STRYKER_JEST_ENV = Symbol('StrykerJestEnvironment');
 
-export function mixinJestEnvironment<T extends typeof JestEnvironment>(JestEnvironmentClass: T & { [STRYKER_JEST_ENV]?: true }): T {
+export function mixinJestEnvironment<T extends typeof JestEnvironment>(
+  JestEnvironmentClass: T & { [STRYKER_JEST_ENV]?: true },
+): T {
   if (JestEnvironmentClass[STRYKER_JEST_ENV]) {
     return JestEnvironmentClass;
   } else {
@@ -37,10 +43,15 @@ export function mixinJestEnvironment<T extends typeof JestEnvironment>(JestEnvir
       constructor(config: JestEnvironmentConfig, context: EnvironmentContext) {
         super(config, context);
         this.#innerHandleTestEvent = this.handleTestEvent; // grab the "handle test event", since it might be a class property
-        this.#strykerContext = this.global[this.global.__strykerGlobalNamespace__ ?? '__stryker__'] = state.instrumenterContext;
+        this.#strykerContext = this.global[
+          this.global.__strykerGlobalNamespace__ ?? '__stryker__'
+        ] = state.instrumenterContext;
         state.testFilesWithStrykerEnvironment.add(context.testPath);
 
-        this.handleTestEvent = (async (event: Circus.Event, eventState: Circus.State) => {
+        this.handleTestEvent = (async (
+          event: Circus.Event,
+          eventState: Circus.State,
+        ) => {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           await this.#innerHandleTestEvent?.(event as any, eventState);
           if (state.coverageAnalysis === 'perTest') {

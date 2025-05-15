@@ -9,11 +9,20 @@ export const stringLiteralMutator: NodeMutator = {
 
   *mutate(path) {
     if (path.isTemplateLiteral()) {
-      const replacement = path.node.quasis.length === 1 && path.node.quasis[0].value.raw.length === 0 ? 'Stryker was here!' : '';
-      yield types.templateLiteral([types.templateElement({ raw: replacement })], []);
+      const replacement =
+        path.node.quasis.length === 1 &&
+        path.node.quasis[0].value.raw.length === 0
+          ? 'Stryker was here!'
+          : '';
+      yield types.templateLiteral(
+        [types.templateElement({ raw: replacement })],
+        [],
+      );
     }
     if (path.isStringLiteral() && isValidParent(path)) {
-      yield types.stringLiteral(path.node.value.length === 0 ? 'Stryker was here!' : '');
+      yield types.stringLiteral(
+        path.node.value.length === 0 ? 'Stryker was here!' : '',
+      );
     }
   },
 };
@@ -31,7 +40,9 @@ function isValidParent(child: NodePath<babel.types.StringLiteral>): boolean {
     types.isObjectMethod(parent) ||
     (types.isObjectProperty(parent) && parent.key === child.node) ||
     (types.isClassProperty(parent) && parent.key === child.node) ||
-    (types.isCallExpression(parent) && types.isIdentifier(parent.callee, { name: 'require' })) ||
-    (types.isCallExpression(parent) && types.isIdentifier(parent.callee, { name: 'Symbol' }))
+    (types.isCallExpression(parent) &&
+      types.isIdentifier(parent.callee, { name: 'require' })) ||
+    (types.isCallExpression(parent) &&
+      types.isIdentifier(parent.callee, { name: 'Symbol' }))
   );
 }

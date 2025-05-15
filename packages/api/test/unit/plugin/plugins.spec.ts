@@ -1,6 +1,13 @@
 import { expect } from 'chai';
 
-import { tokens, commonTokens, PluginKind, declareClassPlugin, declareFactoryPlugin, declareValuePlugin } from '../../../src/plugin/index.js';
+import {
+  tokens,
+  commonTokens,
+  PluginKind,
+  declareClassPlugin,
+  declareFactoryPlugin,
+  declareValuePlugin,
+} from '../../../src/plugin/index.js';
 import { Logger } from '../../../src/logging/index.js';
 import { MutantResult } from '../../../src/core/index.js';
 
@@ -15,7 +22,9 @@ describe('plugins', () => {
           this.log.info(JSON.stringify(result));
         }
       }
-      expect(declareClassPlugin(PluginKind.Reporter, 'rep', MyReporter)).deep.eq({
+      expect(
+        declareClassPlugin(PluginKind.Reporter, 'rep', MyReporter),
+      ).deep.eq({
         injectableClass: MyReporter,
         kind: PluginKind.Reporter,
         name: 'rep',
@@ -34,7 +43,9 @@ describe('plugins', () => {
       }
       createReporter.inject = tokens(commonTokens.logger);
 
-      expect(declareFactoryPlugin(PluginKind.Reporter, 'rep', createReporter)).deep.eq({
+      expect(
+        declareFactoryPlugin(PluginKind.Reporter, 'rep', createReporter),
+      ).deep.eq({
         factory: createReporter,
         kind: PluginKind.Reporter,
         name: 'rep',

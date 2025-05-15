@@ -24,7 +24,9 @@ class IgnoreRule implements Rule {
 
   private matches(mutatorName: string, line: number): boolean {
     const lineMatches = () => this.line === undefined || this.line === line;
-    const mutatorMatches = () => this.mutatorNames.includes(mutatorName) || this.mutatorNames.includes(WILDCARD);
+    const mutatorMatches = () =>
+      this.mutatorNames.includes(mutatorName) ||
+      this.mutatorNames.includes(WILDCARD);
     return lineMatches() && mutatorMatches();
   }
 
@@ -37,7 +39,11 @@ class IgnoreRule implements Rule {
 }
 
 class RestoreRule extends IgnoreRule {
-  constructor(mutatorNames: string[], line: number | undefined, previousRule: Rule) {
+  constructor(
+    mutatorNames: string[],
+    line: number | undefined,
+    previousRule: Rule,
+  ) {
     super(mutatorNames, line, undefined, previousRule);
   }
 }
@@ -53,7 +59,8 @@ const rootRule: Rule = {
  */
 export class DirectiveBookkeeper {
   // https://regex101.com/r/nWLLLm/1
-  private readonly strykerCommentDirectiveRegex = /^\s?Stryker (disable|restore)(?: (next-line))? ([a-zA-Z, ]+)(?::(.+)?)?/;
+  private readonly strykerCommentDirectiveRegex =
+    /^\s?Stryker (disable|restore)(?: (next-line))? ([a-zA-Z, ]+)(?::(.+)?)?/;
 
   private currentIgnoreRule = rootRule;
   private readonly allMutatorNames: string[];
@@ -71,34 +78,63 @@ export class DirectiveBookkeeper {
       ?.map((comment) => ({
         comment,
         matchResult: this.strykerCommentDirectiveRegex.exec(comment.value) as
-          | [fullMatch: string, directiveType: string, scope: string | undefined, mutators: string, reason: string | undefined]
+          | [
+              fullMatch: string,
+              directiveType: string,
+              scope: string | undefined,
+              mutators: string,
+              reason: string | undefined,
+            ]
           | null,
       }))
       .filter(({ matchResult }) => notEmpty(matchResult))
       .forEach(({ comment, matchResult }) => {
         const [, directiveType, scope, mutators, optionalReason] = matchResult!;
         let mutatorNames = mutators.split(',').map((mutator) => mutator.trim());
-        this.warnAboutUnusedDirective(mutatorNames, directiveType, scope, comment);
+        this.warnAboutUnusedDirective(
+          mutatorNames,
+          directiveType,
+          scope,
+          comment,
+        );
         mutatorNames = mutatorNames.map((mutator) => mutator.toLowerCase());
         const reason = (optionalReason ?? DEFAULT_REASON).trim();
         switch (directiveType) {
           case 'disable':
             switch (scope) {
               case 'next-line':
-                this.currentIgnoreRule = new IgnoreRule(mutatorNames, loc!.start.line, reason, this.currentIgnoreRule);
+                this.currentIgnoreRule = new IgnoreRule(
+                  mutatorNames,
+                  loc!.start.line,
+                  reason,
+                  this.currentIgnoreRule,
+                );
                 break;
               default:
-                this.currentIgnoreRule = new IgnoreRule(mutatorNames, undefined, reason, this.currentIgnoreRule);
+                this.currentIgnoreRule = new IgnoreRule(
+                  mutatorNames,
+                  undefined,
+                  reason,
+                  this.currentIgnoreRule,
+                );
                 break;
             }
             break;
           case 'restore':
             switch (scope) {
               case 'next-line':
-                this.currentIgnoreRule = new RestoreRule(mutatorNames, loc!.start.line, this.currentIgnoreRule);
+                this.currentIgnoreRule = new RestoreRule(
+                  mutatorNames,
+                  loc!.start.line,
+                  this.currentIgnoreRule,
+                );
                 break;
               default:
-                this.currentIgnoreRule = new RestoreRule(mutatorNames, undefined, this.currentIgnoreRule);
+                this.currentIgnoreRule = new RestoreRule(
+                  mutatorNames,
+                  undefined,
+                  this.currentIgnoreRule,
+                );
                 break;
             }
             break;
@@ -106,12 +142,20 @@ export class DirectiveBookkeeper {
       });
   }
 
-  public findIgnoreReason(line: number, mutatorName: string): string | undefined {
+  public findIgnoreReason(
+    line: number,
+    mutatorName: string,
+  ): string | undefined {
     mutatorName = mutatorName.toLowerCase();
     return this.currentIgnoreRule.findIgnoreReason(mutatorName, line);
   }
 
-  private warnAboutUnusedDirective(mutators: string[], directiveType: string, scope: string | undefined, comment: types.Comment) {
+  private warnAboutUnusedDirective(
+    mutators: string[],
+    directiveType: string,
+    scope: string | undefined,
+    comment: types.Comment,
+  ) {
     for (const mutator of mutators) {
       if (mutator === WILDCARD) continue;
       if (!this.allMutatorNames.includes(mutator.toLowerCase())) {

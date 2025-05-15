@@ -50,8 +50,13 @@ describe(MochaAdapter.name, () => {
       let stubbedProcessExit = process.exit;
       collectFilesStub.callsFake(() => (stubbedProcessExit = process.exit));
       sut.collectFiles({});
-      expect(originalProcessExit, "Process.exit doesn't seem to be stubbed away").not.eq(stubbedProcessExit);
-      expect(originalProcessExit, "Process.exit doesn't seem to be reset").eq(process.exit);
+      expect(
+        originalProcessExit,
+        "Process.exit doesn't seem to be stubbed away",
+      ).not.eq(stubbedProcessExit);
+      expect(originalProcessExit, "Process.exit doesn't seem to be reset").eq(
+        process.exit,
+      );
     });
   });
 

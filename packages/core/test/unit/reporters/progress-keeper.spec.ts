@@ -1,7 +1,10 @@
 import { expect } from 'chai';
 import { factory } from '@stryker-mutator/test-helpers';
 
-import { DryRunCompletedEvent, MutationTestingPlanReadyEvent } from '@stryker-mutator/api/report';
+import {
+  DryRunCompletedEvent,
+  MutationTestingPlanReadyEvent,
+} from '@stryker-mutator/api/report';
 
 import { ProgressKeeper } from '../../../src/reporters/progress-keeper.js';
 
@@ -25,8 +28,12 @@ describe(ProgressKeeper.name, () => {
       sut.onMutationTestingPlanReady(
         factory.mutationTestingPlanReadyEvent({
           mutantPlans: [
-            factory.mutantEarlyResultPlan({ mutant: factory.ignoredMutantTestCoverage({ id: '1' }) }),
-            factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) }),
+            factory.mutantEarlyResultPlan({
+              mutant: factory.ignoredMutantTestCoverage({ id: '1' }),
+            }),
+            factory.mutantRunPlan({
+              mutant: factory.mutantTestCoverage({ id: '2' }),
+            }),
           ],
         }),
       );
@@ -50,13 +57,19 @@ describe(ProgressKeeper.name, () => {
       netTimeMutant3: number;
       overhead: number;
       reloadEnvironment: boolean;
-    }): { dryRunCompleted: DryRunCompletedEvent; mutationTestingPlanReady: MutationTestingPlanReadyEvent } {
+    }): {
+      dryRunCompleted: DryRunCompletedEvent;
+      mutationTestingPlanReady: MutationTestingPlanReadyEvent;
+    } {
       const test1 = '1';
       const test2 = '2';
       return {
         dryRunCompleted: factory.dryRunCompletedEvent({
           result: factory.completeDryRunResult({
-            tests: [factory.testResult({ id: test1, timeSpentMs: 10 }), factory.testResult({ id: test2, timeSpentMs: 5 })],
+            tests: [
+              factory.testResult({ id: test1, timeSpentMs: 10 }),
+              factory.testResult({ id: test2, timeSpentMs: 5 }),
+            ],
           }),
           timing: factory.runTiming({ net: 15, overhead }),
           capabilities: factory.testRunnerCapabilities({ reloadEnvironment }),
@@ -64,7 +77,9 @@ describe(ProgressKeeper.name, () => {
         mutationTestingPlanReady: factory.mutationTestingPlanReadyEvent({
           mutantPlans: [
             // Ignored mutant
-            factory.mutantEarlyResultPlan({ mutant: factory.ignoredMutantTestCoverage({ id: '1' }) }),
+            factory.mutantEarlyResultPlan({
+              mutant: factory.ignoredMutantTestCoverage({ id: '1' }),
+            }),
             // Run test 1, takes 10ms
             factory.mutantRunPlan({
               mutant: factory.mutantTestCoverage({ id: '2' }),
@@ -80,7 +95,10 @@ describe(ProgressKeeper.name, () => {
             // Run all tests, takes 115ms
             factory.mutantRunPlan({
               mutant: factory.mutantTestCoverage({ id: '4' }),
-              runOptions: factory.mutantRunOptions({ testFilter: undefined, reloadEnvironment: true }),
+              runOptions: factory.mutantRunOptions({
+                testFilter: undefined,
+                reloadEnvironment: true,
+              }),
               netTime: netTimeMutant3,
             }),
           ],

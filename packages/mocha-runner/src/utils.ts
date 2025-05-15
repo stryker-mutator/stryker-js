@@ -2,11 +2,17 @@ import fs from 'fs';
 
 import { MochaOptions } from '../src-generated/mocha-runner-options.js';
 
-const mochaSchema: typeof import('../schema/mocha-runner-options.json') = JSON.parse(
-  fs.readFileSync(new URL('../schema/mocha-runner-options.json', import.meta.url), 'utf-8'),
-);
+const mochaSchema: typeof import('../schema/mocha-runner-options.json') =
+  JSON.parse(
+    fs.readFileSync(
+      new URL('../schema/mocha-runner-options.json', import.meta.url),
+      'utf-8',
+    ),
+  );
 
-export function serializeMochaLoadOptionsArguments(mochaOptions: MochaOptions): string[] {
+export function serializeMochaLoadOptionsArguments(
+  mochaOptions: MochaOptions,
+): string[] {
   const args: string[] = [];
   if (mochaOptions['no-config']) {
     args.push('--no-config');
@@ -32,16 +38,24 @@ export function serializeMochaLoadOptionsArguments(mochaOptions: MochaOptions): 
   return args;
 }
 
-const SUPPORTED_MOCHA_OPTIONS = Object.freeze(Object.keys(mochaSchema.properties.mochaOptions.properties));
+const SUPPORTED_MOCHA_OPTIONS = Object.freeze(
+  Object.keys(mochaSchema.properties.mochaOptions.properties),
+);
 
 /**
  * Filter out those config values that are actually useful to run mocha with Stryker
  * @param rawConfig The raw parsed mocha configuration
  */
-export function filterConfig(rawConfig: Record<string, any>): Partial<MochaOptions> {
+export function filterConfig(
+  rawConfig: Record<string, any>,
+): Partial<MochaOptions> {
   const options: Partial<MochaOptions> = {};
   Object.keys(rawConfig)
-    .filter((rawOption) => SUPPORTED_MOCHA_OPTIONS.some((supportedOption) => rawOption === supportedOption))
+    .filter((rawOption) =>
+      SUPPORTED_MOCHA_OPTIONS.some(
+        (supportedOption) => rawOption === supportedOption,
+      ),
+    )
     .forEach((option) => ((options as any)[option] = rawConfig[option]));
 
   // Config file can also contain positional arguments. They are provided under the `_` key
@@ -53,7 +67,9 @@ export function filterConfig(rawConfig: Record<string, any>): Partial<MochaOptio
       options.spec = [];
     }
     const specs = options.spec;
-    rawConfig._.forEach((positionalArgument: string) => specs.push(positionalArgument));
+    rawConfig._.forEach((positionalArgument: string) =>
+      specs.push(positionalArgument),
+    );
   }
   return options;
 }

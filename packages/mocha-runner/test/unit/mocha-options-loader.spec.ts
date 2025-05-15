@@ -32,7 +32,10 @@ describe(MochaOptionsLoader.name, () => {
 
     it('should log about mocha >= 6', () => {
       sut.load(options);
-      expect(testInjector.logger.debug).calledWith("Mocha >= 6 detected. Using mocha's `%s` to load mocha options", LibWrapper.loadOptions?.name);
+      expect(testInjector.logger.debug).calledWith(
+        "Mocha >= 6 detected. Using mocha's `%s` to load mocha options",
+        LibWrapper.loadOptions?.name,
+      );
     });
 
     it('should call `loadOptions` with serialized arguments', () => {
@@ -94,7 +97,9 @@ describe(MochaOptionsLoader.name, () => {
       rawOptions.baz = 'qux';
       sut.load(options);
       const fnName = LibWrapper.loadOptions?.name;
-      expect(testInjector.logger.trace).calledWith(`Mocha: ${fnName}(['--no-config']) => {"baz":"qux"}`);
+      expect(testInjector.logger.trace).calledWith(
+        `Mocha: ${fnName}(['--no-config']) => {"baz":"qux"}`,
+      );
     });
 
     it("should respect mocha's defaults", () => {
@@ -119,7 +124,9 @@ describe(MochaOptionsLoader.name, () => {
     it('should log about mocha < 6', () => {
       existsFileStub.returns(false);
       sut.load(options);
-      expect(testInjector.logger.debug).calledWith('Mocha < 6 detected. Using custom logic to parse mocha options');
+      expect(testInjector.logger.debug).calledWith(
+        'Mocha < 6 detected. Using custom logic to parse mocha options',
+      );
     });
 
     it('should log deprecated mocha version warning', () => {
@@ -136,7 +143,9 @@ describe(MochaOptionsLoader.name, () => {
         opts: 'some/mocha.opts/file',
       };
       sut.load(options);
-      expect(testInjector.logger.info).calledWith(`Loading mochaOpts from "${path.resolve('some/mocha.opts/file')}"`);
+      expect(testInjector.logger.info).calledWith(
+        `Loading mochaOpts from "${path.resolve('some/mocha.opts/file')}"`,
+      );
       expect(fs.readFileSync).calledWith(path.resolve('some/mocha.opts/file'));
     });
 
@@ -156,7 +165,9 @@ describe(MochaOptionsLoader.name, () => {
     it('should load default mocha.opts file if not specified', () => {
       readFileStub.returns('');
       sut.load(options);
-      expect(testInjector.logger.info).calledWith(`Loading mochaOpts from "${path.resolve('test/mocha.opts')}"`);
+      expect(testInjector.logger.info).calledWith(
+        `Loading mochaOpts from "${path.resolve('test/mocha.opts')}"`,
+      );
       expect(fs.readFileSync).calledWith(path.resolve('./test/mocha.opts'));
     });
 
@@ -166,7 +177,9 @@ describe(MochaOptionsLoader.name, () => {
       };
       sut.load(options);
       expect(fs.readFileSync).not.called;
-      expect(testInjector.logger.debug).calledWith('Not reading additional mochaOpts from a file');
+      expect(testInjector.logger.debug).calledWith(
+        'Not reading additional mochaOpts from a file',
+      );
     });
 
     it('should not load default mocha.opts file if not found', () => {
@@ -191,7 +204,11 @@ describe(MochaOptionsLoader.name, () => {
       });
     });
 
-    function itShouldLoadProperty(property: string, value: string, expectedConfig: Partial<MochaOptions>) {
+    function itShouldLoadProperty(
+      property: string,
+      value: string,
+      expectedConfig: Partial<MochaOptions>,
+    ) {
       it(`should load '${property} if specified`, () => {
         readFileStub.returns(`${property} ${value}`);
         options.mochaOptions = { opts: 'path/to/opts/file' };
@@ -204,8 +221,12 @@ describe(MochaOptionsLoader.name, () => {
     itShouldLoadProperty('--ui', 'qunit', { ui: 'qunit' });
     itShouldLoadProperty('-u', 'qunit', { ui: 'qunit' });
     itShouldLoadProperty('-g', 'grepthis', { grep: 'grepthis' });
-    itShouldLoadProperty('--grep', '/grep(this|that)/', { grep: 'grep(this|that)' });
-    itShouldLoadProperty('--grep', 'grep(this|that)?', { grep: 'grep(this|that)?' });
+    itShouldLoadProperty('--grep', '/grep(this|that)/', {
+      grep: 'grep(this|that)',
+    });
+    itShouldLoadProperty('--grep', 'grep(this|that)?', {
+      grep: 'grep(this|that)?',
+    });
 
     it('should not override additional properties (except for defaults)', () => {
       readFileStub.returns(`
@@ -244,8 +265,12 @@ describe(MochaOptionsLoader.name, () => {
       const mochaOptions = sut.load(options);
       expect(mochaOptions).not.have.property('reporter');
       expect(mochaOptions).not.have.property('ignore-leaks');
-      expect(testInjector.logger.debug).calledWith('Ignoring option "--reporter" as it is not supported.');
-      expect(testInjector.logger.debug).calledWith('Ignoring option "--ignore-leaks" as it is not supported.');
+      expect(testInjector.logger.debug).calledWith(
+        'Ignoring option "--reporter" as it is not supported.',
+      );
+      expect(testInjector.logger.debug).calledWith(
+        'Ignoring option "--ignore-leaks" as it is not supported.',
+      );
     });
 
     it('should ignore invalid --ui and --timeout options', () => {

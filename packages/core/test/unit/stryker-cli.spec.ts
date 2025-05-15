@@ -1,7 +1,12 @@
 import { Command } from 'commander';
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { DashboardOptions, StrykerOptions, ReportType, PartialStrykerOptions } from '@stryker-mutator/api/core';
+import {
+  DashboardOptions,
+  StrykerOptions,
+  ReportType,
+  PartialStrykerOptions,
+} from '@stryker-mutator/api/core';
 
 import { guardMinimalNodeVersion, StrykerCli } from '../../src/stryker-cli.js';
 
@@ -13,19 +18,27 @@ describe(StrykerCli.name, () => {
   });
 
   it('should accept a config file as last argument', () => {
-    arrangeActAssertConfigOption(['stryker.foo.js'], { configFile: 'stryker.foo.js' });
+    arrangeActAssertConfigOption(['stryker.foo.js'], {
+      configFile: 'stryker.foo.js',
+    });
   });
 
   describe('flat options', () => {
     const testCases: Array<[string[], PartialStrykerOptions]> = [
       [['--files', 'foo.js,bar.js'], { files: ['foo.js', 'bar.js'] }],
-      [['--ignorePatterns', 'foo.js,bar.js'], { ignorePatterns: ['foo.js', 'bar.js'] }],
+      [
+        ['--ignorePatterns', 'foo.js,bar.js'],
+        { ignorePatterns: ['foo.js', 'bar.js'] },
+      ],
       [['--buildCommand', 'npm run build'], { buildCommand: 'npm run build' }],
       [['-b', 'npm run build'], { buildCommand: 'npm run build' }],
       [['--checkers', 'foo,bar'], { checkers: ['foo', 'bar'] }],
       [['--checkers', 'foo'], { checkers: ['foo'] }],
       [['--checkers', ''], { checkers: [] }],
-      [['--checkerNodeArgs', '--inspect=1337 --gc'], { checkerNodeArgs: ['--inspect=1337', '--gc'] }],
+      [
+        ['--checkerNodeArgs', '--inspect=1337 --gc'],
+        { checkerNodeArgs: ['--inspect=1337', '--gc'] },
+      ],
       [['--disableBail'], { disableBail: true }],
       [['--dryRunOnly'], { dryRunOnly: true }],
       [['--allowEmpty'], { allowEmpty: true }],
@@ -39,10 +52,16 @@ describe(StrykerCli.name, () => {
       [['--maxConcurrentTestRunners', '42'], { maxConcurrentTestRunners: 42 }],
       [['--tempDirName', 'foo-tmp'], { tempDirName: 'foo-tmp' }],
       [['--testRunner', 'foo-running'], { testRunner: 'foo-running' }],
-      [['--testRunnerNodeArgs', '--inspect=1337 --gc'], { testRunnerNodeArgs: ['--inspect=1337', '--gc'] }],
+      [
+        ['--testRunnerNodeArgs', '--inspect=1337 --gc'],
+        { testRunnerNodeArgs: ['--inspect=1337', '--gc'] },
+      ],
       [['--coverageAnalysis', 'all'], { coverageAnalysis: 'all' }],
       [['--incremental'], { incremental: true }],
-      [['--incrementalFile', 'some-file.json'], { incrementalFile: 'some-file.json' }],
+      [
+        ['--incrementalFile', 'some-file.json'],
+        { incrementalFile: 'some-file.json' },
+      ],
       [['--inPlace'], { inPlace: true }],
       [['--force'], { force: true }],
       [['--ignoreStatic'], { ignoreStatic: true }],
@@ -89,10 +108,21 @@ describe(StrykerCli.name, () => {
     });
 
     it('should remove any lingering options', () => {
-      actRun(['--dashboard.version', 'foo', '--dashboard.project', 'bar', '--dashboard.module', 'baz', '--dashboard.baseUrl', 'quux']);
+      actRun([
+        '--dashboard.version',
+        'foo',
+        '--dashboard.project',
+        'bar',
+        '--dashboard.module',
+        'baz',
+        '--dashboard.baseUrl',
+        'quux',
+      ]);
       const call = runMutationTestingStub.getCall(0);
       const actualOptions: StrykerOptions = call.args[0];
-      const dashboardKeys = Object.keys(actualOptions).filter((key) => key.startsWith('dashboard.'));
+      const dashboardKeys = Object.keys(actualOptions).filter((key) =>
+        key.startsWith('dashboard.'),
+      );
       expect(dashboardKeys, JSON.stringify(dashboardKeys)).lengthOf(0);
     });
   });
@@ -109,10 +139,17 @@ describe(StrykerCli.name, () => {
   });
 
   function actRun(args: string[]): void {
-    new StrykerCli(['node', 'stryker', 'run', ...args], new Command(), runMutationTestingStub).run();
+    new StrykerCli(
+      ['node', 'stryker', 'run', ...args],
+      new Command(),
+      runMutationTestingStub,
+    ).run();
   }
 
-  function arrangeActAssertConfigOption(args: string[], expectedOptions: PartialStrykerOptions): void {
+  function arrangeActAssertConfigOption(
+    args: string[],
+    expectedOptions: PartialStrykerOptions,
+  ): void {
     runMutationTestingStub.resolves();
     actRun(args);
     expect(runMutationTestingStub).called;

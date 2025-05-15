@@ -30,12 +30,26 @@ describe('parse and print integration', () => {
     });
 
     async function actArrangeAndAssert(testCase: string) {
-      const inputFileName = resolvePrinterTestResource('html', `${testCase}.in.html`);
-      const outputFileName = resolvePrinterTestResource('html', `${testCase}.out.html`);
-      const [input, expectedOutput] = await Promise.all([fsPromises.readFile(inputFileName, 'utf8'), fsPromises.readFile(outputFileName, 'utf8')]);
-      const parsed = await createParser(createParserOptions())(input, inputFileName);
+      const inputFileName = resolvePrinterTestResource(
+        'html',
+        `${testCase}.in.html`,
+      );
+      const outputFileName = resolvePrinterTestResource(
+        'html',
+        `${testCase}.out.html`,
+      );
+      const [input, expectedOutput] = await Promise.all([
+        fsPromises.readFile(inputFileName, 'utf8'),
+        fsPromises.readFile(outputFileName, 'utf8'),
+      ]);
+      const parsed = await createParser(createParserOptions())(
+        input,
+        inputFileName,
+      );
       const actualOutput = print(parsed);
-      expect(normalizeWhitespaces(actualOutput)).eq(normalizeWhitespaces(expectedOutput));
+      expect(normalizeWhitespaces(actualOutput)).eq(
+        normalizeWhitespaces(expectedOutput),
+      );
     }
   });
 });

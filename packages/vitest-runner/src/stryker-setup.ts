@@ -1,6 +1,14 @@
 import type { MutantCoverage } from '@stryker-mutator/api/core';
 import type { MutantActivation } from '@stryker-mutator/api/test-runner';
-import { beforeEach, afterAll, beforeAll, afterEach, inject, RunnerTestSuite, RunnerTestCase } from 'vitest';
+import {
+  beforeEach,
+  afterAll,
+  beforeAll,
+  afterEach,
+  inject,
+  RunnerTestSuite,
+  RunnerTestCase,
+} from 'vitest';
 
 // This file is copied to the sandbox dir, don't import anything local!
 // See https://github.com/stryker-mutator/stryker-js/issues/5305
@@ -44,7 +52,13 @@ if (mode === 'mutant') {
 }
 
 // Stryker disable all: this file is copied to the sandbox dir
-function collectTestName({ name, suite }: { name: string; suite?: RunnerTestSuite }): string {
+function collectTestName({
+  name,
+  suite,
+}: {
+  name: string;
+  suite?: RunnerTestSuite;
+}): string {
   const nameParts = [name];
   let currentSuite = suite;
   while (currentSuite) {

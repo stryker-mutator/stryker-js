@@ -14,7 +14,13 @@ export class LoggingEvent {
   readonly level: LogLevel;
   readonly pid: number;
 
-  private constructor(categoryName: string, level: LogLevel, data: Array<unknown>, startTime: Date, pid: number) {
+  private constructor(
+    categoryName: string,
+    level: LogLevel,
+    data: Array<unknown>,
+    startTime: Date,
+    pid: number,
+  ) {
     this.startTime = startTime;
     this.categoryName = categoryName;
     this.data = data;
@@ -49,7 +55,13 @@ export class LoggingEvent {
   }
 
   static deserialize(ser: SerializedLoggingEvent): LoggingEvent {
-    return new LoggingEvent(ser.categoryName, ser.level, [ser.message], new Date(ser.startTime), ser.pid);
+    return new LoggingEvent(
+      ser.categoryName,
+      ser.level,
+      [ser.message],
+      new Date(ser.startTime),
+      ser.pid,
+    );
   }
 
   serialize(): SerializedLoggingEvent {

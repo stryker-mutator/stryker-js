@@ -1,7 +1,17 @@
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { factory, assertions, testInjector, createFakeTick } from '@stryker-mutator/test-helpers';
-import { TestStatus, CompleteDryRunResult, DryRunStatus, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
+import {
+  factory,
+  assertions,
+  testInjector,
+  createFakeTick,
+} from '@stryker-mutator/test-helpers';
+import {
+  TestStatus,
+  CompleteDryRunResult,
+  DryRunStatus,
+  TestRunnerCapabilities,
+} from '@stryker-mutator/api/test-runner';
 import jasmine from 'jasmine';
 import { MutantCoverage } from '@stryker-mutator/api/core';
 import { Task } from '@stryker-mutator/util';
@@ -10,7 +20,13 @@ import * as pluginTokens from '../../src/plugin-tokens.js';
 import { helpers } from '../../src/helpers.js';
 import { JasmineTestRunner } from '../../src/index.js';
 import { expectTestResultsToEqual } from '../helpers/assertions.js';
-import { createEnvStub, createJasmineDoneInfo, createSpec, createSpecResult, createJasmineStartedInfo } from '../helpers/mock-factories.js';
+import {
+  createEnvStub,
+  createJasmineDoneInfo,
+  createSpec,
+  createSpecResult,
+  createJasmineStartedInfo,
+} from '../helpers/mock-factories.js';
 
 describe(JasmineTestRunner.name, () => {
   let reporter: jasmine.CustomReporter;
@@ -27,14 +43,20 @@ describe(JasmineTestRunner.name, () => {
     sinon.stub(helpers, 'createJasmine').returns(jasmineStub);
     clock = sinon.useFakeTimers();
     fakeTick = createFakeTick(clock);
-    jasmineEnvStub.addReporter.callsFake((rep: jasmine.CustomReporter) => (reporter = rep));
+    jasmineEnvStub.addReporter.callsFake(
+      (rep: jasmine.CustomReporter) => (reporter = rep),
+    );
     testInjector.options.jasmineConfigFile = 'jasmineConfFile';
-    sut = testInjector.injector.provideValue(pluginTokens.globalNamespace, '__stryker2__' as const).injectClass(JasmineTestRunner);
+    sut = testInjector.injector
+      .provideValue(pluginTokens.globalNamespace, '__stryker2__' as const)
+      .injectClass(JasmineTestRunner);
   });
 
   describe('capabilities', () => {
     it('should communicate reloadEnvironment=false', () => {
-      const expectedCapabilities: TestRunnerCapabilities = { reloadEnvironment: false };
+      const expectedCapabilities: TestRunnerCapabilities = {
+        reloadEnvironment: false,
+      };
       expect(sut.capabilities()).deep.eq(expectedCapabilities);
     });
   });
@@ -43,7 +65,9 @@ describe(JasmineTestRunner.name, () => {
     it('should configure jasmine on run', async () => {
       await actEmptyMutantRun();
       expect(jasmineStub.execute).called;
-      expect(helpers.createJasmine).calledWith({ projectBaseDir: process.cwd() });
+      expect(helpers.createJasmine).calledWith({
+        projectBaseDir: process.cwd(),
+      });
       expect(jasmineStub.loadConfigFile).calledWith('jasmineConfFile');
       expect(jasmineStub.env.configure).calledWith({
         failFast: true,
@@ -70,7 +94,8 @@ describe(JasmineTestRunner.name, () => {
       expect(jasmineEnvStub.configure).calledWithMatch({
         specFilter: sinon.match.func,
       });
-      const actualSpecFilter: (spec: jasmine.Spec) => boolean = jasmineEnvStub.configure.getCall(0).args[0].specFilter!;
+      const actualSpecFilter: (spec: jasmine.Spec) => boolean =
+        jasmineEnvStub.configure.getCall(0).args[0].specFilter!;
       expect(actualSpecFilter(createSpec({ id: '1' }))).true;
       expect(actualSpecFilter(createSpec({ id: '2' }))).false;
     });
@@ -80,7 +105,8 @@ describe(JasmineTestRunner.name, () => {
       expect(jasmineEnvStub.configure).calledWithMatch({
         specFilter: sinon.match.func,
       });
-      const actualSpecFilter: (spec: jasmine.Spec) => boolean = jasmineEnvStub.configure.getCall(0).args[0].specFilter!;
+      const actualSpecFilter: (spec: jasmine.Spec) => boolean =
+        jasmineEnvStub.configure.getCall(0).args[0].specFilter!;
       expect(actualSpecFilter(createSpec({ id: '1' }))).true;
       expect(actualSpecFilter(createSpec({ id: '2' }))).true;
     });
@@ -96,7 +122,12 @@ describe(JasmineTestRunner.name, () => {
       jasmineStub.execute.returns(executeTask.promise);
 
       // Act
-      const onGoingAct = sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '23' }), mutantActivation: 'static' }));
+      const onGoingAct = sut.mutantRun(
+        factory.mutantRunOptions({
+          activeMutant: factory.mutant({ id: '23' }),
+          mutantActivation: 'static',
+        }),
+      );
       await fakeTick();
 
       // Assert
@@ -120,7 +151,12 @@ describe(JasmineTestRunner.name, () => {
       jasmineStub.execute.returns(executeTask.promise);
 
       // Act
-      const onGoingAct = sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '23' }), mutantActivation: 'runtime' }));
+      const onGoingAct = sut.mutantRun(
+        factory.mutantRunOptions({
+          activeMutant: factory.mutant({ id: '23' }),
+          mutantActivation: 'runtime',
+        }),
+      );
       await fakeTick();
 
       // Assert
@@ -133,7 +169,11 @@ describe(JasmineTestRunner.name, () => {
       await onGoingAct;
     });
 
-    function actEmptyMutantRun(testFilter?: string[], activeMutant = factory.mutant(), sandboxFileName = 'sandbox/file') {
+    function actEmptyMutantRun(
+      testFilter?: string[],
+      activeMutant = factory.mutant(),
+      sandboxFileName = 'sandbox/file',
+    ) {
       let customReporter: jasmine.CustomReporter;
       function addReporter(rep: jasmine.CustomReporter) {
         customReporter = rep;
@@ -143,7 +183,14 @@ describe(JasmineTestRunner.name, () => {
         await customReporter.jasmineDone!(createJasmineDoneInfo());
         return createJasmineDoneInfo();
       });
-      return sut.mutantRun(factory.mutantRunOptions({ activeMutant, testFilter, timeout: 2000, sandboxFileName }));
+      return sut.mutantRun(
+        factory.mutantRunOptions({
+          activeMutant,
+          testFilter,
+          timeout: 2000,
+          sandboxFileName,
+        }),
+      );
     }
   });
 
@@ -179,7 +226,9 @@ describe(JasmineTestRunner.name, () => {
       await sut.dryRun(factory.dryRunOptions({ disableBail: true }));
 
       // Assert
-      expect(jasmineEnvStub.configure).calledWithMatch(sinon.match({ failFast: false, stopOnSpecFailure: false }));
+      expect(jasmineEnvStub.configure).calledWithMatch(
+        sinon.match({ failFast: false, stopOnSpecFailure: false }),
+      );
     });
 
     (['perTest', 'all'] as const).forEach((coverageAnalysis) =>
@@ -198,7 +247,9 @@ describe(JasmineTestRunner.name, () => {
         });
 
         // Act
-        const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis }));
+        const result = await sut.dryRun(
+          factory.dryRunOptions({ coverageAnalysis }),
+        );
 
         // Assert
         const expectedResult: CompleteDryRunResult = {
@@ -223,7 +274,9 @@ describe(JasmineTestRunner.name, () => {
       });
 
       // Act
-      const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
+      const result = await sut.dryRun(
+        factory.dryRunOptions({ coverageAnalysis: 'off' }),
+      );
 
       // Assert
       const expectedResult: CompleteDryRunResult = {
@@ -281,19 +334,56 @@ describe(JasmineTestRunner.name, () => {
     it('should report completed specs', async () => {
       // Arrange
       jasmineStub.execute.callsFake(async () => {
-        await reporter.specDone!(createSpecResult({ id: 'spec0', fullName: 'foo spec', status: 'success', description: 'string' }));
+        await reporter.specDone!(
+          createSpecResult({
+            id: 'spec0',
+            fullName: 'foo spec',
+            status: 'success',
+            description: 'string',
+          }),
+        );
         await reporter.specDone!(
           createSpecResult({
             id: 'spec1',
             fullName: 'bar spec',
             status: 'failure',
-            failedExpectations: [{ actual: 'foo', expected: 'bar', matcherName: 'fooMatcher', passed: false, message: 'bar failed', stack: 'stack' }],
+            failedExpectations: [
+              {
+                actual: 'foo',
+                expected: 'bar',
+                matcherName: 'fooMatcher',
+                passed: false,
+                message: 'bar failed',
+                stack: 'stack',
+              },
+            ],
             description: 'string',
           }),
         );
-        await reporter.specDone!(createSpecResult({ id: 'spec2', fullName: 'disabled', status: 'disabled', description: 'string' }));
-        await reporter.specDone!(createSpecResult({ id: 'spec3', fullName: 'pending', status: 'pending', description: 'string' }));
-        await reporter.specDone!(createSpecResult({ id: 'spec4', fullName: 'excluded', status: 'excluded', description: 'string' }));
+        await reporter.specDone!(
+          createSpecResult({
+            id: 'spec2',
+            fullName: 'disabled',
+            status: 'disabled',
+            description: 'string',
+          }),
+        );
+        await reporter.specDone!(
+          createSpecResult({
+            id: 'spec3',
+            fullName: 'pending',
+            status: 'pending',
+            description: 'string',
+          }),
+        );
+        await reporter.specDone!(
+          createSpecResult({
+            id: 'spec4',
+            fullName: 'excluded',
+            status: 'excluded',
+            description: 'string',
+          }),
+        );
         await reporter.jasmineDone!(createJasmineDoneInfo());
         return createJasmineDoneInfo();
       });
@@ -305,7 +395,12 @@ describe(JasmineTestRunner.name, () => {
       assertions.expectCompleted(result);
       expectTestResultsToEqual(result.tests, [
         { id: 'spec0', name: 'foo spec', status: TestStatus.Success },
-        { id: 'spec1', name: 'bar spec', status: TestStatus.Failed, failureMessage: 'bar failed' },
+        {
+          id: 'spec1',
+          name: 'bar spec',
+          status: TestStatus.Failed,
+          failureMessage: 'bar failed',
+        },
         { id: 'spec2', name: 'disabled', status: TestStatus.Skipped },
         { id: 'spec3', name: 'pending', status: TestStatus.Skipped },
         { id: 'spec4', name: 'excluded', status: TestStatus.Skipped },
@@ -330,7 +425,9 @@ describe(JasmineTestRunner.name, () => {
 
       // Assert
       assertions.expectErrored(actualResult);
-      expect(actualResult.errorMessage).contains('Jasmine reporter didn\'t report "jasmineDone", this shouldn\'t happen');
+      expect(actualResult.errorMessage).contains(
+        'Jasmine reporter didn\'t report "jasmineDone", this shouldn\'t happen',
+      );
     });
   });
 });

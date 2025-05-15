@@ -25,7 +25,10 @@ describe(ProgressAppendOnlyReporter.name, () => {
       sut.onDryRunCompleted(
         factory.dryRunCompletedEvent({
           result: factory.completeDryRunResult({
-            tests: [factory.testResult({ id: '1', timeSpentMs: 10 }), factory.testResult({ id: '2', timeSpentMs: 5 })],
+            tests: [
+              factory.testResult({ id: '1', timeSpentMs: 10 }),
+              factory.testResult({ id: '2', timeSpentMs: 5 }),
+            ],
           }),
           timing: factory.runTiming({ net: 15, overhead: 100 }),
         }),
@@ -34,7 +37,10 @@ describe(ProgressAppendOnlyReporter.name, () => {
         factory.mutationTestingPlanReadyEvent({
           mutantPlans: [
             // Ignored mutant
-            factory.mutantEarlyResultPlan({ mutant: factory.ignoredMutantTestCoverage({ id: '1' }), plan: PlanKind.EarlyResult }),
+            factory.mutantEarlyResultPlan({
+              mutant: factory.ignoredMutantTestCoverage({ id: '1' }),
+              plan: PlanKind.EarlyResult,
+            }),
             // Run test 1, takes 10ms
             factory.mutantRunPlan({
               mutant: factory.mutantTestCoverage({ id: '2' }),
@@ -53,13 +59,19 @@ describe(ProgressAppendOnlyReporter.name, () => {
             factory.mutantRunPlan({
               mutant: factory.mutantTestCoverage({ id: '4' }),
               plan: PlanKind.Run,
-              runOptions: factory.mutantRunOptions({ testFilter: undefined, reloadEnvironment: true }),
+              runOptions: factory.mutantRunOptions({
+                testFilter: undefined,
+                reloadEnvironment: true,
+              }),
               netTime: 15,
             }),
             factory.mutantRunPlan({
               mutant: factory.mutantTestCoverage({ id: '5' }),
               plan: PlanKind.Run,
-              runOptions: factory.mutantRunOptions({ testFilter: ['1', '2'], reloadEnvironment: false }),
+              runOptions: factory.mutantRunOptions({
+                testFilter: ['1', '2'],
+                reloadEnvironment: false,
+              }),
               netTime: 15,
             }),
           ],

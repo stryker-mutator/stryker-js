@@ -20,10 +20,14 @@ export class GitignoreWriter {
       if (!gitignoreContent.toString().includes(defaultTempDirName)) {
         const strykerTempFolderSpecification = `${os.EOL}# stryker temp files${os.EOL}${defaultTempDirName}${os.EOL}`;
         await fs.appendFile(GITIGNORE_FILE, strykerTempFolderSpecification);
-        this.out('Note: Your .gitignore file has been updated to include recommended git ignore patterns for Stryker');
+        this.out(
+          'Note: Your .gitignore file has been updated to include recommended git ignore patterns for Stryker',
+        );
       }
     } else {
-      this.out('No .gitignore file could be found. Please add the following to your .gitignore file: *.stryker-tmp');
+      this.out(
+        'No .gitignore file could be found. Please add the following to your .gitignore file: *.stryker-tmp',
+      );
     }
   }
 }

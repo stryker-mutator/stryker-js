@@ -10,7 +10,15 @@ export type { MutantStatus } from 'mutation-testing-report-schema/api';
 export interface Mutant
   extends Pick<
     schema.MutantResult,
-    'coveredBy' | 'id' | 'killedBy' | 'location' | 'mutatorName' | 'replacement' | 'static' | 'statusReason' | 'testsCompleted'
+    | 'coveredBy'
+    | 'id'
+    | 'killedBy'
+    | 'location'
+    | 'mutatorName'
+    | 'replacement'
+    | 'static'
+    | 'statusReason'
+    | 'testsCompleted'
   > {
   /**
    * The file name from which this mutant originated
@@ -29,7 +37,8 @@ export interface Mutant
 /**
  * Represents a mutant in its matched-with-the-tests state, ready to be tested.
  */
-export type MutantTestCoverage = Mutant & Pick<schema.MutantResult, 'coveredBy' | 'static'>;
+export type MutantTestCoverage = Mutant &
+  Pick<schema.MutantResult, 'coveredBy' | 'static'>;
 
 /**
  * Represents a mutant in its final state, ready to be reported.

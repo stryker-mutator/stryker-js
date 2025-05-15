@@ -14,7 +14,11 @@ export const karmaConfigStarter: ProjectStarter = {
       configFile,
     };
     if (karma.config?.parseConfig) {
-      config = await karma.config.parseConfig(configFile, {}, { promiseConfig: true, throwErrors: true });
+      config = await karma.config.parseConfig(
+        configFile,
+        {},
+        { promiseConfig: true, throwErrors: true },
+      );
     }
 
     const exitTask = new Task<number>();

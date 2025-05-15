@@ -13,12 +13,18 @@ export class JestConfigWrapper {
 
   constructor(resolveFromDirectory: string) {
     // Use requireResolve, that way you can use this plugin from a different directory
-    const requireFromJest = createRequire(require.resolve('jest', { paths: [resolveFromDirectory] }));
-    const requireFromJestCli = createRequire(requireFromJest.resolve('jest-cli'));
+    const requireFromJest = createRequire(
+      require.resolve('jest', { paths: [resolveFromDirectory] }),
+    );
+    const requireFromJestCli = createRequire(
+      requireFromJest.resolve('jest-cli'),
+    );
     this.jestConfig = requireFromJestCli('jest-config');
   }
 
-  public readInitialOptions(...args: Parameters<typeof jestConfig.readInitialOptions>): ReturnType<typeof jestConfig.readInitialOptions> {
+  public readInitialOptions(
+    ...args: Parameters<typeof jestConfig.readInitialOptions>
+  ): ReturnType<typeof jestConfig.readInitialOptions> {
     return this.jestConfig.readInitialOptions(...args);
   }
 }

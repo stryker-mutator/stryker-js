@@ -31,7 +31,10 @@ describe(ClearTextReporter.name, () => {
             mutants: [
               {
                 id: '1',
-                location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+                location: {
+                  start: { line: 0, column: 0 },
+                  end: { line: 0, column: 0 },
+                },
                 mutatorName: 'Block',
                 replacement: '{}',
                 status: 'Killed',
@@ -68,7 +71,10 @@ describe(ClearTextReporter.name, () => {
             mutants: [
               {
                 id: '1',
-                location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+                location: {
+                  start: { line: 0, column: 0 },
+                  end: { line: 0, column: 0 },
+                },
                 mutatorName: 'Block',
                 replacement: '{}',
                 status: 'Killed',
@@ -81,7 +87,11 @@ describe(ClearTextReporter.name, () => {
         thresholds: factory.mutationScoreThresholds({}),
       });
 
-      expect(stdoutStub).not.calledWithMatch(sinon.match('File      | % score | # killed | # timeout | # survived | # no cov | # errors |'));
+      expect(stdoutStub).not.calledWithMatch(
+        sinon.match(
+          'File      | % score | # killed | # timeout | # survived | # no cov | # errors |',
+        ),
+      );
     });
 
     it('should not report files that achieved a 100% score when skipFull is true', () => {
@@ -94,7 +104,10 @@ describe(ClearTextReporter.name, () => {
             mutants: [
               {
                 id: '1',
-                location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+                location: {
+                  start: { line: 0, column: 0 },
+                  end: { line: 0, column: 0 },
+                },
                 mutatorName: 'Block',
                 replacement: '{}',
                 status: 'Ignored',
@@ -107,7 +120,10 @@ describe(ClearTextReporter.name, () => {
             mutants: [
               {
                 id: '1',
-                location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+                location: {
+                  start: { line: 0, column: 0 },
+                  end: { line: 0, column: 0 },
+                },
                 mutatorName: 'Block',
                 replacement: '{}',
                 status: 'Killed',
@@ -144,7 +160,10 @@ describe(ClearTextReporter.name, () => {
             mutants: [
               {
                 id: '1',
-                location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+                location: {
+                  start: { line: 0, column: 0 },
+                  end: { line: 0, column: 0 },
+                },
                 mutatorName: 'Block',
                 replacement: '{}',
                 status: 'Killed',
@@ -170,7 +189,10 @@ describe(ClearTextReporter.name, () => {
             mutants: [
               {
                 id: '1',
-                location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+                location: {
+                  start: { line: 0, column: 0 },
+                  end: { line: 0, column: 0 },
+                },
                 mutatorName: 'Block',
                 replacement: '{}',
                 status: 'Killed',
@@ -185,7 +207,9 @@ describe(ClearTextReporter.name, () => {
 
       const serializedTable: string = stdoutStub.getCalls().pop()!.args[0];
       const rows = serializedTable.split(os.EOL);
-      expect(rows[2]).to.eq('File      |  total | covered | ✅ killed | ⌛️ timeout | 👽 survived | 🙈 no cov | 💥 errors |');
+      expect(rows[2]).to.eq(
+        'File      |  total | covered | ✅ killed | ⌛️ timeout | 👽 survived | 🙈 no cov | 💥 errors |',
+      );
     });
 
     it('should report the clear text table with full n/a values', () => {
@@ -196,7 +220,10 @@ describe(ClearTextReporter.name, () => {
             mutants: [
               {
                 id: '1',
-                location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+                location: {
+                  start: { line: 0, column: 0 },
+                  end: { line: 0, column: 0 },
+                },
                 mutatorName: 'Block',
                 replacement: '{}',
                 status: 'Ignored',
@@ -231,7 +258,10 @@ describe(ClearTextReporter.name, () => {
             mutants: [
               {
                 id: '1',
-                location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+                location: {
+                  start: { line: 0, column: 0 },
+                  end: { line: 0, column: 0 },
+                },
                 mutatorName: 'Block',
                 replacement: '{}',
                 status: 'Ignored',
@@ -244,7 +274,10 @@ describe(ClearTextReporter.name, () => {
             mutants: [
               {
                 id: '1',
-                location: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+                location: {
+                  start: { line: 0, column: 0 },
+                  end: { line: 0, column: 0 },
+                },
                 mutatorName: 'Block',
                 replacement: '{}',
                 status: 'Killed',
@@ -293,7 +326,10 @@ describe(ClearTextReporter.name, () => {
       beforeEach(() => {
         mutant = factory.mutationTestReportSchemaMutantResult({
           id: '1',
-          location: { start: { line: 2, column: 1 }, end: { line: 2, column: 4 } },
+          location: {
+            start: { line: 2, column: 1 },
+            end: { line: 2, column: 4 },
+          },
           replacement: 'bar',
           mutatorName: 'Math',
         });
@@ -307,11 +343,26 @@ describe(ClearTextReporter.name, () => {
           testFiles: {
             'foo.spec.js': factory.mutationTestReportSchemaTestFile({
               tests: [
-                factory.mutationTestReportSchemaTestDefinition({ id: '1', name: 'foo should be bar' }),
-                factory.mutationTestReportSchemaTestDefinition({ id: '2', name: 'bar should be baz' }),
-                factory.mutationTestReportSchemaTestDefinition({ id: '3', name: 'baz should be qux' }),
-                factory.mutationTestReportSchemaTestDefinition({ id: '4', name: 'qux should be quux' }),
-                factory.mutationTestReportSchemaTestDefinition({ id: '5', name: 'quux should be corge' }),
+                factory.mutationTestReportSchemaTestDefinition({
+                  id: '1',
+                  name: 'foo should be bar',
+                }),
+                factory.mutationTestReportSchemaTestDefinition({
+                  id: '2',
+                  name: 'bar should be baz',
+                }),
+                factory.mutationTestReportSchemaTestDefinition({
+                  id: '3',
+                  name: 'baz should be qux',
+                }),
+                factory.mutationTestReportSchemaTestDefinition({
+                  id: '4',
+                  name: 'qux should be quux',
+                }),
+                factory.mutationTestReportSchemaTestDefinition({
+                  id: '5',
+                  name: 'quux should be corge',
+                }),
               ],
             }),
           },
@@ -321,20 +372,28 @@ describe(ClearTextReporter.name, () => {
         mutant.status = 'Killed';
         mutant.killedBy = ['1'];
         act(report);
-        expect(testInjector.logger.debug).calledWithMatch(sinon.match('[Killed] Math'));
+        expect(testInjector.logger.debug).calledWithMatch(
+          sinon.match('[Killed] Math'),
+        );
         expect(testInjector.logger.debug).calledWith(chalk.red('-   foo'));
         expect(testInjector.logger.debug).calledWith(chalk.green('+   bar'));
-        expect(testInjector.logger.debug).calledWith('Killed by: foo should be bar');
+        expect(testInjector.logger.debug).calledWith(
+          'Killed by: foo should be bar',
+        );
       });
 
       it('should report a CompileError mutant to debug', () => {
         mutant.status = 'CompileError';
         mutant.statusReason = 'could not call bar of undefined';
         act(report);
-        expect(testInjector.logger.debug).calledWithMatch(sinon.match('[CompileError] Math'));
+        expect(testInjector.logger.debug).calledWithMatch(
+          sinon.match('[CompileError] Math'),
+        );
         expect(testInjector.logger.debug).calledWith(chalk.red('-   foo'));
         expect(testInjector.logger.debug).calledWith(chalk.green('+   bar'));
-        expect(testInjector.logger.debug).calledWith('Error message: could not call bar of undefined');
+        expect(testInjector.logger.debug).calledWith(
+          'Error message: could not call bar of undefined',
+        );
       });
 
       it('should report a NoCoverage mutant to stdout', () => {
@@ -362,13 +421,17 @@ describe(ClearTextReporter.name, () => {
         testInjector.options.clearTextReporter.reportMutants = false;
         mutant.status = 'NoCoverage';
         act(report);
-        expect(stdoutStub).not.calledWithMatch(sinon.match('[NoCoverage] Math'));
+        expect(stdoutStub).not.calledWithMatch(
+          sinon.match('[NoCoverage] Math'),
+        );
       });
 
       it('should report a Timeout mutant to stdout', () => {
         mutant.status = 'Timeout';
         act(report);
-        expect(testInjector.logger.debug).calledWithMatch(sinon.match('[Timeout] Math'));
+        expect(testInjector.logger.debug).calledWithMatch(
+          sinon.match('[Timeout] Math'),
+        );
       });
 
       it('should report the tests ran for a Survived mutant to stdout for "perTest" coverage analysis', () => {
@@ -389,8 +452,12 @@ describe(ClearTextReporter.name, () => {
         expect(stdoutStub).calledWithExactly(`Tests ran:${os.EOL}`);
         expect(stdoutStub).calledWithExactly(`    foo should be bar${os.EOL}`);
         expect(stdoutStub).calledWithExactly(`    bar should be baz${os.EOL}`);
-        const allCalls = stdoutStub.getCalls().map((call) => call.args.join(''));
-        expect(allCalls.filter((call) => call.includes('baz should be qux'))).lengthOf(1, 'Test "baz should be qux" was written more than once');
+        const allCalls = stdoutStub
+          .getCalls()
+          .map((call) => call.args.join(''));
+        expect(
+          allCalls.filter((call) => call.includes('baz should be qux')),
+        ).lengthOf(1, 'Test "baz should be qux" was written more than once');
         expect(stdoutStub).calledWithExactly(`  and 1 more test!${os.EOL}`);
       });
 
@@ -399,7 +466,9 @@ describe(ClearTextReporter.name, () => {
         mutant.static = true;
         mutant.status = 'Survived';
         act(report);
-        expect(stdoutStub).calledWithExactly(`Ran all tests for this mutant.${os.EOL}`);
+        expect(stdoutStub).calledWithExactly(
+          `Ran all tests for this mutant.${os.EOL}`,
+        );
       });
 
       it('should not log individual ran tests when logTests is not true', () => {
@@ -408,19 +477,33 @@ describe(ClearTextReporter.name, () => {
         mutant.status = 'Survived';
         act(report);
 
-        const allCalls = stdoutStub.getCalls().map((call) => call.args.join(''));
-        expect(process.stdout.write).not.calledWithMatch(sinon.match('Tests ran: '));
-        expect(allCalls.filter((call) => call.includes('foo should be bar'))).lengthOf(1, 'Test "foo should be bar" was written more than once');
-        expect(process.stdout.write).not.calledWithMatch(sinon.match('Ran all tests for this mutant.'));
+        const allCalls = stdoutStub
+          .getCalls()
+          .map((call) => call.args.join(''));
+        expect(process.stdout.write).not.calledWithMatch(
+          sinon.match('Tests ran: '),
+        );
+        expect(
+          allCalls.filter((call) => call.includes('foo should be bar')),
+        ).lengthOf(1, 'Test "foo should be bar" was written more than once');
+        expect(process.stdout.write).not.calledWithMatch(
+          sinon.match('Ran all tests for this mutant.'),
+        );
       });
 
       it('should correctly report tests run per mutant on avg', () => {
         mutant.testsCompleted = 4;
-        report.files['foo.js'].mutants.push(factory.mutationTestReportSchemaMutantResult({ testsCompleted: 5 }));
-        report.files['foo.js'].mutants.push(factory.mutationTestReportSchemaMutantResult({ testsCompleted: 1 }));
+        report.files['foo.js'].mutants.push(
+          factory.mutationTestReportSchemaMutantResult({ testsCompleted: 5 }),
+        );
+        report.files['foo.js'].mutants.push(
+          factory.mutationTestReportSchemaMutantResult({ testsCompleted: 1 }),
+        );
         act(report);
 
-        expect(stdoutStub).calledWithExactly(`Ran 3.33 tests per mutant on average.${os.EOL}`);
+        expect(stdoutStub).calledWithExactly(
+          `Ran 3.33 tests per mutant on average.${os.EOL}`,
+        );
       });
 
       it('should log source file location', () => {
@@ -428,7 +511,11 @@ describe(ClearTextReporter.name, () => {
         mutant.location.start = { line: 4, column: 6 };
         act(report);
 
-        expect(stdoutStub).to.have.been.calledWithMatch(sinon.match(`${chalk.cyan('foo.js')}:${chalk.yellow('4')}:${chalk.yellow('6')}`));
+        expect(stdoutStub).to.have.been.calledWithMatch(
+          sinon.match(
+            `${chalk.cyan('foo.js')}:${chalk.yellow('4')}:${chalk.yellow('6')}`,
+          ),
+        );
       });
 
       it('should log source file names without colored text when clearTextReporter is not false and allowConsoleColors is false', () => {
@@ -450,26 +537,45 @@ describe(ClearTextReporter.name, () => {
           files: {
             'foo.js': factory.mutationTestReportSchemaFileResult({
               mutants: [
-                factory.mutationTestReportSchemaMutantResult({ killedBy: ['0'] }),
-                factory.mutationTestReportSchemaMutantResult({ coveredBy: ['1'] }),
+                factory.mutationTestReportSchemaMutantResult({
+                  killedBy: ['0'],
+                }),
+                factory.mutationTestReportSchemaMutantResult({
+                  coveredBy: ['1'],
+                }),
               ],
             }),
           },
           testFiles: {
             '': factory.mutationTestReportSchemaTestFile({
               tests: [
-                factory.mutationTestReportSchemaTestDefinition({ id: '0', name: 'foo should bar' }),
-                factory.mutationTestReportSchemaTestDefinition({ id: '1', name: 'baz should qux' }),
-                factory.mutationTestReportSchemaTestDefinition({ id: '2', name: 'quux should corge' }),
+                factory.mutationTestReportSchemaTestDefinition({
+                  id: '0',
+                  name: 'foo should bar',
+                }),
+                factory.mutationTestReportSchemaTestDefinition({
+                  id: '1',
+                  name: 'baz should qux',
+                }),
+                factory.mutationTestReportSchemaTestDefinition({
+                  id: '2',
+                  name: 'quux should corge',
+                }),
               ],
             }),
           },
         });
         act(report);
         expect(stdoutStub).calledWithMatch(sinon.match('All tests'));
-        expect(stdoutStub).calledWithMatch(sinon.match('  ✓ foo should bar (killed 1)'));
-        expect(stdoutStub).calledWithMatch(sinon.match('  ~ baz should qux (covered 1)'));
-        expect(stdoutStub).calledWithMatch(sinon.match('  ✘ quux should corge (covered 0)'));
+        expect(stdoutStub).calledWithMatch(
+          sinon.match('  ✓ foo should bar (killed 1)'),
+        );
+        expect(stdoutStub).calledWithMatch(
+          sinon.match('  ~ baz should qux (covered 1)'),
+        );
+        expect(stdoutStub).calledWithMatch(
+          sinon.match('  ✘ quux should corge (covered 0)'),
+        );
       });
 
       it('should not report a list of tests if file names are unknown when reportTests is not true', () => {
@@ -478,17 +584,30 @@ describe(ClearTextReporter.name, () => {
           files: {
             'foo.js': factory.mutationTestReportSchemaFileResult({
               mutants: [
-                factory.mutationTestReportSchemaMutantResult({ killedBy: ['0'] }),
-                factory.mutationTestReportSchemaMutantResult({ coveredBy: ['1'] }),
+                factory.mutationTestReportSchemaMutantResult({
+                  killedBy: ['0'],
+                }),
+                factory.mutationTestReportSchemaMutantResult({
+                  coveredBy: ['1'],
+                }),
               ],
             }),
           },
           testFiles: {
             '': factory.mutationTestReportSchemaTestFile({
               tests: [
-                factory.mutationTestReportSchemaTestDefinition({ id: '0', name: 'foo should bar' }),
-                factory.mutationTestReportSchemaTestDefinition({ id: '1', name: 'baz should qux' }),
-                factory.mutationTestReportSchemaTestDefinition({ id: '2', name: 'quux should corge' }),
+                factory.mutationTestReportSchemaTestDefinition({
+                  id: '0',
+                  name: 'foo should bar',
+                }),
+                factory.mutationTestReportSchemaTestDefinition({
+                  id: '1',
+                  name: 'baz should qux',
+                }),
+                factory.mutationTestReportSchemaTestDefinition({
+                  id: '2',
+                  name: 'quux should corge',
+                }),
               ],
             }),
           },
@@ -503,26 +622,51 @@ describe(ClearTextReporter.name, () => {
           files: {
             'foo.js': factory.mutationTestReportSchemaFileResult({
               mutants: [
-                factory.mutationTestReportSchemaMutantResult({ killedBy: ['0'] }),
-                factory.mutationTestReportSchemaMutantResult({ coveredBy: ['1'] }),
+                factory.mutationTestReportSchemaMutantResult({
+                  killedBy: ['0'],
+                }),
+                factory.mutationTestReportSchemaMutantResult({
+                  coveredBy: ['1'],
+                }),
               ],
             }),
           },
           testFiles: {
             '': factory.mutationTestReportSchemaTestFile({
               tests: [
-                factory.mutationTestReportSchemaTestDefinition({ id: '0', name: 'foo should bar' }),
-                factory.mutationTestReportSchemaTestDefinition({ id: '1', name: 'baz should qux' }),
-                factory.mutationTestReportSchemaTestDefinition({ id: '2', name: 'quux should corge' }),
+                factory.mutationTestReportSchemaTestDefinition({
+                  id: '0',
+                  name: 'foo should bar',
+                }),
+                factory.mutationTestReportSchemaTestDefinition({
+                  id: '1',
+                  name: 'baz should qux',
+                }),
+                factory.mutationTestReportSchemaTestDefinition({
+                  id: '2',
+                  name: 'quux should corge',
+                }),
               ],
             }),
           },
         });
         act(report);
         expect(stdoutStub).calledWithMatch(sinon.match('All tests'));
-        expect(stdoutStub).calledWithMatch(sinon.match(`${chalk.greenBright('✓')} ${chalk.grey('foo should bar')} (killed 1)`));
-        expect(stdoutStub).calledWithMatch(sinon.match(`${chalk.blueBright('~')} ${chalk.grey('baz should qux')} (covered 1)`));
-        expect(stdoutStub).calledWithMatch(sinon.match(`${chalk.redBright('✘')} ${chalk.grey('quux should corge')} (covered 0)`));
+        expect(stdoutStub).calledWithMatch(
+          sinon.match(
+            `${chalk.greenBright('✓')} ${chalk.grey('foo should bar')} (killed 1)`,
+          ),
+        );
+        expect(stdoutStub).calledWithMatch(
+          sinon.match(
+            `${chalk.blueBright('~')} ${chalk.grey('baz should qux')} (covered 1)`,
+          ),
+        );
+        expect(stdoutStub).calledWithMatch(
+          sinon.match(
+            `${chalk.redBright('✘')} ${chalk.grey('quux should corge')} (covered 0)`,
+          ),
+        );
       });
 
       it('should report tests per file if file names are unknown', () => {
@@ -531,30 +675,51 @@ describe(ClearTextReporter.name, () => {
           files: {
             'foo.js': factory.mutationTestReportSchemaFileResult({
               mutants: [
-                factory.mutationTestReportSchemaMutantResult({ killedBy: ['0'] }),
-                factory.mutationTestReportSchemaMutantResult({ coveredBy: ['1'] }),
+                factory.mutationTestReportSchemaMutantResult({
+                  killedBy: ['0'],
+                }),
+                factory.mutationTestReportSchemaMutantResult({
+                  coveredBy: ['1'],
+                }),
               ],
             }),
           },
           testFiles: {
             'foo.spec.js': factory.mutationTestReportSchemaTestFile({
               tests: [
-                factory.mutationTestReportSchemaTestDefinition({ id: '0', name: 'foo should bar' }),
-                factory.mutationTestReportSchemaTestDefinition({ id: '1', name: 'baz should qux' }),
+                factory.mutationTestReportSchemaTestDefinition({
+                  id: '0',
+                  name: 'foo should bar',
+                }),
+                factory.mutationTestReportSchemaTestDefinition({
+                  id: '1',
+                  name: 'baz should qux',
+                }),
               ],
             }),
             'foo.test.js': factory.mutationTestReportSchemaTestFile({
-              tests: [factory.mutationTestReportSchemaTestDefinition({ id: '2', name: 'quux should corge' })],
+              tests: [
+                factory.mutationTestReportSchemaTestDefinition({
+                  id: '2',
+                  name: 'quux should corge',
+                }),
+              ],
             }),
           },
         });
         act(report);
         expect(stdoutStub).calledWithMatch(sinon.match('All tests'));
         expect(stdoutStub).calledWithMatch(sinon.match('  foo.spec.js'));
-        expect(stdoutStub).calledWithMatch(sinon.match('    ✓ foo should bar (killed 1)'));
-        expect(stdoutStub).calledWithMatch(sinon.match('    ~ baz should qux (covered 1)'));
+        expect(stdoutStub).calledWithMatch(
+          sinon.match('    ✓ foo should bar (killed 1)'),
+        );
+        expect(stdoutStub).calledWithMatch(
+          sinon.match('    ~ baz should qux (covered 1)'),
+        );
         expect(stdoutStub).calledWithMatch(sinon.match('  foo.test.js'));
-        expect(stdoutStub).calledWithMatch(sinon.match('    ✘ quux should corge (covered 0)'));
+        expect(stdoutStub).calledWithMatch(
+          sinon.match('    ✘ quux should corge (covered 0)'),
+        );
       });
 
       it('should report the line number if they are known', () => {
@@ -563,13 +728,19 @@ describe(ClearTextReporter.name, () => {
           testFiles: {
             'foo.spec.js': factory.mutationTestReportSchemaTestFile({
               tests: [
-                factory.mutationTestReportSchemaTestDefinition({ id: '0', name: 'foo should bar', location: { start: { line: 7, column: 1 } } }),
+                factory.mutationTestReportSchemaTestDefinition({
+                  id: '0',
+                  name: 'foo should bar',
+                  location: { start: { line: 7, column: 1 } },
+                }),
               ],
             }),
           },
         });
         act(report);
-        expect(stdoutStub).calledWithMatch(sinon.match('✘ foo should bar [line 7] (covered 0)'));
+        expect(stdoutStub).calledWithMatch(
+          sinon.match('✘ foo should bar [line 7] (covered 0)'),
+        );
       });
 
       it('should merge deep directories with only one entry', () => {
@@ -578,32 +749,62 @@ describe(ClearTextReporter.name, () => {
           files: {
             'components/foo.js': factory.mutationTestReportSchemaFileResult({
               mutants: [
-                factory.mutationTestReportSchemaMutantResult({ killedBy: ['0'] }),
-                factory.mutationTestReportSchemaMutantResult({ coveredBy: ['1'] }),
+                factory.mutationTestReportSchemaMutantResult({
+                  killedBy: ['0'],
+                }),
+                factory.mutationTestReportSchemaMutantResult({
+                  coveredBy: ['1'],
+                }),
               ],
             }),
           },
           testFiles: {
-            'test/unit/components/foo.spec.js': factory.mutationTestReportSchemaTestFile({
-              tests: [factory.mutationTestReportSchemaTestDefinition({ id: '0', name: 'foo should bar' })],
-            }),
-            'test/unit/components/foo.test.js': factory.mutationTestReportSchemaTestFile({
-              tests: [factory.mutationTestReportSchemaTestDefinition({ id: '1', name: 'baz should qux' })],
-            }),
-            'test/integration/components/foo.it.test.js': factory.mutationTestReportSchemaTestFile({
-              tests: [factory.mutationTestReportSchemaTestDefinition({ id: '2', name: 'quux should corge' })],
-            }),
+            'test/unit/components/foo.spec.js':
+              factory.mutationTestReportSchemaTestFile({
+                tests: [
+                  factory.mutationTestReportSchemaTestDefinition({
+                    id: '0',
+                    name: 'foo should bar',
+                  }),
+                ],
+              }),
+            'test/unit/components/foo.test.js':
+              factory.mutationTestReportSchemaTestFile({
+                tests: [
+                  factory.mutationTestReportSchemaTestDefinition({
+                    id: '1',
+                    name: 'baz should qux',
+                  }),
+                ],
+              }),
+            'test/integration/components/foo.it.test.js':
+              factory.mutationTestReportSchemaTestFile({
+                tests: [
+                  factory.mutationTestReportSchemaTestDefinition({
+                    id: '2',
+                    name: 'quux should corge',
+                  }),
+                ],
+              }),
           },
         });
         act(report);
         expect(stdoutStub).calledWithMatch(sinon.match('All tests'));
         expect(stdoutStub).calledWithMatch(sinon.match('  unit/components'));
         expect(stdoutStub).calledWithMatch(sinon.match('    foo.spec.js'));
-        expect(stdoutStub).calledWithMatch(sinon.match('      ✓ foo should bar (killed 1)'));
+        expect(stdoutStub).calledWithMatch(
+          sinon.match('      ✓ foo should bar (killed 1)'),
+        );
         expect(stdoutStub).calledWithMatch(sinon.match('    foo.test.js'));
-        expect(stdoutStub).calledWithMatch(sinon.match('      ~ baz should qux (covered 1)'));
-        expect(stdoutStub).calledWithMatch(sinon.match(' integration/components/foo.it.test.js'));
-        expect(stdoutStub).calledWithMatch(sinon.match('   ✘ quux should corge (covered 0)'));
+        expect(stdoutStub).calledWithMatch(
+          sinon.match('      ~ baz should qux (covered 1)'),
+        );
+        expect(stdoutStub).calledWithMatch(
+          sinon.match(' integration/components/foo.it.test.js'),
+        );
+        expect(stdoutStub).calledWithMatch(
+          sinon.match('   ✘ quux should corge (covered 0)'),
+        );
       });
     });
   });

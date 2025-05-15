@@ -1,7 +1,14 @@
-import { assertions, factory, testInjector } from '@stryker-mutator/test-helpers';
+import {
+  assertions,
+  factory,
+  testInjector,
+} from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { createKarmaTestRunner, KarmaTestRunner } from '../../src/karma-test-runner.js';
+import {
+  createKarmaTestRunner,
+  KarmaTestRunner,
+} from '../../src/karma-test-runner.js';
 import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('Infinite loop', () => {
@@ -11,7 +18,10 @@ describe('Infinite loop', () => {
       config: {
         browsers: ['ChromeHeadless'],
         frameworks: ['mocha'],
-        files: [resolveTestResource('infinite-loop', 'infinite-loop.instrumented.js'), resolveTestResource('infinite-loop', 'infinite-loop.spec.js')],
+        files: [
+          resolveTestResource('infinite-loop', 'infinite-loop.instrumented.js'),
+          resolveTestResource('infinite-loop', 'infinite-loop.spec.js'),
+        ],
       },
     };
     testInjector.options.karma = karmaOptions;
@@ -34,10 +44,16 @@ describe('Infinite loop', () => {
 
       // Assert
       assertions.expectTimeout(result);
-      expect(result.reason).contains('Browser disconnected during test execution');
+      expect(result.reason).contains(
+        'Browser disconnected during test execution',
+      );
 
       // Second test, should be recovered by now.
-      const secondResult = await sut.mutantRun(factory.mutantRunOptions({ testFilter: ['should be able to recover and test others'] }));
+      const secondResult = await sut.mutantRun(
+        factory.mutantRunOptions({
+          testFilter: ['should be able to recover and test others'],
+        }),
+      );
       assertions.expectSurvived(secondResult);
       expect(secondResult.nrOfTests).eq(1);
     }
@@ -51,7 +67,9 @@ describe('Infinite loop', () => {
     const result = await sut.mutantRun(
       factory.mutantRunOptions({
         activeMutant: factory.mutant({ id: '24' }),
-        testFilter: ['should be able to break out of an infinite loop with a hit counter'],
+        testFilter: [
+          'should be able to break out of an infinite loop with a hit counter',
+        ],
         hitLimit: 10,
       }),
     );
@@ -59,16 +77,19 @@ describe('Infinite loop', () => {
     // Assert
     assertions.expectTimeout(result);
     expect(result.reason).contains('Hit limit reached');
-    expect(new Date().valueOf() - startTime.valueOf(), 'Test took longer than 3 sec to complete, was the hit counter malfunctioning?').lt(
-      maxTestDurationMS,
-    );
+    expect(
+      new Date().valueOf() - startTime.valueOf(),
+      'Test took longer than 3 sec to complete, was the hit counter malfunctioning?',
+    ).lt(maxTestDurationMS);
   });
 
   it('should reset hit counter state correctly between runs', async () => {
     const firstResult = await sut.mutantRun(
       factory.mutantRunOptions({
         activeMutant: factory.mutant({ id: '24' }),
-        testFilter: ['should be able to break out of an infinite loop with a hit counter'],
+        testFilter: [
+          'should be able to break out of an infinite loop with a hit counter',
+        ],
         hitLimit: 10,
       }),
     );
@@ -76,7 +97,9 @@ describe('Infinite loop', () => {
       factory.mutantRunOptions({
         // 27 is a 'normal' mutant that should be killed
         activeMutant: factory.mutant({ id: '27' }),
-        testFilter: ['should be able to break out of an infinite loop with a hit counter'],
+        testFilter: [
+          'should be able to break out of an infinite loop with a hit counter',
+        ],
         hitLimit: 10,
       }),
     );

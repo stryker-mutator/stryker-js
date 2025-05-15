@@ -2,7 +2,11 @@ import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
 
-import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
+import {
+  testInjector,
+  factory,
+  assertions,
+} from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { Location, Mutant } from '@stryker-mutator/api/core';
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
@@ -25,25 +29,42 @@ describe('Typescript checker on a single project', () => {
   let sut: TypescriptChecker;
 
   beforeEach(() => {
-    (testInjector.options as TypescriptCheckerOptionsWithStrykerOptions).typescriptChecker = { prioritizePerformanceOverAccuracy: true };
+    (
+      testInjector.options as TypescriptCheckerOptionsWithStrykerOptions
+    ).typescriptChecker = { prioritizePerformanceOverAccuracy: true };
     testInjector.options.tsconfigFile = resolveTestResource('tsconfig.json');
     sut = testInjector.injector.injectFunction(createTypescriptChecker);
     return sut.init();
   });
 
   it('should not write output to disk', () => {
-    expect(fs.existsSync(resolveTestResource('dist')), 'Output was written to disk!').false;
+    expect(
+      fs.existsSync(resolveTestResource('dist')),
+      'Output was written to disk!',
+    ).false;
   });
 
   it('should be able to validate a mutant that does not result in an error', async () => {
-    const mutant = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', 'newItem? 42: 43', '42');
-    const expectedResult: Record<string, CheckResult> = { '42': { status: CheckStatus.Passed } };
+    const mutant = createMutant(
+      'todo.ts',
+      'TodoList.allTodos.push(newItem)',
+      'newItem? 42: 43',
+      '42',
+    );
+    const expectedResult: Record<string, CheckResult> = {
+      '42': { status: CheckStatus.Passed },
+    };
     const actual = await sut.check([mutant]);
     expect(actual).deep.eq(expectedResult);
   });
 
   it('should be able invalidate a mutant that does result in a compile error', async () => {
-    const mutant = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', '"This should not be a string 🙄"', 'mutId');
+    const mutant = createMutant(
+      'todo.ts',
+      'TodoList.allTodos.push(newItem)',
+      '"This should not be a string 🙄"',
+      'mutId',
+    );
     const actual = await sut.check([mutant]);
     assertions.expectCompileError(actual.mutId);
     expect(actual.mutId.reason).has.string('todo.ts(15,9): error TS2322');
@@ -51,9 +72,21 @@ describe('Typescript checker on a single project', () => {
 
   it('should be able validate a mutant that does not result in a compile error after a compile error', async () => {
     // Arrange
-    const mutantCompileError = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', '"This should not be a string 🙄"');
-    const mutantWithoutError = createMutant('todo.ts', 'return TodoList.allTodos', '[]', 'mut42', 7);
-    const expectedResult: Record<string, CheckResult> = { mut42: { status: CheckStatus.Passed } };
+    const mutantCompileError = createMutant(
+      'todo.ts',
+      'TodoList.allTodos.push(newItem)',
+      '"This should not be a string 🙄"',
+    );
+    const mutantWithoutError = createMutant(
+      'todo.ts',
+      'return TodoList.allTodos',
+      '[]',
+      'mut42',
+      7,
+    );
+    const expectedResult: Record<string, CheckResult> = {
+      mut42: { status: CheckStatus.Passed },
+    };
 
     // Act
     await sut.check([mutantCompileError]);
@@ -64,7 +97,9 @@ describe('Typescript checker on a single project', () => {
   });
 
   it('should be able to invalidate a mutant that results in an error in a different file', async () => {
-    const actual = await sut.check([createMutant('todo.ts', 'return totalCount;', '', '42')]);
+    const actual = await sut.check([
+      createMutant('todo.ts', 'return totalCount;', '', '42'),
+    ]);
     assertions.expectCompileError(actual['42']);
     expect(actual['42'].reason).has.string('todo.spec.ts(4,7): error TS2322');
   });
@@ -72,31 +107,61 @@ describe('Typescript checker on a single project', () => {
   it('should be able to validate a mutant after a mutant in a different file resulted in a transpile error', async () => {
     // Act
     await sut.check([createMutant('todo.ts', 'return totalCount;', '')]);
-    const result = await sut.check([createMutant('todo.spec.ts', "'Mow lawn'", "'this is valid, right?'", 'id42')]);
+    const result = await sut.check([
+      createMutant(
+        'todo.spec.ts',
+        "'Mow lawn'",
+        "'this is valid, right?'",
+        'id42',
+      ),
+    ]);
 
     // Assert
-    const expectedResult: Record<string, CheckResult> = { id42: { status: CheckStatus.Passed } };
+    const expectedResult: Record<string, CheckResult> = {
+      id42: { status: CheckStatus.Passed },
+    };
     expect(result).deep.eq(expectedResult);
   });
 
   it('should be allow mutations in unrelated files', async () => {
     // Act
-    const result = await sut.check([createMutant('not-type-checked.js', 'bar', 'baz', 'id1')]);
+    const result = await sut.check([
+      createMutant('not-type-checked.js', 'bar', 'baz', 'id1'),
+    ]);
 
     // Assert
-    const expectedResult: Record<string, CheckResult> = { id1: { status: CheckStatus.Passed } };
+    const expectedResult: Record<string, CheckResult> = {
+      id1: { status: CheckStatus.Passed },
+    };
     expect(result).deep.eq(expectedResult);
   });
 
   it('should allow unused local variables (override options)', async () => {
-    const mutant = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', '42', 'id45');
-    const expectedResult: Record<string, CheckResult> = { id45: { status: CheckStatus.Passed } };
+    const mutant = createMutant(
+      'todo.ts',
+      'TodoList.allTodos.push(newItem)',
+      '42',
+      'id45',
+    );
+    const expectedResult: Record<string, CheckResult> = {
+      id45: { status: CheckStatus.Passed },
+    };
     const actual = await sut.check([mutant]);
     expect(actual).deep.eq(expectedResult);
   });
   it('should be able invalidate 2 mutants that do result in a compile errors', async () => {
-    const mutant = createMutant('todo.ts', 'TodoList.allTodos.push(newItem)', '"This should not be a string 🙄"', 'mutId');
-    const mutant2 = createMutant('counter.ts', 'return this.currentNumber;', 'return "This should not return a string 🙄"', 'mutId2');
+    const mutant = createMutant(
+      'todo.ts',
+      'TodoList.allTodos.push(newItem)',
+      '"This should not be a string 🙄"',
+      'mutId',
+    );
+    const mutant2 = createMutant(
+      'counter.ts',
+      'return this.currentNumber;',
+      'return "This should not return a string 🙄"',
+      'mutId2',
+    );
     const actual = await sut.check([mutant, mutant2]);
     assertions.expectCompileError(actual.mutId);
     assertions.expectCompileError(actual.mutId2);
@@ -104,7 +169,12 @@ describe('Typescript checker on a single project', () => {
     expect(actual.mutId2.reason).has.string('counter.ts(7,5): error TS2322');
   });
   it('should be able invalidate 2 mutants that do result in a compile error in file above', async () => {
-    const mutant = createMutant('errorInFileAbove2Mutants/todo.ts', 'TodoList.allTodos.push(newItem)', '"This should not be a string 🙄"', 'mutId');
+    const mutant = createMutant(
+      'errorInFileAbove2Mutants/todo.ts',
+      'TodoList.allTodos.push(newItem)',
+      '"This should not be a string 🙄"',
+      'mutId',
+    );
     const mutant2 = createMutant(
       'errorInFileAbove2Mutants/counter.ts',
       'return (this.currentNumber += numberToIncrementBy);',
@@ -115,17 +185,34 @@ describe('Typescript checker on a single project', () => {
     assertions.expectCompileError(actual.mutId);
     assertions.expectCompileError(actual.mutId2);
     expect(actual.mutId.reason).has.string('todo.ts(15,9): error TS2322');
-    expect(actual.mutId2.reason).has.string('errorInFileAbove2Mutants/todo-counter.ts(7,7): error TS2322');
+    expect(actual.mutId2.reason).has.string(
+      'errorInFileAbove2Mutants/todo-counter.ts(7,7): error TS2322',
+    );
   });
 });
 
 const fileContents = Object.freeze({
-  ['errorInFileAbove2Mutants/todo.ts']: fs.readFileSync(resolveTestResource('src', 'errorInFileAbove2Mutants', 'todo.ts'), 'utf8'),
-  ['errorInFileAbove2Mutants/counter.ts']: fs.readFileSync(resolveTestResource('src', 'errorInFileAbove2Mutants', 'counter.ts'), 'utf8'),
+  ['errorInFileAbove2Mutants/todo.ts']: fs.readFileSync(
+    resolveTestResource('src', 'errorInFileAbove2Mutants', 'todo.ts'),
+    'utf8',
+  ),
+  ['errorInFileAbove2Mutants/counter.ts']: fs.readFileSync(
+    resolveTestResource('src', 'errorInFileAbove2Mutants', 'counter.ts'),
+    'utf8',
+  ),
   ['todo.ts']: fs.readFileSync(resolveTestResource('src', 'todo.ts'), 'utf8'),
-  ['counter.ts']: fs.readFileSync(resolveTestResource('src', 'counter.ts'), 'utf8'),
-  ['todo.spec.ts']: fs.readFileSync(resolveTestResource('src', 'todo.spec.ts'), 'utf8'),
-  ['not-type-checked.js']: fs.readFileSync(resolveTestResource('src', 'not-type-checked.js'), 'utf8'),
+  ['counter.ts']: fs.readFileSync(
+    resolveTestResource('src', 'counter.ts'),
+    'utf8',
+  ),
+  ['todo.spec.ts']: fs.readFileSync(
+    resolveTestResource('src', 'todo.spec.ts'),
+    'utf8',
+  ),
+  ['not-type-checked.js']: fs.readFileSync(
+    resolveTestResource('src', 'not-type-checked.js'),
+    'utf8',
+  ),
 });
 
 function createMutant(

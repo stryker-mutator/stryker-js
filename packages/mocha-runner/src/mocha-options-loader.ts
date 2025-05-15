@@ -5,7 +5,10 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { propertyPath } from '@stryker-mutator/util';
 
-import { MochaOptions, MochaRunnerOptions } from '../src-generated/mocha-runner-options.js';
+import {
+  MochaOptions,
+  MochaRunnerOptions,
+} from '../src-generated/mocha-runner-options.js';
 
 import { LibWrapper } from './lib-wrapper.js';
 import { filterConfig, serializeMochaLoadOptionsArguments } from './utils.js';
@@ -35,7 +38,11 @@ export class MochaOptionsLoader {
 
   public load(strykerOptions: MochaRunnerWithStrykerOptions): MochaOptions {
     const mochaOptions = { ...strykerOptions.mochaOptions } as MochaOptions;
-    const options = { ...DEFAULT_MOCHA_OPTIONS, ...this.loadMochaOptions(mochaOptions), ...mochaOptions };
+    const options = {
+      ...DEFAULT_MOCHA_OPTIONS,
+      ...this.loadMochaOptions(mochaOptions),
+      ...mochaOptions,
+    };
     if (this.log.isDebugEnabled()) {
       this.log.debug(`Loaded options: ${JSON.stringify(options, null, 2)}`);
     }
@@ -44,11 +51,18 @@ export class MochaOptionsLoader {
 
   private loadMochaOptions(overrides: MochaOptions) {
     if (LibWrapper.loadOptions) {
-      this.log.debug("Mocha >= 6 detected. Using mocha's `%s` to load mocha options", LibWrapper.loadOptions.name);
+      this.log.debug(
+        "Mocha >= 6 detected. Using mocha's `%s` to load mocha options",
+        LibWrapper.loadOptions.name,
+      );
       return this.loadMocha6Options(overrides);
     } else {
-      this.log.warn('DEPRECATED: Mocha < 6 detected. Please upgrade to at least Mocha version 6. Stryker will drop support for Mocha < 6 in V5.');
-      this.log.debug('Mocha < 6 detected. Using custom logic to parse mocha options');
+      this.log.warn(
+        'DEPRECATED: Mocha < 6 detected. Please upgrade to at least Mocha version 6. Stryker will drop support for Mocha < 6 in V5.',
+      );
+      this.log.debug(
+        'Mocha < 6 detected. Using custom logic to parse mocha options',
+      );
       return this.loadLegacyMochaOptsFile(overrides);
     }
   }
@@ -57,20 +71,26 @@ export class MochaOptionsLoader {
     const args = serializeMochaLoadOptionsArguments(overrides);
     const rawConfig = LibWrapper.loadOptions(args) ?? {};
     if (this.log.isTraceEnabled()) {
-      this.log.trace(`Mocha: ${LibWrapper.loadOptions.name}([${args.map((arg) => `'${arg}'`).join(',')}]) => ${JSON.stringify(rawConfig)}`);
+      this.log.trace(
+        `Mocha: ${LibWrapper.loadOptions.name}([${args.map((arg) => `'${arg}'`).join(',')}]) => ${JSON.stringify(rawConfig)}`,
+      );
     }
     const options = filterConfig(rawConfig);
     return options;
   }
 
-  private loadLegacyMochaOptsFile(options: MochaOptions): Partial<MochaOptions> {
+  private loadLegacyMochaOptsFile(
+    options: MochaOptions,
+  ): Partial<MochaOptions> {
     if (options['no-opts']) {
       this.log.debug('Not reading additional mochaOpts from a file');
       return options;
     }
     switch (typeof options.opts) {
       case 'undefined': {
-        const defaultMochaOptsFileName = path.resolve(DEFAULT_MOCHA_OPTIONS.opts!);
+        const defaultMochaOptsFileName = path.resolve(
+          DEFAULT_MOCHA_OPTIONS.opts!,
+        );
         if (fs.existsSync(defaultMochaOptsFileName)) {
           return this.readMochaOptsFile(defaultMochaOptsFileName);
         } else {
@@ -86,7 +106,9 @@ export class MochaOptionsLoader {
         if (fs.existsSync(optsFileName)) {
           return this.readMochaOptsFile(optsFileName);
         } else {
-          this.log.error(`Could not load opts from "${optsFileName}". Please make sure opts file exists.`);
+          this.log.error(
+            `Could not load opts from "${optsFileName}". Please make sure opts file exists.`,
+          );
           return {};
         }
       }
@@ -121,7 +143,12 @@ export class MochaOptionsLoader {
             break;
           case '--ui':
           case '-u':
-            mochaRunnerOptions.ui = (this.parseNextString(args) as 'bdd' | 'exports' | 'qunit' | 'tdd') ?? DEFAULT_MOCHA_OPTIONS.ui!;
+            mochaRunnerOptions.ui =
+              (this.parseNextString(args) as
+                | 'bdd'
+                | 'exports'
+                | 'qunit'
+                | 'tdd') ?? DEFAULT_MOCHA_OPTIONS.ui!;
             break;
           case '--grep':
           case '-g': {
@@ -133,7 +160,9 @@ export class MochaOptionsLoader {
             break;
           }
           default:
-            this.log.debug(`Ignoring option "${args[0]}" as it is not supported.`);
+            this.log.debug(
+              `Ignoring option "${args[0]}" as it is not supported.`,
+            );
             break;
         }
       }

@@ -52,7 +52,9 @@ describe(configLoaderFactory.name, () => {
 
       createSut();
 
-      expect(testInjector.logger.warn).calledWith(`Config setting "configFile" is not supported for projectType "${options.jest.projectType}"`);
+      expect(testInjector.logger.warn).calledWith(
+        `Config setting "configFile" is not supported for projectType "${options.jest.projectType}"`,
+      );
     });
   });
   function createSut() {
@@ -60,7 +62,10 @@ describe(configLoaderFactory.name, () => {
       .provideValue(commonTokens.options, options)
       .provideValue(pluginTokens.jestWrapper, jestWrapper)
       .provideValue(pluginTokens.jestConfigWrapper, jestConfigWrapper)
-      .provideValue(pluginTokens.resolve, createRequire(import.meta.url).resolve)
+      .provideValue(
+        pluginTokens.resolve,
+        createRequire(import.meta.url).resolve,
+      )
       .provideValue(pluginTokens.requireFromCwd, requireResolve)
       .provideValue(pluginTokens.processEnv, process.env)
       .injectFunction(configLoaderFactory);
