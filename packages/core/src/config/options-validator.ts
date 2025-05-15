@@ -150,8 +150,9 @@ export class OptionsValidator {
       );
       // @ts-expect-error htmlReporter.baseDir
       if (!rawOptions.htmlReporter.fileName) {
-        // @ts-expect-error htmlReporter.baseDir
+        // @ts-expect-error htmlReporter.fileName
         rawOptions.htmlReporter.fileName = path.join(
+          // @ts-expect-error htmlReporter.baseDir
           String(rawOptions.htmlReporter.baseDir),
           'index.html',
         );

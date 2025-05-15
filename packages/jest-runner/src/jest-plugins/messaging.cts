@@ -1,7 +1,7 @@
-// @ts-expect-error Can't import the types somehow, because the file is a common js file
 import type {
   CoverageAnalysis,
   InstrumenterContext,
+  // @ts-expect-error Can't import the types somehow, because the file is a common js file
 } from '@stryker-mutator/api/core';
 
 class State {
