@@ -31,6 +31,7 @@ typescriptCheckerLoggerFactory.inject = tokens(
 
 function typescriptCheckerLoggerFactory(
   loggerFactory: LoggerFactoryMethod,
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   target: Function | undefined,
 ) {
   const targetName = target?.name ?? TypescriptChecker.name;

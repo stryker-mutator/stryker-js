@@ -121,10 +121,7 @@ export function expectTestResults(
 ): void {
   expectCompleted(actual);
 
-  const actualPruned = pruneUnexpected(
-    actual.tests,
-    expectedTestResults as any,
-  );
+  const actualPruned = pruneUnexpected(actual.tests, expectedTestResults);
   actualPruned.forEach((test) => {
     if (test.status === TestStatus.Failed && test.failureMessage) {
       test.failureMessage = test.failureMessage.substring(

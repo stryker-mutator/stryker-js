@@ -53,12 +53,12 @@ describe(Sandbox.name, () => {
   function createSut(
     project = new Project(
       fsTestDouble,
-      Object.keys(fsTestDouble.files).reduce<FileDescriptions>(
+      Object.keys(fsTestDouble.files).reduce(
         (fileDescriptions, fileName) => {
           fileDescriptions[fileName] = { mutate: true };
           return fileDescriptions;
         },
-        Object.create(null),
+        Object.create(null) as FileDescriptions,
       ),
     ),
   ): Sandbox {

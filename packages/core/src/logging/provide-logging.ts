@@ -17,6 +17,7 @@ getLoggerFactory.inject = [coreTokens.loggingSink] as const;
 
 function loggerFactory(
   getLogger: LoggerFactoryMethod,
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   target: Function | undefined,
 ) {
   return getLogger(target?.name);

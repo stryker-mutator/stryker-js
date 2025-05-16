@@ -93,12 +93,12 @@ export class FileSystemTestDouble implements I<FileSystem> {
   public toFileDescriptions(
     mutate: MutateDescription = true,
   ): FileDescriptions {
-    return Object.keys(this.files).reduce<FileDescriptions>(
+    return Object.keys(this.files).reduce(
       (files, fileName) => {
         files[fileName] = { mutate };
         return files;
       },
-      Object.create(null),
+      Object.create(null) as FileDescriptions,
     );
   }
 }
