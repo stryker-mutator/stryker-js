@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         node-version: [20.x, 24.x]
-        os: ['ubuntu-latest', 'windows-2025']
+        os: ['ubuntu-latest', 'windows-latest']
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
@@ -49,13 +49,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['ubuntu-latest', 'windows-2025']
+        os: ['ubuntu-latest', 'windows-latest']
     steps:
-      # https://github.com/ryanclark/karma-webpack/issues/494
-      - name: Windows temp dir fix
-        run: |
-          echo TEMP="D:\Temp" >> $env:GITHUB_ENV
-          echo TMP="D:\Temp" >> $env:GITHUB_ENV
       - uses: actions/checkout@v4
       - name: Install dependencies
         run: npm ci --engine-strict
@@ -65,6 +60,11 @@ jobs:
         run: 'npm run e2e:install'
       - name: e2e lint
         run: 'npm run e2e:lint'
+      # https://github.com/ryanclark/karma-webpack/issues/494
+      - name: Windows temp dir fix
+        run: |
+          echo TEMP="D:\Temp" >> $env:GITHUB_ENV
+          echo TMP="D:\Temp" >> $env:GITHUB_ENV
       - name: Run e2e tests
         run: 'npm run e2e:run'
       - uses: actions/upload-artifact@v4
