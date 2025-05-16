@@ -64,10 +64,10 @@ describe('After running stryker on jest-react project', () => {
     const mutantsAtLine2 = addResult.mutants.filter(
       ({ location }) => location.start.line === 2,
     );
-    const mutantsAtLin8 = addResult.mutants.filter(
+    const mutantsAtLine8 = addResult.mutants.filter(
       ({ location }) => location.start.line === 8,
     );
-    const mutantsAtLin13 = addResult.mutants.filter(
+    const mutantsAtLine13 = addResult.mutants.filter(
       ({ location }) => location.start.line === 13,
     );
     const mutantsAtLine18 = addResult.mutants.filter(
@@ -75,10 +75,10 @@ describe('After running stryker on jest-react project', () => {
     );
 
     expect(mutantsAtLine2).lengthOf(2);
-    expect(mutantsAtLin8).lengthOf(1);
-    expect(mutantsAtLin13).lengthOf(1);
+    expect(mutantsAtLine8).lengthOf(1);
+    expect(mutantsAtLine13).lengthOf(1);
     expect(mutantsAtLine18).lengthOf(1);
-    [...mutantsAtLine2, ...mutantsAtLin8, ...mutantsAtLin13].forEach(
+    [...mutantsAtLine2, ...mutantsAtLine8, ...mutantsAtLine13].forEach(
       (mutant) => {
         expect(mutant.status).eq('Ignored');
         expect(mutant.statusReason).eq(
