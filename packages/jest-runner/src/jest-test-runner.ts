@@ -301,7 +301,7 @@ export class JestTestRunner implements TestRunner {
   ): string | undefined {
     return (
       error &&
-      `${error.code ? `${String(error.code)} ` : ''}${error.message} ${error.stack}`
+      `${'code' in error ? `${String(error.code)} ` : ''}${error.message} ${error.stack}`
     );
   }
 
