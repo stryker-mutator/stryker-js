@@ -1,13 +1,19 @@
 import { promises as fs } from 'fs';
 
-import { PartialStrykerOptions, StrykerOptions } from '@stryker-mutator/api/core';
+import {
+  PartialStrykerOptions,
+  StrykerOptions,
+} from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Immutable, childProcessAsPromised } from '@stryker-mutator/util';
 
 import { fileUtils } from '../utils/file-utils.js';
 import { CommandTestRunner } from '../test-runner/command-test-runner.js';
-import { SUPPORTED_CONFIG_FILE_NAMES, DEFAULT_CONFIG_FILE_NAMES } from '../config/index.js';
+import {
+  SUPPORTED_CONFIG_FILE_NAMES,
+  DEFAULT_CONFIG_FILE_NAMES,
+} from '../config/index.js';
 
 import { PromptOption } from './prompt-option.js';
 import { CustomInitializerConfiguration } from './custom-initializers/custom-initializer.js';
@@ -56,7 +62,9 @@ export class StrykerConfigWriter {
       reporters: selectedReporters.map((rep) => rep.name),
       testRunner: selectedTestRunner.name,
       testRunner_comment: `Take a look at ${homepageOfSelectedTestRunner} for information about the ${selectedTestRunner.name} plugin.`,
-      coverageAnalysis: CommandTestRunner.is(selectedTestRunner.name) ? 'off' : 'perTest',
+      coverageAnalysis: CommandTestRunner.is(selectedTestRunner.name)
+        ? 'off'
+        : 'perTest',
     };
 
     // Only write buildCommand to config file if non-empty
@@ -70,14 +78,20 @@ export class StrykerConfigWriter {
     }
 
     Object.assign(configObject, ...additionalPiecesOfConfig);
-    return this.writeStrykerConfig(configObject as Immutable<PartialStrykerOptions>, exportAsJson);
+    return this.writeStrykerConfig(
+      configObject as Immutable<PartialStrykerOptions>,
+      exportAsJson,
+    );
   }
 
   /**
    * Create config based on the chosen preset
    * @function
    */
-  public async writeCustomInitializer(initializerConfig: CustomInitializerConfiguration, exportAsJson: boolean): Promise<string> {
+  public async writeCustomInitializer(
+    initializerConfig: CustomInitializerConfiguration,
+    exportAsJson: boolean,
+  ): Promise<string> {
     const config = {
       _comment: `This config was generated using 'stryker init'. Please see the guide for more information: ${initializerConfig.guideUrl}`,
       ...initializerConfig.config,
@@ -86,7 +100,10 @@ export class StrykerConfigWriter {
     return this.writeStrykerConfig(config, exportAsJson);
   }
 
-  private writeStrykerConfig(config: Immutable<PartialStrykerOptions>, exportAsJson: boolean) {
+  private writeStrykerConfig(
+    config: Immutable<PartialStrykerOptions>,
+    exportAsJson: boolean,
+  ) {
     if (exportAsJson) {
       return this.writeJsonConfig(config);
     } else {
@@ -94,7 +111,9 @@ export class StrykerConfigWriter {
     }
   }
 
-  private async writeJsConfig(commentedConfig: Immutable<PartialStrykerOptions>) {
+  private async writeJsConfig(
+    commentedConfig: Immutable<PartialStrykerOptions>,
+  ) {
     const configFileName = DEFAULT_CONFIG_FILE_NAMES.JAVASCRIPT;
     this.out(`Writing & formatting ${configFileName} ...`);
     const rawConfig = this.stringify(commentedConfig);
@@ -105,19 +124,26 @@ export class StrykerConfigWriter {
       export default config;`;
     await fs.writeFile(configFileName, formattedConfig);
     try {
-      await childProcessAsPromised.exec(`npx prettier --write ${configFileName}`);
+      await childProcessAsPromised.exec(
+        `npx prettier --write ${configFileName}`,
+      );
     } catch (error) {
       this.log.debug('Prettier exited with error', error);
-      this.out(`Unable to format ${configFileName} file for you. This is not a big problem, but it might look a bit messy 🙈.`);
+      this.out(
+        `Unable to format ${configFileName} file for you. This is not a big problem, but it might look a bit messy 🙈.`,
+      );
     }
     return configFileName;
   }
 
-  private async writeJsonConfig(commentedConfig: Immutable<PartialStrykerOptions>) {
+  private async writeJsonConfig(
+    commentedConfig: Immutable<PartialStrykerOptions>,
+  ) {
     const configFileName = DEFAULT_CONFIG_FILE_NAMES.JSON;
     this.out(`Writing & formatting ${configFileName}...`);
     const typedConfig = {
-      $schema: './node_modules/@stryker-mutator/core/schema/stryker-schema.json',
+      $schema:
+        './node_modules/@stryker-mutator/core/schema/stryker-schema.json',
       ...commentedConfig,
     };
     const formattedConfig = this.stringify(typedConfig);

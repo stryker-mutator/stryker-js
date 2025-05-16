@@ -6,18 +6,27 @@ import { TestCoverage } from '../../../src/mutants/index.js';
 describe(TestCoverage.name, () => {
   describe(TestCoverage.prototype.hasStaticCoverage.name, () => {
     it('should return false when no static coverage was reported', () => {
-      expect(TestCoverage.from(factory.completeDryRunResult(), testInjector.logger).hasStaticCoverage('1')).false;
+      expect(
+        TestCoverage.from(
+          factory.completeDryRunResult(),
+          testInjector.logger,
+        ).hasStaticCoverage('1'),
+      ).false;
     });
     it('should return false when no static coverage was reported for the mutant', () => {
       const sut = TestCoverage.from(
-        factory.completeDryRunResult({ mutantCoverage: factory.mutantCoverage({ static: { 1: 0, 2: 1 } }) }),
+        factory.completeDryRunResult({
+          mutantCoverage: factory.mutantCoverage({ static: { 1: 0, 2: 1 } }),
+        }),
         testInjector.logger,
       );
       expect(sut.hasStaticCoverage('1')).false;
     });
     it('should return true when static coverage was reported for the mutant', () => {
       const sut = TestCoverage.from(
-        factory.completeDryRunResult({ mutantCoverage: factory.mutantCoverage({ static: { 1: 0, 2: 1 } }) }),
+        factory.completeDryRunResult({
+          mutantCoverage: factory.mutantCoverage({ static: { 1: 0, 2: 1 } }),
+        }),
         testInjector.logger,
       );
       expect(sut.hasStaticCoverage('2')).true;
@@ -26,7 +35,10 @@ describe(TestCoverage.name, () => {
 
   describe(TestCoverage.prototype.addTest.name, () => {
     it('should add the test', () => {
-      const sut = TestCoverage.from(factory.completeDryRunResult(), testInjector.logger);
+      const sut = TestCoverage.from(
+        factory.completeDryRunResult(),
+        testInjector.logger,
+      );
       const test = factory.successTestResult({ id: 'spec1' });
       sut.addTest(test);
       expect(sut.testsById.get('spec1')).eq(test);
@@ -36,7 +48,12 @@ describe(TestCoverage.name, () => {
   describe(TestCoverage.prototype.addCoverage.name, () => {
     it("should create new coverage if the mutant didn't have any", () => {
       const spec1 = factory.testResult({ id: 'spec1' });
-      const sut = new TestCoverage(new Map(), new Map([['spec1', spec1]]), {}, new Map());
+      const sut = new TestCoverage(
+        new Map(),
+        new Map([['spec1', spec1]]),
+        {},
+        new Map(),
+      );
       sut.addCoverage('1', ['spec1']);
       expect(sut.forMutant('1')).deep.eq(new Set([spec1]));
     });
@@ -80,11 +97,21 @@ describe(TestCoverage.name, () => {
       const spec3 = factory.successTestResult({ id: 'spec3' });
       const dryRunResult = factory.completeDryRunResult({
         tests: [spec1, spec2, spec3],
-        mutantCoverage: { static: { 1: 1 }, perTest: { ['spec1']: { 1: 2, 2: 100 }, ['spec2']: { 2: 100 }, ['spec3']: { 1: 3, 2: 0 } } },
+        mutantCoverage: {
+          static: { 1: 1 },
+          perTest: {
+            ['spec1']: { 1: 2, 2: 100 },
+            ['spec2']: { 2: 100 },
+            ['spec3']: { 1: 3, 2: 0 },
+          },
+        },
       });
 
       // Act
-      const actualCoverage = TestCoverage.from(dryRunResult, testInjector.logger);
+      const actualCoverage = TestCoverage.from(
+        dryRunResult,
+        testInjector.logger,
+      );
 
       // Assert
       expect(actualCoverage.testsByMutantId).lengthOf(2);
@@ -93,18 +120,38 @@ describe(TestCoverage.name, () => {
     });
 
     it('should set `hasCoverage` to false when coverage is missing', () => {
-      expect(TestCoverage.from(factory.completeDryRunResult(), testInjector.logger).hasCoverage).false;
+      expect(
+        TestCoverage.from(factory.completeDryRunResult(), testInjector.logger)
+          .hasCoverage,
+      ).false;
     });
 
     it('should set `hasCoverage` to true when coverage of any kind is reported', () => {
-      expect(TestCoverage.from(factory.completeDryRunResult({ mutantCoverage: { perTest: {}, static: {} } }), testInjector.logger).hasCoverage).that;
+      expect(
+        TestCoverage.from(
+          factory.completeDryRunResult({
+            mutantCoverage: { perTest: {}, static: {} },
+          }),
+          testInjector.logger,
+        ).hasCoverage,
+      ).that;
     });
 
     it('should calculate total hits correctly (add perTest and static)', () => {
       const dryRunResult = factory.completeDryRunResult({
-        mutantCoverage: { static: { 1: 1 }, perTest: { ['spec1']: { 1: 2, 2: 100 }, ['spec2']: { 2: 100 }, ['spec3']: { 1: 3 } } },
+        mutantCoverage: {
+          static: { 1: 1 },
+          perTest: {
+            ['spec1']: { 1: 2, 2: 100 },
+            ['spec2']: { 2: 100 },
+            ['spec3']: { 1: 3 },
+          },
+        },
       });
-      const actualCoverage = TestCoverage.from(dryRunResult, testInjector.logger);
+      const actualCoverage = TestCoverage.from(
+        dryRunResult,
+        testInjector.logger,
+      );
 
       expect(actualCoverage.hitsByMutantId).lengthOf(2);
       expect(actualCoverage.hitsByMutantId.get('1')).eq(6);
@@ -115,7 +162,10 @@ describe(TestCoverage.name, () => {
       // Arrange
       const dryRunResult = factory.completeDryRunResult({
         tests: [factory.successTestResult({ id: 'spec1', timeSpentMs: 20 })], // test result for spec2 is missing
-        mutantCoverage: { static: {}, perTest: { spec1: { 1: 1 }, spec2: { 1: 0, 2: 1 } } },
+        mutantCoverage: {
+          static: {},
+          perTest: { spec1: { 1: 1 }, spec2: { 1: 0, 2: 1 } },
+        },
       });
 
       // Act

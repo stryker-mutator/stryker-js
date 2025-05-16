@@ -106,7 +106,11 @@ const enum Comparison {
   GreaterThan = 1,
 }
 function compare(a: number, b: number) {
-  return a < b ? Comparison.LessThan : a > b ? Comparison.GreaterThan : Comparison.EqualTo;
+  return a < b
+    ? Comparison.LessThan
+    : a > b
+      ? Comparison.GreaterThan
+      : Comparison.EqualTo;
 }
 const enum CharacterCodes {
   lineFeed = 0x0a, // \n

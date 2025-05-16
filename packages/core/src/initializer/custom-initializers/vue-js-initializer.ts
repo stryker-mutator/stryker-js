@@ -1,7 +1,10 @@
 import { PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { Immutable } from '@stryker-mutator/util';
 
-import { CustomInitializer, CustomInitializerConfiguration } from './custom-initializer.js';
+import {
+  CustomInitializer,
+  CustomInitializerConfiguration,
+} from './custom-initializer.js';
 
 const guideUrl = 'https://stryker-mutator.io/docs/stryker-js/guides/vuejs';
 

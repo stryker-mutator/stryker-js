@@ -13,7 +13,11 @@ export const booleanLiteralMutator: NodeMutator = {
     if (path.isBooleanLiteral()) {
       yield types.booleanLiteral(!path.node.value);
     }
-    if (path.isUnaryExpression() && path.node.operator === '!' && path.node.prefix) {
+    if (
+      path.isUnaryExpression() &&
+      path.node.operator === '!' &&
+      path.node.prefix
+    ) {
       yield deepCloneNode(path.node.argument);
     }
   },

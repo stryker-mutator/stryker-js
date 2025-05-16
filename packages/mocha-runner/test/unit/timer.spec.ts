@@ -14,6 +14,7 @@ describe('Timer', () => {
 
     afterEach(() => clock.restore());
 
-    it('should work even when global Date object is mocked', () => expect(sut.elapsedMs()).to.be.greaterThan(-1));
+    it('should work even when global Date object is mocked', () =>
+      expect(sut.elapsedMs()).to.be.greaterThan(-1));
   });
 });

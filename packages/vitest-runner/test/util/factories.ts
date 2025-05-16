@@ -1,5 +1,10 @@
 import sinon from 'sinon';
-import type { RunnerTestCase, RunnerTestFile, RunnerTestSuite, Vitest } from 'vitest/node';
+import type {
+  RunnerTestCase,
+  RunnerTestFile,
+  RunnerTestSuite,
+  Vitest,
+} from 'vitest/node';
 
 type ResolvedConfig = Vitest['config'];
 type ResolvedBrowserOptions = ResolvedConfig['browser'];
@@ -22,7 +27,9 @@ export function createVitestMock(): sinon.SinonStubbedInstance<Vitest> {
   } as sinon.SinonStubbedInstance<Vitest>;
 }
 
-export function createSuite(overrides?: Partial<RunnerTestSuite>): RunnerTestSuite {
+export function createSuite(
+  overrides?: Partial<RunnerTestSuite>,
+): RunnerTestSuite {
   return {
     id: '1',
     meta: {},
@@ -35,7 +42,9 @@ export function createSuite(overrides?: Partial<RunnerTestSuite>): RunnerTestSui
   };
 }
 
-export function createVitestFile(overrides?: Partial<Omit<RunnerTestFile, 'file'>>): RunnerTestFile {
+export function createVitestFile(
+  overrides?: Partial<Omit<RunnerTestFile, 'file'>>,
+): RunnerTestFile {
   const file = {
     projectName: '',
     name: 'file.js',
@@ -51,7 +60,9 @@ export function createVitestFile(overrides?: Partial<Omit<RunnerTestFile, 'file'
   return file;
 }
 
-export function createVitestTest(overrides?: Partial<RunnerTestCase>): RunnerTestCase {
+export function createVitestTest(
+  overrides?: Partial<RunnerTestCase>,
+): RunnerTestCase {
   return {
     type: 'test',
     suite: createSuite(),

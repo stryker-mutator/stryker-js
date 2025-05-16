@@ -4,7 +4,12 @@ import { types } from '@babel/core';
 
 import { MutantCollector } from '../../../src/transformers/mutant-collector.js';
 import { transformSvelte } from '../../../src/transformers/svelte-transformer.js';
-import { createJSAst, createRange, createSvelteAst, createTemplateScript } from '../../helpers/factories.js';
+import {
+  createJSAst,
+  createRange,
+  createSvelteAst,
+  createTemplateScript,
+} from '../../helpers/factories.js';
 import { transformerContextStub } from '../../helpers/stubs.js';
 import { TransformerOptions } from '../../../src/transformers/index.js';
 import { instrumentationBabelHeader } from '../../../src/util/index.js';
@@ -20,9 +25,15 @@ describe('svelte-transformer', () => {
     const jsAst = createJSAst({ rawContent: inputScript });
     const moduleScript = createTemplateScript({
       ast: jsAst,
-      range: createRange(moduleScriptStart.length, moduleScriptStart.length + inputScript.length),
+      range: createRange(
+        moduleScriptStart.length,
+        moduleScriptStart.length + inputScript.length,
+      ),
     });
-    const svelteAst = createSvelteAst({ rawContent: svelte, root: { moduleScript, additionalScripts: [] } });
+    const svelteAst = createSvelteAst({
+      rawContent: svelte,
+      root: { moduleScript, additionalScripts: [] },
+    });
     const mutantCollector = new MutantCollector();
     const context = transformerContextStub();
 
@@ -31,10 +42,15 @@ describe('svelte-transformer', () => {
 
     // Assert
     expect(svelteAst.root.moduleScript).not.deep.eq(jsAstOriginal);
-    sinon.assert.calledOnceWithExactly(context.transform, jsAstOriginal, mutantCollector, {
-      ...context,
-      options: { ...context.options, noHeader: true },
-    });
+    sinon.assert.calledOnceWithExactly(
+      context.transform,
+      jsAstOriginal,
+      mutantCollector,
+      {
+        ...context,
+        options: { ...context.options, noHeader: true },
+      },
+    );
   });
 
   it('should transform the svelte file with additional scripts', () => {
@@ -43,10 +59,18 @@ describe('svelte-transformer', () => {
     const svelte = `<script>${scripts[0]}</script>
     <h1>hello {${scripts[1]}}</h1>`;
 
-    const jsAstsOriginal = scripts.map((script) => createJSAst({ rawContent: script }));
+    const jsAstsOriginal = scripts.map((script) =>
+      createJSAst({ rawContent: script }),
+    );
     const additionalScripts = [
-      createTemplateScript({ ast: jsAstsOriginal[2], range: createRange(78, 83) }),
-      createTemplateScript({ ast: jsAstsOriginal[1], range: createRange(50, 67) }),
+      createTemplateScript({
+        ast: jsAstsOriginal[2],
+        range: createRange(78, 83),
+      }),
+      createTemplateScript({
+        ast: jsAstsOriginal[1],
+        range: createRange(50, 67),
+      }),
     ];
     const svelteAst = createSvelteAst({
       rawContent: svelte,
@@ -59,10 +83,23 @@ describe('svelte-transformer', () => {
     transformSvelte(svelteAst, mutantCollector, context);
 
     // Assert
-    const expectedOptions: TransformerOptions = { ...context.options, noHeader: true };
+    const expectedOptions: TransformerOptions = {
+      ...context.options,
+      noHeader: true,
+    };
     sinon.assert.calledTwice(context.transform);
-    sinon.assert.calledWithExactly(context.transform, jsAstsOriginal[1], mutantCollector, { ...context, options: expectedOptions });
-    sinon.assert.calledWithExactly(context.transform, jsAstsOriginal[2], mutantCollector, { ...context, options: expectedOptions });
+    sinon.assert.calledWithExactly(
+      context.transform,
+      jsAstsOriginal[1],
+      mutantCollector,
+      { ...context, options: expectedOptions },
+    );
+    sinon.assert.calledWithExactly(
+      context.transform,
+      jsAstsOriginal[2],
+      mutantCollector,
+      { ...context, options: expectedOptions },
+    );
   });
 
   describe('header placement', () => {
@@ -71,7 +108,11 @@ describe('svelte-transformer', () => {
       const input = createSvelteAst();
 
       // Act
-      transformSvelte(createSvelteAst(), new MutantCollector(), transformerContextStub());
+      transformSvelte(
+        createSvelteAst(),
+        new MutantCollector(),
+        transformerContextStub(),
+      );
 
       // Assert
       expect(input.root.moduleScript).undefined;
@@ -86,46 +127,81 @@ describe('svelte-transformer', () => {
       const jsModule = createJSAst({ rawContent: moduleScriptContent });
       const moduleScriptSvelteNode = createTemplateScript({
         ast: jsModule,
-        range: createRange(moduleScriptStart.length, moduleScriptStart.length + moduleScriptContent.length),
+        range: createRange(
+          moduleScriptStart.length,
+          moduleScriptStart.length + moduleScriptContent.length,
+        ),
       });
-      const jsTemplateScript = createJSAst({ rawContent: templateScriptContent });
-      const templateNode = createTemplateScript({ ast: jsTemplateScript, range: createRange(28, 33), isExpression: true });
-      const svelteAst = createSvelteAst({ rawContent: svelte, root: { moduleScript: moduleScriptSvelteNode, additionalScripts: [templateNode] } });
+      const jsTemplateScript = createJSAst({
+        rawContent: templateScriptContent,
+      });
+      const templateNode = createTemplateScript({
+        ast: jsTemplateScript,
+        range: createRange(28, 33),
+        isExpression: true,
+      });
+      const svelteAst = createSvelteAst({
+        rawContent: svelte,
+        root: {
+          moduleScript: moduleScriptSvelteNode,
+          additionalScripts: [templateNode],
+        },
+      });
       const mutantCollector = new MutantCollector();
       const context = transformerContextStub();
-      context.transform.withArgs(jsModule, sinon.match.any, sinon.match.any).callsFake(() => {
-        mutantCollector.collect(svelteAst.originFileName, jsModule.root.program, {
-          mutatorName: 'test',
-          replacement: types.binaryExpression('-', types.numericLiteral(1), types.numericLiteral(1)),
+      context.transform
+        .withArgs(jsModule, sinon.match.any, sinon.match.any)
+        .callsFake(() => {
+          mutantCollector.collect(
+            svelteAst.originFileName,
+            jsModule.root.program,
+            {
+              mutatorName: 'test',
+              replacement: types.binaryExpression(
+                '-',
+                types.numericLiteral(1),
+                types.numericLiteral(1),
+              ),
+            },
+          );
         });
-      });
 
       // Act
       transformSvelte(svelteAst, mutantCollector, context);
 
       // Assert
-      expect(svelteAst.root.moduleScript!.ast.rawContent).eq(moduleScriptContent); // unchanged
+      expect(svelteAst.root.moduleScript!.ast.rawContent).eq(
+        moduleScriptContent,
+      ); // unchanged
       expect(svelteAst.root.moduleScript!.ast.root.program.body).length(5);
-      expect(svelteAst.root.moduleScript!.ast.root.program.body.slice(0, 4)).deep.eq(instrumentationBabelHeader);
+      expect(
+        svelteAst.root.moduleScript!.ast.root.program.body.slice(0, 4),
+      ).deep.eq(instrumentationBabelHeader);
     });
 
     it('should place the instrumentation header in an invented script module when the module script is absent', () => {
       // Arrange & Act
-      const { svelteAst, rawContent } = arrangeAndActTransformWithMutantsWithoutModuleScript();
+      const { svelteAst, rawContent } =
+        arrangeAndActTransformWithMutantsWithoutModuleScript();
 
       // Assert
       expect(svelteAst.root.moduleScript).ok;
       const moduleScript = svelteAst.root.moduleScript!;
-      expect(svelteAst.rawContent).eq(`<script context="module">\n\n</script>\n${rawContent}`);
+      expect(svelteAst.rawContent).eq(
+        `<script context="module">\n\n</script>\n${rawContent}`,
+      );
       expect(moduleScript.ast.rawContent).eq('');
       expect(moduleScript.ast.root.program.body).length(4);
-      expect(moduleScript.ast.root.program.body).deep.eq(instrumentationBabelHeader);
+      expect(moduleScript.ast.root.program.body).deep.eq(
+        instrumentationBabelHeader,
+      );
       expect(moduleScript.isExpression).false;
     });
 
     it('should offset the start and end location of additional script tags', () => {
       // Arrange & Act
-      const { svelteAst } = arrangeAndActTransformWithMutantsWithoutModuleScript();
+      const { svelteAst } =
+        arrangeAndActTransformWithMutantsWithoutModuleScript();
 
       // Assert
       expect(svelteAst.root.additionalScripts).lengthOf(1);
@@ -136,17 +212,32 @@ describe('svelte-transformer', () => {
     function arrangeAndActTransformWithMutantsWithoutModuleScript() {
       const templateScriptContent = 'foo';
       const rawContent = `<h1>hello!{${templateScriptContent}}</h1>`;
-      const jsTemplateScript = createJSAst({ rawContent: templateScriptContent });
-      const templateNode = createTemplateScript({ ast: jsTemplateScript, range: createRange(11, 14), isExpression: true });
-      const svelteAst = createSvelteAst({ rawContent: rawContent, root: { additionalScripts: [templateNode] } });
+      const jsTemplateScript = createJSAst({
+        rawContent: templateScriptContent,
+      });
+      const templateNode = createTemplateScript({
+        ast: jsTemplateScript,
+        range: createRange(11, 14),
+        isExpression: true,
+      });
+      const svelteAst = createSvelteAst({
+        rawContent: rawContent,
+        root: { additionalScripts: [templateNode] },
+      });
       const mutantCollector = new MutantCollector();
       const context = transformerContextStub();
-      context.transform.withArgs(jsTemplateScript, sinon.match.any, sinon.match.any).callsFake(() => {
-        mutantCollector.collect(svelteAst.originFileName, jsTemplateScript.root.program, {
-          mutatorName: 'bar',
-          replacement: types.identifier('bar'),
+      context.transform
+        .withArgs(jsTemplateScript, sinon.match.any, sinon.match.any)
+        .callsFake(() => {
+          mutantCollector.collect(
+            svelteAst.originFileName,
+            jsTemplateScript.root.program,
+            {
+              mutatorName: 'bar',
+              replacement: types.identifier('bar'),
+            },
+          );
         });
-      });
       transformSvelte(svelteAst, mutantCollector, context);
       return { rawContent, svelteAst };
     }

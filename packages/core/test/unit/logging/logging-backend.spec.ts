@@ -9,7 +9,9 @@ import { expect } from 'chai';
 describe(LoggingBackend.name, () => {
   let sut: LoggingBackend;
   let stdoutStub: sinon.SinonStubbedMember<typeof process.stdout.write>;
-  let createWriteStreamStub: sinon.SinonStubbedMember<typeof fs.createWriteStream>;
+  let createWriteStreamStub: sinon.SinonStubbedMember<
+    typeof fs.createWriteStream
+  >;
   let logFileStream: Writable;
   let logFileWriteStub: sinon.SinonStubbedMember<Writable['write']>;
   let logFileEndStub: sinon.SinonStubbedMember<Writable['end']>;
@@ -28,7 +30,11 @@ describe(LoggingBackend.name, () => {
 
   describe(LoggingBackend.prototype.configure.name, () => {
     it('should be able to update properties using "configure"', () => {
-      sut.configure({ allowConsoleColors: false, fileLogLevel: LogLevel.Information, logLevel: LogLevel.Warning });
+      sut.configure({
+        allowConsoleColors: false,
+        fileLogLevel: LogLevel.Information,
+        logLevel: LogLevel.Warning,
+      });
       expect(sut.showColors).false;
       expect(sut.activeFileLevel).eq(LogLevel.Information);
       expect(sut.activeStdoutLevel).eq(LogLevel.Warning);
@@ -83,7 +89,9 @@ describe(LoggingBackend.name, () => {
     it('should create a log file when needed', () => {
       sut.activeFileLevel = LogLevel.Information;
       sut.log(LoggingEvent.create('category', LogLevel.Information, ['foo']));
-      sinon.assert.calledWith(createWriteStreamStub, 'stryker.log', { flags: 'a' });
+      sinon.assert.calledWith(createWriteStreamStub, 'stryker.log', {
+        flags: 'a',
+      });
     });
 
     it('should not create a log file when not needed', () => {
@@ -121,7 +129,11 @@ describe(LoggingBackend.name, () => {
 
       // Assert
       sinon.assert.called(logFileWriteStub);
-      sinon.assert.calledOnceWithExactly(consoleErrorStub, 'An error occurred while writing to "stryker.log"', expectedError);
+      sinon.assert.calledOnceWithExactly(
+        consoleErrorStub,
+        'An error occurred while writing to "stryker.log"',
+        expectedError,
+      );
     });
 
     it('should not write to file when the stream errored', () => {

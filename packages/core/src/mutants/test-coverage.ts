@@ -1,7 +1,10 @@
 import { CoverageData } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
-import { CompleteDryRunResult, TestResult } from '@stryker-mutator/api/test-runner';
+import {
+  CompleteDryRunResult,
+  TestResult,
+} from '@stryker-mutator/api/test-runner';
 import { notEmpty } from '@stryker-mutator/util';
 
 import { coreTokens } from '../di/index.js';
@@ -64,10 +67,16 @@ export class TestCoverage {
   public static from = testCoverageFrom;
 }
 
-function testCoverageFrom({ tests, mutantCoverage }: CompleteDryRunResult, logger: Logger): TestCoverage {
+function testCoverageFrom(
+  { tests, mutantCoverage }: CompleteDryRunResult,
+  logger: Logger,
+): TestCoverage {
   const hitsByMutantId = new Map<string, number>();
   const testsByMutantId = new Map<string, Set<TestResult>>();
-  const testsById = tests.reduce((acc, test) => acc.set(test.id, test), new Map<string, TestResult>());
+  const testsById = tests.reduce(
+    (acc, test) => acc.set(test.id, test),
+    new Map<string, TestResult>(),
+  );
   if (mutantCoverage) {
     Object.entries(mutantCoverage.perTest).forEach(([testId, coverage]) => {
       const foundTest = testsById.get(testId);
@@ -90,13 +99,27 @@ function testCoverageFrom({ tests, mutantCoverage }: CompleteDryRunResult, logge
     });
 
     // We don't care about the exact tests in this case, just the total number of hits
-    const coverageResultsPerMutant = [mutantCoverage.static, ...Object.values(mutantCoverage.perTest)];
+    const coverageResultsPerMutant = [
+      mutantCoverage.static,
+      ...Object.values(mutantCoverage.perTest),
+    ];
     coverageResultsPerMutant.forEach((coverageByMutantId) => {
       Object.entries(coverageByMutantId).forEach(([mutantId, count]) => {
-        hitsByMutantId.set(mutantId, (hitsByMutantId.get(mutantId) ?? 0) + count);
+        hitsByMutantId.set(
+          mutantId,
+          (hitsByMutantId.get(mutantId) ?? 0) + count,
+        );
       });
     });
   }
-  return new TestCoverage(testsByMutantId, testsById, mutantCoverage?.static, hitsByMutantId);
+  return new TestCoverage(
+    testsByMutantId,
+    testsById,
+    mutantCoverage?.static,
+    hitsByMutantId,
+  );
 }
-testCoverageFrom.inject = [coreTokens.dryRunResult, commonTokens.logger] as const;
+testCoverageFrom.inject = [
+  coreTokens.dryRunResult,
+  commonTokens.logger,
+] as const;

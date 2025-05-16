@@ -19,7 +19,10 @@ export class ChildProcessTestRunnerWorker implements TestRunner {
 
   public static inject = tokens(commonTokens.options, coreTokens.pluginCreator);
   constructor({ testRunner }: StrykerOptions, pluginCreator: PluginCreator) {
-    this.underlyingTestRunner = pluginCreator.create(PluginKind.TestRunner, testRunner);
+    this.underlyingTestRunner = pluginCreator.create(
+      PluginKind.TestRunner,
+      testRunner,
+    );
   }
 
   public async capabilities(): Promise<TestRunnerCapabilities> {
@@ -40,7 +43,11 @@ export class ChildProcessTestRunnerWorker implements TestRunner {
 
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
     const dryRunResult = await this.underlyingTestRunner.dryRun(options);
-    if (dryRunResult.status === DryRunStatus.Complete && !dryRunResult.mutantCoverage && options.coverageAnalysis !== 'off') {
+    if (
+      dryRunResult.status === DryRunStatus.Complete &&
+      !dryRunResult.mutantCoverage &&
+      options.coverageAnalysis !== 'off'
+    ) {
       // @ts-expect-error global __mutantCoverage__ isn't statically typed
       dryRunResult.mutantCoverage = global.__mutantCoverage__;
     }

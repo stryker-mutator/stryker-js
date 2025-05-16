@@ -5,7 +5,10 @@ import { print as jsPrint } from './js-printer.js';
 import { print as tsPrint } from './ts-printer.js';
 import { print as sveltePrint } from './svelte-printer.js';
 
-export type Printer<T extends Ast> = (file: T, context: PrinterContext) => string;
+export type Printer<T extends Ast> = (
+  file: T,
+  context: PrinterContext,
+) => string;
 
 export interface PrinterContext {
   print: Printer<Ast>;

@@ -15,31 +15,47 @@ export class ConcurrencyTokenProvider implements Disposable {
     return this.testRunnerTokenSubject;
   }
   public readonly checkerToken$: Observable<number>;
-  public static readonly inject = tokens(commonTokens.options, commonTokens.logger);
+  public static readonly inject = tokens(
+    commonTokens.options,
+    commonTokens.logger,
+  );
 
   constructor(
     options: Pick<StrykerOptions, 'checkers' | 'concurrency'>,
     private readonly log: Logger,
   ) {
     const cpuCount = os.cpus().length;
-    const concurrency = options.concurrency ?? (cpuCount > 4 ? cpuCount - 1 : cpuCount);
+    const concurrency =
+      options.concurrency ?? (cpuCount > 4 ? cpuCount - 1 : cpuCount);
     if (options.checkers.length > 0) {
       this.concurrencyCheckers = Math.max(Math.ceil(concurrency / 2), 1);
       this.checkerToken$ = range(this.concurrencyCheckers);
       this.concurrencyTestRunners = Math.max(Math.floor(concurrency / 2), 1);
-      log.info('Creating %s checker process(es) and %s test runner process(es).', this.concurrencyCheckers, this.concurrencyTestRunners);
+      log.info(
+        'Creating %s checker process(es) and %s test runner process(es).',
+        this.concurrencyCheckers,
+        this.concurrencyTestRunners,
+      );
     } else {
       this.concurrencyCheckers = 0;
       this.checkerToken$ = range(1); // at least one checker, the `CheckerFacade` will not create worker process.
       this.concurrencyTestRunners = concurrency;
-      log.info('Creating %s test runner process(es).', this.concurrencyTestRunners);
+      log.info(
+        'Creating %s test runner process(es).',
+        this.concurrencyTestRunners,
+      );
     }
-    Array.from({ length: this.concurrencyTestRunners }).forEach(() => this.testRunnerTokenSubject.next(this.tick()));
+    Array.from({ length: this.concurrencyTestRunners }).forEach(() =>
+      this.testRunnerTokenSubject.next(this.tick()),
+    );
   }
 
   public freeCheckers(): void {
     if (this.concurrencyCheckers > 0) {
-      this.log.debug('Checking done, creating %s additional test runner process(es)', this.concurrencyCheckers);
+      this.log.debug(
+        'Checking done, creating %s additional test runner process(es)',
+        this.concurrencyCheckers,
+      );
       for (let i = 0; i < this.concurrencyCheckers; i++) {
         this.testRunnerTokenSubject.next(this.tick());
       }

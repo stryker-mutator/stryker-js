@@ -3,21 +3,32 @@ import fs from 'fs';
 import { syncBuiltinESMExports } from 'module';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
-import { childProcessAsPromised, normalizeWhitespaces } from '@stryker-mutator/util';
+import {
+  childProcessAsPromised,
+  normalizeWhitespaces,
+} from '@stryker-mutator/util';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import typedRestClient, { type RestClient } from 'typed-rest-client/RestClient.js';
+import typedRestClient, {
+  type RestClient,
+} from 'typed-rest-client/RestClient.js';
 
 import { fileUtils } from '../../../src/utils/index.js';
 import { initializerTokens } from '../../../src/initializer/index.js';
-import { NpmClient, NpmSearchResult } from '../../../src/initializer/npm-client.js';
+import {
+  NpmClient,
+  NpmSearchResult,
+} from '../../../src/initializer/npm-client.js';
 import { StrykerConfigWriter } from '../../../src/initializer/stryker-config-writer.js';
 import { StrykerInitializer } from '../../../src/initializer/stryker-initializer.js';
 import { StrykerInquirer } from '../../../src/initializer/stryker-inquirer.js';
 import { Mock } from '../../helpers/producers.js';
 import { GitignoreWriter } from '../../../src/initializer/gitignore-writer.js';
 import { SUPPORTED_CONFIG_FILE_NAMES } from '../../../src/config/index.js';
-import { CustomInitializer, CustomInitializerConfiguration } from '../../../src/initializer/custom-initializers/custom-initializer.js';
+import {
+  CustomInitializer,
+  CustomInitializerConfiguration,
+} from '../../../src/initializer/custom-initializers/custom-initializer.js';
 import { PackageInfo } from '../../../src/initializer/package-info.js';
 import { inquire } from '../../../src/initializer/inquire.js';
 
@@ -68,8 +79,16 @@ describe(StrykerInitializer.name, () => {
 
   describe('initialize()', () => {
     beforeEach(() => {
-      stubTestRunners('@stryker-mutator/awesome-runner', 'stryker-hyper-runner', 'stryker-ghost-runner', '@stryker-mutator/jest-runner');
-      stubReporters('stryker-dimension-reporter', '@stryker-mutator/mars-reporter');
+      stubTestRunners(
+        '@stryker-mutator/awesome-runner',
+        'stryker-hyper-runner',
+        'stryker-ghost-runner',
+        '@stryker-mutator/jest-runner',
+      );
+      stubReporters(
+        'stryker-dimension-reporter',
+        '@stryker-mutator/mars-reporter',
+      );
       stubPackageClient({
         '@stryker-mutator/awesome-runner': undefined,
         '@stryker-mutator/javascript-mutator': undefined,
@@ -106,7 +125,14 @@ describe(StrykerInitializer.name, () => {
       sinon.assert.calledWithExactly(selectStub, {
         message:
           'Which test runner do you want to use? If your test runner isn\'t listed here, you can choose "command" (it uses your `npm test` command, but will come with a big performance penalty)',
-        choices: [{ value: 'awesome' }, { value: 'hyper' }, { value: 'ghost' }, { value: 'jest' }, inquire.separator(), { value: 'command' }],
+        choices: [
+          { value: 'awesome' },
+          { value: 'hyper' },
+          { value: 'ghost' },
+          { value: 'jest' },
+          inquire.separator(),
+          { value: 'command' },
+        ],
       });
     });
 
@@ -122,7 +148,9 @@ describe(StrykerInitializer.name, () => {
       expect(out).calledWith(
         'Done configuring stryker. Please review "stryker.config.json", you might need to configure your test runner correctly.',
       );
-      expect(out).calledWith("Let's kill some mutants with this command: `stryker run`");
+      expect(out).calledWith(
+        "Let's kill some mutants with this command: `stryker run`",
+      );
     });
 
     it('should correctly write and format the stryker js configuration file', async () => {
@@ -165,12 +193,19 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
 
       // Assert
-      expect(out).calledWith('Unable to format stryker.config.mjs file for you. This is not a big problem, but it might look a bit messy 🙈.');
-      expect(testInjector.logger.debug).calledWith('Prettier exited with error', expectedError);
+      expect(out).calledWith(
+        'Unable to format stryker.config.mjs file for you. This is not a big problem, but it might look a bit messy 🙈.',
+      );
+      expect(testInjector.logger.debug).calledWith(
+        'Prettier exited with error',
+        expectedError,
+      );
     });
 
     it('should correctly load dependencies from the preset', async () => {
-      resolvePresetConfig({ dependencies: ['my-awesome-dependency', 'another-awesome-dependency'] });
+      resolvePresetConfig({
+        dependencies: ['my-awesome-dependency', 'another-awesome-dependency'],
+      });
       arrangeAnswers({
         packageManager: 'npm',
         preset: 'awesome-preset',
@@ -178,7 +213,10 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       expect(fsWriteFile).calledOnce;
-      expect(childExecSync).calledWith('npm i --save-dev my-awesome-dependency another-awesome-dependency', { stdio: [0, 1, 2] });
+      expect(childExecSync).calledWith(
+        'npm i --save-dev my-awesome-dependency another-awesome-dependency',
+        { stdio: [0, 1, 2] },
+      );
     });
 
     it('should correctly load configuration from a preset', async () => {
@@ -191,8 +229,13 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
       sinon.assert.callCount(selectStub, 3);
       sinon.assert.calledWithExactly(selectStub, {
-        message: 'Are you using one of these frameworks? Then select a preset configuration.',
-        choices: [{ value: 'awesome-preset' }, inquire.separator(), { value: 'None/other' }],
+        message:
+          'Are you using one of these frameworks? Then select a preset configuration.',
+        choices: [
+          { value: 'awesome-preset' },
+          inquire.separator(),
+          { value: 'None/other' },
+        ],
       });
       sinon.assert.calledWithExactly(selectStub, {
         choices: [{ value: 'JSON' }, { value: 'JavaScript' }],
@@ -215,9 +258,12 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       expect(out).calledWith('Installing NPM dependencies...');
-      expect(childExecSync).calledWith('npm i --save-dev @stryker-mutator/awesome-runner stryker-dimension-reporter @stryker-mutator/mars-reporter', {
-        stdio: [0, 1, 2],
-      });
+      expect(childExecSync).calledWith(
+        'npm i --save-dev @stryker-mutator/awesome-runner stryker-dimension-reporter @stryker-mutator/mars-reporter',
+        {
+          stdio: [0, 1, 2],
+        },
+      );
     });
 
     it('should install additional dependencies with pnpm', async () => {
@@ -227,9 +273,12 @@ describe(StrykerInitializer.name, () => {
         testRunner: 'awesome',
       });
       await sut.initialize();
-      expect(childExecSync).calledWith('pnpm add -D @stryker-mutator/awesome-runner', {
-        stdio: [0, 1, 2],
-      });
+      expect(childExecSync).calledWith(
+        'pnpm add -D @stryker-mutator/awesome-runner',
+        {
+          stdio: [0, 1, 2],
+        },
+      );
     });
 
     it('should explicitly specify plugins when using pnpm', async () => {
@@ -282,8 +331,14 @@ describe(StrykerInitializer.name, () => {
         configFormat: 'JSON',
       });
       await sut.initialize();
-      expect(fs.promises.writeFile).calledWith('stryker.config.json', sinon.match('"someOtherSetting": "enabled"'));
-      expect(fs.promises.writeFile).calledWith('stryker.config.json', sinon.match('"files": []'));
+      expect(fs.promises.writeFile).calledWith(
+        'stryker.config.json',
+        sinon.match('"someOtherSetting": "enabled"'),
+      );
+      expect(fs.promises.writeFile).calledWith(
+        'stryker.config.json',
+        sinon.match('"files": []'),
+      );
     });
 
     it('should annotate the config file with the docs url', async () => {
@@ -344,7 +399,10 @@ describe(StrykerInitializer.name, () => {
         buildCommand: 'npm run build',
       });
       await sut.initialize();
-      expect(fs.promises.writeFile).calledWith('stryker.config.json', sinon.match('"buildCommand": "npm run build"'));
+      expect(fs.promises.writeFile).calledWith(
+        'stryker.config.json',
+        sinon.match('"buildCommand": "npm run build"'),
+      );
     });
 
     it('should set "coverageAnalysis" to "off" when the command test runner is chosen', async () => {
@@ -355,7 +413,10 @@ describe(StrykerInitializer.name, () => {
         configFormat: 'JSON',
       });
       await sut.initialize();
-      expect(fs.promises.writeFile).calledWith('stryker.config.json', sinon.match('"coverageAnalysis": "off"'));
+      expect(fs.promises.writeFile).calledWith(
+        'stryker.config.json',
+        sinon.match('"coverageAnalysis": "off"'),
+      );
     });
 
     it('should reject with that error', () => {
@@ -368,7 +429,9 @@ describe(StrykerInitializer.name, () => {
         configFormat: 'JSON',
       });
 
-      return expect(sut.initialize()).to.eventually.be.rejectedWith(expectedError);
+      return expect(sut.initialize()).to.eventually.be.rejectedWith(
+        expectedError,
+      );
     });
 
     it('should recover when install fails', async () => {
@@ -382,7 +445,9 @@ describe(StrykerInitializer.name, () => {
 
       await sut.initialize();
 
-      expect(out).calledWith('An error occurred during installation, please try it yourself: "npm i --save-dev stryker-ghost-runner"');
+      expect(out).calledWith(
+        'An error occurred during installation, please try it yourself: "npm i --save-dev stryker-ghost-runner"',
+      );
       expect(fs.promises.writeFile).called;
     });
 
@@ -396,12 +461,17 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
       expect(fs.promises.writeFile).calledWith(
         'stryker.config.json',
-        sinon.match('"testRunner_comment": "Take a look at (missing \'homepage\' URL in package.json) for information about the hyper plugin."'),
+        sinon.match(
+          '"testRunner_comment": "Take a look at (missing \'homepage\' URL in package.json) for information about the hyper plugin."',
+        ),
       );
     });
 
     it('should write URL if test runner homepage url as comment', async () => {
-      stubPackageClient({ 'stryker-hyper-runner': { name: 'hyper' } }, 'https://url-to-hyper.com');
+      stubPackageClient(
+        { 'stryker-hyper-runner': { name: 'hyper' } },
+        'https://url-to-hyper.com',
+      );
       arrangeAnswers({
         packageManager: 'npm',
         reporters: [],
@@ -411,16 +481,25 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
       expect(fs.promises.writeFile).calledWith(
         'stryker.config.json',
-        sinon.match('"testRunner_comment": "Take a look at https://url-to-hyper.com for information about the hyper plugin."'),
+        sinon.match(
+          '"testRunner_comment": "Take a look at https://url-to-hyper.com for information about the hyper plugin."',
+        ),
       );
     });
   });
 
   describe('initialize() when no internet', () => {
     it('should log error and continue when fetching test runners', async () => {
-      npmRestClient.get.withArgs('/-/v1/search?text=keywords:%40stryker-mutator%2Ftest-runner-plugin').rejects();
+      npmRestClient.get
+        .withArgs(
+          '/-/v1/search?text=keywords:%40stryker-mutator%2Ftest-runner-plugin',
+        )
+        .rejects();
       stubReporters();
-      stubPackageClient({ 'stryker-javascript': undefined, 'stryker-webpack': undefined });
+      stubPackageClient({
+        'stryker-javascript': undefined,
+        'stryker-webpack': undefined,
+      });
       arrangeAnswers({
         packageManager: 'npm',
         reporters: ['clear-text'],
@@ -432,19 +511,30 @@ describe(StrykerInitializer.name, () => {
       expect(testInjector.logger.error).calledWith(
         `Unable to reach '${defaultNpmRegistry}' (for query /-/v1/search?text=keywords:%40stryker-mutator%2Ftest-runner-plugin). Please check your internet connection.`,
       );
-      expect(fs.promises.writeFile).calledWith('stryker.config.json', sinon.match('"testRunner": "command"'));
+      expect(fs.promises.writeFile).calledWith(
+        'stryker.config.json',
+        sinon.match('"testRunner": "command"'),
+      );
     });
 
     it('should log error and continue when fetching stryker reporters', async () => {
       stubTestRunners('stryker-awesome-runner');
-      npmRestClient.get.withArgs('/-/v1/search?text=keywords:%40stryker-mutator%2Freporter-plugin').rejects();
+      npmRestClient.get
+        .withArgs(
+          '/-/v1/search?text=keywords:%40stryker-mutator%2Freporter-plugin',
+        )
+        .rejects();
       arrangeAnswers({
         packageManager: 'npm',
         reporters: ['clear-text'],
         testRunner: 'awesome',
         configFormat: 'JSON',
       });
-      stubPackageClient({ 'stryker-awesome-runner': undefined, 'stryker-javascript': undefined, 'stryker-webpack': undefined });
+      stubPackageClient({
+        'stryker-awesome-runner': undefined,
+        'stryker-javascript': undefined,
+        'stryker-webpack': undefined,
+      });
 
       await sut.initialize();
 
@@ -489,27 +579,49 @@ describe(StrykerInitializer.name, () => {
     const testRunnersResult: NpmSearchResult = {
       total: testRunners.length,
       objects: testRunners.map((testRunner) => ({
-        package: { name: testRunner, version: '1.1.1', keywords: ['@stryker-mutator/test-runner-plugin'] },
+        package: {
+          name: testRunner,
+          version: '1.1.1',
+          keywords: ['@stryker-mutator/test-runner-plugin'],
+        },
       })),
     };
 
-    npmRestClient.get.withArgs('/-/v1/search?text=keywords:%40stryker-mutator%2Ftest-runner-plugin').resolves({
-      result: testRunnersResult,
-      statusCode: 200,
-      headers: {},
-    });
+    npmRestClient.get
+      .withArgs(
+        '/-/v1/search?text=keywords:%40stryker-mutator%2Ftest-runner-plugin',
+      )
+      .resolves({
+        result: testRunnersResult,
+        statusCode: 200,
+        headers: {},
+      });
   };
 
   const stubReporters = (...reporters: string[]) => {
     const reportersResult: NpmSearchResult = {
       total: reporters.length,
-      objects: reporters.map((reporter) => ({ package: { name: reporter, version: '1.1.1', keywords: ['@stryker-mutator/reporter-plugin'] } })),
+      objects: reporters.map((reporter) => ({
+        package: {
+          name: reporter,
+          version: '1.1.1',
+          keywords: ['@stryker-mutator/reporter-plugin'],
+        },
+      })),
     };
     npmRestClient.get
-      .withArgs('/-/v1/search?text=keywords:%40stryker-mutator%2Freporter-plugin')
+      .withArgs(
+        '/-/v1/search?text=keywords:%40stryker-mutator%2Freporter-plugin',
+      )
       .resolves({ statusCode: 200, headers: {}, result: reportersResult });
   };
-  const stubPackageClient = (initStrykerConfigPerPackage: Record<string, Record<string, unknown> | undefined>, homepage?: string) => {
+  const stubPackageClient = (
+    initStrykerConfigPerPackage: Record<
+      string,
+      Record<string, unknown> | undefined
+    >,
+    homepage?: string,
+  ) => {
     Object.keys(initStrykerConfigPerPackage).forEach((name) => {
       const initStrykerConfig = initStrykerConfigPerPackage[name];
       const result: PackageInfo = {
@@ -519,11 +631,13 @@ describe(StrykerInitializer.name, () => {
         keywords: [],
         version: '1.1.1',
       };
-      npmRestClient.get.withArgs(`/${encodeURIComponent(name)}/1.1.1`).resolves({
-        result,
-        statusCode: 200,
-        headers: {},
-      });
+      npmRestClient.get
+        .withArgs(`/${encodeURIComponent(name)}/1.1.1`)
+        .resolves({
+          result,
+          statusCode: 200,
+          headers: {},
+        });
     });
   };
 
@@ -551,33 +665,72 @@ describe(StrykerInitializer.name, () => {
       ...answerOverrides,
     };
     selectStub
-      .withArgs(sinon.match((opt: SelectOptions) => opt.message.includes('Which test runner do you want to use?')))
+      .withArgs(
+        sinon.match((opt: SelectOptions) =>
+          opt.message.includes('Which test runner do you want to use?'),
+        ),
+      )
       .resolves(answers.testRunner);
-    selectStub.withArgs(sinon.match((opt: SelectOptions) => opt.message.includes('Are you using one of these frameworks?'))).resolves(answers.preset);
+    selectStub
+      .withArgs(
+        sinon.match((opt: SelectOptions) =>
+          opt.message.includes('Are you using one of these frameworks?'),
+        ),
+      )
+      .resolves(answers.preset);
 
     selectStub
-      .withArgs(sinon.match((opt: SelectOptions) => opt.message.includes('Which package manager do you want to use?')))
+      .withArgs(
+        sinon.match((opt: SelectOptions) =>
+          opt.message.includes('Which package manager do you want to use?'),
+        ),
+      )
       .resolves(answers.packageManager);
     selectStub
-      .withArgs(sinon.match((opt: SelectOptions) => opt.message.includes('What file type do you want for your config file?')))
+      .withArgs(
+        sinon.match((opt: SelectOptions) =>
+          opt.message.includes(
+            'What file type do you want for your config file?',
+          ),
+        ),
+      )
       .resolves(answers.configFormat);
 
     checkboxStub
-      .withArgs(sinon.match((opt: CheckboxOptions) => opt.message.includes('Which reporter(s) do you want to use?')))
+      .withArgs(
+        sinon.match((opt: CheckboxOptions) =>
+          opt.message.includes('Which reporter(s) do you want to use?'),
+        ),
+      )
       .resolves(answers.reporters);
 
     inputStub
-      .withArgs(sinon.match((opt: InputOptions) => opt.message.includes('What build command should be executed just before running your tests?')))
+      .withArgs(
+        sinon.match((opt: InputOptions) =>
+          opt.message.includes(
+            'What build command should be executed just before running your tests?',
+          ),
+        ),
+      )
       .resolves(answers.buildCommand);
   }
 
-  function resolvePresetConfig(overrides?: Partial<CustomInitializerConfiguration>) {
-    customInitializerMock.createConfig.resolves({ config: {}, dependencies: [], guideUrl: '', ...overrides });
+  function resolvePresetConfig(
+    overrides?: Partial<CustomInitializerConfiguration>,
+  ) {
+    customInitializerMock.createConfig.resolves({
+      config: {},
+      dependencies: [],
+      guideUrl: '',
+      ...overrides,
+    });
   }
 
   function expectStrykerConfWritten(expectedRawConfig: string) {
     const [fileName, actualConfig] = fsWriteFile.getCall(0).args;
     expect(fileName).eq('stryker.config.mjs');
-    expect(normalizeWhitespaces(actualConfig as string)).eq(normalizeWhitespaces(expectedRawConfig));
+    expect(normalizeWhitespaces(actualConfig as string)).eq(
+      normalizeWhitespaces(expectedRawConfig),
+    );
   }
 });

@@ -19,9 +19,14 @@ export class LoggingBackend implements LoggingSink, Disposable {
   log(event: LoggingEvent) {
     const eventPriority = logLevelPriority[event.level];
     if (eventPriority >= logLevelPriority[this.activeStdoutLevel]) {
-      process.stdout.write(`${this.showColors ? event.formatColorized() : event.format()}\n`);
+      process.stdout.write(
+        `${this.showColors ? event.formatColorized() : event.format()}\n`,
+      );
     }
-    if (eventPriority >= logLevelPriority[this.activeFileLevel] && !this.#fileStream.errored) {
+    if (
+      eventPriority >= logLevelPriority[this.activeFileLevel] &&
+      !this.#fileStream.errored
+    ) {
       this.#fileStream.write(`${event.format()}\n`);
     }
   }
@@ -39,7 +44,11 @@ export class LoggingBackend implements LoggingSink, Disposable {
     return logLevelPriority[this.activeLogLevel];
   }
 
-  configure({ logLevel, fileLogLevel, allowConsoleColors }: PartialStrykerOptions) {
+  configure({
+    logLevel,
+    fileLogLevel,
+    allowConsoleColors,
+  }: PartialStrykerOptions) {
     if (logLevel) {
       this.activeStdoutLevel = logLevel;
     }
@@ -56,7 +65,10 @@ export class LoggingBackend implements LoggingSink, Disposable {
     if (!this.#_fileStream) {
       this.#_fileStream = fs.createWriteStream(LOG_FILE_NAME, { flags: 'a' });
       this.#_fileStream.on('error', (error) => {
-        console.error(`An error occurred while writing to "${LOG_FILE_NAME}"`, error);
+        console.error(
+          `An error occurred while writing to "${LOG_FILE_NAME}"`,
+          error,
+        );
       });
     }
     return this.#_fileStream;

@@ -24,18 +24,24 @@ describe(JestGreaterThan25TestAdapter.name, () => {
     jestWrapperMock = sinon.createStubInstance(JestWrapper);
     jestWrapperMock.runCLI.resolves(jestResult);
 
-    sut = testInjector.injector.provideValue(pluginTokens.jestWrapper, jestWrapperMock).injectClass(JestGreaterThan25TestAdapter);
+    sut = testInjector.injector
+      .provideValue(pluginTokens.jestWrapper, jestWrapperMock)
+      .injectClass(JestGreaterThan25TestAdapter);
   });
 
   it('should call the runCLI method with the correct --projectRoot', async () => {
     await sut.run({ jestConfig });
-    expect(jestWrapperMock.runCLI).calledWith(sinon.match.object, [jestConfig.rootDir]);
+    expect(jestWrapperMock.runCLI).calledWith(sinon.match.object, [
+      jestConfig.rootDir,
+    ]);
   });
 
   it('should call the runCLI method with --projectRoot = cwd when no rootDir is provided', async () => {
     delete jestConfig.rootDir;
     await sut.run({ jestConfig });
-    expect(jestWrapperMock.runCLI).calledWith(sinon.match.object, [process.cwd()]);
+    expect(jestWrapperMock.runCLI).calledWith(sinon.match.object, [
+      process.cwd(),
+    ]);
   });
 
   it('should call the runCLI method with the --findRelatedTests flag when provided', async () => {
@@ -85,7 +91,10 @@ describe(JestGreaterThan25TestAdapter.name, () => {
 
   it('should call the runCLI method without the --testLocationInResults flag when not', async () => {
     await sut.run({ jestConfig, testLocationInResults: false });
-    expect(jestWrapperMock.runCLI).calledWith(sinon.match({ testLocationInResults: false }), [jestConfig.rootDir]);
+    expect(jestWrapperMock.runCLI).calledWith(
+      sinon.match({ testLocationInResults: false }),
+      [jestConfig.rootDir],
+    );
   });
 
   it('should call the runCLI method and return the test result', async () => {

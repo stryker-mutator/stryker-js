@@ -19,7 +19,11 @@ export class AngularIgnorer implements Ignorer {
    * This solves the "Argument needs to be statically analyzable." error
    */
   private isInputModelOrOutputConfigurationObject(path: NodePath): boolean {
-    if (!path.isObjectExpression() || !path.parentPath.isCallExpression() || !path.parentPath.parentPath.isClassProperty()) {
+    if (
+      !path.isObjectExpression() ||
+      !path.parentPath.isCallExpression() ||
+      !path.parentPath.parentPath.isClassProperty()
+    ) {
       return false;
     }
 
@@ -29,21 +33,32 @@ export class AngularIgnorer implements Ignorer {
     const isRequiredSignalIOFunction =
       callExpression.node.callee.type === 'MemberExpression' &&
       callExpression.node.callee.object.type === 'Identifier' &&
-      ANGULAR_SIGNAL_IO_FUNCTIONS.includes(callExpression.node.callee.object.name) &&
+      ANGULAR_SIGNAL_IO_FUNCTIONS.includes(
+        callExpression.node.callee.object.name,
+      ) &&
       callExpression.node.callee.property.type === 'Identifier' &&
       callExpression.node.callee.property.name === 'required';
 
     const isSignalIOFunction =
-      callExpression.node.callee.type === 'Identifier' && ANGULAR_SIGNAL_IO_FUNCTIONS.includes(callExpression.node.callee.name);
-    const isOutput = callExpression.node.callee.type === 'Identifier' && callExpression.node.callee.name === 'output';
+      callExpression.node.callee.type === 'Identifier' &&
+      ANGULAR_SIGNAL_IO_FUNCTIONS.includes(callExpression.node.callee.name);
+    const isOutput =
+      callExpression.node.callee.type === 'Identifier' &&
+      callExpression.node.callee.name === 'output';
 
     if (isRequiredSignalIOFunction || isOutput) {
       // The { alias: '...' } should be the first argument of the call expression
-      return callExpression.node.arguments.length >= 1 && callExpression.node.arguments[0] === objectExpression.node;
+      return (
+        callExpression.node.arguments.length >= 1 &&
+        callExpression.node.arguments[0] === objectExpression.node
+      );
     }
     if (isSignalIOFunction) {
       // The { alias: '...' } should be the second argument of the call expression
-      return callExpression.node.arguments.length >= 2 && callExpression.node.arguments[1] === objectExpression.node;
+      return (
+        callExpression.node.arguments.length >= 2 &&
+        callExpression.node.arguments[1] === objectExpression.node
+      );
     }
 
     return false;

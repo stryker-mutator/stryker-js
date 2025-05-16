@@ -1,18 +1,32 @@
 import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
-import { testInjector, assertions, factory, tick } from '@stryker-mutator/test-helpers';
+import {
+  testInjector,
+  assertions,
+  factory,
+  tick,
+} from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { TestResults } from 'karma';
 import sinon from 'sinon';
 import { Task } from '@stryker-mutator/util';
-import { DryRunOptions, MutantRunOptions, TestRunnerCapabilities, TestStatus } from '@stryker-mutator/api/test-runner';
+import {
+  DryRunOptions,
+  MutantRunOptions,
+  TestRunnerCapabilities,
+  TestStatus,
+} from '@stryker-mutator/api/test-runner';
 import { MutantCoverage } from '@stryker-mutator/api/core';
 
 import { configureKarma } from '../../src/karma-plugins/stryker-karma.conf.js';
 import { KarmaTestRunner } from '../../src/karma-test-runner.js';
 import { ProjectStarter } from '../../src/starters/project-starter.js';
 import { StrykerKarmaSetup } from '../../src-generated/karma-runner-options.js';
-import { Browser, KarmaSpec, StrykerReporter } from '../../src/karma-plugins/stryker-reporter.js';
+import {
+  Browser,
+  KarmaSpec,
+  StrykerReporter,
+} from '../../src/karma-plugins/stryker-reporter.js';
 import { TestHooksMiddleware } from '../../src/karma-plugins/test-hooks-middleware.js';
 import { karma } from '../../src/karma-wrapper.js';
 import { pluginTokens } from '../../src/plugin-tokens.js';
@@ -21,7 +35,9 @@ import { pluginTokens } from '../../src/plugin-tokens.js';
 
 describe(KarmaTestRunner.name, () => {
   let projectStarterMock: sinon.SinonStubbedInstance<ProjectStarter>;
-  let setGlobalsStub: sinon.SinonStubbedMember<typeof configureKarma.setGlobals>;
+  let setGlobalsStub: sinon.SinonStubbedMember<
+    typeof configureKarma.setGlobals
+  >;
   let karmaRunStub: sinon.SinonStubbedMember<typeof karma.runner.run>;
   let getLogger: LoggerFactoryMethod;
   let testHooksMiddlewareMock: sinon.SinonStubbedInstance<TestHooksMiddleware>;
@@ -36,12 +52,16 @@ describe(KarmaTestRunner.name, () => {
   });
 
   function createSut() {
-    return testInjector.injector.provideValue(pluginTokens.projectStarter, projectStarterMock).injectClass(KarmaTestRunner);
+    return testInjector.injector
+      .provideValue(pluginTokens.projectStarter, projectStarterMock)
+      .injectClass(KarmaTestRunner);
   }
 
   describe('capabilities', () => {
     it('should communicate reloadEnvironment=true', () => {
-      const expectedCapabilities: TestRunnerCapabilities = { reloadEnvironment: true };
+      const expectedCapabilities: TestRunnerCapabilities = {
+        reloadEnvironment: true,
+      };
       expect(createSut().capabilities()).deep.eq(expectedCapabilities);
     });
   });
@@ -87,11 +107,17 @@ describe(KarmaTestRunner.name, () => {
 
     beforeEach(async () => {
       sut = createSut();
-      StrykerReporter.instance.karmaConfig = await karma.config.parseConfig(null, {}, { promiseConfig: true });
+      StrykerReporter.instance.karmaConfig = await karma.config.parseConfig(
+        null,
+        {},
+        { promiseConfig: true },
+      );
     });
 
     it('should start karma', async () => {
-      projectStarterMock.start.resolves({ exitPromise: new Task<number>().promise });
+      projectStarterMock.start.resolves({
+        exitPromise: new Task<number>().promise,
+      });
       await actInit();
       expect(projectStarterMock.start).called;
     });
@@ -103,7 +129,9 @@ describe(KarmaTestRunner.name, () => {
     });
 
     it('should reject on browser errors', async () => {
-      projectStarterMock.start.resolves({ exitPromise: new Task<number>().promise });
+      projectStarterMock.start.resolves({
+        exitPromise: new Task<number>().promise,
+      });
       const expected = new Error('karma unavailable');
       const onGoingInit = sut.init();
       StrykerReporter.instance.onBrowserError(createBrowser(), expected);
@@ -122,7 +150,9 @@ describe(KarmaTestRunner.name, () => {
 
     it('should reject on karma version prior to 6.3.0', async () => {
       sinon.stub(karma, 'VERSION').value('6.2.9');
-      await expect(sut.init()).rejectedWith('Your karma version (6.2.9) is not supported. Please install 6.3.0 or higher');
+      await expect(sut.init()).rejectedWith(
+        'Your karma version (6.2.9) is not supported. Please install 6.3.0 or higher',
+      );
     });
 
     it('should not reject when disposed early (#3486)', async () => {
@@ -162,13 +192,25 @@ describe(KarmaTestRunner.name, () => {
       browserError?: [browser: Browser, error: any] | undefined;
     }) {
       const dryRunPromise = sut.dryRun(options);
-      actRun({ browserError, specResults, mutantCoverage, hitCount: undefined, runResults });
+      actRun({
+        browserError,
+        specResults,
+        mutantCoverage,
+        hitCount: undefined,
+        runResults,
+      });
       return dryRunPromise;
     }
 
     it('should report completed specs as test results', async () => {
       const specResults = [
-        createKarmaSpec({ id: 'spec1', suite: ['foo'], description: 'should bar', time: 42, success: true }),
+        createKarmaSpec({
+          id: 'spec1',
+          suite: ['foo'],
+          description: 'should bar',
+          time: 42,
+          success: true,
+        }),
         createKarmaSpec({
           id: 'spec2',
           suite: ['bar', 'when baz'],
@@ -177,10 +219,21 @@ describe(KarmaTestRunner.name, () => {
           time: 44,
           success: false,
         }),
-        createKarmaSpec({ id: 'spec3', suite: ['quux'], description: 'should corge', time: 45, skipped: true }),
+        createKarmaSpec({
+          id: 'spec3',
+          suite: ['quux'],
+          description: 'should corge',
+          time: 45,
+          skipped: true,
+        }),
       ];
       const expectedTests = [
-        factory.testResult({ id: 'spec1', status: TestStatus.Success, timeSpentMs: 42, name: 'foo should bar' }),
+        factory.testResult({
+          id: 'spec1',
+          status: TestStatus.Success,
+          timeSpentMs: 42,
+          name: 'foo should bar',
+        }),
         factory.testResult({
           id: 'spec2',
           status: TestStatus.Failed,
@@ -188,7 +241,12 @@ describe(KarmaTestRunner.name, () => {
           name: 'bar when baz should qux',
           failureMessage: 'expected quux to be qux, expected length of 1',
         }),
-        factory.testResult({ id: 'spec3', status: TestStatus.Skipped, timeSpentMs: 45, name: 'quux should corge' }),
+        factory.testResult({
+          id: 'spec3',
+          status: TestStatus.Skipped,
+          timeSpentMs: 45,
+          name: 'quux should corge',
+        }),
       ];
       const actualResult = await actDryRun({ specResults });
       assertions.expectCompleted(actualResult);
@@ -197,11 +255,18 @@ describe(KarmaTestRunner.name, () => {
 
     it('should run karma with custom karma configuration', async () => {
       // Arrange
-      projectStarterMock.start.resolves({ exitPromise: new Task<number>().promise });
-      StrykerReporter.instance.karmaConfig = await karma.config.parseConfig(null, {}, { promiseConfig: true });
+      projectStarterMock.start.resolves({
+        exitPromise: new Task<number>().promise,
+      });
+      StrykerReporter.instance.karmaConfig = await karma.config.parseConfig(
+        null,
+        {},
+        { promiseConfig: true },
+      );
       StrykerReporter.instance.karmaConfig.hostname = 'www.localhost.com';
       StrykerReporter.instance.karmaConfig.port = 1337;
-      StrykerReporter.instance.karmaConfig.listenAddress = 'www.localhost.com:1337';
+      StrykerReporter.instance.karmaConfig.listenAddress =
+        'www.localhost.com:1337';
       const parseConfigStub = sinon.stub(karma.config, 'parseConfig');
       const expectedRunConfig = { custom: 'config' };
       parseConfigStub.resolves(expectedRunConfig);
@@ -214,7 +279,11 @@ describe(KarmaTestRunner.name, () => {
 
       // Assert
       expect(karmaRunStub).calledWith(expectedRunConfig, sinon.match.func);
-      expect(parseConfigStub).calledWithExactly(null, { hostname: 'www.localhost.com', port: 1337, listenAddress: 'www.localhost.com:1337' });
+      expect(parseConfigStub).calledWithExactly(null, {
+        hostname: 'www.localhost.com',
+        port: 1337,
+        listenAddress: 'www.localhost.com:1337',
+      });
     });
 
     it('should log when karma run is done', async () => {
@@ -223,9 +292,22 @@ describe(KarmaTestRunner.name, () => {
     });
 
     it('should clear run results between runs', async () => {
-      const firstTestResult = createKarmaSpec({ id: 'spec1', suite: ['foo'], description: 'should bar', time: 42, success: true });
-      const expectedTestResult = factory.testResult({ id: 'spec1', status: TestStatus.Success, timeSpentMs: 42, name: 'foo should bar' });
-      const actualFirstResult = await actDryRun({ specResults: [firstTestResult] });
+      const firstTestResult = createKarmaSpec({
+        id: 'spec1',
+        suite: ['foo'],
+        description: 'should bar',
+        time: 42,
+        success: true,
+      });
+      const expectedTestResult = factory.testResult({
+        id: 'spec1',
+        status: TestStatus.Success,
+        timeSpentMs: 42,
+        name: 'foo should bar',
+      });
+      const actualFirstResult = await actDryRun({
+        specResults: [firstTestResult],
+      });
       const actualSecondResult = await actDryRun({});
       assertions.expectCompleted(actualFirstResult);
       assertions.expectCompleted(actualSecondResult);
@@ -234,20 +316,31 @@ describe(KarmaTestRunner.name, () => {
     });
 
     it('should configure the coverage analysis in the test hooks middleware', async () => {
-      await actDryRun({ options: factory.dryRunOptions({ coverageAnalysis: 'all' }) });
-      expect(testHooksMiddlewareMock.configureCoverageAnalysis).calledWithExactly('all');
+      await actDryRun({
+        options: factory.dryRunOptions({ coverageAnalysis: 'all' }),
+      });
+      expect(
+        testHooksMiddlewareMock.configureCoverageAnalysis,
+      ).calledWithExactly('all');
     });
 
     it('should add coverage report when the reporter raises the "coverage_report" event', async () => {
-      const expectedCoverageReport = factory.mutantCoverage({ static: { '1': 4 } });
-      const actualResult = await actDryRun({ mutantCoverage: expectedCoverageReport });
+      const expectedCoverageReport = factory.mutantCoverage({
+        static: { '1': 4 },
+      });
+      const actualResult = await actDryRun({
+        mutantCoverage: expectedCoverageReport,
+      });
       assertions.expectCompleted(actualResult);
       expect(actualResult.mutantCoverage).eq(expectedCoverageReport);
     });
 
     it('should add error when the reporter raises the "browser_error" event', async () => {
       const expectedError = 'Global variable undefined';
-      const actualResult = await actDryRun({ runResults: createKarmaTestResults({ error: true }), browserError: [createBrowser(), expectedError] });
+      const actualResult = await actDryRun({
+        runResults: createKarmaTestResults({ error: true }),
+        browserError: [createBrowser(), expectedError],
+      });
       assertions.expectErrored(actualResult);
       expect(actualResult.errorMessage).deep.eq(expectedError);
     });
@@ -281,7 +374,13 @@ describe(KarmaTestRunner.name, () => {
       browserError?: [browser: Browser, error: any] | undefined;
     }) {
       const promise = sut.mutantRun(options);
-      actRun({ specResults, runResults, mutantCoverage, hitCount, browserError });
+      actRun({
+        specResults,
+        runResults,
+        mutantCoverage,
+        hitCount,
+        browserError,
+      });
       return promise;
     }
 
@@ -293,17 +392,26 @@ describe(KarmaTestRunner.name, () => {
     it('should configure the mutant run on the middleware', async () => {
       const options = factory.mutantRunOptions({ testFilter: ['foobar'] });
       await actMutantRun({ options });
-      expect(testHooksMiddlewareMock.configureMutantRun).calledOnceWithExactly(options);
+      expect(testHooksMiddlewareMock.configureMutantRun).calledOnceWithExactly(
+        options,
+      );
     });
 
     it('should correctly report a survived mutant', async () => {
-      const result = await actMutantRun({ specResults: [createKarmaSpec({ success: true })] });
+      const result = await actMutantRun({
+        specResults: [createKarmaSpec({ success: true })],
+      });
       assertions.expectSurvived(result);
       expect(result.nrOfTests).eq(1);
     });
 
     it('should correctly report a killed mutant', async () => {
-      const result = await actMutantRun({ specResults: [createKarmaSpec({ success: true }), createKarmaSpec({ success: false })] });
+      const result = await actMutantRun({
+        specResults: [
+          createKarmaSpec({ success: true }),
+          createKarmaSpec({ success: false }),
+        ],
+      });
       assertions.expectKilled(result);
       expect(result.nrOfTests).eq(2);
     });
@@ -312,12 +420,20 @@ describe(KarmaTestRunner.name, () => {
       arrangeLauncherMock();
       const onGoingRun = sut.mutantRun(factory.mutantRunOptions());
       StrykerReporter.instance.onRunStart();
-      StrykerReporter.instance.onBrowserError(createBrowser({ id: '42', state: 'DISCONNECTED' }), 'disconnected');
-      StrykerReporter.instance.onRunComplete(null, createKarmaTestResults({ disconnected: true }));
+      StrykerReporter.instance.onBrowserError(
+        createBrowser({ id: '42', state: 'DISCONNECTED' }),
+        'disconnected',
+      );
+      StrykerReporter.instance.onRunComplete(
+        null,
+        createKarmaTestResults({ disconnected: true }),
+      );
       StrykerReporter.instance.onBrowsersReady();
       const result = await onGoingRun;
       assertions.expectTimeout(result);
-      expect(result.reason).eq('Browser disconnected during test execution. Karma error: disconnected');
+      expect(result.reason).eq(
+        'Browser disconnected during test execution. Karma error: disconnected',
+      );
     });
 
     it('should restart the browser and wait until it is restarted when it gets disconnected (issue #2989)', async () => {
@@ -326,14 +442,22 @@ describe(KarmaTestRunner.name, () => {
 
       // Act
       let runCompleted = false;
-      const onGoingRun = sut.mutantRun(factory.mutantRunOptions()).then(() => (runCompleted = true));
+      const onGoingRun = sut
+        .mutantRun(factory.mutantRunOptions())
+        .then(() => (runCompleted = true));
       StrykerReporter.instance.onRunStart();
-      StrykerReporter.instance.onBrowserError(createBrowser({ id: '42', state: 'DISCONNECTED' }), 'disconnected');
+      StrykerReporter.instance.onBrowserError(
+        createBrowser({ id: '42', state: 'DISCONNECTED' }),
+        'disconnected',
+      );
 
       // Assert
       expect(launcher.restart).calledWith('42');
       expect(karmaServer.get).calledWith('launcher');
-      StrykerReporter.instance.onRunComplete(null, createKarmaTestResults({ disconnected: true }));
+      StrykerReporter.instance.onRunComplete(
+        null,
+        createKarmaTestResults({ disconnected: true }),
+      );
       await tick();
       expect(runCompleted).false;
       StrykerReporter.instance.onBrowsersReady();
@@ -368,7 +492,11 @@ describe(KarmaTestRunner.name, () => {
 
   describe('dispose', () => {
     beforeEach(async () => {
-      StrykerReporter.instance.karmaConfig = await karma.config.parseConfig(null, {}, { promiseConfig: true });
+      StrykerReporter.instance.karmaConfig = await karma.config.parseConfig(
+        null,
+        {},
+        { promiseConfig: true },
+      );
     });
 
     it('should not do anything if there is no karma server', async () => {
@@ -397,7 +525,9 @@ describe(KarmaTestRunner.name, () => {
       await initPromise;
 
       // Act
-      const onGoingDisposal = sut.dispose().then(() => (disposeResolved = true));
+      const onGoingDisposal = sut
+        .dispose()
+        .then(() => (disposeResolved = true));
 
       // Assert
       await tick();
@@ -421,11 +551,16 @@ describe(KarmaTestRunner.name, () => {
     browserError: [browser: Browser, error: any] | undefined;
   }) {
     StrykerReporter.instance.onRunStart();
-    specResults.forEach((spec) => StrykerReporter.instance.onSpecComplete(null, spec));
+    specResults.forEach((spec) =>
+      StrykerReporter.instance.onSpecComplete(null, spec),
+    );
     if (browserError) {
       StrykerReporter.instance.onBrowserError(...browserError);
     }
-    StrykerReporter.instance.onBrowserComplete(null, { mutantCoverage, hitCount });
+    StrykerReporter.instance.onBrowserComplete(null, {
+      mutantCoverage,
+      hitCount,
+    });
     StrykerReporter.instance.onRunComplete(null, runResults);
   }
 });

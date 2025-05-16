@@ -17,7 +17,10 @@ const startingCommentRegex = /(^\s*\/\*.*?\*\/)/gs;
  *
  * @see https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-7.html#-ts-nocheck-in-typescript-files
  */
-export async function disableTypeChecks(file: File, options: ParserOptions): Promise<File> {
+export async function disableTypeChecks(
+  file: File,
+  options: ParserOptions,
+): Promise<File> {
   const format = getFormat(file.name);
   if (!format) {
     // Readme files and stuff don't need disabling.
@@ -46,11 +49,16 @@ export async function disableTypeChecks(file: File, options: ParserOptions): Pro
 }
 
 function isJSFileWithoutTSDirectives(file: File, format: AstFormat) {
-  return (format === AstFormat.TS || format === AstFormat.JS) && !tsDirectiveLikeRegEx.test(file.content);
+  return (
+    (format === AstFormat.TS || format === AstFormat.JS) &&
+    !tsDirectiveLikeRegEx.test(file.content)
+  );
 }
 
 function disableTypeCheckingInBabelAst(ast: ScriptAst): string {
-  return prefixWithNoCheck(removeTSDirectives(ast.rawContent, ast.root.comments));
+  return prefixWithNoCheck(
+    removeTSDirectives(ast.rawContent, ast.root.comments),
+  );
 }
 
 function prefixWithNoCheck(code: string): string {
@@ -71,13 +79,17 @@ function prefixWithNoCheck(code: string): string {
 }
 
 function disableTypeCheckingInHtml(ast: HtmlAst): string {
-  const sortedScripts = [...ast.root.scripts].sort((a, b) => a.root.start! - b.root.start!);
+  const sortedScripts = [...ast.root.scripts].sort(
+    (a, b) => a.root.start! - b.root.start!,
+  );
   let currentIndex = 0;
   let html = '';
   for (const script of sortedScripts) {
     html += ast.rawContent.substring(currentIndex, script.root.start!);
     html += '\n';
-    html += prefixWithNoCheck(removeTSDirectives(script.rawContent, script.root.comments));
+    html += prefixWithNoCheck(
+      removeTSDirectives(script.rawContent, script.root.comments),
+    );
     html += '\n';
     currentIndex = script.root.end!;
   }
@@ -86,13 +98,17 @@ function disableTypeCheckingInHtml(ast: HtmlAst): string {
 }
 
 function disableTypeCheckingInSvelte(ast: SvelteAst): string {
-  const sortedScripts = [ast.root.moduleScript, ...ast.root.additionalScripts].filter(notEmpty).sort((a, b) => a.range.start - b.range.start);
+  const sortedScripts = [ast.root.moduleScript, ...ast.root.additionalScripts]
+    .filter(notEmpty)
+    .sort((a, b) => a.range.start - b.range.start);
   let currentIndex = 0;
   let html = '';
   for (const script of sortedScripts) {
     html += ast.rawContent.substring(currentIndex, script.range.start);
     html += '\n';
-    html += prefixWithNoCheck(removeTSDirectives(script.ast.rawContent, script.ast.root.comments));
+    html += prefixWithNoCheck(
+      removeTSDirectives(script.ast.rawContent, script.ast.root.comments),
+    );
     html += '\n';
     currentIndex = script.range.end;
   }
@@ -100,7 +116,10 @@ function disableTypeCheckingInSvelte(ast: SvelteAst): string {
   return html;
 }
 
-function removeTSDirectives(text: string, comments: Array<types.CommentBlock | types.CommentLine> | null | undefined): string {
+function removeTSDirectives(
+  text: string,
+  comments: Array<types.CommentBlock | types.CommentLine> | null | undefined,
+): string {
   const directiveRanges = comments
     ?.map(tryParseTSDirective)
     .filter(notEmpty)
@@ -119,11 +138,16 @@ function removeTSDirectives(text: string, comments: Array<types.CommentBlock | t
   }
 }
 
-function tryParseTSDirective(comment: types.CommentBlock | types.CommentLine): { startPos: number; endPos: number } | undefined {
+function tryParseTSDirective(
+  comment: types.CommentBlock | types.CommentLine,
+): { startPos: number; endPos: number } | undefined {
   const match = commentDirectiveRegEx.exec(comment.value);
   if (match) {
     const directiveStartPos = comment.start! + match[1].length + 2; // +2 to account for the `//` or `/*` start character
-    return { startPos: directiveStartPos, endPos: directiveStartPos + match[2].length + 1 };
+    return {
+      startPos: directiveStartPos,
+      endPos: directiveStartPos + match[2].length + 1,
+    };
   }
   return undefined;
 }

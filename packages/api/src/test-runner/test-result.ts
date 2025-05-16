@@ -43,4 +43,7 @@ export interface SuccessTestResult extends BaseTestResult {
   status: TestStatus.Success;
 }
 
-export type TestResult = FailedTestResult | SkippedTestResult | SuccessTestResult;
+export type TestResult =
+  | FailedTestResult
+  | SkippedTestResult
+  | SuccessTestResult;

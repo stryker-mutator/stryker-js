@@ -11,7 +11,10 @@ export const arrowFunctionMutator: NodeMutator = {
     if (
       path.isArrowFunctionExpression() &&
       !types.isBlockStatement(path.node.body) &&
-      !(types.isIdentifier(path.node.body) && path.node.body.name === 'undefined')
+      !(
+        types.isIdentifier(path.node.body) &&
+        path.node.body.name === 'undefined'
+      )
     ) {
       yield types.arrowFunctionExpression([], types.identifier('undefined'));
     }

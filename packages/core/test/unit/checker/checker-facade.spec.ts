@@ -23,13 +23,20 @@ describe(CheckerFacade.name, () => {
 
   describe('check', () => {
     it('should return checker result', async () => {
-      const mutant1 = factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) });
-      const mutant2 = factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) });
+      const mutant1 = factory.mutantRunPlan({
+        mutant: factory.mutantTestCoverage({ id: '1' }),
+      });
+      const mutant2 = factory.mutantRunPlan({
+        mutant: factory.mutantTestCoverage({ id: '2' }),
+      });
 
       innerChecker.check.returns(
         Promise.resolve({
           [mutant1.mutant.id]: { status: CheckStatus.Passed },
-          [mutant2.mutant.id]: { status: CheckStatus.CompileError, reason: 'Test' },
+          [mutant2.mutant.id]: {
+            status: CheckStatus.CompileError,
+            reason: 'Test',
+          },
         }),
       );
 
@@ -42,26 +49,44 @@ describe(CheckerFacade.name, () => {
     });
 
     it('should throw an error when checker does not return all mutants', async () => {
-      innerChecker.check.returns(Promise.resolve({ '1': { status: CheckStatus.Passed } }));
-
-      await expect(
-        sut.check('test-checker', [
-          factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) }),
-          factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) }),
-          factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '3' }) }),
-        ]),
-      ).to.be.rejectedWith('Checker "test-checker" was missing check results for mutant ids "2,3", while Stryker asked to check them');
-    });
-
-    it('should throw an error when checker returns to many mutants', async () => {
       innerChecker.check.returns(
-        Promise.resolve({ '1': { status: CheckStatus.Passed }, '2': { status: CheckStatus.Passed }, '3': { status: CheckStatus.Passed } }),
+        Promise.resolve({ '1': { status: CheckStatus.Passed } }),
       );
 
       await expect(
         sut.check('test-checker', [
-          factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) }),
-          factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) }),
+          factory.mutantRunPlan({
+            mutant: factory.mutantTestCoverage({ id: '1' }),
+          }),
+          factory.mutantRunPlan({
+            mutant: factory.mutantTestCoverage({ id: '2' }),
+          }),
+          factory.mutantRunPlan({
+            mutant: factory.mutantTestCoverage({ id: '3' }),
+          }),
+        ]),
+      ).to.be.rejectedWith(
+        'Checker "test-checker" was missing check results for mutant ids "2,3", while Stryker asked to check them',
+      );
+    });
+
+    it('should throw an error when checker returns to many mutants', async () => {
+      innerChecker.check.returns(
+        Promise.resolve({
+          '1': { status: CheckStatus.Passed },
+          '2': { status: CheckStatus.Passed },
+          '3': { status: CheckStatus.Passed },
+        }),
+      );
+
+      await expect(
+        sut.check('test-checker', [
+          factory.mutantRunPlan({
+            mutant: factory.mutantTestCoverage({ id: '1' }),
+          }),
+          factory.mutantRunPlan({
+            mutant: factory.mutantTestCoverage({ id: '2' }),
+          }),
         ]),
       ).to.be.rejectedWith(
         'Checker "test-checker" returned a check result for mutant id "3", but a check wasn\'t requested for it. Stryker asked to check mutant ids: 1,2',
@@ -71,10 +96,16 @@ describe(CheckerFacade.name, () => {
 
   describe('group', () => {
     it('should return group result', async () => {
-      const mutant1 = factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) });
-      const mutant2 = factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) });
+      const mutant1 = factory.mutantRunPlan({
+        mutant: factory.mutantTestCoverage({ id: '1' }),
+      });
+      const mutant2 = factory.mutantRunPlan({
+        mutant: factory.mutantTestCoverage({ id: '2' }),
+      });
 
-      innerChecker.group.returns(Promise.resolve([[mutant1.mutant.id, mutant2.mutant.id]]));
+      innerChecker.group.returns(
+        Promise.resolve([[mutant1.mutant.id, mutant2.mutant.id]]),
+      );
 
       const result = await sut.group('test-checker', [mutant1, mutant2]);
 
@@ -86,8 +117,12 @@ describe(CheckerFacade.name, () => {
 
       await expect(
         sut.group('test-checker', [
-          factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) }),
-          factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) }),
+          factory.mutantRunPlan({
+            mutant: factory.mutantTestCoverage({ id: '1' }),
+          }),
+          factory.mutantRunPlan({
+            mutant: factory.mutantTestCoverage({ id: '2' }),
+          }),
         ]),
       ).to.be.rejectedWith(
         'Checker "test-checker" returned a group result for mutant id "3", but a group wasn\'t requested for it. Stryker asked to group mutant ids: 1,2!',
@@ -99,11 +134,19 @@ describe(CheckerFacade.name, () => {
 
       await expect(
         sut.group('test-checker', [
-          factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '1' }) }),
-          factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '2' }) }),
-          factory.mutantRunPlan({ mutant: factory.mutantTestCoverage({ id: '3' }) }),
+          factory.mutantRunPlan({
+            mutant: factory.mutantTestCoverage({ id: '1' }),
+          }),
+          factory.mutantRunPlan({
+            mutant: factory.mutantTestCoverage({ id: '2' }),
+          }),
+          factory.mutantRunPlan({
+            mutant: factory.mutantTestCoverage({ id: '3' }),
+          }),
         ]),
-      ).to.be.rejectedWith('Checker "test-checker" was missing group results for mutant ids "2,3", while Stryker asked to group them!');
+      ).to.be.rejectedWith(
+        'Checker "test-checker" was missing group results for mutant ids "2,3", while Stryker asked to group them!',
+      );
     });
   });
 });

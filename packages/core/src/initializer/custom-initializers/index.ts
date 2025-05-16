@@ -1,4 +1,8 @@
-import { BaseContext, commonTokens, Injector } from '@stryker-mutator/api/plugin';
+import {
+  BaseContext,
+  commonTokens,
+  Injector,
+} from '@stryker-mutator/api/plugin';
 import type { resolveFromCwd } from '@stryker-mutator/util';
 
 import { coreTokens } from '../../di/index.js';
@@ -14,7 +18,9 @@ interface CustomInitializerContext extends BaseContext {
   [coreTokens.resolveFromCwd]: typeof resolveFromCwd;
 }
 
-export function createInitializers(injector: Injector<CustomInitializerContext>): CustomInitializer[] {
+export function createInitializers(
+  injector: Injector<CustomInitializerContext>,
+): CustomInitializer[] {
   return [
     injector.injectClass(AngularInitializer),
     injector.injectClass(ReactInitializer),

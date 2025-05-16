@@ -1,7 +1,11 @@
 import { expect } from 'chai';
 import { TestStatus } from '@stryker-mutator/api/test-runner';
 
-import { collectTestsFromSuite, convertTestToTestResult, fromTestId } from '../../src/vitest-helpers.js';
+import {
+  collectTestsFromSuite,
+  convertTestToTestResult,
+  fromTestId,
+} from '../../src/vitest-helpers.js';
 import { createSuite, createVitestTest } from '../util/factories.js';
 
 describe('vitest-helpers', () => {
@@ -46,7 +50,12 @@ describe('vitest-helpers', () => {
     });
 
     it('should return 2 tests for a suite with 2 tests', () => {
-      const suite = createSuite({ tasks: [createVitestTest({ name: 'test1', id: '1' }), createVitestTest({ name: 'test2', id: '2' })] });
+      const suite = createSuite({
+        tasks: [
+          createVitestTest({ name: 'test1', id: '1' }),
+          createVitestTest({ name: 'test2', id: '2' }),
+        ],
+      });
       const result = collectTestsFromSuite(suite);
       expect(result).to.have.lengthOf(2);
     });
@@ -57,7 +66,10 @@ describe('vitest-helpers', () => {
           createSuite({
             id: '2',
             name: 'suite2',
-            tasks: [createVitestTest({ name: 'test1', id: '1' }), createVitestTest({ name: 'test2', id: '2' })],
+            tasks: [
+              createVitestTest({ name: 'test1', id: '1' }),
+              createVitestTest({ name: 'test2', id: '2' }),
+            ],
           }),
         ],
       });

@@ -14,7 +14,8 @@ import { OutOfMemoryError } from '../child-proxy/out-of-memory-error.js';
 import { TestRunnerDecorator } from './test-runner-decorator.js';
 import { Logger } from '@stryker-mutator/api/logging';
 
-const ERROR_MESSAGE = 'Test runner crashed. Tried twice to restart it without any luck. Last time the error message was: ';
+const ERROR_MESSAGE =
+  'Test runner crashed. Tried twice to restart it without any luck. Last time the error message was: ';
 export const MAX_RETRIES = 2;
 
 /**

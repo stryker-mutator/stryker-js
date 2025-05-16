@@ -20,8 +20,13 @@ describe(ReactScriptsJestConfigLoader.name, () => {
   beforeEach(() => {
     createReactJestConfigStub = sinon.stub();
     requireResolveStub = sinon.stub();
-    requireResolveStub.returns(path.resolve('./node_modules/react-scripts/package.json'));
-    createReactJestConfigStub.returns({ testPaths: ['example'], watchPlugins: undefined });
+    requireResolveStub.returns(
+      path.resolve('./node_modules/react-scripts/package.json'),
+    );
+    createReactJestConfigStub.returns({
+      testPaths: ['example'],
+      watchPlugins: undefined,
+    });
     requireFromCwdStub = sinon.stub();
     requireFromCwdStub.returns(createReactJestConfigStub);
     processEnvMock = {
@@ -29,7 +34,10 @@ describe(ReactScriptsJestConfigLoader.name, () => {
     };
     sut = testInjector.injector
       .provideValue(pluginTokens.processEnv, processEnvMock)
-      .provideValue(pluginTokens.resolve, requireResolveStub as unknown as RequireResolve)
+      .provideValue(
+        pluginTokens.resolve,
+        requireResolveStub as unknown as RequireResolve,
+      )
       .provideValue(pluginTokens.requireFromCwd, requireFromCwdStub)
       .injectClass(ReactScriptsJestConfigLoader);
   });
@@ -38,8 +46,14 @@ describe(ReactScriptsJestConfigLoader.name, () => {
     const config = await sut.loadConfig();
 
     expect(requireResolveStub).calledWith('react-scripts/package.json');
-    expect(requireFromCwdStub).calledWith('react-scripts/scripts/utils/createJestConfig');
-    expect(createReactJestConfigStub).calledWith(sinon.match.func, process.cwd(), false);
+    expect(requireFromCwdStub).calledWith(
+      'react-scripts/scripts/utils/createJestConfig',
+    );
+    expect(createReactJestConfigStub).calledWith(
+      sinon.match.func,
+      process.cwd(),
+      false,
+    );
     expect(config).deep.eq({ testPaths: ['example'], watchPlugins: undefined });
   });
 

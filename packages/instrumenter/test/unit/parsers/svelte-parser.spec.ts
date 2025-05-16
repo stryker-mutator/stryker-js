@@ -3,7 +3,11 @@ import sinon from 'sinon';
 
 import { ParserContext } from '../../../src/parsers/parser-context.js';
 import { parse } from '../../../src/parsers/svelte-parser.js';
-import { createJSAst, createRange, createTSAst } from '../../helpers/factories.js';
+import {
+  createJSAst,
+  createRange,
+  createTSAst,
+} from '../../helpers/factories.js';
 import { parserContextStub } from '../../helpers/stubs.js';
 import { AstFormat, Range, TemplateScript } from '../../../src/syntax/index.js';
 
@@ -39,7 +43,12 @@ describe('svelte-parser', () => {
 
       await parse(svelte, 'index.svelte', contextStub);
 
-      sinon.assert.calledWithExactly(contextStub.parse, script, 'index.svelte', AstFormat.JS);
+      sinon.assert.calledWithExactly(
+        contextStub.parse,
+        script,
+        'index.svelte',
+        AstFormat.JS,
+      );
     });
 
     it('should offset the module script location correctly', async () => {
@@ -97,7 +106,11 @@ describe('svelte-parser', () => {
         },
         isExpression: false,
       };
-      expect(parsed.root.additionalScripts.find(({ isExpression: expression }) => !expression)).deep.eq(expected);
+      expect(
+        parsed.root.additionalScripts.find(
+          ({ isExpression: expression }) => !expression,
+        ),
+      ).deep.eq(expected);
     });
 
     it('should offset the location of a template expression correctly', async () => {
@@ -129,7 +142,11 @@ describe('svelte-parser', () => {
         },
         isExpression: true,
       };
-      expect(parsed.root.additionalScripts.find(({ isExpression: expression }) => expression)).deep.eq(expected);
+      expect(
+        parsed.root.additionalScripts.find(
+          ({ isExpression: expression }) => expression,
+        ),
+      ).deep.eq(expected);
     });
 
     it('should offset the location of a template script correctly', async () => {
@@ -190,9 +207,16 @@ describe('svelte-parser', () => {
 
     it('should find multiple html script tags', async () => {
       const scripts = ["const name = 'test'", "const test = 'test'"];
-      const jsAsts = [createJSAst({ rawContent: scripts[0] }), createJSAst({ rawContent: scripts[1] })];
+      const jsAsts = [
+        createJSAst({ rawContent: scripts[0] }),
+        createJSAst({ rawContent: scripts[1] }),
+      ];
       const svelte = `<div><script>${scripts[0]}</script><script>${scripts[1]}</script></div>`;
-      contextStub.parse.withArgs(scripts[0], sinon.match.any).resolves(jsAsts[0]).withArgs(scripts[1], sinon.match.any).resolves(jsAsts[1]);
+      contextStub.parse
+        .withArgs(scripts[0], sinon.match.any)
+        .resolves(jsAsts[0])
+        .withArgs(scripts[1], sinon.match.any)
+        .resolves(jsAsts[1]);
 
       const parsed = await parse(svelte, 'index.svelte', contextStub);
 
@@ -200,8 +224,16 @@ describe('svelte-parser', () => {
     });
 
     it('should find all script tags (instance, module and html)', async () => {
-      const scripts = ["const name = 'test'", "const name = 'world'", "const name = 'test'"];
-      const jsAsts = [createJSAst({ rawContent: scripts[0] }), createJSAst({ rawContent: scripts[1] }), createJSAst({ rawContent: scripts[2] })];
+      const scripts = [
+        "const name = 'test'",
+        "const name = 'world'",
+        "const name = 'test'",
+      ];
+      const jsAsts = [
+        createJSAst({ rawContent: scripts[0] }),
+        createJSAst({ rawContent: scripts[1] }),
+        createJSAst({ rawContent: scripts[2] }),
+      ];
       const svelte = `<script>${scripts[0]}</script><script context="module">${scripts[1]}</script><div><h1>hello</h1><script>${scripts[2]}</script></div>`;
       contextStub.parse
         .withArgs(scripts[0], sinon.match.any)
@@ -214,15 +246,32 @@ describe('svelte-parser', () => {
       const parsed = await parse(svelte, 'index.svelte', contextStub);
 
       expect(parsed.root.moduleScript).not.undefined;
-      expect(parsed.root.moduleScript?.range).deep.eq({ start: 61, end: 81 } satisfies Range);
+      expect(parsed.root.moduleScript?.range).deep.eq({
+        start: 61,
+        end: 81,
+      } satisfies Range);
       expect(parsed.root.additionalScripts).lengthOf(2);
-      expect(parsed.root.additionalScripts[0].range).deep.eq({ start: 8, end: 27 } satisfies Range);
-      expect(parsed.root.additionalScripts[1].range).deep.eq({ start: 117, end: 136 } satisfies Range);
+      expect(parsed.root.additionalScripts[0].range).deep.eq({
+        start: 8,
+        end: 27,
+      } satisfies Range);
+      expect(parsed.root.additionalScripts[1].range).deep.eq({
+        start: 117,
+        end: 136,
+      } satisfies Range);
     });
 
     it('should support typescript scripts', async () => {
-      const scripts = ['const hello: string = "hello";', 'const foo: string = "foo";', 'const bar: string = "bar";'];
-      const tsAsts = [createTSAst({ rawContent: scripts[0] }), createTSAst({ rawContent: scripts[1] }), createTSAst({ rawContent: scripts[2] })];
+      const scripts = [
+        'const hello: string = "hello";',
+        'const foo: string = "foo";',
+        'const bar: string = "bar";',
+      ];
+      const tsAsts = [
+        createTSAst({ rawContent: scripts[0] }),
+        createTSAst({ rawContent: scripts[1] }),
+        createTSAst({ rawContent: scripts[2] }),
+      ];
       const svelte = `<script lang="ts">${scripts[0]}</script><script lang="ts" context="module">${scripts[1]}</script><div><h1>hello</h1><script lang="ts">${scripts[2]}</script></div>`;
       contextStub.parse
         .withArgs(scripts[0], 'index.svelte', AstFormat.TS)
@@ -254,7 +303,12 @@ describe('svelte-parser', () => {
       const ast = await parse(svelte, 'index.svelte', contextStub);
 
       // Assert
-      sinon.assert.calledOnceWithExactly(contextStub.parse, 'foo', 'index.svelte', AstFormat.JS);
+      sinon.assert.calledOnceWithExactly(
+        contextStub.parse,
+        'foo',
+        'index.svelte',
+        AstFormat.JS,
+      );
       const expectedTemplateScript: TemplateScript = {
         ast: jsAst,
         isExpression: true,
@@ -274,7 +328,12 @@ describe('svelte-parser', () => {
       const ast = await parse(svelte, 'index.svelte', contextStub);
 
       // Assert
-      sinon.assert.calledOnceWithExactly(contextStub.parse, 'foo', 'index.svelte', AstFormat.JS);
+      sinon.assert.calledOnceWithExactly(
+        contextStub.parse,
+        'foo',
+        'index.svelte',
+        AstFormat.JS,
+      );
       expect(ast.root.additionalScripts[0].ast.root).deep.eq(jsAst.root);
     });
 
@@ -301,8 +360,18 @@ describe('svelte-parser', () => {
 
       // Assert
       sinon.assert.calledTwice(contextStub.parse);
-      sinon.assert.calledWithExactly(contextStub.parse, firstIfExpression, 'index.svelte', AstFormat.JS);
-      sinon.assert.calledWithExactly(contextStub.parse, secondIfExpression, 'index.svelte', AstFormat.JS);
+      sinon.assert.calledWithExactly(
+        contextStub.parse,
+        firstIfExpression,
+        'index.svelte',
+        AstFormat.JS,
+      );
+      sinon.assert.calledWithExactly(
+        contextStub.parse,
+        secondIfExpression,
+        'index.svelte',
+        AstFormat.JS,
+      );
       expect(ast.root.additionalScripts).lengthOf(2);
       expect(ast.root.additionalScripts[0].ast.root).eq(firstIf.root);
       expect(ast.root.additionalScripts[1].ast.root).eq(secondIf.root);
@@ -323,7 +392,12 @@ describe('svelte-parser', () => {
       const ast = await parse(svelte, 'index.svelte', contextStub);
 
       // Assert
-      sinon.assert.calledOnceWithExactly(contextStub.parse, keyExpression, 'index.svelte', AstFormat.JS);
+      sinon.assert.calledOnceWithExactly(
+        contextStub.parse,
+        keyExpression,
+        'index.svelte',
+        AstFormat.JS,
+      );
       expect(ast.root.additionalScripts).lengthOf(1);
       expect(ast.root.additionalScripts[0].ast.root).eq(keyAst.root);
     });
@@ -343,14 +417,20 @@ describe('svelte-parser', () => {
       const ast = await parse(svelte, 'index.svelte', contextStub);
 
       // Assert
-      sinon.assert.calledOnceWithExactly(contextStub.parse, eachExpression, 'index.svelte', AstFormat.JS);
+      sinon.assert.calledOnceWithExactly(
+        contextStub.parse,
+        eachExpression,
+        'index.svelte',
+        AstFormat.JS,
+      );
       expect(ast.root.additionalScripts).lengthOf(1);
       expect(ast.root.additionalScripts[0].ast.root).eq(keyAst.root);
     });
 
     it('should parse a {#await expression} block', async () => {
       // Arrange
-      const awaitExpression = "fetch('https://api.agify.io?name=teun&country_id=NL')";
+      const awaitExpression =
+        "fetch('https://api.agify.io?name=teun&country_id=NL')";
       const awaitAst = createJSAst({ rawContent: awaitExpression });
       const svelte = `<div>
   {#await ${awaitExpression}}
@@ -367,7 +447,12 @@ describe('svelte-parser', () => {
       const ast = await parse(svelte, 'index.svelte', contextStub);
 
       // Assert
-      sinon.assert.calledOnceWithExactly(contextStub.parse, awaitExpression, 'index.svelte', AstFormat.JS);
+      sinon.assert.calledOnceWithExactly(
+        contextStub.parse,
+        awaitExpression,
+        'index.svelte',
+        AstFormat.JS,
+      );
       expect(ast.root.additionalScripts).lengthOf(1);
       expect(ast.root.additionalScripts[0].ast.root).eq(awaitAst.root);
     });
@@ -385,7 +470,12 @@ describe('svelte-parser', () => {
       const ast = await parse(svelte, 'index.svelte', contextStub);
 
       // Assert
-      sinon.assert.calledOnceWithExactly(contextStub.parse, constAssignment, 'index.svelte', AstFormat.JS);
+      sinon.assert.calledOnceWithExactly(
+        contextStub.parse,
+        constAssignment,
+        'index.svelte',
+        AstFormat.JS,
+      );
       expect(ast.root.additionalScripts).lengthOf(1);
       expect(ast.root.additionalScripts[0].ast.root).eq(constAst.root);
     });
@@ -393,19 +483,28 @@ describe('svelte-parser', () => {
     it('should parse a on:event="handler" block', async () => {
       // Arrange
       const eventHandlerExpression = '() => (a += 1)';
-      const eventHandlerAst = createJSAst({ rawContent: eventHandlerExpression });
+      const eventHandlerAst = createJSAst({
+        rawContent: eventHandlerExpression,
+      });
       const svelte = `<div>
   <button on:click={${eventHandlerExpression}}>
     increase
   </button>
 </div>`;
-      contextStub.parse.withArgs(eventHandlerExpression).resolves(eventHandlerAst);
+      contextStub.parse
+        .withArgs(eventHandlerExpression)
+        .resolves(eventHandlerAst);
 
       // Act
       const ast = await parse(svelte, 'index.svelte', contextStub);
 
       // Assert
-      sinon.assert.calledOnceWithExactly(contextStub.parse, eventHandlerExpression, 'index.svelte', AstFormat.JS);
+      sinon.assert.calledOnceWithExactly(
+        contextStub.parse,
+        eventHandlerExpression,
+        'index.svelte',
+        AstFormat.JS,
+      );
       expect(ast.root.additionalScripts).lengthOf(1);
       expect(ast.root.additionalScripts[0].ast.root).eq(eventHandlerAst.root);
     });

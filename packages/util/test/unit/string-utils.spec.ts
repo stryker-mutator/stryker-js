@@ -121,10 +121,14 @@ describe('stringUtils', () => {
 
   describe(normalizeFileName.name, () => {
     it('should normalize `\\`', () => {
-      expect(normalizeFileName('test\\util\\foo.spec.js')).eq('test/util/foo.spec.js');
+      expect(normalizeFileName('test\\util\\foo.spec.js')).eq(
+        'test/util/foo.spec.js',
+      );
     });
     it('should normalize `/`', () => {
-      expect(normalizeFileName('test/util/foo.spec.js')).eq('test/util/foo.spec.js');
+      expect(normalizeFileName('test/util/foo.spec.js')).eq(
+        'test/util/foo.spec.js',
+      );
     });
   });
 

@@ -74,7 +74,10 @@ export class ProjectFile implements FileDescription {
 
   public async writeToSandbox(sandboxDir: string): Promise<string> {
     const folderName = path.join(sandboxDir, path.dirname(this.#relativePath));
-    const targetFileName = path.join(folderName, path.basename(this.#relativePath));
+    const targetFileName = path.join(
+      folderName,
+      path.basename(this.#relativePath),
+    );
     await this.fs.mkdir(path.dirname(targetFileName), { recursive: true });
     await this.#writeTo(targetFileName);
     return targetFileName;

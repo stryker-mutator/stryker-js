@@ -17,8 +17,15 @@ const resolveFromParent = path.resolve.bind(path, dirname, '..');
  */
 async function generate(schemaFile) {
   const parsedFile = path.parse(schemaFile);
-  const schema = preprocessSchema(JSON.parse(await readFile(schemaFile, 'utf-8')));
-  const resolveOutputDir = path.resolve.bind(path, parsedFile.dir, '..', 'src-generated');
+  const schema = preprocessSchema(
+    JSON.parse(await readFile(schemaFile, 'utf-8')),
+  );
+  const resolveOutputDir = path.resolve.bind(
+    path,
+    parsedFile.dir,
+    '..',
+    'src-generated',
+  );
   const outFile = resolveOutputDir(`${parsedFile.name}.ts`);
   await mkdir(resolveOutputDir(), { recursive: true });
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -47,8 +54,12 @@ async function generate(schemaFile) {
 }
 
 async function generateAllSchemas() {
-  const files = await glob('packages/!(core)/schema/*.json', { cwd: resolveFromParent() });
-  await Promise.all(files.map((fileName) => generate(resolveFromParent(fileName))));
+  const files = await glob('packages/!(core)/schema/*.json', {
+    cwd: resolveFromParent(),
+  });
+  await Promise.all(
+    files.map((fileName) => generate(resolveFromParent(fileName))),
+  );
 }
 
 generateAllSchemas().catch((err) => {
@@ -73,7 +84,9 @@ function preprocessSchema(inputSchema) {
           required: preprocessRequired(cleanedSchema.properties, inputRequired),
         };
         if (cleanedSchema.definitions) {
-          outputSchema.definitions = preprocessProperties(cleanedSchema.definitions);
+          outputSchema.definitions = preprocessProperties(
+            cleanedSchema.definitions,
+          );
         }
         return outputSchema;
       case 'array':
@@ -100,7 +113,9 @@ function preprocessSchema(inputSchema) {
     if (err instanceof SchemaError) {
       throw err;
     } else {
-      throw new SchemaError(`Schema failed: ${JSON.stringify(inputSchema)}, ${err.stack}`);
+      throw new SchemaError(
+        `Schema failed: ${JSON.stringify(inputSchema)}, ${err.stack}`,
+      );
     }
   }
 }
@@ -114,7 +129,9 @@ function preprocessProperties(inputProperties) {
   if (inputProperties) {
     const outputProperties = {};
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    Object.entries(inputProperties).forEach(([name, value]) => (outputProperties[name] = preprocessSchema(value)));
+    Object.entries(inputProperties).forEach(
+      ([name, value]) => (outputProperties[name] = preprocessSchema(value)),
+    );
     return outputProperties;
   }
 }
@@ -143,7 +160,10 @@ function preprocessRequired(inputProperties, inputRequired) {
   if (inputProperties) {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return Object.entries(inputProperties)
-      .filter(([name, value]) => 'default' in value || inputRequired.indexOf(name) >= 0)
+      .filter(
+        ([name, value]) =>
+          'default' in value || inputRequired.indexOf(name) >= 0,
+      )
       .map(([name]) => name);
   } else {
     return inputRequired;

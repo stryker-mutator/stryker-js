@@ -9,7 +9,14 @@ import pluginChaiFriendly from 'eslint-plugin-chai-friendly';
 
 /** @type {import('@typescript-eslint/utils').TSESLint.FlatConfig.Rules} */
 export const rules = {
-  '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_*', ignoreRestSiblings: true, varsIgnorePattern: '^_' }],
+  '@typescript-eslint/no-unused-vars': [
+    'error',
+    {
+      argsIgnorePattern: '^_*',
+      ignoreRestSiblings: true,
+      varsIgnorePattern: '^_',
+    },
+  ],
 
   // fix - separate PR
   '@typescript-eslint/unbound-method': 'off',

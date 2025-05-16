@@ -10,35 +10,53 @@ import { LoggingClient } from './logging-client.js';
 import { LogLevel } from '@stryker-mutator/api/core';
 
 function getLoggerFactory(loggingSink: LoggingSink) {
-  return (categoryName?: string): Logger => new LoggerImpl(categoryName ?? 'UNKNOWN', loggingSink);
+  return (categoryName?: string): Logger =>
+    new LoggerImpl(categoryName ?? 'UNKNOWN', loggingSink);
 }
 getLoggerFactory.inject = [coreTokens.loggingSink] as const;
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-function loggerFactory(getLogger: LoggerFactoryMethod, target: Function | undefined) {
+function loggerFactory(
+  getLogger: LoggerFactoryMethod,
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+  target: Function | undefined,
+) {
   return getLogger(target?.name);
 }
 loggerFactory.inject = [commonTokens.getLogger, commonTokens.target] as const;
 
-export function provideLogging<T extends { [coreTokens.loggingSink]: LoggingSink }>(injector: Injector<T>) {
+export function provideLogging<
+  T extends { [coreTokens.loggingSink]: LoggingSink },
+>(injector: Injector<T>) {
   return injector
     .provideFactory(commonTokens.getLogger, getLoggerFactory)
     .provideFactory(commonTokens.logger, loggerFactory, Scope.Transient)
     .provideClass('loggingServer', LoggingServer);
 }
-provideLogging.inject = [coreTokens.loggingSink, commonTokens.injector] as const;
+provideLogging.inject = [
+  coreTokens.loggingSink,
+  commonTokens.injector,
+] as const;
 
 export async function provideLoggingBackend(injector: Injector) {
-  const out = injector.provideClass(coreTokens.loggingSink, LoggingBackend).provideClass(coreTokens.loggingServer, LoggingServer);
+  const out = injector
+    .provideClass(coreTokens.loggingSink, LoggingBackend)
+    .provideClass(coreTokens.loggingServer, LoggingServer);
   const loggingServer = out.resolve(coreTokens.loggingServer);
   const loggingServerAddress = await loggingServer.listen();
-  return out.provideValue(coreTokens.loggingServerAddress, loggingServerAddress);
+  return out.provideValue(
+    coreTokens.loggingServerAddress,
+    loggingServerAddress,
+  );
 }
 provideLoggingBackend.inject = [commonTokens.injector] as const;
 
 export type LoggingProvider = ReturnType<typeof provideLogging>;
 
-export async function provideLoggingClient(injector: Injector, loggingServerAddress: LoggingServerAddress, activeLogLevel: LogLevel) {
+export async function provideLoggingClient(
+  injector: Injector,
+  loggingServerAddress: LoggingServerAddress,
+  activeLogLevel: LogLevel,
+) {
   const out = injector
     .provideValue(coreTokens.loggingServerAddress, loggingServerAddress)
     .provideValue(coreTokens.loggerActiveLevel, activeLogLevel)

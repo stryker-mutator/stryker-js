@@ -1,7 +1,14 @@
-import { assertions, testInjector, factory } from '@stryker-mutator/test-helpers';
+import {
+  assertions,
+  testInjector,
+  factory,
+} from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { createMochaTestRunnerFactory, MochaTestRunner } from '../../src/index.js';
+import {
+  createMochaTestRunnerFactory,
+  MochaTestRunner,
+} from '../../src/index.js';
 import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('Running a project with root hooks', () => {
@@ -9,7 +16,9 @@ describe('Running a project with root hooks', () => {
 
   beforeEach(async () => {
     process.chdir(resolveTestResource('parallel-with-root-hooks-sample'));
-    sut = testInjector.injector.injectFunction(createMochaTestRunnerFactory('__stryker2__'));
+    sut = testInjector.injector.injectFunction(
+      createMochaTestRunnerFactory('__stryker2__'),
+    );
     await sut.init();
   });
 

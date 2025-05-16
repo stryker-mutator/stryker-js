@@ -7,7 +7,10 @@ import { ResourceDecorator } from '../concurrent/index.js';
 
 import { CheckerResource } from './checker-resource.js';
 
-export class CheckerRetryDecorator extends ResourceDecorator<CheckerResource> implements CheckerResource {
+export class CheckerRetryDecorator
+  extends ResourceDecorator<CheckerResource>
+  implements CheckerResource
+{
   constructor(
     producer: () => CheckerResource,
     private readonly log: Logger,
@@ -15,11 +18,17 @@ export class CheckerRetryDecorator extends ResourceDecorator<CheckerResource> im
     super(producer);
   }
 
-  public async check(checkerName: string, mutants: Mutant[]): ReturnType<CheckerResource['check']> {
+  public async check(
+    checkerName: string,
+    mutants: Mutant[],
+  ): ReturnType<CheckerResource['check']> {
     return this.tryAction(() => this.innerResource.check(checkerName, mutants));
   }
 
-  public async group(checkerName: string, mutants: Mutant[]): ReturnType<CheckerResource['group']> {
+  public async group(
+    checkerName: string,
+    mutants: Mutant[],
+  ): ReturnType<CheckerResource['group']> {
     return this.tryAction(() => this.innerResource.group(checkerName, mutants));
   }
 
@@ -29,9 +38,14 @@ export class CheckerRetryDecorator extends ResourceDecorator<CheckerResource> im
     } catch (error) {
       if (error instanceof ChildProcessCrashedError) {
         if (error instanceof OutOfMemoryError) {
-          this.log.warn(`Checker process [${error.pid}] ran out of memory. Retrying in a new process.`);
+          this.log.warn(
+            `Checker process [${error.pid}] ran out of memory. Retrying in a new process.`,
+          );
         } else {
-          this.log.warn(`Checker process [${error.pid}] crashed with exit code ${error.exitCode}. Retrying in a new process.`, error);
+          this.log.warn(
+            `Checker process [${error.pid}] crashed with exit code ${error.exitCode}. Retrying in a new process.`,
+            error,
+          );
         }
         await this.recover();
         return act();

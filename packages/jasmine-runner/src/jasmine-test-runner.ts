@@ -1,7 +1,18 @@
 import { EOL } from 'os';
 
-import { StrykerOptions, CoverageAnalysis, InstrumenterContext, MutantCoverage, INSTRUMENTER_CONSTANTS } from '@stryker-mutator/api/core';
-import { commonTokens, tokens, Injector, PluginContext } from '@stryker-mutator/api/plugin';
+import {
+  StrykerOptions,
+  CoverageAnalysis,
+  InstrumenterContext,
+  MutantCoverage,
+  INSTRUMENTER_CONSTANTS,
+} from '@stryker-mutator/api/core';
+import {
+  commonTokens,
+  tokens,
+  Injector,
+  PluginContext,
+} from '@stryker-mutator/api/plugin';
 import {
   DryRunStatus,
   TestResult,
@@ -25,14 +36,18 @@ import { helpers } from './helpers.js';
 import * as pluginTokens from './plugin-tokens.js';
 
 export function createJasmineTestRunnerFactory(
-  namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE,
+  namespace:
+    | typeof INSTRUMENTER_CONSTANTS.NAMESPACE
+    | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE,
 ): {
   (injector: Injector<PluginContext>): JasmineTestRunner;
   inject: ['$injector'];
 } {
   createJasmineTestRunner.inject = tokens(commonTokens.injector);
   function createJasmineTestRunner(injector: Injector<PluginContext>) {
-    return injector.provideValue(pluginTokens.globalNamespace, namespace).injectClass(JasmineTestRunner);
+    return injector
+      .provideValue(pluginTokens.globalNamespace, namespace)
+      .injectClass(JasmineTestRunner);
   }
   return createJasmineTestRunner;
 }
@@ -44,10 +59,19 @@ export class JasmineTestRunner implements TestRunner {
   private readonly Date: typeof Date = Date; // take Date prototype now we still can (user might choose to mock it away)
   private readonly instrumenterContext: InstrumenterContext;
 
-  public static inject = tokens(commonTokens.options, pluginTokens.globalNamespace);
-  constructor(options: StrykerOptions, globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__') {
-    this.jasmineConfigFile = (options as JasmineRunnerOptions).jasmineConfigFile;
-    this.instrumenterContext = global[globalNamespace] ?? (global[globalNamespace] = {});
+  public static inject = tokens(
+    commonTokens.options,
+    pluginTokens.globalNamespace,
+  );
+  constructor(
+    options: StrykerOptions,
+    globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__',
+  ) {
+    this.jasmineConfigFile = (
+      options as JasmineRunnerOptions
+    ).jasmineConfigFile;
+    this.instrumenterContext =
+      global[globalNamespace] ?? (global[globalNamespace] = {});
   }
 
   public capabilities(): TestRunnerCapabilities {
@@ -56,13 +80,31 @@ export class JasmineTestRunner implements TestRunner {
   }
 
   public dryRun(options: DryRunOptions): Promise<DryRunResult> {
-    return this.run(undefined, options.coverageAnalysis, options.disableBail, undefined, undefined);
+    return this.run(
+      undefined,
+      options.coverageAnalysis,
+      options.disableBail,
+      undefined,
+      undefined,
+    );
   }
 
-  public async mutantRun({ hitLimit, testFilter, disableBail, activeMutant, mutantActivation }: MutantRunOptions): Promise<MutantRunResult> {
+  public async mutantRun({
+    hitLimit,
+    testFilter,
+    disableBail,
+    activeMutant,
+    mutantActivation,
+  }: MutantRunOptions): Promise<MutantRunResult> {
     this.instrumenterContext.hitLimit = hitLimit;
     this.instrumenterContext.hitCount = hitLimit ? 0 : undefined;
-    const runResult = await this.run(testFilter, undefined, disableBail, activeMutant.id, mutantActivation);
+    const runResult = await this.run(
+      testFilter,
+      undefined,
+      disableBail,
+      activeMutant.id,
+      mutantActivation,
+    );
     return toMutantRunResult(runResult);
   }
 
@@ -75,7 +117,8 @@ export class JasmineTestRunner implements TestRunner {
   ): Promise<DryRunResult> {
     try {
       if (!this.jasmine) {
-        this.instrumenterContext.activeMutant = mutantActivation === 'static' ? activeMutantId : undefined;
+        this.instrumenterContext.activeMutant =
+          mutantActivation === 'static' ? activeMutantId : undefined;
         this.jasmine = await this.createAndConfigureJasmineRunner(disableBail);
       }
       const jasmineInstance: jasmine = this.jasmine;
@@ -94,14 +137,22 @@ export class JasmineTestRunner implements TestRunner {
           startTimeCurrentSpec = new this.Date().getTime();
         },
         specDone: (specResult: jasmine.SpecResult) => {
-          tests.push(helpers.toStrykerTestResult(specResult, new this.Date().getTime() - startTimeCurrentSpec));
+          tests.push(
+            helpers.toStrykerTestResult(
+              specResult,
+              new this.Date().getTime() - startTimeCurrentSpec,
+            ),
+          );
         },
         jasmineDone: () => {
           let mutantCoverage: MutantCoverage | undefined = undefined;
           if (coverageAnalysis === 'all' || coverageAnalysis === 'perTest') {
             ({ mutantCoverage } = this.instrumenterContext);
           }
-          result = determineHitLimitReached(this.instrumenterContext.hitCount, this.instrumenterContext.hitLimit) ?? {
+          result = determineHitLimitReached(
+            this.instrumenterContext.hitCount,
+            this.instrumenterContext.hitLimit,
+          ) ?? {
             status: DryRunStatus.Complete,
             tests,
             mutantCoverage,
@@ -112,7 +163,9 @@ export class JasmineTestRunner implements TestRunner {
       jasmineInstance.env.addReporter(reporter);
       await jasmineInstance.execute();
       if (!result) {
-        throw new Error('Jasmine reporter didn\'t report "jasmineDone", this shouldn\'t happen');
+        throw new Error(
+          'Jasmine reporter didn\'t report "jasmineDone", this shouldn\'t happen',
+        );
       }
       return result;
     } catch (error) {
@@ -127,11 +180,15 @@ export class JasmineTestRunner implements TestRunner {
   private jasmine?: jasmine;
   private specIdsFilter?: string[];
 
-  private async createAndConfigureJasmineRunner(disableBail: boolean): Promise<jasmine> {
+  private async createAndConfigureJasmineRunner(
+    disableBail: boolean,
+  ): Promise<jasmine> {
     const specFilter = (spec: jasmine.Spec): boolean => {
       return this.specIdsFilter?.includes(spec.id.toString()) ?? true;
     };
-    const jasmineInstance = helpers.createJasmine({ projectBaseDir: process.cwd() });
+    const jasmineInstance = helpers.createJasmine({
+      projectBaseDir: process.cwd(),
+    });
     // The `loadConfigFile` will fallback on the default
     await jasmineInstance.loadConfigFile(this.jasmineConfigFile);
     jasmineInstance.env.configure({

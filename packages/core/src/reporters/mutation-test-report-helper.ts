@@ -1,13 +1,37 @@
 import path from 'path';
 
-import { Location, Position, StrykerOptions, MutantTestCoverage, MutantResult, schema, MutantStatus } from '@stryker-mutator/api/core';
+import {
+  Location,
+  Position,
+  StrykerOptions,
+  MutantTestCoverage,
+  MutantResult,
+  schema,
+  MutantStatus,
+} from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
-import { I, normalizeFileName, normalizeWhitespaces, type requireResolve } from '@stryker-mutator/util';
-import { calculateMutationTestMetrics, MutationTestMetricsResult } from 'mutation-testing-metrics';
-import { MutantRunResult, MutantRunStatus, TestResult } from '@stryker-mutator/api/test-runner';
-import { CheckStatus, PassedCheckResult, CheckResult } from '@stryker-mutator/api/check';
+import {
+  I,
+  normalizeFileName,
+  normalizeWhitespaces,
+  type requireResolve,
+} from '@stryker-mutator/util';
+import {
+  calculateMutationTestMetrics,
+  MutationTestMetricsResult,
+} from 'mutation-testing-metrics';
+import {
+  MutantRunResult,
+  MutantRunStatus,
+  TestResult,
+} from '@stryker-mutator/api/test-runner';
+import {
+  CheckStatus,
+  PassedCheckResult,
+  CheckResult,
+} from '@stryker-mutator/api/check';
 
 import { strykerVersion } from '../stryker-package.js';
 import { coreTokens } from '../di/index.js';
@@ -15,7 +39,9 @@ import { objectUtils } from '../utils/object-utils.js';
 import { Project, FileSystem } from '../fs/index.js';
 import { TestCoverage } from '../mutants/index.js';
 
-const STRYKER_FRAMEWORK: Readonly<Pick<schema.FrameworkInformation, 'branding' | 'name' | 'version'>> = Object.freeze({
+const STRYKER_FRAMEWORK: Readonly<
+  Pick<schema.FrameworkInformation, 'branding' | 'name' | 'version'>
+> = Object.freeze({
   name: 'StrykerJS',
   version: strykerVersion,
   branding: {
@@ -49,7 +75,10 @@ export class MutationTestReportHelper {
     private readonly requireFromCwd: typeof requireResolve,
   ) {}
 
-  public reportCheckFailed(mutant: MutantTestCoverage, checkResult: Exclude<CheckResult, PassedCheckResult>): MutantResult {
+  public reportCheckFailed(
+    mutant: MutantTestCoverage,
+    checkResult: Exclude<CheckResult, PassedCheckResult>,
+  ): MutantResult {
     const location = this.toLocation(mutant.location);
     return this.reportOne({
       ...mutant,
@@ -59,7 +88,10 @@ export class MutationTestReportHelper {
     });
   }
 
-  public reportMutantStatus(mutant: MutantTestCoverage, status: MutantStatus): MutantResult {
+  public reportMutantStatus(
+    mutant: MutantTestCoverage,
+    status: MutantStatus,
+  ): MutantResult {
     const location = this.toLocation(mutant.location);
     return this.reportOne({
       ...mutant,
@@ -68,7 +100,10 @@ export class MutationTestReportHelper {
     });
   }
 
-  public reportMutantRunResult(mutant: MutantTestCoverage, result: MutantRunResult): MutantResult {
+  public reportMutantRunResult(
+    mutant: MutantTestCoverage,
+    result: MutantRunResult,
+  ): MutantResult {
     const location = this.toLocation(mutant.location);
 
     // Prune fields used for Stryker bookkeeping
@@ -111,7 +146,9 @@ export class MutationTestReportHelper {
     return result;
   }
 
-  private checkStatusToResultStatus(status: Exclude<CheckStatus, CheckStatus.Passed>): MutantStatus {
+  private checkStatusToResultStatus(
+    status: Exclude<CheckStatus, CheckStatus.Passed>,
+  ): MutantStatus {
     switch (status) {
       case CheckStatus.CompileError:
         return 'CompileError';
@@ -123,8 +160,14 @@ export class MutationTestReportHelper {
     const metrics = calculateMutationTestMetrics(report);
     this.reporter.onMutationTestReportReady(report, metrics);
     if (this.options.incremental) {
-      await this.fs.mkdir(path.dirname(this.options.incrementalFile), { recursive: true });
-      await this.fs.writeFile(this.options.incrementalFile, JSON.stringify(report, null, 2), 'utf-8');
+      await this.fs.mkdir(path.dirname(this.options.incrementalFile), {
+        recursive: true,
+      });
+      await this.fs.writeFile(
+        this.options.incrementalFile,
+        JSON.stringify(report, null, 2),
+        'utf-8',
+      );
     }
     this.determineExitCode(metrics);
   }
@@ -135,11 +178,17 @@ export class MutationTestReportHelper {
     const formattedScore = mutationScore.toFixed(2);
     if (typeof breaking === 'number') {
       if (mutationScore < breaking) {
-        this.log.error(`Final mutation score ${formattedScore} under breaking threshold ${breaking}, setting exit code to 1 (failure).`);
-        this.log.info('(improve mutation score or set `thresholds.break = null` to prevent this error in the future)');
+        this.log.error(
+          `Final mutation score ${formattedScore} under breaking threshold ${breaking}, setting exit code to 1 (failure).`,
+        );
+        this.log.info(
+          '(improve mutation score or set `thresholds.break = null` to prevent this error in the future)',
+        );
         objectUtils.setExitCode(1);
       } else {
-        this.log.info(`Final mutation score of ${formattedScore} is greater than or equal to break threshold ${breaking}`);
+        this.log.info(
+          `Final mutation score of ${formattedScore} is greater than or equal to break threshold ${breaking}`,
+        );
       }
     } else {
       this.log.debug(
@@ -148,13 +197,21 @@ export class MutationTestReportHelper {
     }
   }
 
-  private async mutationTestReport(results: readonly MutantResult[]): Promise<schema.MutationTestResult> {
+  private async mutationTestReport(
+    results: readonly MutantResult[],
+  ): Promise<schema.MutationTestResult> {
     // Mocha, jest and karma use test titles as test ids.
     // This can mean a lot of duplicate strings in the json report.
     // Therefore we remap the test ids here to numbers.
-    const testIdMap = new Map([...this.testCoverage.testsById.values()].map((test, index) => [test.id, index.toString()]));
+    const testIdMap = new Map(
+      [...this.testCoverage.testsById.values()].map((test, index) => [
+        test.id,
+        index.toString(),
+      ]),
+    );
     const remapTestId = (id: string): string => testIdMap.get(id) ?? id;
-    const remapTestIds = (ids: string[] | undefined): string[] | undefined => ids?.map(remapTestId);
+    const remapTestIds = (ids: string[] | undefined): string[] | undefined =>
+      ids?.map(remapTestId);
 
     return {
       files: await this.toFileResults(results, remapTestIds),
@@ -176,31 +233,52 @@ export class MutationTestReportHelper {
   ): Promise<schema.FileResultDictionary> {
     const fileResultsByName = new Map<string, schema.FileResult>(
       await Promise.all(
-        [...new Set(results.map(({ fileName }) => fileName))].map(async (fileName) => [fileName, await this.toFileResult(fileName)] as const),
+        [...new Set(results.map(({ fileName }) => fileName))].map(
+          async (fileName) =>
+            [fileName, await this.toFileResult(fileName)] as const,
+        ),
       ),
     );
 
     return results.reduce<schema.FileResultDictionary>((acc, mutantResult) => {
       const reportFileName = normalizeReportFileName(mutantResult.fileName);
-      const fileResult = acc[reportFileName] ?? (acc[reportFileName] = fileResultsByName.get(mutantResult.fileName)!);
+      const fileResult =
+        acc[reportFileName] ??
+        (acc[reportFileName] = fileResultsByName.get(mutantResult.fileName)!);
       fileResult.mutants.push(this.toMutantResult(mutantResult, remapTestIds));
       return acc;
     }, {});
   }
 
-  private async toTestFiles(remapTestId: (id: string) => string): Promise<schema.TestFileDefinitionDictionary> {
+  private async toTestFiles(
+    remapTestId: (id: string) => string,
+  ): Promise<schema.TestFileDefinitionDictionary> {
     const testFilesByName = new Map<string, schema.TestFile>(
       await Promise.all(
-        [...new Set([...this.testCoverage.testsById.values()].map(({ fileName }) => fileName))].map(
-          async (fileName) => [normalizeReportFileName(fileName), await this.toTestFile(fileName)] as const,
+        [
+          ...new Set(
+            [...this.testCoverage.testsById.values()].map(
+              ({ fileName }) => fileName,
+            ),
+          ),
+        ].map(
+          async (fileName) =>
+            [
+              normalizeReportFileName(fileName),
+              await this.toTestFile(fileName),
+            ] as const,
         ),
       ),
     );
 
-    return [...this.testCoverage.testsById.values()].reduce<schema.TestFileDefinitionDictionary>((acc, testResult) => {
+    return [
+      ...this.testCoverage.testsById.values(),
+    ].reduce<schema.TestFileDefinitionDictionary>((acc, testResult) => {
       const test = this.toTestDefinition(testResult, remapTestId);
       const reportFileName = normalizeReportFileName(testResult.fileName);
-      const testFile = acc[reportFileName] ?? (acc[reportFileName] = testFilesByName.get(reportFileName)!);
+      const testFile =
+        acc[reportFileName] ??
+        (acc[reportFileName] = testFilesByName.get(reportFileName)!);
       testFile.tests.push(test);
       return acc;
     }, {});
@@ -224,7 +302,9 @@ export class MutationTestReportHelper {
     return fileResult;
   }
 
-  private async toTestFile(fileName: string | undefined): Promise<schema.TestFile> {
+  private async toTestFile(
+    fileName: string | undefined,
+  ): Promise<schema.TestFile> {
     const testFile: schema.TestFile = { tests: [] };
     if (fileName) {
       const file = this.project.files.get(fileName);
@@ -240,11 +320,16 @@ export class MutationTestReportHelper {
     return testFile;
   }
 
-  private toTestDefinition(test: TestResult, remapTestId: (id: string) => string): schema.TestDefinition {
+  private toTestDefinition(
+    test: TestResult,
+    remapTestId: (id: string) => string,
+  ): schema.TestDefinition {
     return {
       id: remapTestId(test.id),
       name: test.name,
-      location: test.startPosition ? { start: this.toPosition(test.startPosition) } : undefined,
+      location: test.startPosition
+        ? { start: this.toPosition(test.startPosition) }
+        : undefined,
     };
   }
 
@@ -262,8 +347,12 @@ export class MutationTestReportHelper {
     }
   }
 
-  private toMutantResult(mutantResult: MutantResult, remapTestIds: (ids: string[] | undefined) => string[] | undefined): schema.MutantResult {
-    const { fileName, location, killedBy, coveredBy, ...apiMutant } = mutantResult;
+  private toMutantResult(
+    mutantResult: MutantResult,
+    remapTestIds: (ids: string[] | undefined) => string[] | undefined,
+  ): schema.MutantResult {
+    const { fileName, location, killedBy, coveredBy, ...apiMutant } =
+      mutantResult;
     return {
       ...apiMutant,
       killedBy: remapTestIds(killedBy),
@@ -289,7 +378,14 @@ export class MutationTestReportHelper {
   private discoverDependencies(): schema.Dependencies {
     const discover = (specifier: string) => {
       try {
-        return [specifier, (this.requireFromCwd(`${specifier}/package.json`) as { version: string }).version];
+        return [
+          specifier,
+          (
+            this.requireFromCwd(`${specifier}/package.json`) as {
+              version: string;
+            }
+          ).version,
+        ];
       } catch {
         // package does not exist...
         return undefined;
@@ -317,12 +413,14 @@ export class MutationTestReportHelper {
       'webpack-cli',
       'ts-jest',
     ];
-    return dependencies.map(discover).reduce<schema.Dependencies>((acc, dependency) => {
-      if (dependency) {
-        acc[dependency[0]] = dependency[1];
-      }
-      return acc;
-    }, {});
+    return dependencies
+      .map(discover)
+      .reduce<schema.Dependencies>((acc, dependency) => {
+        if (dependency) {
+          acc[dependency[0]] = dependency[1];
+        }
+        return acc;
+      }, {});
   }
 }
 

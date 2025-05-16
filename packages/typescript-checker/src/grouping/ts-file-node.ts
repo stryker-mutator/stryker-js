@@ -11,7 +11,9 @@ export class TSFileNode {
     public children: TSFileNode[],
   ) {}
 
-  public getAllParentReferencesIncludingSelf(allParentReferences: Set<TSFileNode> = new Set<TSFileNode>()): Set<TSFileNode> {
+  public getAllParentReferencesIncludingSelf(
+    allParentReferences: Set<TSFileNode> = new Set<TSFileNode>(),
+  ): Set<TSFileNode> {
     allParentReferences.add(this);
     this.parents.forEach((parent) => {
       if (!allParentReferences.has(parent)) {
@@ -21,7 +23,9 @@ export class TSFileNode {
     return allParentReferences;
   }
 
-  public getAllChildReferencesIncludingSelf(allChildReferences: Set<TSFileNode> = new Set<TSFileNode>()): Set<TSFileNode> {
+  public getAllChildReferencesIncludingSelf(
+    allChildReferences: Set<TSFileNode> = new Set<TSFileNode>(),
+  ): Set<TSFileNode> {
     allChildReferences.add(this);
     this.children.forEach((child) => {
       if (!allChildReferences.has(child)) {
@@ -31,15 +35,22 @@ export class TSFileNode {
     return allChildReferences;
   }
 
-  public getMutantsWithReferenceToChildrenOrSelf(mutants: Mutant[], nodesChecked: string[] = []): Mutant[] {
+  public getMutantsWithReferenceToChildrenOrSelf(
+    mutants: Mutant[],
+    nodesChecked: string[] = [],
+  ): Mutant[] {
     if (nodesChecked.includes(this.fileName)) {
       return [];
     }
 
     nodesChecked.push(this.fileName);
 
-    const relatedMutants = mutants.filter((m) => toPosixFileName(m.fileName) == this.fileName);
-    const childResult = this.children.flatMap((c) => c.getMutantsWithReferenceToChildrenOrSelf(mutants, nodesChecked));
+    const relatedMutants = mutants.filter(
+      (m) => toPosixFileName(m.fileName) == this.fileName,
+    );
+    const childResult = this.children.flatMap((c) =>
+      c.getMutantsWithReferenceToChildrenOrSelf(mutants, nodesChecked),
+    );
     return [...relatedMutants, ...childResult];
   }
 }

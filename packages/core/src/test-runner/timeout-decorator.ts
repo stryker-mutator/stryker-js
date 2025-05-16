@@ -45,8 +45,14 @@ export class TimeoutDecorator extends TestRunnerDecorator {
     }
   }
 
-  private async run<TResult>(options: { timeout: number }, actRun: () => Promise<TResult>): Promise<TResult | typeof ExpirableTask.TimeoutExpired> {
-    this.log.debug('Starting timeout timer (%s ms) for a test run', options.timeout);
+  private async run<TResult>(
+    options: { timeout: number },
+    actRun: () => Promise<TResult>,
+  ): Promise<TResult | typeof ExpirableTask.TimeoutExpired> {
+    this.log.debug(
+      'Starting timeout timer (%s ms) for a test run',
+      options.timeout,
+    );
     const result = await ExpirableTask.timeout(actRun(), options.timeout);
     if (result === ExpirableTask.TimeoutExpired) {
       await this.handleTimeout();
@@ -57,7 +63,9 @@ export class TimeoutDecorator extends TestRunnerDecorator {
   }
 
   private async handleTimeout(): Promise<void> {
-    this.log.debug('Timeout expired, restarting the process and reporting timeout');
+    this.log.debug(
+      'Timeout expired, restarting the process and reporting timeout',
+    );
     await this.recover();
   }
 }

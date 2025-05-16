@@ -100,7 +100,9 @@ describe(ChildProcessProxy.name, () => {
   it('should be able to log on debug when LogLevel.Debug is allowed', async () => {
     await sut.proxy.debug('test message');
     await sleep(); // Give the logging server some time to process the message
-    const actualLoggingEventCalls = loggingSinkMock.log.getCalls().filter((call) => call.args[0].categoryName === Echo.name);
+    const actualLoggingEventCalls = loggingSinkMock.log
+      .getCalls()
+      .filter((call) => call.args[0].categoryName === Echo.name);
     expect(actualLoggingEventCalls).lengthOf(1);
     const actualLoggingEvent = actualLoggingEventCalls[0].args[0];
     expect(actualLoggingEvent.data).deep.eq(['test message']);
@@ -112,7 +114,9 @@ describe(ChildProcessProxy.name, () => {
     await sut.proxy.trace('foo');
     await sut.proxy.debug('bar');
     await sleep(); // Give the logging server some time to process the message
-    const actualLoggingEventCalls = loggingSinkMock.log.getCalls().filter((call) => call.args[0].categoryName === Echo.name);
+    const actualLoggingEventCalls = loggingSinkMock.log
+      .getCalls()
+      .filter((call) => call.args[0].categoryName === Echo.name);
     expect(actualLoggingEventCalls).lengthOf(1);
     const actualLoggingEvent = actualLoggingEventCalls[0].args[0];
     expect(actualLoggingEvent.data).deep.eq(['bar']);
@@ -140,7 +144,9 @@ describe(ChildProcessProxy.name, () => {
 
   it('should immediately reject any subsequent calls when the child process exits', async () => {
     await expect(sut.proxy.exit(1)).rejected;
-    await expect(sut.proxy.say('something')).rejectedWith(ChildProcessCrashedError);
+    await expect(sut.proxy.say('something')).rejectedWith(
+      ChildProcessCrashedError,
+    );
   });
 
   it('should throw an OutOfMemoryError if the process went out-of-memory', async function () {

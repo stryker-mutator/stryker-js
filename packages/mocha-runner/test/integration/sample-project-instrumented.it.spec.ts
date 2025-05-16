@@ -1,10 +1,18 @@
 import path from 'path';
 
-import { testInjector, factory, assertions, TempTestDirectorySandbox } from '@stryker-mutator/test-helpers';
+import {
+  testInjector,
+  factory,
+  assertions,
+  TempTestDirectorySandbox,
+} from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { MutantCoverage } from '@stryker-mutator/api/core';
 
-import { MochaTestRunner, createMochaTestRunnerFactory } from '../../src/index.js';
+import {
+  MochaTestRunner,
+  createMochaTestRunnerFactory,
+} from '../../src/index.js';
 import { createMochaOptions } from '../helpers/factories.js';
 
 describe('Running an instrumented project', () => {
@@ -16,9 +24,14 @@ describe('Running an instrumented project', () => {
     // Work in a tmp dir, files can only be loaded once.
     sandbox = new TempTestDirectorySandbox('sample-project-instrumented');
     await sandbox.init();
-    spec = [path.resolve(sandbox.tmpDir, 'MyMath.js'), path.resolve(sandbox.tmpDir, 'MyMathSpec.js')];
+    spec = [
+      path.resolve(sandbox.tmpDir, 'MyMath.js'),
+      path.resolve(sandbox.tmpDir, 'MyMathSpec.js'),
+    ];
     testInjector.options.mochaOptions = createMochaOptions({ spec });
-    sut = testInjector.injector.injectFunction(createMochaTestRunnerFactory('__stryker2__'));
+    sut = testInjector.injector.injectFunction(
+      createMochaTestRunnerFactory('__stryker2__'),
+    );
   });
 
   afterEach(async () => {
@@ -32,7 +45,9 @@ describe('Running an instrumented project', () => {
     });
 
     it('should report perTest mutantCoverage when coverage analysis is "perTest"', async () => {
-      const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
+      const result = await sut.dryRun(
+        factory.dryRunOptions({ coverageAnalysis: 'perTest' }),
+      );
       assertions.expectCompleted(result);
       const expectedMutantCoverage: MutantCoverage = {
         perTest: {
@@ -62,15 +77,16 @@ describe('Running an instrumented project', () => {
             '14': 1,
             '15': 1,
           },
-          'MyMath should be able to recognize that 0 is not a negative number': {
-            '1': 1,
-            '8': 1,
-            '9': 1,
-            '10': 1,
-            '11': 1,
-            '12': 1,
-            '13': 1,
-          },
+          'MyMath should be able to recognize that 0 is not a negative number':
+            {
+              '1': 1,
+              '8': 1,
+              '9': 1,
+              '10': 1,
+              '11': 1,
+              '12': 1,
+              '13': 1,
+            },
         },
         static: {
           '0': 1,
@@ -80,7 +96,9 @@ describe('Running an instrumented project', () => {
     });
 
     it('should report static mutantCoverage when coverage analysis is "all"', async () => {
-      const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'all' }));
+      const result = await sut.dryRun(
+        factory.dryRunOptions({ coverageAnalysis: 'all' }),
+      );
       assertions.expectCompleted(result);
       const expectedMutantCoverage: MutantCoverage = {
         perTest: {},
@@ -107,7 +125,9 @@ describe('Running an instrumented project', () => {
     });
 
     it('should not report mutantCoverage when coverage analysis is "off"', async () => {
-      const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
+      const result = await sut.dryRun(
+        factory.dryRunOptions({ coverageAnalysis: 'off' }),
+      );
       assertions.expectCompleted(result);
       expect(result.mutantCoverage).undefined;
     });
@@ -119,26 +139,47 @@ describe('Running an instrumented project', () => {
     });
 
     it('should be able to survive a mutant', async () => {
-      const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '0' }) }));
+      const result = await sut.mutantRun(
+        factory.mutantRunOptions({
+          activeMutant: factory.mutantTestCoverage({ id: '0' }),
+        }),
+      );
       assertions.expectSurvived(result);
     });
 
     it('should be able to kill a mutant', async () => {
-      const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '3' }) }));
+      const result = await sut.mutantRun(
+        factory.mutantRunOptions({
+          activeMutant: factory.mutantTestCoverage({ id: '3' }),
+        }),
+      );
       assertions.expectKilled(result);
-      expect(result.killedBy).deep.eq(['MyMath should be able to add two numbers']);
+      expect(result.killedBy).deep.eq([
+        'MyMath should be able to add two numbers',
+      ]);
       expect(result.failureMessage).eq('expected -3 to equal 7');
     });
 
     it('should bail after the first failed test', async () => {
-      const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '8' }) }));
+      const result = await sut.mutantRun(
+        factory.mutantRunOptions({
+          activeMutant: factory.mutantTestCoverage({ id: '8' }),
+        }),
+      );
       assertions.expectKilled(result);
-      expect(result.killedBy).deep.eq(['MyMath should be able to recognize a negative number']);
+      expect(result.killedBy).deep.eq([
+        'MyMath should be able to recognize a negative number',
+      ]);
       expect(result.nrOfTests).eq(4); // 5th test shouldn't have run
     });
 
     it('should report all killedBy tests when bail is disabled', async () => {
-      const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '8' }), disableBail: true }));
+      const result = await sut.mutantRun(
+        factory.mutantRunOptions({
+          activeMutant: factory.mutantTestCoverage({ id: '8' }),
+          disableBail: true,
+        }),
+      );
       assertions.expectKilled(result);
       expect(result.killedBy).deep.eq([
         'MyMath should be able to recognize a negative number',
@@ -149,10 +190,15 @@ describe('Running an instrumented project', () => {
 
     it('should be able to kill a mutant with filtered test', async () => {
       const result = await sut.mutantRun(
-        factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '3' }), testFilter: ['MyMath should be able to add two numbers'] }),
+        factory.mutantRunOptions({
+          activeMutant: factory.mutantTestCoverage({ id: '3' }),
+          testFilter: ['MyMath should be able to add two numbers'],
+        }),
       );
       assertions.expectKilled(result);
-      expect(result.killedBy).deep.eq(['MyMath should be able to add two numbers']);
+      expect(result.killedBy).deep.eq([
+        'MyMath should be able to add two numbers',
+      ]);
       expect(result.failureMessage).eq('expected -3 to equal 7');
     });
 
@@ -160,7 +206,10 @@ describe('Running an instrumented project', () => {
       const result = await sut.mutantRun(
         factory.mutantRunOptions({
           activeMutant: factory.mutantTestCoverage({ id: '3' }),
-          testFilter: ['MyMath should be able negate a number', 'MyMath should be able to recognize a negative number'],
+          testFilter: [
+            'MyMath should be able negate a number',
+            'MyMath should be able to recognize a negative number',
+          ],
         }),
       );
       assertions.expectSurvived(result);
@@ -170,22 +219,33 @@ describe('Running an instrumented project', () => {
   describe('mutantRun mutant activation', () => {
     beforeEach(async () => {
       while (spec.pop());
-      spec.push(path.resolve(sandbox.tmpDir, 'MyMath.js'), path.resolve(sandbox.tmpDir, 'MyMathMutantActivationSpec.js'));
+      spec.push(
+        path.resolve(sandbox.tmpDir, 'MyMath.js'),
+        path.resolve(sandbox.tmpDir, 'MyMathMutantActivationSpec.js'),
+      );
       await sut.init();
     });
 
     it('should activate mutant only during runtime', async () => {
       // First run with "pi" mutant active during runtime
       const resultPiMutant = await sut.mutantRun(
-        factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '0' }), mutantActivation: 'runtime' }),
+        factory.mutantRunOptions({
+          activeMutant: factory.mutantTestCoverage({ id: '0' }),
+          mutantActivation: 'runtime',
+        }),
       );
       const resultAddMutant = await sut.mutantRun(
-        factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '2' }), mutantActivation: 'runtime' }),
+        factory.mutantRunOptions({
+          activeMutant: factory.mutantTestCoverage({ id: '2' }),
+          mutantActivation: 'runtime',
+        }),
       );
 
       assertions.expectSurvived(resultPiMutant);
       assertions.expectKilled(resultAddMutant);
-      expect(resultAddMutant.killedBy).deep.eq(['MyMath with mutantActivation should give 6.28 for pi + pi']);
+      expect(resultAddMutant.killedBy).deep.eq([
+        'MyMath with mutantActivation should give 6.28 for pi + pi',
+      ]);
     });
   });
 });

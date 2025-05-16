@@ -1,4 +1,10 @@
-import { DryRunOptions, DryRunResult, MutantRunOptions, MutantRunResult, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
+import {
+  DryRunOptions,
+  DryRunResult,
+  MutantRunOptions,
+  MutantRunResult,
+  TestRunnerCapabilities,
+} from '@stryker-mutator/api/test-runner';
 
 import { TestRunnerDecorator } from './test-runner-decorator.js';
 
@@ -24,15 +30,21 @@ export class ReloadEnvironmentDecorator extends TestRunnerDecorator {
     return super.dryRun(options);
   }
 
-  public override async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
+  public override async mutantRun(
+    options: MutantRunOptions,
+  ): Promise<MutantRunResult> {
     let newState: TestEnvironmentState;
     if (options.reloadEnvironment) {
       newState = TestEnvironmentState.LoadedStaticMutant;
 
       // If env is still pristine (first run), no reload is actually needed
-      options.reloadEnvironment = this.testEnvironment !== TestEnvironmentState.Pristine;
+      options.reloadEnvironment =
+        this.testEnvironment !== TestEnvironmentState.Pristine;
 
-      if (options.reloadEnvironment && !(await this.testRunnerIsCapableOfReload())) {
+      if (
+        options.reloadEnvironment &&
+        !(await this.testRunnerIsCapableOfReload())
+      ) {
         await this.recover();
         options.reloadEnvironment = false;
       }

@@ -19,7 +19,12 @@ import { JestConfigLoader } from './jest-config-loader.js';
 export class CustomJestConfigLoader implements JestConfigLoader {
   private readonly options: JestRunnerOptionsWithStrykerOptions;
 
-  public static inject = tokens(commonTokens.logger, commonTokens.options, pluginTokens.requireFromCwd, pluginTokens.jestConfigWrapper);
+  public static inject = tokens(
+    commonTokens.logger,
+    commonTokens.options,
+    pluginTokens.requireFromCwd,
+    pluginTokens.jestConfigWrapper,
+  );
 
   constructor(
     private readonly log: Logger,
@@ -42,10 +47,15 @@ export class CustomJestConfigLoader implements JestConfigLoader {
    * Tries to read the jest config via the native jest api, available since jest@>=29.3
    */
   private async readConfigNative(): Promise<Config.InitialOptions> {
-    const { config, configPath } = await this.jestConfig.readInitialOptions(this.options.jest.configFile, { skipMultipleConfigError: true });
+    const { config, configPath } = await this.jestConfig.readInitialOptions(
+      this.options.jest.configFile,
+      { skipMultipleConfigError: true },
+    );
     const hint = '(used native `readInitialOptions` from jest-config)';
     if (configPath) {
-      this.log.debug(`Read config from "${path.relative(process.cwd(), configPath)}" ${hint}.`);
+      this.log.debug(
+        `Read config from "${path.relative(process.cwd(), configPath)}" ${hint}.`,
+      );
     } else {
       this.log.debug(`No config file read ${hint}.`);
     }
@@ -56,15 +66,25 @@ export class CustomJestConfigLoader implements JestConfigLoader {
    * The legacy readConfig functionality
    */
   public async readConfigManually(): Promise<Config.InitialOptions> {
-    const jestConfig = (await this.readConfigFromJestConfigFile()) ?? (await this.readConfigFromPackageJson()) ?? {};
-    this.log.debug("Read config: %s (used stryker's own config reading functionality)", jestConfig);
+    const jestConfig =
+      (await this.readConfigFromJestConfigFile()) ??
+      (await this.readConfigFromPackageJson()) ??
+      {};
+    this.log.debug(
+      "Read config: %s (used stryker's own config reading functionality)",
+      jestConfig,
+    );
     return jestConfig;
   }
 
-  private async readConfigFromJestConfigFile(): Promise<Config.InitialOptions | undefined> {
+  private async readConfigFromJestConfigFile(): Promise<
+    Config.InitialOptions | undefined
+  > {
     const configFilePath = this.resolveJestConfigFilePath();
     if (configFilePath) {
-      let config = this.requireFromCwd(configFilePath) as Config.InitialOptions | (() => Promise<Config.InitialOptions>);
+      let config = this.requireFromCwd(configFilePath) as
+        | Config.InitialOptions
+        | (() => Promise<Config.InitialOptions>);
       if (typeof config === 'function') {
         config = await config();
       }
@@ -75,10 +95,14 @@ export class CustomJestConfigLoader implements JestConfigLoader {
     return undefined;
   }
 
-  private async readConfigFromPackageJson(): Promise<Config.InitialOptions | undefined> {
+  private async readConfigFromPackageJson(): Promise<
+    Config.InitialOptions | undefined
+  > {
     const pkgJsonFilePath = this.resolvePackageJsonFilePath();
     if (pkgJsonFilePath) {
-      const config: Config.InitialOptions = JSON.parse(await fs.promises.readFile(pkgJsonFilePath, 'utf8')).jest ?? {};
+      const config: Config.InitialOptions =
+        JSON.parse(await fs.promises.readFile(pkgJsonFilePath, 'utf8')).jest ??
+        {};
       this.log.debug(`Read Jest config from ${pkgJsonFilePath}`);
       this.setRootDir(config, pkgJsonFilePath);
       return config;
@@ -88,20 +112,33 @@ export class CustomJestConfigLoader implements JestConfigLoader {
 
   private resolvePackageJsonFilePath(): string | undefined {
     const jestOptions = this.options;
-    const packageJsonCandidate = path.resolve(jestOptions.jest.configFile ?? 'package.json');
-    if (packageJsonCandidate.endsWith('package.json') && (jestOptions.jest.configFile ?? fs.existsSync(packageJsonCandidate))) {
+    const packageJsonCandidate = path.resolve(
+      jestOptions.jest.configFile ?? 'package.json',
+    );
+    if (
+      packageJsonCandidate.endsWith('package.json') &&
+      (jestOptions.jest.configFile ?? fs.existsSync(packageJsonCandidate))
+    ) {
       return packageJsonCandidate;
     }
     return undefined;
   }
   private setRootDir(config: Config.InitialOptions, configFilePath: string) {
-    config.rootDir = path.resolve(path.dirname(configFilePath), config.rootDir ?? '.');
+    config.rootDir = path.resolve(
+      path.dirname(configFilePath),
+      config.rootDir ?? '.',
+    );
   }
 
   private resolveJestConfigFilePath(): string | undefined {
     const jestOptions = this.options;
-    const configFileCandidate = path.resolve(jestOptions.jest.configFile ?? 'jest.config.js');
-    if (!configFileCandidate.endsWith('package.json') && (jestOptions.jest.configFile ?? fs.existsSync(configFileCandidate))) {
+    const configFileCandidate = path.resolve(
+      jestOptions.jest.configFile ?? 'jest.config.js',
+    );
+    if (
+      !configFileCandidate.endsWith('package.json') &&
+      (jestOptions.jest.configFile ?? fs.existsSync(configFileCandidate))
+    ) {
       return configFileCandidate;
     }
     return undefined;

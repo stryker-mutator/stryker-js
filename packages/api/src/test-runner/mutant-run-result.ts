@@ -5,7 +5,11 @@ export enum MutantRunStatus {
   Error = 'error',
 }
 
-export type MutantRunResult = ErrorMutantRunResult | KilledMutantRunResult | SurvivedMutantRunResult | TimeoutMutantRunResult;
+export type MutantRunResult =
+  | ErrorMutantRunResult
+  | KilledMutantRunResult
+  | SurvivedMutantRunResult
+  | TimeoutMutantRunResult;
 
 export interface TimeoutMutantRunResult {
   status: MutantRunStatus.Timeout;

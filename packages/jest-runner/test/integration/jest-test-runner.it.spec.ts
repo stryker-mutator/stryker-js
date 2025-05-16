@@ -1,9 +1,19 @@
 import { expect } from 'chai';
 import { commonTokens } from '@stryker-mutator/api/plugin';
-import { factory, testInjector, assertions } from '@stryker-mutator/test-helpers';
-import { CompleteDryRunResult, TestStatus } from '@stryker-mutator/api/test-runner';
+import {
+  factory,
+  testInjector,
+  assertions,
+} from '@stryker-mutator/test-helpers';
+import {
+  CompleteDryRunResult,
+  TestStatus,
+} from '@stryker-mutator/api/test-runner';
 
-import { JestTestRunner, jestTestRunnerFactory } from '../../src/jest-test-runner.js';
+import {
+  JestTestRunner,
+  jestTestRunnerFactory,
+} from '../../src/jest-test-runner.js';
 import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-options-with-stryker-options.js';
 import { JestOptions } from '../../src-generated/jest-runner-options.js';
 import { createJestOptions } from '../helpers/producers.js';
@@ -24,15 +34,23 @@ describe(`${JestTestRunner.name} integration test`, () => {
   ]);
 
   function createSut(overrides?: Partial<JestOptions>) {
-    const options: JestRunnerOptionsWithStrykerOptions = factory.strykerWithPluginOptions({
-      jest: createJestOptions(overrides),
-    });
+    const options: JestRunnerOptionsWithStrykerOptions =
+      factory.strykerWithPluginOptions({
+        jest: createJestOptions(overrides),
+      });
 
-    return testInjector.injector.provideValue(commonTokens.options, options).injectFunction(jestTestRunnerFactory);
+    return testInjector.injector
+      .provideValue(commonTokens.options, options)
+      .injectFunction(jestTestRunnerFactory);
   }
 
-  const expectToHaveSuccessfulTests = (result: CompleteDryRunResult, n: number) => {
-    expect(result.tests.filter((t) => t.status === TestStatus.Success)).to.have.length(n);
+  const expectToHaveSuccessfulTests = (
+    result: CompleteDryRunResult,
+    n: number,
+  ) => {
+    expect(
+      result.tests.filter((t) => t.status === TestStatus.Success),
+    ).to.have.length(n);
   };
 
   describe('dryRun', () => {
@@ -41,10 +59,14 @@ describe(`${JestTestRunner.name} integration test`, () => {
       const sut = createSut();
       await sut.init();
 
-      const runResult = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
+      const runResult = await sut.dryRun(
+        factory.dryRunOptions({ coverageAnalysis: 'off' }),
+      );
 
       assertions.expectCompleted(runResult);
-      const result = runResult.tests.find((test) => test.id === 'Add should be able to add two numbers');
+      const result = runResult.tests.find(
+        (test) => test.id === 'Add should be able to add two numbers',
+      );
       expect(result).to.not.be.null;
       expect(result!.name).to.equal('Add should be able to add two numbers');
       expect(result!.timeSpentMs).to.be.above(-1);
@@ -55,32 +77,52 @@ describe(`${JestTestRunner.name} integration test`, () => {
       const sut = createSut();
       await sut.init();
 
-      const runResult = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
+      const runResult = await sut.dryRun(
+        factory.dryRunOptions({ coverageAnalysis: 'off' }),
+      );
 
       assertions.expectCompleted(runResult);
       expectToHaveSuccessfulTests(runResult, testNames.length);
     });
 
     it('should run tests on the example custom project using jest.config.js', async () => {
-      process.chdir(resolveTestResource('exampleProjectWithExplicitJestConfig'));
+      process.chdir(
+        resolveTestResource('exampleProjectWithExplicitJestConfig'),
+      );
 
       const sut = createSut();
       await sut.init();
 
-      const runResult = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
+      const runResult = await sut.dryRun(
+        factory.dryRunOptions({ coverageAnalysis: 'off' }),
+      );
 
       assertions.expectCompleted(runResult);
       expectToHaveSuccessfulTests(runResult, testNames.length);
     });
 
     it('should report the test positions and file names', async () => {
-      process.chdir(resolveTestResource('exampleProjectWithExplicitJestConfig'));
-      const addSpecFileName = resolveTestResource('exampleProjectWithExplicitJestConfig', 'src', '__tests__', 'AddSpec.js');
-      const circleSpecFileName = resolveTestResource('exampleProjectWithExplicitJestConfig', 'src', '__tests__', 'CircleSpec.js');
+      process.chdir(
+        resolveTestResource('exampleProjectWithExplicitJestConfig'),
+      );
+      const addSpecFileName = resolveTestResource(
+        'exampleProjectWithExplicitJestConfig',
+        'src',
+        '__tests__',
+        'AddSpec.js',
+      );
+      const circleSpecFileName = resolveTestResource(
+        'exampleProjectWithExplicitJestConfig',
+        'src',
+        '__tests__',
+        'CircleSpec.js',
+      );
       const sut = createSut();
       await sut.init();
 
-      const runResult = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
+      const runResult = await sut.dryRun(
+        factory.dryRunOptions({ coverageAnalysis: 'perTest' }),
+      );
       assertions.expectCompleted(runResult);
       expectTestResults(runResult, [
         {
@@ -113,7 +155,10 @@ describe(`${JestTestRunner.name} integration test`, () => {
   });
 
   describe('mutantRun', () => {
-    const resolveFromProject = resolveTestResource.bind(undefined, 'jasmine2-node-instrumented');
+    const resolveFromProject = resolveTestResource.bind(
+      undefined,
+      'jasmine2-node-instrumented',
+    );
 
     it('should kill mutant 1', async () => {
       process.chdir(resolveFromProject());
@@ -129,7 +174,9 @@ describe(`${JestTestRunner.name} integration test`, () => {
       const runResult = await sut.mutantRun(mutantRunOptions);
 
       assertions.expectKilled(runResult);
-      expect(runResult.killedBy).deep.eq(['Add should be able to add two numbers']);
+      expect(runResult.killedBy).deep.eq([
+        'Add should be able to add two numbers',
+      ]);
       // eslint-disable-next-line no-control-regex
       expect(runResult.failureMessage.replace(/\x1B[[(?);]{0,2}(;?\d)*./g, ''))
         .contains('Expected: 7')
@@ -188,7 +235,9 @@ describe(`${JestTestRunner.name} integration test`, () => {
 
       // Assert
       assertions.expectKilled(result);
-      expect(result.killedBy).deep.eq(['Add should be able to add two numbers']);
+      expect(result.killedBy).deep.eq([
+        'Add should be able to add two numbers',
+      ]);
     });
 
     it('should be able to collect all tests that kill a mutant when disableBail = true', async () => {

@@ -73,8 +73,12 @@ function ${IS_MUTANT_ACTIVE_HELPER}(id) {
  * returns syntax for `global.activeMutant === $mutantId`
  * @param mutantId The id of the mutant to switch
  */
-export function mutantTestExpression(mutantId: string): babel.types.CallExpression {
-  return types.callExpression(types.identifier(IS_MUTANT_ACTIVE_HELPER), [types.stringLiteral(mutantId)]);
+export function mutantTestExpression(
+  mutantId: string,
+): babel.types.CallExpression {
+  return types.callExpression(types.identifier(IS_MUTANT_ACTIVE_HELPER), [
+    types.stringLiteral(mutantId),
+  ]);
 }
 
 interface Position {
@@ -82,18 +86,31 @@ interface Position {
   column: number;
 }
 
-function eqLocation(a: babel.types.SourceLocation, b: babel.types.SourceLocation): boolean {
+function eqLocation(
+  a: babel.types.SourceLocation,
+  b: babel.types.SourceLocation,
+): boolean {
   function eqPosition(start: Position, end: Position): boolean {
     return start.column === end.column && start.line === end.line;
   }
   return eqPosition(a.start, b.start) && eqPosition(a.end, b.end);
 }
 
-export function eqNode<T extends babel.types.Node>(a: T, b: babel.types.Node): b is T {
+export function eqNode<T extends babel.types.Node>(
+  a: T,
+  b: babel.types.Node,
+): b is T {
   return a.type === b.type && !!a.loc && !!b.loc && eqLocation(a.loc, b.loc);
 }
 
-export function offsetLocations(file: babel.types.File, { position, line, column }: { position: number; line: number; column: number }): void {
+export function offsetLocations(
+  file: babel.types.File,
+  {
+    position,
+    line,
+    column,
+  }: { position: number; line: number; column: number },
+): void {
   const offsetNode = (node: babel.types.Node): void => {
     node.start! += position;
     node.end! += position;
@@ -124,9 +141,16 @@ export function offsetLocations(file: babel.types.File, { position, line, column
  * @param mutants The mutants for which covering syntax needs to be generated
  * @param targetExpression The original expression
  */
-export function mutationCoverageSequenceExpression(mutants: Iterable<Mutant>, targetExpression?: babel.types.Expression): babel.types.Expression {
-  const mutantIds = [...mutants].map((mutant) => types.stringLiteral(mutant.id));
-  const sequence: babel.types.Expression[] = [types.callExpression(types.identifier(COVER_MUTANT_HELPER), mutantIds)];
+export function mutationCoverageSequenceExpression(
+  mutants: Iterable<Mutant>,
+  targetExpression?: babel.types.Expression,
+): babel.types.Expression {
+  const mutantIds = [...mutants].map((mutant) =>
+    types.stringLiteral(mutant.id),
+  );
+  const sequence: babel.types.Expression[] = [
+    types.callExpression(types.identifier(COVER_MUTANT_HELPER), mutantIds),
+  ];
   if (targetExpression) {
     sequence.push(targetExpression);
   }
@@ -161,36 +185,40 @@ function isDeclareModule(path: babel.NodePath): boolean {
   return path.isTSModuleDeclaration() && (path.node.declare ?? false);
 }
 
-const tsTypeAnnotationNodeTypes: ReadonlyArray<babel.types.Node['type']> = Object.freeze([
-  'TSAsExpression',
-  'TSInterfaceDeclaration',
-  'TSTypeAnnotation',
-  'TSTypeAliasDeclaration',
-  'TSEnumDeclaration',
-  'TSDeclareFunction',
-  'TSTypeParameterInstantiation',
-  'TSTypeParameterDeclaration',
-]);
+const tsTypeAnnotationNodeTypes: ReadonlyArray<babel.types.Node['type']> =
+  Object.freeze([
+    'TSAsExpression',
+    'TSInterfaceDeclaration',
+    'TSTypeAnnotation',
+    'TSTypeAliasDeclaration',
+    'TSEnumDeclaration',
+    'TSDeclareFunction',
+    'TSTypeParameterInstantiation',
+    'TSTypeParameterDeclaration',
+  ]);
 
-const flowTypeAnnotationNodeTypes: ReadonlyArray<babel.types.Node['type']> = Object.freeze([
-  'DeclareClass',
-  'DeclareFunction',
-  'DeclareInterface',
-  'DeclareModule',
-  'DeclareModuleExports',
-  'DeclareTypeAlias',
-  'DeclareOpaqueType',
-  'DeclareVariable',
-  'DeclareExportDeclaration',
-  'DeclareExportAllDeclaration',
-  'InterfaceDeclaration',
-  'OpaqueType',
-  'TypeAlias',
-  'InterfaceDeclaration',
-]);
+const flowTypeAnnotationNodeTypes: ReadonlyArray<babel.types.Node['type']> =
+  Object.freeze([
+    'DeclareClass',
+    'DeclareFunction',
+    'DeclareInterface',
+    'DeclareModule',
+    'DeclareModuleExports',
+    'DeclareTypeAlias',
+    'DeclareOpaqueType',
+    'DeclareVariable',
+    'DeclareExportDeclaration',
+    'DeclareExportAllDeclaration',
+    'InterfaceDeclaration',
+    'OpaqueType',
+    'TypeAlias',
+    'InterfaceDeclaration',
+  ]);
 
 export function isImportDeclaration(path: babel.NodePath): boolean {
-  return types.isTSImportEqualsDeclaration(path.node) || path.isImportDeclaration();
+  return (
+    types.isTSImportEqualsDeclaration(path.node) || path.isImportDeclaration()
+  );
 }
 
 /**
@@ -206,26 +234,43 @@ export interface SourceLocationInFile {
  * @param haystack The range to look in
  * @param needle the range to search for
  */
-export function locationIncluded(haystack: SourceLocationInFile, needle: SourceLocationInFile): boolean {
+export function locationIncluded(
+  haystack: SourceLocationInFile,
+  needle: SourceLocationInFile,
+): boolean {
   const startIncluded =
-    haystack.start.line < needle.start.line || (haystack.start.line === needle.start.line && haystack.start.column <= needle.start.column);
-  const endIncluded = haystack.end.line > needle.end.line || (haystack.end.line === needle.end.line && haystack.end.column >= needle.end.column);
+    haystack.start.line < needle.start.line ||
+    (haystack.start.line === needle.start.line &&
+      haystack.start.column <= needle.start.column);
+  const endIncluded =
+    haystack.end.line > needle.end.line ||
+    (haystack.end.line === needle.end.line &&
+      haystack.end.column >= needle.end.column);
   return startIncluded && endIncluded;
 }
 
 /**
  * Determines if two locations overlap with each other
  */
-export function locationOverlaps(a: SourceLocationInFile, b: SourceLocationInFile): boolean {
-  const startIncluded = a.start.line < b.end.line || (a.start.line === b.end.line && a.start.column <= b.end.column);
-  const endIncluded = a.end.line > b.start.line || (a.end.line === b.start.line && a.end.column >= b.start.column);
+export function locationOverlaps(
+  a: SourceLocationInFile,
+  b: SourceLocationInFile,
+): boolean {
+  const startIncluded =
+    a.start.line < b.end.line ||
+    (a.start.line === b.end.line && a.start.column <= b.end.column);
+  const endIncluded =
+    a.end.line > b.start.line ||
+    (a.end.line === b.start.line && a.end.column >= b.start.column);
   return startIncluded && endIncluded;
 }
 
 /**
  * Helper for `types.cloneNode(node, deep: true, withoutLocations: false);`
  */
-export function deepCloneNode<TNode extends babel.types.Node>(node: TNode): TNode {
+export function deepCloneNode<TNode extends babel.types.Node>(
+  node: TNode,
+): TNode {
   return types.cloneNode(node, /* deep */ true, /* withoutLocations */ false);
 }
 

@@ -1,7 +1,10 @@
 import { expect } from 'chai';
 import chalk from 'chalk';
 
-import { DiffChanges, DiffStatisticsCollector } from '../../../src/mutants/diff-statistics-collector.js';
+import {
+  DiffChanges,
+  DiffStatisticsCollector,
+} from '../../../src/mutants/diff-statistics-collector.js';
 
 describe(DiffStatisticsCollector.name, () => {
   it('should count changes', () => {
@@ -50,6 +53,8 @@ describe(DiffStatisticsCollector.name, () => {
   it('should support empty reports', () => {
     const sut = new DiffStatisticsCollector();
     expect(sut.createDetailedReport()).lengthOf(0);
-    expect(sut.createTotalsReport()).eq(`${chalk.yellowBright(0)} files changed (${chalk.greenBright('+0')} ${chalk.redBright('-0')})`);
+    expect(sut.createTotalsReport()).eq(
+      `${chalk.yellowBright(0)} files changed (${chalk.greenBright('+0')} ${chalk.redBright('-0')})`,
+    );
   });
 });

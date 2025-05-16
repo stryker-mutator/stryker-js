@@ -5,10 +5,19 @@ export interface UnserializableDescription {
   reason: string;
 }
 
-export function findUnserializables(thing: unknown): UnserializableDescription[] | undefined {
+export function findUnserializables(
+  thing: unknown,
+): UnserializableDescription[] | undefined {
   switch (typeof thing) {
     case 'number':
-      return !isFinite(thing) ? [{ reason: `Number value \`${thing}\` has no JSON representation`, path: [] }] : undefined;
+      return !isFinite(thing)
+        ? [
+            {
+              reason: `Number value \`${thing}\` has no JSON representation`,
+              path: [],
+            },
+          ]
+        : undefined;
     case 'string':
     case 'boolean':
     case 'undefined':

@@ -97,7 +97,10 @@ describe('fs', () => {
         sut.writeFile('foo.js', 'some-content');
 
         // Asset
-        expect(watcherCallback).calledWith('foo.js', ts.FileWatcherEventKind.Changed);
+        expect(watcherCallback).calledWith(
+          'foo.js',
+          ts.FileWatcherEventKind.Changed,
+        );
       });
 
       it('should convert path separator to forward slashes', () => {
@@ -111,7 +114,10 @@ describe('fs', () => {
         helper.readFileStub.returns('foobar');
         const watcherCallback = sinon.stub();
         sut.watchFile('foo.js', watcherCallback);
-        expect(testInjector.logger.trace).calledWith('Registering watcher for file "%s"', 'foo.js');
+        expect(testInjector.logger.trace).calledWith(
+          'Registering watcher for file "%s"',
+          'foo.js',
+        );
       });
     });
     describe(HybridFileSystem.prototype.existsInMemory.name, () => {

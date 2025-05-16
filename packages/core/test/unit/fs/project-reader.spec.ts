@@ -3,7 +3,11 @@ import type { Dirent } from 'fs';
 
 import { MutateDescription, MutationRange } from '@stryker-mutator/api/core';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import { I, normalizeFileName, normalizeWhitespaces } from '@stryker-mutator/util';
+import {
+  I,
+  normalizeFileName,
+  normalizeWhitespaces,
+} from '@stryker-mutator/util';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
@@ -52,9 +56,19 @@ describe(ProjectReader.name, () => {
         path.resolve('util', 'index.js'),
         path.resolve('util', 'object', 'object-helper.js'),
       ]);
-      expect(await result.files.get(path.resolve('app', 'app.component.js'))!.readContent()).eq('@Component()');
-      expect(await result.files.get(path.resolve('util', 'index.js'))!.readContent()).eq('foo.bar');
-      expect(await result.files.get(path.resolve('util', 'object', 'object-helper.js'))!.readContent()).eq('export const helpers = {}');
+      expect(
+        await result.files
+          .get(path.resolve('app', 'app.component.js'))!
+          .readContent(),
+      ).eq('@Component()');
+      expect(
+        await result.files.get(path.resolve('util', 'index.js'))!.readContent(),
+      ).eq('foo.bar');
+      expect(
+        await result.files
+          .get(path.resolve('util', 'object', 'object-helper.js'))!
+          .readContent(),
+      ).eq('export const helpers = {}');
       expect(fsMock.readdir).calledWith(process.cwd(), { withFileTypes: true });
     });
     it('should respect ignore patterns', async () => {
@@ -65,7 +79,9 @@ describe(ProjectReader.name, () => {
       testInjector.options.ignorePatterns = ['dist'];
       const sut = createSut();
       const result = await sut.read();
-      expect([...result.files.keys()]).deep.eq([path.resolve('src', 'index.js')]);
+      expect([...result.files.keys()]).deep.eq([
+        path.resolve('src', 'index.js'),
+      ]);
     });
     it('should respect deep ignore patterns', async () => {
       stubFileSystem({
@@ -80,7 +96,9 @@ describe(ProjectReader.name, () => {
       const sut = createSut();
       const { files } = await sut.read();
       expect(files).lengthOf(1);
-      expect(files.keys().next().value).eq(path.resolve('packages', 'app', 'src', 'index.js'));
+      expect(files.keys().next().value).eq(
+        path.resolve('packages', 'app', 'src', 'index.js'),
+      );
     });
     it('should ignore default files', async () => {
       // Arrange
@@ -133,9 +151,15 @@ describe(ProjectReader.name, () => {
       expect(files).lengthOf(4);
       const keys = files.keys();
       expect(keys.next().value).eq(path.resolve('.stryker-tmp', 'index.js'));
-      expect(keys.next().value).eq(path.resolve('reports', 'stryker-incremental.json'));
-      expect(keys.next().value).eq(path.resolve('reports', 'mutation', 'mutation.html'));
-      expect(keys.next().value).eq(path.resolve('reports', 'mutation', 'mutation.json'));
+      expect(keys.next().value).eq(
+        path.resolve('reports', 'stryker-incremental.json'),
+      );
+      expect(keys.next().value).eq(
+        path.resolve('reports', 'mutation', 'mutation.html'),
+      );
+      expect(keys.next().value).eq(
+        path.resolve('reports', 'mutation', 'mutation.json'),
+      );
     });
     it('should not ignore deep report directories by default', async () => {
       // Arrange
@@ -147,12 +171,16 @@ describe(ProjectReader.name, () => {
       const { files } = await sut.read();
       // Assert
       expect(files).lengthOf(1);
-      expect(files.keys().next().value).eq(path.resolve('app', 'reports', 'reporter.component.js'));
+      expect(files.keys().next().value).eq(
+        path.resolve('app', 'reports', 'reporter.component.js'),
+      );
     });
     it('should ignore a deep node_modules directory by default', async () => {
       // Arrange
       stubFileSystem({
-        testResources: { 'require-resolve': { node_modules: { bar: { 'index.js': '' } } } },
+        testResources: {
+          'require-resolve': { node_modules: { bar: { 'index.js': '' } } },
+        },
       });
       const sut = createSut();
       // Act
@@ -174,13 +202,20 @@ describe(ProjectReader.name, () => {
       const { files } = await sut.read();
       // Assert
       expect(files).lengthOf(2);
-      expect(new Set(files.keys())).deep.eq(new Set([path.resolve('index.js'), path.resolve('node_modules', 'rimraf', 'index.js')]));
+      expect(new Set(files.keys())).deep.eq(
+        new Set([
+          path.resolve('index.js'),
+          path.resolve('node_modules', 'rimraf', 'index.js'),
+        ]),
+      );
     });
     it('should allow un-ignore deep node_modules directory', async () => {
       // Arrange
       stubFileSystem({
         node_modules: { rimraf: { 'index.js': '' } },
-        testResources: { 'require-resolve': { node_modules: { bar: { 'index.js': '' } } } },
+        testResources: {
+          'require-resolve': { node_modules: { bar: { 'index.js': '' } } },
+        },
       });
       testInjector.options.ignorePatterns = ['!testResources/**/node_modules'];
       const sut = createSut();
@@ -188,7 +223,15 @@ describe(ProjectReader.name, () => {
       const { files } = await sut.read();
       // Assert
       expect(files).lengthOf(1);
-      expect(files.keys().next().value).eq(path.resolve('testResources', 'require-resolve', 'node_modules', 'bar', 'index.js'));
+      expect(files.keys().next().value).eq(
+        path.resolve(
+          'testResources',
+          'require-resolve',
+          'node_modules',
+          'bar',
+          'index.js',
+        ),
+      );
     });
     it('should reject if fs commands fail', async () => {
       const expectedError = factory.fileNotFoundError();
@@ -217,7 +260,9 @@ describe(ProjectReader.name, () => {
       const sut = createSut();
       const { files } = await sut.read();
       expect(files).lengthOf(1);
-      expect(files.keys().next().value).eq(path.resolve('app', 'src', 'index.js'));
+      expect(files.keys().next().value).eq(
+        path.resolve('app', 'src', 'index.js'),
+      );
     });
     describe('without mutate files', () => {
       it('should warn about dry-run', async () => {
@@ -287,25 +332,36 @@ describe(ProjectReader.name, () => {
           },
         ];
         expect([...result.filesToMutate.keys()]).deep.eq([expectedFileName]);
-        expect(result.filesToMutate.get(expectedFileName)!.mutate).deep.eq(expectedRanges);
+        expect(result.filesToMutate.get(expectedFileName)!.mutate).deep.eq(
+          expectedRanges,
+        );
       });
 
       it('should default column numbers if not present', async () => {
         testInjector.options.mutate = ['mute1.js:6-12'];
         const sut = createSut();
         const result = await sut.read();
-        const expectedMutate: MutateDescription = [mutateRange(5, 0, 11, Number.MAX_SAFE_INTEGER)];
+        const expectedMutate: MutateDescription = [
+          mutateRange(5, 0, 11, Number.MAX_SAFE_INTEGER),
+        ];
         expect(result.filesToMutate).lengthOf(1);
-        expect(result.filesToMutate.get(path.resolve('mute1.js'))!.mutate).deep.eq(expectedMutate);
+        expect(
+          result.filesToMutate.get(path.resolve('mute1.js'))!.mutate,
+        ).deep.eq(expectedMutate);
       });
 
       it('should allow multiple mutation ranges', async () => {
         testInjector.options.mutate = ['mute1.js:6-12', 'mute1.js:50-60'];
         const sut = createSut();
         const result = await sut.read();
-        const expectedMutate: MutateDescription = [mutateRange(5, 0, 11, Number.MAX_SAFE_INTEGER), mutateRange(49, 0, 59, Number.MAX_SAFE_INTEGER)];
+        const expectedMutate: MutateDescription = [
+          mutateRange(5, 0, 11, Number.MAX_SAFE_INTEGER),
+          mutateRange(49, 0, 59, Number.MAX_SAFE_INTEGER),
+        ];
         expect(result.filesToMutate).lengthOf(1);
-        expect(result.filesToMutate.get(path.resolve('mute1.js'))!.mutate).deep.eq(expectedMutate);
+        expect(
+          result.filesToMutate.get(path.resolve('mute1.js'))!.mutate,
+        ).deep.eq(expectedMutate);
       });
     });
     describe('with mutate file patterns', () => {
@@ -314,7 +370,10 @@ describe(ProjectReader.name, () => {
         testInjector.options.mutate = ['mute*'];
         const sut = createSut();
         const result = await sut.read();
-        expect([...result.filesToMutate.keys()]).to.deep.equal([path.resolve('mute1.js'), path.resolve('mute2.js')]);
+        expect([...result.filesToMutate.keys()]).to.deep.equal([
+          path.resolve('mute1.js'),
+          path.resolve('mute2.js'),
+        ]);
         expect([...result.files.keys()]).to.deep.equal([
           path.resolve('file1.js'),
           path.resolve('file2.js'),
@@ -329,10 +388,16 @@ describe(ProjectReader.name, () => {
         testInjector.options.ignorePatterns = ['mute2.js'];
         const sut = createSut();
         const result = await sut.read();
-        expect([...result.filesToMutate.keys()]).to.deep.equal([path.resolve('mute1.js')]);
+        expect([...result.filesToMutate.keys()]).to.deep.equal([
+          path.resolve('mute1.js'),
+        ]);
       });
       it('should warn about useless patterns custom "mutate" patterns', async () => {
-        testInjector.options.mutate = ['src/**/*.js', '!src/index.js', 'types/global.d.ts'];
+        testInjector.options.mutate = [
+          'src/**/*.js',
+          '!src/index.js',
+          'types/global.d.ts',
+        ];
         stubFileSystem({
           src: {
             'foo.js': 'foo();',
@@ -341,8 +406,12 @@ describe(ProjectReader.name, () => {
         const sut = createSut();
         await sut.read();
         expect(testInjector.logger.warn).calledTwice;
-        expect(testInjector.logger.warn).calledWith('Glob pattern "!src/index.js" did not exclude any files.');
-        expect(testInjector.logger.warn).calledWith('Glob pattern "types/global.d.ts" did not result in any files.');
+        expect(testInjector.logger.warn).calledWith(
+          'Glob pattern "!src/index.js" did not exclude any files.',
+        );
+        expect(testInjector.logger.warn).calledWith(
+          'Glob pattern "types/global.d.ts" did not result in any files.',
+        );
       });
       it('should not warn about useless patterns if "mutate" isn\'t overridden', async () => {
         stubFileSystem({
@@ -369,16 +438,30 @@ describe(ProjectReader.name, () => {
       stubFileSystem({}); // empty dir
       const sut = createSut();
       await sut.read();
-      sinon.assert.calledOnceWithExactly(fsMock.readFile, 'reports/stryker-incremental.json', 'utf-8');
+      sinon.assert.calledOnceWithExactly(
+        fsMock.readFile,
+        'reports/stryker-incremental.json',
+        'utf-8',
+      );
     });
     it('should be read when incremental = true and force = true', async () => {
       testInjector.options.incremental = true;
       testInjector.options.force = true;
-      stubFileSystem({ reports: { 'stryker-incremental.json': JSON.stringify(factory.mutationTestReportSchemaMutationTestResult({})) } });
+      stubFileSystem({
+        reports: {
+          'stryker-incremental.json': JSON.stringify(
+            factory.mutationTestReportSchemaMutationTestResult({}),
+          ),
+        },
+      });
       const sut = createSut();
       const actualProject = await sut.read();
       expect(actualProject.incrementalReport).not.undefined;
-      sinon.assert.calledOnceWithExactly(fsMock.readFile, 'reports/stryker-incremental.json', 'utf-8');
+      sinon.assert.calledOnceWithExactly(
+        fsMock.readFile,
+        'reports/stryker-incremental.json',
+        'utf-8',
+      );
     });
     it('should handle file not found correctly', async () => {
       // Arrange
@@ -408,7 +491,10 @@ describe(ProjectReader.name, () => {
                 'foo.js': factory.mutationTestReportSchemaFileResult({
                   mutants: [
                     factory.mutationTestReportSchemaMutantResult({
-                      location: { start: { line: 1, column: 2 }, end: { line: 3, column: 4 } },
+                      location: {
+                        start: { line: 1, column: 2 },
+                        end: { line: 3, column: 4 },
+                      },
                     }),
                   ],
                 }),
@@ -423,7 +509,10 @@ describe(ProjectReader.name, () => {
                       location: { start: { line: 1, column: 2 } },
                     }),
                     factory.mutationTestReportSchemaTestDefinition({
-                      location: { start: { line: 3, column: 4 }, end: { line: 5, column: 6 } },
+                      location: {
+                        start: { line: 3, column: 4 },
+                        end: { line: 5, column: 6 },
+                      },
                     }),
                   ],
                 }),
@@ -443,7 +532,10 @@ describe(ProjectReader.name, () => {
           'foo.js': factory.mutationTestReportSchemaFileResult({
             mutants: [
               factory.mutationTestReportSchemaMutantResult({
-                location: { start: { line: 0, column: 1 }, end: { line: 2, column: 3 } }, // Stryker works 0-based internally
+                location: {
+                  start: { line: 0, column: 1 },
+                  end: { line: 2, column: 3 },
+                }, // Stryker works 0-based internally
               }),
             ],
           }),
@@ -451,12 +543,17 @@ describe(ProjectReader.name, () => {
         testFiles: {
           'foo.spec.js': factory.mutationTestReportSchemaTestFile({
             tests: [
-              factory.mutationTestReportSchemaTestDefinition({ location: undefined }),
+              factory.mutationTestReportSchemaTestDefinition({
+                location: undefined,
+              }),
               factory.mutationTestReportSchemaTestDefinition({
                 location: { start: { line: 0, column: 1 }, end: undefined },
               }),
               factory.mutationTestReportSchemaTestDefinition({
-                location: { start: { line: 2, column: 3 }, end: { line: 4, column: 5 } },
+                location: {
+                  start: { line: 2, column: 3 },
+                  end: { line: 4, column: 5 },
+                },
               }),
             ],
           }),
@@ -470,11 +567,20 @@ describe(ProjectReader.name, () => {
       stubFileSystem({}); // empty dir
       const sut = createSut();
       await sut.read();
-      sinon.assert.calledOnceWithExactly(fsMock.readFile, 'some/other/file.json', 'utf-8');
+      sinon.assert.calledOnceWithExactly(
+        fsMock.readFile,
+        'some/other/file.json',
+        'utf-8',
+      );
     });
   });
 
-  function mutateRange(startLine: number, startColumn: number, endLine: number, endColumn: number): MutationRange {
+  function mutateRange(
+    startLine: number,
+    startColumn: number,
+    endLine: number,
+    endColumn: number,
+  ): MutationRange {
     return {
       start: { line: startLine, column: startColumn },
       end: { line: endLine, column: endColumn },
@@ -482,7 +588,9 @@ describe(ProjectReader.name, () => {
   }
 
   function createSut() {
-    return testInjector.injector.provideValue(coreTokens.fs, fsMock).injectClass(ProjectReader);
+    return testInjector.injector
+      .provideValue(coreTokens.fs, fsMock)
+      .injectClass(ProjectReader);
   }
 
   type DirectoryEntry = string | { [name: string]: DirectoryEntry };
@@ -493,16 +601,22 @@ describe(ProjectReader.name, () => {
       const relativeName = path.relative(process.cwd(), fullName);
       // Make sure both forward slash and backslashes are stubbed on windows os's
       fsMock.readFile.withArgs(relativeName).resolves(dirEntry);
-      fsMock.readFile.withArgs(normalizeFileName(relativeName)).resolves(dirEntry);
+      fsMock.readFile
+        .withArgs(normalizeFileName(relativeName))
+        .resolves(dirEntry);
     } else {
-      fsMock.readdir
-        .withArgs(fullName, sinon.match.object)
-        .resolves(
-          Object.entries(dirEntry).map(
-            ([name, value]) => createDirent({ name, isDirectory: typeof value !== 'string' }) as unknown as Dirent<Buffer<ArrayBufferLike>>,
-          ),
-        );
-      Object.entries(dirEntry).map(([name, value]) => stubFileSystem(value, path.resolve(fullName, name)));
+      fsMock.readdir.withArgs(fullName, sinon.match.object).resolves(
+        Object.entries(dirEntry).map(
+          ([name, value]) =>
+            createDirent({
+              name,
+              isDirectory: typeof value !== 'string',
+            }) as unknown as Dirent<Buffer<ArrayBufferLike>>,
+        ),
+      );
+      Object.entries(dirEntry).map(([name, value]) =>
+        stubFileSystem(value, path.resolve(fullName, name)),
+      );
     }
     fsMock.readFile.rejects(factory.fileNotFoundError());
   }

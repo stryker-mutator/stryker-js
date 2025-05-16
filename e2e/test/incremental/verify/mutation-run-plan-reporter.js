@@ -23,4 +23,10 @@ export class MutationRunPlanReporter {
   }
 }
 
-export const strykerPlugins = [declareClassPlugin(PluginKind.Reporter, 'mutation-run-plan', MutationRunPlanReporter)];
+export const strykerPlugins = [
+  declareClassPlugin(
+    PluginKind.Reporter,
+    'mutation-run-plan',
+    MutationRunPlanReporter,
+  ),
+];

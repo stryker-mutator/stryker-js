@@ -6,7 +6,10 @@ import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { MutateDescription } from '@stryker-mutator/api/core';
 
 import { transformerContextStub } from '../../helpers/stubs.js';
-import { AstTransformer, TransformerContext } from '../../../src/transformers/index.js';
+import {
+  AstTransformer,
+  TransformerContext,
+} from '../../../src/transformers/index.js';
 import { MutantCollector } from '../../../src/transformers/mutant-collector.js';
 import { transformBabel } from '../../../src/transformers/babel-transformer.js';
 import { ScriptAst, ScriptFormat } from '../../../src/syntax/index.js';
@@ -42,7 +45,11 @@ describe('babel-transformer', () => {
     name: 'Plus',
     *mutate(path) {
       if (path.isBinaryExpression() && path.node.operator === '+') {
-        yield types.binaryExpression('-', types.cloneNode(path.node.left, true), types.cloneNode(path.node.right, true));
+        yield types.binaryExpression(
+          '-',
+          types.cloneNode(path.node.left, true),
+          types.cloneNode(path.node.right, true),
+        );
       }
     },
   };
@@ -50,14 +57,23 @@ describe('babel-transformer', () => {
   const blockStatementPlacer: MutantPlacer<babel.types.Statement> = {
     name: 'blockStatementPlacerForTest',
     canPlace: (path) => path.isStatement(),
-    place: (path, appliedMutants) => path.replaceWith(types.blockStatement([...appliedMutants.values(), path.node])),
-  };
-  const sequenceExpressionPlacer: MutantPlacer<babel.types.SequenceExpression> = {
-    name: 'sequenceExpressionPlacerForTest',
-    canPlace: (path) => path.isSequenceExpression(),
     place: (path, appliedMutants) =>
-      path.replaceWith(types.sequenceExpression([...[...appliedMutants.values()].flatMap((val) => val.expressions), ...path.node.expressions])),
+      path.replaceWith(
+        types.blockStatement([...appliedMutants.values(), path.node]),
+      ),
   };
+  const sequenceExpressionPlacer: MutantPlacer<babel.types.SequenceExpression> =
+    {
+      name: 'sequenceExpressionPlacerForTest',
+      canPlace: (path) => path.isSequenceExpression(),
+      place: (path, appliedMutants) =>
+        path.replaceWith(
+          types.sequenceExpression([
+            ...[...appliedMutants.values()].flatMap((val) => val.expressions),
+            ...path.node.expressions,
+          ]),
+        ),
+    };
 
   beforeEach(() => {
     context = transformerContextStub();
@@ -75,11 +91,15 @@ describe('babel-transformer', () => {
       expect(mutantCollector.mutants[0].mutatorName).eq('Foo');
       expect(mutantCollector.mutants[1].replacementCode).eq('bar - baz');
       expect(mutantCollector.mutants[1].mutatorName).eq('Plus');
-      expect(normalizeWhitespaces(generate(ast.root).code)).contains('{ bar = bar + baz; foo = bar - baz; foo = bar + baz; }');
+      expect(normalizeWhitespaces(generate(ast.root).code)).contains(
+        '{ bar = bar + baz; foo = bar - baz; foo = bar + baz; }',
+      );
     });
 
     it('should not place the same mutant twice (#2968)', () => {
-      const ast = createJSAst({ rawContent: 'foo((console.log(bar + baz), bar + baz));' });
+      const ast = createJSAst({
+        rawContent: 'foo((console.log(bar + baz), bar + baz));',
+      });
       act(ast);
       const { code } = generate(ast.root);
       expect(normalizeWhitespaces(code)).contains(
@@ -103,7 +123,9 @@ describe('babel-transformer', () => {
       const ast = createJSAst({ rawContent: 'foo("bar")' });
 
       // Act
-      expect(() => act(ast)).throws('example.js:1:0 brokenPlacer could not place mutants with type(s): "Foo".');
+      expect(() => act(ast)).throws(
+        'example.js:1:0 brokenPlacer could not place mutants with type(s): "Foo".',
+      );
     });
   });
 
@@ -127,7 +149,9 @@ describe('babel-transformer', () => {
       context.options.excludedMutations = ['Foo'];
       act(ast);
       expect(mutantCollector.mutants).lengthOf(1);
-      expect(mutantCollector.mutants[0].ignoreReason).eq('Ignored because of excluded mutation "Foo"');
+      expect(mutantCollector.mutants[0].ignoreReason).eq(
+        'Ignored because of excluded mutation "Foo"',
+      );
     });
   });
 
@@ -180,7 +204,9 @@ describe('babel-transformer', () => {
       return mutantCollector.mutants.filter((mutant) => !mutant.ignoreReason);
     }
     function ignoredMutants() {
-      return mutantCollector.mutants.filter((mutant) => Boolean(mutant.ignoreReason));
+      return mutantCollector.mutants.filter((mutant) =>
+        Boolean(mutant.ignoreReason),
+      );
     }
 
     describe('"Stryker disable next-line"', () => {
@@ -230,9 +256,13 @@ describe('babel-transformer', () => {
         });
         act(ast);
         expect(ignoredMutants()).lengthOf(2);
-        expect(ignoredMutants().map((mutant) => mutant.original.loc!.start.line)).deep.eq([3, 3]);
+        expect(
+          ignoredMutants().map((mutant) => mutant.original.loc!.start.line),
+        ).deep.eq([3, 3]);
         expect(notIgnoredMutants()).lengthOf(2);
-        expect(notIgnoredMutants().map((mutant) => mutant.original.loc!.start.line)).deep.eq([4, 4]);
+        expect(
+          notIgnoredMutants().map((mutant) => mutant.original.loc!.start.line),
+        ).deep.eq([4, 4]);
       });
 
       it('should ignore a mutant when lead with a "Stryker disable next-line mutator" comment targeting that mutant', () => {
@@ -291,7 +321,9 @@ describe('babel-transformer', () => {
         `,
         });
         act(ast);
-        expect(mutantCollector.mutants[0].ignoreReason).to.equal("I don't like foo");
+        expect(mutantCollector.mutants[0].ignoreReason).to.equal(
+          "I don't like foo",
+        );
       });
 
       it('should allow multiple user comments for one line', () => {
@@ -303,8 +335,15 @@ describe('babel-transformer', () => {
         `,
         });
         act(ast);
-        expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'Foo')?.ignoreReason).to.equal("I don't like foo");
-        expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'Plus')?.ignoreReason).to.equal("I also don't like plus");
+        expect(
+          mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'Foo')
+            ?.ignoreReason,
+        ).to.equal("I don't like foo");
+        expect(
+          mutantCollector.mutants.find(
+            (mutant) => mutant.mutatorName === 'Plus',
+          )?.ignoreReason,
+        ).to.equal("I also don't like plus");
       });
     });
 
@@ -371,9 +410,15 @@ describe('babel-transformer', () => {
         act(ast);
         expect(notIgnoredMutants()).lengthOf(0);
         expect(
-          mutantCollector.mutants.filter((mutant) => mutant.mutatorName === 'Plus').every((mutant) => mutant.ignoreReason === 'Disable everything'),
+          mutantCollector.mutants
+            .filter((mutant) => mutant.mutatorName === 'Plus')
+            .every((mutant) => mutant.ignoreReason === 'Disable everything'),
         ).to.be.true;
-        expect(mutantCollector.mutants.find((mutant) => mutant.mutatorName === 'Foo')!.ignoreReason).to.equal('But have a reason for disabling foo');
+        expect(
+          mutantCollector.mutants.find(
+            (mutant) => mutant.mutatorName === 'Foo',
+          )!.ignoreReason,
+        ).to.equal('But have a reason for disabling foo');
       });
 
       it('should be able to restore a specific mutator that was previously explicitly disabled', () => {
@@ -453,7 +498,9 @@ describe('babel-transformer', () => {
         act(ast);
 
         expect(context.logger.warn).calledWithMatch(
-          sinon.match("Unused 'Stryker disable' directive. Mutator with name 'RandomName' not found. Directive found at: example.ts:1"),
+          sinon.match(
+            "Unused 'Stryker disable' directive. Mutator with name 'RandomName' not found. Directive found at: example.ts:1",
+          ),
         );
       });
 
@@ -468,7 +515,9 @@ describe('babel-transformer', () => {
         act(ast);
 
         expect(context.logger.warn).calledWithMatch(
-          sinon.match("Unused 'Stryker disable next-line' directive. Mutator with name 'RandomName' not found. Directive found at: example.ts:1"),
+          sinon.match(
+            "Unused 'Stryker disable next-line' directive. Mutator with name 'RandomName' not found. Directive found at: example.ts:1",
+          ),
         );
       });
 
@@ -485,7 +534,9 @@ describe('babel-transformer', () => {
         act(ast);
 
         expect(context.logger.warn).calledWithMatch(
-          sinon.match("Unused 'Stryker disable' directive. Mutator with name 'RandomName' not found. Directive found at: example.ts:2"),
+          sinon.match(
+            "Unused 'Stryker disable' directive. Mutator with name 'RandomName' not found. Directive found at: example.ts:2",
+          ),
         );
       });
 
@@ -536,7 +587,8 @@ describe('babel-transformer', () => {
         act(ast);
         expect(notIgnoredMutants()).lengthOf(2);
         expect(ignoredMutants()).lengthOf(2);
-        const [actualRestoredMutantPlus, actualRestoredMutantFoo] = notIgnoredMutants();
+        const [actualRestoredMutantPlus, actualRestoredMutantFoo] =
+          notIgnoredMutants();
         expect(actualRestoredMutantPlus.mutatorName).eq('Plus');
         expect(actualRestoredMutantPlus.original.loc!.start.line).eq(6);
         expect(actualRestoredMutantFoo.mutatorName).eq('Foo');
@@ -556,7 +608,8 @@ describe('babel-transformer', () => {
         act(ast);
         expect(notIgnoredMutants()).lengthOf(2);
         expect(ignoredMutants()).lengthOf(2);
-        const [actualNotIgnoredPlusMutant, actualNotIgnoredFooMutant] = notIgnoredMutants();
+        const [actualNotIgnoredPlusMutant, actualNotIgnoredFooMutant] =
+          notIgnoredMutants();
         expect(actualNotIgnoredPlusMutant.mutatorName).eq('Plus');
         expect(actualNotIgnoredPlusMutant.original.loc!.start.line).eq(5);
         expect(actualNotIgnoredFooMutant.mutatorName).eq('Foo');
@@ -638,7 +691,12 @@ describe('babel-transformer', () => {
       mutantPlacers.push(catchAllMutantPlacer);
     });
 
-    function range(startLine: number, startColumn: number, endLine: number, endColumn: number): MutateDescription {
+    function range(
+      startLine: number,
+      startColumn: number,
+      endLine: number,
+      endColumn: number,
+    ): MutateDescription {
       return [
         {
           start: { line: startLine, column: startColumn },
@@ -688,30 +746,49 @@ describe('babel-transformer', () => {
 
   describe('header', () => {
     it('should add the global js header on top but after comments that are followed by newline', () => {
-      const ast = createJSAst({ rawContent: '// @flow\n// another comment\n\nconst foo="cat"' });
+      const ast = createJSAst({
+        rawContent: '// @flow\n// another comment\n\nconst foo="cat"',
+      });
       act(ast);
       expect(ast.root.program.body[0].leadingComments![0].value).eq(' @flow');
-      expect(ast.root.program.body[0].leadingComments![1].value).eq(' another comment');
-      const [{ leadingComments: _unused, ...actualFirstStatement }] = ast.root.program.body;
-      const [{ leadingComments: _unused2, ...expectedFirstStatement }] = instrumentationBabelHeader;
+      expect(ast.root.program.body[0].leadingComments![1].value).eq(
+        ' another comment',
+      );
+      const [{ leadingComments: _unused, ...actualFirstStatement }] =
+        ast.root.program.body;
+      const [{ leadingComments: _unused2, ...expectedFirstStatement }] =
+        instrumentationBabelHeader;
       expect(actualFirstStatement).deep.eq(expectedFirstStatement);
-      expect(ast.root.program.body.slice(1, instrumentationBabelHeader.length)).deep.eq(instrumentationBabelHeader.slice(1));
+      expect(
+        ast.root.program.body.slice(1, instrumentationBabelHeader.length),
+      ).deep.eq(instrumentationBabelHeader.slice(1));
     });
 
     it('should add the global js header on top but after comments that are followed by a statement', () => {
-      const ast = createJSAst({ rawContent: '// @flow\n// another comment\nconst foo="cat"' });
+      const ast = createJSAst({
+        rawContent: '// @flow\n// another comment\nconst foo="cat"',
+      });
       act(ast);
 
       expect(ast.root.program.body[0].leadingComments![0].value).eq(' @flow');
-      expect(ast.root.program.body[0].leadingComments![1].value).eq(' another comment');
-      const [{ leadingComments: _unused, ...actualFirstStatement }] = ast.root.program.body;
-      const [{ leadingComments: _unused2, ...expectedFirstStatement }] = instrumentationBabelHeader;
+      expect(ast.root.program.body[0].leadingComments![1].value).eq(
+        ' another comment',
+      );
+      const [{ leadingComments: _unused, ...actualFirstStatement }] =
+        ast.root.program.body;
+      const [{ leadingComments: _unused2, ...expectedFirstStatement }] =
+        instrumentationBabelHeader;
       expect(actualFirstStatement).deep.eq(expectedFirstStatement);
-      expect(ast.root.program.body.slice(1, instrumentationBabelHeader.length)).deep.eq(instrumentationBabelHeader.slice(1));
+      expect(
+        ast.root.program.body.slice(1, instrumentationBabelHeader.length),
+      ).deep.eq(instrumentationBabelHeader.slice(1));
     });
 
     it('should not add global js header if no mutants were placed in the code', () => {
-      const ast = createJSAst({ originFileName: 'foo.js', rawContent: 'const bar = baz' }); // no mutants
+      const ast = createJSAst({
+        originFileName: 'foo.js',
+        rawContent: 'const bar = baz',
+      }); // no mutants
       act(ast);
       expect(ast.root.program.body).lengthOf(1);
     });
@@ -729,12 +806,14 @@ describe('babel-transformer', () => {
   });
 
   function act(ast: ScriptAst) {
-    (transformBabel as (...args: [...Parameters<AstTransformer<ScriptFormat>>, mutators: NodeMutator[], mutantPlacers: MutantPlacer[]]) => void)(
-      ast,
-      mutantCollector,
-      context,
-      mutators,
-      mutantPlacers,
-    );
+    (
+      transformBabel as (
+        ...args: [
+          ...Parameters<AstTransformer<ScriptFormat>>,
+          mutators: NodeMutator[],
+          mutantPlacers: MutantPlacer[],
+        ]
+      ) => void
+    )(ast, mutantCollector, context, mutators, mutantPlacers);
   }
 });

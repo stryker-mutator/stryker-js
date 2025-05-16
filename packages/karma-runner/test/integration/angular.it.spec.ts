@@ -1,7 +1,10 @@
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
-import { createKarmaTestRunner, KarmaTestRunner } from '../../src/karma-test-runner.js';
+import {
+  createKarmaTestRunner,
+  KarmaTestRunner,
+} from '../../src/karma-test-runner.js';
 import { KarmaRunnerOptionsWithStrykerOptions } from '../../src/karma-runner-options-with-stryker-options.js';
 import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 

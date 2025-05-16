@@ -1,6 +1,14 @@
 import { NodePath, types } from '@babel/core';
 
-import { JSAst, AstFormat, HtmlAst, TSAst, SvelteAst, TemplateScript, Range } from '../../src/syntax/index.js';
+import {
+  JSAst,
+  AstFormat,
+  HtmlAst,
+  TSAst,
+  SvelteAst,
+  TemplateScript,
+  Range,
+} from '../../src/syntax/index.js';
 import { Mutant, Mutable } from '../../src/mutant.js';
 import { ParserOptions } from '../../src/parsers/index.js';
 import { InstrumenterOptions } from '../../src/index.js';
@@ -8,14 +16,18 @@ import { TransformerOptions } from '../../src/transformers/index.js';
 
 import { parseTS, parseJS, findNodePath } from './syntax-test-helpers.js';
 
-export function createParserOptions(overrides?: Partial<ParserOptions>): ParserOptions {
+export function createParserOptions(
+  overrides?: Partial<ParserOptions>,
+): ParserOptions {
   return {
     plugins: null,
     ...overrides,
   };
 }
 
-export function createTransformerOptions(overrides?: Partial<TransformerOptions>): TransformerOptions {
+export function createTransformerOptions(
+  overrides?: Partial<TransformerOptions>,
+): TransformerOptions {
   return {
     excludedMutations: [],
     ignorers: [],
@@ -23,7 +35,9 @@ export function createTransformerOptions(overrides?: Partial<TransformerOptions>
   };
 }
 
-export function createInstrumenterOptions(overrides?: Partial<InstrumenterOptions>): InstrumenterOptions {
+export function createInstrumenterOptions(
+  overrides?: Partial<InstrumenterOptions>,
+): InstrumenterOptions {
   return {
     ...createParserOptions(),
     ...createTransformerOptions(),
@@ -54,7 +68,9 @@ export function createJSAst(overrides?: Partial<JSAst>): JSAst {
   };
 }
 
-export function createIdentifierNodePath(name: string): NodePath<types.Identifier> {
+export function createIdentifierNodePath(
+  name: string,
+): NodePath<types.Identifier> {
   return findNodePath<types.Identifier>(parseJS(name), (t) => t.isIdentifier());
 }
 
@@ -71,7 +87,9 @@ export function createTSAst(overrides?: Partial<TSAst>): TSAst {
 }
 
 export function createSvelteAst(overrides?: Partial<SvelteAst>): SvelteAst {
-  const rawContent = overrides?.rawContent ?? '<script>let name = "temp"</script><h1>hello {name}!</h1>';
+  const rawContent =
+    overrides?.rawContent ??
+    '<script>let name = "temp"</script><h1>hello {name}!</h1>';
   const originFileName = overrides?.originFileName ?? 'foo.svelte';
   return {
     format: AstFormat.Svelte,
@@ -85,7 +103,9 @@ export function createSvelteAst(overrides?: Partial<SvelteAst>): SvelteAst {
   };
 }
 
-export function createTemplateScript(overrides?: Partial<TemplateScript>): TemplateScript {
+export function createTemplateScript(
+  overrides?: Partial<TemplateScript>,
+): TemplateScript {
   return {
     ast: createJSAst(),
     range: { start: 26, end: 16 },
@@ -99,11 +119,16 @@ export function createRange(start = 0, end = 0): Range {
 }
 
 export function createMutant(overrides?: Partial<Mutant>): Mutant {
-  return new Mutant(overrides?.id ?? '1', overrides?.fileName ?? 'example.js', overrides?.original ?? types.identifier('foo'), {
-    mutatorName: overrides?.mutatorName ?? 'fooMutator',
-    replacement: overrides?.replacement ?? parseJS('bar').program.body[0],
-    ignoreReason: overrides?.ignoreReason,
-  });
+  return new Mutant(
+    overrides?.id ?? '1',
+    overrides?.fileName ?? 'example.js',
+    overrides?.original ?? types.identifier('foo'),
+    {
+      mutatorName: overrides?.mutatorName ?? 'fooMutator',
+      replacement: overrides?.replacement ?? parseJS('bar').program.body[0],
+      ignoreReason: overrides?.ignoreReason,
+    },
+  );
 }
 
 export function createMutable(overrides?: Partial<Mutable>): Mutable {
@@ -114,7 +139,9 @@ export function createMutable(overrides?: Partial<Mutable>): Mutable {
   };
 }
 
-export function createSourceLocation(overrides?: Partial<babel.types.SourceLocation>): babel.types.SourceLocation {
+export function createSourceLocation(
+  overrides?: Partial<babel.types.SourceLocation>,
+): babel.types.SourceLocation {
   return {
     start: createSourcePosition({ line: 1, column: 0 }),
     end: createSourcePosition({ line: 1, column: 1 }),
@@ -125,7 +152,9 @@ export function createSourceLocation(overrides?: Partial<babel.types.SourceLocat
 }
 
 export type SourcePosition = babel.types.SourceLocation['start'];
-export function createSourcePosition(overrides?: Partial<SourcePosition>): SourcePosition {
+export function createSourcePosition(
+  overrides?: Partial<SourcePosition>,
+): SourcePosition {
   return {
     line: 0,
     column: 0,

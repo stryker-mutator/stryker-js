@@ -1,7 +1,15 @@
 import path from 'path';
 
 import { TestResult } from '@stryker-mutator/api/test-runner';
-import { MutantRunPlan, MutantTestPlan, PlanKind, Mutant, StrykerOptions, MutantStatus, MutantEarlyResultPlan } from '@stryker-mutator/api/core';
+import {
+  MutantRunPlan,
+  MutantTestPlan,
+  PlanKind,
+  Mutant,
+  StrykerOptions,
+  MutantStatus,
+  MutantEarlyResultPlan,
+} from '@stryker-mutator/api/core';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 import { I, notEmpty, split } from '@stryker-mutator/util';
@@ -13,7 +21,10 @@ import { objectUtils } from '../utils/object-utils.js';
 import { optionsPath } from '../utils/index.js';
 import { Project } from '../fs/project.js';
 
-import { IncrementalDiffer, toRelativeNormalizedFileName } from './incremental-differ.js';
+import {
+  IncrementalDiffer,
+  toRelativeNormalizedFileName,
+} from './incremental-differ.js';
 import { TestCoverage } from './test-coverage.js';
 
 /**
@@ -52,10 +63,14 @@ export class MutantTestPlanner {
     private readonly options: StrykerOptions,
     private readonly logger: Logger,
   ) {
-    this.timeSpentAllTests = calculateTotalTime(this.testCoverage.testsById.values());
+    this.timeSpentAllTests = calculateTotalTime(
+      this.testCoverage.testsById.values(),
+    );
   }
 
-  public async makePlan(mutants: readonly Mutant[]): Promise<readonly MutantTestPlan[]> {
+  public async makePlan(
+    mutants: readonly Mutant[],
+  ): Promise<readonly MutantTestPlan[]> {
     const mutantsDiff = await this.incrementalDiff(mutants);
     const mutantPlans = mutantsDiff.map((mutant) => this.planMutant(mutant));
     this.reporter.onMutationTestingPlanReady({ mutantPlans });
@@ -83,7 +98,12 @@ export class MutantTestPlanner {
         // If not static, or it was "hybrid" (both static and perTest coverage) and ignoreStatic is on.
         // Only run covered tests with mutant active during runtime
         const netTime = calculateTotalTime(tests);
-        return this.createMutantRunPlan(mutant, { netTime, coveredBy, isStatic, testFilter: coveredBy });
+        return this.createMutantRunPlan(mutant, {
+          netTime,
+          coveredBy,
+          isStatic,
+          testFilter: coveredBy,
+        });
       } else if (this.options.ignoreStatic) {
         // Static (w/o perTest coverage) and ignoreStatic is on -> Ignore.
         return this.createMutantEarlyResultPlan(mutant, {
@@ -94,11 +114,17 @@ export class MutantTestPlanner {
         });
       } else {
         // Static (or hybrid) and `ignoreStatic` is off -> run all tests
-        return this.createMutantRunPlan(mutant, { netTime: this.timeSpentAllTests, isStatic, coveredBy });
+        return this.createMutantRunPlan(mutant, {
+          netTime: this.timeSpentAllTests,
+          isStatic,
+          coveredBy,
+        });
       }
     } else {
       // No coverage information exists, all tests need to run
-      return this.createMutantRunPlan(mutant, { netTime: this.timeSpentAllTests });
+      return this.createMutantRunPlan(mutant, {
+        netTime: this.timeSpentAllTests,
+      });
     }
   }
 
@@ -110,7 +136,13 @@ export class MutantTestPlanner {
       statusReason,
       coveredBy,
       killedBy,
-    }: { isStatic: boolean | undefined; status: MutantStatus; statusReason?: string; coveredBy?: string[]; killedBy?: string[] },
+    }: {
+      isStatic: boolean | undefined;
+      status: MutantStatus;
+      statusReason?: string;
+      coveredBy?: string[];
+      killedBy?: string[];
+    },
   ): MutantEarlyResultPlan {
     return {
       plan: PlanKind.EarlyResult,
@@ -132,12 +164,18 @@ export class MutantTestPlanner {
       testFilter,
       isStatic,
       coveredBy,
-    }: { netTime: number; testFilter?: string[] | undefined; isStatic?: boolean | undefined; coveredBy?: string[] | undefined },
+    }: {
+      netTime: number;
+      testFilter?: string[] | undefined;
+      isStatic?: boolean | undefined;
+      coveredBy?: string[] | undefined;
+    },
   ): MutantRunPlan {
     const { disableBail, timeoutMS, timeoutFactor } = this.options;
     const timeout = timeoutFactor * netTime + timeoutMS + this.timeOverheadMS;
     const hitCount = this.testCoverage.hitsByMutantId.get(mutant.id);
-    const hitLimit = hitCount === undefined ? undefined : hitCount * HIT_LIMIT_FACTOR;
+    const hitLimit =
+      hitCount === undefined ? undefined : hitCount * HIT_LIMIT_FACTOR;
 
     return {
       plan: PlanKind.Run,
@@ -168,23 +206,38 @@ export class MutantTestPlanner {
   }
 
   private warnAboutSlow(mutantPlans: readonly MutantTestPlan[]) {
-    if (!this.options.ignoreStatic && objectUtils.isWarningEnabled('slow', this.options.warnings)) {
+    if (
+      !this.options.ignoreStatic &&
+      objectUtils.isWarningEnabled('slow', this.options.warnings)
+    ) {
       // Only warn when the estimated time to run all static mutants exceeds 40%
       // ... and when the average performance impact of a static mutant is estimated to be twice that (or more) of a non-static mutant
       const ABSOLUTE_CUT_OFF_PERUNAGE = 0.4;
       const RELATIVE_CUT_OFF_FACTOR = 2;
       const zeroIfNaN = (n: number) => (isNaN(n) ? 0 : n);
-      const totalNetTime = (runPlans: MutantRunPlan[]) => runPlans.reduce((acc, { netTime }) => acc + netTime, 0);
+      const totalNetTime = (runPlans: MutantRunPlan[]) =>
+        runPlans.reduce((acc, { netTime }) => acc + netTime, 0);
       const runPlans = mutantPlans.filter(isRunPlan);
-      const [staticRunPlans, runTimeRunPlans] = split(runPlans, ({ mutant }) => Boolean(mutant.static));
+      const [staticRunPlans, runTimeRunPlans] = split(runPlans, ({ mutant }) =>
+        Boolean(mutant.static),
+      );
       const estimatedTimeForStaticMutants = totalNetTime(staticRunPlans);
       const estimatedTimeForRunTimeMutants = totalNetTime(runTimeRunPlans);
-      const estimatedTotalTime = estimatedTimeForRunTimeMutants + estimatedTimeForStaticMutants;
-      const avgTimeForAStaticMutant = zeroIfNaN(estimatedTimeForStaticMutants / staticRunPlans.length);
-      const avgTimeForARunTimeMutant = zeroIfNaN(estimatedTimeForRunTimeMutants / runTimeRunPlans.length);
-      const relativeTimeForStaticMutants = estimatedTimeForStaticMutants / estimatedTotalTime;
-      const absoluteCondition = relativeTimeForStaticMutants >= ABSOLUTE_CUT_OFF_PERUNAGE;
-      const relativeCondition = avgTimeForAStaticMutant >= RELATIVE_CUT_OFF_FACTOR * avgTimeForARunTimeMutant;
+      const estimatedTotalTime =
+        estimatedTimeForRunTimeMutants + estimatedTimeForStaticMutants;
+      const avgTimeForAStaticMutant = zeroIfNaN(
+        estimatedTimeForStaticMutants / staticRunPlans.length,
+      );
+      const avgTimeForARunTimeMutant = zeroIfNaN(
+        estimatedTimeForRunTimeMutants / runTimeRunPlans.length,
+      );
+      const relativeTimeForStaticMutants =
+        estimatedTimeForStaticMutants / estimatedTotalTime;
+      const absoluteCondition =
+        relativeTimeForStaticMutants >= ABSOLUTE_CUT_OFF_PERUNAGE;
+      const relativeCondition =
+        avgTimeForAStaticMutant >=
+        RELATIVE_CUT_OFF_FACTOR * avgTimeForARunTimeMutant;
       if (relativeCondition && absoluteCondition) {
         const percentage = (perunage: number) => Math.round(perunage * 100);
         this.logger.warn(
@@ -201,7 +254,9 @@ export class MutantTestPlanner {
     }
   }
 
-  private async incrementalDiff(currentMutants: readonly Mutant[]): Promise<readonly Mutant[]> {
+  private async incrementalDiff(
+    currentMutants: readonly Mutant[],
+  ): Promise<readonly Mutant[]> {
     const { incrementalReport } = this.project;
 
     if (incrementalReport) {
@@ -211,7 +266,12 @@ export class MutantTestPlanner {
         Object.keys(incrementalReport.files),
         Object.keys(incrementalReport.testFiles ?? {}),
       );
-      const diffedMutants = this.incrementalDiffer.diff(currentMutants, this.testCoverage, incrementalReport, currentFiles);
+      const diffedMutants = this.incrementalDiffer.diff(
+        currentMutants,
+        this.testCoverage,
+        incrementalReport,
+        currentFiles,
+      );
 
       return diffedMutants;
     }
@@ -219,21 +279,32 @@ export class MutantTestPlanner {
   }
 
   private async readAllOriginalFiles(
-    ...thingsWithFileNamesOrFileNames: Array<Iterable<string | { fileName?: string }>>
+    ...thingsWithFileNamesOrFileNames: Array<
+      Iterable<string | { fileName?: string }>
+    >
   ): Promise<Map<string, string>> {
     const uniqueFileNames = [
       ...new Set(
         thingsWithFileNamesOrFileNames
-          .flatMap((container) => [...container].map((thing) => (typeof thing === 'string' ? thing : thing.fileName)))
+          .flatMap((container) =>
+            [...container].map((thing) =>
+              typeof thing === 'string' ? thing : thing.fileName,
+            ),
+          )
           .filter(notEmpty)
           .map((fileName) => path.resolve(fileName)),
       ),
     ];
     const result = await Promise.all(
       uniqueFileNames.map(async (fileName) => {
-        const originalContent = await this.project.files.get(fileName)?.readOriginal();
+        const originalContent = await this.project.files
+          .get(fileName)
+          ?.readOriginal();
         if (originalContent) {
-          return [toRelativeNormalizedFileName(fileName), originalContent] as const;
+          return [
+            toRelativeNormalizedFileName(fileName),
+            originalContent,
+          ] as const;
         } else {
           return undefined;
         }
@@ -260,9 +331,13 @@ function toTestIds(testResults: Iterable<TestResult>): string[] {
   return result;
 }
 
-export function isEarlyResult(mutantPlan: MutantTestPlan): mutantPlan is MutantEarlyResultPlan {
+export function isEarlyResult(
+  mutantPlan: MutantTestPlan,
+): mutantPlan is MutantEarlyResultPlan {
   return mutantPlan.plan === PlanKind.EarlyResult;
 }
-export function isRunPlan(mutantPlan: MutantTestPlan): mutantPlan is MutantRunPlan {
+export function isRunPlan(
+  mutantPlan: MutantTestPlan,
+): mutantPlan is MutantRunPlan {
   return mutantPlan.plan === PlanKind.Run;
 }

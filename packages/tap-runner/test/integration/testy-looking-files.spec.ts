@@ -45,7 +45,14 @@ describe('Running in an testy-looking-files project', () => {
     const files = await findTestyLookingFiles(['test/a.js', 'test/a.*']);
 
     // Assert
-    const expectedFiles = ['test/a.cjs', 'test/a.js', 'test/a.jsx', 'test/a.mjs', 'test/a.ts', 'test/a.tsx'];
+    const expectedFiles = [
+      'test/a.cjs',
+      'test/a.js',
+      'test/a.jsx',
+      'test/a.mjs',
+      'test/a.ts',
+      'test/a.tsx',
+    ];
 
     expect(files.sort()).deep.equals(expectedFiles.sort());
   });

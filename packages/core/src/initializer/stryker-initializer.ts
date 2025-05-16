@@ -51,12 +51,17 @@ export class StrykerInitializer {
     const selectedPreset = await this.selectCustomInitializer();
     let configFileName: string;
     if (selectedPreset) {
-      configFileName = await this.initiateInitializer(this.configWriter, selectedPreset);
+      configFileName = await this.initiateInitializer(
+        this.configWriter,
+        selectedPreset,
+      );
     } else {
       configFileName = await this.initiateCustom(this.configWriter);
     }
     await this.gitignoreWriter.addStrykerTempFolder();
-    this.out(`Done configuring stryker. Please review "${configFileName}", you might need to configure your test runner correctly.`);
+    this.out(
+      `Done configuring stryker. Please review "${configFileName}", you might need to configure your test runner correctly.`,
+    );
     this.out("Let's kill some mutants with this command: `stryker run`");
   }
 
@@ -74,26 +79,43 @@ export class StrykerInitializer {
     copyEnvVariable('https_proxy', 'HTTPS_PROXY');
   }
 
-  private async selectCustomInitializer(): Promise<CustomInitializer | undefined> {
+  private async selectCustomInitializer(): Promise<
+    CustomInitializer | undefined
+  > {
     const customInitializer: CustomInitializer[] = this.customInitializers;
     if (customInitializer.length) {
       this.log.debug(`Found presets: ${JSON.stringify(customInitializer)}`);
       return this.inquirer.promptPresets(customInitializer);
     } else {
-      this.log.debug('No presets have been configured, reverting to custom configuration');
+      this.log.debug(
+        'No presets have been configured, reverting to custom configuration',
+      );
       return undefined;
     }
   }
 
-  private async initiateInitializer(configWriter: StrykerConfigWriter, selectedPreset: CustomInitializer) {
+  private async initiateInitializer(
+    configWriter: StrykerConfigWriter,
+    selectedPreset: CustomInitializer,
+  ) {
     const presetConfig = await selectedPreset.createConfig();
     const isJsonSelected = await this.selectJsonConfigType();
-    const configFileName = await configWriter.writeCustomInitializer(presetConfig, isJsonSelected);
+    const configFileName = await configWriter.writeCustomInitializer(
+      presetConfig,
+      isJsonSelected,
+    );
     if (presetConfig.additionalConfigFiles) {
-      await Promise.all(Object.entries(presetConfig.additionalConfigFiles).map(([name, content]) => fsPromises.writeFile(name, content)));
+      await Promise.all(
+        Object.entries(presetConfig.additionalConfigFiles).map(
+          ([name, content]) => fsPromises.writeFile(name, content),
+        ),
+      );
     }
     const selectedPackageManager = await this.selectPackageManager();
-    this.installNpmDependencies(presetConfig.dependencies, selectedPackageManager);
+    this.installNpmDependencies(
+      presetConfig.dependencies,
+      selectedPackageManager,
+    );
     return configFileName;
   }
 
@@ -103,10 +125,16 @@ export class StrykerInitializer {
     const selectedReporters = await this.selectReporters();
     const selectedPackageManager = await this.selectPackageManager();
     const isJsonSelected = await this.selectJsonConfigType();
-    const npmDependencies = this.getSelectedNpmDependencies([selectedTestRunner].concat(selectedReporters));
+    const npmDependencies = this.getSelectedNpmDependencies(
+      [selectedTestRunner].concat(selectedReporters),
+    );
     const packageInfo = await this.fetchAdditionalConfig(npmDependencies);
-    const pkgInfoOfSelectedTestRunner = packageInfo.find((pkg) => pkg.name == selectedTestRunner.pkg?.name);
-    const additionalConfig = packageInfo.map((dep) => dep.initStrykerConfig ?? {}).filter(notEmpty);
+    const pkgInfoOfSelectedTestRunner = packageInfo.find(
+      (pkg) => pkg.name == selectedTestRunner.pkg?.name,
+    );
+    const additionalConfig = packageInfo
+      .map((dep) => dep.initStrykerConfig ?? {})
+      .filter(notEmpty);
 
     const configFileName = await configWriter.write(
       selectedTestRunner,
@@ -115,7 +143,8 @@ export class StrykerInitializer {
       selectedPackageManager,
       npmDependencies.map((pkg) => pkg.name),
       additionalConfig,
-      pkgInfoOfSelectedTestRunner?.homepage ?? "(missing 'homepage' URL in package.json)",
+      pkgInfoOfSelectedTestRunner?.homepage ??
+        "(missing 'homepage' URL in package.json)",
       isJsonSelected,
     );
     this.installNpmDependencies(
@@ -131,7 +160,9 @@ export class StrykerInitializer {
     return this.inquirer.promptTestRunners(testRunnerOptions);
   }
 
-  private async getBuildCommand(selectedTestRunner: PromptOption): Promise<PromptOption> {
+  private async getBuildCommand(
+    selectedTestRunner: PromptOption,
+  ): Promise<PromptOption> {
     if (selectedTestRunner.name !== 'jest') {
       return this.inquirer.promptBuildCommand();
     }
@@ -182,7 +213,9 @@ export class StrykerInitializer {
     return this.inquirer.promptJsonConfigFormat();
   }
 
-  private getSelectedNpmDependencies(selectedOptions: Array<PromptOption | null>): PackageInfo[] {
+  private getSelectedNpmDependencies(
+    selectedOptions: Array<PromptOption | null>,
+  ): PackageInfo[] {
     return selectedOptions
       .filter(notEmpty)
       .map((option) => option.pkg)
@@ -193,23 +226,34 @@ export class StrykerInitializer {
    * Install the npm packages
    * @function
    */
-  private installNpmDependencies(dependencies: string[], selectedOption: PromptOption): void {
+  private installNpmDependencies(
+    dependencies: string[],
+    selectedOption: PromptOption,
+  ): void {
     if (dependencies.length === 0) {
       return;
     }
 
     const dependencyArg = dependencies.join(' ');
     this.out('Installing NPM dependencies...');
-    const cmd = this.getInstallCommand(selectedOption.name as PackageManager, dependencyArg);
+    const cmd = this.getInstallCommand(
+      selectedOption.name as PackageManager,
+      dependencyArg,
+    );
     this.out(cmd);
     try {
       childProcess.execSync(cmd, { stdio: [0, 1, 2] });
     } catch {
-      this.out(`An error occurred during installation, please try it yourself: "${cmd}"`);
+      this.out(
+        `An error occurred during installation, please try it yourself: "${cmd}"`,
+      );
     }
   }
 
-  private getInstallCommand(packageManager: PackageManager, dependencyArg: string): string {
+  private getInstallCommand(
+    packageManager: PackageManager,
+    dependencyArg: string,
+  ): string {
     switch (packageManager) {
       case PackageManager.Yarn:
         return `yarn add ${dependencyArg} --dev`;
@@ -220,7 +264,11 @@ export class StrykerInitializer {
     }
   }
 
-  private async fetchAdditionalConfig(dependencies: PackageSummary[]): Promise<PackageInfo[]> {
-    return await Promise.all(dependencies.map((dep) => this.client.getAdditionalConfig(dep)));
+  private async fetchAdditionalConfig(
+    dependencies: PackageSummary[],
+  ): Promise<PackageInfo[]> {
+    return await Promise.all(
+      dependencies.map((dep) => this.client.getAdditionalConfig(dep)),
+    );
   }
 }

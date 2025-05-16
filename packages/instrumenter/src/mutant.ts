@@ -1,6 +1,10 @@
 import babel, { type types } from '@babel/core';
 import generate from '@babel/generator';
-import { Mutant as ApiMutant, Location, Position } from '@stryker-mutator/api/core';
+import {
+  Mutant as ApiMutant,
+  Location,
+  Position,
+} from '@stryker-mutator/api/core';
 
 import { deepCloneNode, eqNode } from './util/index.js';
 
@@ -69,14 +73,19 @@ export class Mutant implements Mutable {
         },
       });
       if (!applied) {
-        throw new Error(`Could not apply mutant ${JSON.stringify(this.replacement)}.`);
+        throw new Error(
+          `Could not apply mutant ${JSON.stringify(this.replacement)}.`,
+        );
       }
       return mutatedAst;
     }
   }
 }
 
-function toApiLocation(source: types.SourceLocation, offset: Position): Location {
+function toApiLocation(
+  source: types.SourceLocation,
+  offset: Position,
+): Location {
   const loc = {
     start: toPosition(source.start, offset),
     end: toPosition(source.end, offset),

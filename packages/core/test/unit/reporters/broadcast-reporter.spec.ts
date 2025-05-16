@@ -20,7 +20,11 @@ describe(BroadcastReporter.name, () => {
     rep1 = factory.reporter('rep1');
     rep2 = factory.reporter('rep2');
     pluginCreatorMock = sinon.createStubInstance(PluginCreator);
-    pluginCreatorMock.create.withArgs(PluginKind.Reporter, 'rep1').returns(rep1).withArgs(PluginKind.Reporter, 'rep2').returns(rep2);
+    pluginCreatorMock.create
+      .withArgs(PluginKind.Reporter, 'rep1')
+      .returns(rep1)
+      .withArgs(PluginKind.Reporter, 'rep2')
+      .returns(rep2);
   });
 
   afterEach(() => {
@@ -39,8 +43,14 @@ describe(BroadcastReporter.name, () => {
       sut = createSut();
 
       // Assert
-      expect(sut.reporters).deep.eq({ 'progress-append-only': expectedReporter });
-      sinon.assert.calledWith(pluginCreatorMock.create, PluginKind.Reporter, 'progress-append-only');
+      expect(sut.reporters).deep.eq({
+        'progress-append-only': expectedReporter,
+      });
+      sinon.assert.calledWith(
+        pluginCreatorMock.create,
+        PluginKind.Reporter,
+        'progress-append-only',
+      );
     });
 
     it('should create the correct reporters', () => {
@@ -48,7 +58,9 @@ describe(BroadcastReporter.name, () => {
       setTTY(true);
       testInjector.options.reporters = ['progress', 'rep2'];
       const progress = factory.reporter('progress');
-      pluginCreatorMock.create.withArgs(PluginKind.Reporter, 'progress').returns(progress);
+      pluginCreatorMock.create
+        .withArgs(PluginKind.Reporter, 'progress')
+        .returns(progress);
 
       // Act
       sut = createSut();
@@ -63,7 +75,9 @@ describe(BroadcastReporter.name, () => {
     it('should warn if there is no reporter', () => {
       testInjector.options.reporters = [];
       sut = createSut();
-      expect(testInjector.logger.warn).calledWith(sinon.match('No reporter configured'));
+      expect(testInjector.logger.warn).calledWith(
+        sinon.match('No reporter configured'),
+      );
     });
   });
 
@@ -73,10 +87,16 @@ describe(BroadcastReporter.name, () => {
     });
 
     it('should forward "onDryRunCompleted"', async () => {
-      await actAssertShouldForward('onDryRunCompleted', factory.dryRunCompletedEvent());
+      await actAssertShouldForward(
+        'onDryRunCompleted',
+        factory.dryRunCompletedEvent(),
+      );
     });
     it('should forward "onMutationTestingPlanReady"', async () => {
-      await actAssertShouldForward('onMutationTestingPlanReady', factory.mutationTestingPlanReadyEvent());
+      await actAssertShouldForward(
+        'onMutationTestingPlanReady',
+        factory.mutationTestingPlanReadyEvent(),
+      );
     });
     it('should forward "onMutantTested"', async () => {
       await actAssertShouldForward('onMutantTested', factory.mutantResult());
@@ -107,7 +127,9 @@ describe(BroadcastReporter.name, () => {
             wrapUpRejectFn = reject;
           }),
         );
-        rep2.wrapUp.returns(new Promise<void>((resolve) => (wrapUpResolveFn2 = resolve)));
+        rep2.wrapUp.returns(
+          new Promise<void>((resolve) => (wrapUpResolveFn2 = resolve)),
+        );
         result = sut.wrapUp().then(() => void (isResolved = true));
       });
 
@@ -130,7 +152,10 @@ describe(BroadcastReporter.name, () => {
         it('should not result in a rejection', () => result);
 
         it('should log the error', () => {
-          expect(testInjector.logger.error).calledWith("An error occurred during 'wrapUp' on reporter 'rep1'.", actualError);
+          expect(testInjector.logger.error).calledWith(
+            "An error occurred during 'wrapUp' on reporter 'rep1'.",
+            actualError,
+          );
         });
       });
     });
@@ -140,14 +165,22 @@ describe(BroadcastReporter.name, () => {
 
       beforeEach(() => {
         actualError = new Error('some error');
-        factory.ALL_REPORTER_EVENTS.forEach((eventName) => rep1[eventName].throws(actualError));
+        factory.ALL_REPORTER_EVENTS.forEach((eventName) =>
+          rep1[eventName].throws(actualError),
+        );
       });
 
       it('should still broadcast "onDryRunCompleted"', async () => {
-        await actAssertShouldForward('onDryRunCompleted', factory.dryRunCompletedEvent());
+        await actAssertShouldForward(
+          'onDryRunCompleted',
+          factory.dryRunCompletedEvent(),
+        );
       });
       it('should still broadcast "onMutationTestingPlanReady"', async () => {
-        await actAssertShouldForward('onMutationTestingPlanReady', factory.mutationTestingPlanReadyEvent());
+        await actAssertShouldForward(
+          'onMutationTestingPlanReady',
+          factory.mutationTestingPlanReadyEvent(),
+        );
       });
       it('should still broadcast "onMutantTested"', async () => {
         await actAssertShouldForward('onMutantTested', factory.mutantResult());
@@ -166,14 +199,19 @@ describe(BroadcastReporter.name, () => {
       it('should log each error', () => {
         factory.ALL_REPORTER_EVENTS.forEach((eventName) => {
           (sut as any)[eventName]();
-          expect(testInjector.logger.error).to.have.been.calledWith(`An error occurred during '${eventName}' on reporter 'rep1'.`, actualError);
+          expect(testInjector.logger.error).to.have.been.calledWith(
+            `An error occurred during '${eventName}' on reporter 'rep1'.`,
+            actualError,
+          );
         });
       });
     });
   });
 
   function createSut() {
-    return testInjector.injector.provideValue(coreTokens.pluginCreator, pluginCreatorMock).injectClass(BroadcastReporter);
+    return testInjector.injector
+      .provideValue(coreTokens.pluginCreator, pluginCreatorMock)
+      .injectClass(BroadcastReporter);
   }
 
   function captureTTY() {
@@ -188,8 +226,15 @@ describe(BroadcastReporter.name, () => {
     process.stdout.isTTY = val;
   }
 
-  async function actAssertShouldForward<TMethod extends keyof Reporter>(method: TMethod, ...input: Parameters<Required<Reporter>[TMethod]>) {
-    await (sut[method] as (...args: Parameters<Required<Reporter>[TMethod]>) => Promise<void> | void)(...input);
+  async function actAssertShouldForward<TMethod extends keyof Reporter>(
+    method: TMethod,
+    ...input: Parameters<Required<Reporter>[TMethod]>
+  ) {
+    await (
+      sut[method] as (
+        ...args: Parameters<Required<Reporter>[TMethod]>
+      ) => Promise<void> | void
+    )(...input);
     expect(rep1[method]).calledWithExactly(...input);
     expect(rep2[method]).calledWithExactly(...input);
   }

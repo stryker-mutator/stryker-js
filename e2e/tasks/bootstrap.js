@@ -12,7 +12,9 @@ import { satisfiesPlatform } from './utils.js';
  */
 
 const pattern = process.argv[2] || '*';
-const dirs = (await fs.readdir(new URL('../test', import.meta.url))).filter(filter(pattern));
+const dirs = (await fs.readdir(new URL('../test', import.meta.url))).filter(
+  filter(pattern),
+);
 const concurrency = os.cpus().length;
 const command = process.env.CI ? 'ci' : 'install';
 
@@ -21,7 +23,9 @@ const command = process.env.CI ? 'ci' : 'install';
  * @property {string[]} [os]
  */
 
-console.info(`Installing ${dirs.length} test dirs using "npm ${command}" (used pattern: "${pattern}", concurrency ${concurrency})`);
+console.info(
+  `Installing ${dirs.length} test dirs using "npm ${command}" (used pattern: "${pattern}", concurrency ${concurrency})`,
+);
 let count = 0;
 reportProgress();
 from(dirs)
@@ -33,9 +37,15 @@ from(dirs)
       const pkg = JSON.parse(await fs.readFile(url, 'utf-8'));
       if (satisfiesPlatform(pkg)) {
         try {
-          await execa('npm', [command], { timeout: 500000, cwd, stdio: 'pipe' });
+          await execa('npm', [command], {
+            timeout: 500000,
+            cwd,
+            stdio: 'pipe',
+          });
         } catch (err) {
-          throw new Error(`Error running "npm ${command}" in ${cwd.href}`, { cause: err });
+          throw new Error(`Error running "npm ${command}" in ${cwd.href}`, {
+            cause: err,
+          });
         }
       }
       return dir;
@@ -59,7 +69,9 @@ function reportProgress(current) {
     if (count > 0) {
       process.stdout.write('\r');
     }
-    process.stdout.write(`${count}/${dirs.length}${current ? ` (${current})` : ''}`);
+    process.stdout.write(
+      `${count}/${dirs.length}${current ? ` (${current})` : ''}`,
+    );
     process.stdout.clearLine?.(1);
   }
 }

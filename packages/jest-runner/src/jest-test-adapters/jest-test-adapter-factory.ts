@@ -33,11 +33,22 @@ export function jestTestAdapterFactory(
     return injector.injectClass(JestGreaterThan25TestAdapter);
   }
 }
-jestTestAdapterFactory.inject = tokens(commonTokens.logger, pluginTokens.jestWrapper, commonTokens.options, commonTokens.injector);
+jestTestAdapterFactory.inject = tokens(
+  commonTokens.logger,
+  pluginTokens.jestWrapper,
+  commonTokens.options,
+  commonTokens.injector,
+);
 
-function guardJestVersion({ version, raw }: CoercedVersion, options: StrykerOptions, log: Logger) {
+function guardJestVersion(
+  { version, raw }: CoercedVersion,
+  options: StrykerOptions,
+  log: Logger,
+) {
   if (semver.satisfies(version, '<22.0.0')) {
-    throw new Error(`You need Jest version >= 22.0.0 to use the @stryker-mutator/jest-runner plugin, found ${raw}`);
+    throw new Error(
+      `You need Jest version >= 22.0.0 to use the @stryker-mutator/jest-runner plugin, found ${raw}`,
+    );
   } else if (semver.satisfies(version, '<24')) {
     if (options.coverageAnalysis !== 'off') {
       throw new Error(

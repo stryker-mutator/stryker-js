@@ -21,7 +21,9 @@ describe('errors', () => {
 
     it('should convert a regular error to string', () => {
       const error = new Error('expected error');
-      expect(errorToString(error)).eq(`Error: expected error\n${error.stack?.toString()}`);
+      expect(errorToString(error)).eq(
+        `Error: expected error\n${error.stack?.toString()}`,
+      );
     });
 
     it('should convert an error without a stack trace to string', () => {

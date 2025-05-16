@@ -1,8 +1,15 @@
-import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
+import {
+  testInjector,
+  factory,
+  assertions,
+} from '@stryker-mutator/test-helpers';
 import { TestStatus } from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
 
-import { createKarmaTestRunner, KarmaTestRunner } from '../../src/karma-test-runner.js';
+import {
+  createKarmaTestRunner,
+  KarmaTestRunner,
+} from '../../src/karma-test-runner.js';
 import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 describe('read config integration', () => {
@@ -14,7 +21,10 @@ describe('read config integration', () => {
 
   it('should not override client options in a mocha project', async () => {
     testInjector.options.karma = {
-      configFile: resolveTestResource('configs', 'mocha-client-options-karma.conf.js'),
+      configFile: resolveTestResource(
+        'configs',
+        'mocha-client-options-karma.conf.js',
+      ),
     };
     sut = testInjector.injector.injectFunction(createKarmaTestRunner);
     await sut.init();
@@ -23,14 +33,19 @@ describe('read config integration', () => {
     expect(dryRunResult.tests).lengthOf(2);
     const [test1, test2] = dryRunResult.tests;
     expect(test1.status).eq(TestStatus.Success);
-    expect(test1.id).eq('mocha client options should not override client options');
+    expect(test1.id).eq(
+      'mocha client options should not override client options',
+    );
     assertions.expectFailed(test2);
     expect(test2.id).eq('mocha client options should override bail');
     expect(test2.failureMessage).contains('Expected exception');
   });
   it('should not override client options in a jasmine project', async () => {
     testInjector.options.karma = {
-      configFile: resolveTestResource('configs', 'jasmine-client-options-karma.conf.js'),
+      configFile: resolveTestResource(
+        'configs',
+        'jasmine-client-options-karma.conf.js',
+      ),
     };
     sut = testInjector.injector.injectFunction(createKarmaTestRunner);
     await sut.init();

@@ -12,22 +12,36 @@ export class CheckerWorker implements CheckerResource {
 
   public static inject = tokens(commonTokens.options, coreTokens.pluginCreator);
   constructor(options: StrykerOptions, pluginCreator: PluginCreator) {
-    this.innerCheckers = new Map(options.checkers.map((name) => [name, pluginCreator.create(PluginKind.Checker, name)]));
+    this.innerCheckers = new Map(
+      options.checkers.map((name) => [
+        name,
+        pluginCreator.create(PluginKind.Checker, name),
+      ]),
+    );
   }
   public async init(): Promise<void> {
     for (const [name, checker] of this.innerCheckers.entries()) {
       try {
         await checker.init();
       } catch (error: unknown) {
-        throw new StrykerError(`An error occurred during initialization of the "${name}" checker`, error);
+        throw new StrykerError(
+          `An error occurred during initialization of the "${name}" checker`,
+          error,
+        );
       }
     }
   }
-  public async check(checkerName: string, mutants: Mutant[]): Promise<Record<string, CheckResult>> {
+  public async check(
+    checkerName: string,
+    mutants: Mutant[],
+  ): Promise<Record<string, CheckResult>> {
     return this.perform(checkerName, (checker) => checker.check(mutants));
   }
 
-  public async group(checkerName: string, mutants: Mutant[]): Promise<string[][]> {
+  public async group(
+    checkerName: string,
+    mutants: Mutant[],
+  ): Promise<string[][]> {
     return this.perform(
       checkerName,
       (checker) =>

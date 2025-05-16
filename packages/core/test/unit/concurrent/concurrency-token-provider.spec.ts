@@ -16,7 +16,10 @@ describe(ConcurrencyTokenProvider.name, () => {
   it('should log about processes', () => {
     testInjector.options.concurrency = 9;
     const sut = createSut();
-    expect(testInjector.logger.info).calledWith('Creating %s test runner process(es).', 9);
+    expect(testInjector.logger.info).calledWith(
+      'Creating %s test runner process(es).',
+      9,
+    );
     sut.dispose();
   });
 
@@ -24,20 +27,39 @@ describe(ConcurrencyTokenProvider.name, () => {
     testInjector.options.concurrency = 9;
     testInjector.options.checkers = ['typescript'];
     const sut = createSut();
-    expect(testInjector.logger.info).calledWith('Creating %s checker process(es) and %s test runner process(es).', 5, 4);
+    expect(testInjector.logger.info).calledWith(
+      'Creating %s checker process(es) and %s test runner process(es).',
+      5,
+      4,
+    );
     sut.dispose();
   });
 
   describe('testRunnerToken$', () => {
     it('should use cpuCount if concurrency is not set and CPU count <= 4', async () => {
-      sinon.stub(os, 'cpus').returns([createCpuInfo(), createCpuInfo(), createCpuInfo(), createCpuInfo()]);
+      sinon
+        .stub(os, 'cpus')
+        .returns([
+          createCpuInfo(),
+          createCpuInfo(),
+          createCpuInfo(),
+          createCpuInfo(),
+        ]);
       const sut = createSut();
       const actualTokens = await actAllTestRunnerTokens(sut);
       expect(actualTokens).deep.eq([0, 1, 2, 3]);
     });
 
     it('should use cpuCount - 1 if concurrency is not set and CPU count > 4', async () => {
-      sinon.stub(os, 'cpus').returns([createCpuInfo(), createCpuInfo(), createCpuInfo(), createCpuInfo(), createCpuInfo()]);
+      sinon
+        .stub(os, 'cpus')
+        .returns([
+          createCpuInfo(),
+          createCpuInfo(),
+          createCpuInfo(),
+          createCpuInfo(),
+          createCpuInfo(),
+        ]);
       const sut = createSut();
       const actualTokens = await actAllTestRunnerTokens(sut);
       expect(actualTokens).deep.eq([0, 1, 2, 3]);
@@ -71,7 +93,9 @@ describe(ConcurrencyTokenProvider.name, () => {
       sut.dispose();
     });
 
-    function actAllTestRunnerTokens(sut: ConcurrencyTokenProvider): Promise<number[]> {
+    function actAllTestRunnerTokens(
+      sut: ConcurrencyTokenProvider,
+    ): Promise<number[]> {
       const tokens = lastValueFrom(sut.testRunnerToken$.pipe(toArray()));
       sut.dispose();
       return tokens;

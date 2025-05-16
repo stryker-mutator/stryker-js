@@ -40,7 +40,10 @@ import { TSFileNode } from './ts-file-node.js';
  *
  * In this function, we create groups of mutants who can be tested at the same time.
  */
-export function createGroups(mutants: Mutant[], nodes: Map<string, TSFileNode>): string[][] {
+export function createGroups(
+  mutants: Mutant[],
+  nodes: Map<string, TSFileNode>,
+): string[][] {
   const groups: string[][] = [];
   const mutantsToGroup = new Set(mutants);
 
@@ -51,11 +54,17 @@ export function createGroups(mutants: Mutant[], nodes: Map<string, TSFileNode>):
 
     for (const currentMutant of mutantsToGroup) {
       const currentNode = findNode(currentMutant.fileName, nodes);
-      if (!nodesToIgnore.has(currentNode) && !parentsHaveOverlapWith(currentNode, groupNodes)) {
+      if (
+        !nodesToIgnore.has(currentNode) &&
+        !parentsHaveOverlapWith(currentNode, groupNodes)
+      ) {
         group.push(currentMutant.id);
         groupNodes.add(currentNode);
         mutantsToGroup.delete(currentMutant);
-        addRangeOfNodesToSet(nodesToIgnore, currentNode.getAllParentReferencesIncludingSelf());
+        addRangeOfNodesToSet(
+          nodesToIgnore,
+          currentNode.getAllParentReferencesIncludingSelf(),
+        );
       }
     }
     groups.push(group);
@@ -64,7 +73,10 @@ export function createGroups(mutants: Mutant[], nodes: Map<string, TSFileNode>):
   return groups;
 }
 
-function addRangeOfNodesToSet(nodes: Set<TSFileNode>, nodesToAdd: Iterable<TSFileNode>) {
+function addRangeOfNodesToSet(
+  nodes: Set<TSFileNode>,
+  nodesToAdd: Iterable<TSFileNode>,
+) {
   for (const parent of nodesToAdd) {
     nodes.add(parent);
   }
@@ -78,7 +90,10 @@ function findNode(fileName: string, nodes: Map<string, TSFileNode>) {
   return node;
 }
 
-function parentsHaveOverlapWith(currentNode: TSFileNode, groupNodes: Set<TSFileNode>) {
+function parentsHaveOverlapWith(
+  currentNode: TSFileNode,
+  groupNodes: Set<TSFileNode>,
+) {
   for (const parentNode of currentNode.getAllParentReferencesIncludingSelf()) {
     if (groupNodes.has(parentNode)) {
       return true;

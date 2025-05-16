@@ -26,7 +26,10 @@ describe(DashboardReporter.name, () => {
 
   function createSut(ciProviderOverride: CIProvider | null = ciProviderMock) {
     return testInjector.injector
-      .provideValue(dashboardReporterTokens.dashboardReporterClient, dashboardClientMock as unknown as DashboardReporterClient)
+      .provideValue(
+        dashboardReporterTokens.dashboardReporterClient,
+        dashboardClientMock as unknown as DashboardReporterClient,
+      )
       .provideValue(dashboardReporterTokens.ciProvider, ciProviderOverride)
       .injectClass(DashboardReporter);
   }
@@ -55,7 +58,8 @@ describe(DashboardReporter.name, () => {
     testInjector.options.dashboard.reportType = ReportType.Full;
     ciProviderMock.determineProject.returns('github.com/foo/bar');
     ciProviderMock.determineVersion.returns('master');
-    const expectedMutationTestResult = factory.mutationTestReportSchemaMutationTestResult();
+    const expectedMutationTestResult =
+      factory.mutationTestReportSchemaMutationTestResult();
 
     // Act
     await act(expectedMutationTestResult);
@@ -75,18 +79,27 @@ describe(DashboardReporter.name, () => {
     testInjector.options.dashboard.reportType = ReportType.MutationScore;
     ciProviderMock.determineProject.returns('github.com/foo/bar');
     ciProviderMock.determineVersion.returns('master');
-    const mutationTestResult = factory.mutationTestReportSchemaMutationTestResult({
-      files: {
-        'a.js': factory.mutationTestReportSchemaFileResult({
-          mutants: [
-            factory.mutationTestReportSchemaMutantResult({ status: 'Killed' }),
-            factory.mutationTestReportSchemaMutantResult({ status: 'Killed' }),
-            factory.mutationTestReportSchemaMutantResult({ status: 'Killed' }),
-            factory.mutationTestReportSchemaMutantResult({ status: 'Survived' }),
-          ],
-        }),
-      },
-    });
+    const mutationTestResult =
+      factory.mutationTestReportSchemaMutationTestResult({
+        files: {
+          'a.js': factory.mutationTestReportSchemaFileResult({
+            mutants: [
+              factory.mutationTestReportSchemaMutantResult({
+                status: 'Killed',
+              }),
+              factory.mutationTestReportSchemaMutantResult({
+                status: 'Killed',
+              }),
+              factory.mutationTestReportSchemaMutantResult({
+                status: 'Killed',
+              }),
+              factory.mutationTestReportSchemaMutantResult({
+                status: 'Survived',
+              }),
+            ],
+          }),
+        },
+      });
     const expectedReport: Report = {
       mutationScore: 75,
     };
@@ -109,7 +122,10 @@ describe(DashboardReporter.name, () => {
     const sut = createSut(null);
 
     // Act
-    sut.onMutationTestReportReady(factory.mutationTestReportSchemaMutationTestResult(), factory.mutationTestMetricsResult());
+    sut.onMutationTestReportReady(
+      factory.mutationTestReportSchemaMutationTestResult(),
+      factory.mutationTestMetricsResult(),
+    );
     await sut.wrapUp();
 
     // Assert

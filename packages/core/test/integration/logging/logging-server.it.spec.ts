@@ -30,14 +30,20 @@ describe('Logging server integration', () => {
 
     // Act
     const expectedError = new Error('expected');
-    const actualLogEvent = LoggingEvent.create('Foo Category', LogLevel.Information, ['bar', expectedError]);
+    const actualLogEvent = LoggingEvent.create(
+      'Foo Category',
+      LogLevel.Information,
+      ['bar', expectedError],
+    );
     client.log(actualLogEvent);
 
     // Assert
     let attempt = 0;
     while (true) {
       try {
-        expect(loggingSink.log).calledWith(LoggingEvent.deserialize(actualLogEvent.serialize()));
+        expect(loggingSink.log).calledWith(
+          LoggingEvent.deserialize(actualLogEvent.serialize()),
+        );
         break;
       } catch (error) {
         if (attempt > 10) {

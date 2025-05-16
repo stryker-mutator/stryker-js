@@ -1,4 +1,9 @@
-import { BaseContext, commonTokens, Injector, tokens } from '@stryker-mutator/api/plugin';
+import {
+  BaseContext,
+  commonTokens,
+  Injector,
+  tokens,
+} from '@stryker-mutator/api/plugin';
 
 import { instrumenterTokens } from './instrumenter-tokens.js';
 import { createParser } from './parsers/index.js';
@@ -14,7 +19,9 @@ export interface InstrumenterContext extends BaseContext {
 }
 
 createInstrumenter.inject = tokens(commonTokens.injector);
-export function createInstrumenter(injector: Injector<BaseContext>): Instrumenter {
+export function createInstrumenter(
+  injector: Injector<BaseContext>,
+): Instrumenter {
   return injector
     .provideValue(instrumenterTokens.print, print)
     .provideValue(instrumenterTokens.createParser, createParser)

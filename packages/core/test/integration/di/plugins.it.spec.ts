@@ -13,8 +13,12 @@ describe('Plugins integration', () => {
 
     beforeEach(async () => {
       const loader = testInjector.injector.injectClass(PluginLoader);
-      const plugins = await loader.load(['./testResources/plugins/custom-plugins.js']);
-      pluginCreator = testInjector.injector.provideValue(coreTokens.pluginsByKind, plugins.pluginsByKind).injectClass(PluginCreator);
+      const plugins = await loader.load([
+        './testResources/plugins/custom-plugins.js',
+      ]);
+      pluginCreator = testInjector.injector
+        .provideValue(coreTokens.pluginsByKind, plugins.pluginsByKind)
+        .injectClass(PluginCreator);
     });
 
     it('should be able to load a "ValuePlugin"', () => {

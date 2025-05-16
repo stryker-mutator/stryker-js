@@ -6,7 +6,12 @@ import { fileURLToPath } from 'url';
 import path from 'path';
 
 import { StrykerOptions } from '@stryker-mutator/api/core';
-import { commonTokens, declareClassPlugin, PluginKind, tokens } from '@stryker-mutator/api/plugin';
+import {
+  commonTokens,
+  declareClassPlugin,
+  PluginKind,
+  tokens,
+} from '@stryker-mutator/api/plugin';
 import {
   TestRunner,
   DryRunResult,
@@ -34,7 +39,11 @@ abstract class NotImplementedTestRunner implements TestRunner {
 class CoverageReportingTestRunner extends NotImplementedTestRunner {
   public async dryRun(): Promise<DryRunResult> {
     (global as any).__mutantCoverage__ = 'overridden';
-    return { status: DryRunStatus.Complete, tests: [], mutantCoverage: factory.mutantCoverage({ static: { 1: 42 } }) };
+    return {
+      status: DryRunStatus.Complete,
+      tests: [],
+      mutantCoverage: factory.mutantCoverage({ static: { 1: 42 } }),
+    };
   }
 }
 
@@ -87,7 +96,10 @@ class DiscoverRegexTestRunner extends NotImplementedTestRunner {
     if (types.isRegExp(this.options.someRegex)) {
       return factory.completeDryRunResult();
     } else {
-      return factory.errorDryRunResult({ errorMessage: 'No regex found in runnerOptions.strykerOptions.someRegex' });
+      return factory.errorDryRunResult({
+        errorMessage:
+          'No regex found in runnerOptions.strykerOptions.someRegex',
+      });
     }
   }
 }
@@ -163,7 +175,9 @@ class AsynchronousPromiseRejectionHandlerTestRunner extends NotImplementedTestRu
   public promise?: Promise<void>;
 
   public async init() {
-    this.promise = Promise.reject(new Error('Reject for now, but will be caught asynchronously'));
+    this.promise = Promise.reject(
+      new Error('Reject for now, but will be caught asynchronously'),
+    );
   }
   public async dryRun(): Promise<DryRunResult> {
     this.promise!.catch(() => {});
@@ -180,9 +194,13 @@ class StaticMutantTestRunner extends NotImplementedTestRunner {
   public override async dryRun(): Promise<DryRunResult> {
     this.count++;
     if (this.count === 1) {
-      return factory.completeDryRunResult({ tests: [factory.failedTestResult()] });
+      return factory.completeDryRunResult({
+        tests: [factory.failedTestResult()],
+      });
     } else {
-      return factory.completeDryRunResult({ tests: [factory.successTestResult()] });
+      return factory.completeDryRunResult({
+        tests: [factory.successTestResult()],
+      });
     }
   }
   public override async mutantRun(): Promise<MutantRunResult> {
@@ -191,17 +209,49 @@ class StaticMutantTestRunner extends NotImplementedTestRunner {
 }
 
 export const strykerPlugins = [
-  declareClassPlugin(PluginKind.TestRunner, 'verify-working-folder', VerifyWorkingFolderTestRunner),
-  declareClassPlugin(PluginKind.TestRunner, 'slow-init-dispose', SlowInitAndDisposeTestRunner),
-  declareClassPlugin(PluginKind.TestRunner, 'never-resolved', NeverResolvedTestRunner),
+  declareClassPlugin(
+    PluginKind.TestRunner,
+    'verify-working-folder',
+    VerifyWorkingFolderTestRunner,
+  ),
+  declareClassPlugin(
+    PluginKind.TestRunner,
+    'slow-init-dispose',
+    SlowInitAndDisposeTestRunner,
+  ),
+  declareClassPlugin(
+    PluginKind.TestRunner,
+    'never-resolved',
+    NeverResolvedTestRunner,
+  ),
   declareClassPlugin(PluginKind.TestRunner, 'errored', ErroredTestRunner),
-  declareClassPlugin(PluginKind.TestRunner, 'discover-regex', DiscoverRegexTestRunner),
-  declareClassPlugin(PluginKind.TestRunner, 'direct-resolved', DirectResolvedTestRunner),
-  declareClassPlugin(PluginKind.TestRunner, 'coverage-reporting', CoverageReportingTestRunner),
+  declareClassPlugin(
+    PluginKind.TestRunner,
+    'discover-regex',
+    DiscoverRegexTestRunner,
+  ),
+  declareClassPlugin(
+    PluginKind.TestRunner,
+    'direct-resolved',
+    DirectResolvedTestRunner,
+  ),
+  declareClassPlugin(
+    PluginKind.TestRunner,
+    'coverage-reporting',
+    CoverageReportingTestRunner,
+  ),
   declareClassPlugin(PluginKind.TestRunner, 'time-bomb', TimeBombTestRunner),
-  declareClassPlugin(PluginKind.TestRunner, 'proximity-mine', ProximityMineTestRunner),
+  declareClassPlugin(
+    PluginKind.TestRunner,
+    'proximity-mine',
+    ProximityMineTestRunner,
+  ),
   declareClassPlugin(PluginKind.TestRunner, 'counter', CounterTestRunner),
-  declareClassPlugin(PluginKind.TestRunner, 'async-promise-rejection-handler', AsynchronousPromiseRejectionHandlerTestRunner),
+  declareClassPlugin(
+    PluginKind.TestRunner,
+    'async-promise-rejection-handler',
+    AsynchronousPromiseRejectionHandlerTestRunner,
+  ),
   declareClassPlugin(PluginKind.TestRunner, 'reject-init', RejectInitRunner),
   declareClassPlugin(PluginKind.TestRunner, 'static', StaticMutantTestRunner),
 ];

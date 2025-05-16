@@ -27,11 +27,20 @@ export class DashboardReporter implements Reporter {
 
   private onGoingWork: Promise<void> | undefined;
 
-  public onMutationTestReportReady(result: schema.MutationTestResult, metrics: MutationTestMetricsResult): void {
+  public onMutationTestReportReady(
+    result: schema.MutationTestResult,
+    metrics: MutationTestMetricsResult,
+  ): void {
     this.onGoingWork = (async () => {
-      const { projectName, version, moduleName } = this.getContextFromEnvironment();
+      const { projectName, version, moduleName } =
+        this.getContextFromEnvironment();
       if (projectName && version) {
-        await this.update(this.toReport(result, metrics), projectName, version, moduleName);
+        await this.update(
+          this.toReport(result, metrics),
+          projectName,
+          version,
+          moduleName,
+        );
       } else {
         this.log.info(
           'The report was not send to the dashboard. The dashboard.project and/or dashboard.version values were missing and not detected to be running on a build server.',
@@ -44,7 +53,10 @@ export class DashboardReporter implements Reporter {
     await this.onGoingWork;
   }
 
-  private toReport(result: schema.MutationTestResult, metrics: MutationTestMetricsResult): Report {
+  private toReport(
+    result: schema.MutationTestResult,
+    metrics: MutationTestMetricsResult,
+  ): Report {
     if (this.options.dashboard.reportType === ReportType.Full) {
       return result;
     } else {
@@ -54,7 +66,12 @@ export class DashboardReporter implements Reporter {
     }
   }
 
-  private async update(report: Report, projectName: string, version: string, moduleName: string | undefined) {
+  private async update(
+    report: Report,
+    projectName: string,
+    version: string,
+    moduleName: string | undefined,
+  ) {
     try {
       const href = await this.dashboardReporterClient.updateReport({
         report,
@@ -71,8 +88,10 @@ export class DashboardReporter implements Reporter {
   private getContextFromEnvironment() {
     return {
       moduleName: this.options.dashboard.module,
-      projectName: this.options.dashboard.project ?? this.ciProvider?.determineProject(),
-      version: this.options.dashboard.version ?? this.ciProvider?.determineVersion(),
+      projectName:
+        this.options.dashboard.project ?? this.ciProvider?.determineProject(),
+      version:
+        this.options.dashboard.version ?? this.ciProvider?.determineVersion(),
     };
   }
 }

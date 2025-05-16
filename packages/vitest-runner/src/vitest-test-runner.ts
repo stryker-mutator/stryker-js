@@ -1,9 +1,19 @@
 import { fileURLToPath } from 'url';
 import path from 'path';
 import fs from 'fs';
-import { CoverageData, INSTRUMENTER_CONSTANTS, MutantCoverage, StrykerOptions } from '@stryker-mutator/api/core';
+import {
+  CoverageData,
+  INSTRUMENTER_CONSTANTS,
+  MutantCoverage,
+  StrykerOptions,
+} from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
+import {
+  commonTokens,
+  Injector,
+  PluginContext,
+  tokens,
+} from '@stryker-mutator/api/plugin';
 import {
   TestRunner,
   DryRunResult,
@@ -18,17 +28,30 @@ import {
 import { escapeRegExp, notEmpty } from '@stryker-mutator/util';
 
 import { vitestWrapper, Vitest } from './vitest-wrapper.js';
-import { convertTestToTestResult, fromTestId, collectTestsFromSuite, normalizeCoverage } from './vitest-helpers.js';
+import {
+  convertTestToTestResult,
+  fromTestId,
+  collectTestsFromSuite,
+  normalizeCoverage,
+} from './vitest-helpers.js';
 import { VitestRunnerOptionsWithStrykerOptions } from './vitest-runner-options-with-stryker-options.js';
 
 type StrykerNamespace = '__stryker__' | '__stryker2__';
-const STRYKER_SETUP = fileURLToPath(new URL('./stryker-setup.js', import.meta.url));
+const STRYKER_SETUP = fileURLToPath(
+  new URL('./stryker-setup.js', import.meta.url),
+);
 
 export class VitestTestRunner implements TestRunner {
-  public static inject = [commonTokens.options, commonTokens.logger, 'globalNamespace'] as const;
+  public static inject = [
+    commonTokens.options,
+    commonTokens.logger,
+    'globalNamespace',
+  ] as const;
   private ctx?: Vitest;
   private readonly options: VitestRunnerOptionsWithStrykerOptions;
-  private localSetupFile = path.resolve(`./stryker-setup-${process.env.STRYKER_MUTATOR_WORKER_ID ?? 0}.js`);
+  private localSetupFile = path.resolve(
+    `./stryker-setup-${process.env.STRYKER_MUTATOR_WORKER_ID ?? 0}.js`,
+  );
 
   constructor(
     options: StrykerOptions,
@@ -69,11 +92,16 @@ export class VitestTestRunner implements TestRunner {
     this.ctx.provide('globalNamespace', this.globalNamespace);
     this.ctx.config.browser.screenshotFailures = false;
     this.ctx.projects.forEach((project) => {
-      project.config.setupFiles = [this.localSetupFile, ...project.config.setupFiles];
+      project.config.setupFiles = [
+        this.localSetupFile,
+        ...project.config.setupFiles,
+      ];
       project.config.browser.screenshotFailures = false;
     });
     if (this.log.isDebugEnabled()) {
-      this.log.debug(`vitest final config: ${JSON.stringify(this.ctx.config, null, 2)}`);
+      this.log.debug(
+        `vitest final config: ${JSON.stringify(this.ctx.config, null, 2)}`,
+      );
     }
   }
 
@@ -132,7 +160,9 @@ export class VitestTestRunner implements TestRunner {
       return testResult;
     });
     if (!failure && this.ctx!.state.errorsSet.size > 0) {
-      const errorText = [...this.ctx!.state.errorsSet].map((val) => JSON.stringify(val)).join('\n');
+      const errorText = [...this.ctx!.state.errorsSet]
+        .map((val) => JSON.stringify(val))
+        .join('\n');
       return {
         status: DryRunStatus.Error,
         errorMessage: `An error occurred outside of a test run, please be sure to properly await your promises! ${errorText}`,
@@ -166,23 +196,32 @@ export class VitestTestRunner implements TestRunner {
   private readMutantCoverage(): MutantCoverage {
     // Read coverage from all projects
     const coverages: MutantCoverage[] = [
-      ...new Map(this.ctx!.state.getFiles().map((file) => [`${file.projectName}-${file.name}`, file] as const)).entries(),
+      ...new Map(
+        this.ctx!.state.getFiles().map(
+          (file) => [`${file.projectName}-${file.name}`, file] as const,
+        ),
+      ).entries(),
     ]
-      .map(([, file]) => (file.meta as { mutantCoverage?: MutantCoverage }).mutantCoverage)
+      .map(
+        ([, file]) =>
+          (file.meta as { mutantCoverage?: MutantCoverage }).mutantCoverage,
+      )
       .filter(notEmpty)
       .map(normalizeCoverage);
 
     if (coverages.length > 1) {
       return coverages.reduce((acc, projectCoverage) => {
         // perTest contains the coverage per test id
-        Object.entries(projectCoverage.perTest).forEach(([testId, testCoverage]) => {
-          if (testId in acc.perTest) {
-            // Keys are mutant ids, the numbers are the amount of times it was hit.
-            mergeCoverage(acc.perTest[testId], testCoverage);
-          } else {
-            acc.perTest[testId] = testCoverage;
-          }
-        });
+        Object.entries(projectCoverage.perTest).forEach(
+          ([testId, testCoverage]) => {
+            if (testId in acc.perTest) {
+              // Keys are mutant ids, the numbers are the amount of times it was hit.
+              mergeCoverage(acc.perTest[testId], testCoverage);
+            } else {
+              acc.perTest[testId] = testCoverage;
+            }
+          },
+        );
         mergeCoverage(acc.static, projectCoverage.static);
         return acc;
       });
@@ -209,14 +248,18 @@ export class VitestTestRunner implements TestRunner {
 export const vitestTestRunnerFactory = createVitestTestRunnerFactory();
 
 export function createVitestTestRunnerFactory(
-  namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE,
+  namespace:
+    | typeof INSTRUMENTER_CONSTANTS.NAMESPACE
+    | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE,
 ): {
   (injector: Injector<PluginContext>): VitestTestRunner;
   inject: ['$injector'];
 } {
   createVitestTestRunner.inject = tokens(commonTokens.injector);
   function createVitestTestRunner(injector: Injector<PluginContext>) {
-    return injector.provideValue('globalNamespace', namespace).injectClass(VitestTestRunner);
+    return injector
+      .provideValue('globalNamespace', namespace)
+      .injectClass(VitestTestRunner);
   }
   return createVitestTestRunner;
 }

@@ -26,14 +26,18 @@ describe(JsonReporter.name, () => {
       };
       actReportReady();
       await sut.wrapUp();
-      expect(testInjector.logger.debug).calledWith(`Using relative path ${expectedPath}`);
+      expect(testInjector.logger.debug).calledWith(
+        `Using relative path ${expectedPath}`,
+      );
     });
 
     it('should use default base directory when no override is configured', async () => {
       const expectedPath = path.normalize('reports/mutation/mutation.json');
       actReportReady();
       await sut.wrapUp();
-      expect(testInjector.logger.debug).calledWith(`Using relative path ${expectedPath}`);
+      expect(testInjector.logger.debug).calledWith(
+        `Using relative path ${expectedPath}`,
+      );
     });
 
     it('should write the mutation report to disk', async () => {
@@ -47,7 +51,10 @@ describe(JsonReporter.name, () => {
       };
       sut.onMutationTestReportReady(report);
       await sut.wrapUp();
-      expect(writeFileStub).calledWith(path.resolve('reports', 'mutation', 'mutation.json'), JSON.stringify(report));
+      expect(writeFileStub).calledWith(
+        path.resolve('reports', 'mutation', 'mutation.json'),
+        JSON.stringify(report),
+      );
     });
   });
 
@@ -66,6 +73,10 @@ describe(JsonReporter.name, () => {
   });
 
   function actReportReady() {
-    sut.onMutationTestReportReady({ files: {}, schemaVersion: '', thresholds: { high: 0, low: 0 } });
+    sut.onMutationTestReportReady({
+      files: {},
+      schemaVersion: '',
+      thresholds: { high: 0, low: 0 },
+    });
   }
 });

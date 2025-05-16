@@ -1,5 +1,8 @@
 import NodeEnvironment from 'jest-environment-node';
-import type { JestEnvironmentConfig, EnvironmentContext } from '@jest/environment';
+import type {
+  JestEnvironmentConfig,
+  EnvironmentContext,
+} from '@jest/environment';
 import type { Circus } from '@jest/types';
 
 class JestTestEnvironment extends NodeEnvironment {

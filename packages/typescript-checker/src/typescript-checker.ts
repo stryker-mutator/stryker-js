@@ -5,7 +5,13 @@ import { EOL } from 'os';
 
 import ts from 'typescript';
 import { Checker, CheckResult, CheckStatus } from '@stryker-mutator/api/check';
-import { tokens, commonTokens, PluginContext, Injector, Scope } from '@stryker-mutator/api/plugin';
+import {
+  tokens,
+  commonTokens,
+  PluginContext,
+  Injector,
+  Scope,
+} from '@stryker-mutator/api/plugin';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 import { split, strykerReportBugUrl } from '@stryker-mutator/util';
@@ -18,18 +24,32 @@ import { TSFileNode } from './grouping/ts-file-node.js';
 import { TypescriptCheckerOptionsWithStrykerOptions } from './typescript-checker-options-with-stryker-options.js';
 import { HybridFileSystem } from './fs/hybrid-file-system.js';
 
-typescriptCheckerLoggerFactory.inject = tokens(commonTokens.getLogger, commonTokens.target);
-// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-function typescriptCheckerLoggerFactory(loggerFactory: LoggerFactoryMethod, target: Function | undefined) {
+typescriptCheckerLoggerFactory.inject = tokens(
+  commonTokens.getLogger,
+  commonTokens.target,
+);
+
+function typescriptCheckerLoggerFactory(
+  loggerFactory: LoggerFactoryMethod,
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+  target: Function | undefined,
+) {
   const targetName = target?.name ?? TypescriptChecker.name;
-  const category = targetName === TypescriptChecker.name ? TypescriptChecker.name : `${TypescriptChecker.name}.${targetName}`;
+  const category =
+    targetName === TypescriptChecker.name
+      ? TypescriptChecker.name
+      : `${TypescriptChecker.name}.${targetName}`;
   return loggerFactory(category);
 }
 
 create.inject = tokens(commonTokens.injector);
 export function create(injector: Injector<PluginContext>): TypescriptChecker {
   return injector
-    .provideFactory(commonTokens.logger, typescriptCheckerLoggerFactory, Scope.Transient)
+    .provideFactory(
+      commonTokens.logger,
+      typescriptCheckerLoggerFactory,
+      Scope.Transient,
+    )
     .provideClass(pluginTokens.fs, HybridFileSystem)
     .provideClass(pluginTokens.tsCompiler, TypescriptCompiler)
     .injectClass(TypescriptChecker);
@@ -43,7 +63,11 @@ export class TypescriptChecker implements Checker {
    * Keep track of all tsconfig files which are read during compilation (for project references)
    */
 
-  public static inject = tokens(commonTokens.logger, commonTokens.options, pluginTokens.tsCompiler);
+  public static inject = tokens(
+    commonTokens.logger,
+    commonTokens.options,
+    pluginTokens.tsCompiler,
+  );
   private readonly options: TypescriptCheckerOptionsWithStrykerOptions;
 
   constructor(
@@ -61,7 +85,9 @@ export class TypescriptChecker implements Checker {
     const errors = await this.tsCompiler.init();
 
     if (errors.length) {
-      throw new Error(`Typescript error(s) found in dry run compilation: ${this.createErrorText(errors)}`);
+      throw new Error(
+        `Typescript error(s) found in dry run compilation: ${this.createErrorText(errors)}`,
+      );
     }
   }
 
@@ -71,16 +97,25 @@ export class TypescriptChecker implements Checker {
    * @param mutants The mutants to check
    */
   public async check(mutants: Mutant[]): Promise<Record<string, CheckResult>> {
-    const result: Record<string, CheckResult> = Object.fromEntries(mutants.map((mutant) => [mutant.id, { status: CheckStatus.Passed }]));
+    const result: Record<string, CheckResult> = Object.fromEntries(
+      mutants.map((mutant) => [mutant.id, { status: CheckStatus.Passed }]),
+    );
 
     // Check if this is the group with unrelated files and return check status passed if so
     if (!this.tsCompiler.nodes.get(toPosixFileName(mutants[0].fileName))) {
       return result;
     }
 
-    const mutantErrorRelationMap = await this.checkErrors(mutants, {}, this.tsCompiler.nodes);
+    const mutantErrorRelationMap = await this.checkErrors(
+      mutants,
+      {},
+      this.tsCompiler.nodes,
+    );
     for (const [id, errors] of Object.entries(mutantErrorRelationMap)) {
-      result[id] = { status: CheckStatus.CompileError, reason: this.createErrorText(errors) };
+      result[id] = {
+        status: CheckStatus.CompileError,
+        reason: this.createErrorText(errors),
+      };
     }
 
     return result;
@@ -96,11 +131,17 @@ export class TypescriptChecker implements Checker {
       return Promise.resolve(mutants.map((m) => [m.id]));
     }
     const { nodes } = this.tsCompiler;
-    const [mutantsOutsideProject, mutantsInProject] = split(mutants, (m) => nodes.get(toPosixFileName(m.fileName)) == null);
+    const [mutantsOutsideProject, mutantsInProject] = split(
+      mutants,
+      (m) => nodes.get(toPosixFileName(m.fileName)) == null,
+    );
 
     const groups = createGroups(mutantsInProject, nodes);
     if (mutantsOutsideProject.length) {
-      return Promise.resolve([mutantsOutsideProject.map((m) => m.id), ...groups]);
+      return Promise.resolve([
+        mutantsOutsideProject.map((m) => m.id),
+        ...groups,
+      ]);
     } else {
       return Promise.resolve(groups);
     }
@@ -140,7 +181,8 @@ export class TypescriptChecker implements Checker {
           )}`,
         );
       }
-      const mutantsRelatedToError = nodeErrorWasThrownIn.getMutantsWithReferenceToChildrenOrSelf(mutants);
+      const mutantsRelatedToError =
+        nodeErrorWasThrownIn.getMutantsWithReferenceToChildrenOrSelf(mutants);
 
       if (mutantsRelatedToError.length === 0) {
         // In rare cases there are no mutants related to the typescript error

@@ -2,14 +2,30 @@ import path from 'path';
 
 import { diff_match_patch as DiffMatchPatch } from 'diff-match-patch';
 import chalk from 'chalk';
-import { schema, Mutant, Position, Location, StrykerOptions, FileDescriptions, MutateDescription } from '@stryker-mutator/api/core';
+import {
+  schema,
+  Mutant,
+  Position,
+  Location,
+  StrykerOptions,
+  FileDescriptions,
+  MutateDescription,
+} from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
-import { I, normalizeFileName, normalizeLineEndings, notEmpty } from '@stryker-mutator/util';
+import {
+  I,
+  normalizeFileName,
+  normalizeLineEndings,
+  notEmpty,
+} from '@stryker-mutator/util';
 import { TestDefinition } from 'mutation-testing-report-schema';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 
-import { DiffChange, DiffStatisticsCollector } from './diff-statistics-collector.js';
+import {
+  DiffChange,
+  DiffStatisticsCollector,
+} from './diff-statistics-collector.js';
 import { TestCoverage } from './test-coverage.js';
 
 /**
@@ -42,22 +58,40 @@ const diffMatchPatch = new DiffMatchPatch();
 export class IncrementalDiffer {
   public mutantStatisticsCollector: DiffStatisticsCollector | undefined;
   public testStatisticsCollector: DiffStatisticsCollector | undefined;
-  private readonly mutateDescriptionByRelativeFileName: Map<string, MutateDescription>;
+  private readonly mutateDescriptionByRelativeFileName: Map<
+    string,
+    MutateDescription
+  >;
 
-  public static inject = [commonTokens.logger, commonTokens.options, commonTokens.fileDescriptions] as const;
+  public static inject = [
+    commonTokens.logger,
+    commonTokens.options,
+    commonTokens.fileDescriptions,
+  ] as const;
   constructor(
     private readonly logger: Logger,
     private readonly options: StrykerOptions,
     fileDescriptions: FileDescriptions,
   ) {
     this.mutateDescriptionByRelativeFileName = new Map(
-      Object.entries(fileDescriptions).map(([name, description]) => [toRelativeNormalizedFileName(name), description.mutate]),
+      Object.entries(fileDescriptions).map(([name, description]) => [
+        toRelativeNormalizedFileName(name),
+        description.mutate,
+      ]),
     );
   }
 
-  private isInMutatedScope(relativeFileName: string, mutant: schema.MutantResult): boolean {
-    const mutate = this.mutateDescriptionByRelativeFileName.get(relativeFileName);
-    return mutate === true || (Array.isArray(mutate) && mutate.some((range) => locationIncluded(range, mutant.location)));
+  private isInMutatedScope(
+    relativeFileName: string,
+    mutant: schema.MutantResult,
+  ): boolean {
+    const mutate =
+      this.mutateDescriptionByRelativeFileName.get(relativeFileName);
+    return (
+      mutate === true ||
+      (Array.isArray(mutate) &&
+        mutate.some((range) => locationIncluded(range, mutant.location)))
+    );
   }
 
   public diff(
@@ -76,14 +110,21 @@ export class IncrementalDiffer {
 
     // Collect what we can reuse, while correcting for diff in the locations
     const reusableMutantsByKey = collectReusableMutantsByKey(this.logger);
-    const { byId: oldTestsById, byKey: oldTestInfoByKey } = collectReusableTestInfo(this.logger);
+    const { byId: oldTestsById, byKey: oldTestInfoByKey } =
+      collectReusableTestInfo(this.logger);
 
     // Collect some helper maps and sets
-    const { oldCoverageByMutantKey: oldCoverageTestKeysByMutantKey, oldKilledByMutantKey: oldKilledTestKeysByMutantKey } =
-      collectOldKilledAndCoverageMatrix();
-    const oldTestKeys = new Set([...oldTestsById.values()].map(({ key }) => key));
+    const {
+      oldCoverageByMutantKey: oldCoverageTestKeysByMutantKey,
+      oldKilledByMutantKey: oldKilledTestKeysByMutantKey,
+    } = collectOldKilledAndCoverageMatrix();
+    const oldTestKeys = new Set(
+      [...oldTestsById.values()].map(({ key }) => key),
+    );
     const newTestKeys = new Set(
-      [...testCoverage.testsById].map(([, test]) => testToIdentifyingKey(test, toRelativeNormalizedFileName(test.fileName))),
+      [...testCoverage.testsById].map(([, test]) =>
+        testToIdentifyingKey(test, toRelativeNormalizedFileName(test.fileName)),
+      ),
     );
 
     // Create a dictionary to more easily get test information
@@ -113,7 +154,10 @@ export class IncrementalDiffer {
           timeSpentMs: 0,
           fileName: path.resolve(relativeFileName),
         };
-        testInfoByKey.set(testKey, { test, relativeFileName: relativeFileName });
+        testInfoByKey.set(testKey, {
+          test,
+          relativeFileName: relativeFileName,
+        });
         testCoverage.addTest(test);
       }
     }
@@ -130,7 +174,15 @@ export class IncrementalDiffer {
         if (oldMutant) {
           const coveringTests = testCoverage.forMutant(mutant.id);
           const killedByTestKeys = oldKilledTestKeysByMutantKey.get(mutantKey);
-          if (mutantCanBeReused(mutant, oldMutant, mutantKey, coveringTests, killedByTestKeys)) {
+          if (
+            mutantCanBeReused(
+              mutant,
+              oldMutant,
+              mutantKey,
+              coveringTests,
+              killedByTestKeys,
+            )
+          ) {
             reusedMutantCount++;
             const { status, statusReason, testsCompleted } = oldMutant;
             return {
@@ -161,7 +213,10 @@ export class IncrementalDiffer {
       // ```
       // The conditional expression mutator here decides to _not_ mutate b to `false` the second time around. (even though the text of "b" itself didn't change)
       // Not doing this additional check would result in a sticky mutant that is never removed
-      if (!currentMutantKeys.has(mutantKey) && !this.isInMutatedScope(oldResult.relativeFileName, oldResult)) {
+      if (
+        !currentMutantKeys.has(mutantKey) &&
+        !this.isInMutatedScope(oldResult.relativeFileName, oldResult)
+      ) {
         const coverage = oldCoverageTestKeysByMutantKey.get(mutantKey) ?? [];
         const killed = oldKilledTestKeysByMutantKey.get(mutantKey) ?? [];
         const coveredBy = testKeysToId(coverage);
@@ -180,7 +235,9 @@ export class IncrementalDiffer {
     }
 
     if (this.logger.isInfoEnabled()) {
-      const testInfo = testCoverage.hasCoverage ? `\n\tTests:\t\t${testStatisticsCollector.createTotalsReport()}` : '';
+      const testInfo = testCoverage.hasCoverage
+        ? `\n\tTests:\t\t${testStatisticsCollector.createTotalsReport()}`
+        : '';
       this.logger.info(
         `Incremental report:\n\tMutants:\t${mutantStatisticsCollector.createTotalsReport()}` +
           testInfo +
@@ -192,7 +249,9 @@ export class IncrementalDiffer {
       const noChanges = 'No changes';
       const detailedMutantSummary = `${lineSeparator}${mutantStatisticsCollector.createDetailedReport().join(lineSeparator) || noChanges}`;
       const detailedTestsSummary = `${lineSeparator}${testStatisticsCollector.createDetailedReport().join(lineSeparator) || noChanges}`;
-      this.logger.debug(`Detailed incremental report:\n\tMutants: ${detailedMutantSummary}\n\tTests: ${detailedTestsSummary}`);
+      this.logger.debug(
+        `Detailed incremental report:\n\tMutants: ${detailedMutantSummary}\n\tTests: ${detailedTestsSummary}`,
+      );
     }
     return mutants;
 
@@ -210,8 +269,16 @@ export class IncrementalDiffer {
           const currentFileSource = currentRelativeFiles.get(relativeFileName);
           if (currentFileSource) {
             log.trace('Diffing %s', relativeFileName);
-            const { results, removeCount } = performFileDiff(oldFile.source, currentFileSource, oldFile.mutants);
-            mutantStatisticsCollector.count(relativeFileName, 'removed', removeCount);
+            const { results, removeCount } = performFileDiff(
+              oldFile.source,
+              currentFileSource,
+              oldFile.mutants,
+            );
+            mutantStatisticsCollector.count(
+              relativeFileName,
+              'removed',
+              removeCount,
+            );
             return results.map((m) => [
               mutantToIdentifyingKey(m, relativeFileName),
               {
@@ -220,7 +287,11 @@ export class IncrementalDiffer {
               },
             ]);
           }
-          mutantStatisticsCollector.count(relativeFileName, 'removed', oldFile.mutants.length);
+          mutantStatisticsCollector.count(
+            relativeFileName,
+            'removed',
+            oldFile.mutants.length,
+          );
           // File has since been deleted, these mutants are not reused
           return [];
         }),
@@ -228,7 +299,10 @@ export class IncrementalDiffer {
     }
 
     function collectReusableTestInfo(log: Logger) {
-      const byId = new Map<string, { relativeFileName: string; test: TestDefinition; key: string }>();
+      const byId = new Map<
+        string,
+        { relativeFileName: string; test: TestDefinition; key: string }
+      >();
       const byKey = new Map<string, TestInfo>();
 
       Object.entries(testFiles ?? {}).forEach(([fileName, oldTestFile]) => {
@@ -238,12 +312,27 @@ export class IncrementalDiffer {
           // An empty file name means the test runner cannot report test file locations.
           // If the current file is undefined while the test runner can report test file locations, it means it has been deleted
           log.debug('Test file removed: %s', relativeFileName);
-          testStatisticsCollector.count(relativeFileName, 'removed', oldTestFile.tests.length);
-        } else if (currentFileSource !== undefined && oldTestFile.source !== undefined) {
+          testStatisticsCollector.count(
+            relativeFileName,
+            'removed',
+            oldTestFile.tests.length,
+          );
+        } else if (
+          currentFileSource !== undefined &&
+          oldTestFile.source !== undefined
+        ) {
           log.trace('Diffing %s', relativeFileName);
           const locatedTests = closeLocations(oldTestFile);
-          const { results, removeCount } = performFileDiff(oldTestFile.source, currentFileSource, locatedTests);
-          testStatisticsCollector.count(relativeFileName, 'removed', removeCount);
+          const { results, removeCount } = performFileDiff(
+            oldTestFile.source,
+            currentFileSource,
+            locatedTests,
+          );
+          testStatisticsCollector.count(
+            relativeFileName,
+            'removed',
+            removeCount,
+          );
           results.forEach((test) => {
             const key = testToIdentifyingKey(test, relativeFileName);
             const testInfo = { key, test, relativeFileName };
@@ -268,8 +357,16 @@ export class IncrementalDiffer {
       const oldKilledByMutantKey = new Map<string, Set<string>>();
 
       for (const [key, mutant] of reusableMutantsByKey) {
-        const killedRow = new Set(mutant.killedBy?.map((testId) => oldTestsById.get(testId)?.key).filter(notEmpty));
-        const coverageRow = new Set(mutant.coveredBy?.map((testId) => oldTestsById.get(testId)?.key).filter(notEmpty));
+        const killedRow = new Set(
+          mutant.killedBy
+            ?.map((testId) => oldTestsById.get(testId)?.key)
+            .filter(notEmpty),
+        );
+        const coverageRow = new Set(
+          mutant.coveredBy
+            ?.map((testId) => oldTestsById.get(testId)?.key)
+            .filter(notEmpty),
+        );
         killedRow.forEach((killed) => coverageRow.add(killed));
         oldCoverageByMutantKey.set(key, coverageRow);
         oldKilledByMutantKey.set(key, killedRow);
@@ -278,9 +375,14 @@ export class IncrementalDiffer {
     }
 
     function collectCurrentTestInfo() {
-      const byTestKey = new Map<string, { relativeFileName: string; test: TestResult }>();
+      const byTestKey = new Map<
+        string,
+        { relativeFileName: string; test: TestResult }
+      >();
       for (const testResult of testCoverage.testsById.values()) {
-        const relativeFileName = toRelativeNormalizedFileName(testResult.fileName);
+        const relativeFileName = toRelativeNormalizedFileName(
+          testResult.fileName,
+        );
         const key = testToIdentifyingKey(testResult, relativeFileName);
         const info = { relativeFileName, test: testResult, key: key };
         byTestKey.set(key, info);
@@ -307,7 +409,11 @@ export class IncrementalDiffer {
         return false;
       }
 
-      const testsDiff = diffTestCoverage(mutant.id, oldCoverageTestKeysByMutantKey.get(mutantKey), coveringTests);
+      const testsDiff = diffTestCoverage(
+        mutant.id,
+        oldCoverageTestKeysByMutantKey.get(mutantKey),
+        coveringTests,
+      );
       if (oldMutant.status === 'Killed') {
         if (oldKillingTests) {
           for (const killingTest of oldKillingTests) {
@@ -340,7 +446,10 @@ export class IncrementalDiffer {
       const result = new Map<string, DiffAction>();
       if (newCoveringTests) {
         for (const newTest of newCoveringTests) {
-          const key = testToIdentifyingKey(newTest, toRelativeNormalizedFileName(newTest.fileName));
+          const key = testToIdentifyingKey(
+            newTest,
+            toRelativeNormalizedFileName(newTest.fileName),
+          );
           result.set(key, oldCoveringTestKeys?.has(key) ? 'same' : 'added');
         }
       }
@@ -369,12 +478,21 @@ export class IncrementalDiffer {
  * @param items The mutants or tests to be looked . These will be treated as immutable.
  * @returns A list of items with updated locations, without items that are changed.
  */
-function performFileDiff<T extends { location: Location }>(oldCode: string, newCode: string, items: T[]): { results: T[]; removeCount: number } {
+function performFileDiff<T extends { location: Location }>(
+  oldCode: string,
+  newCode: string,
+  items: T[],
+): { results: T[]; removeCount: number } {
   const oldSourceNormalized = normalizeLineEndings(oldCode);
   const currentSrcNormalized = normalizeLineEndings(newCode);
-  const diffChanges = diffMatchPatch.diff_main(oldSourceNormalized, currentSrcNormalized);
+  const diffChanges = diffMatchPatch.diff_main(
+    oldSourceNormalized,
+    currentSrcNormalized,
+  );
 
-  const toDo = new Set(items.map((m) => ({ ...m, location: deepClone(m.location) })));
+  const toDo = new Set(
+    items.map((m) => ({ ...m, location: deepClone(m.location) })),
+  );
   const [added, removed] = [1, -1];
   const done: T[] = [];
   const currentPosition: Position = { column: 0, line: 0 };
@@ -388,12 +506,19 @@ function performFileDiff<T extends { location: Location }>(oldCode: string, newC
     if (change === added) {
       for (const test of toDo) {
         const { location } = test;
-        if (gte(currentPosition, location.start) && gte(location.end, currentPosition)) {
+        if (
+          gte(currentPosition, location.start) &&
+          gte(location.end, currentPosition)
+        ) {
           // This item cannot be reused, code was added here
           removeCount++;
           toDo.delete(test);
         } else {
-          locationAdd(location, offset, currentPosition.line === location.start.line);
+          locationAdd(
+            location,
+            offset,
+            currentPosition.line === location.start.line,
+          );
         }
       }
       positionMove(currentPosition, offset);
@@ -408,7 +533,11 @@ function performFileDiff<T extends { location: Location }>(oldCode: string, newC
           removeCount++;
           toDo.delete(item);
         } else {
-          locationAdd(item.location, negate(offset), currentPosition.line === start.line);
+          locationAdd(
+            item.location,
+            negate(offset),
+            currentPosition.line === start.line,
+          );
         }
       }
     } else {
@@ -449,21 +578,32 @@ function deepClone(loc: Location): Location {
  * Consists of the relative file name, mutator name, replacement, and location
  */
 function mutantToIdentifyingKey(
-  { mutatorName, replacement, location: { start, end } }: Pick<Mutant, 'location' | 'mutatorName'> & { replacement?: string },
+  {
+    mutatorName,
+    replacement,
+    location: { start, end },
+  }: Pick<Mutant, 'location' | 'mutatorName'> & { replacement?: string },
   relativeFileName: string,
 ) {
   return `${relativeFileName}@${start.line}:${start.column}-${end.line}:${end.column}\n${mutatorName}: ${replacement}`;
 }
 
 function testToIdentifyingKey(
-  { name, location, startPosition }: Pick<schema.TestDefinition, 'location' | 'name'> & Pick<TestResult, 'startPosition'>,
+  {
+    name,
+    location,
+    startPosition,
+  }: Pick<schema.TestDefinition, 'location' | 'name'> &
+    Pick<TestResult, 'startPosition'>,
   relativeFileName: string | undefined,
 ) {
   startPosition = startPosition ?? location?.start ?? { line: 0, column: 0 };
   return `${relativeFileName}@${startPosition.line}:${startPosition.column}\n${name}`;
 }
 
-export function toRelativeNormalizedFileName(fileName: string | undefined): string {
+export function toRelativeNormalizedFileName(
+  fileName: string | undefined,
+): string {
   return normalizeFileName(path.relative(process.cwd(), fileName ?? ''));
 }
 
@@ -490,7 +630,11 @@ function positionMove(pos: Position, diff: Position): Position {
   return pos;
 }
 
-function locationAdd({ start, end }: Location, { line, column }: Position, currentLine: boolean) {
+function locationAdd(
+  { start, end }: Location,
+  { line, column }: Position,
+  currentLine: boolean,
+) {
   start.line += line;
   if (currentLine) {
     start.column += column;
@@ -532,30 +676,52 @@ function closeLocations(testFile: schema.TestFile): LocatedTest[] {
         openEndedTests.push(test);
       }
     } else {
-      locatedTests.push({ ...test, location: { start: { line: 0, column: 0 }, end: { line: Number.POSITIVE_INFINITY, column: 0 } } });
+      locatedTests.push({
+        ...test,
+        location: {
+          start: { line: 0, column: 0 },
+          end: { line: Number.POSITIVE_INFINITY, column: 0 },
+        },
+      });
     }
   });
 
   if (openEndedTests.length) {
     // Sort the opened tests in order to close their locations
-    openEndedTests.sort((a, b) => a.location.start.line - b.location.start.line);
+    openEndedTests.sort(
+      (a, b) => a.location.start.line - b.location.start.line,
+    );
     const openEndedTestSet = new Set(openEndedTests);
     const startPositions = uniqueStartPositions(openEndedTests);
 
     let currentPositionIndex = 0;
     openEndedTestSet.forEach((test) => {
-      if (eqPosition(test.location.start, startPositions[currentPositionIndex])) {
+      if (
+        eqPosition(test.location.start, startPositions[currentPositionIndex])
+      ) {
         currentPositionIndex++;
       }
       if (startPositions[currentPositionIndex]) {
-        locatedTests.push({ ...test, location: { start: test.location.start, end: startPositions[currentPositionIndex] } });
+        locatedTests.push({
+          ...test,
+          location: {
+            start: test.location.start,
+            end: startPositions[currentPositionIndex],
+          },
+        });
         openEndedTestSet.delete(test);
       }
     });
 
     // Don't forget about the last tests
     openEndedTestSet.forEach((lastTest) => {
-      locatedTests.push({ ...lastTest, location: { start: lastTest.location.start, end: { line: Number.POSITIVE_INFINITY, column: 0 } } });
+      locatedTests.push({
+        ...lastTest,
+        location: {
+          start: lastTest.location.start,
+          end: { line: Number.POSITIVE_INFINITY, column: 0 },
+        },
+      });
     });
   }
 
@@ -567,13 +733,20 @@ function closeLocations(testFile: schema.TestFile): LocatedTest[] {
  */
 function uniqueStartPositions(sortedTests: OpenEndedTest[]) {
   let current: Position | undefined;
-  const startPositions = sortedTests.reduce<Position[]>((collector, { location: { start } }) => {
-    if (!current || current.line !== start.line || current.column !== start.column) {
-      current = start;
-      collector.push(current);
-    }
-    return collector;
-  }, []);
+  const startPositions = sortedTests.reduce<Position[]>(
+    (collector, { location: { start } }) => {
+      if (
+        !current ||
+        current.line !== start.line ||
+        current.column !== start.column
+      ) {
+        current = start;
+        collector.push(current);
+      }
+      return collector;
+    },
+    [],
+  );
   return startPositions;
 }
 
@@ -590,4 +763,6 @@ function eqPosition(start: Position, end?: Position): boolean {
 }
 
 type LocatedTest = schema.TestDefinition & { location: Location };
-type OpenEndedTest = schema.TestDefinition & { location: schema.OpenEndLocation };
+type OpenEndedTest = schema.TestDefinition & {
+  location: schema.OpenEndLocation;
+};

@@ -1,7 +1,11 @@
 import { exec } from 'child_process';
 import os from 'os';
 
-import { StrykerOptions, CommandRunnerOptions, INSTRUMENTER_CONSTANTS } from '@stryker-mutator/api/core';
+import {
+  StrykerOptions,
+  CommandRunnerOptions,
+  INSTRUMENTER_CONSTANTS,
+} from '@stryker-mutator/api/core';
 import {
   TestRunner,
   TestStatus,
@@ -29,7 +33,9 @@ export class CommandTestRunner implements TestRunner {
   /**
    * "command"
    */
-  public static readonly runnerName = CommandTestRunner.name.replace('TestRunner', '').toLowerCase();
+  public static readonly runnerName = CommandTestRunner.name
+    .replace('TestRunner', '')
+    .toLowerCase();
 
   /**
    * Determines whether a given name is "command" (ignore case)
@@ -59,18 +65,33 @@ export class CommandTestRunner implements TestRunner {
     return this.run({});
   }
 
-  public async mutantRun({ activeMutant }: Pick<MutantRunOptions, 'activeMutant'>): Promise<MutantRunResult> {
+  public async mutantRun({
+    activeMutant,
+  }: Pick<MutantRunOptions, 'activeMutant'>): Promise<MutantRunResult> {
     const result = await this.run({ activeMutantId: activeMutant.id });
     return toMutantRunResult(result);
   }
 
-  private run({ activeMutantId }: { activeMutantId?: string }): Promise<DryRunResult> {
+  private run({
+    activeMutantId,
+  }: {
+    activeMutantId?: string;
+  }): Promise<DryRunResult> {
     const timerInstance = new Timer();
     return new Promise((res, rej) => {
       const output: Array<Buffer | string> = [];
       const env =
-        activeMutantId === undefined ? process.env : { ...process.env, [INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]: activeMutantId };
-      const childProcess = exec(this.settings.command, { cwd: this.workingDir, env });
+        activeMutantId === undefined
+          ? process.env
+          : {
+              ...process.env,
+              [INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]:
+                activeMutantId,
+            };
+      const childProcess = exec(this.settings.command, {
+        cwd: this.workingDir,
+        env,
+      });
       childProcess.on('error', (error) => {
         objectUtils
           .kill(childProcess.pid)
@@ -113,7 +134,10 @@ export class CommandTestRunner implements TestRunner {
         };
       }
 
-      function completeResult(exitCode: number | null, timer: Timer): CompleteDryRunResult {
+      function completeResult(
+        exitCode: number | null,
+        timer: Timer,
+      ): CompleteDryRunResult {
         const duration = timer.elapsedMs();
         if (exitCode === 0) {
           return {
@@ -133,7 +157,9 @@ export class CommandTestRunner implements TestRunner {
             tests: [
               {
                 id: 'all',
-                failureMessage: output.map((buf) => buf.toString()).join(os.EOL),
+                failureMessage: output
+                  .map((buf) => buf.toString())
+                  .join(os.EOL),
                 name: 'All tests',
                 status: TestStatus.Failed,
                 timeSpentMs: duration,
