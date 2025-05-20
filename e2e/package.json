@@ -52,7 +52,7 @@
     "karma-vite": "1.0.5",
     "karma-webpack": "5.0.1",
     "minimatch": "10.0.1",
-    "mocha": "11.3.0",
+    "mocha": "11.4.0",
     "mutation-testing-metrics": "3.5.1",
     "mutation-testing-report-schema": "3.5.1",
     "playwright": "1.52.0",
