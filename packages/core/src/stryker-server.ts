@@ -6,6 +6,7 @@ import {
   MutationTestParams,
   MutationTestResult,
   DiscoveredFile,
+  FileRange,
 } from 'mutation-server-protocol';
 import {
   JSONRPCClient,
@@ -235,10 +236,17 @@ export class StrykerServer {
     });
   }
 
-  #filesToGlobPatterns(files: string[] | undefined): string[] | undefined {
-    return files?.map((file) => (file.endsWith('/') ? `${file}**/*` : file));
+  #filesToGlobPatterns(files: FileRange[] | undefined): string[] | undefined {
+    return files?.map(
+      ({ path, range }) =>
+        `${path.endsWith('/') ? `${path}**/*` : path}${range ? `:${posToMutationRange(range.start)}-${posToMutationRange(range.end)}` : ''}`,
+    );
   }
-  #overrideMutate(files?: string[]) {
+  #overrideMutate(files: FileRange[] | undefined) {
     return files ? { mutate: this.#filesToGlobPatterns(files) } : undefined;
   }
+}
+
+function posToMutationRange(pos: NonNullable<FileRange['range']>['start']) {
+  return `${pos.line}:${pos.column}`;
 }

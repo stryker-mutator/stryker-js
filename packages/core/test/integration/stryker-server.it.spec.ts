@@ -45,6 +45,9 @@ describe(StrykerServer.name, () => {
       expect(await client.discover({ files: ['src/add.js'] })).matchSnapshot();
     });
 
+    // @TODO: Fix tests
+    // @TODO: Add ranges
+
     it('should be able to run mutation tests', async () => {
       const results: MutationTestResult[] = [];
       client.mutationTestResult$.subscribe((result) => results.push(result));
