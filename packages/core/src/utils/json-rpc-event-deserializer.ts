@@ -15,7 +15,12 @@ export class JsonRpcEventDeserializer {
       }
       const { header, contentStart } = headerInfo;
       const contentLengthIndex = header.indexOf(CONTENT_LENGTH_HEADER);
-      const contentLength = parseInt(header.substring(contentLengthIndex + CONTENT_LENGTH_HEADER.length).trim(), 10);
+      const contentLength = parseInt(
+        header
+          .substring(contentLengthIndex + CONTENT_LENGTH_HEADER.length)
+          .trim(),
+        10,
+      );
       const contentEnd = contentStart + contentLength;
       if (this.#chunk.length < contentEnd) {
         // Not enough data yet, wait for next events

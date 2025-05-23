@@ -11,7 +11,9 @@ describe(JsonRpcEventDeserializer.name, () => {
     const event = { some: 'event' };
     const body = JSON.stringify(event);
     const bodyContent = Buffer.from(body, 'utf8');
-    const events = sut.deserialize(Buffer.from(`Content-Length:${bodyContent.byteLength}\r\n\r\n${body}`));
+    const events = sut.deserialize(
+      Buffer.from(`Content-Length:${bodyContent.byteLength}\r\n\r\n${body}`),
+    );
     expect(events).deep.eq([event]);
   });
 
@@ -23,7 +25,9 @@ describe(JsonRpcEventDeserializer.name, () => {
     const bodyContent1 = Buffer.from(body1, 'utf8');
     const bodyContent2 = Buffer.from(body2, 'utf8');
     const events = sut.deserialize(
-      Buffer.from(`Content-Length:${bodyContent1.byteLength}\r\n\r\n${body1}Content-Length:${bodyContent2.byteLength}\r\n\r\n${body2}`),
+      Buffer.from(
+        `Content-Length:${bodyContent1.byteLength}\r\n\r\n${body1}Content-Length:${bodyContent2.byteLength}\r\n\r\n${body2}`,
+      ),
     );
     expect(events).deep.eq([event1, event2]);
   });
@@ -32,7 +36,11 @@ describe(JsonRpcEventDeserializer.name, () => {
     const event = { some: 'event' };
     const body = JSON.stringify(event);
     const bodyContent = Buffer.from(body, 'utf8');
-    const events1 = sut.deserialize(Buffer.from(`Content-Length:${bodyContent.byteLength}\r\n\r\n${body.substring(0, 5)}`));
+    const events1 = sut.deserialize(
+      Buffer.from(
+        `Content-Length:${bodyContent.byteLength}\r\n\r\n${body.substring(0, 5)}`,
+      ),
+    );
     const events2 = sut.deserialize(Buffer.from(`${body.substring(5)}`));
     expect(events1).deep.eq([]);
     expect(events2).deep.eq([event]);
@@ -43,7 +51,9 @@ describe(JsonRpcEventDeserializer.name, () => {
     const body = JSON.stringify(event);
     const bodyContent = Buffer.from(body, 'utf8');
     const events1 = sut.deserialize(Buffer.from(`Content-Length:`));
-    const events2 = sut.deserialize(Buffer.from(`${bodyContent.byteLength}\r\n\r\n${body}`));
+    const events2 = sut.deserialize(
+      Buffer.from(`${bodyContent.byteLength}\r\n\r\n${body}`),
+    );
     expect(events1).deep.eq([]);
     expect(events2).deep.eq([event]);
   });
@@ -52,7 +62,9 @@ describe(JsonRpcEventDeserializer.name, () => {
     const event = { some: 'event' };
     const body = JSON.stringify(event);
     const bodyContent = Buffer.from(body, 'utf8');
-    const events = sut.deserialize(Buffer.from(`Content-Length: ${bodyContent.byteLength} \r\n\r\n${body}`));
+    const events = sut.deserialize(
+      Buffer.from(`Content-Length: ${bodyContent.byteLength} \r\n\r\n${body}`),
+    );
     expect(events).deep.eq([event]);
   });
 });

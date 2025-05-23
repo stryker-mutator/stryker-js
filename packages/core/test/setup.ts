@@ -39,8 +39,12 @@ const snapshotFileMap = new Map<string, string>();
 function snapshotFileFor(outFile: string): string {
   let originalFile = snapshotFileMap.get(outFile);
   if (!originalFile) {
-    const sourceMapContent: { sources: string[] } = JSON.parse(retrieveSourceMap(outFile)!.map as string);
-    originalFile = path.resolve(path.dirname(outFile), sourceMapContent.sources[0]) + '.snap';
+    const sourceMapContent: { sources: string[] } = JSON.parse(
+      retrieveSourceMap(outFile)!.map as string,
+    );
+    originalFile =
+      path.resolve(path.dirname(outFile), sourceMapContent.sources[0]) +
+      '.snap';
     snapshotFileMap.set(outFile, originalFile);
   }
   return originalFile;
