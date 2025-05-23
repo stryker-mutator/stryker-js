@@ -1,6 +1,17 @@
-import { DiscoverParams, DiscoverResult, ConfigureParams, ConfigureResult, MutationTestParams, MutationTestResult } from 'mutation-server-protocol';
+import {
+  DiscoverParams,
+  DiscoverResult,
+  ConfigureParams,
+  ConfigureResult,
+  MutationTestParams,
+  MutationTestResult,
+} from 'mutation-server-protocol';
 import net from 'net';
-import { JSONRPCClient, JSONRPCServer, JSONRPCServerAndClient } from 'json-rpc-2.0';
+import {
+  JSONRPCClient,
+  JSONRPCServer,
+  JSONRPCServerAndClient,
+} from 'json-rpc-2.0';
 import { StrykerServer } from '../../src/stryker-server.js';
 import { resolveFromRoot } from '../helpers/test-utils.js';
 import { JsonRpcEventDeserializer } from '../../src/utils/json-rpc-event-deserializer.js';
@@ -13,7 +24,9 @@ describe(StrykerServer.name, () => {
     let client: MutationServerClient;
 
     beforeEach(async () => {
-      process.chdir(resolveFromRoot('testResources/stryker-server/happy-project'));
+      process.chdir(
+        resolveFromRoot('testResources/stryker-server/happy-project'),
+      );
       sut = new StrykerServer({ plugins: [], concurrency: 1 });
       const port = await sut.start();
       client = await MutationServerClient.create(port);
@@ -45,10 +58,17 @@ describe(StrykerServer.name, () => {
     it('should be able to run mutation tests twice in parallel', async () => {
       const results: MutationTestResult[] = [];
       client.mutationTestResult$.subscribe((result) => results.push(result));
-      const [first, second] = await Promise.all([client.mutationTest({ files: ['src/app.js'] }), client.mutationTest({ files: ['src/math.js'] })]);
+      const [first, second] = await Promise.all([
+        client.mutationTest({ files: ['src/app.js'] }),
+        client.mutationTest({ files: ['src/math.js'] }),
+      ]);
       assertEmptyMutationTestResult(first);
       assertEmptyMutationTestResult(second);
-      const cleanedResults = cleanResults(results.sort((a, b) => Object.keys(a.files)[0].localeCompare(Object.keys(b.files)[0])));
+      const cleanedResults = cleanResults(
+        results.sort((a, b) =>
+          Object.keys(a.files)[0].localeCompare(Object.keys(b.files)[0]),
+        ),
+      );
       expect(cleanedResults).lengthOf(5);
       expect(cleanedResults).matchSnapshot();
     });
@@ -61,8 +81,10 @@ describe(StrykerServer.name, () => {
 
 class MutationServerClient {
   readonly #rpc: JSONRPCServerAndClient;
-  readonly #mutationTestResultsSubject = new ReplaySubject<MutationTestResult>();
-  readonly mutationTestResult$ = this.#mutationTestResultsSubject.asObservable();
+  readonly #mutationTestResultsSubject =
+    new ReplaySubject<MutationTestResult>();
+  readonly mutationTestResult$ =
+    this.#mutationTestResultsSubject.asObservable();
   readonly #socket: net.Socket;
   readonly #port;
 
@@ -77,13 +99,18 @@ class MutationServerClient {
       this.#socket.write(content);
     });
     this.#rpc = new JSONRPCServerAndClient(server, client);
-    this.#rpc.addMethod('reportMutationTestProgress', (result: MutationTestResult) => {
-      this.#mutationTestResultsSubject.next(result);
-    });
+    this.#rpc.addMethod(
+      'reportMutationTestProgress',
+      (result: MutationTestResult) => {
+        this.#mutationTestResultsSubject.next(result);
+      },
+    );
 
     this.#socket.on('data', (data) => {
       for (const event of deserializer.deserialize(data)) {
-        this.#rpc.receiveAndSend(event);
+        this.#rpc.receiveAndSend(event).catch((error) => {
+          console.error(error);
+        });
       }
     });
   }
@@ -119,7 +146,9 @@ class MutationServerClient {
     return this.#rpc.request('discover', params);
   }
 
-  async mutationTest(params: MutationTestParams = {}): Promise<MutationTestResult> {
+  async mutationTest(
+    params: MutationTestParams = {},
+  ): Promise<MutationTestResult> {
     return this.#rpc.request('mutationTest', params);
   }
 }
