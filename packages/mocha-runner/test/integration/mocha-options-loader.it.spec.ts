@@ -2,7 +2,10 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { MochaOptions } from '../../src-generated/mocha-runner-options.js';
-import { MochaOptionsLoader, DEFAULT_MOCHA_OPTIONS } from '../../src/mocha-options-loader.js';
+import {
+  MochaOptionsLoader,
+  DEFAULT_MOCHA_OPTIONS,
+} from '../../src/mocha-options-loader.js';
 import { MochaRunnerWithStrykerOptions } from '../../src/mocha-runner-with-stryker-options.js';
 import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
@@ -112,7 +115,8 @@ describe(`${MochaOptionsLoader.name} integration`, () => {
   }
 
   function actLoad(mochaConfig: MochaOptions): MochaOptions {
-    const mochaRunnerWithStrykerOptions = testInjector.options as MochaRunnerWithStrykerOptions;
+    const mochaRunnerWithStrykerOptions =
+      testInjector.options as MochaRunnerWithStrykerOptions;
     mochaRunnerWithStrykerOptions.mochaOptions = mochaConfig;
     return sut.load(mochaRunnerWithStrykerOptions);
   }

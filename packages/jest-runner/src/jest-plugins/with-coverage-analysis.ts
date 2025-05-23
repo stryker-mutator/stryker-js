@@ -10,7 +10,9 @@ import { JestWrapper } from '../utils/jest-wrapper.js';
 
 import { state } from './messaging.cjs';
 
-const jestEnvironmentGenericFileName = fileURLToPath(new URL('./jest-environment-generic.cjs', import.meta.url));
+const jestEnvironmentGenericFileName = fileURLToPath(
+  new URL('./jest-environment-generic.cjs', import.meta.url),
+);
 
 /**
  * Jest's defaults.
@@ -50,7 +52,11 @@ export function withCoverageAnalysis(
   }
 }
 
-export function withHitLimit(jestConfig: Config.InitialOptions, hitLimit: number | undefined, jestWrapper: JestWrapper): Config.InitialOptions {
+export function withHitLimit(
+  jestConfig: Config.InitialOptions,
+  hitLimit: number | undefined,
+  jestWrapper: JestWrapper,
+): Config.InitialOptions {
   // Override with Stryker specific test environment to capture coverage analysis
   if (typeof hitLimit === 'number') {
     const overrides: Config.InitialOptions = {};
@@ -65,11 +71,19 @@ export function withHitLimit(jestConfig: Config.InitialOptions, hitLimit: number
  * Setup the test framework (aka "runner" in jest terms) for "perTest" coverage analysis.
  * Will use monkey patching for framework "jest-jasmine2", and will assume the test environment handles events when "jest-circus"
  */
-function setupFramework(jestConfig: Config.InitialOptions, overrides: Config.InitialOptions, jestWrapper: JestWrapper) {
-  const testRunner = jestConfig.testRunner ?? getJestDefaults(jestWrapper).testRunner;
+function setupFramework(
+  jestConfig: Config.InitialOptions,
+  overrides: Config.InitialOptions,
+  jestWrapper: JestWrapper,
+) {
+  const testRunner =
+    jestConfig.testRunner ?? getJestDefaults(jestWrapper).testRunner;
   if (testRunner === 'jest-jasmine2') {
     overrides.setupFilesAfterEnv = [
-      path.resolve(path.dirname(fileURLToPath(import.meta.url)), './jasmine2-setup-coverage-analysis.cjs'),
+      path.resolve(
+        path.dirname(fileURLToPath(import.meta.url)),
+        './jasmine2-setup-coverage-analysis.cjs',
+      ),
       ...(jestConfig.setupFilesAfterEnv ?? []),
     ];
   } else if (!testRunner.includes('jest-circus')) {
@@ -85,12 +99,19 @@ function setupFramework(jestConfig: Config.InitialOptions, overrides: Config.Ini
   }
 }
 
-function overrideEnvironment(jestConfig: Config.InitialOptions, overrides: Config.InitialOptions, jestWrapper: JestWrapper): void {
-  const originalJestEnvironment = jestConfig.testEnvironment ?? getJestDefaults(jestWrapper).testEnvironment;
+function overrideEnvironment(
+  jestConfig: Config.InitialOptions,
+  overrides: Config.InitialOptions,
+  jestWrapper: JestWrapper,
+): void {
+  const originalJestEnvironment =
+    jestConfig.testEnvironment ?? getJestDefaults(jestWrapper).testEnvironment;
   state.jestEnvironment = nameEnvironment(originalJestEnvironment);
   overrides.testEnvironment = jestEnvironmentGenericFileName;
 }
 
 function nameEnvironment(shortName: string): string {
-  return ['node', 'jsdom'].includes(shortName) ? `jest-environment-${shortName}` : shortName;
+  return ['node', 'jsdom'].includes(shortName)
+    ? `jest-environment-${shortName}`
+    : shortName;
 }

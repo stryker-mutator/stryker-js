@@ -1,8 +1,18 @@
-import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
+import {
+  testInjector,
+  factory,
+  assertions,
+} from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import { KilledMutantRunResult, MutantRunStatus } from '@stryker-mutator/api/test-runner';
+import {
+  KilledMutantRunResult,
+  MutantRunStatus,
+} from '@stryker-mutator/api/test-runner';
 
-import { createKarmaTestRunner, KarmaTestRunner } from '../../src/karma-test-runner.js';
+import {
+  createKarmaTestRunner,
+  KarmaTestRunner,
+} from '../../src/karma-test-runner.js';
 import { KarmaRunnerOptionsWithStrykerOptions } from '../../src/karma-runner-options-with-stryker-options.js';
 import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
@@ -17,7 +27,10 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
     before(async () => {
       (testInjector.options as KarmaRunnerOptionsWithStrykerOptions).karma = {
         projectType: 'custom',
-        configFile: resolveTestResource('instrumented', 'karma-jasmine.conf.js'),
+        configFile: resolveTestResource(
+          'instrumented',
+          'karma-jasmine.conf.js',
+        ),
       };
       sut = createSut();
       await sut.init();
@@ -29,7 +42,9 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
 
     describe('dryRun', () => {
       it('should only report static coverage if coverage analysis is "all"', async () => {
-        const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'all' }));
+        const result = await sut.dryRun(
+          factory.dryRunOptions({ coverageAnalysis: 'all' }),
+        );
         assertions.expectCompleted(result);
         expect(result.mutantCoverage).ok;
         expect(result.mutantCoverage!.static).deep.eq({
@@ -55,7 +70,9 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
       });
 
       it('should report "perTest" coverage if coverage analysis is "perTest"', async () => {
-        const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
+        const result = await sut.dryRun(
+          factory.dryRunOptions({ coverageAnalysis: 'perTest' }),
+        );
         assertions.expectCompleted(result);
         expect(result.mutantCoverage).ok;
         expect(result.mutantCoverage!.static).deep.eq({});
@@ -99,7 +116,9 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
       });
 
       it('should not report coverage when coverage analysis is "off"', async () => {
-        const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
+        const result = await sut.dryRun(
+          factory.dryRunOptions({ coverageAnalysis: 'off' }),
+        );
         assertions.expectCompleted(result);
         expect(result.mutantCoverage).not.ok;
       });
@@ -107,10 +126,16 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
 
     describe('mutantRun', () => {
       it('should be able to kill a mutant', async () => {
-        const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '0' }) }));
+        const result = await sut.mutantRun(
+          factory.mutantRunOptions({
+            activeMutant: factory.mutant({ id: '0' }),
+          }),
+        );
         assertions.expectKilled(result);
         expect(result.killedBy).deep.eq(['spec0']);
-        expect(result.failureMessage.split('\n')[0]).eq('Expected undefined to be 7.');
+        expect(result.failureMessage.split('\n')[0]).eq(
+          'Expected undefined to be 7.',
+        );
       });
 
       it('should survive if the filtered tests do not kill the mutant', async () => {
@@ -128,8 +153,17 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
       });
 
       it('should be able to kill again after a mutant survived', async () => {
-        await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '11' }) }));
-        const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '2' }), testFilter: ['spec1'] }));
+        await sut.mutantRun(
+          factory.mutantRunOptions({
+            activeMutant: factory.mutant({ id: '11' }),
+          }),
+        );
+        const result = await sut.mutantRun(
+          factory.mutantRunOptions({
+            activeMutant: factory.mutant({ id: '2' }),
+            testFilter: ['spec1'],
+          }),
+        );
         assertions.expectKilled(result);
         [result.failureMessage] = result.failureMessage.split('\n');
         const expected = factory.killedMutantRunResult({
@@ -142,8 +176,18 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
       });
 
       it('should be able to clear the test filter', async () => {
-        await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '2' }), testFilter: ['spec1'] }));
-        const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '1' }), testFilter: undefined }));
+        await sut.mutantRun(
+          factory.mutantRunOptions({
+            activeMutant: factory.mutant({ id: '2' }),
+            testFilter: ['spec1'],
+          }),
+        );
+        const result = await sut.mutantRun(
+          factory.mutantRunOptions({
+            activeMutant: factory.mutant({ id: '1' }),
+            testFilter: undefined,
+          }),
+        );
         assertions.expectKilled(result);
       });
     });
@@ -163,7 +207,9 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
 
     describe('dryRun', () => {
       it('should only report static coverage if coverage analysis is "all"', async () => {
-        const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'all' }));
+        const result = await sut.dryRun(
+          factory.dryRunOptions({ coverageAnalysis: 'all' }),
+        );
         assertions.expectCompleted(result);
         expect(result.mutantCoverage).ok;
         expect(result.mutantCoverage!.static).deep.eq({
@@ -189,7 +235,9 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
       });
 
       it('should report "perTest" coverage if coverage analysis is "perTest"', async () => {
-        const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
+        const result = await sut.dryRun(
+          factory.dryRunOptions({ coverageAnalysis: 'perTest' }),
+        );
         assertions.expectCompleted(result);
         expect(result.mutantCoverage).ok;
         expect(result.mutantCoverage!.static).deep.eq({});
@@ -235,14 +283,26 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
 
     describe('mutantRun', () => {
       it('should be able to kill a mutant', async () => {
-        const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '0' }) }));
+        const result = await sut.mutantRun(
+          factory.mutantRunOptions({
+            activeMutant: factory.mutant({ id: '0' }),
+          }),
+        );
         assertions.expectKilled(result);
-        expect(result.killedBy).deep.eq(['Add should be able to add two numbers']);
-        expect(result.failureMessage.split('\n')[0]).eq('Error: Expected 7 but got undefined');
+        expect(result.killedBy).deep.eq([
+          'Add should be able to add two numbers',
+        ]);
+        expect(result.failureMessage.split('\n')[0]).eq(
+          'Error: Expected 7 but got undefined',
+        );
       });
 
       it('should bail after first failing test', async () => {
-        const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '0' }) }));
+        const result = await sut.mutantRun(
+          factory.mutantRunOptions({
+            activeMutant: factory.mutant({ id: '0' }),
+          }),
+        );
         assertions.expectKilled(result);
         expect(result.nrOfTests).eq(1);
       });
@@ -263,9 +323,16 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
       });
 
       it('should be able to kill again after a mutant survived', async () => {
-        await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '11' }) }));
+        await sut.mutantRun(
+          factory.mutantRunOptions({
+            activeMutant: factory.mutant({ id: '11' }),
+          }),
+        );
         const result = await sut.mutantRun(
-          factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '2' }), testFilter: ['Add should be able 1 to a number'] }),
+          factory.mutantRunOptions({
+            activeMutant: factory.mutant({ id: '2' }),
+            testFilter: ['Add should be able 1 to a number'],
+          }),
         );
         assertions.expectKilled(result);
         [result.failureMessage] = result.failureMessage.split('\n');
@@ -280,9 +347,17 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
 
       it('should be able to clear the test filter', async () => {
         await sut.mutantRun(
-          factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '2' }), testFilter: ['Add should be able 1 to a number'] }),
+          factory.mutantRunOptions({
+            activeMutant: factory.mutant({ id: '2' }),
+            testFilter: ['Add should be able 1 to a number'],
+          }),
         );
-        const result = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '1' }), testFilter: undefined }));
+        const result = await sut.mutantRun(
+          factory.mutantRunOptions({
+            activeMutant: factory.mutant({ id: '1' }),
+            testFilter: undefined,
+          }),
+        );
         assertions.expectKilled(result);
       });
     });

@@ -20,7 +20,10 @@ export async function parseTS(text: string, fileName: string): Promise<TSAst> {
   };
 }
 
-export async function parseTsx(text: string, fileName: string): Promise<TsxAst> {
+export async function parseTsx(
+  text: string,
+  fileName: string,
+): Promise<TsxAst> {
   return {
     root: await parse(text, fileName, true),
     format: AstFormat.Tsx,
@@ -29,7 +32,11 @@ export async function parseTsx(text: string, fileName: string): Promise<TsxAst> 
   };
 }
 
-async function parse(text: string, fileName: string, isTSX: boolean): Promise<babel.types.File> {
+async function parse(
+  text: string,
+  fileName: string,
+  isTSX: boolean,
+): Promise<babel.types.File> {
   const ast = await parseAsync(text, {
     filename: fileName,
     parserOpts: {
@@ -37,17 +44,26 @@ async function parse(text: string, fileName: string, isTSX: boolean): Promise<ba
     },
     configFile: false,
     babelrc: false,
-    presets: [[require.resolve('@babel/preset-typescript'), { isTSX, allExtensions: true }]],
+    presets: [
+      [
+        require.resolve('@babel/preset-typescript'),
+        { isTSX, allExtensions: true },
+      ],
+    ],
     plugins: [
       [require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
       [require.resolve('@babel/plugin-proposal-explicit-resource-management')],
     ],
   });
   if (ast === null) {
-    throw new Error(`Expected ${fileName} to contain a babel.types.file, but it yielded null`);
+    throw new Error(
+      `Expected ${fileName} to contain a babel.types.file, but it yielded null`,
+    );
   }
   if (types.isProgram(ast)) {
-    throw new Error(`Expected ${fileName} to contain a babel.types.file, but was a program`);
+    throw new Error(
+      `Expected ${fileName} to contain a babel.types.file, but was a program`,
+    );
   }
   return ast;
 }

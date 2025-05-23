@@ -15,8 +15,12 @@ describe('HtmlReporter with example math project', () => {
     const sut = testInjector.injector.injectClass(HtmlReporter);
     sut.onMutationTestReportReady(simpleReport);
     await sut.wrapUp();
-    expect(await fileUtils.exists(fileName), `file ${fileName} does not exist`).true;
-    const bindMutationTestReportContent = await fs.promises.readFile(fileName, 'utf8');
+    expect(await fileUtils.exists(fileName), `file ${fileName} does not exist`)
+      .true;
+    const bindMutationTestReportContent = await fs.promises.readFile(
+      fileName,
+      'utf8',
+    );
     expect(bindMutationTestReportContent).include(JSON.stringify(simpleReport));
   });
 });

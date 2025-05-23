@@ -71,11 +71,18 @@ export function execStryker(cmd) {
  * @param {string} eventResultDirectory
  * @returns {Promise<import('mutation-testing-metrics').MutationTestMetricsResult>}
  */
-export async function readMutationTestResult(eventResultDirectory = path.resolve('reports', 'mutation', 'events')) {
+export async function readMutationTestResult(
+  eventResultDirectory = path.resolve('reports', 'mutation', 'events'),
+) {
   const allReportFiles = await fsPromises.readdir(eventResultDirectory);
-  const mutationTestReportFile = allReportFiles.find((file) => !!/.*onMutationTestReportReady.*/.exec(file));
+  const mutationTestReportFile = allReportFiles.find(
+    (file) => !!/.*onMutationTestReportReady.*/.exec(file),
+  );
   expect(mutationTestReportFile).ok;
-  const mutationTestReportContent = await fsPromises.readFile(path.resolve(eventResultDirectory, mutationTestReportFile || ''), 'utf8');
+  const mutationTestReportContent = await fsPromises.readFile(
+    path.resolve(eventResultDirectory, mutationTestReportFile || ''),
+    'utf8',
+  );
   /**
    * @type {import('mutation-testing-report-schema/api').MutationTestResult}
    */
@@ -84,8 +91,13 @@ export async function readMutationTestResult(eventResultDirectory = path.resolve
   return metricsResult;
 }
 
-export async function readMutationTestingJsonResult(jsonReportFile = path.resolve('reports', 'mutation', 'mutation.json')) {
-  const mutationTestReportContent = await fsPromises.readFile(jsonReportFile, 'utf8');
+export async function readMutationTestingJsonResult(
+  jsonReportFile = path.resolve('reports', 'mutation', 'mutation.json'),
+) {
+  const mutationTestReportContent = await fsPromises.readFile(
+    jsonReportFile,
+    'utf8',
+  );
   /**
    * @type {import('mutation-testing-report-schema/api').MutationTestResult}
    */
@@ -97,8 +109,12 @@ export async function readMutationTestingJsonResult(jsonReportFile = path.resolv
  * @param {string} [jsonReportFile]
  * @returns {Promise<import('mutation-testing-metrics').MutationTestMetricsResult>}
  */
-export async function readMutationTestingJsonResultAsMetricsResult(jsonReportFile = path.resolve('reports', 'mutation', 'mutation.json')) {
-  return calculateMutationTestMetrics(await readMutationTestingJsonResult(jsonReportFile));
+export async function readMutationTestingJsonResultAsMetricsResult(
+  jsonReportFile = path.resolve('reports', 'mutation', 'mutation.json'),
+) {
+  return calculateMutationTestMetrics(
+    await readMutationTestingJsonResult(jsonReportFile),
+  );
 }
 
 /**
@@ -110,6 +126,7 @@ export function readLogFile(fileName = path.resolve('stryker.log')) {
 }
 
 export async function expectMetricsJsonToMatchSnapshot() {
-  const actualMetricsResult = await readMutationTestingJsonResultAsMetricsResult();
+  const actualMetricsResult =
+    await readMutationTestingJsonResultAsMetricsResult();
   expect(actualMetricsResult.systemUnderTestMetrics.metrics).to.matchSnapshot();
 }

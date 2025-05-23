@@ -34,8 +34,14 @@ export const regexMutator: NodeMutator = {
 
   *mutate(path) {
     if (path.isRegExpLiteral()) {
-      for (const replacementPattern of mutatePattern(path.node.pattern, path.node.flags)) {
-        const replacement = types.regExpLiteral(replacementPattern, path.node.flags);
+      for (const replacementPattern of mutatePattern(
+        path.node.pattern,
+        path.node.flags,
+      )) {
+        const replacement = types.regExpLiteral(
+          replacementPattern,
+          path.node.flags,
+        );
         yield replacement;
       }
     } else if (path.isStringLiteral() && isObviousRegexString(path)) {
@@ -50,7 +56,9 @@ export const regexMutator: NodeMutator = {
 function mutatePattern(pattern: string, flags: string | undefined): string[] {
   if (pattern.length) {
     try {
-      return weaponRegex.mutate(pattern, flags, weaponRegexOptions).map((mutant) => mutant.pattern);
+      return weaponRegex
+        .mutate(pattern, flags, weaponRegexOptions)
+        .map((mutant) => mutant.pattern);
     } catch (err: any) {
       console.error(
         `[RegexMutator]: The Regex parser of weapon-regex couldn't parse this regex pattern: "${pattern}". Please report this issue at https://github.com/stryker-mutator/weapon-regex/issues. Inner error: ${err.message}`,

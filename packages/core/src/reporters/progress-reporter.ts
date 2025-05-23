@@ -7,7 +7,9 @@ import { ProgressKeeper } from './progress-keeper.js';
 export class ProgressBarReporter extends ProgressKeeper {
   private progressBar?: ProgressBar;
 
-  public onMutationTestingPlanReady(event: MutationTestingPlanReadyEvent): void {
+  public onMutationTestingPlanReady(
+    event: MutationTestingPlanReadyEvent,
+  ): void {
     super.onMutationTestingPlanReady(event);
     const progressBarContent =
       'Mutation testing  [:bar] :percent (elapsed: :et, remaining: :etc) :tested/:mutants Mutants tested (:survived survived, :timedOut timed out)';
@@ -24,7 +26,11 @@ export class ProgressBarReporter extends ProgressKeeper {
   public onMutantTested(result: MutantResult): number {
     const ticks = super.onMutantTested(result);
 
-    const progressBarContent = { ...this.progress, et: this.getElapsedTime(), etc: this.getEtc() };
+    const progressBarContent = {
+      ...this.progress,
+      et: this.getElapsedTime(),
+      etc: this.getEtc(),
+    };
     if (ticks) {
       this.tick(ticks, progressBarContent);
     } else {

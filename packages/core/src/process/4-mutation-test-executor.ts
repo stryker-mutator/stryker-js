@@ -1,8 +1,28 @@
-import { from, partition, merge, Observable, lastValueFrom, EMPTY, concat, bufferTime, mergeMap } from 'rxjs';
+import {
+  from,
+  partition,
+  merge,
+  Observable,
+  lastValueFrom,
+  EMPTY,
+  concat,
+  bufferTime,
+  mergeMap,
+} from 'rxjs';
 import { toArray, map, shareReplay, tap } from 'rxjs/operators';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
-import { MutantResult, Mutant, StrykerOptions, PlanKind, MutantTestPlan, MutantRunPlan } from '@stryker-mutator/api/core';
-import { TestRunner, CompleteDryRunResult } from '@stryker-mutator/api/test-runner';
+import {
+  MutantResult,
+  Mutant,
+  StrykerOptions,
+  PlanKind,
+  MutantTestPlan,
+  MutantRunPlan,
+} from '@stryker-mutator/api/core';
+import {
+  TestRunner,
+  CompleteDryRunResult,
+} from '@stryker-mutator/api/test-runner';
 import { Logger } from '@stryker-mutator/api/logging';
 import { I } from '@stryker-mutator/util';
 import { CheckStatus } from '@stryker-mutator/api/check';
@@ -68,7 +88,9 @@ export class MutationTestExecutor {
 
   public async execute(): Promise<MutantResult[]> {
     if (this.options.dryRunOnly) {
-      this.log.info('The dry-run has been completed successfully. No mutations have been executed.');
+      this.log.info(
+        'The dry-run has been completed successfully. No mutations have been executed.',
+      );
       return [];
     }
 
@@ -78,11 +100,21 @@ export class MutationTestExecutor {
     }
 
     const mutantTestPlans = await this.planner.makePlan(this.mutants);
-    const { earlyResult$, runMutant$ } = this.executeEarlyResult(from(mutantTestPlans));
+    const { earlyResult$, runMutant$ } = this.executeEarlyResult(
+      from(mutantTestPlans),
+    );
     const { passedMutant$, checkResult$ } = this.executeCheck(runMutant$);
-    const { coveredMutant$, noCoverageResult$ } = this.executeNoCoverage(passedMutant$);
+    const { coveredMutant$, noCoverageResult$ } =
+      this.executeNoCoverage(passedMutant$);
     const testRunnerResult$ = this.executeRunInTestRunner(coveredMutant$);
-    const results = await lastValueFrom(merge(testRunnerResult$, checkResult$, noCoverageResult$, earlyResult$).pipe(toArray()));
+    const results = await lastValueFrom(
+      merge(
+        testRunnerResult$,
+        checkResult$,
+        noCoverageResult$,
+        earlyResult$,
+      ).pipe(toArray()),
+    );
     await this.mutationTestReportHelper.reportAll(results);
     await this.reporter.wrapUp();
     this.logDone();
@@ -90,28 +122,48 @@ export class MutationTestExecutor {
   }
 
   private executeEarlyResult(input$: Observable<MutantTestPlan>) {
-    const [earlyResultMutants$, runMutant$] = partition(input$.pipe(shareReplay()), isEarlyResult);
-    const earlyResult$ = earlyResultMutants$.pipe(map(({ mutant }) => this.mutationTestReportHelper.reportMutantStatus(mutant, mutant.status)));
+    const [earlyResultMutants$, runMutant$] = partition(
+      input$.pipe(shareReplay()),
+      isEarlyResult,
+    );
+    const earlyResult$ = earlyResultMutants$.pipe(
+      map(({ mutant }) =>
+        this.mutationTestReportHelper.reportMutantStatus(mutant, mutant.status),
+      ),
+    );
     return { earlyResult$, runMutant$ };
   }
 
   private executeNoCoverage(input$: Observable<MutantRunPlan>) {
-    const [noCoverageMatchedMutant$, coveredMutant$] = partition(input$.pipe(shareReplay()), ({ runOptions }) => runOptions.testFilter?.length === 0);
+    const [noCoverageMatchedMutant$, coveredMutant$] = partition(
+      input$.pipe(shareReplay()),
+      ({ runOptions }) => runOptions.testFilter?.length === 0,
+    );
     const noCoverageResult$ = noCoverageMatchedMutant$.pipe(
-      map(({ mutant }) => this.mutationTestReportHelper.reportMutantStatus(mutant, 'NoCoverage')),
+      map(({ mutant }) =>
+        this.mutationTestReportHelper.reportMutantStatus(mutant, 'NoCoverage'),
+      ),
     );
     return { noCoverageResult$, coveredMutant$ };
   }
 
-  private executeRunInTestRunner(input$: Observable<MutantRunPlan>): Observable<MutantResult> {
+  private executeRunInTestRunner(
+    input$: Observable<MutantRunPlan>,
+  ): Observable<MutantResult> {
     const sortedPlan$ = input$.pipe(
       bufferTime(BUFFER_FOR_SORTING_MS),
       mergeMap((plans) => plans.sort(reloadEnvironmentLast)),
     );
-    return this.testRunnerPool.schedule(sortedPlan$, async (testRunner, { mutant, runOptions }) => {
-      const result = await testRunner.mutantRun(runOptions);
-      return this.mutationTestReportHelper.reportMutantRunResult(mutant, result);
-    });
+    return this.testRunnerPool.schedule(
+      sortedPlan$,
+      async (testRunner, { mutant, runOptions }) => {
+        const result = await testRunner.mutantRun(runOptions);
+        return this.mutationTestReportHelper.reportMutantRunResult(
+          mutant,
+          result,
+        );
+      },
+    );
   }
 
   private logDone() {
@@ -131,13 +183,18 @@ export class MutationTestExecutor {
     for (const checkerName of this.options.checkers) {
       // Use this checker
       const [checkFailedResult$, checkPassedResult$] = partition(
-        this.executeSingleChecker(checkerName, passedMutant$).pipe(shareReplay()),
+        this.executeSingleChecker(checkerName, passedMutant$).pipe(
+          shareReplay(),
+        ),
         isEarlyResult,
       );
 
       // Prepare for the next one
       passedMutant$ = checkPassedResult$;
-      checkResult$ = concat(checkResult$, checkFailedResult$.pipe(map(({ mutant }) => mutant)));
+      checkResult$ = concat(
+        checkResult$,
+        checkFailedResult$.pipe(map(({ mutant }) => mutant)),
+      );
     }
     return {
       checkResult$,
@@ -150,7 +207,10 @@ export class MutationTestExecutor {
                 this.concurrencyTokenProvider.freeCheckers();
               })
               .catch((error) => {
-                this.log.error('An error occurred while disposing checkers: %s', error);
+                this.log.error(
+                  'An error occurred while disposing checkers: %s',
+                  error,
+                );
               });
           },
         }),
@@ -164,9 +224,14 @@ export class MutationTestExecutor {
    * @param input$ The mutants tasks to check
    * @returns An observable stream with early results (check failed) and passed results
    */
-  private executeSingleChecker(checkerName: string, input$: Observable<MutantRunPlan>): Observable<MutantTestPlan> {
+  private executeSingleChecker(
+    checkerName: string,
+    input$: Observable<MutantRunPlan>,
+  ): Observable<MutantTestPlan> {
     const group$ = this.checkerPool
-      .schedule(input$.pipe(bufferTime(CHECK_BUFFER_MS)), (checker, mutants) => checker.group(checkerName, mutants))
+      .schedule(input$.pipe(bufferTime(CHECK_BUFFER_MS)), (checker, mutants) =>
+        checker.group(checkerName, mutants),
+      )
       .pipe(mergeMap((mutantGroups) => mutantGroups));
     const checkTask$ = this.checkerPool
       .schedule(group$, (checker, group) => checker.check(checkerName, group))
@@ -177,7 +242,10 @@ export class MutationTestExecutor {
             ? mutantRunPlan
             : {
                 plan: PlanKind.EarlyResult as const,
-                mutant: this.mutationTestReportHelper.reportCheckFailed(mutantRunPlan.mutant, checkResult),
+                mutant: this.mutationTestReportHelper.reportCheckFailed(
+                  mutantRunPlan.mutant,
+                  checkResult,
+                ),
               },
         ),
       );

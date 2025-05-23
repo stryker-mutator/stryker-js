@@ -3,9 +3,19 @@ import babel, { type NodePath, type types } from '@babel/core';
 // @ts-expect-error The babel types don't define "File" yet
 import { File } from '@babel/core';
 
-import { isImportDeclaration, isTypeNode, locationIncluded, locationOverlaps, placeHeaderIfNeeded } from '../util/syntax-helpers.js';
+import {
+  isImportDeclaration,
+  isTypeNode,
+  locationIncluded,
+  locationOverlaps,
+  placeHeaderIfNeeded,
+} from '../util/syntax-helpers.js';
 import { ScriptFormat } from '../syntax/index.js';
-import { allMutantPlacers, MutantPlacer, throwPlacementError } from '../mutant-placers/index.js';
+import {
+  allMutantPlacers,
+  MutantPlacer,
+  throwPlacementError,
+} from '../mutant-placers/index.js';
 import { Mutable, Mutant } from '../mutant.js';
 import { allMutators } from '../mutators/index.js';
 
@@ -32,13 +42,20 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
 ) => {
   // Wrap the AST in a `new File`, so `nodePath.buildCodeFrameError` works
   // https://github.com/babel/babel/issues/11889
-  const file = new File({ filename: originFileName }, { code: rawContent, ast: root });
+  const file = new File(
+    { filename: originFileName },
+    { code: rawContent, ast: root },
+  );
 
   // Create a placementMap for the mutation switching bookkeeping
   const placementMap: PlacementMap = new Map();
 
   // Create the bookkeeper responsible for the // Stryker ... directives
-  const directiveBookkeeper = new DirectiveBookkeeper(logger, mutators, originFileName);
+  const directiveBookkeeper = new DirectiveBookkeeper(
+    logger,
+    mutators,
+    originFileName,
+  );
 
   // The ignorer bookkeeper is responsible for keeping track of the ignored node and the reason why it is ignored
   const ignorerBookkeeper = new IgnorerBookkeeper(options.ignorers);
@@ -84,12 +101,18 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
    *  If mutants were collected, be sure to register them in the placement map.
    */
   function registerInPlacementMap(path: NodePath, mutantsToPlace: Mutant[]) {
-    const placementPath = path.find((ancestor) => placementMap.has(ancestor.node));
+    const placementPath = path.find((ancestor) =>
+      placementMap.has(ancestor.node),
+    );
     if (placementPath) {
       const { appliedMutants } = placementMap.get(placementPath.node)!;
-      mutantsToPlace.forEach((mutant) => appliedMutants.set(mutant, mutant.applied(placementPath.node)));
+      mutantsToPlace.forEach((mutant) =>
+        appliedMutants.set(mutant, mutant.applied(placementPath.node)),
+      );
     } else {
-      throw new Error(`Mutants cannot be placed. This shouldn't happen! Unplaced mutants: ${JSON.stringify(mutantsToPlace, null, 2)}`);
+      throw new Error(
+        `Mutants cannot be placed. This shouldn't happen! Unplaced mutants: ${JSON.stringify(mutantsToPlace, null, 2)}`,
+      );
     }
   }
 
@@ -112,13 +135,20 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
       isImportDeclaration(path) ||
       path.isDecorator() ||
       !mutateDescription ||
-      (Array.isArray(mutateDescription) && mutateDescription.every((range) => !locationOverlaps(range, path.node.loc!)))
+      (Array.isArray(mutateDescription) &&
+        mutateDescription.every(
+          (range) => !locationOverlaps(range, path.node.loc!),
+        ))
     );
   }
 
   function shouldMutate(path: NodePath) {
     return (
-      mutateDescription === true || (Array.isArray(mutateDescription) && mutateDescription.some((range) => locationIncluded(range, path.node.loc!)))
+      mutateDescription === true ||
+      (Array.isArray(mutateDescription) &&
+        mutateDescription.some((range) =>
+          locationIncluded(range, path.node.loc!),
+        ))
     );
   }
 
@@ -132,7 +162,13 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
         mutantsPlacement.placer.place(path, mutantsPlacement.appliedMutants);
         path.skip();
       } catch (error) {
-        throwPlacementError(error as Error, path, mutantsPlacement.placer, [...mutantsPlacement.appliedMutants.keys()], originFileName);
+        throwPlacementError(
+          error as Error,
+          path,
+          mutantsPlacement.placer,
+          [...mutantsPlacement.appliedMutants.keys()],
+          originFileName,
+        );
       }
     }
   }
@@ -142,7 +178,9 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
    */
   function collectMutants(path: NodePath) {
     return [...mutate(path)]
-      .map((mutable) => mutantCollector.collect(originFileName, path.node, mutable, offset))
+      .map((mutable) =>
+        mutantCollector.collect(originFileName, path.node, mutable, offset),
+      )
       .filter((mutant) => !mutant.ignoreReason);
   }
 
@@ -156,14 +194,19 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
           replacement,
           mutatorName: mutator.name,
           ignoreReason:
-            directiveBookkeeper.findIgnoreReason(node.node.loc!.start.line, mutator.name) ??
+            directiveBookkeeper.findIgnoreReason(
+              node.node.loc!.start.line,
+              mutator.name,
+            ) ??
             findExcludedMutatorIgnoreReason(mutator.name) ??
             ignorerBookkeeper.currentIgnoreMessage,
         };
       }
     }
 
-    function findExcludedMutatorIgnoreReason(mutatorName: string): string | undefined {
+    function findExcludedMutatorIgnoreReason(
+      mutatorName: string,
+    ): string | undefined {
       if (options.excludedMutations.includes(mutatorName)) {
         return `Ignored because of excluded mutation "${mutatorName}"`;
       } else {

@@ -1,4 +1,8 @@
-const combine = (prefixes: string[], suffixes: string[], extensions: string[]): string[] => {
+const combine = (
+  prefixes: string[],
+  suffixes: string[],
+  extensions: string[],
+): string[] => {
   const fileNames: string[] = [];
   for (const prefix of prefixes) {
     for (const suffix of suffixes) {

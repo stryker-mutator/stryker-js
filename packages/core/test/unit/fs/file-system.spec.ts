@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs, { Dirent } from 'fs';
 
 import { expect } from 'chai';
 
@@ -46,7 +46,11 @@ describe(FileSystem.name, () => {
     });
 
     it('should forward "readdir"', async () => {
-      const stub = sinon.stub(fs.promises, 'readdir');
+      // @ts-expect-error The incorrect overload is chosen by default
+      const stub: sinon.SinonStub<
+        [string, { withFileTypes: true }],
+        Promise<Dirent<string>[]>
+      > = sinon.stub(fs.promises, 'readdir');
       const expectedResult = [createDirent()];
       stub.resolves(expectedResult);
       const actualResult = await sut.readdir('bar', { withFileTypes: true });
@@ -66,7 +70,11 @@ describe(FileSystem.name, () => {
       const stub = sinon.stub(fs.promises, 'readFile');
       const task1 = new Task<string>();
       const task2 = new Task<string>();
-      stub.onFirstCall().returns(task1.promise).onSecondCall().returns(task2.promise);
+      stub
+        .onFirstCall()
+        .returns(task1.promise)
+        .onSecondCall()
+        .returns(task2.promise);
 
       // Act
       const onGoing = sut.readFile('file.js');
@@ -85,7 +93,11 @@ describe(FileSystem.name, () => {
       const expectedError = new Error('Expected error for testing');
       const task1 = new Task<string>();
       const task2 = new Task<string>();
-      stub.onFirstCall().returns(task1.promise).onSecondCall().returns(task2.promise);
+      stub
+        .onFirstCall()
+        .returns(task1.promise)
+        .onSecondCall()
+        .returns(task2.promise);
 
       // Act
       const onGoing = sut.readFile('file.js');

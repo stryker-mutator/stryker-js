@@ -13,7 +13,10 @@ describe('js-printer', () => {
   });
 
   it('should be able to print js', () => {
-    const actual = print(createJSAst({ rawContent: 'const foo = 42' }), contextStub);
+    const actual = print(
+      createJSAst({ rawContent: 'const foo = 42' }),
+      contextStub,
+    );
     expect(actual).eq('const foo = 42;');
   });
 });

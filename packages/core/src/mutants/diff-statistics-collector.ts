@@ -36,7 +36,9 @@ export class DiffStatisticsCollector {
   }
 
   public createDetailedReport(): string[] {
-    return [...this.changesByFile.entries()].map(([fileName, changes]) => `${fileName} ${changes.toString()}`);
+    return [...this.changesByFile.entries()].map(
+      ([fileName, changes]) => `${fileName} ${changes.toString()}`,
+    );
   }
 
   public createTotalsReport(): string {

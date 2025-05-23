@@ -3,7 +3,14 @@ import path from 'path';
 import sinon from 'sinon';
 import { expect } from 'chai';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import { MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan, PlanKind, Mutant, schema } from '@stryker-mutator/api/core';
+import {
+  MutantEarlyResultPlan,
+  MutantRunPlan,
+  MutantTestPlan,
+  PlanKind,
+  Mutant,
+  schema,
+} from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
 
 import { MutantTestPlanner } from '../../../src/mutants/index.js';
@@ -33,7 +40,10 @@ describe(MutantTestPlanner.name, () => {
 
   function act(
     mutants: Mutant[],
-    project = new Project(fileSystemTestDouble, fileSystemTestDouble.toFileDescriptions()),
+    project = new Project(
+      fileSystemTestDouble,
+      fileSystemTestDouble.toFileDescriptions(),
+    ),
   ): Promise<readonly MutantTestPlan[]> {
     return testInjector.injector
       .provideValue(coreTokens.testCoverage, testCoverage)
@@ -48,14 +58,27 @@ describe(MutantTestPlanner.name, () => {
   }
 
   it('should make an early result plan for an ignored mutant', async () => {
-    const mutant = factory.mutant({ id: '2', status: 'Ignored', statusReason: 'foo should ignore' });
+    const mutant = factory.mutant({
+      id: '2',
+      status: 'Ignored',
+      statusReason: 'foo should ignore',
+    });
 
     // Act
     const result = await act([mutant]);
 
     // Assert
     const expected: MutantEarlyResultPlan[] = [
-      { plan: PlanKind.EarlyResult, mutant: { ...mutant, static: false, status: 'Ignored', coveredBy: undefined, killedBy: undefined } },
+      {
+        plan: PlanKind.EarlyResult,
+        mutant: {
+          ...mutant,
+          static: false,
+          status: 'Ignored',
+          coveredBy: undefined,
+          killedBy: undefined,
+        },
+      },
     ];
     expect(result).deep.eq(expected);
   });
@@ -109,14 +132,20 @@ describe(MutantTestPlanner.name, () => {
         fileName: 'foo.js',
         mutatorName: 'fooMutator',
         replacement: '<=',
-        location: { start: { line: 0, column: 0 }, end: { line: 0, column: 1 } },
+        location: {
+          start: { line: 0, column: 0 },
+          end: { line: 0, column: 1 },
+        },
       }),
       factory.mutant({
         id: '2',
         fileName: 'bar.js',
         mutatorName: 'barMutator',
         replacement: '{}',
-        location: { start: { line: 0, column: 2 }, end: { line: 0, column: 3 } },
+        location: {
+          start: { line: 0, column: 2 },
+          end: { line: 0, column: 3 },
+        },
       }),
     ];
     testCoverage.addTest(factory.successTestResult({ timeSpentMs: 20 }));
@@ -126,7 +155,10 @@ describe(MutantTestPlanner.name, () => {
     const mutantPlans = await act(mutants);
 
     // Assert
-    sinon.assert.calledOnceWithExactly(reporterMock.onMutationTestingPlanReady, { mutantPlans });
+    sinon.assert.calledOnceWithExactly(
+      reporterMock.onMutationTestingPlanReady,
+      { mutantPlans },
+    );
   });
 
   describe('coverage', () => {
@@ -167,8 +199,12 @@ describe(MutantTestPlanner.name, () => {
         // Arrange
         const mutant1 = factory.mutant({ id: '1' });
         const mutants = [mutant1];
-        testCoverage.addTest(factory.successTestResult({ id: 'spec1', timeSpentMs: 20 }));
-        testCoverage.addTest(factory.successTestResult({ id: 'spec2', timeSpentMs: 22 }));
+        testCoverage.addTest(
+          factory.successTestResult({ id: 'spec1', timeSpentMs: 20 }),
+        );
+        testCoverage.addTest(
+          factory.successTestResult({ id: 'spec2', timeSpentMs: 22 }),
+        );
 
         // Act
         const [result] = await act(mutants);
@@ -187,7 +223,9 @@ describe(MutantTestPlanner.name, () => {
         const mutant = factory.mutant({ id: '1' });
         const mutants = [mutant];
         testCoverage.staticCoverage['1'] = true;
-        testCoverage.addTest(factory.successTestResult({ id: 'spec1', timeSpentMs: 0 }));
+        testCoverage.addTest(
+          factory.successTestResult({ id: 'spec1', timeSpentMs: 0 }),
+        );
         testCoverage.hasCoverage = true;
 
         // Act
@@ -215,7 +253,9 @@ describe(MutantTestPlanner.name, () => {
         testInjector.options.ignoreStatic = false;
         const mutants = [factory.mutant({ id: '1' })];
         testCoverage.staticCoverage['1'] = true;
-        testCoverage.addTest(factory.successTestResult({ id: 'spec1', timeSpentMs: 0 }));
+        testCoverage.addTest(
+          factory.successTestResult({ id: 'spec1', timeSpentMs: 0 }),
+        );
         testCoverage.hasCoverage = true;
 
         // Act
@@ -233,7 +273,9 @@ describe(MutantTestPlanner.name, () => {
       it('should set activeMutant on the runOptions', async () => {
         // Arrange
         const mutants = [Object.freeze(factory.mutant({ id: '1' }))];
-        testCoverage.addTest(factory.successTestResult({ id: 'spec1', timeSpentMs: 0 }));
+        testCoverage.addTest(
+          factory.successTestResult({ id: 'spec1', timeSpentMs: 0 }),
+        );
 
         // Act
         const [result] = await act(mutants);
@@ -261,8 +303,12 @@ describe(MutantTestPlanner.name, () => {
         // Arrange
         const mutant = factory.mutant({ id: '1' });
         const mutants = [mutant];
-        testCoverage.addTest(factory.successTestResult({ id: 'spec1', timeSpentMs: 20 }));
-        testCoverage.addTest(factory.successTestResult({ id: 'spec2', timeSpentMs: 22 }));
+        testCoverage.addTest(
+          factory.successTestResult({ id: 'spec1', timeSpentMs: 20 }),
+        );
+        testCoverage.addTest(
+          factory.successTestResult({ id: 'spec2', timeSpentMs: 22 }),
+        );
 
         // Act
         const [result] = await act(mutants);
@@ -279,7 +325,9 @@ describe(MutantTestPlanner.name, () => {
         // Arrange
         testInjector.options.ignoreStatic = true;
         const mutants = [factory.mutant({ id: '1' })];
-        testCoverage.addTest(factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }));
+        testCoverage.addTest(
+          factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }),
+        );
         testCoverage.addCoverage('1', ['spec1']);
         testCoverage.staticCoverage['1'] = true;
 
@@ -299,8 +347,12 @@ describe(MutantTestPlanner.name, () => {
         // Arrange
         testInjector.options.ignoreStatic = false;
         const mutants = [factory.mutant({ id: '1' })];
-        testCoverage.addTest(factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }));
-        testCoverage.addTest(factory.successTestResult({ id: 'spec2', timeSpentMs: 20 }));
+        testCoverage.addTest(
+          factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }),
+        );
+        testCoverage.addTest(
+          factory.successTestResult({ id: 'spec2', timeSpentMs: 20 }),
+        );
         testCoverage.staticCoverage['1'] = true;
         testCoverage.addCoverage('1', ['spec1']);
 
@@ -320,8 +372,14 @@ describe(MutantTestPlanner.name, () => {
     describe('with perTest coverage', () => {
       it('should enable test filtering with runtime mutant activation for covered tests', async () => {
         // Arrange
-        const mutants = [factory.mutant({ id: '1' }), factory.mutant({ id: '2' })];
-        testCoverage.addTest(factory.successTestResult({ id: 'spec1', timeSpentMs: 0 }), factory.successTestResult({ id: 'spec2', timeSpentMs: 0 }));
+        const mutants = [
+          factory.mutant({ id: '1' }),
+          factory.mutant({ id: '2' }),
+        ];
+        testCoverage.addTest(
+          factory.successTestResult({ id: 'spec1', timeSpentMs: 0 }),
+          factory.successTestResult({ id: 'spec2', timeSpentMs: 0 }),
+        );
         testCoverage.addCoverage('1', ['spec1']);
         testCoverage.addCoverage('2', ['spec2']);
         testCoverage.staticCoverage['1'] = false;
@@ -346,7 +404,10 @@ describe(MutantTestPlanner.name, () => {
 
       it('should calculate timeout and net time using the sum of covered tests', async () => {
         // Arrange
-        const mutants = [factory.mutant({ id: '1' }), factory.mutant({ id: '2' })];
+        const mutants = [
+          factory.mutant({ id: '1' }),
+          factory.mutant({ id: '2' }),
+        ];
         testCoverage.addTest(
           factory.successTestResult({ id: 'spec1', timeSpentMs: 20 }),
           factory.successTestResult({ id: 'spec2', timeSpentMs: 10 }),
@@ -407,15 +468,24 @@ describe(MutantTestPlanner.name, () => {
 
       // Assert
       expect(testInjector.logger.warn)
-        .calledWithMatch('Detected 1 static mutants (14% of total) that are estimated to take 40% of the time running the tests!')
-        .and.calledWithMatch('(disable "warnings.slow" to ignore this warning)');
+        .calledWithMatch(
+          'Detected 1 static mutants (14% of total) that are estimated to take 40% of the time running the tests!',
+        )
+        .and.calledWithMatch(
+          '(disable "warnings.slow" to ignore this warning)',
+        );
     });
 
     it('should warn when 100% of the mutants are static', async () => {
       // Arrange
       testInjector.options.ignoreStatic = false;
-      const mutants = [factory.mutant({ id: '1' }), factory.mutant({ id: '2' })];
-      testCoverage.addTest(factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }));
+      const mutants = [
+        factory.mutant({ id: '1' }),
+        factory.mutant({ id: '2' }),
+      ];
+      testCoverage.addTest(
+        factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }),
+      );
       testCoverage.hasCoverage = true;
       arrangeStaticCoverage(1, 2);
 
@@ -538,40 +608,64 @@ describe(MutantTestPlanner.name, () => {
         const testFileFullName = path.resolve(this.#testFileName);
         const srcFileFullName = path.resolve(this.#srcFileName);
         this.#mutants.push(
-          factory.mutant({ id: '1', fileName: srcFileFullName, mutatorName: 'fooMutator', replacement: '<=', location: loc(0, 0, 0, 1) }),
+          factory.mutant({
+            id: '1',
+            fileName: srcFileFullName,
+            mutatorName: 'fooMutator',
+            replacement: '<=',
+            location: loc(0, 0, 0, 1),
+          }),
         );
         fileSystemTestDouble.files[srcFileFullName] = 'foo';
         fileSystemTestDouble.files[testFileFullName] = 'describe("foo")';
-        this.#incrementalReport = factory.mutationTestReportSchemaMutationTestResult({
-          files: {
-            [this.#srcFileName.replace(/\\/g, '/')]: factory.mutationTestReportSchemaFileResult({
-              source: 'foo',
-              mutants: [
-                factory.mutantResult({
-                  status: 'Killed',
-                  replacement: '<=',
-                  mutatorName: 'fooMutator',
-                  location: loc(0, 0, 0, 1),
-                  killedBy: ['1'],
-                  coveredBy: ['1'],
+        this.#incrementalReport =
+          factory.mutationTestReportSchemaMutationTestResult({
+            files: {
+              [this.#srcFileName.replace(/\\/g, '/')]:
+                factory.mutationTestReportSchemaFileResult({
+                  source: 'foo',
+                  mutants: [
+                    factory.mutantResult({
+                      status: 'Killed',
+                      replacement: '<=',
+                      mutatorName: 'fooMutator',
+                      location: loc(0, 0, 0, 1),
+                      killedBy: ['1'],
+                      coveredBy: ['1'],
+                    }),
+                  ],
                 }),
-              ],
-            }),
-          },
-          testFiles: {
-            [this.#testFileName.replace(/\\/g, '/')]: factory.mutationTestReportSchemaTestFile({
-              source: 'describe("foo")',
-              tests: [factory.mutationTestReportSchemaTestDefinition({ id: '1', name: 'foo should bar' })],
-            }),
-          },
-        });
-        testCoverage.addTest(factory.testResult({ fileName: testFileFullName, id: 'spec1', name: 'foo should bar' }));
+            },
+            testFiles: {
+              [this.#testFileName.replace(/\\/g, '/')]:
+                factory.mutationTestReportSchemaTestFile({
+                  source: 'describe("foo")',
+                  tests: [
+                    factory.mutationTestReportSchemaTestDefinition({
+                      id: '1',
+                      name: 'foo should bar',
+                    }),
+                  ],
+                }),
+            },
+          });
+        testCoverage.addTest(
+          factory.testResult({
+            fileName: testFileFullName,
+            id: 'spec1',
+            name: 'foo should bar',
+          }),
+        );
         testCoverage.addCoverage(1, ['spec1']);
         return this;
       }
 
       public build() {
-        const project = new Project(fileSystemTestDouble, fileSystemTestDouble.toFileDescriptions(), this.#incrementalReport);
+        const project = new Project(
+          fileSystemTestDouble,
+          fileSystemTestDouble.toFileDescriptions(),
+          this.#incrementalReport,
+        );
         return { mutants: this.#mutants, project };
       }
     }
@@ -581,7 +675,9 @@ describe(MutantTestPlanner.name, () => {
 
     it("should plan an early result for mutants that didn't change", async () => {
       // Arrange
-      const { mutants, project } = new ScenarioBuilder().withIncrementalKilledMutant().build();
+      const { mutants, project } = new ScenarioBuilder()
+        .withIncrementalKilledMutant()
+        .build();
 
       // Act
       const [actualPlan] = await act(mutants, project);
@@ -594,7 +690,10 @@ describe(MutantTestPlanner.name, () => {
 
     it('should normalize file names before passing them to the differ', async () => {
       // Arrange
-      const { mutants, project } = new ScenarioBuilder().withWindowsPathSeparator().withIncrementalKilledMutant().build();
+      const { mutants, project } = new ScenarioBuilder()
+        .withWindowsPathSeparator()
+        .withIncrementalKilledMutant()
+        .build();
 
       // Act
       const [actualPlan] = await act(mutants, project);
@@ -616,9 +715,15 @@ describe(MutantTestPlanner.name, () => {
 function assertIsRunPlan(plan: MutantTestPlan): asserts plan is MutantRunPlan {
   expect(plan.plan).eq(PlanKind.Run);
 }
-function assertIsEarlyResultPlan(plan: MutantTestPlan): asserts plan is MutantEarlyResultPlan {
+function assertIsEarlyResultPlan(
+  plan: MutantTestPlan,
+): asserts plan is MutantEarlyResultPlan {
   expect(plan.plan).eq(PlanKind.EarlyResult);
 }
 function calculateTimeout(netTime: number): number {
-  return testInjector.options.timeoutMS + testInjector.options.timeoutFactor * netTime + TIME_OVERHEAD_MS;
+  return (
+    testInjector.options.timeoutMS +
+    testInjector.options.timeoutFactor * netTime +
+    TIME_OVERHEAD_MS
+  );
 }

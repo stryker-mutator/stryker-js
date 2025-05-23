@@ -65,7 +65,9 @@ describe(CircleProvider.name, () => {
     });
 
     it('should throw if env variable is missing', () => {
-      expect(sut.determineProject.bind(sut)).throws('Missing environment variable "CIRCLE_REPOSITORY_URL');
+      expect(sut.determineProject.bind(sut)).throws(
+        'Missing environment variable "CIRCLE_REPOSITORY_URL',
+      );
     });
   });
 });

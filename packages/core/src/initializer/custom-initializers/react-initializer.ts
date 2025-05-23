@@ -1,7 +1,10 @@
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Immutable } from '@stryker-mutator/util';
 
-import { CustomInitializer, CustomInitializerConfiguration } from './custom-initializer.js';
+import {
+  CustomInitializer,
+  CustomInitializerConfiguration,
+} from './custom-initializer.js';
 
 const guideUrl = 'https://stryker-mutator.io/docs/stryker-js/guides/react';
 
@@ -23,6 +26,10 @@ export class ReactInitializer implements CustomInitializer {
   };
 
   public createConfig(): Promise<CustomInitializerConfiguration> {
-    return Promise.resolve({ config: this.config, guideUrl, dependencies: this.dependencies });
+    return Promise.resolve({
+      config: this.config,
+      guideUrl,
+      dependencies: this.dependencies,
+    });
   }
 }

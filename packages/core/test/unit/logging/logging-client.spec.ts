@@ -11,7 +11,9 @@ import { LoggingEvent } from '../../../src/logging/logging-event.js';
 describe(LoggingClient.name, () => {
   let sut: LoggingClient;
   let loggingServerAddress: LoggingServerAddress;
-  let createConnectionStub: sinon.SinonStub<[port: number, host: string, connectionListener: () => void]>;
+  let createConnectionStub: sinon.SinonStub<
+    [port: number, host: string, connectionListener: () => void]
+  >;
   let socketMock: sinon.SinonStubbedInstance<net.Socket>;
   let consoleErrorStub: sinon.SinonStubbedMember<typeof console.error>;
 
@@ -35,38 +37,62 @@ describe(LoggingClient.name, () => {
     it('should create a connection', async () => {
       createConnectionStub.callsArgOn(2, undefined);
       await sut.openConnection();
-      sinon.assert.calledOnceWithExactly(createConnectionStub, loggingServerAddress.port, 'localhost', sinon.match.func);
+      sinon.assert.calledOnceWithExactly(
+        createConnectionStub,
+        loggingServerAddress.port,
+        'localhost',
+        sinon.match.func,
+      );
     });
     it('should reject when an error occurs', async () => {
       const expectedError = new Error('foobar');
-      socketMock.on.withArgs('error' as 'timeout').callsArgWith(1, expectedError);
+      socketMock.on
+        .withArgs('error' as 'timeout')
+        .callsArgWith(1, expectedError);
       await expect(sut.openConnection()).rejectedWith(expectedError);
     });
     it('should log errors to console', async () => {
       const expectedError = new Error('expected error');
-      socketMock.on.withArgs('error' as 'timeout').callsArgWith(1, expectedError);
+      socketMock.on
+        .withArgs('error' as 'timeout')
+        .callsArgWith(1, expectedError);
       await expect(sut.openConnection()).rejected;
-      sinon.assert.calledOnceWithExactly(consoleErrorStub, 'Error occurred in logging client', expectedError);
+      sinon.assert.calledOnceWithExactly(
+        consoleErrorStub,
+        'Error occurred in logging client',
+        expectedError,
+      );
     });
   });
 
   describe(LoggingClient.prototype.log.name, () => {
     it('should throw when not connected', () => {
-      expect(() => sut.log(LoggingEvent.create('cat', LogLevel.Information, []))).throws(
+      expect(() =>
+        sut.log(LoggingEvent.create('cat', LogLevel.Information, [])),
+      ).throws(
         "Cannot use the logging client before it is connected, please call 'LoggingClient.prototype.openConnection' first",
       );
     });
 
     it('should write the event to the socket', async () => {
       await connect();
-      const event = LoggingEvent.create('category', LogLevel.Information, ['foo', 'bar']);
+      const event = LoggingEvent.create('category', LogLevel.Information, [
+        'foo',
+        'bar',
+      ]);
       sut.log(event);
-      sinon.assert.calledOnceWithExactly(socketMock.write, `${JSON.stringify(event.serialize())}__STRYKER_CORE__`);
+      sinon.assert.calledOnceWithExactly(
+        socketMock.write,
+        `${JSON.stringify(event.serialize())}__STRYKER_CORE__`,
+      );
     });
 
     it('should not write the event to the socket when the level is not enabled', async () => {
       await connect();
-      const event = LoggingEvent.create('category', LogLevel.Trace, ['foo', 'bar']);
+      const event = LoggingEvent.create('category', LogLevel.Trace, [
+        'foo',
+        'bar',
+      ]);
       sut.log(event);
       sinon.assert.notCalled(socketMock.write);
     });
@@ -75,7 +101,9 @@ describe(LoggingClient.name, () => {
       await connect();
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
       (socketMock.writable as boolean) = false;
-      sut.log(LoggingEvent.create('category', LogLevel.Information, ['foo', 'bar']));
+      sut.log(
+        LoggingEvent.create('category', LogLevel.Information, ['foo', 'bar']),
+      );
       sinon.assert.notCalled(socketMock.write);
     });
 

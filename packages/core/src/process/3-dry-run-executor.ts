@@ -23,9 +23,17 @@ import { Timer } from '../utils/timer.js';
 import { createTestRunnerFactory } from '../test-runner/index.js';
 import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper.js';
 import { ConfigError } from '../errors.js';
-import { ConcurrencyTokenProvider, Pool, createTestRunnerPool } from '../concurrent/index.js';
+import {
+  ConcurrencyTokenProvider,
+  Pool,
+  createTestRunnerPool,
+} from '../concurrent/index.js';
 import { FileMatcher } from '../config/index.js';
-import { IncrementalDiffer, MutantTestPlanner, TestCoverage } from '../mutants/index.js';
+import {
+  IncrementalDiffer,
+  MutantTestPlanner,
+  TestCoverage,
+} from '../mutants/index.js';
 import { CheckerFacade } from '../checker/index.js';
 import { StrictReporter } from '../reporters/index.js';
 import { objectUtils } from '../utils/object-utils.js';
@@ -73,14 +81,25 @@ export class DryRunExecutor {
     const testRunnerInjector = this.injector
       .provideClass(coreTokens.workerIdGenerator, IdGenerator)
       .provideFactory(coreTokens.testRunnerFactory, createTestRunnerFactory)
-      .provideValue(coreTokens.testRunnerConcurrencyTokens, this.concurrencyTokenProvider.testRunnerToken$)
+      .provideValue(
+        coreTokens.testRunnerConcurrencyTokens,
+        this.concurrencyTokenProvider.testRunnerToken$,
+      )
       .provideFactory(coreTokens.testRunnerPool, createTestRunnerPool);
-    const testRunnerPool = testRunnerInjector.resolve(coreTokens.testRunnerPool);
-    const { result, timing } = await lastValueFrom(testRunnerPool.schedule(of(0), (testRunner) => this.executeDryRun(testRunner)));
+    const testRunnerPool = testRunnerInjector.resolve(
+      coreTokens.testRunnerPool,
+    );
+    const { result, timing } = await lastValueFrom(
+      testRunnerPool.schedule(of(0), (testRunner) =>
+        this.executeDryRun(testRunner),
+      ),
+    );
 
     this.logInitialTestRunSucceeded(result.tests, timing);
     if (!result.tests.length && !this.options.allowEmpty) {
-      throw new ConfigError('No tests were executed. Stryker will exit prematurely. Please check your configuration.');
+      throw new ConfigError(
+        'No tests were executed. Stryker will exit prematurely. Please check your configuration.',
+      );
     }
 
     return testRunnerInjector
@@ -90,17 +109,24 @@ export class DryRunExecutor {
       .provideFactory(coreTokens.testCoverage, TestCoverage.from)
       .provideClass(coreTokens.incrementalDiffer, IncrementalDiffer)
       .provideClass(coreTokens.mutantTestPlanner, MutantTestPlanner)
-      .provideClass(coreTokens.mutationTestReportHelper, MutationTestReportHelper)
+      .provideClass(
+        coreTokens.mutationTestReportHelper,
+        MutationTestReportHelper,
+      )
       .provideClass(coreTokens.workerIdGenerator, IdGenerator);
   }
 
-  private validateResultCompleted(runResult: DryRunResult): asserts runResult is CompleteDryRunResult {
+  private validateResultCompleted(
+    runResult: DryRunResult,
+  ): asserts runResult is CompleteDryRunResult {
     switch (runResult.status) {
       case DryRunStatus.Complete: {
         const failedTests = runResult.tests.filter(isFailedTest);
         if (failedTests.length) {
           this.logFailedTestsInInitialRun(failedTests);
-          throw new ConfigError('There were failed tests in the initial test run.');
+          throw new ConfigError(
+            'There were failed tests in the initial test run.',
+          );
         }
         return;
       }
@@ -114,14 +140,20 @@ export class DryRunExecutor {
     throw new Error('Something went wrong in the initial test run');
   }
 
-  private async executeDryRun(testRunner: TestRunner): Promise<DryRunCompletedEvent> {
+  private async executeDryRun(
+    testRunner: TestRunner,
+  ): Promise<DryRunCompletedEvent> {
     if (this.options.dryRunOnly) {
-      this.log.info('Note: running the dry-run only. No mutations will be tested.');
+      this.log.info(
+        'Note: running the dry-run only. No mutations will be tested.',
+      );
     }
 
     const dryRunTimeout = this.options.dryRunTimeoutMinutes * 1000 * 60;
     const project = this.injector.resolve(coreTokens.project);
-    const dryRunFiles = objectUtils.map(project.filesToMutate, (_, name) => this.sandbox.sandboxFileFor(name));
+    const dryRunFiles = objectUtils.map(project.filesToMutate, (_, name) =>
+      this.sandbox.sandboxFileFor(name),
+    );
     this.timer.mark(INITIAL_TEST_RUN_MARKER);
     this.log.info(
       `Starting initial test run (${this.options.testRunner} test runner with "${this.options.coverageAnalysis}" coverage analysis). This may take a while.`,
@@ -149,7 +181,9 @@ export class DryRunExecutor {
    * @param dryRunResult the completed result
    */
   private remapSandboxFilesToOriginalFiles(dryRunResult: CompleteDryRunResult) {
-    const disableTypeCheckingFileMatcher = new FileMatcher(this.options.disableTypeChecks);
+    const disableTypeCheckingFileMatcher = new FileMatcher(
+      this.options.disableTypeChecks,
+    );
     dryRunResult.tests.forEach((test) => {
       if (test.fileName) {
         test.fileName = this.sandbox.originalFileFor(test.fileName);
@@ -157,7 +191,10 @@ export class DryRunExecutor {
         // HACK line numbers of the tests can be offset by 1 because the disable type checks preprocessor could have added a `// @ts-nocheck` line.
         // We correct for that here if needed
         // If we do more complex stuff in sandbox preprocessing in the future, we might want to add a robust remapping logic
-        if (test.startPosition && disableTypeCheckingFileMatcher.matches(test.fileName)) {
+        if (
+          test.startPosition &&
+          disableTypeCheckingFileMatcher.matches(test.fileName)
+        ) {
           test.startPosition.line--;
         }
       }
@@ -186,8 +223,14 @@ export class DryRunExecutor {
    * The overhead time is used to calculate exact timeout values during mutation testing.
    * See timeoutMS setting in README for more information on this calculation
    */
-  private calculateTiming(grossTimeMS: number, tests: readonly TestResult[]): RunTiming {
-    const netTimeMS = tests.reduce((total, test) => total + test.timeSpentMs, 0);
+  private calculateTiming(
+    grossTimeMS: number,
+    tests: readonly TestResult[],
+  ): RunTiming {
+    const netTimeMS = tests.reduce(
+      (total, test) => total + test.timeSpentMs,
+      0,
+    );
     const overheadTimeMS = grossTimeMS - netTimeMS;
     return {
       net: netTimeMS,

@@ -33,22 +33,39 @@ describe(CustomJestConfigLoader.name, () => {
   describe('native readInitialOptions', () => {
     it('should readInitialOptions ', async () => {
       const expectedOptions: Config.InitialOptions = { displayName: 'test' };
-      jestConfigWrapperMock.readInitialOptions.resolves({ config: expectedOptions, configPath: 'my-foo-jest-config.js' });
+      jestConfigWrapperMock.readInitialOptions.resolves({
+        config: expectedOptions,
+        configPath: 'my-foo-jest-config.js',
+      });
       const actualOptions = await sut.loadConfig();
       expect(actualOptions).eq(expectedOptions);
-      sinon.assert.calledOnceWithExactly(jestConfigWrapperMock.readInitialOptions, undefined, { skipMultipleConfigError: true });
+      sinon.assert.calledOnceWithExactly(
+        jestConfigWrapperMock.readInitialOptions,
+        undefined,
+        { skipMultipleConfigError: true },
+      );
     });
 
     it('should readInitialOptions with a custom jest config file', async () => {
       options.jest.configFile = 'my-foo-jest-config.js';
       const expectedOptions: Config.InitialOptions = { displayName: 'test' };
-      jestConfigWrapperMock.readInitialOptions.resolves({ config: expectedOptions, configPath: 'my-foo-jest-config.js' });
+      jestConfigWrapperMock.readInitialOptions.resolves({
+        config: expectedOptions,
+        configPath: 'my-foo-jest-config.js',
+      });
       await sut.loadConfig();
-      sinon.assert.calledOnceWithExactly(jestConfigWrapperMock.readInitialOptions, 'my-foo-jest-config.js', { skipMultipleConfigError: true });
+      sinon.assert.calledOnceWithExactly(
+        jestConfigWrapperMock.readInitialOptions,
+        'my-foo-jest-config.js',
+        { skipMultipleConfigError: true },
+      );
     });
 
     it('should log where config was read from', async () => {
-      jestConfigWrapperMock.readInitialOptions.resolves({ config: {}, configPath: path.resolve('my-foo-jest-config.js') });
+      jestConfigWrapperMock.readInitialOptions.resolves({
+        config: {},
+        configPath: path.resolve('my-foo-jest-config.js'),
+      });
       await sut.loadConfig();
       sinon.assert.calledWith(
         testInjector.logger.debug,
@@ -57,9 +74,15 @@ describe(CustomJestConfigLoader.name, () => {
     });
 
     it('should log when no config file was read', async () => {
-      jestConfigWrapperMock.readInitialOptions.resolves({ config: {}, configPath: null });
+      jestConfigWrapperMock.readInitialOptions.resolves({
+        config: {},
+        configPath: null,
+      });
       await sut.loadConfig();
-      sinon.assert.calledWith(testInjector.logger.debug, 'No config file read (used native `readInitialOptions` from jest-config).');
+      sinon.assert.calledWith(
+        testInjector.logger.debug,
+        'No config file read (used native `readInitialOptions` from jest-config).',
+      );
     });
   });
 
@@ -84,7 +107,9 @@ describe(CustomJestConfigLoader.name, () => {
 
       const config = await sut.loadConfig();
 
-      expect(requireFromCwdStub).calledWith(path.join(projectRoot, 'jest.config.js'));
+      expect(requireFromCwdStub).calledWith(
+        path.join(projectRoot, 'jest.config.js'),
+      );
       expect(config).to.deep.contains(readConfig);
     });
 
@@ -94,7 +119,9 @@ describe(CustomJestConfigLoader.name, () => {
 
       const config = await sut.loadConfig();
 
-      expect(requireFromCwdStub).calledWith(path.join(projectRoot, 'jest.config.js'));
+      expect(requireFromCwdStub).calledWith(
+        path.join(projectRoot, 'jest.config.js'),
+      );
       expect(config).to.deep.contains(readConfig);
     });
 
@@ -104,7 +131,9 @@ describe(CustomJestConfigLoader.name, () => {
 
       const config = await sut.loadConfig();
 
-      expect(requireFromCwdStub).calledWith(path.join(projectRoot, 'jest.config.js'));
+      expect(requireFromCwdStub).calledWith(
+        path.join(projectRoot, 'jest.config.js'),
+      );
       expect(config).to.deep.contains({ rootDir: projectRoot });
     });
 
@@ -114,8 +143,12 @@ describe(CustomJestConfigLoader.name, () => {
       requireFromCwdStub.returns(readConfig);
       const config = await sut.loadConfig();
 
-      expect(requireFromCwdStub).calledWith(path.join(projectRoot, 'jest.config.js'));
-      expect(config).to.deep.contains({ rootDir: path.resolve(projectRoot, 'lib') });
+      expect(requireFromCwdStub).calledWith(
+        path.join(projectRoot, 'jest.config.js'),
+      );
+      expect(config).to.deep.contains({
+        rootDir: path.resolve(projectRoot, 'lib'),
+      });
     });
 
     it('should allow users to configure a jest.config.json file as "configFile"', async () => {
@@ -128,7 +161,9 @@ describe(CustomJestConfigLoader.name, () => {
       const config = await sut.loadConfig();
 
       // Assert
-      expect(requireFromCwdStub).calledWith(path.join(projectRoot, 'jest.config.json'));
+      expect(requireFromCwdStub).calledWith(
+        path.join(projectRoot, 'jest.config.json'),
+      );
       expect(config).to.deep.contain(readConfig);
     });
 
@@ -146,7 +181,11 @@ describe(CustomJestConfigLoader.name, () => {
       const config = await sut.loadConfig();
 
       // Assert
-      sinon.assert.calledWith(readFileStub, path.join(projectRoot, 'package.json'), 'utf8');
+      sinon.assert.calledWith(
+        readFileStub,
+        path.join(projectRoot, 'package.json'),
+        'utf8',
+      );
       expect(config).to.deep.contain(readConfig);
     });
 
@@ -179,7 +218,11 @@ describe(CustomJestConfigLoader.name, () => {
       const config = await sut.loadConfig();
 
       // Assert
-      sinon.assert.calledWith(readFileStub, path.join(projectRoot, 'package.json'), 'utf8');
+      sinon.assert.calledWith(
+        readFileStub,
+        path.join(projectRoot, 'package.json'),
+        'utf8',
+      );
       expect(config).to.deep.contain(readConfig);
     });
 
@@ -197,12 +240,18 @@ describe(CustomJestConfigLoader.name, () => {
       const config = await sut.loadConfig();
 
       // Assert
-      sinon.assert.calledWith(readFileStub, path.join(projectRoot, 'client', 'package.json'), 'utf8');
+      sinon.assert.calledWith(
+        readFileStub,
+        path.join(projectRoot, 'client', 'package.json'),
+        'utf8',
+      );
       expect(config).to.deep.contain(readConfig);
     });
 
     it('should load the default Jest configuration if there is no package.json config or jest.config.js', async () => {
-      requireFromCwdStub.throws(Error('ENOENT: no such file or directory, open package.json'));
+      requireFromCwdStub.throws(
+        Error('ENOENT: no such file or directory, open package.json'),
+      );
       readFileStub.resolves('{ }'); // note, no `jest` key here!
       const config = await sut.loadConfig();
       expect(config).to.deep.equal({});

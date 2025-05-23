@@ -32,7 +32,12 @@ export class TempTestDirectorySandbox {
     if (this.soft) {
       this.tmpDir = path.resolve(this.from);
     } else {
-      this.tmpDir = path.resolve(this.originalWorkingDir, 'testResources', 'tmp', `workDir-${random()}`);
+      this.tmpDir = path.resolve(
+        this.originalWorkingDir,
+        'testResources',
+        'tmp',
+        `workDir-${random()}`,
+      );
       await fs.promises.cp(this.from, this.tmpDir, { recursive: true });
     }
     process.chdir(this.tmpDir);

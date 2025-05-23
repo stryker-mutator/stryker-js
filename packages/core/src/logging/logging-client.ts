@@ -11,7 +11,10 @@ import { coreTokens } from '../di/index.js';
 export class LoggingClient implements LoggingSink, Disposable {
   #socket?: net.Socket;
 
-  static readonly inject = [coreTokens.loggerActiveLevel, coreTokens.loggingServerAddress] as const;
+  static readonly inject = [
+    coreTokens.loggerActiveLevel,
+    coreTokens.loggingServerAddress,
+  ] as const;
   constructor(
     private logLevel: LogLevel,
     private loggingServerAddress: LoggingServerAddress,
@@ -19,7 +22,11 @@ export class LoggingClient implements LoggingSink, Disposable {
 
   openConnection() {
     return new Promise<void>((res, rej) => {
-      this.#socket = net.createConnection(this.loggingServerAddress.port, 'localhost', res);
+      this.#socket = net.createConnection(
+        this.loggingServerAddress.port,
+        'localhost',
+        res,
+      );
       this.#socket.on('error', (error) => {
         console.error('Error occurred in logging client', error);
         rej(error);

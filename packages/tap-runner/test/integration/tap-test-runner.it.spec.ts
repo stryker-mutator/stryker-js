@@ -3,8 +3,16 @@ import os from 'os';
 import { fileURLToPath } from 'url';
 
 import { expect } from 'chai';
-import { factory, TempTestDirectorySandbox, testInjector, assertions } from '@stryker-mutator/test-helpers';
-import { DryRunStatus, KilledMutantRunResult } from '@stryker-mutator/api/test-runner';
+import {
+  factory,
+  TempTestDirectorySandbox,
+  testInjector,
+  assertions,
+} from '@stryker-mutator/test-helpers';
+import {
+  DryRunStatus,
+  KilledMutantRunResult,
+} from '@stryker-mutator/api/test-runner';
 import { normalizeFileName } from '@stryker-mutator/util';
 
 import { TapTestRunner } from '../../src/index.js';
@@ -20,7 +28,16 @@ describe('tap-runner integration', () => {
   let sut: TapTestRunner;
   let sandbox: TempTestDirectorySandbox;
   let options: TapRunnerOptionsWithStrykerOptions;
-  const hooksFile = normalizeFileName(path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', 'src', 'setup', 'hook.cjs'));
+  const hooksFile = normalizeFileName(
+    path.resolve(
+      path.dirname(fileURLToPath(import.meta.url)),
+      '..',
+      '..',
+      'src',
+      'setup',
+      'hook.cjs',
+    ),
+  );
 
   beforeEach(() => {
     options = testInjector.options as TapRunnerOptionsWithStrykerOptions;
@@ -36,16 +53,22 @@ describe('tap-runner integration', () => {
     beforeEach(async () => {
       sandbox = new TempTestDirectorySandbox('example');
       await sandbox.init();
-      sut = testInjector.injector.injectFunction(createTapTestRunnerFactory('__stryker2__'));
+      sut = testInjector.injector.injectFunction(
+        createTapTestRunnerFactory('__stryker2__'),
+      );
       await sut.init();
 
       const excludeFiles = ['tests/bail.spec.js', 'tests/error.spec.js'];
-      testFilter = (await findTestyLookingFiles(options.tap.testFiles)).filter((file) => !excludeFiles.includes(file));
+      testFilter = (await findTestyLookingFiles(options.tap.testFiles)).filter(
+        (file) => !excludeFiles.includes(file),
+      );
     });
 
     it('should be able complete a dry run', async () => {
       // Act
-      const run = await sut.dryRun(factory.dryRunOptions({ files: testFilter }));
+      const run = await sut.dryRun(
+        factory.dryRunOptions({ files: testFilter }),
+      );
 
       // Assert
       expect(run.status).eq(DryRunStatus.Complete);
@@ -89,20 +112,26 @@ describe('tap-runner integration', () => {
     it('should be able to run mutantRun that gets killed', async () => {
       // Act
       const testFiles = ['tests/error.spec.js'];
-      const run = await sut.mutantRun(factory.mutantRunOptions({ disableBail: true, testFilter: testFiles }));
+      const run = await sut.mutantRun(
+        factory.mutantRunOptions({ disableBail: true, testFilter: testFiles }),
+      );
 
       // Assert
       assertions.expectKilled(run);
 
       expect([...run.killedBy].sort()).deep.eq(['tests/error.spec.js']);
-      expect(run.failureMessage).eq('Concat two strings > An error occurred: An error occurred');
+      expect(run.failureMessage).eq(
+        'Concat two strings > An error occurred: An error occurred',
+      );
     });
 
     it('should be able to run test file with random output', async () => {
       const testFiles = ['tests/random-output.spec.js'];
 
       // Act
-      const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles }));
+      const run = await sut.mutantRun(
+        factory.mutantRunOptions({ testFilter: testFiles }),
+      );
       // Assert
       assertions.expectSurvived(run);
     });
@@ -110,13 +139,16 @@ describe('tap-runner integration', () => {
     it('should be able to run test file without output', async () => {
       const testFiles = ['tests/no-output.spec.js'];
       // Act
-      const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles }));
+      const run = await sut.mutantRun(
+        factory.mutantRunOptions({ testFilter: testFiles }),
+      );
 
       // Assert
       assertions.expectSurvived(run);
     });
 
-    const bailedFailureMessage = 'Failing test > This test will fail: This test will fail';
+    const bailedFailureMessage =
+      'Failing test > This test will fail: This test will fail';
     const notBailedFailureMessage =
       'Failing test > This test will fail: This test will fail, This long tests could be bailed > 3hours is not 3hours: 3hours is not 3hours';
     it('should not bail out process when disableBail is false and forceBail is false', async () => {
@@ -185,12 +217,20 @@ describe('tap-runner integration', () => {
       expect(timeDiff).gte(BAIL_TIMEOUT);
     });
 
-    async function arrangeAndActBail(disableBail: boolean, forceBail: boolean): Promise<KilledMutantRunResult> {
+    async function arrangeAndActBail(
+      disableBail: boolean,
+      forceBail: boolean,
+    ): Promise<KilledMutantRunResult> {
       options.tap.forceBail = forceBail;
       const testFiles = ['tests/bail.spec.js', 'tests/error.spec.js'];
 
       // Act
-      const run = await sut.mutantRun(factory.mutantRunOptions({ testFilter: testFiles, disableBail: disableBail }));
+      const run = await sut.mutantRun(
+        factory.mutantRunOptions({
+          testFilter: testFiles,
+          disableBail: disableBail,
+        }),
+      );
 
       assertions.expectKilled(run);
       return run;
@@ -204,7 +244,9 @@ describe('tap-runner integration', () => {
       options.tap = tapRunnerOptions({
         testFiles: ['readme.md'], // WAT??? -> Not even a .js file
       });
-      sut = testInjector.injector.injectFunction(createTapTestRunnerFactory('__stryker2__'));
+      sut = testInjector.injector.injectFunction(
+        createTapTestRunnerFactory('__stryker2__'),
+      );
       await sut.init();
     });
 
@@ -214,7 +256,9 @@ describe('tap-runner integration', () => {
 
       // Assert
       assertions.expectErrored(run);
-      expect(run.errorMessage).contains('Error running file "readme.md". Tap process exited with code 1');
+      expect(run.errorMessage).contains(
+        'Error running file "readme.md". Tap process exited with code 1',
+      );
     });
   });
 
@@ -225,7 +269,9 @@ describe('tap-runner integration', () => {
       options.tap = tapRunnerOptions({
         nodeArgs: ['--loader', 'ts-node/esm'],
       });
-      sut = testInjector.injector.injectFunction(createTapTestRunnerFactory('__stryker2__'));
+      sut = testInjector.injector.injectFunction(
+        createTapTestRunnerFactory('__stryker2__'),
+      );
       await sut.init();
     });
 
@@ -259,7 +305,9 @@ describe('tap-runner integration', () => {
       options.tap = tapRunnerOptions({
         nodeArgs: [avaLocation, '--tap'],
       });
-      sut = testInjector.injector.injectFunction(createTapTestRunnerFactory('__stryker2__'));
+      sut = testInjector.injector.injectFunction(
+        createTapTestRunnerFactory('__stryker2__'),
+      );
       await sut.init();
     });
 

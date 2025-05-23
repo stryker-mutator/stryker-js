@@ -2,7 +2,13 @@ import path from 'path';
 import { isDeepStrictEqual } from 'util';
 
 import { Minimatch } from 'minimatch';
-import { StrykerOptions, FileDescriptions, FileDescription, Location, Position } from '@stryker-mutator/api/core';
+import {
+  StrykerOptions,
+  FileDescriptions,
+  FileDescription,
+  Location,
+  Position,
+} from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { ERROR_CODES, I, isErrnoException } from '@stryker-mutator/util';
@@ -16,7 +22,15 @@ import { coreTokens } from '../di/index.js';
 import { Project } from './project.js';
 import { FileSystem } from './file-system.js';
 
-const ALWAYS_IGNORE = Object.freeze(['node_modules', '.git', '*.tsbuildinfo', '/stryker.log', '.next', '.nuxt', '.svelte-kit']);
+const ALWAYS_IGNORE = Object.freeze([
+  'node_modules',
+  '.git',
+  '*.tsbuildinfo',
+  '/stryker.log',
+  '.next',
+  '.nuxt',
+  '.svelte-kit',
+]);
 
 export const IGNORE_PATTERN_CHARACTER = '!';
 /**
@@ -26,7 +40,8 @@ export const IGNORE_PATTERN_CHARACTER = '!';
  * * "src/app.js:5:4-6:4" will mutate from line 5, column 4 through line 6 column 4 inside app.js (columns 4 are included).
  * * "src/app.js:5-6:4" will mutate from line 5, column 0 through line 6 column 4 inside app.js (column 4 is included).
  */
-export const MUTATION_RANGE_REGEX = /(.*?):((\d+)(?::(\d+))?-(\d+)(?::(\d+))?)$/;
+export const MUTATION_RANGE_REGEX =
+  /(.*?):((\d+)(?::(\d+))?-(\d+)(?::(\d+))?)$/;
 
 export class ProjectReader {
   private readonly mutatePatterns: readonly string[];
@@ -35,14 +50,34 @@ export class ProjectReader {
   private readonly force: boolean;
   private readonly incrementalFile: string;
 
-  public static inject = tokens(coreTokens.fs, commonTokens.logger, commonTokens.options);
+  public static inject = tokens(
+    coreTokens.fs,
+    commonTokens.logger,
+    commonTokens.options,
+  );
   constructor(
     private readonly fs: I<FileSystem>,
     private readonly log: Logger,
-    { mutate, tempDirName, ignorePatterns, incremental, incrementalFile, force, htmlReporter, jsonReporter }: StrykerOptions,
+    {
+      mutate,
+      tempDirName,
+      ignorePatterns,
+      incremental,
+      incrementalFile,
+      force,
+      htmlReporter,
+      jsonReporter,
+    }: StrykerOptions,
   ) {
     this.mutatePatterns = mutate;
-    this.ignoreRules = [...ALWAYS_IGNORE, tempDirName, incrementalFile, htmlReporter.fileName, jsonReporter.fileName, ...ignorePatterns];
+    this.ignoreRules = [
+      ...ALWAYS_IGNORE,
+      tempDirName,
+      incrementalFile,
+      htmlReporter.fileName,
+      jsonReporter.fileName,
+      ...ignorePatterns,
+    ];
     this.incremental = incremental;
     this.incrementalFile = incrementalFile;
     this.force = force;
@@ -51,8 +86,17 @@ export class ProjectReader {
   public async read(): Promise<Project> {
     const inputFileNames = await this.resolveInputFileNames();
     const fileDescriptions = this.resolveFileDescriptions(inputFileNames);
-    const project = new Project(this.fs, fileDescriptions, await this.readIncrementalReport());
-    project.logFiles(this.log, this.ignoreRules, this.force, this.mutatePatterns);
+    const project = new Project(
+      this.fs,
+      fileDescriptions,
+      await this.readIncrementalReport(),
+    );
+    project.logFiles(
+      this.log,
+      this.ignoreRules,
+      this.force,
+      this.mutatePatterns,
+    );
     return project;
   }
 
@@ -63,16 +107,24 @@ export class ProjectReader {
    */
   private resolveFileDescriptions(inputFileNames: string[]): FileDescriptions {
     // Only log about useless patterns when the user actually configured it
-    const logAboutUselessPatterns = !isDeepStrictEqual(this.mutatePatterns, defaultOptions.mutate);
+    const logAboutUselessPatterns = !isDeepStrictEqual(
+      this.mutatePatterns,
+      defaultOptions.mutate,
+    );
 
     // Start out without files to mutate
     const mutateInputFileMap = new Map<string, FileDescription>();
-    inputFileNames.forEach((fileName) => mutateInputFileMap.set(fileName, { mutate: false }));
+    inputFileNames.forEach((fileName) =>
+      mutateInputFileMap.set(fileName, { mutate: false }),
+    );
 
     // Now lets see what we need to mutate
     for (const pattern of this.mutatePatterns) {
       if (pattern.startsWith(IGNORE_PATTERN_CHARACTER)) {
-        const files = this.filterMutatePattern(mutateInputFileMap.keys(), pattern.substring(1));
+        const files = this.filterMutatePattern(
+          mutateInputFileMap.keys(),
+          pattern.substring(1),
+        );
         if (logAboutUselessPatterns && files.size === 0) {
           this.log.warn(`Glob pattern "${pattern}" did not exclude any files.`);
         }
@@ -82,17 +134,25 @@ export class ProjectReader {
       } else {
         const files = this.filterMutatePattern(inputFileNames, pattern);
         if (logAboutUselessPatterns && files.size === 0) {
-          this.log.warn(`Glob pattern "${pattern}" did not result in any files.`);
+          this.log.warn(
+            `Glob pattern "${pattern}" did not result in any files.`,
+          );
         }
         for (const [fileName, file] of files) {
-          mutateInputFileMap.set(fileName, this.mergeFileDescriptions(file, mutateInputFileMap.get(fileName)));
+          mutateInputFileMap.set(
+            fileName,
+            this.mergeFileDescriptions(file, mutateInputFileMap.get(fileName)),
+          );
         }
       }
     }
     return Object.fromEntries(mutateInputFileMap);
   }
 
-  private mergeFileDescriptions(first: FileDescription, second?: FileDescription): FileDescription {
+  private mergeFileDescriptions(
+    first: FileDescription,
+    second?: FileDescription,
+  ): FileDescription {
     if (second) {
       if (Array.isArray(first.mutate) && Array.isArray(second.mutate)) {
         return { mutate: [...second.mutate, ...first.mutate] };
@@ -112,21 +172,37 @@ export class ProjectReader {
    * @param fileNames the file names to match to the pattern
    * @param mutatePattern the pattern to match with
    */
-  private filterMutatePattern(fileNames: Iterable<string>, mutatePattern: string): Map<string, FileDescription> {
+  private filterMutatePattern(
+    fileNames: Iterable<string>,
+    mutatePattern: string,
+  ): Map<string, FileDescription> {
     const mutationRangeMatch = MUTATION_RANGE_REGEX.exec(mutatePattern);
     let mutate: FileDescription['mutate'] = true;
     if (mutationRangeMatch) {
-      const [_, newPattern, _mutationRange, startLine, startColumn = '0', endLine, endColumn = Number.MAX_SAFE_INTEGER.toString()] =
-        mutationRangeMatch;
+      const [
+        _,
+        newPattern,
+        _mutationRange,
+        startLine,
+        startColumn = '0',
+        endLine,
+        endColumn = Number.MAX_SAFE_INTEGER.toString(),
+      ] = mutationRangeMatch;
       mutatePattern = newPattern;
       mutate = [
         {
-          start: { line: parseInt(startLine) - 1, column: parseInt(startColumn) },
+          start: {
+            line: parseInt(startLine) - 1,
+            column: parseInt(startColumn),
+          },
           end: { line: parseInt(endLine) - 1, column: parseInt(endColumn) },
         },
       ];
     }
-    const matcher = new FileMatcher(mutatePattern, /* allowHiddenFiles */ false);
+    const matcher = new FileMatcher(
+      mutatePattern,
+      /* allowHiddenFiles */ false,
+    );
     const inputFiles = new Map<string, FileDescription>();
     for (const fileName of fileNames) {
       if (matcher.matches(fileName)) {
@@ -137,7 +213,10 @@ export class ProjectReader {
   }
 
   private async resolveInputFileNames(): Promise<string[]> {
-    const ignoreRules = this.ignoreRules.map((pattern) => new Minimatch(pattern, { dot: true, flipNegate: true, nocase: true }));
+    const ignoreRules = this.ignoreRules.map(
+      (pattern) =>
+        new Minimatch(pattern, { dot: true, flipNegate: true, nocase: true }),
+    );
 
     /**
      * Rewrite of: https://github.com/npm/ignore-walk/blob/0e4f87adccb3e16f526d2e960ed04bdc77fd6cca/index.js#L213-L215
@@ -147,7 +226,11 @@ export class ProjectReader {
     };
 
     // Inspired by https://github.com/npm/ignore-walk/blob/0e4f87adccb3e16f526d2e960ed04bdc77fd6cca/index.js#L124
-    const matchesDirectory = (entryName: string, entryPath: string, rule: Minimatch) => {
+    const matchesDirectory = (
+      entryName: string,
+      entryPath: string,
+      rule: Minimatch,
+    ) => {
       return (
         matchesFile(entryName, entryPath, rule) ||
         rule.match(`/${entryPath}/`) ||
@@ -157,8 +240,16 @@ export class ProjectReader {
     };
 
     // Inspired by https://github.com/npm/ignore-walk/blob/0e4f87adccb3e16f526d2e960ed04bdc77fd6cca/index.js#L123
-    const matchesFile = (entryName: string, entryPath: string, rule: Minimatch) => {
-      return rule.match(entryName) || rule.match(entryPath) || rule.match(`/${entryPath}`);
+    const matchesFile = (
+      entryName: string,
+      entryPath: string,
+      rule: Minimatch,
+    ) => {
+      return (
+        rule.match(entryName) ||
+        rule.match(entryPath) ||
+        rule.match(`/${entryPath}`)
+      );
     };
 
     const crawlDir = async (dir: string, rootDir = dir): Promise<string[]> => {
@@ -171,7 +262,9 @@ export class ProjectReader {
             const entryPath = `${relativeName.length ? `${relativeName}/` : ''}${dirEntry.name}`;
             ignoreRules.forEach((rule) => {
               if (rule.negate !== included) {
-                const match = dirEntry.isDirectory() ? matchesDirectory(dirEntry.name, entryPath, rule) : matchesFile(dirEntry.name, entryPath, rule);
+                const match = dirEntry.isDirectory()
+                  ? matchesDirectory(dirEntry.name, entryPath, rule)
+                  : matchesFile(dirEntry.name, entryPath, rule);
                 if (match) {
                   included = rule.negate;
                 }
@@ -181,7 +274,10 @@ export class ProjectReader {
           })
           .map(async (dirent) => {
             if (dirent.isDirectory()) {
-              return crawlDir(path.resolve(rootDir, relativeName, dirent.name), rootDir);
+              return crawlDir(
+                path.resolve(rootDir, relativeName, dirent.name),
+                rootDir,
+              );
             } else {
               return path.resolve(rootDir, relativeName, dirent.name);
             }
@@ -193,7 +289,9 @@ export class ProjectReader {
     return files;
   }
 
-  private async readIncrementalReport(): Promise<MutationTestResult | undefined> {
+  private async readIncrementalReport(): Promise<
+    MutationTestResult | undefined
+  > {
     if (!this.incremental) {
       return;
     }
@@ -206,7 +304,13 @@ export class ProjectReader {
         files: Object.fromEntries(
           Object.entries(result.files).map(([fileName, file]) => [
             fileName,
-            { ...file, mutants: file.mutants.map((mutant) => ({ ...mutant, location: reportLocationToStrykerLocation(mutant.location) })) },
+            {
+              ...file,
+              mutants: file.mutants.map((mutant) => ({
+                ...mutant,
+                location: reportLocationToStrykerLocation(mutant.location),
+              })),
+            },
           ]),
         ),
         testFiles:
@@ -216,14 +320,25 @@ export class ProjectReader {
               fileName,
               {
                 ...file,
-                tests: file.tests.map((test) => ({ ...test, location: test.location && reportOpenEndLocationToStrykerLocation(test.location) })),
+                tests: file.tests.map((test) => ({
+                  ...test,
+                  location:
+                    test.location &&
+                    reportOpenEndLocationToStrykerLocation(test.location),
+                })),
               },
             ]),
           ),
       };
     } catch (err: unknown) {
-      if (isErrnoException(err) && err.code === ERROR_CODES.NoSuchFileOrDirectory) {
-        this.log.info('No incremental result file found at %s, a full mutation testing run will be performed.', this.incrementalFile);
+      if (
+        isErrnoException(err) &&
+        err.code === ERROR_CODES.NoSuchFileOrDirectory
+      ) {
+        this.log.info(
+          'No incremental result file found at %s, a full mutation testing run will be performed.',
+          this.incrementalFile,
+        );
         return;
       }
       // Whoops, didn't mean to catch this one!
@@ -232,7 +347,10 @@ export class ProjectReader {
   }
 }
 
-function reportOpenEndLocationToStrykerLocation({ start, end }: OpenEndLocation): OpenEndLocation {
+function reportOpenEndLocationToStrykerLocation({
+  start,
+  end,
+}: OpenEndLocation): OpenEndLocation {
   return {
     start: reportPositionToStrykerPosition(start),
     end: end && reportPositionToStrykerPosition(end),

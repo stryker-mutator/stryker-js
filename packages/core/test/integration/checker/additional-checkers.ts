@@ -13,7 +13,12 @@ class HealthyChecker implements Checker {
   }
 
   public async check([mutant]: Mutant[]): Promise<Record<string, CheckResult>> {
-    return { [mutant.id]: mutant.id === '1' ? { status: CheckStatus.Passed } : { status: CheckStatus.CompileError, reason: 'Id is not 1 🤷‍♂️' } };
+    return {
+      [mutant.id]:
+        mutant.id === '1'
+          ? { status: CheckStatus.Passed }
+          : { status: CheckStatus.CompileError, reason: 'Id is not 1 🤷‍♂️' },
+    };
   }
 }
 
@@ -35,9 +40,16 @@ export class TwoTimesTheCharm implements Checker {
   }
 
   public async check(mutants: Mutant[]): Promise<Record<string, CheckResult>> {
-    let count = +(await fs.promises.readFile(TwoTimesTheCharm.COUNTER_FILE, 'utf-8'));
+    let count = +(await fs.promises.readFile(
+      TwoTimesTheCharm.COUNTER_FILE,
+      'utf-8',
+    ));
     count++;
-    await fs.promises.writeFile(TwoTimesTheCharm.COUNTER_FILE, count.toString(), 'utf-8');
+    await fs.promises.writeFile(
+      TwoTimesTheCharm.COUNTER_FILE,
+      count.toString(),
+      'utf-8',
+    );
     if (count >= 2) {
       return { [mutants[0].id]: { status: CheckStatus.Passed } };
     } else {
@@ -53,9 +65,13 @@ export class VerifyTitle implements Checker {
 
   public async check([mutant]: Mutant[]): Promise<Record<string, CheckResult>> {
     if (mutant.fileName === process.title) {
-      return { [mutant.id]: factory.checkResult({ status: CheckStatus.Passed }) };
+      return {
+        [mutant.id]: factory.checkResult({ status: CheckStatus.Passed }),
+      };
     } else {
-      return { [mutant.id]: factory.checkResult({ status: CheckStatus.CompileError }) };
+      return {
+        [mutant.id]: factory.checkResult({ status: CheckStatus.CompileError }),
+      };
     }
   }
 }
@@ -63,6 +79,10 @@ export class VerifyTitle implements Checker {
 export const strykerPlugins = [
   declareClassPlugin(PluginKind.Checker, 'healthy', HealthyChecker),
   declareClassPlugin(PluginKind.Checker, 'crashing', CrashingChecker),
-  declareClassPlugin(PluginKind.Checker, 'two-times-the-charm', TwoTimesTheCharm),
+  declareClassPlugin(
+    PluginKind.Checker,
+    'two-times-the-charm',
+    TwoTimesTheCharm,
+  ),
   declareClassPlugin(PluginKind.Checker, 'verify-title', VerifyTitle),
 ];

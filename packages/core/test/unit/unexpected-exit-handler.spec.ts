@@ -21,7 +21,10 @@ describe(UnexpectedExitHandler.name, () => {
 
   function createSut() {
     return testInjector.injector
-      .provideValue(coreTokens.process, processMock as unknown as Pick<NodeJS.Process, 'exit' | 'off' | 'on'>)
+      .provideValue(
+        coreTokens.process,
+        processMock as unknown as Pick<NodeJS.Process, 'exit' | 'off' | 'on'>,
+      )
       .injectClass(UnexpectedExitHandler);
   }
 

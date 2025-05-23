@@ -3,7 +3,12 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs/promises';
 
-import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
+import {
+  commonTokens,
+  Injector,
+  PluginContext,
+  tokens,
+} from '@stryker-mutator/api/plugin';
 import {
   BaseTestResult,
   determineHitLimitReached,
@@ -19,22 +24,43 @@ import {
   TimeoutDryRunResult,
   toMutantRunResult,
 } from '@stryker-mutator/api/test-runner';
-import { InstrumenterContext, INSTRUMENTER_CONSTANTS, MutantCoverage, StrykerOptions } from '@stryker-mutator/api/core';
+import {
+  InstrumenterContext,
+  INSTRUMENTER_CONSTANTS,
+  MutantCoverage,
+  StrykerOptions,
+} from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { normalizeFileName } from '@stryker-mutator/util';
 
 import * as pluginTokens from './plugin-tokens.js';
-import { findTestyLookingFiles, captureTapResult, TapResult, buildArguments } from './tap-helper.js';
+import {
+  findTestyLookingFiles,
+  captureTapResult,
+  TapResult,
+  buildArguments,
+} from './tap-helper.js';
 import { TapRunnerOptionsWithStrykerOptions } from './tap-runner-options-with-stryker-options.js';
-import { strykerHitLimit, strykerNamespace, strykerDryRun, tempTapOutputFileName } from './setup/env.cjs';
+import {
+  strykerHitLimit,
+  strykerNamespace,
+  strykerDryRun,
+  tempTapOutputFileName,
+} from './setup/env.cjs';
 
-export function createTapTestRunnerFactory(namespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE): {
+export function createTapTestRunnerFactory(
+  namespace:
+    | typeof INSTRUMENTER_CONSTANTS.NAMESPACE
+    | '__stryker2__' = INSTRUMENTER_CONSTANTS.NAMESPACE,
+): {
   (injector: Injector<PluginContext>): TapTestRunner;
   inject: ['$injector'];
 } {
   createTapTestRunner.inject = tokens(commonTokens.injector);
   function createTapTestRunner(injector: Injector<PluginContext>) {
-    return injector.provideValue(pluginTokens.globalNamespace, namespace).injectClass(TapTestRunner);
+    return injector
+      .provideValue(pluginTokens.globalNamespace, namespace)
+      .injectClass(TapTestRunner);
   }
   return createTapTestRunner;
 }
@@ -55,20 +81,34 @@ interface TapRunOptions {
 }
 
 export class TapTestRunner implements TestRunner {
-  public static inject = tokens(commonTokens.options, commonTokens.logger, pluginTokens.globalNamespace);
+  public static inject = tokens(
+    commonTokens.options,
+    commonTokens.logger,
+    pluginTokens.globalNamespace,
+  );
   private testFiles: string[] = [];
-  private static readonly hookFile = normalizeFileName(path.resolve(path.dirname(fileURLToPath(import.meta.url)), 'setup', 'hook.cjs'));
+  private static readonly hookFile = normalizeFileName(
+    path.resolve(
+      path.dirname(fileURLToPath(import.meta.url)),
+      'setup',
+      'hook.cjs',
+    ),
+  );
   private readonly options: TapRunnerOptionsWithStrykerOptions;
 
   constructor(
     options: StrykerOptions,
     private readonly log: Logger,
-    private readonly globalNamespace: typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__',
+    private readonly globalNamespace:
+      | typeof INSTRUMENTER_CONSTANTS.NAMESPACE
+      | '__stryker2__',
   ) {
     this.options = options as TapRunnerOptionsWithStrykerOptions;
   }
 
-  public capabilities(): Promise<TestRunnerCapabilities> | TestRunnerCapabilities {
+  public capabilities():
+    | Promise<TestRunnerCapabilities>
+    | TestRunnerCapabilities {
     return { reloadEnvironment: true };
   }
 
@@ -82,11 +122,21 @@ export class TapTestRunner implements TestRunner {
 
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
     return toMutantRunResult(
-      await this.run({ disableBail: options.disableBail, activeMutant: options.activeMutant.id, hitLimit: options.hitLimit }, options.testFilter),
+      await this.run(
+        {
+          disableBail: options.disableBail,
+          activeMutant: options.activeMutant.id,
+          hitLimit: options.hitLimit,
+        },
+        options.testFilter,
+      ),
     );
   }
 
-  private async run(testOptions: TapRunOptions, testFilter?: string[]): Promise<DryRunResult> {
+  private async run(
+    testOptions: TapRunOptions,
+    testFilter?: string[],
+  ): Promise<DryRunResult> {
     const testFiles = testFilter ?? this.testFiles;
 
     const runs: TestResult[] = [];
@@ -97,11 +147,17 @@ export class TapTestRunner implements TestRunner {
 
     for (const testFile of testFiles) {
       try {
-        const { testResult, coverage } = await this.runFile(testFile, testOptions);
+        const { testResult, coverage } = await this.runFile(
+          testFile,
+          testOptions,
+        );
         runs.push(testResult);
         totalCoverage.perTest[testFile] = coverage?.static ?? {};
 
-        if (testResult.status !== TestStatus.Success && !testOptions.disableBail) {
+        if (
+          testResult.status !== TestStatus.Success &&
+          !testOptions.disableBail
+        ) {
           break;
         }
       } catch (err) {
@@ -123,36 +179,59 @@ export class TapTestRunner implements TestRunner {
     };
   }
 
-  private async runFile(testFile: string, testOptions: TapRunOptions): Promise<{ testResult: TestResult; coverage: MutantCoverage | undefined }> {
+  private async runFile(
+    testFile: string,
+    testOptions: TapRunOptions,
+  ): Promise<{ testResult: TestResult; coverage: MutantCoverage | undefined }> {
     const env: NodeJS.ProcessEnv = {
       ...process.env,
       [strykerHitLimit]: testOptions.hitLimit?.toString(),
       [strykerNamespace]: this.globalNamespace,
-      [INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]: testOptions.activeMutant,
+      [INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]:
+        testOptions.activeMutant,
       [strykerDryRun]: testOptions.dryRun?.toString(),
     };
-    const args = buildArguments(this.options.tap.nodeArgs, TapTestRunner.hookFile, testFile);
+    const args = buildArguments(
+      this.options.tap.nodeArgs,
+      TapTestRunner.hookFile,
+      testFile,
+    );
 
     if (this.log.isDebugEnabled()) {
-      this.log.debug(`Running: \`node ${args.map((arg) => `"${arg}"`).join(' ')}\` in ${process.cwd()}`);
+      this.log.debug(
+        `Running: \`node ${args.map((arg) => `"${arg}"`).join(' ')}\` in ${process.cwd()}`,
+      );
     }
     const now = () => new Date().getTime();
     const before = now();
     const tapProcess = childProcess.spawn('node', args, { env });
-    const result = await captureTapResult(tapProcess, !testOptions.disableBail && this.options.tap.forceBail);
+    const result = await captureTapResult(
+      tapProcess,
+      !testOptions.disableBail && this.options.tap.forceBail,
+    );
     const timeSpentMs = now() - before;
     const fileName = tempTapOutputFileName(tapProcess.pid);
     const fileContent = await fs.readFile(fileName, 'utf-8');
     await fs.rm(fileName);
     const file = JSON.parse(fileContent) as InstrumenterContext;
-    const hitLimitReached = determineHitLimitReached(file.hitCount, testOptions.hitLimit);
+    const hitLimitReached = determineHitLimitReached(
+      file.hitCount,
+      testOptions.hitLimit,
+    );
     if (hitLimitReached) {
       throw new HitLimitError(hitLimitReached);
     }
-    return { testResult: this.tapResultToTestResult(testFile, result, timeSpentMs), coverage: file.mutantCoverage };
+    return {
+      testResult: this.tapResultToTestResult(testFile, result, timeSpentMs),
+      coverage: file.mutantCoverage,
+    };
   }
 
-  private tapResultToTestResult(fileName: string, { result, failedTests }: TapResult, timeSpentMs: number): TestResult {
+  private tapResultToTestResult(
+    fileName: string,
+    { result, failedTests }: TapResult,
+    timeSpentMs: number,
+  ): TestResult {
     const generic: BaseTestResult = {
       id: fileName,
       name: fileName,
@@ -170,7 +249,9 @@ export class TapTestRunner implements TestRunner {
       return {
         ...generic,
         status: TestStatus.Failed,
-        failureMessage: failedTests.map((f) => `${f.fullname}: ${f.name}`).join(', ') ?? 'Unknown issue',
+        failureMessage:
+          failedTests.map((f) => `${f.fullname}: ${f.name}`).join(', ') ??
+          'Unknown issue',
       };
     }
   }

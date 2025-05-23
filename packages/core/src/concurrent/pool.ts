@@ -1,6 +1,18 @@
 import { TestRunner } from '@stryker-mutator/api/test-runner';
 import { notEmpty } from '@stryker-mutator/util';
-import { BehaviorSubject, filter, ignoreElements, lastValueFrom, mergeMap, Observable, ReplaySubject, Subject, takeUntil, tap, zip } from 'rxjs';
+import {
+  BehaviorSubject,
+  filter,
+  ignoreElements,
+  lastValueFrom,
+  mergeMap,
+  Observable,
+  ReplaySubject,
+  Subject,
+  takeUntil,
+  tap,
+  zip,
+} from 'rxjs';
 import { Disposable, tokens } from 'typed-inject';
 
 import { CheckerFacade } from '../checker/index.js';
@@ -17,13 +29,25 @@ export interface Resource extends Partial<Disposable> {
   init?(): Promise<void>;
 }
 
-createTestRunnerPool.inject = tokens(coreTokens.testRunnerFactory, coreTokens.testRunnerConcurrencyTokens);
-export function createTestRunnerPool(factory: () => TestRunnerResource, concurrencyToken$: Observable<number>): Pool<TestRunner> {
+createTestRunnerPool.inject = tokens(
+  coreTokens.testRunnerFactory,
+  coreTokens.testRunnerConcurrencyTokens,
+);
+export function createTestRunnerPool(
+  factory: () => TestRunnerResource,
+  concurrencyToken$: Observable<number>,
+): Pool<TestRunner> {
   return new Pool(factory, concurrencyToken$);
 }
 
-createCheckerPool.inject = tokens(coreTokens.checkerFactory, coreTokens.checkerConcurrencyTokens);
-export function createCheckerPool(factory: () => CheckerFacade, concurrencyToken$: Observable<number>): Pool<CheckerFacade> {
+createCheckerPool.inject = tokens(
+  coreTokens.checkerFactory,
+  coreTokens.checkerConcurrencyTokens,
+);
+export function createCheckerPool(
+  factory: () => CheckerFacade,
+  concurrencyToken$: Observable<number>,
+): Pool<CheckerFacade> {
   return new Pool<CheckerFacade>(factory, concurrencyToken$);
 }
 
@@ -40,7 +64,10 @@ class WorkItem<TResource extends Resource, TIn, TOut> {
    */
   constructor(
     private readonly input: TIn,
-    private readonly task: (resource: TResource, input: TIn) => Promise<TOut> | TOut,
+    private readonly task: (
+      resource: TResource,
+      input: TIn,
+    ) => Promise<TOut> | TOut,
   ) {}
 
   public async execute(resource: TResource) {
@@ -76,11 +103,15 @@ export class Pool<TResource extends Resource> implements Disposable {
   private readonly disposedSubject = new BehaviorSubject(false);
 
   // The dispose$ only emits one `true` value when disposed (never emits `false`). Useful for `takeUntil`
-  private readonly dispose$ = this.disposedSubject.pipe(filter((isDisposed) => isDisposed));
+  private readonly dispose$ = this.disposedSubject.pipe(
+    filter((isDisposed) => isDisposed),
+  );
 
   private readonly createdResources: TResource[] = [];
   // The queued work items. This is a replay subject, so scheduled work items can easily be rejected after it was picked up
-  private readonly todoSubject = new ReplaySubject<WorkItem<TResource, any, any>>();
+  private readonly todoSubject = new ReplaySubject<
+    WorkItem<TResource, any, any>
+  >();
 
   constructor(factory: () => TResource, concurrencyToken$: Observable<number>) {
     // Stream resources that are ready to pick up work
@@ -147,7 +178,10 @@ export class Pool<TResource extends Resource> implements Disposable {
    * @param input$ The inputs to pair up with a resource.
    * @param task The task to execute on each resource
    */
-  public schedule<TIn, TOut>(input$: Observable<TIn>, task: (resource: TResource, input: TIn) => Promise<TOut> | TOut): Observable<TOut> {
+  public schedule<TIn, TOut>(
+    input$: Observable<TIn>,
+    task: (resource: TResource, input: TIn) => Promise<TOut> | TOut,
+  ): Observable<TOut> {
     return input$.pipe(
       mergeMap((input) => {
         const workItem = new WorkItem(input, task);
@@ -165,7 +199,9 @@ export class Pool<TResource extends Resource> implements Disposable {
       this.disposedSubject.next(true);
       this.todoSubject.subscribe((workItem) => workItem.complete());
       this.todoSubject.complete();
-      await Promise.all(this.createdResources.map((resource) => resource.dispose?.()));
+      await Promise.all(
+        this.createdResources.map((resource) => resource.dispose?.()),
+      );
     }
   }
 }

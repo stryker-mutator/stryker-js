@@ -19,14 +19,18 @@ describe('angularStarter', () => {
     cliStub = sinon.stub();
     requireResolveStub = sinon.stub();
     requireResolveStub.withArgs('@angular/cli').returns(cliStub);
-    sut = testInjector.injector.provideValue(pluginTokens.requireResolve, requireResolveStub).injectClass(AngularProjectStarter);
+    sut = testInjector.injector
+      .provideValue(pluginTokens.requireResolve, requireResolveStub)
+      .injectClass(AngularProjectStarter);
     options = testInjector.options as KarmaRunnerOptionsWithStrykerOptions;
     options.karma = { projectType: 'angular-cli' };
   });
 
   it('should throw an error if angular cli version < 6.1.0', async () => {
     setAngularVersion('6.0.8');
-    await expect(sut.start()).rejectedWith('Your @angular/cli version (6.0.8) is not supported. Please install 6.1.0 or higher');
+    await expect(sut.start()).rejectedWith(
+      'Your @angular/cli version (6.0.8) is not supported. Please install 6.1.0 or higher',
+    );
   });
 
   it('should support version 6.1.0 and up inc release candidates', async () => {
@@ -49,7 +53,11 @@ describe('angularStarter', () => {
     setAngularVersion();
     await sut.start();
     expect(cliStub).calledWith({
-      cliArgs: ['test', '--progress=false', `--karma-config=${strykerKarmaConfigPath}`],
+      cliArgs: [
+        'test',
+        '--progress=false',
+        `--karma-config=${strykerKarmaConfigPath}`,
+      ],
     });
   });
 
@@ -65,7 +73,14 @@ describe('angularStarter', () => {
     cliStub.resolves();
     await sut.start();
     expect(cliStub).calledWith({
-      cliArgs: ['test', '--progress=false', `--karma-config=${strykerKarmaConfigPath}`, '--baz=true', '--foo=bar', '--foo-bar=baz'],
+      cliArgs: [
+        'test',
+        '--progress=false',
+        `--karma-config=${strykerKarmaConfigPath}`,
+        '--baz=true',
+        '--foo=bar',
+        '--foo-bar=baz',
+      ],
     });
   });
 

@@ -2,24 +2,37 @@ import sinon from 'sinon';
 import { expect } from 'chai';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { commonTokens, Injector } from '@stryker-mutator/api/plugin';
-import { LoggingBackend, LoggingSink, provideLoggingBackend, provideLoggingClient } from '../../../src/logging/index.js';
+import {
+  LoggingBackend,
+  LoggingSink,
+  provideLogging,
+  provideLoggingBackend,
+  provideLoggingClient,
+} from '../../../src/logging/index.js';
 import { coreTokens } from '../../../src/di/index.js';
-import { LoggingServer, LoggingServerAddress } from '../../../src/logging/logging-server.js';
+import {
+  LoggingServer,
+  LoggingServerAddress,
+} from '../../../src/logging/logging-server.js';
 import { LoggingClient } from '../../../src/logging/logging-client.js';
 import { LogLevel } from '@stryker-mutator/api/core';
 
 describe('Provide logging', () => {
   describe(provideLoggingBackend.name, () => {
-    let injectorMock: sinon.SinonStubbedInstance<Awaited<ReturnType<typeof provideLoggingBackend>>>;
+    let injectorMock: sinon.SinonStubbedInstance<
+      Injector<
+        ReturnType<typeof provideLoggingBackend> & {
+          [coreTokens.loggingServer]: LoggingServer;
+        }
+      >
+    >;
     let loggingServerMock: sinon.SinonStubbedInstance<LoggingServer>;
-    let loggingBackendMock: sinon.SinonStubbedInstance<LoggingBackend>;
-
     beforeEach(() => {
       injectorMock = factory.injector();
       loggingServerMock = sinon.createStubInstance(LoggingServer);
-      loggingBackendMock = sinon.createStubInstance(LoggingBackend);
-      injectorMock.resolve.withArgs(coreTokens.loggingServer).returns(loggingServerMock);
-      injectorMock.resolve.withArgs(coreTokens.loggingSink).returns(loggingBackendMock);
+      injectorMock.resolve
+        .withArgs(coreTokens.loggingServer)
+        .returns(loggingServerMock);
     });
 
     it('should provide a logging backend', async () => {
@@ -28,7 +41,11 @@ describe('Provide logging', () => {
 
       // Assert
       expect(result).eq(injectorMock);
-      sinon.assert.calledWithExactly(injectorMock.provideClass, coreTokens.loggingSink, LoggingBackend);
+      sinon.assert.calledWithExactly(
+        injectorMock.provideClass,
+        coreTokens.loggingSink,
+        LoggingBackend,
+      );
     });
     it('should open the logging server and provide the address', async () => {
       // Arrange
@@ -39,46 +56,25 @@ describe('Provide logging', () => {
       await provideLoggingBackend(injectorMock);
 
       // Assert
-      sinon.assert.calledWithExactly(injectorMock.provideValue, coreTokens.loggingServerAddress, expectedAddress);
-    });
-
-    it('should provide a logger factory', async () => {
-      // Arrange
-      const expectedAddress: LoggingServerAddress = { port: 42 };
-      loggingServerMock.listen.resolves(expectedAddress);
-
-      // Act
-      const actualInjector = await provideLoggingBackend(injectorMock);
-      const getLogger = actualInjector.resolve(commonTokens.getLogger);
-
-      // Assert
-      const logger = getLogger('foo');
-      logger.info('bar');
-      sinon.assert.calledWith(loggingBackendMock.log, sinon.match({ level: LogLevel.Information, data: ['bar'], categoryName: 'foo' }));
-    });
-
-    it('should provide a logger', async () => {
-      // Arrange
-      const expectedAddress: LoggingServerAddress = { port: 42 };
-      loggingServerMock.listen.resolves(expectedAddress);
-
-      // Act
-      const actualInjector = await provideLoggingBackend(injectorMock);
-      const logger = actualInjector.resolve(commonTokens.logger);
-
-      // Assert
-      logger.info('bar');
-      sinon.assert.calledWith(loggingBackendMock.log, sinon.match({ level: LogLevel.Information, data: ['bar'], categoryName: 'UNKNOWN' }));
+      sinon.assert.calledWithExactly(
+        injectorMock.provideValue,
+        coreTokens.loggingServerAddress,
+        expectedAddress,
+      );
     });
   });
 
   describe(provideLoggingClient.name, () => {
-    let injectorMock: sinon.SinonStubbedInstance<Awaited<ReturnType<typeof provideLoggingClient>>>;
+    let injectorMock: sinon.SinonStubbedInstance<
+      Awaited<ReturnType<typeof provideLoggingClient>>
+    >;
     let loggingClientMock: sinon.SinonStubbedInstance<LoggingClient>;
     beforeEach(() => {
       injectorMock = factory.injector();
       loggingClientMock = sinon.createStubInstance(LoggingClient);
-      injectorMock.resolve.withArgs(coreTokens.loggingSink).returns(loggingClientMock);
+      injectorMock.resolve
+        .withArgs(coreTokens.loggingSink)
+        .returns(loggingClientMock);
     });
 
     it('should provide a logging client', async () => {
@@ -87,12 +83,24 @@ describe('Provide logging', () => {
       const activeLogLevel = LogLevel.Error;
 
       // Act
-      const result = await provideLoggingClient(injectorMock, loggingServerAddress, activeLogLevel);
+      const result = await provideLoggingClient(
+        injectorMock,
+        loggingServerAddress,
+        activeLogLevel,
+      );
 
       // Assert
       expect(result).eq(injectorMock);
-      sinon.assert.calledWithExactly(injectorMock.provideValue, coreTokens.loggingServerAddress, loggingServerAddress);
-      sinon.assert.calledWithExactly(injectorMock.provideValue, coreTokens.loggerActiveLevel, activeLogLevel);
+      sinon.assert.calledWithExactly(
+        injectorMock.provideValue,
+        coreTokens.loggingServerAddress,
+        loggingServerAddress,
+      );
+      sinon.assert.calledWithExactly(
+        injectorMock.provideValue,
+        coreTokens.loggerActiveLevel,
+        activeLogLevel,
+      );
     });
 
     it('should open the connection', async () => {
@@ -102,26 +110,52 @@ describe('Provide logging', () => {
       // Assert
       sinon.assert.called(loggingClientMock.openConnection);
     });
+  });
 
-    it('should provide a logger factory', async () => {
-      const loggingServerAddress = { port: 42 };
-      const activeLogLevel = LogLevel.Error;
+  describe(provideLogging.name, () => {
+    let loggingSinkMock: sinon.SinonStubbedInstance<LoggingSink>;
 
-      const actualInjector = await provideLoggingClient(injectorMock, loggingServerAddress, activeLogLevel);
+    beforeEach(() => {
+      loggingSinkMock = {
+        isEnabled: sinon.stub(),
+        log: sinon.stub(),
+      };
+    });
+
+    function createInjector() {
+      return testInjector.injector.provideValue(
+        coreTokens.loggingSink,
+        loggingSinkMock,
+      );
+    }
+
+    it('should provide a logger factory', () => {
+      const actualInjector = provideLogging(createInjector());
       const getLogger = actualInjector.resolve(commonTokens.getLogger);
       const logger = getLogger('foo');
       logger.info('bar');
-      sinon.assert.calledWith(loggingClientMock.log, sinon.match({ level: LogLevel.Information, data: ['bar'], categoryName: 'foo' }));
+      sinon.assert.calledWith(
+        loggingSinkMock.log,
+        sinon.match({
+          level: LogLevel.Information,
+          data: ['bar'],
+          categoryName: 'foo',
+        }),
+      );
     });
 
-    it('should provide a logger', async () => {
-      const loggingServerAddress = { port: 42 };
-      const activeLogLevel = LogLevel.Error;
-
-      const actualInjector = await provideLoggingClient(injectorMock, loggingServerAddress, activeLogLevel);
+    it('should provide a logger', () => {
+      const actualInjector = provideLogging(createInjector());
       const logger = actualInjector.resolve(commonTokens.logger);
       logger.info('bar');
-      sinon.assert.calledWith(loggingClientMock.log, sinon.match({ level: LogLevel.Information, data: ['bar'], categoryName: 'UNKNOWN' }));
+      sinon.assert.calledWith(
+        loggingSinkMock.log,
+        sinon.match({
+          level: LogLevel.Information,
+          data: ['bar'],
+          categoryName: 'UNKNOWN',
+        }),
+      );
     });
   });
 });

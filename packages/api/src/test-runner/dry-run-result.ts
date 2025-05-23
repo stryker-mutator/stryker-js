@@ -3,7 +3,10 @@ import { MutantCoverage } from '../core/index.js';
 import { DryRunStatus } from './dry-run-status.js';
 import { TestResult } from './test-result.js';
 
-export type DryRunResult = CompleteDryRunResult | ErrorDryRunResult | TimeoutDryRunResult;
+export type DryRunResult =
+  | CompleteDryRunResult
+  | ErrorDryRunResult
+  | TimeoutDryRunResult;
 
 export interface CompleteDryRunResult {
   /**

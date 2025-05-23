@@ -27,8 +27,12 @@ describe(ReloadEnvironmentDecorator.name, () => {
 
     it('should cache capabilities', async () => {
       testRunner.capabilities.resolves({ reloadEnvironment: true });
-      await sut.mutantRun(factory.mutantRunOptions({ reloadEnvironment: true }));
-      await sut.mutantRun(factory.mutantRunOptions({ reloadEnvironment: true }));
+      await sut.mutantRun(
+        factory.mutantRunOptions({ reloadEnvironment: true }),
+      );
+      await sut.mutantRun(
+        factory.mutantRunOptions({ reloadEnvironment: true }),
+      );
       expect(testRunner.capabilities).calledOnce;
     });
 
@@ -38,10 +42,14 @@ describe(ReloadEnvironmentDecorator.name, () => {
       });
       it('should not recreate the test runner when reloadEnvironment is true', async () => {
         // Arrange
-        await sut.mutantRun(factory.mutantRunOptions({ reloadEnvironment: false })); // Mark test env state as loaded
+        await sut.mutantRun(
+          factory.mutantRunOptions({ reloadEnvironment: false }),
+        ); // Mark test env state as loaded
 
         // Act
-        await sut.mutantRun(factory.mutantRunOptions({ reloadEnvironment: true }));
+        await sut.mutantRun(
+          factory.mutantRunOptions({ reloadEnvironment: true }),
+        );
 
         // Assert
         expect(testRunnerFactory).calledOnce;
@@ -54,7 +62,9 @@ describe(ReloadEnvironmentDecorator.name, () => {
       });
 
       it('should override "reloadEnvironment" when the previous run loaded a static mutant', async () => {
-        await sut.mutantRun(factory.mutantRunOptions({ reloadEnvironment: true })); // Mark test env state as loaded a static mutant
+        await sut.mutantRun(
+          factory.mutantRunOptions({ reloadEnvironment: true }),
+        ); // Mark test env state as loaded a static mutant
         const options = factory.mutantRunOptions({ reloadEnvironment: false });
         await sut.mutantRun(options);
         expect(options.reloadEnvironment).true;
@@ -78,10 +88,14 @@ describe(ReloadEnvironmentDecorator.name, () => {
       });
       it('should recreate the test runner when reloadEnvironment is true and test environment was loaded', async () => {
         // Arrange
-        await sut.mutantRun(factory.mutantRunOptions({ reloadEnvironment: false }));
+        await sut.mutantRun(
+          factory.mutantRunOptions({ reloadEnvironment: false }),
+        );
 
         // Act
-        await sut.mutantRun(factory.mutantRunOptions({ reloadEnvironment: true }));
+        await sut.mutantRun(
+          factory.mutantRunOptions({ reloadEnvironment: true }),
+        );
 
         // Assert
         expect(testRunnerFactory).calledTwice;
@@ -89,20 +103,32 @@ describe(ReloadEnvironmentDecorator.name, () => {
 
       it('should recreate the test runner when reloadEnvironment is true and a dry run was ran before', async () => {
         await sut.dryRun(factory.dryRunOptions());
-        await sut.mutantRun(factory.mutantRunOptions({ reloadEnvironment: true }));
+        await sut.mutantRun(
+          factory.mutantRunOptions({ reloadEnvironment: true }),
+        );
         expect(testRunnerFactory).calledTwice;
       });
 
       it('should recreate the test runner when a static mutant was loaded', async () => {
-        await sut.mutantRun(factory.mutantRunOptions({ reloadEnvironment: true })); // Load static mutant
-        await sut.mutantRun(factory.mutantRunOptions({ reloadEnvironment: false }));
+        await sut.mutantRun(
+          factory.mutantRunOptions({ reloadEnvironment: true }),
+        ); // Load static mutant
+        await sut.mutantRun(
+          factory.mutantRunOptions({ reloadEnvironment: false }),
+        );
         expect(testRunnerFactory).calledTwice;
       });
 
       it('should not recreate the test runner when reloadEnvironment is false and the test environment was already loaded', async () => {
-        await sut.mutantRun(factory.mutantRunOptions({ reloadEnvironment: true }));
-        await sut.mutantRun(factory.mutantRunOptions({ reloadEnvironment: false }));
-        await sut.mutantRun(factory.mutantRunOptions({ reloadEnvironment: false }));
+        await sut.mutantRun(
+          factory.mutantRunOptions({ reloadEnvironment: true }),
+        );
+        await sut.mutantRun(
+          factory.mutantRunOptions({ reloadEnvironment: false }),
+        );
+        await sut.mutantRun(
+          factory.mutantRunOptions({ reloadEnvironment: false }),
+        );
         expect(testRunnerFactory).calledTwice;
       });
     });

@@ -33,7 +33,12 @@ export class Project {
     return this.files.size === 0;
   }
 
-  public logFiles(log: Logger, ignoreRules: readonly string[], force: boolean, mutatePatterns: readonly string[]): void {
+  public logFiles(
+    log: Logger,
+    ignoreRules: readonly string[],
+    force: boolean,
+    mutatePatterns: readonly string[],
+  ): void {
     if (this.isEmpty) {
       log.warn(
         normalizeWhitespaces(`No files found in directory ${process.cwd()} using ignore rules: ${JSON.stringify(ignoreRules)}. 
@@ -42,14 +47,20 @@ export class Project {
     } else {
       if (this.filesToMutate.size) {
         const incrementalInfo = this.incrementalReport
-          ? ` using incremental report with ${Object.values(this.incrementalReport.files).reduce(
+          ? ` using incremental report with ${Object.values(
+              this.incrementalReport.files,
+            ).reduce(
               (total, { mutants }) => total + mutants.length,
               0,
             )} mutant(s), and ${Object.values(this.incrementalReport.testFiles ?? {}).reduce((total, { tests }) => total + tests.length, 0)} test(s)${
-              force ? '. Force mode is activated, all mutants will be retested' : ''
+              force
+                ? '. Force mode is activated, all mutants will be retested'
+                : ''
             }`
           : '';
-        log.info(`Found ${this.filesToMutate.size} of ${this.files.size} file(s) to be mutated${incrementalInfo}.`);
+        log.info(
+          `Found ${this.filesToMutate.size} of ${this.files.size} file(s) to be mutated${incrementalInfo}.`,
+        );
       } else {
         const msg =
           normalizeWhitespaces(`Warning: No files found for mutation with the given glob expressions. As a result, a dry-run will be performed without actually modifying anything. 
@@ -62,8 +73,12 @@ export class Project {
         log.warn(msg);
       }
       if (log.isDebugEnabled()) {
-        log.debug(`All input files: ${JSON.stringify([...this.files.keys()], null, 2)}`);
-        log.debug(`Files to mutate: ${JSON.stringify([...this.filesToMutate.keys()], null, 2)}`);
+        log.debug(
+          `All input files: ${JSON.stringify([...this.files.keys()], null, 2)}`,
+        );
+        log.debug(
+          `Files to mutate: ${JSON.stringify([...this.filesToMutate.keys()], null, 2)}`,
+        );
       }
     }
   }

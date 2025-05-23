@@ -16,7 +16,11 @@ interface ReportResponseBody {
 const STRYKER_DASHBOARD_API_KEY = 'STRYKER_DASHBOARD_API_KEY';
 
 export class DashboardReporterClient {
-  public static inject = tokens(commonTokens.logger, dashboardReporterTokens.httpClient, commonTokens.options);
+  public static inject = tokens(
+    commonTokens.logger,
+    dashboardReporterTokens.httpClient,
+    commonTokens.options,
+  );
   constructor(
     private readonly log: Logger,
     private readonly httpClient: HttpClient,
@@ -37,9 +41,14 @@ export class DashboardReporterClient {
     const url = this.getPutUrl(projectName, version, moduleName);
     const serializedBody = JSON.stringify(report);
     this.log.info('PUT report to %s (~%s bytes)', url, serializedBody.length);
-    const apiKey = objectUtils.getEnvironmentVariable(STRYKER_DASHBOARD_API_KEY);
+    const apiKey = objectUtils.getEnvironmentVariable(
+      STRYKER_DASHBOARD_API_KEY,
+    );
     if (apiKey) {
-      this.log.debug('Using configured API key from environment "%s"', STRYKER_DASHBOARD_API_KEY);
+      this.log.debug(
+        'Using configured API key from environment "%s"',
+        STRYKER_DASHBOARD_API_KEY,
+      );
     }
     this.log.trace('PUT report %s', serializedBody);
     const result = await this.httpClient.put(url, serializedBody, {
@@ -55,11 +64,17 @@ export class DashboardReporterClient {
         `Error HTTP PUT ${url}. Unauthorized. Did you provide the correct api key in the "${STRYKER_DASHBOARD_API_KEY}" environment variable?`,
       );
     } else {
-      throw new StrykerError(`Error HTTP PUT ${url}. Response status code: ${result.message.statusCode}. Response body: ${responseBody}`);
+      throw new StrykerError(
+        `Error HTTP PUT ${url}. Response status code: ${result.message.statusCode}. Response body: ${responseBody}`,
+      );
     }
   }
 
-  private getPutUrl(repoSlug: string, version: string, moduleName: string | undefined) {
+  private getPutUrl(
+    repoSlug: string,
+    version: string,
+    moduleName: string | undefined,
+  ) {
     const base = `${this.options.dashboard.baseUrl}/${repoSlug}/${encodeURIComponent(version)}`;
     if (moduleName) {
       return `${base}?module=${encodeURIComponent(moduleName)}`;

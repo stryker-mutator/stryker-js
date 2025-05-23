@@ -8,10 +8,16 @@ import { jestTestRunnerFactory } from './jest-test-runner.js';
 
 process.env.BABEL_ENV = 'test';
 
-export const strykerPlugins = [declareFactoryPlugin(PluginKind.TestRunner, 'jest', jestTestRunnerFactory)];
+export const strykerPlugins = [
+  declareFactoryPlugin(PluginKind.TestRunner, 'jest', jestTestRunnerFactory),
+];
 
-export const strykerValidationSchema: typeof import('../schema/jest-runner-options.json') = JSON.parse(
-  fs.readFileSync(new URL('../schema/jest-runner-options.json', import.meta.url), 'utf-8'),
-);
+export const strykerValidationSchema: typeof import('../schema/jest-runner-options.json') =
+  JSON.parse(
+    fs.readFileSync(
+      new URL('../schema/jest-runner-options.json', import.meta.url),
+      'utf-8',
+    ),
+  );
 
 export { mixinJestEnvironment };

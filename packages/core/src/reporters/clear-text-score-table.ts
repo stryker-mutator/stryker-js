@@ -1,6 +1,9 @@
 import os from 'os';
 
-import { MutationScoreThresholds, StrykerOptions } from '@stryker-mutator/api/core';
+import {
+  MutationScoreThresholds,
+  StrykerOptions,
+} from '@stryker-mutator/api/core';
 
 import { MetricsResult } from 'mutation-testing-metrics';
 
@@ -10,15 +13,25 @@ import { stringWidth } from '../utils/string-utils.js';
 
 const FILES_ROOT_NAME = 'All files';
 
-type TableCellValueFactory = (row: MetricsResult, ancestorCount: number) => string;
+type TableCellValueFactory = (
+  row: MetricsResult,
+  ancestorCount: number,
+) => string;
 
-const repeat = (char: string, nTimes: number) => new Array(nTimes > -1 ? nTimes + 1 : 0).join(char);
+const repeat = (char: string, nTimes: number) =>
+  new Array(nTimes > -1 ? nTimes + 1 : 0).join(char);
 const spaces = (n: number) => repeat(' ', n);
 
-const determineContentWidth = (row: MetricsResult, valueFactory: TableCellValueFactory, ancestorCount = 0): number => {
+const determineContentWidth = (
+  row: MetricsResult,
+  valueFactory: TableCellValueFactory,
+  ancestorCount = 0,
+): number => {
   return Math.max(
     valueFactory(row, ancestorCount).length,
-    ...row.childResults.map((child) => determineContentWidth(child, valueFactory, ancestorCount + 1)),
+    ...row.childResults.map((child) =>
+      determineContentWidth(child, valueFactory, ancestorCount + 1),
+    ),
   );
 };
 
@@ -96,14 +109,20 @@ class MutationScoreColumn extends SingleColumn {
       scoreType,
       false,
       (row) => {
-        const score = scoreType === 'total' ? row.metrics.mutationScore : row.metrics.mutationScoreBasedOnCoveredCode;
+        const score =
+          scoreType === 'total'
+            ? row.metrics.mutationScore
+            : row.metrics.mutationScoreBasedOnCoveredCode;
         return isNaN(score) ? 'n/a' : score.toFixed(2);
       },
       rows,
     );
   }
   protected color(metricsResult: MetricsResult) {
-    const { mutationScore: score, mutationScoreBasedOnCoveredCode: coveredScore } = metricsResult.metrics;
+    const {
+      mutationScore: score,
+      mutationScoreBasedOnCoveredCode: coveredScore,
+    } = metricsResult.metrics;
     const scoreToUse = this.scoreType === 'total' ? score : coveredScore;
     if (isNaN(scoreToUse)) {
       return chalk.grey;
@@ -119,7 +138,14 @@ class MutationScoreColumn extends SingleColumn {
 
 class FileColumn extends SingleColumn {
   constructor(rows: MetricsResult) {
-    super('File', true, (row, ancestorCount) => spaces(ancestorCount) + (ancestorCount === 0 ? FILES_ROOT_NAME : row.name), rows);
+    super(
+      'File',
+      true,
+      (row, ancestorCount) =>
+        spaces(ancestorCount) +
+        (ancestorCount === 0 ? FILES_ROOT_NAME : row.name),
+      rows,
+    );
   }
   protected override pad(input: string): string {
     // Align left
@@ -132,7 +158,9 @@ class GroupColumn extends Column {
   constructor(groupName: string, ...columns: SingleColumn[]) {
     // Calculate the width of the columns, use the `width`, since the gross width is included in this grouped column. Subtract 2 for the padding.
     const { isFirstColumn } = columns[0];
-    const columnsWidth = columns.reduce((acc, cur) => acc + cur.width, 0) - (isFirstColumn ? 1 : 2);
+    const columnsWidth =
+      columns.reduce((acc, cur) => acc + cur.width, 0) -
+      (isFirstColumn ? 1 : 2);
     const groupNameWidth = stringWidth(groupName);
     super(groupName, Math.max(groupNameWidth, columnsWidth), isFirstColumn);
     this.columns = columns;
@@ -151,7 +179,9 @@ class GroupColumn extends Column {
   }
 
   drawTableCell(score: MetricsResult, ancestorCount: number): string {
-    return this.columns.map((column) => column.drawTableCell(score, ancestorCount)).join('|');
+    return this.columns
+      .map((column) => column.drawTableCell(score, ancestorCount))
+      .join('|');
   }
 }
 
@@ -213,7 +243,8 @@ export class ClearTextScoreTable {
         new SingleColumn(
           `${options.clearTextReporter.allowEmojis ? '💥' : '#'} errors`,
           false,
-          (row) => (row.metrics.runtimeErrors + row.metrics.compileErrors).toString(),
+          (row) =>
+            (row.metrics.runtimeErrors + row.metrics.compileErrors).toString(),
           metricsResult,
         ),
       ),
@@ -239,12 +270,22 @@ export class ClearTextScoreTable {
     return this.columns.map(toDraw).join('|') + '|';
   }
 
-  private drawTableBody(current = this.metricsResult, ancestorCount = 0): string[] {
+  private drawTableBody(
+    current = this.metricsResult,
+    ancestorCount = 0,
+  ): string[] {
     const rows: string[] = [];
-    if (!this.options.clearTextReporter.skipFull || current.metrics.mutationScore !== 100) {
+    if (
+      !this.options.clearTextReporter.skipFull ||
+      current.metrics.mutationScore !== 100
+    ) {
       rows.push(this.drawRow((c) => c.drawTableCell(current, ancestorCount)));
     }
-    rows.push(...current.childResults.flatMap((child) => this.drawTableBody(child, ancestorCount + 1)));
+    rows.push(
+      ...current.childResults.flatMap((child) =>
+        this.drawTableBody(child, ancestorCount + 1),
+      ),
+    );
     return rows;
   }
 

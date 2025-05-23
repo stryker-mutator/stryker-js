@@ -54,7 +54,10 @@ describe('CustomInitializers', () => {
       ] as os.CpuInfo[];
       cpusStub.returns(sevenCores);
       sut = testInjector.injector
-        .provideValue(coreTokens.execa, execaStub as unknown as typeof execaCommand)
+        .provideValue(
+          coreTokens.execa,
+          execaStub as unknown as typeof execaCommand,
+        )
         .provideValue(coreTokens.resolveFromCwd, resolveStub)
         .injectClass(AngularInitializer);
     });
@@ -66,7 +69,12 @@ describe('CustomInitializers', () => {
     it('should provide expected config', async () => {
       const { config } = await sut.createConfig();
       const expectedConfig: PartialStrykerOptions = {
-        mutate: ['src/**/*.ts', '!src/**/*.spec.ts', '!src/test.ts', '!src/environments/*.ts'],
+        mutate: [
+          'src/**/*.ts',
+          '!src/**/*.spec.ts',
+          '!src/test.ts',
+          '!src/environments/*.ts',
+        ],
         testRunner: 'karma',
         karma: {
           configFile: 'karma.conf.js',
@@ -78,7 +86,8 @@ describe('CustomInitializers', () => {
         reporters: ['progress', 'clear-text', 'html'],
         ignorers: ['angular'],
         concurrency: 3,
-        concurrency_comment: 'Recommended to use about half of your available cores when running stryker with angular',
+        concurrency_comment:
+          'Recommended to use about half of your available cores when running stryker with angular',
         coverageAnalysis: 'perTest',
       };
       expect(config).deep.eq(expectedConfig);
@@ -95,10 +104,20 @@ describe('CustomInitializers', () => {
       await sut.createConfig();
 
       // Assert
-      sinon.assert.calledOnceWithExactly(resolveStub, '@angular/cli/package.json');
+      sinon.assert.calledOnceWithExactly(
+        resolveStub,
+        '@angular/cli/package.json',
+      );
       sinon.assert.calledOnceWithExactly(existsStub, 'karma.conf.js');
-      sinon.assert.calledOnceWithExactly(execaStub, 'npx ng generate config karma');
-      sinon.assert.calledOnceWithExactly(readFileStub, './node_modules/@angular/cli/package.json', 'utf8');
+      sinon.assert.calledOnceWithExactly(
+        execaStub,
+        'npx ng generate config karma',
+      );
+      sinon.assert.calledOnceWithExactly(
+        readFileStub,
+        './node_modules/@angular/cli/package.json',
+        'utf8',
+      );
     });
 
     it('should not create a karma config when the `@angular/cli` version does not support it', async () => {
@@ -134,14 +153,22 @@ describe('CustomInitializers', () => {
       resolveStub.returns('./node_modules/@angular/cli/package.json');
       existsStub.resolves(false);
       readFileStub.resolves('{"version": "15.1.0"}');
-      execaStub.resolves({ stdout: 'Some detailed output' } as Result<{ encoding: 'utf8' }>);
+      execaStub.resolves({ stdout: 'Some detailed output' } as Result<{
+        encoding: 'utf8';
+      }>);
 
       // Act
       await sut.createConfig();
 
       // Assert
-      sinon.assert.calledWithExactly(testInjector.logger.info, 'No "karma.conf.js" file found, running command: "npx ng generate config karma"');
-      sinon.assert.calledWithExactly(testInjector.logger.info, '\nSome detailed output');
+      sinon.assert.calledWithExactly(
+        testInjector.logger.info,
+        'No "karma.conf.js" file found, running command: "npx ng generate config karma"',
+      );
+      sinon.assert.calledWithExactly(
+        testInjector.logger.info,
+        '\nSome detailed output',
+      );
     });
 
     it('should log a warning, but not crash when discovering angular-cli version fails', async () => {
@@ -215,7 +242,8 @@ describe('CustomInitializers', () => {
 
       await sut.createConfig();
       sinon.assert.calledWithExactly(confirmStub, {
-        message: 'Are you using native EcmaScript modules? (see https://jestjs.io/docs/ecmascript-modules)',
+        message:
+          'Are you using native EcmaScript modules? (see https://jestjs.io/docs/ecmascript-modules)',
         default: true,
       });
     });

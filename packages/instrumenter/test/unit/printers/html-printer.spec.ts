@@ -31,7 +31,10 @@ describe('html-printer', () => {
     offsetLocations(jsScript.root, { column: 13, line: 1, position: 14 });
     const actualHtml = '<html><script>foo = baz;</script></html>';
     const expectedHtml = /<html><script>.*foo = bar;.*<\/script><\/html>/s;
-    const ast = createHtmlAst({ rawContent: actualHtml, root: { scripts: [jsScript] } });
+    const ast = createHtmlAst({
+      rawContent: actualHtml,
+      root: { scripts: [jsScript] },
+    });
 
     // Act
     const output = print(ast, contextStub);
@@ -45,7 +48,10 @@ describe('html-printer', () => {
   it('should replace multiple scripts', () => {
     // Arrange
     const expectedScriptContent = ['foo = bar;', 'qux = quux;'];
-    const scripts = [createJSAst({ rawContent: '1' }), createJSAst({ rawContent: '2' })];
+    const scripts = [
+      createJSAst({ rawContent: '1' }),
+      createJSAst({ rawContent: '2' }),
+    ];
     contextStub.print
       .withArgs(scripts[0], sinon.match.any)
       .returns(expectedScriptContent[0])
@@ -56,7 +62,8 @@ describe('html-printer', () => {
     scripts[1].root.start = 32;
     scripts[1].root.end = 33;
     const input = '<html><script>1</script><script>2</script></html>';
-    const expectedOutput = /<html><script>.*foo = bar.*<\/script><script>.*qux = quux;.*<\/script><\/html>/s;
+    const expectedOutput =
+      /<html><script>.*foo = bar.*<\/script><script>.*qux = quux;.*<\/script><\/html>/s;
     const ast = createHtmlAst({ rawContent: input, root: { scripts } });
 
     // Act
@@ -70,7 +77,10 @@ describe('html-printer', () => {
   it('should output order scripts correctly', () => {
     // Arrange
     const expectedScriptContent = ['foo = bar;', 'qux = quux;'];
-    const scripts = [createJSAst({ rawContent: '1' }), createJSAst({ rawContent: '2' })];
+    const scripts = [
+      createJSAst({ rawContent: '1' }),
+      createJSAst({ rawContent: '2' }),
+    ];
     contextStub.print
       .withArgs(scripts[0], sinon.match.any)
       .returns(expectedScriptContent[0])
@@ -81,7 +91,8 @@ describe('html-printer', () => {
     scripts[0].root.start = 32;
     scripts[0].root.end = 33;
     const input = '<html><script>1</script><script>2</script></html>';
-    const expectedOutput = /<html><script>.*qux = quux;.*<\/script><script>.*foo = bar;.*<\/script><\/html>/s;
+    const expectedOutput =
+      /<html><script>.*qux = quux;.*<\/script><script>.*foo = bar;.*<\/script><\/html>/s;
     const ast = createHtmlAst({ rawContent: input, root: { scripts } });
 
     // Act

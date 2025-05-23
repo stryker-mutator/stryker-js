@@ -1,34 +1,65 @@
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { testInjector, factory, tick, createFakeTick } from '@stryker-mutator/test-helpers';
+import {
+  testInjector,
+  factory,
+  tick,
+  createFakeTick,
+} from '@stryker-mutator/test-helpers';
 import { Reporter } from '@stryker-mutator/api/report';
-import { TestRunner, MutantRunOptions, MutantRunResult, MutantRunStatus, CompleteDryRunResult, TestResult } from '@stryker-mutator/api/test-runner';
+import {
+  TestRunner,
+  MutantRunOptions,
+  MutantRunResult,
+  MutantRunStatus,
+  CompleteDryRunResult,
+  TestResult,
+} from '@stryker-mutator/api/test-runner';
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { mergeMap } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { Mutant, MutantTestCoverage, MutantEarlyResultPlan, MutantRunPlan, MutantTestPlan } from '@stryker-mutator/api/core';
+import {
+  Mutant,
+  MutantTestCoverage,
+  MutantEarlyResultPlan,
+  MutantRunPlan,
+  MutantTestPlan,
+} from '@stryker-mutator/api/core';
 import { I, Task } from '@stryker-mutator/util';
 
 import { MutationTestExecutor } from '../../../src/process/index.js';
 import { coreTokens } from '../../../src/di/index.js';
-import { createTestRunnerPoolMock, createCheckerPoolMock } from '../../helpers/producers.js';
+import {
+  createTestRunnerPoolMock,
+  createCheckerPoolMock,
+} from '../../helpers/producers.js';
 import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-report-helper.js';
 import { Timer } from '../../../src/utils/timer.js';
-import { ConcurrencyTokenProvider, Pool } from '../../../src/concurrent/index.js';
+import {
+  ConcurrencyTokenProvider,
+  Pool,
+} from '../../../src/concurrent/index.js';
 import { Sandbox } from '../../../src/sandbox/index.js';
 import { MutantTestPlanner } from '../../../src/mutants/index.js';
 import { CheckerFacade } from '../../../src/checker/checker-facade.js';
 
-function ignoredEarlyResultPlan(overrides?: Partial<Mutant>): MutantEarlyResultPlan {
+function ignoredEarlyResultPlan(
+  overrides?: Partial<Mutant>,
+): MutantEarlyResultPlan {
   return factory.mutantEarlyResultPlan({
     mutant: { ...factory.mutant(overrides), status: 'Ignored' },
   });
 }
 
-function mutantRunPlan(overrides?: Partial<MutantRunOptions & MutantTestCoverage>): MutantRunPlan {
+function mutantRunPlan(
+  overrides?: Partial<MutantRunOptions & MutantTestCoverage>,
+): MutantRunPlan {
   const mutant = factory.mutantTestCoverage(overrides);
   return factory.mutantRunPlan({
-    runOptions: factory.mutantRunOptions({ ...overrides, activeMutant: mutant }),
+    runOptions: factory.mutantRunOptions({
+      ...overrides,
+      activeMutant: mutant,
+    }),
     mutant,
   });
 }
@@ -51,27 +82,49 @@ describe(MutationTestExecutor.name, () => {
 
   beforeEach(() => {
     reporterMock = factory.reporter();
-    mutationTestReportHelperMock = sinon.createStubInstance(MutationTestReportHelper);
+    mutationTestReportHelperMock = sinon.createStubInstance(
+      MutationTestReportHelper,
+    );
     mutantTestPlannerMock = sinon.createStubInstance(MutantTestPlanner);
     timerMock = sinon.createStubInstance(Timer);
     testRunner = factory.testRunner();
     testRunnerPoolMock = createTestRunnerPoolMock();
     checkerPoolMock = createCheckerPoolMock();
-    checker = { init: sinon.stub(), group: sinon.stub(), check: sinon.stub(), dispose: sinon.stub() };
-    concurrencyTokenProviderMock = sinon.createStubInstance(ConcurrencyTokenProvider);
+    checker = {
+      init: sinon.stub(),
+      group: sinon.stub(),
+      check: sinon.stub(),
+      dispose: sinon.stub(),
+    };
+    concurrencyTokenProviderMock = sinon.createStubInstance(
+      ConcurrencyTokenProvider,
+    );
     sandboxMock = sinon.createStubInstance(Sandbox);
     (
       checkerPoolMock.schedule as sinon.SinonStub<
-        [Observable<Mutant>, (checker: I<CheckerFacade>, arg: Mutant) => Promise<CheckResult>],
+        [
+          Observable<Mutant>,
+          (checker: I<CheckerFacade>, arg: Mutant) => Promise<CheckResult>,
+        ],
         Observable<CheckResult>
       >
-    ).callsFake((item$, task) => item$.pipe(mergeMap((item) => task(checker, item))));
+    ).callsFake((item$, task) =>
+      item$.pipe(mergeMap((item) => task(checker, item))),
+    );
     (
       testRunnerPoolMock.schedule as sinon.SinonStub<
-        [Observable<MutantTestCoverage>, (testRunner: TestRunner, arg: MutantTestCoverage) => Promise<MutantRunResult>],
+        [
+          Observable<MutantTestCoverage>,
+          (
+            testRunner: TestRunner,
+            arg: MutantTestCoverage,
+          ) => Promise<MutantRunResult>,
+        ],
         Observable<MutantRunResult>
       >
-    ).callsFake((item$, task) => item$.pipe(mergeMap((item) => task(testRunner, item))));
+    ).callsFake((item$, task) =>
+      item$.pipe(mergeMap((item) => task(testRunner, item))),
+    );
 
     mutants = [factory.mutant()];
     mutantTestPlans = [];
@@ -84,11 +137,17 @@ describe(MutationTestExecutor.name, () => {
       .provideValue(coreTokens.timeOverheadMS, 42)
       .provideValue(coreTokens.mutants, mutants)
       .provideValue(coreTokens.mutantTestPlanner, mutantTestPlannerMock)
-      .provideValue(coreTokens.mutationTestReportHelper, mutationTestReportHelperMock)
+      .provideValue(
+        coreTokens.mutationTestReportHelper,
+        mutationTestReportHelperMock,
+      )
       .provideValue(coreTokens.sandbox, sandboxMock)
       .provideValue(coreTokens.timer, timerMock)
       .provideValue(coreTokens.testRunnerPool, testRunnerPoolMock)
-      .provideValue(coreTokens.concurrencyTokenProvider, concurrencyTokenProviderMock)
+      .provideValue(
+        coreTokens.concurrencyTokenProvider,
+        concurrencyTokenProviderMock,
+      )
       .provideValue(coreTokens.dryRunResult, completeDryRunResult)
       .injectClass(MutationTestExecutor);
   });
@@ -106,17 +165,30 @@ describe(MutationTestExecutor.name, () => {
     mutantRunResult?: MutantRunResult;
     dryRunTestResult?: TestResult[];
   }) {
-    checker.check.resolves([[overrides?.mutantRunPlan ?? mutantRunPlan(), overrides?.checkResult ?? factory.checkResult()]]);
-    testRunner.mutantRun.resolves(overrides?.mutantRunResult ?? factory.survivedMutantRunResult());
-    completeDryRunResult.tests = overrides?.dryRunTestResult ?? [factory.testResult()];
+    checker.check.resolves([
+      [
+        overrides?.mutantRunPlan ?? mutantRunPlan(),
+        overrides?.checkResult ?? factory.checkResult(),
+      ],
+    ]);
+    testRunner.mutantRun.resolves(
+      overrides?.mutantRunResult ?? factory.survivedMutantRunResult(),
+    );
+    completeDryRunResult.tests = overrides?.dryRunTestResult ?? [
+      factory.testResult(),
+    ];
     arrangeMutationTestReportHelper();
   }
 
   describe('early result', () => {
     it('should short circuit ignored mutants (not check or run them)', async () => {
       // Arrange
-      mutantTestPlans.push(ignoredEarlyResultPlan({ id: '1', statusReason: '1 is ignored' }));
-      mutantTestPlans.push(ignoredEarlyResultPlan({ id: '2', statusReason: '2 is ignored' }));
+      mutantTestPlans.push(
+        ignoredEarlyResultPlan({ id: '1', statusReason: '1 is ignored' }),
+      );
+      mutantTestPlans.push(
+        ignoredEarlyResultPlan({ id: '2', statusReason: '2 is ignored' }),
+      );
 
       // Act
       const actualResults = await sut.execute();
@@ -142,13 +214,19 @@ describe(MutationTestExecutor.name, () => {
     it('should report an ignored mutant as `Ignored`', async () => {
       // Arrange
       arrangeScenario();
-      mutantTestPlans.push(ignoredEarlyResultPlan({ id: '1', statusReason: '1 is ignored' }));
+      mutantTestPlans.push(
+        ignoredEarlyResultPlan({ id: '1', statusReason: '1 is ignored' }),
+      );
 
       // Act
       await sut.execute();
 
       // Assert
-      sinon.assert.calledWithExactly(mutationTestReportHelperMock.reportMutantStatus, mutantTestPlans[0].mutant, 'Ignored');
+      sinon.assert.calledWithExactly(
+        mutationTestReportHelperMock.reportMutantStatus,
+        mutantTestPlans[0].mutant,
+        'Ignored',
+      );
     });
 
     it('should report an uncovered mutant with `NoCoverage`', async () => {
@@ -160,7 +238,10 @@ describe(MutationTestExecutor.name, () => {
       await sut.execute();
 
       // Assert
-      expect(mutationTestReportHelperMock.reportMutantStatus).calledWithExactly(mutantTestPlans[0].mutant, 'NoCoverage');
+      expect(mutationTestReportHelperMock.reportMutantStatus).calledWithExactly(
+        mutantTestPlans[0].mutant,
+        'NoCoverage',
+      );
     });
   });
 
@@ -172,7 +253,10 @@ describe(MutationTestExecutor.name, () => {
     it('should report non-passed check results as "checkFailed"', async () => {
       // Arrange
       const mutant = mutantRunPlan({ id: '1' });
-      const failedCheckResult = factory.checkResult({ reason: 'Cannot find foo() of `undefined`', status: CheckStatus.CompileError });
+      const failedCheckResult = factory.checkResult({
+        reason: 'Cannot find foo() of `undefined`',
+        status: CheckStatus.CompileError,
+      });
       checker.group.resolves([[mutant]]);
       checker.check.resolves([[mutant, failedCheckResult]]);
       mutantTestPlans.push(mutant);
@@ -181,7 +265,10 @@ describe(MutationTestExecutor.name, () => {
       await sut.execute();
 
       // Assert
-      expect(mutationTestReportHelperMock.reportCheckFailed).calledWithExactly(mutantTestPlans[0].mutant, failedCheckResult);
+      expect(mutationTestReportHelperMock.reportCheckFailed).calledWithExactly(
+        mutantTestPlans[0].mutant,
+        failedCheckResult,
+      );
     });
 
     it('should group mutants buffered by time', async () => {
@@ -253,11 +340,17 @@ describe(MutationTestExecutor.name, () => {
       testRunner.mutantRun.resolves(factory.survivedMutantRunResult());
       checker.check
         .withArgs('foo', [plan])
-        .resolves([[plan, factory.checkResult({ status: CheckStatus.CompileError })]])
+        .resolves([
+          [plan, factory.checkResult({ status: CheckStatus.CompileError })],
+        ])
         .withArgs('foo', [plan2])
-        .resolves([[plan2, factory.checkResult({ status: CheckStatus.Passed })]])
+        .resolves([
+          [plan2, factory.checkResult({ status: CheckStatus.Passed })],
+        ])
         .withArgs('bar', [plan2])
-        .resolves([[plan2, factory.checkResult({ status: CheckStatus.Passed })]]);
+        .resolves([
+          [plan2, factory.checkResult({ status: CheckStatus.Passed })],
+        ]);
       mutantTestPlans.push(plan, plan2);
       checker.group
         .withArgs('foo', [plan, plan2])
@@ -308,8 +401,16 @@ describe(MutationTestExecutor.name, () => {
 
       // Assert
       expect(mutationTestReportHelperMock.reportCheckFailed).calledTwice;
-      sinon.assert.calledWithExactly(mutationTestReportHelperMock.reportCheckFailed, plan1.mutant, failedCheckResult);
-      sinon.assert.calledWithExactly(mutationTestReportHelperMock.reportCheckFailed, plan1.mutant, failedCheckResult);
+      sinon.assert.calledWithExactly(
+        mutationTestReportHelperMock.reportCheckFailed,
+        plan1.mutant,
+        failedCheckResult,
+      );
+      sinon.assert.calledWithExactly(
+        mutationTestReportHelperMock.reportCheckFailed,
+        plan1.mutant,
+        failedCheckResult,
+      );
     });
 
     it('should free checker resources after checking stage is complete', async () => {
@@ -372,7 +473,9 @@ describe(MutationTestExecutor.name, () => {
     it('should report mutant run results', async () => {
       // Arrange
       const plan = mutantRunPlan({ static: true });
-      const mutantRunResult = factory.killedMutantRunResult({ status: MutantRunStatus.Killed });
+      const mutantRunResult = factory.killedMutantRunResult({
+        status: MutantRunStatus.Killed,
+      });
       mutantTestPlans.push(plan);
       arrangeScenario({ mutantRunResult });
 
@@ -380,7 +483,9 @@ describe(MutationTestExecutor.name, () => {
       await sut.execute();
 
       // Assert
-      expect(mutationTestReportHelperMock.reportMutantRunResult).calledWithExactly(plan.mutant, mutantRunResult);
+      expect(
+        mutationTestReportHelperMock.reportMutantRunResult,
+      ).calledWithExactly(plan.mutant, mutantRunResult);
     });
   });
 
@@ -392,7 +497,10 @@ describe(MutationTestExecutor.name, () => {
     await sut.execute();
 
     // Assert
-    expect(testInjector.logger.info).calledWithExactly('Done in %s.', '2 seconds, tops!');
+    expect(testInjector.logger.info).calledWithExactly(
+      'Done in %s.',
+      '2 seconds, tops!',
+    );
   });
 
   it('should short circuit when dryRunOnly is enabled', async () => {

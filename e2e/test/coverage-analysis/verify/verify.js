@@ -42,16 +42,10 @@ describe('Coverage analysis', () => {
       strykerOptions.testRunner = 'jest';
       strykerOptions.plugins.push('@stryker-mutator/jest-runner');
       strykerOptions.testRunnerNodeArgs = ['--experimental-vm-modules'];
-      strykerOptions.jest = {
-        configFile: 'jest.config.json',
-      };
+      strykerOptions.jest = { configFile: 'jest.config.json' };
       strykerOptions.tempDirName = 'stryker-tmp';
     });
-    describeTests({
-      off: 22,
-      all: 18,
-      perTest: 10,
-    });
+    describeTests({ off: 22, all: 18, perTest: 10 });
   });
 
   describe('with mocha-runner', () => {
@@ -74,7 +68,8 @@ describe('Coverage analysis', () => {
     });
     it('should provide expected in browser mode', async () => {
       strykerOptions.vitest = { configFile: 'vitest.browser.config.js' };
-      await actAssertPerTest(12);
+      // Vitest has a race condition, can be anywhere between 10 and 12 (should be 10)
+      await actAssertPerTest(10, 12);
     });
   });
 
@@ -131,10 +126,15 @@ describe('Coverage analysis', () => {
       const stryker = new Stryker(strykerOptions);
 
       // Act
-      const testsRan = (await stryker.runMutationTest()).reduce((a, b) => a + (b.testsCompleted ?? 0), 0);
+      const testsRan = (await stryker.runMutationTest()).reduce(
+        (a, b) => a + (b.testsCompleted ?? 0),
+        0,
+      );
 
       // Assert
-      const metricsResult = calculateMetrics(CoverageAnalysisReporter.instance?.report.files);
+      const metricsResult = calculateMetrics(
+        CoverageAnalysisReporter.instance?.report.files,
+      );
       const expectedMetricsResult = {
         noCoverage: 0,
         survived: 3,
@@ -151,10 +151,15 @@ describe('Coverage analysis', () => {
       const stryker = new Stryker(strykerOptions);
 
       // Act
-      const testsRan = (await stryker.runMutationTest()).reduce((a, b) => a + (b.testsCompleted ?? 0), 0);
+      const testsRan = (await stryker.runMutationTest()).reduce(
+        (a, b) => a + (b.testsCompleted ?? 0),
+        0,
+      );
 
       // Assert
-      const metricsResult = calculateMetrics(CoverageAnalysisReporter.instance?.report.files);
+      const metricsResult = calculateMetrics(
+        CoverageAnalysisReporter.instance?.report.files,
+      );
       const expectedMetricsResult = {
         noCoverage: 2,
         survived: 1,
@@ -178,7 +183,9 @@ describe('Coverage analysis', () => {
       const result = await stryker.runMutationTest();
       // Assert
       const testsRan = result.reduce((a, b) => a + (b.testsCompleted ?? 0), 0);
-      const metricsResult = calculateMetrics(CoverageAnalysisReporter.instance?.report.files);
+      const metricsResult = calculateMetrics(
+        CoverageAnalysisReporter.instance?.report.files,
+      );
       const expectedMetricsResult = {
         ignored: 1,
         noCoverage: 2,
@@ -191,16 +198,25 @@ describe('Coverage analysis', () => {
     });
   }
 
-  /** @param {number} expectedTestCount */
-  async function actAssertPerTest(expectedTestCount = 10) {
+  /** @param {number} expectedTestCountMin */
+  /** @param {number} expectedTestCountMax */
+  async function actAssertPerTest(
+    expectedTestCountMin = 10,
+    expectedTestCountMax = expectedTestCountMin,
+  ) {
     // Arrange
     strykerOptions.coverageAnalysis = 'perTest';
     const stryker = new Stryker(strykerOptions);
     // Act
     const result = await stryker.runMutationTest();
     // Assert
-    const testsRan = result.reduce((acc, mutant) => acc + (mutant.testsCompleted ?? 0), 0);
-    const metricsResult = calculateMetrics(CoverageAnalysisReporter.instance?.report.files);
+    const testsRan = result.reduce(
+      (acc, mutant) => acc + (mutant.testsCompleted ?? 0),
+      0,
+    );
+    const metricsResult = calculateMetrics(
+      CoverageAnalysisReporter.instance?.report.files,
+    );
     /**
      * @type {Partial<import('mutation-testing-metrics').Metrics>}
      */
@@ -211,6 +227,7 @@ describe('Coverage analysis', () => {
       mutationScore: 72.72727272727273,
     };
     expect(metricsResult.metrics).deep.include(expectedMetricsResult);
-    expect(testsRan).eq(expectedTestCount);
+    expect(testsRan).gte(expectedTestCountMin);
+    expect(testsRan).lte(expectedTestCountMax);
   }
 });

@@ -21,7 +21,11 @@ describe(HtmlReporter.name, () => {
       actReportReady();
       await sut.wrapUp();
       expect(testInjector.logger.debug).calledWith('Using file "foo/bar.html"');
-      sinon.assert.calledWithExactly(writeFileStub, 'foo/bar.html', sinon.match.string);
+      sinon.assert.calledWithExactly(
+        writeFileStub,
+        'foo/bar.html',
+        sinon.match.string,
+      );
     });
 
     it('should write the mutation report to the report file', async () => {
@@ -41,7 +45,11 @@ describe(HtmlReporter.name, () => {
       };
       sut.onMutationTestReportReady(report);
       await sut.wrapUp();
-      sinon.assert.calledWithExactly(writeFileStub, 'reports/mutation/mutation.html', sinon.match(JSON.stringify(report)));
+      sinon.assert.calledWithExactly(
+        writeFileStub,
+        'reports/mutation/mutation.html',
+        sinon.match(JSON.stringify(report)),
+      );
     });
 
     it('should escape HTML tags in the mutation testing report.', async () => {
@@ -61,7 +69,11 @@ describe(HtmlReporter.name, () => {
       };
       sut.onMutationTestReportReady(report);
       await sut.wrapUp();
-      sinon.assert.calledWithExactly(writeFileStub, 'reports/mutation/mutation.html', sinon.match('"source":"<"+"script><"+"/script>"'));
+      sinon.assert.calledWithExactly(
+        writeFileStub,
+        'reports/mutation/mutation.html',
+        sinon.match('"source":"<"+"script><"+"/script>"'),
+      );
     });
   });
 
@@ -80,6 +92,10 @@ describe(HtmlReporter.name, () => {
   });
 
   function actReportReady() {
-    sut.onMutationTestReportReady({ files: {}, schemaVersion: '', thresholds: { high: 0, low: 0 } });
+    sut.onMutationTestReportReady({
+      files: {},
+      schemaVersion: '',
+      thresholds: { high: 0, low: 0 },
+    });
   }
 });

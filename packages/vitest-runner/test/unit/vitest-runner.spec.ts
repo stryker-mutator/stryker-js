@@ -11,12 +11,16 @@ import { createVitestMock } from '../util/factories.js';
 
 describe(VitestTestRunner.name, () => {
   let sut: VitestTestRunner;
-  let createVitestStub: sinon.SinonStubbedMember<typeof vitestWrapper.createVitest>;
+  let createVitestStub: sinon.SinonStubbedMember<
+    typeof vitestWrapper.createVitest
+  >;
   let options: VitestRunnerOptionsWithStrykerOptions;
   let vitestStub: sinon.SinonStubbedInstance<Vitest>;
 
   beforeEach(() => {
-    sut = testInjector.injector.provideValue('globalNamespace', '__stryker2__' as const).injectClass(VitestTestRunner);
+    sut = testInjector.injector
+      .provideValue('globalNamespace', '__stryker2__' as const)
+      .injectClass(VitestTestRunner);
     createVitestStub = sinon.stub(vitestWrapper, 'createVitest');
     options = testInjector.options as VitestRunnerOptionsWithStrykerOptions;
     options.vitest = {};
@@ -26,7 +30,9 @@ describe(VitestTestRunner.name, () => {
 
   it('should not have reload capabilities', () => {
     // The files under test are cached between runs
-    const expectedCapabilities: TestRunnerCapabilities = { reloadEnvironment: true };
+    const expectedCapabilities: TestRunnerCapabilities = {
+      reloadEnvironment: true,
+    };
     expect(sut.capabilities()).deep.eq(expectedCapabilities);
   });
 
@@ -42,5 +48,12 @@ describe(VitestTestRunner.name, () => {
     await sut.init();
 
     expect(process.env.NODE_ENV).to.equal('test');
+  });
+  it('should set the VITEST environment variable to test in init', async () => {
+    delete process.env.VITEST;
+
+    await sut.init();
+
+    expect(process.env.VITEST).to.equal('1');
   });
 });

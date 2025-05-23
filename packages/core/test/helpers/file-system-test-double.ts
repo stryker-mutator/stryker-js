@@ -9,7 +9,9 @@ import { FileSystem } from '../../src/fs/index.js';
 
 import { createDirent } from './producers.js';
 
-type Param<TMethod extends keyof I<FileSystem>, n extends number> = Parameters<FileSystem[TMethod]>[n];
+type Param<TMethod extends keyof I<FileSystem>, n extends number> = Parameters<
+  FileSystem[TMethod]
+>[n];
 
 /**
  * A test double for the file system.
@@ -17,7 +19,9 @@ type Param<TMethod extends keyof I<FileSystem>, n extends number> = Parameters<F
  */
 export class FileSystemTestDouble implements I<FileSystem> {
   public dirs = new Set<string>();
-  constructor(public readonly files: Record<string, string> = Object.create(null)) {}
+  constructor(
+    public readonly files: Record<string, string> = Object.create(null),
+  ) {}
   public dispose(): void {
     // Idle, nothing to do here
   }
@@ -33,7 +37,10 @@ export class FileSystemTestDouble implements I<FileSystem> {
     return file;
   }
 
-  public async copyFile(src: Param<'copyFile', 0>, dest: Param<'copyFile', 1>): Promise<void> {
+  public async copyFile(
+    src: Param<'copyFile', 0>,
+    dest: Param<'copyFile', 1>,
+  ): Promise<void> {
     if (typeof src !== 'string' || typeof dest !== 'string') {
       this.throwNotSupported();
     }
@@ -43,7 +50,10 @@ export class FileSystemTestDouble implements I<FileSystem> {
     this.files[dest] = this.files[src];
   }
 
-  public async writeFile(name: Param<'writeFile', 0>, data: Param<'writeFile', 1>): Promise<void> {
+  public async writeFile(
+    name: Param<'writeFile', 0>,
+    data: Param<'writeFile', 1>,
+  ): Promise<void> {
     if (typeof name !== 'string' || typeof data !== 'string') {
       this.throwNotSupported();
     }
@@ -62,7 +72,10 @@ export class FileSystemTestDouble implements I<FileSystem> {
     const dirents: Dirent[] = Object.keys(this.files)
       .filter((file) => file.startsWith(dirName))
       .map((fileName) => {
-        const filePath = fileName.substring(dirName.length).split(/[/\\]/).filter(Boolean);
+        const filePath = fileName
+          .substring(dirName.length)
+          .split(/[/\\]/)
+          .filter(Boolean);
         const [name] = filePath;
         const isDirectory = filePath.length > 1;
         return createDirent({ name, isDirectory });
@@ -77,11 +90,15 @@ export class FileSystemTestDouble implements I<FileSystem> {
   /**
    * Creates file descriptions for each file in this test double
    */
-  public toFileDescriptions(mutate: MutateDescription = true): FileDescriptions {
-    return Object.keys(this.files).reduce<FileDescriptions>((files, fileName) => {
-      files[fileName] = { mutate };
-      return files;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    }, Object.create(null));
+  public toFileDescriptions(
+    mutate: MutateDescription = true,
+  ): FileDescriptions {
+    return Object.keys(this.files).reduce(
+      (files, fileName) => {
+        files[fileName] = { mutate };
+        return files;
+      },
+      Object.create(null) as FileDescriptions,
+    );
   }
 }

@@ -28,7 +28,9 @@ describe(`${CommandTestRunner.name} integration`, () => {
       const result = await sut.dryRun();
       assertions.expectCompleted(result);
       expect(result.tests).lengthOf(1);
-      expect(TestStatus[result.tests[0].status]).eq(TestStatus[TestStatus.Failed]);
+      expect(TestStatus[result.tests[0].status]).eq(
+        TestStatus[TestStatus.Failed],
+      );
       expect(result.tests[0].name).eq('All tests');
       assertions.expectFailed(result.tests[0]);
       expect(result.tests[0].failureMessage).includes('Test 2 - NOK');
@@ -54,12 +56,16 @@ describe(`${CommandTestRunner.name} integration`, () => {
   describe(CommandTestRunner.prototype.mutantRun.name, () => {
     it('should report mutant as survived if the process exits with 0', async () => {
       const sut = createSut({ command: 'npm run mutant' });
-      const result = await sut.mutantRun({ activeMutant: factory.mutant({ id: '41' }) });
+      const result = await sut.mutantRun({
+        activeMutant: factory.mutant({ id: '41' }),
+      });
       assertions.expectSurvived(result);
     });
     it('should report mutant as killed if the process exits with 1', async () => {
       const sut = createSut({ command: 'npm run mutant' });
-      const result = await sut.mutantRun({ activeMutant: factory.mutant({ id: '42' /* 42 should fail */ }) });
+      const result = await sut.mutantRun({
+        activeMutant: factory.mutant({ id: '42' /* 42 should fail */ }),
+      });
       assertions.expectKilled(result);
       expect(result.killedBy).deep.eq(['all']);
     });

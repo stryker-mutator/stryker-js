@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.0.1](https://github.com/stryker-mutator/stryker-js/compare/v9.0.0...v9.0.1) (2025-05-14)
+
+**Note:** Version bump only for package @stryker-mutator/tap-runner
+
+# [9.0.0](https://github.com/stryker-mutator/stryker-js/compare/v8.7.1...v9.0.0) (2025-05-13)
+
+### Bug Fixes
+
+- **deps:** update dependency tslib to v2.8.1 ([#5075](https://github.com/stryker-mutator/stryker-js/issues/5075)) ([f069348](https://github.com/stryker-mutator/stryker-js/commit/f069348db3ed1a7af27b058d629fa0dc2472df9c))
+
+### Features
+
+- **tap:** provide `--test-reporter=tap` as default nodeArg ([#5302](https://github.com/stryker-mutator/stryker-js/issues/5302)) ([228fb81](https://github.com/stryker-mutator/stryker-js/commit/228fb81f6b2a968596c7617c2d1b18bb331932ea))
+
 ## [8.7.1](https://github.com/stryker-mutator/stryker-js/compare/v8.7.0...v8.7.1) (2024-12-11)
 
 **Note:** Version bump only for package @stryker-mutator/tap-runner

@@ -44,7 +44,9 @@ export function createParser({ plugins: pluginsOverride }: ParserOptions) {
       sourceType: 'module',
     });
     if (types.isProgram(ast)) {
-      throw new Error(`Expected ${fileName} to contain a babel.types.file, but was a program`);
+      throw new Error(
+        `Expected ${fileName} to contain a babel.types.file, but was a program`,
+      );
     }
     return {
       originFileName: fileName,

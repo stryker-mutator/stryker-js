@@ -22,6 +22,8 @@ export const logicalOperatorMutator: NodeMutator = {
   },
 };
 
-function isSupported(operator: string): operator is keyof typeof logicalOperatorReplacements {
+function isSupported(
+  operator: string,
+): operator is keyof typeof logicalOperatorReplacements {
   return Object.keys(logicalOperatorReplacements).includes(operator);
 }

@@ -15,7 +15,9 @@ const operators = {
   '!==': ['==='],
 } as const;
 
-function isEqualityOperator(operator: string): operator is keyof typeof operators {
+function isEqualityOperator(
+  operator: string,
+): operator is keyof typeof operators {
   return Object.keys(operators).includes(operator);
 }
 export const equalityOperatorMutator: NodeMutator = {

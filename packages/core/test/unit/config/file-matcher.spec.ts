@@ -9,7 +9,18 @@ describe(FileMatcher.name, () => {
       expect(sut.matches('src/foo.ts')).true;
     });
 
-    ['js', 'ts', 'jsx', 'tsx', 'html', 'vue', 'mjs', 'mts', 'cts', 'cjs'].forEach((ext) => {
+    [
+      'js',
+      'ts',
+      'jsx',
+      'tsx',
+      'html',
+      'vue',
+      'mjs',
+      'mts',
+      'cts',
+      'cjs',
+    ].forEach((ext) => {
       it(`should match when the glob pattern matches with extension ${ext}`, () => {
         const sut = new FileMatcher(true);
         expect(sut.matches(`src/foo.${ext}`)).true;

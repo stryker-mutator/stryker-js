@@ -8,7 +8,10 @@ import { commonTokens } from '@stryker-mutator/api/plugin';
 
 const DEFAULT_NPM_REGISTRY = 'https://registry.npmjs.com';
 
-function getRegistry(logger: Logger, execaSync: typeof execaCommandSync): string {
+function getRegistry(
+  logger: Logger,
+  execaSync: typeof execaCommandSync,
+): string {
   if (process.env.npm_config_registry) {
     return process.env.npm_config_registry;
   } else if (process.env.npm_command) {
@@ -24,7 +27,10 @@ function getRegistry(logger: Logger, execaSync: typeof execaCommandSync): string
 
       return registry.stdout.trim();
     } catch (e) {
-      logger.warn('Could not run `npm config get --global registry` falling back to default npm registry.', errorToString(e));
+      logger.warn(
+        'Could not run `npm config get --global registry` falling back to default npm registry.',
+        errorToString(e),
+      );
 
       return DEFAULT_NPM_REGISTRY;
     }

@@ -1,4 +1,11 @@
-import { TestRunner, DryRunOptions, MutantRunOptions, MutantRunResult, DryRunResult, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
+import {
+  TestRunner,
+  DryRunOptions,
+  MutantRunOptions,
+  MutantRunResult,
+  DryRunResult,
+  TestRunnerCapabilities,
+} from '@stryker-mutator/api/test-runner';
 
 import { ResourceDecorator } from '../concurrent/index.js';
 

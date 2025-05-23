@@ -1,10 +1,19 @@
 import path from 'path';
 
-import { BaseTestResult, TestResult, TestStatus } from '@stryker-mutator/api/test-runner';
-import type { RunMode, Suite, TaskState, Test, ResolvedConfig } from 'vitest';
+import {
+  BaseTestResult,
+  TestResult,
+  TestStatus,
+} from '@stryker-mutator/api/test-runner';
+import type { RunMode, TaskState } from 'vitest';
+import { RunnerTestCase, RunnerTestSuite } from 'vitest/node';
 import { MutantCoverage } from '@stryker-mutator/api/core';
+import { collectTestName, toRawTestId } from './test-helpers.js';
 
-function convertTaskStateToTestStatus(taskState: TaskState | undefined, testMode: RunMode): TestStatus {
+function convertTaskStateToTestStatus(
+  taskState: TaskState | undefined,
+  testMode: RunMode,
+): TestStatus {
   if (testMode === 'skip') {
     return TestStatus.Skipped;
   }
@@ -21,7 +30,7 @@ function convertTaskStateToTestStatus(taskState: TaskState | undefined, testMode
   return TestStatus.Failed;
 }
 
-export function convertTestToTestResult(test: Test): TestResult {
+export function convertTestToTestResult(test: RunnerTestCase): TestResult {
   const status = convertTaskStateToTestStatus(test.result?.state, test.mode);
   const baseTestResult: BaseTestResult = {
     id: normalizeTestId(toRawTestId(test)),
@@ -33,7 +42,8 @@ export function convertTestToTestResult(test: Test): TestResult {
     return {
       ...baseTestResult,
       status,
-      failureMessage: test.result?.errors?.[0]?.message ?? 'StrykerJS: Unknown test failure',
+      failureMessage:
+        test.result?.errors?.[0]?.message ?? 'StrykerJS: Unknown test failure',
     };
   } else {
     return {
@@ -56,13 +66,18 @@ export function normalizeTestId(id: string): string {
 export function normalizeCoverage(rawCoverage: MutantCoverage): MutantCoverage {
   return {
     perTest: Object.fromEntries(
-      Object.entries(rawCoverage.perTest).map(([rawTestId, coverageData]) => [normalizeTestId(rawTestId), coverageData] as const),
+      Object.entries(rawCoverage.perTest).map(
+        ([rawTestId, coverageData]) =>
+          [normalizeTestId(rawTestId), coverageData] as const,
+      ),
     ),
     static: rawCoverage.static,
   };
 }
 
-export function collectTestsFromSuite(suite: Suite): Test[] {
+export function collectTestsFromSuite(
+  suite: RunnerTestSuite,
+): RunnerTestCase[] {
   return suite.tasks.flatMap((task) => {
     if (task.type === 'suite') {
       return collectTestsFromSuite(task);
@@ -73,40 +88,3 @@ export function collectTestsFromSuite(suite: Suite): Test[] {
     }
   });
 }
-
-export function addToInlineDeps(config: ResolvedConfig, matcher: RegExp): void {
-  switch (typeof config.deps?.inline) {
-    case 'undefined':
-      config.deps = { inline: [matcher] };
-      break;
-    case 'object':
-      config.deps.inline.push(matcher);
-      break;
-    case 'boolean':
-      if (!config.deps.inline) {
-        config.deps.inline = [matcher];
-      }
-      break;
-    default:
-      config.deps.inline satisfies never;
-  }
-}
-
-// Stryker disable all: the function toTestId will be stringified at runtime which will cause problems when mutated.
-
-// Note: this function is used in code and copied to the mutated environment so the naming convention will always be the same.
-// It can not use external resource because those will not be available in the mutated environment.
-export function collectTestName({ name, suite }: { name: string; suite?: Suite }): string {
-  const nameParts = [name];
-  let currentSuite = suite;
-  while (currentSuite) {
-    nameParts.unshift(currentSuite.name);
-    currentSuite = currentSuite.suite;
-  }
-  return nameParts.join(' ').trim();
-}
-
-export function toRawTestId(test: Test): string {
-  return `${test.file?.filepath ?? 'unknown.js'}#${collectTestName(test)}`;
-}
-// Stryker restore all

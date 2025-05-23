@@ -2,11 +2,24 @@ import path from 'path';
 import { fileURLToPath, URL } from 'url';
 import { createRequire } from 'module';
 
-import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
+import {
+  testInjector,
+  factory,
+  assertions,
+} from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import { DryRunStatus, TestStatus, CompleteDryRunResult, ErrorDryRunResult, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
-import { INSTRUMENTER_CONSTANTS, MutantCoverage } from '@stryker-mutator/api/core';
+import {
+  DryRunStatus,
+  TestStatus,
+  CompleteDryRunResult,
+  ErrorDryRunResult,
+  TestRunnerCapabilities,
+} from '@stryker-mutator/api/test-runner';
+import {
+  INSTRUMENTER_CONSTANTS,
+  MutantCoverage,
+} from '@stryker-mutator/api/core';
 import { Config } from '@jest/types';
 import { Task } from '@stryker-mutator/util';
 
@@ -33,7 +46,9 @@ describe(JestTestRunner.name, () => {
     options = testInjector.options as JestRunnerOptionsWithStrykerOptions;
     jestWrapperMock = sinon.createStubInstance(JestWrapper);
     jestTestAdapterMock = { run: sinon.stub() };
-    jestRunResult = producers.createJestRunResult({ results: producers.createJestAggregatedResult({ testResults: [] }) });
+    jestRunResult = producers.createJestRunResult({
+      results: producers.createJestAggregatedResult({ testResults: [] }),
+    });
     jestTestAdapterMock.run.resolves(jestRunResult);
     jestConfigLoaderMock = { loadConfig: sinon.stub() };
     jestConfigLoaderMock.loadConfig.resolves({});
@@ -64,7 +79,9 @@ describe(JestTestRunner.name, () => {
 
   describe('capabilities', () => {
     it('should communicate reloadEnvironment=true', () => {
-      const expectedCapabilities: TestRunnerCapabilities = { reloadEnvironment: true };
+      const expectedCapabilities: TestRunnerCapabilities = {
+        reloadEnvironment: true,
+      };
       expect(createSut().capabilities()).deep.eq(expectedCapabilities);
     });
   });
@@ -91,7 +108,9 @@ describe(JestTestRunner.name, () => {
 
     it('should always set bail = false (see https://github.com/facebook/jest/issues/11766)', async () => {
       const sut = await arrangeInitializedSut();
-      await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off', disableBail: true }));
+      await sut.dryRun(
+        factory.dryRunOptions({ coverageAnalysis: 'off', disableBail: true }),
+      );
       expect(jestTestAdapterMock.run).calledWithMatch(
         sinon.match({
           jestConfig: sinon.match({ bail: false }),
@@ -115,14 +134,23 @@ describe(JestTestRunner.name, () => {
       const sut = await arrangeInitializedSut();
       testInjector.logger.isTraceEnabled.returns(true);
       await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
-      expect(testInjector.logger.trace).calledWithMatch(/Invoking Jest with config\s.*/, sinon.match(/.*"jestConfig".*/));
+      expect(testInjector.logger.trace).calledWithMatch(
+        /Invoking Jest with config\s.*/,
+        sinon.match(/.*"jestConfig".*/),
+      );
     });
 
     it('should call the jestTestRunner run method and return a correct runResult', async () => {
       const sut = await arrangeInitializedSut();
-      jestTestAdapterMock.run.resolves(producers.createJestRunResult({ results: producers.createSuccessResult() }));
+      jestTestAdapterMock.run.resolves(
+        producers.createJestRunResult({
+          results: producers.createSuccessResult(),
+        }),
+      );
 
-      const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
+      const result = await sut.dryRun(
+        factory.dryRunOptions({ coverageAnalysis: 'off' }),
+      );
 
       const expectedRunResult: CompleteDryRunResult = {
         status: DryRunStatus.Complete,
@@ -142,9 +170,15 @@ describe(JestTestRunner.name, () => {
 
     it('should call the jestTestRunner run method and return a skipped runResult', async () => {
       const sut = await arrangeInitializedSut();
-      jestTestAdapterMock.run.resolves(producers.createJestRunResult({ results: producers.createPendingResult() }));
+      jestTestAdapterMock.run.resolves(
+        producers.createJestRunResult({
+          results: producers.createPendingResult(),
+        }),
+      );
 
-      const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
+      const result = await sut.dryRun(
+        factory.dryRunOptions({ coverageAnalysis: 'off' }),
+      );
 
       const expectedRunResult: CompleteDryRunResult = {
         status: DryRunStatus.Complete,
@@ -165,9 +199,15 @@ describe(JestTestRunner.name, () => {
 
     it('should call the jestTestRunner run method and return a todo runResult', async () => {
       const sut = await arrangeInitializedSut();
-      jestTestAdapterMock.run.resolves(producers.createJestRunResult({ results: producers.createTodoResult() }));
+      jestTestAdapterMock.run.resolves(
+        producers.createJestRunResult({
+          results: producers.createTodoResult(),
+        }),
+      );
 
-      const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
+      const result = await sut.dryRun(
+        factory.dryRunOptions({ coverageAnalysis: 'off' }),
+      );
       const expectedRunResult: CompleteDryRunResult = {
         status: DryRunStatus.Complete,
         tests: [
@@ -194,9 +234,15 @@ describe(JestTestRunner.name, () => {
 
     it('should call the jestTestRunner run method and return a negative runResult', async () => {
       const sut = await arrangeInitializedSut();
-      jestTestAdapterMock.run.resolves(producers.createJestRunResult({ results: producers.createFailResult() }));
+      jestTestAdapterMock.run.resolves(
+        producers.createJestRunResult({
+          results: producers.createFailResult(),
+        }),
+      );
 
-      const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
+      const result = await sut.dryRun(
+        factory.dryRunOptions({ coverageAnalysis: 'off' }),
+      );
 
       const expectedRunResult: CompleteDryRunResult = {
         status: DryRunStatus.Complete,
@@ -248,9 +294,13 @@ describe(JestTestRunner.name, () => {
           }),
         ],
       });
-      jestTestAdapterMock.run.resolves(producers.createJestRunResult({ results: jestResult }));
+      jestTestAdapterMock.run.resolves(
+        producers.createJestRunResult({ results: jestResult }),
+      );
 
-      const result = await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
+      const result = await sut.dryRun(
+        factory.dryRunOptions({ coverageAnalysis: 'off' }),
+      );
 
       const expectedRunResult: ErrorDryRunResult = {
         status: DryRunStatus.Error,
@@ -278,7 +328,12 @@ describe(JestTestRunner.name, () => {
     it('should use correct fileNamesUnderTest if findRelatedTests = true', async () => {
       options.jest.enableFindRelatedTests = true;
       const sut = await arrangeInitializedSut();
-      await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off', files: ['.stryker-tmp/sandbox2/foo.js'] }));
+      await sut.dryRun(
+        factory.dryRunOptions({
+          coverageAnalysis: 'off',
+          files: ['.stryker-tmp/sandbox2/foo.js'],
+        }),
+      );
       expect(jestTestAdapterMock.run).calledWithExactly(
         sinon.match({
           fileNamesUnderTest: ['.stryker-tmp/sandbox2/foo.js'],
@@ -289,7 +344,12 @@ describe(JestTestRunner.name, () => {
     it('should not set fileNamesUnderTest if findRelatedTests = false', async () => {
       options.jest.enableFindRelatedTests = false;
       const sut = await arrangeInitializedSut();
-      await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off', files: ['.stryker-tmp/sandbox2/foo.js'] }));
+      await sut.dryRun(
+        factory.dryRunOptions({
+          coverageAnalysis: 'off',
+          files: ['.stryker-tmp/sandbox2/foo.js'],
+        }),
+      );
       expect(jestTestAdapterMock.run).calledWithExactly(
         sinon.match({
           fileNamesUnderTest: undefined,
@@ -305,11 +365,16 @@ describe(JestTestRunner.name, () => {
         jestTestAdapterMock.run.returns(runTask.promise);
         const expectedMutantCoverage: MutantCoverage = {
           static: { 0: 3, 1: 2 },
-          perTest: { 'foo should be bar': { 7: 1 }, 'baz should be qux': { 6: 1 } },
+          perTest: {
+            'foo should be bar': { 7: 1 },
+            'baz should be qux': { 6: 1 },
+          },
         };
 
         // Act
-        const onGoingDryRun = sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'all' }));
+        const onGoingDryRun = sut.dryRun(
+          factory.dryRunOptions({ coverageAnalysis: 'all' }),
+        );
         state.instrumenterContext.mutantCoverage = expectedMutantCoverage;
         runTask.resolve({
           results: producers.createJestAggregatedResult({
@@ -331,7 +396,12 @@ describe(JestTestRunner.name, () => {
         await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'all' }));
         expect(jestTestAdapterMock.run).calledWithMatch({
           jestConfig: sinon.match({
-            testEnvironment: fileURLToPath(new URL('../../src/jest-plugins/jest-environment-generic.cjs', import.meta.url)),
+            testEnvironment: fileURLToPath(
+              new URL(
+                '../../src/jest-plugins/jest-environment-generic.cjs',
+                import.meta.url,
+              ),
+            ),
           }),
         });
         expect(state.jestEnvironment).eq(testEnvironment);
@@ -356,10 +426,19 @@ describe(JestTestRunner.name, () => {
       it('should add a set setupFile if testRunner = "jest-jasmine2"', async () => {
         options.jest.config = { testRunner: 'jest-jasmine2' };
         const sut = await arrangeInitializedSut();
-        await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
+        await sut.dryRun(
+          factory.dryRunOptions({ coverageAnalysis: 'perTest' }),
+        );
         expect(jestTestAdapterMock.run).calledWithMatch({
           jestConfig: sinon.match({
-            setupFilesAfterEnv: [fileURLToPath(new URL('../../src/jest-plugins/jasmine2-setup-coverage-analysis.cjs', import.meta.url))],
+            setupFilesAfterEnv: [
+              fileURLToPath(
+                new URL(
+                  '../../src/jest-plugins/jasmine2-setup-coverage-analysis.cjs',
+                  import.meta.url,
+                ),
+              ),
+            ],
           }),
         });
       });
@@ -368,10 +447,19 @@ describe(JestTestRunner.name, () => {
         jestWrapperMock.getVersion.returns('26.999.999');
         options.jest.config = { testRunner: undefined };
         const sut = await arrangeInitializedSut();
-        await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
+        await sut.dryRun(
+          factory.dryRunOptions({ coverageAnalysis: 'perTest' }),
+        );
         expect(jestTestAdapterMock.run).calledWithMatch({
           jestConfig: sinon.match({
-            setupFilesAfterEnv: [fileURLToPath(new URL('../../src/jest-plugins/jasmine2-setup-coverage-analysis.cjs', import.meta.url))],
+            setupFilesAfterEnv: [
+              fileURLToPath(
+                new URL(
+                  '../../src/jest-plugins/jasmine2-setup-coverage-analysis.cjs',
+                  import.meta.url,
+                ),
+              ),
+            ],
           }),
         });
       });
@@ -380,7 +468,9 @@ describe(JestTestRunner.name, () => {
         jestWrapperMock.getVersion.returns('27.0.0');
         options.jest.config = { testRunner: undefined };
         const sut = await arrangeInitializedSut();
-        await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
+        await sut.dryRun(
+          factory.dryRunOptions({ coverageAnalysis: 'perTest' }),
+        );
         expect(jestTestAdapterMock.run).calledWithMatch({
           jestConfig: sinon.match({ setupFilesAfterEnv: undefined }),
         });
@@ -390,7 +480,9 @@ describe(JestTestRunner.name, () => {
         jestWrapperMock.getVersion.returns('30.0.0-alpha.6');
         options.jest.config = { testRunner: undefined };
         const sut = await arrangeInitializedSut();
-        await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
+        await sut.dryRun(
+          factory.dryRunOptions({ coverageAnalysis: 'perTest' }),
+        );
         expect(jestTestAdapterMock.run).calledWithMatch({
           jestConfig: sinon.match({ setupFilesAfterEnv: undefined }),
         });
@@ -399,7 +491,9 @@ describe(JestTestRunner.name, () => {
       it('should not allow the circus test runner for coverage analysis "perTest"', async () => {
         options.jest.config = { testRunner: 'jest-circus/runner' };
         const sut = await arrangeInitializedSut();
-        await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
+        await sut.dryRun(
+          factory.dryRunOptions({ coverageAnalysis: 'perTest' }),
+        );
         expect(jestTestAdapterMock.run).calledWithMatch({
           jestConfig: sinon.match({ setupFilesAfterEnv: undefined }),
         });
@@ -407,22 +501,36 @@ describe(JestTestRunner.name, () => {
 
       it('should not allow a full path to circus test runner for coverage analysis "perTest"', async () => {
         const require = createRequire(import.meta.url);
-        options.jest.config = { testRunner: require.resolve('jest-circus/runner') };
+        options.jest.config = {
+          testRunner: require.resolve('jest-circus/runner'),
+        };
         const sut = await arrangeInitializedSut();
-        await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
+        await sut.dryRun(
+          factory.dryRunOptions({ coverageAnalysis: 'perTest' }),
+        );
         expect(jestTestAdapterMock.run).calledWithMatch({
           jestConfig: sinon.match({ setupFilesAfterEnv: undefined }),
         });
       });
 
       it('should not remove existing setup files if testRunner = "jest-jasmine2"', async () => {
-        options.jest.config = { testRunner: 'jest-jasmine2', setupFilesAfterEnv: ['setup/env.js', 'setup/unit.js'] };
+        options.jest.config = {
+          testRunner: 'jest-jasmine2',
+          setupFilesAfterEnv: ['setup/env.js', 'setup/unit.js'],
+        };
         const sut = await arrangeInitializedSut();
-        await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
+        await sut.dryRun(
+          factory.dryRunOptions({ coverageAnalysis: 'perTest' }),
+        );
         expect(jestTestAdapterMock.run).calledWithMatch({
           jestConfig: sinon.match({
             setupFilesAfterEnv: [
-              fileURLToPath(new URL('../../src/jest-plugins/jasmine2-setup-coverage-analysis.cjs', import.meta.url)),
+              fileURLToPath(
+                new URL(
+                  '../../src/jest-plugins/jasmine2-setup-coverage-analysis.cjs',
+                  import.meta.url,
+                ),
+              ),
               'setup/env.js',
               'setup/unit.js',
             ],
@@ -440,9 +548,14 @@ describe(JestTestRunner.name, () => {
       });
 
       it('should not add a set setupFile if testRunner = "jest-circus/runner"', async () => {
-        options.jest.config = { testRunner: 'jest-circus/runner', setupFilesAfterEnv: ['setup.js'] };
+        options.jest.config = {
+          testRunner: 'jest-circus/runner',
+          setupFilesAfterEnv: ['setup.js'],
+        };
         const sut = await arrangeInitializedSut();
-        await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
+        await sut.dryRun(
+          factory.dryRunOptions({ coverageAnalysis: 'perTest' }),
+        );
         expect(jestTestAdapterMock.run).calledWithMatch({
           jestConfig: sinon.match({ setupFilesAfterEnv: ['setup.js'] }),
         });
@@ -451,7 +564,9 @@ describe(JestTestRunner.name, () => {
       it('should reject if coverageAnalysis = perTest and test runner is not recognized', async () => {
         options.jest.config = { testRunner: 'foo/runner' };
         const sut = await arrangeInitializedSut();
-        const onGoingRun = sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
+        const onGoingRun = sut.dryRun(
+          factory.dryRunOptions({ coverageAnalysis: 'perTest' }),
+        );
         await expect(onGoingRun).rejectedWith(
           'The @stryker-mutator/jest-runner doesn\'t support coverageAnalysis "perTest" with "jestConfig.testRunner": "foo/runner". Please open an issue if you want support for this: https://github.com/stryker-mutator/stryker-js/issues',
         );
@@ -464,15 +579,21 @@ describe(JestTestRunner.name, () => {
         jestTestAdapterMock.run.returns(runTask.promise);
 
         // Act
-        const onGoingRun = sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
+        const onGoingRun = sut.dryRun(
+          factory.dryRunOptions({ coverageAnalysis: 'perTest' }),
+        );
         state.testFilesWithStrykerEnvironment.add('foo.js');
         // mutant coverage for bar.js is missing
         runTask.resolve(
           producers.createJestRunResult({
             results: producers.createJestAggregatedResult({
               testResults: [
-                producers.createJestTestResult({ testFilePath: path.resolve('foo.js') }),
-                producers.createJestTestResult({ testFilePath: path.resolve('bar.js') }),
+                producers.createJestTestResult({
+                  testFilePath: path.resolve('foo.js'),
+                }),
+                producers.createJestTestResult({
+                  testFilePath: path.resolve('bar.js'),
+                }),
               ],
             }),
           }),
@@ -481,7 +602,9 @@ describe(JestTestRunner.name, () => {
 
         // Assert
         assertions.expectErrored(result);
-        expect(result.errorMessage).matches(/Missing coverage results for.*bar\.js/s); // exact error messages are tested in separate unit tests
+        expect(result.errorMessage).matches(
+          /Missing coverage results for.*bar\.js/s,
+        ); // exact error messages are tested in separate unit tests
       });
     });
   });
@@ -491,7 +614,10 @@ describe(JestTestRunner.name, () => {
       options.jest.enableFindRelatedTests = true;
       const sut = await arrangeInitializedSut();
       await sut.mutantRun(
-        factory.mutantRunOptions({ activeMutant: factory.mutant({ fileName: 'foo.js' }), sandboxFileName: '.stryker-tmp/sandbox2/foo.js' }),
+        factory.mutantRunOptions({
+          activeMutant: factory.mutant({ fileName: 'foo.js' }),
+          sandboxFileName: '.stryker-tmp/sandbox2/foo.js',
+        }),
       );
       expect(jestTestAdapterMock.run).calledWithExactly(
         sinon.match({
@@ -505,7 +631,9 @@ describe(JestTestRunner.name, () => {
     it('should not set fileNamesUnderTest if findRelatedTests = false', async () => {
       options.jest.enableFindRelatedTests = false;
       const sut = await arrangeInitializedSut();
-      await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant() }));
+      await sut.mutantRun(
+        factory.mutantRunOptions({ activeMutant: factory.mutant() }),
+      );
       expect(jestTestAdapterMock.run).calledWithExactly(
         sinon.match({
           jestConfig: sinon.match.object,
@@ -517,15 +645,27 @@ describe(JestTestRunner.name, () => {
 
     it('should set the active mutant in environment variable', async () => {
       const sut = await arrangeInitializedSut();
-      const onGoingWork = sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '25' }) }));
-      expect(process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]).to.equal('25');
+      const onGoingWork = sut.mutantRun(
+        factory.mutantRunOptions({
+          activeMutant: factory.mutant({ id: '25' }),
+        }),
+      );
+      expect(
+        process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE],
+      ).to.equal('25');
       await onGoingWork;
     });
 
     it('should reset the active mutant in environment variable', async () => {
       const sut = await arrangeInitializedSut();
-      await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '25' }) }));
-      expect(process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]).to.equal(undefined);
+      await sut.mutantRun(
+        factory.mutantRunOptions({
+          activeMutant: factory.mutant({ id: '25' }),
+        }),
+      );
+      expect(
+        process.env[INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE],
+      ).to.equal(undefined);
     });
 
     it('should set the node environment variable before calling jest in the dry run', async () => {
@@ -540,7 +680,11 @@ describe(JestTestRunner.name, () => {
 
     it('should set the __strykerGlobalNamespace__ in globals', async () => {
       const sut = await arrangeInitializedSut();
-      await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '25' }) }));
+      await sut.mutantRun(
+        factory.mutantRunOptions({
+          activeMutant: factory.mutant({ id: '25' }),
+        }),
+      );
       expect(jestTestAdapterMock.run).calledWithMatch(
         sinon.match({
           jestConfig: {
@@ -558,7 +702,11 @@ describe(JestTestRunner.name, () => {
       };
       options.jest.config = customConfig;
       const sut = await arrangeInitializedSut();
-      await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '25' }) }));
+      await sut.mutantRun(
+        factory.mutantRunOptions({
+          activeMutant: factory.mutant({ id: '25' }),
+        }),
+      );
       expect(jestTestAdapterMock.run).calledWithMatch(
         sinon.match({
           jestConfig: {
@@ -570,7 +718,11 @@ describe(JestTestRunner.name, () => {
 
     it('should set testNamePattern if testFilter is set', async () => {
       const sut = await arrangeInitializedSut();
-      await sut.mutantRun(factory.mutantRunOptions({ testFilter: ['foo should be bar/z', 'baz should be ba\\.z'] }));
+      await sut.mutantRun(
+        factory.mutantRunOptions({
+          testFilter: ['foo should be bar/z', 'baz should be ba\\.z'],
+        }),
+      );
       expect(jestTestAdapterMock.run).calledWithMatch(
         sinon.match({
           testNamePattern: '(foo should be bar/z)|(baz should be ba\\\\\\.z)',
@@ -591,14 +743,23 @@ describe(JestTestRunner.name, () => {
     });
 
     it('should report a timeout when the hitLimit was reached', async () => {
-      const result = await actMutantRun(factory.mutantRunOptions({ hitLimit: 9 }), 10);
+      const result = await actMutantRun(
+        factory.mutantRunOptions({ hitLimit: 9 }),
+        10,
+      );
       assertions.expectTimeout(result);
       expect(result.reason).contains('Hit limit reached (10/9)');
     });
 
     it('should reset the hitLimit between runs', async () => {
-      const firstResult = await actMutantRun(factory.mutantRunOptions({ hitLimit: 9 }), 10);
-      const secondResult = await actMutantRun(factory.mutantRunOptions({ hitLimit: undefined }), 10);
+      const firstResult = await actMutantRun(
+        factory.mutantRunOptions({ hitLimit: 9 }),
+        10,
+      );
+      const secondResult = await actMutantRun(
+        factory.mutantRunOptions({ hitLimit: undefined }),
+        10,
+      );
       assertions.expectTimeout(firstResult);
       assertions.expectSurvived(secondResult);
     });
@@ -606,7 +767,10 @@ describe(JestTestRunner.name, () => {
 
   function createSut() {
     return testInjector.injector
-      .provideValue(pluginTokens.jestTestAdapter, jestTestAdapterMock as unknown as JestTestAdapter)
+      .provideValue(
+        pluginTokens.jestTestAdapter,
+        jestTestAdapterMock as unknown as JestTestAdapter,
+      )
       .provideValue(pluginTokens.configLoader, jestConfigLoaderMock)
       .provideValue(pluginTokens.globalNamespace, '__stryker2__' as const)
       .provideValue(pluginTokens.jestWrapper, jestWrapperMock)
@@ -619,7 +783,10 @@ describe(JestTestRunner.name, () => {
     return sut;
   }
 
-  async function actMutantRun(option = factory.mutantRunOptions(), hitCount?: number) {
+  async function actMutantRun(
+    option = factory.mutantRunOptions(),
+    hitCount?: number,
+  ) {
     const sut = createSut();
     await sut.init();
     jestTestAdapterMock.run.callsFake(() => {

@@ -10,13 +10,23 @@ import { ParserOptions } from './parser-options.js';
 
 export function createParser(
   parserOptions: ParserOptions,
-): <T extends AstFormat = AstFormat>(code: string, fileName: string, formatOverride?: T) => Promise<AstByFormat[T]> {
+): <T extends AstFormat = AstFormat>(
+  code: string,
+  fileName: string,
+  formatOverride?: T,
+) => Promise<AstByFormat[T]> {
   const jsParse = createJSParser(parserOptions);
-  return async function parse<T extends AstFormat = AstFormat>(code: string, fileName: string, formatOverride?: T): Promise<AstByFormat[T]> {
+  return async function parse<T extends AstFormat = AstFormat>(
+    code: string,
+    fileName: string,
+    formatOverride?: T,
+  ): Promise<AstByFormat[T]> {
     const format = getFormat(fileName, formatOverride);
     if (!format) {
       const ext = path.extname(fileName).toLowerCase();
-      throw new Error(`Unable to parse ${fileName}. No parser registered for ${ext}!`);
+      throw new Error(
+        `Unable to parse ${fileName}. No parser registered for ${ext}!`,
+      );
     }
     switch (format) {
       case AstFormat.JS:
@@ -28,12 +38,17 @@ export function createParser(
       case AstFormat.Html:
         return htmlParse(code, fileName, { parse }) as Promise<AstByFormat[T]>;
       case AstFormat.Svelte:
-        return svelteParse(code, fileName, { parse }) as Promise<AstByFormat[T]>;
+        return svelteParse(code, fileName, { parse }) as Promise<
+          AstByFormat[T]
+        >;
     }
   };
 }
 
-export function getFormat(fileName: string, override?: AstFormat): AstFormat | undefined {
+export function getFormat(
+  fileName: string,
+  override?: AstFormat,
+): AstFormat | undefined {
   if (override) {
     return override;
   } else {

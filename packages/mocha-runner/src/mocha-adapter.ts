@@ -41,7 +41,9 @@ export class MochaAdapter {
     }
   }
 
-  public async handleRequires(requires: string[]): Promise<RootHookObject | undefined> {
+  public async handleRequires(
+    requires: string[],
+  ): Promise<RootHookObject | undefined> {
     this.log.trace('Resolving requires %s', requires);
     if (LibWrapper.handleRequires) {
       this.log.trace('Using `handleRequires`');

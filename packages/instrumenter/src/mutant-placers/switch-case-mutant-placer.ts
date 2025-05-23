@@ -1,6 +1,9 @@
 import babel, { type types } from '@babel/core';
 
-import { mutantTestExpression, mutationCoverageSequenceExpression } from '../util/index.js';
+import {
+  mutantTestExpression,
+  mutationCoverageSequenceExpression,
+} from '../util/index.js';
 
 import { MutantPlacer } from './mutant-placer.js';
 
@@ -21,11 +24,17 @@ export const switchCaseMutantPlacer: MutantPlacer<types.SwitchCase> = {
   },
   place(path, appliedMutants) {
     let consequence: types.Statement = babel.types.blockStatement([
-      babel.types.expressionStatement(mutationCoverageSequenceExpression(appliedMutants.keys())),
+      babel.types.expressionStatement(
+        mutationCoverageSequenceExpression(appliedMutants.keys()),
+      ),
       ...path.node.consequent,
     ]);
     for (const [mutant, appliedMutant] of appliedMutants) {
-      consequence = babel.types.ifStatement(mutantTestExpression(mutant.id), babel.types.blockStatement(appliedMutant.consequent), consequence);
+      consequence = babel.types.ifStatement(
+        mutantTestExpression(mutant.id),
+        babel.types.blockStatement(appliedMutant.consequent),
+        consequence,
+      );
     }
     path.replaceWith(babel.types.switchCase(path.node.test, [consequence]));
   },

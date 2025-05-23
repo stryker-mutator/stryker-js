@@ -9,7 +9,9 @@ import { createGroups } from '../../../src/grouping/create-groups.js';
 describe(createGroups.name, () => {
   it('single mutant should create single group', () => {
     const mutants = [factory.mutant({ fileName: 'a.js', id: 'mutant-1' })];
-    const nodes = new Map<string, TSFileNode>([['a.js', new TSFileNode('a.js', [], [])]]);
+    const nodes = new Map<string, TSFileNode>([
+      ['a.js', new TSFileNode('a.js', [], [])],
+    ]);
     const groups = createGroups(mutants, nodes);
     expect(groups).to.have.lengthOf(1);
     expect(groups[0]).to.have.lengthOf(1);
@@ -17,7 +19,10 @@ describe(createGroups.name, () => {
   });
 
   it('two mutants in different files without reference to each other should create single group', () => {
-    const mutants = [factory.mutant({ fileName: 'a.js', id: '1' }), factory.mutant({ fileName: 'b.js', id: '2' })];
+    const mutants = [
+      factory.mutant({ fileName: 'a.js', id: '1' }),
+      factory.mutant({ fileName: 'b.js', id: '2' }),
+    ];
     const nodes = new Map<string, TSFileNode>([
       ['a.js', new TSFileNode('a.js', [], [])],
       ['b.js', new TSFileNode('b.js', [], [])],
@@ -29,7 +34,10 @@ describe(createGroups.name, () => {
   });
 
   it('two mutants in different files with reference to each other should create 2 groups', () => {
-    const mutants = [factory.mutant({ fileName: 'a.js', id: '1' }), factory.mutant({ fileName: 'b.js', id: '2' })];
+    const mutants = [
+      factory.mutant({ fileName: 'a.js', id: '1' }),
+      factory.mutant({ fileName: 'b.js', id: '2' }),
+    ];
     const nodeA = new TSFileNode('a.js', [], []);
     const nodeB = new TSFileNode('b.js', [nodeA], []);
     const nodes = new Map<string, TSFileNode>([
@@ -43,7 +51,10 @@ describe(createGroups.name, () => {
   });
 
   it('two mutants in different files with circular dependency to each other should create 2 groups', () => {
-    const mutants = [factory.mutant({ fileName: 'a.js', id: '1' }), factory.mutant({ fileName: 'b.js', id: '2' })];
+    const mutants = [
+      factory.mutant({ fileName: 'a.js', id: '1' }),
+      factory.mutant({ fileName: 'b.js', id: '2' }),
+    ];
     const nodeA = new TSFileNode('a.js', [], []);
     const nodeB = new TSFileNode('b.js', [nodeA], []);
     nodeA.parents.push(nodeB);
@@ -58,7 +69,10 @@ describe(createGroups.name, () => {
   });
 
   it('two mutants in same file should create 2 groups', () => {
-    const mutants = [factory.mutant({ fileName: 'a.js', id: '1' }), factory.mutant({ fileName: 'a.js', id: '2' })];
+    const mutants = [
+      factory.mutant({ fileName: 'a.js', id: '1' }),
+      factory.mutant({ fileName: 'a.js', id: '2' }),
+    ];
     const nodeA = new TSFileNode('a.js', [], []);
     const nodes = new Map<string, TSFileNode>([[nodeA.fileName, nodeA]]);
     const groups = createGroups(mutants, nodes);
@@ -105,6 +119,8 @@ describe(createGroups.name, () => {
     const nodeA = new TSFileNode('.js', [], []);
     const nodes = new Map<string, TSFileNode>([[nodeA.fileName, nodeA]]);
 
-    expect(createGroups.bind(null, mutants, nodes)).throw('Node not in graph: a.js');
+    expect(createGroups.bind(null, mutants, nodes)).throw(
+      'Node not in graph: a.js',
+    );
   });
 });

@@ -32,7 +32,10 @@ describe(ProgressBarReporter.name, () => {
       sut.onDryRunCompleted(
         factory.dryRunCompletedEvent({
           result: factory.completeDryRunResult({
-            tests: [factory.testResult({ id: '1', timeSpentMs: 10 }), factory.testResult({ id: '2', timeSpentMs: 5 })],
+            tests: [
+              factory.testResult({ id: '1', timeSpentMs: 10 }),
+              factory.testResult({ id: '2', timeSpentMs: 5 }),
+            ],
           }),
           timing: factory.runTiming({ net: 15, overhead: 100 }),
         }),
@@ -41,7 +44,9 @@ describe(ProgressBarReporter.name, () => {
         factory.mutationTestingPlanReadyEvent({
           mutantPlans: [
             // Ignored mutant
-            factory.mutantEarlyResultPlan({ mutant: factory.ignoredMutantTestCoverage({ id: '1' }) }),
+            factory.mutantEarlyResultPlan({
+              mutant: factory.ignoredMutantTestCoverage({ id: '1' }),
+            }),
             // Run test 1, takes 10ms
             factory.mutantRunPlan({
               mutant: factory.mutantTestCoverage({ id: '2' }),
@@ -57,7 +62,10 @@ describe(ProgressBarReporter.name, () => {
             // Run all tests, takes 115ms
             factory.mutantRunPlan({
               mutant: factory.mutantTestCoverage({ id: '4' }),
-              runOptions: factory.mutantRunOptions({ testFilter: undefined, reloadEnvironment: true }),
+              runOptions: factory.mutantRunOptions({
+                testFilter: undefined,
+                reloadEnvironment: true,
+              }),
               netTime: 15,
             }),
           ],
@@ -80,9 +88,15 @@ describe(ProgressBarReporter.name, () => {
     });
 
     it('should tick the ProgressBar with 1 survived mutant when status is "Survived"', () => {
-      sut.onMutantTested(factory.survivedMutantResult({ id: '4', static: true }));
+      sut.onMutantTested(
+        factory.survivedMutantResult({ id: '4', static: true }),
+      );
       progressBarTickTokens = { total: 130, tested: 1, survived: 1 };
-      sinon.assert.calledWithMatch(progressBar.tick, 115, progressBarTickTokens);
+      sinon.assert.calledWithMatch(
+        progressBar.tick,
+        115,
+        progressBarTickTokens,
+      );
     });
   });
 
@@ -91,7 +105,10 @@ describe(ProgressBarReporter.name, () => {
       sut.onDryRunCompleted(
         factory.dryRunCompletedEvent({
           result: factory.completeDryRunResult({
-            tests: [factory.testResult({ id: '1', timeSpentMs: 10 }), factory.testResult({ id: '2', timeSpentMs: 5 })],
+            tests: [
+              factory.testResult({ id: '1', timeSpentMs: 10 }),
+              factory.testResult({ id: '2', timeSpentMs: 5 }),
+            ],
           }),
           timing: factory.runTiming({ net: 15, overhead: 100 }),
         }),
@@ -100,7 +117,9 @@ describe(ProgressBarReporter.name, () => {
         factory.mutationTestingPlanReadyEvent({
           mutantPlans: [
             // Ignored mutant
-            factory.mutantEarlyResultPlan({ mutant: factory.ignoredMutantTestCoverage({ id: '1' }) }),
+            factory.mutantEarlyResultPlan({
+              mutant: factory.ignoredMutantTestCoverage({ id: '1' }),
+            }),
             // Run test 1, takes 10ms
             factory.mutantRunPlan({
               mutant: factory.mutantTestCoverage({ id: '2' }),
@@ -116,7 +135,10 @@ describe(ProgressBarReporter.name, () => {
             // Run all tests, takes 115ms
             factory.mutantRunPlan({
               mutant: factory.mutantTestCoverage({ id: '4' }),
-              runOptions: factory.mutantRunOptions({ testFilter: undefined, reloadEnvironment: true }),
+              runOptions: factory.mutantRunOptions({
+                testFilter: undefined,
+                reloadEnvironment: true,
+              }),
               netTime: 15,
             }),
           ],
@@ -129,7 +151,10 @@ describe(ProgressBarReporter.name, () => {
 
       sut.onMutantTested(factory.mutantResult({ id: '3' }));
 
-      sinon.assert.calledWithMatch(progressBar.tick, 5, { et: '<1m', etc: '~4m' });
+      sinon.assert.calledWithMatch(progressBar.tick, 5, {
+        et: '<1m',
+        etc: '~4m',
+      });
     });
 
     it('should show correct time info after a hundred seconds and 7% tested', () => {
@@ -137,7 +162,10 @@ describe(ProgressBarReporter.name, () => {
 
       sut.onMutantTested(factory.mutantResult({ id: '2' }));
 
-      sinon.assert.calledWithMatch(progressBar.tick, 10, { et: '~1m', etc: '~20m' });
+      sinon.assert.calledWithMatch(progressBar.tick, 10, {
+        et: '~1m',
+        etc: '~20m',
+      });
     });
 
     it('should show correct time info after ten thousand seconds and 88%', () => {
@@ -145,7 +173,10 @@ describe(ProgressBarReporter.name, () => {
 
       sut.onMutantTested(factory.mutantResult({ id: '4' }));
 
-      sinon.assert.calledWithMatch(progressBar.tick, 115, { et: '~2h 46m', etc: '~21m' });
+      sinon.assert.calledWithMatch(progressBar.tick, 115, {
+        et: '~2h 46m',
+        etc: '~21m',
+      });
     });
 
     it('should show correct time info after an hour and 11% tested', () => {
@@ -154,8 +185,14 @@ describe(ProgressBarReporter.name, () => {
       sut.onMutantTested(factory.mutantResult({ id: '2' }));
       sut.onMutantTested(factory.mutantResult({ id: '3' }));
 
-      sinon.assert.calledWithMatch(progressBar.tick, 10, { et: '~1h 0m', etc: '~12h 0m' });
-      sinon.assert.calledWithMatch(progressBar.tick, 5, { et: '~1h 0m', etc: '~7h 40m' });
+      sinon.assert.calledWithMatch(progressBar.tick, 10, {
+        et: '~1h 0m',
+        etc: '~12h 0m',
+      });
+      sinon.assert.calledWithMatch(progressBar.tick, 5, {
+        et: '~1h 0m',
+        etc: '~7h 40m',
+      });
     });
   });
 });

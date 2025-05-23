@@ -19,13 +19,26 @@ export class MutantCollector {
    * @param offset offset of mutant nodes
    * @returns The mutant (for testability)
    */
-  public collect(fileName: string, original: types.Node, mutable: Mutable, offset: Position = { line: 0, column: 0 }): Mutant {
-    const mutant = new Mutant(this._mutants.length.toString(), fileName, original, mutable, offset);
+  public collect(
+    fileName: string,
+    original: types.Node,
+    mutable: Mutable,
+    offset: Position = { line: 0, column: 0 },
+  ): Mutant {
+    const mutant = new Mutant(
+      this._mutants.length.toString(),
+      fileName,
+      original,
+      mutable,
+      offset,
+    );
     this._mutants.push(mutant);
     return mutant;
   }
 
   public hasPlacedMutants(fileName: string): boolean {
-    return this.mutants.some((mutant) => mutant.fileName === fileName && !mutant.ignoreReason);
+    return this.mutants.some(
+      (mutant) => mutant.fileName === fileName && !mutant.ignoreReason,
+    );
   }
 }

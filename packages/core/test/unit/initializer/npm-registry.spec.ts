@@ -46,16 +46,25 @@ describe('npm registry', () => {
 
     it('should return globally configured npm registry when run with node command', () => {
       const expectedRegistry = 'http://my.custom.npm.registry.stryker';
-      const execaCommandSyncMock = sinon.spy((_command, _options) => ({ stdout: expectedRegistry }));
+      const execaCommandSyncMock = sinon.spy((_command, _options) => ({
+        stdout: expectedRegistry,
+      }));
       process.env.npm_config_registry = '';
       process.env.npm_command = '';
 
-      const registry = getRegistry(testInjector.logger, execaCommandSyncMock as unknown as typeof execaCommandSync);
+      const registry = getRegistry(
+        testInjector.logger,
+        execaCommandSyncMock as unknown as typeof execaCommandSync,
+      );
 
-      sinon.assert.calledOnceWithExactly(execaCommandSyncMock, 'npm config get --global registry', {
-        stdout: 'pipe',
-        timeout: 20000,
-      });
+      sinon.assert.calledOnceWithExactly(
+        execaCommandSyncMock,
+        'npm config get --global registry',
+        {
+          stdout: 'pipe',
+          timeout: 20000,
+        },
+      );
 
       expect(registry).to.equal(expectedRegistry);
     });
@@ -68,12 +77,19 @@ describe('npm registry', () => {
       process.env.npm_config_registry = '';
       process.env.npm_command = '';
 
-      const registry = getRegistry(testInjector.logger, execaCommandSyncMock as unknown as typeof execaCommandSync);
+      const registry = getRegistry(
+        testInjector.logger,
+        execaCommandSyncMock as unknown as typeof execaCommandSync,
+      );
 
-      sinon.assert.calledOnceWithExactly(execaCommandSyncMock, 'npm config get --global registry', {
-        stdout: 'pipe',
-        timeout: 20000,
-      });
+      sinon.assert.calledOnceWithExactly(
+        execaCommandSyncMock,
+        'npm config get --global registry',
+        {
+          stdout: 'pipe',
+          timeout: 20000,
+        },
+      );
 
       expect(registry).to.equal(DEFAULT_REGISTRY);
       sinon.assert.calledOnceWithMatch(

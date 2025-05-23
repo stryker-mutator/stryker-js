@@ -1,6 +1,6 @@
 {
   "name": "create-stryker",
-  "version": "8.7.1",
+  "version": "9.0.1",
   "description": "Initializer for StrykerJS",
   "type": "module",
   "files": [
@@ -17,7 +17,7 @@
     "directory": "packages/create-stryker"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.0.0"
   },
   "keywords": [
     "mutation testing",
@@ -38,6 +38,6 @@
   "homepage": "https://stryker-mutator.io/",
   "bin": "dist/src/index.js",
   "dependencies": {
-    "@stryker-mutator/core": "8.7.1"
+    "@stryker-mutator/core": "9.0.1"
   }
 }

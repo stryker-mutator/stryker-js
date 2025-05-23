@@ -5,7 +5,11 @@ import { coreTokens } from '../../../src/di/index.js';
 import { FileSystem, ProjectReader } from '../../../src/fs/index.js';
 import { resolveFromRoot } from '../../helpers/test-utils.js';
 
-const resolveTestResource = resolveFromRoot.bind(undefined, 'testResources', 'input-files');
+const resolveTestResource = resolveFromRoot.bind(
+  undefined,
+  'testResources',
+  'input-files',
+);
 
 describe(`${ProjectReader.name} integration`, () => {
   let sut: ProjectReader;
@@ -29,8 +33,18 @@ describe(`${ProjectReader.name} integration`, () => {
     expect([...project.filesToMutate.keys()]).deep.eq([
       resolveTestResource('lib', 'string-utils.js'),
       resolveTestResource('src', 'app.ts'),
-      resolveTestResource('src', 'components', 'calculator', 'calculator.component.tsx'),
-      resolveTestResource('src', 'components', 'heading', 'heading.component.vue'),
+      resolveTestResource(
+        'src',
+        'components',
+        'calculator',
+        'calculator.component.tsx',
+      ),
+      resolveTestResource(
+        'src',
+        'components',
+        'heading',
+        'heading.component.vue',
+      ),
       resolveTestResource('src', 'index.html'),
       resolveTestResource('src', 'services', 'storage.ts'),
       resolveTestResource('src', 'services', 'test.ts'),
@@ -45,7 +59,9 @@ describe(`${ProjectReader.name} integration`, () => {
     const project = await sut.read();
 
     // Act
-    const content = await project.files.get(resolveTestResource('lib', 'string-utils.js'))?.readContent();
+    const content = await project.files
+      .get(resolveTestResource('lib', 'string-utils.js'))
+      ?.readContent();
 
     // Assert
     expect(content).eq(stringConcatSnapshot);

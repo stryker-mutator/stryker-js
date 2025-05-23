@@ -7,7 +7,11 @@ import {
   MutationTestResult,
   DiscoveredFile,
 } from 'mutation-server-protocol';
-import { JSONRPCClient, JSONRPCServer, JSONRPCServerAndClient } from 'json-rpc-2.0';
+import {
+  JSONRPCClient,
+  JSONRPCServer,
+  JSONRPCServerAndClient,
+} from 'json-rpc-2.0';
 import net from 'net';
 import { createInjector, Injector } from 'typed-inject';
 import { PrepareExecutor } from './process/1-prepare-executor.js';
@@ -22,7 +26,10 @@ import { Reporter } from '@stryker-mutator/api/report';
 import { Stryker } from './stryker.js';
 import { promisify } from 'util';
 import { normalizeReportFileName } from './reporters/mutation-test-report-helper.js';
-import { LoggingBackendProvider, provideLoggingBackend } from './logging/provide-logging.js';
+import {
+  LoggingBackendProvider,
+  provideLoggingBackend,
+} from './logging/provide-logging.js';
 
 export const rpcMethods = Object.freeze({
   configure: 'configure',
@@ -31,7 +38,8 @@ export const rpcMethods = Object.freeze({
   reportMutationTestProgressNotification: 'reportMutationTestProgress',
 });
 
-const STRYKER_SERVER_NOT_STARTED = "Stryker server isn't started yet, please call `start` first";
+const STRYKER_SERVER_NOT_STARTED =
+  "Stryker server isn't started yet, please call `start` first";
 const STRYKER_SERVER_ALREADY_STARTED = 'Server already started';
 /**
  * An implementation of the mutation testing server protocol for StrykerJS.
@@ -68,7 +76,9 @@ export class StrykerServer {
       throw new Error(STRYKER_SERVER_ALREADY_STARTED);
     }
     this.#rootInjector = this.injectorFactory();
-    this.#loggingBackendProvider = await provideLoggingBackend(this.#rootInjector);
+    this.#loggingBackendProvider = await provideLoggingBackend(
+      this.#rootInjector,
+    );
     return new Promise((resolve) => {
       this.#server = net.createServer((socket) => {
         const deserializer = new JsonRpcEventDeserializer();
@@ -88,13 +98,16 @@ export class StrykerServer {
             this.mutationTest(params).subscribe({
               next: (mutantResult) => {
                 const { fileName, ...mutant } = mutantResult;
-                rpc.client.notify(rpcMethods.reportMutationTestProgressNotification, {
-                  files: {
-                    [normalizeReportFileName(fileName)]: {
-                      mutants: [mutant],
+                rpc.client.notify(
+                  rpcMethods.reportMutationTestProgressNotification,
+                  {
+                    files: {
+                      [normalizeReportFileName(fileName)]: {
+                        mutants: [mutant],
+                      },
                     },
-                  },
-                } satisfies MutationTestResult);
+                  } satisfies MutationTestResult,
+                );
               },
               error: reject,
               complete: () => resolve({ files: {} }),
@@ -145,10 +158,22 @@ export class StrykerServer {
       const pluginCreator = inj.resolve(coreTokens.pluginCreator);
       const options = inj.resolve(commonTokens.options);
       const project = inj.resolve(coreTokens.project);
-      const filesToMutate = await Promise.all([...project.filesToMutate.values()].map((file) => file.toInstrumenterFile()));
-      const ignorers = options.ignorers.map((name) => pluginCreator.create(PluginKind.Ignore, name));
-      const instrumentResult = await instrumenter.instrument(filesToMutate, { ignorers, ...options.mutator });
-      const mutants = instrumentResult.mutants.map((mutant) => ({ ...mutant, location: objectUtils.toSchemaLocation(mutant.location) }));
+      const filesToMutate = await Promise.all(
+        [...project.filesToMutate.values()].map((file) =>
+          file.toInstrumenterFile(),
+        ),
+      );
+      const ignorers = options.ignorers.map((name) =>
+        pluginCreator.create(PluginKind.Ignore, name),
+      );
+      const instrumentResult = await instrumenter.instrument(filesToMutate, {
+        ignorers,
+        ...options.mutator,
+      });
+      const mutants = instrumentResult.mutants.map((mutant) => ({
+        ...mutant,
+        location: objectUtils.toSchemaLocation(mutant.location),
+      }));
       const mutantsByFile = mutants.reduce((acc, mutant) => {
         const { fileName, ...discoveredMutant } = mutant;
         const normalizedFileName = normalizeReportFileName(fileName);
@@ -176,12 +201,18 @@ export class StrykerServer {
         },
       };
 
-      Stryker.run(this.#loggingBackendProvider.provideValue(coreTokens.reporterOverride, reporter), {
-        ...this.cliOptions,
-        allowConsoleColors: false,
-        configFile: this.#configFilePath,
-        ...this.#overrideMutate(params.files),
-      })
+      Stryker.run(
+        this.#loggingBackendProvider.provideValue(
+          coreTokens.reporterOverride,
+          reporter,
+        ),
+        {
+          ...this.cliOptions,
+          allowConsoleColors: false,
+          configFile: this.#configFilePath,
+          ...this.#overrideMutate(params.files),
+        },
+      )
         .then(() => subscriber.complete())
         .catch((error) => subscriber.error(error));
     });

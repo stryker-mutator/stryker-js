@@ -1,7 +1,11 @@
 import { EOL } from 'os';
 
 import { Injector } from 'typed-inject';
-import { assertions, factory, testInjector } from '@stryker-mutator/test-helpers';
+import {
+  assertions,
+  factory,
+  testInjector,
+} from '@stryker-mutator/test-helpers';
 import sinon from 'sinon';
 import {
   TestRunner,
@@ -16,10 +20,17 @@ import { Observable, mergeMap } from 'rxjs';
 import { I } from '@stryker-mutator/util';
 
 import { Timer } from '../../../src/utils/timer.js';
-import { DryRunContext, DryRunExecutor, MutationTestContext } from '../../../src/process/index.js';
+import {
+  DryRunContext,
+  DryRunExecutor,
+  MutationTestContext,
+} from '../../../src/process/index.js';
 import { coreTokens } from '../../../src/di/index.js';
 import { ConfigError } from '../../../src/errors.js';
-import { ConcurrencyTokenProvider, Pool } from '../../../src/concurrent/index.js';
+import {
+  ConcurrencyTokenProvider,
+  Pool,
+} from '../../../src/concurrent/index.js';
 import { createTestRunnerPoolMock } from '../../helpers/producers.js';
 import { Sandbox } from '../../../src/sandbox/index.js';
 import { Project } from '../../../src/fs/index.js';
@@ -47,15 +58,28 @@ describe(DryRunExecutor.name, () => {
     testRunnerPoolMock = createTestRunnerPoolMock();
     (
       testRunnerPoolMock.schedule as sinon.SinonStub<
-        [Observable<unknown>, (testRunner: TestRunner, arg: unknown) => Promise<DryRunResult>],
+        [
+          Observable<unknown>,
+          (testRunner: TestRunner, arg: unknown) => Promise<DryRunResult>,
+        ],
         Observable<DryRunResult>
       >
-    ).callsFake((item$, task) => item$.pipe(mergeMap((item) => task(testRunnerMock, item))));
-    concurrencyTokenProviderMock = sinon.createStubInstance(ConcurrencyTokenProvider);
-    injectorMock = factory.injector() as unknown as sinon.SinonStubbedInstance<Injector<MutationTestContext>>;
-    injectorMock.resolve.withArgs(coreTokens.testRunnerPool).returns(testRunnerPoolMock as I<Pool<TestRunner>>);
+    ).callsFake((item$, task) =>
+      item$.pipe(mergeMap((item) => task(testRunnerMock, item))),
+    );
+    concurrencyTokenProviderMock = sinon.createStubInstance(
+      ConcurrencyTokenProvider,
+    );
+    injectorMock = factory.injector() as unknown as sinon.SinonStubbedInstance<
+      Injector<MutationTestContext>
+    >;
+    injectorMock.resolve
+      .withArgs(coreTokens.testRunnerPool)
+      .returns(testRunnerPoolMock as I<Pool<TestRunner>>);
     sandbox = sinon.createStubInstance(Sandbox);
-    const fsTestDouble = new FileSystemTestDouble({ 'bar.js': 'console.log("bar")' });
+    const fsTestDouble = new FileSystemTestDouble({
+      'bar.js': 'console.log("bar")',
+    });
     project = new Project(fsTestDouble, fsTestDouble.toFileDescriptions());
     injectorMock.resolve.withArgs(coreTokens.project).returns(project);
     sut = new DryRunExecutor(
@@ -167,7 +191,9 @@ describe(DryRunExecutor.name, () => {
       // Arrange
       const expectedOverHeadTimeMs = 90;
       const expectedNetTime = 90;
-      runResult.tests.push(factory.successTestResult({ timeSpentMs: expectedNetTime }));
+      runResult.tests.push(
+        factory.successTestResult({ timeSpentMs: expectedNetTime }),
+      );
       timerMock.elapsedMs.returns(expectedOverHeadTimeMs + expectedNetTime);
 
       // Act
@@ -200,14 +226,20 @@ describe(DryRunExecutor.name, () => {
         expect(timerMock.mark).calledWith('Initial test run');
         expect(timerMock.elapsedMs).calledWith('Initial test run');
         expect(timerMock.mark).calledBefore(timerMock.elapsedMs);
-        expect(actualResultInjector.provideValue).calledWithExactly(coreTokens.timeOverheadMS, expectedOverHeadTimeMs);
+        expect(actualResultInjector.provideValue).calledWithExactly(
+          coreTokens.timeOverheadMS,
+          expectedOverHeadTimeMs,
+        );
       });
 
       it('should never calculate a negative overhead time', async () => {
         runResult.tests.push(factory.successTestResult({ timeSpentMs: 10 }));
         timerMock.elapsedMs.returns(9);
         const injector = await sut.execute();
-        expect(injector.provideValue).calledWithExactly(coreTokens.timeOverheadMS, 0);
+        expect(injector.provideValue).calledWithExactly(
+          coreTokens.timeOverheadMS,
+          0,
+        );
       });
 
       it('should provide the dry run result', async () => {
@@ -218,25 +250,42 @@ describe(DryRunExecutor.name, () => {
           static: {},
         };
         const actualInjector = await sut.execute();
-        expect(actualInjector.provideValue).calledWithExactly(coreTokens.dryRunResult, runResult);
+        expect(actualInjector.provideValue).calledWithExactly(
+          coreTokens.dryRunResult,
+          runResult,
+        );
       });
 
       it('should remap test files that are reported', async () => {
-        runResult.tests.push(factory.successTestResult({ fileName: '.stryker-tmp/sandbox-123/test/foo.spec.js' }));
+        runResult.tests.push(
+          factory.successTestResult({
+            fileName: '.stryker-tmp/sandbox-123/test/foo.spec.js',
+          }),
+        );
         sandbox.originalFileFor.returns('test/foo.spec.js');
         await sut.execute();
-        const actualDryRunResult = injectorMock.provideValue.getCalls().find((call) => call.args[0] === coreTokens.dryRunResult)!
+        const actualDryRunResult = injectorMock.provideValue
+          .getCalls()
+          .find((call) => call.args[0] === coreTokens.dryRunResult)!
           .args[1] as DryRunResult;
         assertions.expectCompleted(actualDryRunResult);
         expect(actualDryRunResult.tests[0].fileName).eq('test/foo.spec.js');
-        expect(sandbox.originalFileFor).calledWith('.stryker-tmp/sandbox-123/test/foo.spec.js');
+        expect(sandbox.originalFileFor).calledWith(
+          '.stryker-tmp/sandbox-123/test/foo.spec.js',
+        );
       });
 
       it('should remap test locations when type checking was disabled for a test file', async () => {
         testInjector.options.disableTypeChecks = '{src,test}/**/*.js';
         runResult.tests.push(
-          factory.successTestResult({ fileName: '.stryker-tmp/sandbox-123/test/foo.spec.js', startPosition: { line: 3, column: 1 } }),
-          factory.successTestResult({ fileName: '.stryker-tmp/sandbox-123/testResources/foo.spec.js', startPosition: { line: 5, column: 1 } }),
+          factory.successTestResult({
+            fileName: '.stryker-tmp/sandbox-123/test/foo.spec.js',
+            startPosition: { line: 3, column: 1 },
+          }),
+          factory.successTestResult({
+            fileName: '.stryker-tmp/sandbox-123/testResources/foo.spec.js',
+            startPosition: { line: 5, column: 1 },
+          }),
         );
         sandbox.originalFileFor
           .withArgs('.stryker-tmp/sandbox-123/test/foo.spec.js')
@@ -244,18 +293,28 @@ describe(DryRunExecutor.name, () => {
           .withArgs('.stryker-tmp/sandbox-123/testResources/foo.spec.js')
           .returns('testResources/foo.spec.js');
         await sut.execute();
-        const actualDryRunResult = injectorMock.provideValue.getCalls().find((call) => call.args[0] === coreTokens.dryRunResult)!
+        const actualDryRunResult = injectorMock.provideValue
+          .getCalls()
+          .find((call) => call.args[0] === coreTokens.dryRunResult)!
           .args[1] as DryRunResult;
         assertions.expectCompleted(actualDryRunResult);
-        expect(actualDryRunResult.tests[0].startPosition).deep.eq({ line: 2, column: 1 });
-        expect(actualDryRunResult.tests[1].startPosition).deep.eq({ line: 5, column: 1 }); // should not have been remapped, since type checking wasn't disabled here
+        expect(actualDryRunResult.tests[0].startPosition).deep.eq({
+          line: 2,
+          column: 1,
+        });
+        expect(actualDryRunResult.tests[1].startPosition).deep.eq({
+          line: 5,
+          column: 1,
+        }); // should not have been remapped, since type checking wasn't disabled here
       });
 
       it('should have logged the amount of tests ran', async () => {
         runResult.tests.push(factory.successTestResult({ timeSpentMs: 10 }));
         runResult.tests.push(factory.successTestResult({ timeSpentMs: 10 }));
         timerMock.humanReadableElapsed.returns('30 seconds');
-        timerMock.humanReadableElapsed.withArgs('Initial test run').returns('2 seconds');
+        timerMock.humanReadableElapsed
+          .withArgs('Initial test run')
+          .returns('2 seconds');
         timerMock.elapsedMs.returns(30000);
         timerMock.elapsedMs.withArgs('Initial test run').returns(2000);
 
@@ -281,13 +340,25 @@ describe(DryRunExecutor.name, () => {
       it('should prevent dryRun to throw an error when no tests are found and allowEmpty is set to true', async () => {
         testInjector.options.allowEmpty = true;
         await sut.execute();
-        expect(testInjector.logger.info).to.have.been.calledWith('No tests were found');
+        expect(testInjector.logger.info).to.have.been.calledWith(
+          'No tests were found',
+        );
       });
     });
     describe('with failed tests', () => {
       beforeEach(() => {
-        runResult.tests.push(factory.failedTestResult({ name: 'foo is bar', failureMessage: 'foo was baz' }));
-        runResult.tests.push(factory.failedTestResult({ name: 'bar is baz', failureMessage: 'bar was qux' }));
+        runResult.tests.push(
+          factory.failedTestResult({
+            name: 'foo is bar',
+            failureMessage: 'foo was baz',
+          }),
+        );
+        runResult.tests.push(
+          factory.failedTestResult({
+            name: 'bar is baz',
+            failureMessage: 'bar was qux',
+          }),
+        );
       });
 
       it('should have logged the errors', async () => {
@@ -298,7 +369,10 @@ describe(DryRunExecutor.name, () => {
       });
 
       it('should reject with correct message', async () => {
-        await expect(sut.execute()).rejectedWith(ConfigError, 'There were failed tests in the initial test run.');
+        await expect(sut.execute()).rejectedWith(
+          ConfigError,
+          'There were failed tests in the initial test run.',
+        );
       });
     });
   });
@@ -314,10 +388,14 @@ describe(DryRunExecutor.name, () => {
     it('should have logged the errors', async () => {
       runResult.errorMessage = 'cannot call foo() on undefined';
       await expect(sut.execute()).rejected;
-      expect(testInjector.logger.error).calledWith(`One or more tests resulted in an error:${EOL}\tcannot call foo() on undefined`);
+      expect(testInjector.logger.error).calledWith(
+        `One or more tests resulted in an error:${EOL}\tcannot call foo() on undefined`,
+      );
     });
     it('should reject with correct message', async () => {
-      await expect(sut.execute()).rejectedWith('Something went wrong in the initial test run');
+      await expect(sut.execute()).rejectedWith(
+        'Something went wrong in the initial test run',
+      );
     });
   });
 
@@ -331,11 +409,15 @@ describe(DryRunExecutor.name, () => {
 
     it('should have logged the timeout', async () => {
       await expect(sut.execute()).rejected;
-      expect(testInjector.logger.error).calledWith('Initial test run timed out!');
+      expect(testInjector.logger.error).calledWith(
+        'Initial test run timed out!',
+      );
     });
 
     it('should reject with correct message', async () => {
-      await expect(sut.execute()).rejectedWith('Something went wrong in the initial test run');
+      await expect(sut.execute()).rejectedWith(
+        'Something went wrong in the initial test run',
+      );
     });
   });
 });

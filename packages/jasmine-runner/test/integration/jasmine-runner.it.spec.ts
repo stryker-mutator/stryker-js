@@ -1,8 +1,16 @@
-import { factory, assertions, testInjector, TempTestDirectorySandbox } from '@stryker-mutator/test-helpers';
+import {
+  factory,
+  assertions,
+  testInjector,
+  TempTestDirectorySandbox,
+} from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { TestStatus } from '@stryker-mutator/api/test-runner';
 
-import { JasmineTestRunner, createJasmineTestRunnerFactory } from '../../src/jasmine-test-runner.js';
+import {
+  JasmineTestRunner,
+  createJasmineTestRunnerFactory,
+} from '../../src/jasmine-test-runner.js';
 import { expectTestResultsToEqual } from '../helpers/assertions.js';
 
 import { jasmineInitSuccessResults } from './helpers.js';
@@ -20,7 +28,9 @@ describe('JasmineRunner integration', () => {
       sandbox = new TempTestDirectorySandbox('jasmine-init');
       await sandbox.init();
       testInjector.options.jasmineConfigFile = 'spec/support/jasmine.json';
-      sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
+      sut = testInjector.injector.injectFunction(
+        createJasmineTestRunnerFactory('__stryker2__'),
+      );
     });
 
     it('should run the specs', async () => {
@@ -33,7 +43,10 @@ describe('JasmineRunner integration', () => {
       await sut.dryRun(factory.dryRunOptions());
       const secondRunResult = await sut.dryRun(factory.dryRunOptions());
       assertions.expectCompleted(secondRunResult);
-      expectTestResultsToEqual(secondRunResult.tests, jasmineInitSuccessResults);
+      expectTestResultsToEqual(
+        secondRunResult.tests,
+        jasmineInitSuccessResults,
+      );
     });
   });
 
@@ -41,7 +54,9 @@ describe('JasmineRunner integration', () => {
     beforeEach(async () => {
       sandbox = new TempTestDirectorySandbox('errors');
       await sandbox.init();
-      sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
+      sut = testInjector.injector.injectFunction(
+        createJasmineTestRunnerFactory('__stryker2__'),
+      );
     });
 
     it('should be able to tell the error', async () => {
@@ -57,7 +72,9 @@ describe('JasmineRunner integration', () => {
     beforeEach(async () => {
       sandbox = new TempTestDirectorySandbox('test-failures');
       await sandbox.init();
-      sut = testInjector.injector.injectFunction(createJasmineTestRunnerFactory('__stryker2__'));
+      sut = testInjector.injector.injectFunction(
+        createJasmineTestRunnerFactory('__stryker2__'),
+      );
     });
 
     it('should complete with first test failure (bail)', async () => {
@@ -74,7 +91,9 @@ describe('JasmineRunner integration', () => {
     });
 
     it('should report all failing tests when disableBail is true', async () => {
-      const result = await sut.dryRun(factory.dryRunOptions({ disableBail: true }));
+      const result = await sut.dryRun(
+        factory.dryRunOptions({ disableBail: true }),
+      );
       assertions.expectCompleted(result);
       expectTestResultsToEqual(result.tests, [
         {

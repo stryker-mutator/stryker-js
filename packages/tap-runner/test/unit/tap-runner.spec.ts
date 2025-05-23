@@ -14,7 +14,10 @@ import { expect } from 'chai';
 
 import * as tap from 'tap-parser';
 
-import { createTapTestRunnerFactory, TapTestRunner } from '../../src/tap-test-runner.js';
+import {
+  createTapTestRunnerFactory,
+  TapTestRunner,
+} from '../../src/tap-test-runner.js';
 import { TapParser } from '../../src/tap-parser-factory.js';
 
 class ChildProcessMock extends EventEmitter {
@@ -40,7 +43,9 @@ describe(TapTestRunner.name, () => {
 
     forkStub = sinon.stub(childProcess, 'spawn');
     forkStub.returns(childProcessMock);
-    sut = testInjector.injector.injectFunction(createTapTestRunnerFactory('__stryker2__'));
+    sut = testInjector.injector.injectFunction(
+      createTapTestRunnerFactory('__stryker2__'),
+    );
   });
 
   afterEach(() => {

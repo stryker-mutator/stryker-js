@@ -31,7 +31,12 @@ describe(sut.name, () => {
   });
 
   it('should mutate obvious Regex string literals', () => {
-    expectJSMutation(sut, 'new RegExp("\\\\d{4}")', 'new RegExp("\\\\d")', 'new RegExp("\\\\D{4}")');
+    expectJSMutation(
+      sut,
+      'new RegExp("\\\\d{4}")',
+      'new RegExp("\\\\d")',
+      'new RegExp("\\\\D{4}")',
+    );
   });
 
   it('should not mutate the flags of a new RegExp constructor', () => {
@@ -51,6 +56,10 @@ describe(sut.name, () => {
   });
 
   it('should only pass flags in new RegExp constructors if it is a string literal', () => {
-    expectJSMutation(sut, 'new RegExp("\\\\u{20}", foo)', 'new RegExp("\\\\u", foo)');
+    expectJSMutation(
+      sut,
+      'new RegExp("\\\\u{20}", foo)',
+      'new RegExp("\\\\u", foo)',
+    );
   });
 });

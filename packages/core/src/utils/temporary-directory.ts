@@ -10,7 +10,10 @@ export class TemporaryDirectory implements Disposable {
   #temporaryDirectory?: string;
   public removeDuringDisposal: boolean;
 
-  public static readonly inject = tokens(commonTokens.logger, commonTokens.options);
+  public static readonly inject = tokens(
+    commonTokens.logger,
+    commonTokens.options,
+  );
   constructor(
     private readonly log: Logger,
     private readonly options: StrykerOptions,
@@ -21,7 +24,9 @@ export class TemporaryDirectory implements Disposable {
   public async initialize(): Promise<void> {
     const parent = path.resolve(this.options.tempDirName);
     await fs.promises.mkdir(parent, { recursive: true });
-    this.#temporaryDirectory = await fs.promises.mkdtemp(path.join(parent, this.options.inPlace ? 'backup-' : 'sandbox-'));
+    this.#temporaryDirectory = await fs.promises.mkdtemp(
+      path.join(parent, this.options.inPlace ? 'backup-' : 'sandbox-'),
+    );
     this.log.debug('Using temp directory "%s"', this.#temporaryDirectory);
   }
 
@@ -41,19 +46,32 @@ export class TemporaryDirectory implements Disposable {
    */
   public async dispose(): Promise<void> {
     if (this.removeDuringDisposal && this.#temporaryDirectory) {
-      this.log.debug('Deleting stryker temp directory %s', this.#temporaryDirectory);
+      this.log.debug(
+        'Deleting stryker temp directory %s',
+        this.#temporaryDirectory,
+      );
       try {
-        await fs.promises.rm(this.#temporaryDirectory, { recursive: true, force: true });
+        await fs.promises.rm(this.#temporaryDirectory, {
+          recursive: true,
+          force: true,
+        });
       } catch {
-        this.log.info(`Failed to delete stryker temp directory ${this.#temporaryDirectory}`);
+        this.log.info(
+          `Failed to delete stryker temp directory ${this.#temporaryDirectory}`,
+        );
       }
-      const lingeringDirectories = await fs.promises.readdir(this.options.tempDirName);
+      const lingeringDirectories = await fs.promises.readdir(
+        this.options.tempDirName,
+      );
       if (!lingeringDirectories.length) {
         try {
           await fs.promises.rmdir(this.options.tempDirName);
         } catch (e) {
           // It's not THAT important, maybe another StrykerJS process started in the meantime.
-          this.log.debug(`Failed to clean temp ${path.basename(this.options.tempDirName)}`, e);
+          this.log.debug(
+            `Failed to clean temp ${path.basename(this.options.tempDirName)}`,
+            e,
+          );
         }
       }
     }

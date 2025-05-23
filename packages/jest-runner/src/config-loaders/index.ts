@@ -8,26 +8,41 @@ import { JestPluginContext } from '../plugin-di.js';
 import { CustomJestConfigLoader } from './custom-jest-config-loader.js';
 import { ReactScriptsJestConfigLoader } from './react-scripts-jest-config-loader.js';
 
-configLoaderFactory.inject = tokens(commonTokens.options, commonTokens.injector, commonTokens.logger);
+configLoaderFactory.inject = tokens(
+  commonTokens.options,
+  commonTokens.injector,
+  commonTokens.logger,
+);
 export function configLoaderFactory(
   options: StrykerOptions,
   injector: Injector<JestPluginContext>,
   log: Logger,
 ): CustomJestConfigLoader | ReactScriptsJestConfigLoader {
-  const warnAboutConfigFile = (projectType: string, configFile: string | undefined) => {
+  const warnAboutConfigFile = (
+    projectType: string,
+    configFile: string | undefined,
+  ) => {
     if (configFile) {
-      log.warn(`Config setting "configFile" is not supported for projectType "${projectType}"`);
+      log.warn(
+        `Config setting "configFile" is not supported for projectType "${projectType}"`,
+      );
     }
   };
-  const optionsWithJest: JestRunnerOptionsWithStrykerOptions = options as JestRunnerOptionsWithStrykerOptions;
+  const optionsWithJest: JestRunnerOptionsWithStrykerOptions =
+    options as JestRunnerOptionsWithStrykerOptions;
   switch (optionsWithJest.jest.projectType) {
     case 'custom':
       return injector.injectClass(CustomJestConfigLoader);
     case 'create-react-app':
-      warnAboutConfigFile(optionsWithJest.jest.projectType, optionsWithJest.jest.configFile);
+      warnAboutConfigFile(
+        optionsWithJest.jest.projectType,
+        optionsWithJest.jest.configFile,
+      );
       return injector.injectClass(ReactScriptsJestConfigLoader);
     default:
-      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-      throw new Error(`No configLoader available for ${optionsWithJest.jest.projectType}`);
+      throw new Error(
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        `No configLoader available for ${optionsWithJest.jest.projectType satisfies never}`,
+      );
   }
 }

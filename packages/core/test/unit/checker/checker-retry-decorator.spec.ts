@@ -26,7 +26,10 @@ describe(CheckerRetryDecorator.name, () => {
       dispose: sinon.stub(),
     };
     const checkers = [innerChecker1, innerChecker2];
-    sut = new CheckerRetryDecorator(() => checkers.shift()!, testInjector.logger);
+    sut = new CheckerRetryDecorator(
+      () => checkers.shift()!,
+      testInjector.logger,
+    );
   });
 
   it('should forward any results', async () => {
@@ -41,7 +44,9 @@ describe(CheckerRetryDecorator.name, () => {
   it('should forward normal rejections', async () => {
     const expectedError = new Error('expected error');
     innerChecker1.check.rejects(expectedError);
-    await expect(sut.check('foo', [factory.mutant()])).rejectedWith(expectedError);
+    await expect(sut.check('foo', [factory.mutant()])).rejectedWith(
+      expectedError,
+    );
   });
 
   it('should retry when the process crashed', async () => {
@@ -70,7 +75,10 @@ describe(CheckerRetryDecorator.name, () => {
     await sut.check('foo', [factory.mutant()]);
 
     // Assert
-    expect(testInjector.logger.warn).calledWithExactly('Checker process [6] crashed with exit code 3. Retrying in a new process.', error);
+    expect(testInjector.logger.warn).calledWithExactly(
+      'Checker process [6] crashed with exit code 3. Retrying in a new process.',
+      error,
+    );
   });
 
   it('should log a warning when the process ran out of memory', async () => {
@@ -83,6 +91,8 @@ describe(CheckerRetryDecorator.name, () => {
     await sut.check('foo', [factory.mutant()]);
 
     // Assert
-    expect(testInjector.logger.warn).calledWithExactly('Checker process [6] ran out of memory. Retrying in a new process.');
+    expect(testInjector.logger.warn).calledWithExactly(
+      'Checker process [6] ran out of memory. Retrying in a new process.',
+    );
   });
 });

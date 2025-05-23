@@ -1,10 +1,18 @@
 import path from 'path';
 
-import { factory, assertions, testInjector, TempTestDirectorySandbox } from '@stryker-mutator/test-helpers';
+import {
+  factory,
+  assertions,
+  testInjector,
+  TempTestDirectorySandbox,
+} from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import { TestStatus } from '@stryker-mutator/api/test-runner';
 
-import { createVitestTestRunnerFactory, VitestTestRunner } from '../../src/vitest-test-runner.js';
+import {
+  createVitestTestRunnerFactory,
+  VitestTestRunner,
+} from '../../src/vitest-test-runner.js';
 import { VitestRunnerOptionsWithStrykerOptions } from '../../src/vitest-runner-options-with-stryker-options.js';
 
 describe('VitestRunner integration', () => {
@@ -13,7 +21,9 @@ describe('VitestRunner integration', () => {
   let options: VitestRunnerOptionsWithStrykerOptions;
 
   beforeEach(() => {
-    sut = testInjector.injector.injectFunction(createVitestTestRunnerFactory('__stryker2__'));
+    sut = testInjector.injector.injectFunction(
+      createVitestTestRunnerFactory('__stryker2__'),
+    );
     options = testInjector.options as VitestRunnerOptionsWithStrykerOptions;
     options.vitest = {};
   });
@@ -25,10 +35,13 @@ describe('VitestRunner integration', () => {
 
   describe('using the simple-project project', () => {
     const test1 = 'tests/add.spec.ts#add should be able to add two numbers';
-    const test2 = 'tests/add.spec.ts#add should be able to add a negative number';
+    const test2 =
+      'tests/add.spec.ts#add should be able to add a negative number';
     const test3 = 'tests/math.spec.ts#math should be able negate a number';
-    const test4 = 'tests/math.spec.ts#math should be able to add one to a number';
-    const test5 = 'tests/math.spec.ts#math should be able to recognize a negative number';
+    const test4 =
+      'tests/math.spec.ts#math should be able to add one to a number';
+    const test5 =
+      'tests/math.spec.ts#math should be able to recognize a negative number';
     const test6 = 'tests/pi.spec.ts#pi should be 3.14';
     let sandboxFileName: string;
 
@@ -47,14 +60,24 @@ describe('VitestRunner integration', () => {
         const runResult = await sut.dryRun();
         assertions.expectCompleted(runResult);
         assertions.expectTestResults(runResult, [
-          { id: test1, fileName: path.resolve('tests/add.spec.ts'), name: 'add should be able to add two numbers', status: TestStatus.Success },
+          {
+            id: test1,
+            fileName: path.resolve('tests/add.spec.ts'),
+            name: 'add should be able to add two numbers',
+            status: TestStatus.Success,
+          },
           {
             id: test2,
             fileName: path.resolve('tests/add.spec.ts'),
             name: 'add should be able to add a negative number',
             status: TestStatus.Success,
           },
-          { id: test3, fileName: path.resolve('tests/math.spec.ts'), name: 'math should be able negate a number', status: TestStatus.Success },
+          {
+            id: test3,
+            fileName: path.resolve('tests/math.spec.ts'),
+            name: 'math should be able negate a number',
+            status: TestStatus.Success,
+          },
           {
             id: test4,
             fileName: path.resolve('tests/math.spec.ts'),
@@ -67,7 +90,12 @@ describe('VitestRunner integration', () => {
             name: 'math should be able to recognize a negative number',
             status: TestStatus.Success,
           },
-          { id: test6, fileName: path.resolve('tests/pi.spec.ts'), name: 'pi should be 3.14', status: TestStatus.Success },
+          {
+            id: test6,
+            fileName: path.resolve('tests/pi.spec.ts'),
+            name: 'pi should be 3.14',
+            status: TestStatus.Success,
+          },
         ]);
       });
 
@@ -273,7 +301,9 @@ describe('VitestRunner integration', () => {
 
       assertions.expectCompleted(runResult);
       expect(runResult.tests).to.have.lengthOf(1);
-      expect(runResult.tests[0].name).eq('math should be able to add two numbers');
+      expect(runResult.tests[0].name).eq(
+        'math should be able to add two numbers',
+      );
     });
 
     it('should load custom vitest config when config file is set', async () => {
@@ -284,7 +314,9 @@ describe('VitestRunner integration', () => {
 
       assertions.expectCompleted(runResult);
       expect(runResult.tests).to.have.lengthOf(1);
-      expect(runResult.tests[0].name).eq('math should be able to add one to a number');
+      expect(runResult.tests[0].name).eq(
+        'math should be able to add one to a number',
+      );
     });
   });
 
@@ -323,7 +355,13 @@ describe('VitestRunner integration', () => {
       const runResult = await sut.mutantRun(
         factory.mutantRunOptions({
           activeMutant: factory.mutant({ id: '1' }),
-          sandboxFileName: path.resolve(sandbox.tmpDir, 'packages', 'bar', 'src', 'math.js'),
+          sandboxFileName: path.resolve(
+            sandbox.tmpDir,
+            'packages',
+            'bar',
+            'src',
+            'math.js',
+          ),
         }),
       );
       assertions.expectKilled(runResult);
@@ -339,19 +377,25 @@ describe('VitestRunner integration', () => {
 
     async function actErroredMutant() {
       await sut.init();
-      return sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '1' }) }));
+      return sut.mutantRun(
+        factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '1' }) }),
+      );
     }
 
     // See https://github.com/stryker-mutator/stryker-js/issues/4306
     it('should be able to report an ErrorResult', async () => {
       const runResult = await actErroredMutant();
       assertions.expectErrored(runResult);
-      expect(runResult.errorMessage).contains('An error occurred outside of a test run');
+      expect(runResult.errorMessage).contains(
+        'An error occurred outside of a test run',
+      );
     });
 
     it('should be able recover from an error result', async () => {
       await actErroredMutant();
-      const runResult = await sut.mutantRun(factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '3' }) }));
+      const runResult = await sut.mutantRun(
+        factory.mutantRunOptions({ activeMutant: factory.mutant({ id: '3' }) }),
+      );
       assertions.expectSurvived(runResult);
     });
   });

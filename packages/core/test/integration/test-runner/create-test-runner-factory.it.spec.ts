@@ -5,10 +5,17 @@ import path from 'path';
 import sinon from 'sinon';
 import { expect } from 'chai';
 import { LogLevel } from '@stryker-mutator/api/core';
-import { testInjector, factory, assertions } from '@stryker-mutator/test-helpers';
+import {
+  testInjector,
+  factory,
+  assertions,
+} from '@stryker-mutator/test-helpers';
 import { DryRunStatus } from '@stryker-mutator/api/test-runner';
 
-import { LoggingServerAddress, LoggingSink } from '../../../src/logging/index.js';
+import {
+  LoggingServerAddress,
+  LoggingSink,
+} from '../../../src/logging/index.js';
 import { createTestRunnerFactory } from '../../../src/test-runner/index.js';
 import { sleep } from '../../helpers/test-utils.js';
 import { coreTokens } from '../../../src/di/index.js';
@@ -16,7 +23,10 @@ import { TestRunnerResource } from '../../../src/concurrent/index.js';
 import { IdGenerator } from '../../../src/child-proxy/id-generator.js';
 import { LoggingServer } from '../../../src/logging/logging-server.js';
 
-import { additionalTestRunnersFileUrl, CounterTestRunner } from './additional-test-runners.js';
+import {
+  additionalTestRunnersFileUrl,
+  CounterTestRunner,
+} from './additional-test-runners.js';
 import { loggingSink } from '../../helpers/producers.js';
 import { LoggingEvent } from '../../../src/logging/logging-event.js';
 
@@ -46,7 +56,9 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
     testInjector.options.maxTestRunnerReuse = 0;
     alreadyDisposed = false;
     createSut = testInjector.injector
-      .provideValue(coreTokens.sandbox, { workingDirectory: path.dirname(fileURLToPath(import.meta.url)) })
+      .provideValue(coreTokens.sandbox, {
+        workingDirectory: path.dirname(fileURLToPath(import.meta.url)),
+      })
       .provideValue(coreTokens.loggingServerAddress, loggingServerAddress)
       .provideValue(coreTokens.pluginModulePaths, pluginModulePaths)
       .provideClass(coreTokens.workerIdGenerator, IdGenerator)
@@ -70,7 +82,9 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
   }
 
   function actDryRun(timeout = 4000) {
-    return sut.dryRun(factory.dryRunOptions({ timeout, coverageAnalysis: 'all' }));
+    return sut.dryRun(
+      factory.dryRunOptions({ timeout, coverageAnalysis: 'all' }),
+    );
   }
 
   function actMutantRun(options = factory.mutantRunOptions()) {
@@ -81,7 +95,9 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
     await arrangeSut('coverage-reporting');
     const result = await actDryRun();
     assertions.expectCompleted(result);
-    expect(result.mutantCoverage).deep.eq(factory.mutantCoverage({ static: { 1: 42 } }));
+    expect(result.mutantCoverage).deep.eq(
+      factory.mutantCoverage({ static: { 1: 42 } }),
+    );
   });
 
   it('should pass along the run result', async () => {
@@ -114,7 +130,9 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
     await arrangeSut('errored');
     const result = await actDryRun(1000);
     assertions.expectErrored(result);
-    expect(result.errorMessage).includes('SyntaxError: This is invalid syntax!').and.includes('at ErroredTestRunner.dryRun');
+    expect(result.errorMessage)
+      .includes('SyntaxError: This is invalid syntax!')
+      .and.includes('at ErroredTestRunner.dryRun');
   });
 
   it('should run only after initialization, even when it is slow', async () => {
@@ -168,8 +186,11 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
       loggingSinkMock.log,
       sinon.match((actualEvent: LoggingEvent) => {
         return (
-          actualEvent.data.toString().includes('UnhandledPromiseRejectionWarning: Unhandled promise rejection') &&
-          actualEvent.level === LogLevel.Debug
+          actualEvent.data
+            .toString()
+            .includes(
+              'UnhandledPromiseRejectionWarning: Unhandled promise rejection',
+            ) && actualEvent.level === LogLevel.Debug
         );
       }),
     );
@@ -180,16 +201,24 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
     await arrangeSut('counter');
 
     await actMutantRun();
-    expect(fs.readFileSync(CounterTestRunner.COUNTER_FILE, 'utf8')).to.equal('1');
+    expect(fs.readFileSync(CounterTestRunner.COUNTER_FILE, 'utf8')).to.equal(
+      '1',
+    );
 
     await actMutantRun();
-    expect(fs.readFileSync(CounterTestRunner.COUNTER_FILE, 'utf8')).to.equal('2');
+    expect(fs.readFileSync(CounterTestRunner.COUNTER_FILE, 'utf8')).to.equal(
+      '2',
+    );
 
     await actMutantRun();
-    expect(fs.readFileSync(CounterTestRunner.COUNTER_FILE, 'utf8')).to.equal('3');
+    expect(fs.readFileSync(CounterTestRunner.COUNTER_FILE, 'utf8')).to.equal(
+      '3',
+    );
 
     await actMutantRun();
-    expect(fs.readFileSync(CounterTestRunner.COUNTER_FILE, 'utf8')).to.equal('1');
+    expect(fs.readFileSync(CounterTestRunner.COUNTER_FILE, 'utf8')).to.equal(
+      '1',
+    );
   });
 
   describe('running static mutants', () => {
@@ -198,21 +227,37 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
     });
 
     it('should not reload environment when reloadEnvironment = false', async () => {
-      const result1 = await actMutantRun(factory.mutantRunOptions({ reloadEnvironment: false }));
-      const result2 = await actMutantRun(factory.mutantRunOptions({ reloadEnvironment: false }));
+      const result1 = await actMutantRun(
+        factory.mutantRunOptions({ reloadEnvironment: false }),
+      );
+      const result2 = await actMutantRun(
+        factory.mutantRunOptions({ reloadEnvironment: false }),
+      );
       assertions.expectKilled(result1); // killed means it was the first run in the environment
       assertions.expectSurvived(result2); // survived means it was the second run in the environment
     });
 
     it('should reload environment when reloadEnvironment is true', async () => {
-      await actMutantRun(factory.mutantRunOptions({ reloadEnvironment: false }));
-      const result = await actMutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '2' }), reloadEnvironment: true }));
+      await actMutantRun(
+        factory.mutantRunOptions({ reloadEnvironment: false }),
+      );
+      const result = await actMutantRun(
+        factory.mutantRunOptions({
+          activeMutant: factory.mutantTestCoverage({ id: '2' }),
+          reloadEnvironment: true,
+        }),
+      );
       assertions.expectKilled(result);
     });
 
     it('should reload environment when reloadEnvironment is true and dry run came before', async () => {
       await actDryRun();
-      const result = await actMutantRun(factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '2' }), reloadEnvironment: true }));
+      const result = await actMutantRun(
+        factory.mutantRunOptions({
+          activeMutant: factory.mutantTestCoverage({ id: '2' }),
+          reloadEnvironment: true,
+        }),
+      );
       assertions.expectKilled(result);
     });
   });

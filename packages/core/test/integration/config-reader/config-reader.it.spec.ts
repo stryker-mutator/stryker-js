@@ -17,7 +17,11 @@ describe(ConfigReader.name, () => {
       .injectClass(ConfigReader);
   }
 
-  const resolveTestResource = resolveFromRoot.bind(undefined, 'testResources', 'config-reader');
+  const resolveTestResource = resolveFromRoot.bind(
+    undefined,
+    'testResources',
+    'config-reader',
+  );
 
   let originalCwd: string;
 
@@ -33,7 +37,9 @@ describe(ConfigReader.name, () => {
     it('should throw an error with a non-existing config file', async () => {
       sut = createSut();
 
-      await expect(sut.readConfig({ configFile: 'no-file.js' })).rejectedWith('Invalid config file "no-file.js". File does not exist!');
+      await expect(sut.readConfig({ configFile: 'no-file.js' })).rejectedWith(
+        'Invalid config file "no-file.js". File does not exist!',
+      );
     });
 
     describe('without overridden config file', () => {
@@ -119,7 +125,9 @@ describe(ConfigReader.name, () => {
       it('should read config file', async () => {
         sut = createSut();
 
-        const result = await sut.readConfig({ configFile: 'testResources/config-reader/valid.conf.js' });
+        const result = await sut.readConfig({
+          configFile: 'testResources/config-reader/valid.conf.js',
+        });
 
         expect(result.valid).to.be.eq('config');
         expect(result.should).to.be.eq('be');
@@ -130,7 +138,9 @@ describe(ConfigReader.name, () => {
       it('should read a json config file', async () => {
         sut = createSut();
 
-        const result = await sut.readConfig({ configFile: 'testResources/config-reader/valid.json' });
+        const result = await sut.readConfig({
+          configFile: 'testResources/config-reader/valid.json',
+        });
 
         expect(result.valid).to.be.eq('config');
         expect(result.should).to.be.eq('be');
@@ -145,7 +155,11 @@ describe(ConfigReader.name, () => {
       });
 
       it('should throw an error', async () => {
-        await expect(sut.readConfig({ configFile: 'testResources/config-reader/syntax-error.conf.js' })).rejectedWith(
+        await expect(
+          sut.readConfig({
+            configFile: 'testResources/config-reader/syntax-error.conf.js',
+          }),
+        ).rejectedWith(
           'Invalid config file "testResources/config-reader/syntax-error.conf.js". Error during import. Inner error: SyntaxError: Unexpected identifier',
         );
       });

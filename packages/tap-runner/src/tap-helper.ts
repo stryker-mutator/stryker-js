@@ -6,7 +6,9 @@ import * as tap from 'tap-parser';
 
 import { TapParser } from './tap-parser-factory.js';
 
-export function findTestyLookingFiles(globPatterns: string[]): Promise<string[]> {
+export function findTestyLookingFiles(
+  globPatterns: string[],
+): Promise<string[]> {
   return glob(globPatterns, { ignore: ['**/node_modules/**'], posix: true });
 }
 
@@ -15,7 +17,10 @@ export interface TapResult {
   failedTests: tap.TapError[];
 }
 
-function parseTap(tapProcess: ChildProcessWithoutNullStreams, forceBail: boolean) {
+function parseTap(
+  tapProcess: ChildProcessWithoutNullStreams,
+  forceBail: boolean,
+) {
   return new Promise<TapResult>((resolve) => {
     const failedTests: tap.TapError[] = [];
     const config = { bail: forceBail };
@@ -37,13 +42,21 @@ function parseTap(tapProcess: ChildProcessWithoutNullStreams, forceBail: boolean
   });
 }
 
-export async function captureTapResult(tapProcess: ChildProcessWithoutNullStreams, disableBail: boolean): Promise<TapResult> {
-  const exitAsPromised = new Promise<number>((resolve) => tapProcess.on('exit', resolve));
+export async function captureTapResult(
+  tapProcess: ChildProcessWithoutNullStreams,
+  disableBail: boolean,
+): Promise<TapResult> {
+  const exitAsPromised = new Promise<number>((resolve) =>
+    tapProcess.on('exit', resolve),
+  );
   const stderrOutput: Buffer[] = [];
   tapProcess.stderr.on('data', (chunk: Buffer) => {
     stderrOutput.push(chunk);
   });
-  const [exitCodeResult, tapResult] = await Promise.all([exitAsPromised, parseTap(tapProcess, disableBail)]);
+  const [exitCodeResult, tapResult] = await Promise.all([
+    exitAsPromised,
+    parseTap(tapProcess, disableBail),
+  ]);
 
   if (exitCodeResult !== 0 && !tapResult.failedTests.length) {
     // The tap process errored, but we don't have any failed tests. This is probably a syntax error in the test file.
@@ -59,7 +72,11 @@ export async function captureTapResult(tapProcess: ChildProcessWithoutNullStream
   return tapResult;
 }
 
-export function buildArguments(args: string[], hookFile: string, testFile: string): string[] {
+export function buildArguments(
+  args: string[],
+  hookFile: string,
+  testFile: string,
+): string[] {
   const hookFilePlaceholder = '{{hookFile}}';
   const testFilePlaceholder = '{{testFile}}';
 
@@ -71,5 +88,9 @@ export function buildArguments(args: string[], hookFile: string, testFile: strin
     args = [...args, testFilePlaceholder];
   }
 
-  return args.map((arg) => arg.replaceAll(testFilePlaceholder, testFile).replaceAll(hookFilePlaceholder, hookFile));
+  return args.map((arg) =>
+    arg
+      .replaceAll(testFilePlaceholder, testFile)
+      .replaceAll(hookFilePlaceholder, hookFile),
+  );
 }

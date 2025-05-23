@@ -26,7 +26,9 @@ export function createJasmineStartedInfo(): jasmine.JasmineStartedInfo {
   };
 }
 
-export function createSpecResult(overrides?: Partial<jasmine.SpecResult>): jasmine.SpecResult {
+export function createSpecResult(
+  overrides?: Partial<jasmine.SpecResult>,
+): jasmine.SpecResult {
   return {
     description: 'should have bar',
     fullName: 'Foo should have bar',

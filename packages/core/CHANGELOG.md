@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.0.1](https://github.com/stryker-mutator/stryker-js/compare/v9.0.0...v9.0.1) (2025-05-14)
+
+**Note:** Version bump only for package @stryker-mutator/core
+
+# [9.0.0](https://github.com/stryker-mutator/stryker-js/compare/v8.7.1...v9.0.0) (2025-05-13)
+
+### Bug Fixes
+
+- **deps:** update dependency @inquirer/prompts to v7 ([#5059](https://github.com/stryker-mutator/stryker-js/issues/5059)) ([0d23fd1](https://github.com/stryker-mutator/stryker-js/commit/0d23fd14e0f0ece100a97c2035b7334642b9a0ab))
+- **deps:** update dependency chalk to ~5.4.0 ([#5183](https://github.com/stryker-mutator/stryker-js/issues/5183)) ([c1f9286](https://github.com/stryker-mutator/stryker-js/commit/c1f928600d8810eaeb43a06b254b5daaac56f441))
+- **deps:** update dependency commander to v13 ([#5228](https://github.com/stryker-mutator/stryker-js/issues/5228)) ([3604746](https://github.com/stryker-mutator/stryker-js/commit/3604746eef79d9d5eb3956d01b187e512aed9a5a))
+- **deps:** update dependency execa to v9.5.2 ([#5137](https://github.com/stryker-mutator/stryker-js/issues/5137)) ([2ef28b8](https://github.com/stryker-mutator/stryker-js/commit/2ef28b85bfebcfda6b692db5ba83f74a0a3be565))
+- **deps:** update dependency mutation-testing-elements to v3.5.2 ([#5285](https://github.com/stryker-mutator/stryker-js/issues/5285)) ([5a878d7](https://github.com/stryker-mutator/stryker-js/commit/5a878d768dbcbb1314120e1714789d3d6fc7ca06))
+- **deps:** update dependency semver to ~7.7.0 ([#5184](https://github.com/stryker-mutator/stryker-js/issues/5184)) ([5c78a65](https://github.com/stryker-mutator/stryker-js/commit/5c78a65a109f3b348601de934604b96931082ea8))
+- **deps:** update dependency tslib to v2.8.1 ([#5075](https://github.com/stryker-mutator/stryker-js/issues/5075)) ([f069348](https://github.com/stryker-mutator/stryker-js/commit/f069348db3ed1a7af27b058d629fa0dc2472df9c))
+- **deps:** update dependency typed-inject to v5 ([#5239](https://github.com/stryker-mutator/stryker-js/issues/5239)) ([42eb160](https://github.com/stryker-mutator/stryker-js/commit/42eb16015899e3ed098877e32273762d77d30d91))
+- **deps:** update mutation-testing-elements monorepo to v3.5.1 ([#5198](https://github.com/stryker-mutator/stryker-js/issues/5198)) ([dca35d4](https://github.com/stryker-mutator/stryker-js/commit/dca35d47c12df6860bca534a4f643ff14c988589))
+
+### Features
+
+- **node:** drop support for node 18 ([#5290](https://github.com/stryker-mutator/stryker-js/issues/5290)) ([307ef79](https://github.com/stryker-mutator/stryker-js/commit/307ef79f009b75eaa58b2824be20b352ab5fd340))
+
+### BREAKING CHANGES
+
+- **node:** Node 18 is no longer supported, please use Node 20 or higher
+
 ## [8.7.1](https://github.com/stryker-mutator/stryker-js/compare/v8.7.0...v8.7.1) (2024-12-11)
 
 **Note:** Version bump only for package @stryker-mutator/core

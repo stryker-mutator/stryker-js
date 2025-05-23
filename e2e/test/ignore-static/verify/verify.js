@@ -2,7 +2,10 @@ import fs from 'fs';
 
 import { expect } from 'chai';
 
-import { execStryker, expectMetricsJsonToMatchSnapshot } from '../../../helpers.js';
+import {
+  execStryker,
+  expectMetricsJsonToMatchSnapshot,
+} from '../../../helpers.js';
 
 describe('Ignore static e2e test', () => {
   beforeEach(async () => {
@@ -30,7 +33,9 @@ describe('Ignore static e2e test', () => {
     await expectMetricsJsonToMatchSnapshot();
   });
   it('should work for jest', async () => {
-    const { exitCode } = execStryker('stryker run --testRunner jest --tempDirName stryker-tmp');
+    const { exitCode } = execStryker(
+      'stryker run --testRunner jest --tempDirName stryker-tmp',
+    );
     expect(exitCode).eq(0);
     await expectMetricsJsonToMatchSnapshot();
   });

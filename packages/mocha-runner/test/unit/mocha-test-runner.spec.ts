@@ -1,8 +1,17 @@
 import { expect } from 'chai';
 import Mocha from 'mocha';
-import { testInjector, factory, assertions, tick } from '@stryker-mutator/test-helpers';
+import {
+  testInjector,
+  factory,
+  assertions,
+  tick,
+} from '@stryker-mutator/test-helpers';
 import sinon from 'sinon';
-import { KilledMutantRunResult, MutantRunStatus, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
+import {
+  KilledMutantRunResult,
+  MutantRunStatus,
+  TestRunnerCapabilities,
+} from '@stryker-mutator/api/test-runner';
 import { Task } from '@stryker-mutator/util';
 
 import { MochaTestRunner } from '../../src/mocha-test-runner.js';
@@ -13,7 +22,10 @@ import { MochaOptionsLoader } from '../../src/mocha-options-loader.js';
 import { createMochaOptions } from '../helpers/factories.js';
 
 describe(MochaTestRunner.name, () => {
-  let mocha: sinon.SinonStubbedInstance<Mocha> & { suite: sinon.SinonStubbedInstance<Mocha.Suite>; dispose?: sinon.SinonStub };
+  let mocha: sinon.SinonStubbedInstance<Mocha> & {
+    suite: sinon.SinonStubbedInstance<Mocha.Suite>;
+    dispose?: sinon.SinonStub;
+  };
   let mochaAdapterMock: sinon.SinonStubbedInstance<MochaAdapter>;
   let mochaOptionsLoaderMock: sinon.SinonStubbedInstance<MochaOptionsLoader>;
   let reporterMock: sinon.SinonStubbedInstance<StrykerMochaReporter>;
@@ -53,7 +65,9 @@ describe(MochaTestRunner.name, () => {
 
   describe('capabilities', () => {
     it('should communicate reloadEnvironment=false', async () => {
-      const expectedCapabilities: TestRunnerCapabilities = { reloadEnvironment: false };
+      const expectedCapabilities: TestRunnerCapabilities = {
+        reloadEnvironment: false,
+      };
       expect(await createSut().capabilities()).deep.eq(expectedCapabilities);
     });
   });
@@ -67,7 +81,9 @@ describe(MochaTestRunner.name, () => {
     it('should load mocha options', async () => {
       mochaOptionsLoaderMock.load.returns({});
       await sut.init();
-      expect(mochaOptionsLoaderMock.load).calledWithExactly(testInjector.options);
+      expect(mochaOptionsLoaderMock.load).calledWithExactly(
+        testInjector.options,
+      );
     });
 
     it('should collect the files', async () => {
@@ -93,18 +109,26 @@ describe(MochaTestRunner.name, () => {
       const requires = ['test/setup.js'];
 
       const expectedRootHooks = { beforeEach() {} };
-      mochaOptionsLoaderMock.load.returns(createMochaOptions({ require: requires }));
+      mochaOptionsLoaderMock.load.returns(
+        createMochaOptions({ require: requires }),
+      );
       mochaAdapterMock.handleRequires.resolves(expectedRootHooks);
 
       await sut.init();
 
-      const expectedMochaOptions: Mocha.MochaOptions = { rootHooks: expectedRootHooks };
-      expect(mochaAdapterMock.create).calledWith(sinon.match(expectedMochaOptions));
+      const expectedMochaOptions: Mocha.MochaOptions = {
+        rootHooks: expectedRootHooks,
+      };
+      expect(mochaAdapterMock.create).calledWith(
+        sinon.match(expectedMochaOptions),
+      );
     });
 
     it('should reject when requires contains "esm" (see #3014)', async () => {
       const requires = ['esm', 'ts-node/require'];
-      mochaOptionsLoaderMock.load.returns(createMochaOptions({ require: requires }));
+      mochaOptionsLoaderMock.load.returns(
+        createMochaOptions({ require: requires }),
+      );
       await expect(sut.init()).rejectedWith(
         'Config option "mochaOptions.require" does not support "esm", please use `"testRunnerNodeArgs": ["--require", "esm"]` instead. See https://github.com/stryker-mutator/stryker-js/issues/3014 for more information.',
       );
@@ -192,8 +216,12 @@ describe(MochaTestRunner.name, () => {
     });
 
     it('should add a beforeEach hook if coverage analysis is "perTest"', async () => {
-      const runPromise = sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
-      sut.beforeEach!({ currentTest: { fullTitle: () => 'foo should be bar' } } as Mocha.Context);
+      const runPromise = sut.dryRun(
+        factory.dryRunOptions({ coverageAnalysis: 'perTest' }),
+      );
+      sut.beforeEach!({
+        currentTest: { fullTitle: () => 'foo should be bar' },
+      } as Mocha.Context);
       mocha.run.callsArg(0);
       await runPromise;
       expect(sut.beforeEach).undefined;
@@ -201,7 +229,9 @@ describe(MochaTestRunner.name, () => {
     });
 
     it('should not add a beforeEach hook if coverage analysis isn\'t "perTest"', async () => {
-      const runPromise = sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'all' }));
+      const runPromise = sut.dryRun(
+        factory.dryRunOptions({ coverageAnalysis: 'all' }),
+      );
       expect(sut.beforeEach).undefined;
       mocha.run.callsArg(0);
       await runPromise;
@@ -210,34 +240,53 @@ describe(MochaTestRunner.name, () => {
     it('should collect mutant coverage', async () => {
       StrykerMochaReporter.currentInstance = reporterMock;
       reporterMock.tests = [];
-      global.__stryker2__!.mutantCoverage = factory.mutantCoverage({ static: { 1: 2 } });
-      const result = await actDryRun(factory.dryRunOptions({ coverageAnalysis: 'all' }));
+      global.__stryker2__!.mutantCoverage = factory.mutantCoverage({
+        static: { 1: 2 },
+      });
+      const result = await actDryRun(
+        factory.dryRunOptions({ coverageAnalysis: 'all' }),
+      );
       assertions.expectCompleted(result);
-      expect(result.mutantCoverage).deep.eq(factory.mutantCoverage({ static: { 1: 2 } }));
+      expect(result.mutantCoverage).deep.eq(
+        factory.mutantCoverage({ static: { 1: 2 } }),
+      );
     });
 
     it('should not collect mutant coverage if coverageAnalysis is "off"', async () => {
       StrykerMochaReporter.currentInstance = reporterMock;
       reporterMock.tests = [];
-      global.__stryker2__!.mutantCoverage = factory.mutantCoverage({ static: { 1: 2 } });
-      const result = await actDryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
+      global.__stryker2__!.mutantCoverage = factory.mutantCoverage({
+        static: { 1: 2 },
+      });
+      const result = await actDryRun(
+        factory.dryRunOptions({ coverageAnalysis: 'off' }),
+      );
       assertions.expectCompleted(result);
       expect(result.mutantCoverage).undefined;
     });
 
     it('should result in the reported tests', async () => {
-      const expectedTests = [factory.successTestResult(), factory.failedTestResult()];
+      const expectedTests = [
+        factory.successTestResult(),
+        factory.failedTestResult(),
+      ];
       StrykerMochaReporter.currentInstance = reporterMock;
       reporterMock.tests = expectedTests;
-      const result = await actDryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
+      const result = await actDryRun(
+        factory.dryRunOptions({ coverageAnalysis: 'off' }),
+      );
       assertions.expectCompleted(result);
       expect(result.tests).eq(expectedTests);
     });
 
     it("should result an error if the StrykerMochaReporter isn't set correctly", async () => {
-      const result = await actDryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
+      const result = await actDryRun(
+        factory.dryRunOptions({ coverageAnalysis: 'off' }),
+      );
       assertions.expectErrored(result);
-      expect(result.errorMessage).eq("Mocha didn't instantiate the StrykerMochaReporter correctly. Test result cannot be reported.");
+      expect(result.errorMessage).eq(
+        "Mocha didn't instantiate the StrykerMochaReporter correctly. Test result cannot be reported.",
+      );
     });
 
     async function actDryRun(options = factory.dryRunOptions()) {
@@ -263,7 +312,10 @@ describe(MochaTestRunner.name, () => {
 
       // Act
       const onGoingAct = actMutantRun(
-        factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '42' }), mutantActivation: 'static' }),
+        factory.mutantRunOptions({
+          activeMutant: factory.mutantTestCoverage({ id: '42' }),
+          mutantActivation: 'static',
+        }),
       );
 
       // Assert
@@ -282,7 +334,10 @@ describe(MochaTestRunner.name, () => {
 
       // Act
       const onGoingAct = actMutantRun(
-        factory.mutantRunOptions({ activeMutant: factory.mutantTestCoverage({ id: '42' }), mutantActivation: 'runtime' }),
+        factory.mutantRunOptions({
+          activeMutant: factory.mutantTestCoverage({ id: '42' }),
+          mutantActivation: 'runtime',
+        }),
       );
 
       // Assert
@@ -313,17 +368,35 @@ describe(MochaTestRunner.name, () => {
     });
 
     it('should use `grep` to when the test filter is specified', async () => {
-      await actMutantRun(factory.mutantRunOptions({ testFilter: ['foo should be bar', 'baz should be qux'] }));
-      expect(mocha.grep).calledWith(new RegExp('(^foo should be bar$)|(^baz should be qux$)'));
+      await actMutantRun(
+        factory.mutantRunOptions({
+          testFilter: ['foo should be bar', 'baz should be qux'],
+        }),
+      );
+      expect(mocha.grep).calledWith(
+        new RegExp('(^foo should be bar$)|(^baz should be qux$)'),
+      );
     });
 
     it('should escape regex characters when filtering', async () => {
-      await actMutantRun(factory.mutantRunOptions({ testFilter: ['should escape *.\\, but not /'] }));
-      expect(mocha.grep).calledWith(new RegExp('(^should escape \\*\\.\\\\, but not /$)'));
+      await actMutantRun(
+        factory.mutantRunOptions({
+          testFilter: ['should escape *.\\, but not /'],
+        }),
+      );
+      expect(mocha.grep).calledWith(
+        new RegExp('(^should escape \\*\\.\\\\, but not /$)'),
+      );
     });
 
     it('should be able to report a killed mutant when a test fails', async () => {
-      reporterMock.tests = [factory.successTestResult(), factory.failedTestResult({ id: 'foo should be bar', failureMessage: 'foo was baz' })];
+      reporterMock.tests = [
+        factory.successTestResult(),
+        factory.failedTestResult({
+          id: 'foo should be bar',
+          failureMessage: 'foo was baz',
+        }),
+      ];
       const result = await actMutantRun();
       const expectedResult: KilledMutantRunResult = {
         failureMessage: 'foo was baz',
@@ -335,28 +408,43 @@ describe(MochaTestRunner.name, () => {
     });
 
     it('should be able report a survived mutant when all test succeed', async () => {
-      reporterMock.tests = [factory.successTestResult(), factory.successTestResult()];
+      reporterMock.tests = [
+        factory.successTestResult(),
+        factory.successTestResult(),
+      ];
       const result = await actMutantRun();
       assertions.expectSurvived(result);
     });
 
     it('should report a timeout when the hitLimit was reached', async () => {
       reporterMock.tests = [factory.failedTestResult()];
-      const result = await actMutantRun(factory.mutantRunOptions({ hitLimit: 9 }), 10);
+      const result = await actMutantRun(
+        factory.mutantRunOptions({ hitLimit: 9 }),
+        10,
+      );
       assertions.expectTimeout(result);
       expect(result.reason).contains('Hit limit reached (10/9)');
     });
 
     it('should reset the hitLimit between runs', async () => {
       reporterMock.tests = [factory.failedTestResult()];
-      const firstResult = await actMutantRun(factory.mutantRunOptions({ hitLimit: 9 }), 10);
+      const firstResult = await actMutantRun(
+        factory.mutantRunOptions({ hitLimit: 9 }),
+        10,
+      );
       reporterMock.tests = [factory.failedTestResult()];
-      const secondResult = await actMutantRun(factory.mutantRunOptions({ hitLimit: undefined }), 10);
+      const secondResult = await actMutantRun(
+        factory.mutantRunOptions({ hitLimit: undefined }),
+        10,
+      );
       assertions.expectTimeout(firstResult);
       assertions.expectKilled(secondResult);
     });
 
-    async function actMutantRun(options = factory.mutantRunOptions(), hitCount?: number) {
+    async function actMutantRun(
+      options = factory.mutantRunOptions(),
+      hitCount?: number,
+    ) {
       mocha.run.callsArg(0);
       const result = sut.mutantRun(options);
       global.__stryker2__!.hitCount = hitCount;

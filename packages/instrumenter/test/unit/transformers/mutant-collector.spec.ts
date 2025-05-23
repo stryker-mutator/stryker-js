@@ -24,7 +24,10 @@ describe(MutantCollector.name, () => {
       const fileName = 'file.js';
       const original = types.identifier('bar');
       const replacement = types.identifier('foo');
-      sut.collect(fileName, original, { mutatorName: 'fooMutator', replacement });
+      sut.collect(fileName, original, {
+        mutatorName: 'fooMutator',
+        replacement,
+      });
       expect(sut.mutants).deep.eq([
         createMutant({
           fileName,
@@ -39,8 +42,14 @@ describe(MutantCollector.name, () => {
       const fileName = 'file.js';
       const original = types.identifier('bar');
       const replacement = types.identifier('baz');
-      sut.collect(fileName, original, { mutatorName: 'fooMutator', replacement: types.identifier('foo') });
-      sut.collect(fileName, original, { mutatorName: 'fooMutator', replacement });
+      sut.collect(fileName, original, {
+        mutatorName: 'fooMutator',
+        replacement: types.identifier('foo'),
+      });
+      sut.collect(fileName, original, {
+        mutatorName: 'fooMutator',
+        replacement,
+      });
       expect(sut.mutants).lengthOf(2);
       expect(sut.mutants[1]).deep.eq(
         createMutant({
@@ -58,7 +67,12 @@ describe(MutantCollector.name, () => {
       const replacement = types.identifier('bar');
       const expectedOffset: Position = { line: 4, column: 42 };
 
-      sut.collect(fileName, original, { replacement, mutatorName: 'mutatorName' }, expectedOffset);
+      sut.collect(
+        fileName,
+        original,
+        { replacement, mutatorName: 'mutatorName' },
+        expectedOffset,
+      );
 
       expect(sut.mutants[0].offset).eq(expectedOffset);
     });
@@ -66,20 +80,33 @@ describe(MutantCollector.name, () => {
 
   describe(MutantCollector.prototype.hasPlacedMutants.name, () => {
     it('should return true when a mutant is placed for the file', () => {
-      const input = [createMutant({ fileName: 'foo.js' }), createMutant({ fileName: 'bar.js' })];
-      input.map((mutant) => sut.collect(mutant.fileName, mutant.original, mutant));
+      const input = [
+        createMutant({ fileName: 'foo.js' }),
+        createMutant({ fileName: 'bar.js' }),
+      ];
+      input.map((mutant) =>
+        sut.collect(mutant.fileName, mutant.original, mutant),
+      );
       expect(sut.hasPlacedMutants('foo.js')).true;
       expect(sut.hasPlacedMutants('bar.js')).true;
     });
 
     it('should return false when no mutants is registered for the file', () => {
-      const input = [createMutant({ fileName: 'foo.js' }), createMutant({ fileName: 'bar.js' })];
-      input.map((mutant) => sut.collect(mutant.fileName, mutant.original, mutant));
+      const input = [
+        createMutant({ fileName: 'foo.js' }),
+        createMutant({ fileName: 'bar.js' }),
+      ];
+      input.map((mutant) =>
+        sut.collect(mutant.fileName, mutant.original, mutant),
+      );
       expect(sut.hasPlacedMutants('baz.js')).false;
     });
 
     it('should return false when there are ignored mutants only', () => {
-      const input = createMutant({ fileName: 'foo.js', ignoreReason: 'foo is ignored' });
+      const input = createMutant({
+        fileName: 'foo.js',
+        ignoreReason: 'foo is ignored',
+      });
       sut.collect(input.fileName, input.original, input);
       expect(sut.hasPlacedMutants('foo.js')).false;
     });

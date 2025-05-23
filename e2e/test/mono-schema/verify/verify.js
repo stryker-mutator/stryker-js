@@ -12,10 +12,20 @@ import { beforeEach } from 'mocha';
  * @type {import('ajv').SchemaObject}
  */
 const monoSchema = JSON.parse(
-  fs.readFileSync(new URL('../../../node_modules/@stryker-mutator/core/schema/stryker-schema.json', import.meta.url), 'utf-8'),
+  fs.readFileSync(
+    new URL(
+      '../../../node_modules/@stryker-mutator/core/schema/stryker-schema.json',
+      import.meta.url,
+    ),
+    'utf-8',
+  ),
 );
-const valid = JSON.parse(fs.readFileSync(new URL('../test/valid.json', import.meta.url), 'utf-8'));
-const invalid = JSON.parse(fs.readFileSync(new URL('../test/invalid.json', import.meta.url), 'utf-8'));
+const valid = JSON.parse(
+  fs.readFileSync(new URL('../test/valid.json', import.meta.url), 'utf-8'),
+);
+const invalid = JSON.parse(
+  fs.readFileSync(new URL('../test/invalid.json', import.meta.url), 'utf-8'),
+);
 
 const Ajv = ajvModule.default;
 const ajv = new Ajv({
@@ -91,7 +101,8 @@ describe('The Stryker meta schema', () => {
     {
       keyword: 'type',
       instancePath: '/karma/ngConfig/testArguments',
-      schemaPath: '#/definitions/karmaNgConfigOptions/properties/testArguments/type',
+      schemaPath:
+        '#/definitions/karmaNgConfigOptions/properties/testArguments/type',
       params: {
         type: 'object',
       },
@@ -132,15 +143,29 @@ describe('PartialStrykerOptions', () => {
   ['Node', 'Node16'].forEach((moduleMode) => {
     describe(`with --moduleResolution ${moduleMode}`, () => {
       it('should validate a valid schema', () => {
-        const diagnostics = tsc('--moduleResolution', moduleMode, '--module', moduleMode, 'valid.js');
+        const diagnostics = tsc(
+          '--moduleResolution',
+          moduleMode,
+          '--module',
+          moduleMode,
+          'valid.js',
+        );
         // eslint-disable-next-line @typescript-eslint/no-base-to-string -- Ignore as messageText is a string.
         expect(diagnostics, String(diagnostics[0]?.messageText)).empty;
       });
       it('should invalidate an invalid schema', () => {
-        const diagnostics = tsc('--moduleResolution', moduleMode, '--module', moduleMode, 'invalid.js');
+        const diagnostics = tsc(
+          '--moduleResolution',
+          moduleMode,
+          '--module',
+          moduleMode,
+          'invalid.js',
+        );
         expect(diagnostics).not.empty;
 
-        expect(diagnostics.map(({ messageText }) => messageText).sort()).deep.eq([
+        expect(
+          diagnostics.map(({ messageText }) => messageText).sort(),
+        ).deep.eq([
           "Type 'string' is not assignable to type '(string | undefined)[]'.",
           "Type '{ name: string; }' is not assignable to type 'string'.",
         ]);
@@ -159,9 +184,14 @@ function tsc(...args) {
       return ts.sys.readFile(file);
     });
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const program = ts.createProgram(fileNames, { ...config.compilerOptions, ...options });
+    const program = ts.createProgram(fileNames, {
+      ...config.compilerOptions,
+      ...options,
+    });
     const emitResult = program.emit();
-    const allDiagnostics = ts.getPreEmitDiagnostics(program).concat(emitResult.diagnostics);
+    const allDiagnostics = ts
+      .getPreEmitDiagnostics(program)
+      .concat(emitResult.diagnostics);
     return allDiagnostics;
   } finally {
     process.chdir(path.dirname(fileURLToPath(import.meta.url)));

@@ -509,7 +509,7 @@ more like your would run the tests yourself in your project directory.
 Only disable this setting if you really know what you are doing.
 
 For example, [Jest](https://jestjs.io/) expects any plugins to be located at "./node_modules/..."
-in the Sandbox directory. Another example can be running [karma](http://karma-runner.github.io/) tests where
+in the Sandbox directory. Another example can be running [karma](https://karma-runner.github.io/) tests where
 you specify files from the 'node_modules/angular/...'. Without symlinking the
 node_modules directory this would not be possible.
 

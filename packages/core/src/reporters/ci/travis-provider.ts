@@ -16,8 +16,9 @@ export class TravisProvider implements CIProvider {
   }
   public determineVersion(): string | undefined {
     return (
-      objectUtils.undefinedEmptyString(objectUtils.getEnvironmentVariable('TRAVIS_PULL_REQUEST_BRANCH')) ??
-      objectUtils.getEnvironmentVariable('TRAVIS_BRANCH')
+      objectUtils.undefinedEmptyString(
+        objectUtils.getEnvironmentVariable('TRAVIS_PULL_REQUEST_BRANCH'),
+      ) ?? objectUtils.getEnvironmentVariable('TRAVIS_BRANCH')
     );
   }
 }

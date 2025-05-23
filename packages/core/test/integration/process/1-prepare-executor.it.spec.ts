@@ -13,14 +13,27 @@ import { LoggingBackend } from '../../../src/logging/logging-backend.js';
 describe(`${PrepareExecutor.name} integration test`, () => {
   it('should log about unknown properties in log file', async () => {
     const cliOptions: PartialStrykerOptions = {
-      configFile: resolveFromRoot('testResources', 'options-validation', 'unknown-options.conf.json'),
+      configFile: resolveFromRoot(
+        'testResources',
+        'options-validation',
+        'unknown-options.conf.json',
+      ),
     };
     const sut = testInjector.injector
       .provideValue(coreTokens.reporterOverride, undefined)
-      .provideValue(coreTokens.loggingSink, sinon.createStubInstance(LoggingBackend))
-      .provideValue(coreTokens.loggingServerAddress, { port: 4200 } satisfies LoggingServerAddress)
+      .provideValue(
+        coreTokens.loggingSink,
+        sinon.createStubInstance(LoggingBackend),
+      )
+      .provideValue(coreTokens.loggingServerAddress, {
+        port: 4200,
+      } satisfies LoggingServerAddress)
       .injectClass(PrepareExecutor);
     await sut.execute(cliOptions);
-    expect(testInjector.logger.warn).calledWithMatch(sinon.match('Unknown stryker config option "this is an unknown property"'));
+    expect(testInjector.logger.warn).calledWithMatch(
+      sinon.match(
+        'Unknown stryker config option "this is an unknown property"',
+      ),
+    );
   });
 });

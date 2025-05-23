@@ -1,7 +1,12 @@
 import semver from 'semver';
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
-import { commonTokens, Injector, PluginContext, tokens } from '@stryker-mutator/api/plugin';
+import {
+  commonTokens,
+  Injector,
+  PluginContext,
+  tokens,
+} from '@stryker-mutator/api/plugin';
 import {
   TestRunner,
   DryRunOptions,
@@ -16,14 +21,25 @@ import type { Config } from 'karma';
 import { StrykerKarmaSetup } from '../src-generated/karma-runner-options.js';
 
 import { karma } from './karma-wrapper.js';
-import { createProjectStarter, ProjectStarter } from './starters/project-starter.js';
-import { configureKarma, StrykerReporter, TestHooksMiddleware } from './karma-plugins/index.js';
+import {
+  createProjectStarter,
+  ProjectStarter,
+} from './starters/project-starter.js';
+import {
+  configureKarma,
+  StrykerReporter,
+  TestHooksMiddleware,
+} from './karma-plugins/index.js';
 import { KarmaRunnerOptionsWithStrykerOptions } from './karma-runner-options-with-stryker-options.js';
 import { pluginTokens } from './plugin-tokens.js';
 
 createKarmaTestRunner.inject = tokens(commonTokens.injector);
-export function createKarmaTestRunner(injector: Injector<PluginContext>): KarmaTestRunner {
-  return injector.provideFactory(pluginTokens.projectStarter, createProjectStarter).injectClass(KarmaTestRunner);
+export function createKarmaTestRunner(
+  injector: Injector<PluginContext>,
+): KarmaTestRunner {
+  return injector
+    .provideFactory(pluginTokens.projectStarter, createProjectStarter)
+    .injectClass(KarmaTestRunner);
 }
 
 const MIN_KARMA_VERSION = '6.3.0';
@@ -33,7 +49,12 @@ export class KarmaTestRunner implements TestRunner {
   private runConfig!: Config;
   private isDisposed = false;
 
-  public static inject = tokens(commonTokens.logger, commonTokens.getLogger, commonTokens.options, pluginTokens.projectStarter);
+  public static inject = tokens(
+    commonTokens.logger,
+    commonTokens.getLogger,
+    commonTokens.options,
+    pluginTokens.projectStarter,
+  );
   constructor(
     private readonly log: Logger,
     getLogger: LoggerFactoryMethod,
@@ -56,12 +77,17 @@ export class KarmaTestRunner implements TestRunner {
   public async init(): Promise<void> {
     const version = semver.coerce(karma.VERSION);
     if (!version || semver.lt(version, MIN_KARMA_VERSION)) {
-      throw new Error(`Your karma version (${karma.VERSION}) is not supported. Please install ${MIN_KARMA_VERSION} or higher`);
+      throw new Error(
+        `Your karma version (${karma.VERSION}) is not supported. Please install ${MIN_KARMA_VERSION} or higher`,
+      );
     }
     const browsersReadyPromise = StrykerReporter.instance.whenBrowsersReady();
     const { exitPromise } = await this.starter.start();
     this.exitPromise = exitPromise;
-    const maybeExitCode = await Promise.race([browsersReadyPromise, exitPromise]);
+    const maybeExitCode = await Promise.race([
+      browsersReadyPromise,
+      exitPromise,
+    ]);
     if (typeof maybeExitCode === 'number') {
       if (!this.isDisposed) {
         throw new Error(
@@ -80,7 +106,9 @@ export class KarmaTestRunner implements TestRunner {
   }
 
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
-    TestHooksMiddleware.instance.configureCoverageAnalysis(options.coverageAnalysis);
+    TestHooksMiddleware.instance.configureCoverageAnalysis(
+      options.coverageAnalysis,
+    );
     return await this.run();
   }
 
@@ -111,7 +139,10 @@ export class KarmaTestRunner implements TestRunner {
     const defaultKarmaConfig: StrykerKarmaSetup = {
       projectType: 'custom',
     };
-    return Object.assign(defaultKarmaConfig, (options as KarmaRunnerOptionsWithStrykerOptions).karma);
+    return Object.assign(
+      defaultKarmaConfig,
+      (options as KarmaRunnerOptionsWithStrykerOptions).karma,
+    );
   }
 
   private runServer(): void {

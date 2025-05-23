@@ -24,13 +24,20 @@ export class LoggingServer implements Disposable {
         dataSoFar += data;
         let index;
         while ((index = dataSoFar.indexOf(DELIMITER)) !== -1) {
-          const logEvent: SerializedLoggingEvent = JSON.parse(dataSoFar.substring(0, index));
+          const logEvent: SerializedLoggingEvent = JSON.parse(
+            dataSoFar.substring(0, index),
+          );
           dataSoFar = dataSoFar.substring(index + DELIMITER.length);
           this.loggingSink.log(LoggingEvent.deserialize(logEvent));
         }
       });
       socket.on('error', (error) => {
-        this.loggingSink.log(LoggingEvent.create(LoggingServer.name, LogLevel.Debug, ['An worker log process hung up unexpectedly', error]));
+        this.loggingSink.log(
+          LoggingEvent.create(LoggingServer.name, LogLevel.Debug, [
+            'An worker log process hung up unexpectedly',
+            error,
+          ]),
+        );
       });
     });
   }

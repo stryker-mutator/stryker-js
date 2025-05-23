@@ -21,7 +21,10 @@ describe(DashboardReporterClient.name, () => {
     environment = new EnvironmentVariableStore();
     httpClient = mock(HttpClient);
     sut = testInjector.injector
-      .provideValue(dashboardReporterTokens.httpClient, httpClient as unknown as HttpClient)
+      .provideValue(
+        dashboardReporterTokens.httpClient,
+        httpClient as unknown as HttpClient,
+      )
       .injectClass(DashboardReporterClient);
   });
 
@@ -45,7 +48,12 @@ describe(DashboardReporterClient.name, () => {
       const expectedUrl = `${baseUrl}/${projectName}/${expectedVersion}`;
 
       // Act
-      const actualHref = await sut.updateReport({ projectName, report, version, moduleName: undefined });
+      const actualHref = await sut.updateReport({
+        projectName,
+        report,
+        version,
+        moduleName: undefined,
+      });
 
       // Assert
       expect(actualHref).eq(expectedHref);
@@ -53,9 +61,19 @@ describe(DashboardReporterClient.name, () => {
         ['X-Api-Key']: apiKey,
         ['Content-Type']: 'application/json',
       });
-      expect(testInjector.logger.info).calledWith('PUT report to %s (~%s bytes)', expectedUrl, expectedBody.length);
-      expect(testInjector.logger.debug).calledWith('Using configured API key from environment "%s"', 'STRYKER_DASHBOARD_API_KEY');
-      expect(testInjector.logger.trace).calledWith('PUT report %s', expectedBody);
+      expect(testInjector.logger.info).calledWith(
+        'PUT report to %s (~%s bytes)',
+        expectedUrl,
+        expectedBody.length,
+      );
+      expect(testInjector.logger.debug).calledWith(
+        'Using configured API key from environment "%s"',
+        'STRYKER_DASHBOARD_API_KEY',
+      );
+      expect(testInjector.logger.trace).calledWith(
+        'PUT report %s',
+        expectedBody,
+      );
     });
 
     it('should put the report for a specific module', async () => {
@@ -65,7 +83,12 @@ describe(DashboardReporterClient.name, () => {
       const expectedUrl = `${baseUrl}/${projectName}/${expectedVersion}?module=stryker%20module`;
 
       // Act
-      await sut.updateReport({ projectName: projectName, report, version, moduleName: 'stryker module' });
+      await sut.updateReport({
+        projectName: projectName,
+        report,
+        version,
+        moduleName: 'stryker module',
+      });
 
       // Assert
       expect(httpClient.put).calledWith(expectedUrl);
@@ -79,7 +102,12 @@ describe(DashboardReporterClient.name, () => {
       const expectedUrl = `https://foo.bar.com/api/${projectName}/${expectedVersion}?module=stryker%20module`;
 
       // Act
-      await sut.updateReport({ projectName: projectName, report, version, moduleName: 'stryker module' });
+      await sut.updateReport({
+        projectName: projectName,
+        report,
+        version,
+        moduleName: 'stryker module',
+      });
 
       // Assert
       expect(httpClient.put).calledWith(expectedUrl);
@@ -93,7 +121,12 @@ describe(DashboardReporterClient.name, () => {
       };
 
       // Act
-      const promise = sut.updateReport({ report, projectName: projectName, version, moduleName: undefined });
+      const promise = sut.updateReport({
+        report,
+        projectName: projectName,
+        version,
+        moduleName: undefined,
+      });
 
       // Assert
       await expect(promise).rejectedWith(
@@ -107,7 +140,12 @@ describe(DashboardReporterClient.name, () => {
       const report = factory.mutationTestReportSchemaMutationTestResult();
 
       // Act
-      const promise = sut.updateReport({ report, projectName, version, moduleName: undefined });
+      const promise = sut.updateReport({
+        report,
+        projectName,
+        version,
+        moduleName: undefined,
+      });
 
       // Assert
       await expect(promise).rejectedWith(

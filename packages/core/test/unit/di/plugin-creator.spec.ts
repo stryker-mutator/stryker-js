@@ -1,5 +1,11 @@
 import { expect } from 'chai';
-import { ClassPlugin, FactoryPlugin, Plugin, PluginKind, ValuePlugin } from '@stryker-mutator/api/plugin';
+import {
+  ClassPlugin,
+  FactoryPlugin,
+  Plugin,
+  PluginKind,
+  ValuePlugin,
+} from '@stryker-mutator/api/plugin';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 
 import { coreTokens, PluginCreator } from '../../../src/di/index.js';
@@ -10,7 +16,9 @@ describe(PluginCreator.name, () => {
 
   beforeEach(() => {
     pluginsByKind = new Map();
-    sut = testInjector.injector.provideValue(coreTokens.pluginsByKind, pluginsByKind).injectClass(PluginCreator);
+    sut = testInjector.injector
+      .provideValue(coreTokens.pluginsByKind, pluginsByKind)
+      .injectClass(PluginCreator);
   });
 
   it("should create a FactoryPlugin using it's factory method", () => {

@@ -19,12 +19,16 @@ describe('TestRunnerDecorator', () => {
       it('should pass through resolved results', () => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         testRunner[methodName].resolves('some value' as any);
-        return expect((sut[methodName] as any)()).to.eventually.eq('some value');
+        return expect((sut[methodName] as any)()).to.eventually.eq(
+          'some value',
+        );
       });
 
       it('should pass through rejected results', () => {
         testRunner[methodName].rejects(new Error('some error'));
-        return expect((sut[methodName] as any)()).to.be.rejectedWith('some error');
+        return expect((sut[methodName] as any)()).to.be.rejectedWith(
+          'some error',
+        );
       });
     });
   }

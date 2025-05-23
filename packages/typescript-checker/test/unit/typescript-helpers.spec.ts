@@ -21,7 +21,9 @@ describe('typescript-helpers', () => {
     });
 
     it('should throw an error if the tsconfig file could not be found', () => {
-      expect(() => determineBuildModeEnabled('tsconfig.json')).throws('File "tsconfig.json" not found');
+      expect(() => determineBuildModeEnabled('tsconfig.json')).throws(
+        'File "tsconfig.json" not found',
+      );
     });
 
     it('should return true if the tsconfig file has references', () => {
@@ -38,14 +40,27 @@ describe('typescript-helpers', () => {
 
   describe(overrideOptions.name, () => {
     it('should allow unreachable and unused code', () => {
-      expect(JSON.parse(overrideOptions({ config: {} }, false)).compilerOptions).deep.include({
+      expect(
+        JSON.parse(overrideOptions({ config: {} }, false)).compilerOptions,
+      ).deep.include({
         allowUnreachableCode: true,
         noUnusedLocals: false,
         noUnusedParameters: false,
       });
       expect(
         JSON.parse(
-          overrideOptions({ config: { compilerOptions: { allowUnreachableCode: false, noUnusedLocals: true, noUnusedParameters: true } } }, false),
+          overrideOptions(
+            {
+              config: {
+                compilerOptions: {
+                  allowUnreachableCode: false,
+                  noUnusedLocals: true,
+                  noUnusedParameters: true,
+                },
+              },
+            },
+            false,
+          ),
         ).compilerOptions,
       ).deep.include({
         allowUnreachableCode: true,
@@ -55,7 +70,9 @@ describe('typescript-helpers', () => {
     });
 
     it('should set --noEmit options when `--build` mode is off', () => {
-      expect(JSON.parse(overrideOptions({ config: {} }, false)).compilerOptions).deep.include({
+      expect(
+        JSON.parse(overrideOptions({ config: {} }, false)).compilerOptions,
+      ).deep.include({
         noEmit: true,
         incremental: false,
         composite: false,
@@ -124,7 +141,9 @@ describe('typescript-helpers', () => {
     });
 
     it('should set --emitDeclarationOnly options when `--build` mode is on', () => {
-      expect(JSON.parse(overrideOptions({ config: {} }, true)).compilerOptions).deep.include({
+      expect(
+        JSON.parse(overrideOptions({ config: {} }, true)).compilerOptions,
+      ).deep.include({
         emitDeclarationOnly: true,
         noEmit: false,
         declarationMap: true,
@@ -152,7 +171,14 @@ describe('typescript-helpers', () => {
     });
 
     it('should set --declarationMap and --declaration options when `--build` mode is on', () => {
-      expect(JSON.parse(overrideOptions({ config: { declarationMap: false, declaration: false } }, true)).compilerOptions).deep.include({
+      expect(
+        JSON.parse(
+          overrideOptions(
+            { config: { declarationMap: false, declaration: false } },
+            true,
+          ),
+        ).compilerOptions,
+      ).deep.include({
         declarationMap: true,
         declaration: true,
       });
@@ -176,21 +202,39 @@ describe('typescript-helpers', () => {
             true,
           ),
         ).compilerOptions,
-      ).to.not.have.any.keys('inlineSourceMap', 'inlineSources', 'mapRoute', 'sourceRoot', 'outFile');
+      ).to.not.have.any.keys(
+        'inlineSourceMap',
+        'inlineSources',
+        'mapRoute',
+        'sourceRoot',
+        'outFile',
+      );
     });
   });
 
   describe(retrieveReferencedProjects.name, () => {
     it('should result in an empty array when references are missing', () => {
-      expect(retrieveReferencedProjects({ config: { compilerOptions: {} } }, '')).deep.eq([]);
+      expect(
+        retrieveReferencedProjects({ config: { compilerOptions: {} } }, ''),
+      ).deep.eq([]);
     });
 
     it('should retrieve referenced projects', () => {
-      expect(retrieveReferencedProjects({ config: { references: [{ path: 'some.json' }] } }, process.cwd())).deep.eq([path.resolve('some.json')]);
+      expect(
+        retrieveReferencedProjects(
+          { config: { references: [{ path: 'some.json' }] } },
+          process.cwd(),
+        ),
+      ).deep.eq([path.resolve('some.json')]);
     });
 
     it('should resolve from given dirname', () => {
-      expect(retrieveReferencedProjects({ config: { references: [{ path: 'some.json' }] } }, 'a/b')).deep.eq([path.resolve('a', 'b', 'some.json')]);
+      expect(
+        retrieveReferencedProjects(
+          { config: { references: [{ path: 'some.json' }] } },
+          'a/b',
+        ),
+      ).deep.eq([path.resolve('a', 'b', 'some.json')]);
     });
   });
 

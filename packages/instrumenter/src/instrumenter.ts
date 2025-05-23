@@ -20,7 +20,12 @@ import { File } from './file.js';
  * @see https://github.com/stryker-mutator/stryker-js/issues/1514
  */
 export class Instrumenter {
-  public static inject = tokens(commonTokens.logger, instrumenterTokens.createParser, instrumenterTokens.print, instrumenterTokens.transform);
+  public static inject = tokens(
+    commonTokens.logger,
+    instrumenterTokens.createParser,
+    instrumenterTokens.print,
+    instrumenterTokens.transform,
+  );
 
   constructor(
     private readonly logger: Logger,
@@ -29,15 +34,25 @@ export class Instrumenter {
     private readonly _transform = transform,
   ) {}
 
-  public async instrument(files: readonly File[], options: InstrumenterOptions): Promise<InstrumentResult> {
-    this.logger.debug('Instrumenting %d source files with mutants', files.length);
+  public async instrument(
+    files: readonly File[],
+    options: InstrumenterOptions,
+  ): Promise<InstrumentResult> {
+    this.logger.debug(
+      'Instrumenting %d source files with mutants',
+      files.length,
+    );
     const mutantCollector = new MutantCollector();
     const outFiles: File[] = [];
     let mutantCount = 0;
     const parse = this._createParser(options);
     for (const { name, mutate, content } of files) {
       const ast = await parse(content, name);
-      this._transform(ast, mutantCollector, { options, mutateDescription: toBabelLineNumber(mutate), logger: this.logger });
+      this._transform(ast, mutantCollector, {
+        options,
+        mutateDescription: toBabelLineNumber(mutate),
+        logger: this.logger,
+      });
       const mutatedContent = this._print(ast);
       outFiles.push({
         name,
@@ -47,11 +62,19 @@ export class Instrumenter {
       if (this.logger.isDebugEnabled()) {
         const nrOfMutantsInFile = mutantCollector.mutants.length - mutantCount;
         mutantCount = mutantCollector.mutants.length;
-        this.logger.debug(`Instrumented ${path.relative(process.cwd(), name)} (${nrOfMutantsInFile} mutant(s))`);
+        this.logger.debug(
+          `Instrumented ${path.relative(process.cwd(), name)} (${nrOfMutantsInFile} mutant(s))`,
+        );
       }
     }
-    const mutants = mutantCollector.mutants.map((mutant) => mutant.toApiMutant());
-    this.logger.info('Instrumented %d source file(s) with %d mutant(s)', files.length, mutants.length);
+    const mutants = mutantCollector.mutants.map((mutant) =>
+      mutant.toApiMutant(),
+    );
+    this.logger.info(
+      'Instrumented %d source file(s) with %d mutant(s)',
+      files.length,
+      mutants.length,
+    );
     return {
       files: outFiles,
       mutants,

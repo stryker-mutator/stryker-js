@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.0.1](https://github.com/stryker-mutator/stryker-js/compare/v9.0.0...v9.0.1) (2025-05-14)
+
+### Bug Fixes
+
+- **vitest:** copy stryker setup locally to support browser mode ([#5306](https://github.com/stryker-mutator/stryker-js/issues/5306)) ([309eb5b](https://github.com/stryker-mutator/stryker-js/commit/309eb5bb328998d6b9eb89f263dd4f7b1be95c61))
+
+# [9.0.0](https://github.com/stryker-mutator/stryker-js/compare/v8.7.1...v9.0.0) (2025-05-13)
+
+### Bug Fixes
+
+- **deps:** update dependency tslib to v2.8.1 ([#5075](https://github.com/stryker-mutator/stryker-js/issues/5075)) ([f069348](https://github.com/stryker-mutator/stryker-js/commit/f069348db3ed1a7af27b058d629fa0dc2472df9c))
+- **vitest-runner:** Ensure no test failure screenshots from Vitest ([#5243](https://github.com/stryker-mutator/stryker-js/issues/5243)) ([20f8d1b](https://github.com/stryker-mutator/stryker-js/commit/20f8d1b77aed74f7bd0230d5743d3b912cf2323c))
+
+### Features
+
+- **vitest-runner:** support vitest 3 browser mode ([6f4c1f0](https://github.com/stryker-mutator/stryker-js/commit/6f4c1f0c08674eb2bf05f0d0b4435f646e1f9980))
+
+### BREAKING CHANGES
+
+- **vitest-runner:** vitest runner now supports vitest v2 or higher
+
 ## [8.7.1](https://github.com/stryker-mutator/stryker-js/compare/v8.7.0...v8.7.1) (2024-12-11)
 
 **Note:** Version bump only for package @stryker-mutator/vitest-runner

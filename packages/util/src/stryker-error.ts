@@ -5,6 +5,8 @@ export class StrykerError extends Error {
     message: string,
     public readonly innerError?: unknown,
   ) {
-    super(`${message}${innerError ? `. Inner error: ${errorToString(innerError)}` : ''}`);
+    super(
+      `${message}${innerError ? `. Inner error: ${errorToString(innerError)}` : ''}`,
+    );
   }
 }

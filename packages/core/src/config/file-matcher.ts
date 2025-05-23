@@ -24,7 +24,11 @@ export class FileMatcher {
 
   public matches(fileName: string): boolean {
     if (typeof this.pattern === 'string') {
-      return minimatch(normalizeFileName(path.resolve(fileName)), this.pattern, { dot: this.allowHiddenFiles });
+      return minimatch(
+        normalizeFileName(path.resolve(fileName)),
+        this.pattern,
+        { dot: this.allowHiddenFiles },
+      );
     } else {
       return this.pattern;
     }

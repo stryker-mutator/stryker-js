@@ -65,11 +65,19 @@ describe(ChildProcessProxy.name, () => {
   describe('constructor', () => {
     it('should create child process', () => {
       sut = createSut();
-      expect(forkStub).calledWith(fileURLToPath(new URL('../../../src/child-proxy/child-process-proxy-worker.js', import.meta.url)), {
-        silent: true,
-        execArgv: [],
-        env: { STRYKER_MUTATOR_WORKER: workerId.toString(), ...process.env },
-      });
+      expect(forkStub).calledWith(
+        fileURLToPath(
+          new URL(
+            '../../../src/child-proxy/child-process-proxy-worker.js',
+            import.meta.url,
+          ),
+        ),
+        {
+          silent: true,
+          execArgv: [],
+          env: { STRYKER_MUTATOR_WORKER: workerId.toString(), ...process.env },
+        },
+      );
     });
 
     it('should not directly send the init message', () => {
@@ -107,7 +115,10 @@ describe(ChildProcessProxy.name, () => {
 
     it('should set `execArgv`', () => {
       createSut({ execArgv: ['--inspect-brk'] });
-      expect(forkStub).calledWithMatch(sinon.match.string, sinon.match({ execArgv: ['--inspect-brk'] }));
+      expect(forkStub).calledWithMatch(
+        sinon.match.string,
+        sinon.match({ execArgv: ['--inspect-brk'] }),
+      );
     });
 
     it('should send init message to child process when the Ready message is received', () => {
@@ -133,7 +144,9 @@ describe(ChildProcessProxy.name, () => {
       receiveMessage({ kind: ParentMessageKind.Ready });
 
       // Assert
-      expect(childProcessMock.send).calledWith(stringUtils.serialize(expectedMessage));
+      expect(childProcessMock.send).calledWith(
+        stringUtils.serialize(expectedMessage),
+      );
     });
   });
 
@@ -169,7 +182,8 @@ describe(ChildProcessProxy.name, () => {
     });
 
     it('should reject any outstanding worker promises with the error', () => {
-      const expectedError = 'Child process [pid 4648] exited unexpectedly with exit code 646 (SIGINT).';
+      const expectedError =
+        'Child process [pid 4648] exited unexpectedly with exit code 646 (SIGINT).';
       const actualPromise = sut.proxy.say('test');
       actClose(646);
       return expect(actualPromise).rejectedWith(expectedError);
@@ -220,7 +234,10 @@ describe(ChildProcessProxy.name, () => {
       receiveMessage({ kind: ParentMessageKind.Ready });
 
       // Act
-      receiveMessage({ kind: ParentMessageKind.InitError, error: 'some error' });
+      receiveMessage({
+        kind: ParentMessageKind.InitError,
+        error: 'some error',
+      });
 
       // Assert
       await assertDisposedCorrectly();
@@ -232,7 +249,10 @@ describe(ChildProcessProxy.name, () => {
       receiveMessage({ kind: ParentMessageKind.Ready });
 
       // Act
-      receiveMessage({ kind: ParentMessageKind.InitError, error: 'some error' });
+      receiveMessage({
+        kind: ParentMessageKind.InitError,
+        error: 'some error',
+      });
 
       // Assert
       await expect(sut.proxy.sayHello()).rejectedWith('some error');
@@ -240,8 +260,13 @@ describe(ChildProcessProxy.name, () => {
     });
 
     async function assertDisposedCorrectly() {
-      const expectedDispose: WorkerMessage = { kind: WorkerMessageKind.Dispose };
-      sinon.assert.calledWithExactly(childProcessMock.send, JSON.stringify(expectedDispose));
+      const expectedDispose: WorkerMessage = {
+        kind: WorkerMessageKind.Dispose,
+      };
+      sinon.assert.calledWithExactly(
+        childProcessMock.send,
+        JSON.stringify(expectedDispose),
+      );
       receiveMessage({ kind: ParentMessageKind.DisposeCompleted });
       await tick();
       expect(killStub).calledWith(childProcessMock.pid);
@@ -277,7 +302,9 @@ describe(ChildProcessProxy.name, () => {
 
       // Assert
       expect(result).eq('ack');
-      expect(childProcessMock.send).calledWith(stringUtils.serialize(expectedWorkerMessage));
+      expect(childProcessMock.send).calledWith(
+        stringUtils.serialize(expectedWorkerMessage),
+      );
     });
 
     it('should use a unique correlation id for each call', async () => {
@@ -286,18 +313,40 @@ describe(ChildProcessProxy.name, () => {
       receiveMessage({ kind: ParentMessageKind.Initialized });
 
       // Act
-      const promises = [sut.proxy.say('echo'), sut.proxy.say('hello'), sut.proxy.sum(1, 2)];
+      const promises = [
+        sut.proxy.say('echo'),
+        sut.proxy.say('hello'),
+        sut.proxy.sum(1, 2),
+      ];
       clock.tick(0);
-      receiveMessage({ kind: ParentMessageKind.CallResult, correlationId: 0, result: 'ack' });
-      receiveMessage({ kind: ParentMessageKind.CallResult, correlationId: 1, result: 'ack' });
-      receiveMessage({ kind: ParentMessageKind.CallResult, correlationId: 2, result: 'ack' });
+      receiveMessage({
+        kind: ParentMessageKind.CallResult,
+        correlationId: 0,
+        result: 'ack',
+      });
+      receiveMessage({
+        kind: ParentMessageKind.CallResult,
+        correlationId: 1,
+        result: 'ack',
+      });
+      receiveMessage({
+        kind: ParentMessageKind.CallResult,
+        correlationId: 2,
+        result: 'ack',
+      });
       await Promise.all(promises);
 
       // Assert
       sinon.assert.calledThrice(childProcessMock.send);
-      const actualWorkerMessage1: CallMessage = JSON.parse(childProcessMock.send.firstCall.args[0] as string);
-      const actualWorkerMessage2: CallMessage = JSON.parse(childProcessMock.send.secondCall.args[0] as string);
-      const actualWorkerMessage3: CallMessage = JSON.parse(childProcessMock.send.thirdCall.args[0] as string);
+      const actualWorkerMessage1: CallMessage = JSON.parse(
+        childProcessMock.send.firstCall.args[0] as string,
+      );
+      const actualWorkerMessage2: CallMessage = JSON.parse(
+        childProcessMock.send.secondCall.args[0] as string,
+      );
+      const actualWorkerMessage3: CallMessage = JSON.parse(
+        childProcessMock.send.thirdCall.args[0] as string,
+      );
       expect(actualWorkerMessage1.correlationId).eq(0);
       expect(actualWorkerMessage1.methodName).eq('say');
       expect(actualWorkerMessage1.args).deep.eq(['echo']);
@@ -316,8 +365,16 @@ describe(ChildProcessProxy.name, () => {
       const delayedEcho = sut.proxy.say('echo');
       const delayedHello = sut.proxy.sayHello();
       clock.tick(0);
-      receiveMessage({ kind: ParentMessageKind.CallResult, correlationId: 0, result: 'ack' });
-      receiveMessage({ kind: ParentMessageKind.CallResult, correlationId: 1, result: 'Hello' });
+      receiveMessage({
+        kind: ParentMessageKind.CallResult,
+        correlationId: 0,
+        result: 'ack',
+      });
+      receiveMessage({
+        kind: ParentMessageKind.CallResult,
+        correlationId: 1,
+        result: 'Hello',
+      });
 
       // Act
       const [echo, hello] = await Promise.all([delayedEcho, delayedHello]);
@@ -334,8 +391,16 @@ describe(ChildProcessProxy.name, () => {
       const delayedEcho = sut.proxy.say('echo');
       const delayedHello = sut.proxy.sayHello();
       clock.tick(0);
-      receiveMessage({ kind: ParentMessageKind.CallResult, correlationId: 1, result: 'Hello' });
-      receiveMessage({ kind: ParentMessageKind.CallResult, correlationId: 0, result: 'ack' });
+      receiveMessage({
+        kind: ParentMessageKind.CallResult,
+        correlationId: 1,
+        result: 'Hello',
+      });
+      receiveMessage({
+        kind: ParentMessageKind.CallResult,
+        correlationId: 0,
+        result: 'ack',
+      });
 
       // Act
       const [echo, hello] = await Promise.all([delayedEcho, delayedHello]);
@@ -358,7 +423,11 @@ describe(ChildProcessProxy.name, () => {
       receiveMessage({ kind: ParentMessageKind.Initialized });
       await tick();
       expect(childProcessMock.send).calledTwice; // call
-      receiveMessage({ kind: ParentMessageKind.CallResult, correlationId: 0, result: 'Hello' });
+      receiveMessage({
+        kind: ParentMessageKind.CallResult,
+        correlationId: 0,
+        result: 'Hello',
+      });
       expect(await onGoingCall).eq('Hello');
     });
   });
@@ -373,8 +442,12 @@ describe(ChildProcessProxy.name, () => {
 
     it('should send a dispose message', async () => {
       await actDispose();
-      const expectedWorkerMessage: DisposeMessage = { kind: WorkerMessageKind.Dispose };
-      expect(childProcessMock.send).calledWith(stringUtils.serialize(expectedWorkerMessage));
+      const expectedWorkerMessage: DisposeMessage = {
+        kind: WorkerMessageKind.Dispose,
+      };
+      expect(childProcessMock.send).calledWith(
+        stringUtils.serialize(expectedWorkerMessage),
+      );
     });
 
     it('should kill the child process', async () => {

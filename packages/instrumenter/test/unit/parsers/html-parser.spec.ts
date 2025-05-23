@@ -32,17 +32,27 @@ describe('html-parser', () => {
     `;
 
     it('should be able to parse simple HTML', async () => {
-      const parsed = await parse(simpleHtml, 'index.html', contextStub as ParserContext);
+      const parsed = await parse(
+        simpleHtml,
+        'index.html',
+        contextStub as ParserContext,
+      );
       expect(parsed).ok;
     });
 
     it('should work without script tags', async () => {
-      const parsed = await parse(simpleHtml, 'index.html', contextStub as ParserContext);
+      const parsed = await parse(
+        simpleHtml,
+        'index.html',
+        contextStub as ParserContext,
+      );
       expect(parsed.root.scripts).lengthOf(0);
     });
 
     it('should throw an error on invalid HTML', async () => {
-      await expect(parse('<p></div>', 'index.html', contextStub as ParserContext)).rejectedWith(
+      await expect(
+        parse('<p></div>', 'index.html', contextStub as ParserContext),
+      ).rejectedWith(
         ParseError,
         'Parse error in index.html (1:3) Unexpected closing tag "div".',
       );
@@ -61,7 +71,11 @@ describe('html-parser', () => {
     `;
 
     it('should deliver one script', async () => {
-      const parsed = await parse(html, 'index.html', contextStub as ParserContext);
+      const parsed = await parse(
+        html,
+        'index.html',
+        contextStub as ParserContext,
+      );
       expect(parsed.root.scripts).lengthOf(1);
     });
 
@@ -71,7 +85,11 @@ describe('html-parser', () => {
       contextStub.parse.resolves(actualScriptAst);
 
       // Act
-      const parsed = await parse(html, 'index.html', contextStub as ParserContext);
+      const parsed = await parse(
+        html,
+        'index.html',
+        contextStub as ParserContext,
+      );
 
       // Assert
       expect(parsed.root.scripts[0].offset!.column).eq(74);
@@ -86,6 +104,7 @@ describe('html-parser', () => {
       { actualType: 'javascript', expectedType: AstFormat.JS },
       { actualType: 'JavaScript', expectedType: AstFormat.JS },
       { actualType: 'text/javascript', expectedType: AstFormat.JS },
+      { actualType: 'module', expectedType: AstFormat.JS },
       { actualType: 'js', expectedType: AstFormat.JS },
       { actualType: 'ts', expectedType: AstFormat.TS },
       { actualType: 'typescript', expectedType: AstFormat.TS },
@@ -98,38 +117,66 @@ describe('html-parser', () => {
     testCases.forEach(({ actualType, expectedType }) => {
       it(`should parse <script type="${actualType}"> as ${expectedType}`, async () => {
         const code = 'foo.bar(40,2)';
-        await parse(`<script type="${actualType}">${code}</script>`, 'test.html', contextStub as ParserContext);
+        await parse(
+          `<script type="${actualType}">${code}</script>`,
+          'test.html',
+          contextStub as ParserContext,
+        );
         expect(contextStub.parse).calledWith(code, 'test.html', expectedType);
       });
       it(`should parse <script lang="${actualType}"> as ${expectedType}`, async () => {
         const code = 'foo.bar(40,2)';
-        await parse(`<script lang="${actualType}">${code}</script>`, 'test.html', contextStub as ParserContext);
+        await parse(
+          `<script lang="${actualType}">${code}</script>`,
+          'test.html',
+          contextStub as ParserContext,
+        );
         expect(contextStub.parse).calledWith(code, 'test.html', expectedType);
       });
     });
 
     it('should parse <script> without a "type" as js', async () => {
       const code = 'foo.bar(40,2)';
-      await parse(`<script>${code}</script>`, 'test.html', contextStub as ParserContext);
+      await parse(
+        `<script>${code}</script>`,
+        'test.html',
+        contextStub as ParserContext,
+      );
       expect(contextStub.parse).calledWith(code, 'test.html', AstFormat.JS);
     });
     it('shouldn\'t parse scripts with a "src" attribute', async () => {
-      await parse('<script src="foo.js"></script>', 'test.html', contextStub as ParserContext);
+      await parse(
+        '<script src="foo.js"></script>',
+        'test.html',
+        contextStub as ParserContext,
+      );
       expect(contextStub.parse).not.called;
     });
 
     it('should support script tags deep in html', async () => {
-      await parse('<html><body><div><div><section><script></script></section></div></div></body></html>', 'test.html', contextStub as ParserContext);
+      await parse(
+        '<html><body><div><div><section><script></script></section></div></div></body></html>',
+        'test.html',
+        contextStub as ParserContext,
+      );
       expect(contextStub.parse).called;
     });
 
     it('should support script tags with more attributes', async () => {
-      await parse('<script defer type="ts"></script>', 'test.html', contextStub as ParserContext);
+      await parse(
+        '<script defer type="ts"></script>',
+        'test.html',
+        contextStub as ParserContext,
+      );
       expect(contextStub.parse).calledWith('', 'test.html', AstFormat.TS);
     });
 
     it('should ignore unknown script types', async () => {
-      const parsed = await parse('<script type="text/template"><div></div></script>', 'test.html', contextStub as ParserContext);
+      const parsed = await parse(
+        '<script type="text/template"><div></div></script>',
+        'test.html',
+        contextStub as ParserContext,
+      );
       expect(parsed.root.scripts).lengthOf(0);
     });
 

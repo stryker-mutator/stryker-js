@@ -57,19 +57,30 @@ function filterRelevantErrors(allErrors: ErrorObject[]): ErrorObject[] {
   const META_SCHEMA_KEYWORDS = Object.freeze(['anyOf', 'allOf', 'oneOf']);
 
   // Split the meta errors from what I call "single errors" (the real errors)
-  const [metaErrors, singleErrors] = split(allErrors, (error) => META_SCHEMA_KEYWORDS.includes(error.keyword));
+  const [metaErrors, singleErrors] = split(allErrors, (error) =>
+    META_SCHEMA_KEYWORDS.includes(error.keyword),
+  );
 
   // Filter out the single errors we want to show
-  const nonShadowedSingleErrors = removeShadowingErrors(singleErrors, metaErrors);
+  const nonShadowedSingleErrors = removeShadowingErrors(
+    singleErrors,
+    metaErrors,
+  );
 
   // We're handling type errors differently, split them out
-  const [typeErrors, nonTypeErrors] = split(nonShadowedSingleErrors, (error) => error.keyword === 'type');
+  const [typeErrors, nonTypeErrors] = split(
+    nonShadowedSingleErrors,
+    (error) => error.keyword === 'type',
+  );
 
   // Filter out the type errors that already have other errors as well.
   // For example when setting `logLevel: 4`, we don't want to see the error specifying that logLevel should be a string,
   // if the other error already specified that it should be one of the enum values.
   const nonShadowingTypeErrors = typeErrors.filter(
-    (typeError) => !nonTypeErrors.some((nonTypeError) => nonTypeError.instancePath === typeError.instancePath),
+    (typeError) =>
+      !nonTypeErrors.some(
+        (nonTypeError) => nonTypeError.instancePath === typeError.instancePath,
+      ),
   );
   const typeErrorsMerged = mergeTypeErrorsByPath(nonShadowingTypeErrors);
   return [...nonTypeErrors, ...typeErrorsMerged];
@@ -83,11 +94,20 @@ function filterRelevantErrors(allErrors: ErrorObject[]): ErrorObject[] {
  * @param singleErrors The 'real' errors
  * @param metaErrors The grouping errors
  */
-function removeShadowingErrors(singleErrors: ErrorObject[], metaErrors: ErrorObject[]): ErrorObject[] {
+function removeShadowingErrors(
+  singleErrors: ErrorObject[],
+  metaErrors: ErrorObject[],
+): ErrorObject[] {
   return singleErrors.filter((error) => {
-    if (metaErrors.some((metaError) => error.instancePath.startsWith(metaError.instancePath))) {
+    if (
+      metaErrors.some((metaError) =>
+        error.instancePath.startsWith(metaError.instancePath),
+      )
+    ) {
       return !singleErrors.some(
-        (otherError) => otherError.instancePath.startsWith(error.instancePath) && otherError.instancePath.length > error.instancePath.length,
+        (otherError) =>
+          otherError.instancePath.startsWith(error.instancePath) &&
+          otherError.instancePath.length > error.instancePath.length,
       );
     } else {
       return true;

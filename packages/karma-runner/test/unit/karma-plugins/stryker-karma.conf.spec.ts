@@ -10,7 +10,10 @@ import type { requireResolve } from '@stryker-mutator/util';
 
 import { configureKarma as sut } from '../../../src/karma-plugins/stryker-karma.conf.js';
 import { strykerReporterFactory } from '../../../src/karma-plugins/stryker-reporter.js';
-import { TestHooksMiddleware, TEST_HOOKS_FILE_NAME } from '../../../src/karma-plugins/test-hooks-middleware.js';
+import {
+  TestHooksMiddleware,
+  TEST_HOOKS_FILE_NAME,
+} from '../../../src/karma-plugins/test-hooks-middleware.js';
 
 describe('stryker-karma.conf.js', () => {
   let getLogger: sinon.SinonStub;
@@ -119,13 +122,17 @@ describe('stryker-karma.conf.js', () => {
     expect(testInjector.logger.error).calledWithMatch(
       `Unable to find karma config at "foobar.conf.js" (tried to load from ${path.resolve(expectedKarmaConfigFile)})`,
     );
-    expect(requireResolveStub).calledWith(path.resolve(expectedKarmaConfigFile));
+    expect(requireResolveStub).calledWith(
+      path.resolve(expectedKarmaConfigFile),
+    );
   });
 
   it("should reject if the user's karma config file didn't export a function", async () => {
     sut.setGlobals({ karmaConfigFile: 'foo.js' });
     requireResolveStub.returns({ foo: 'bar' });
-    await expect(act()).rejectedWith(`Karma config file "${path.resolve('foo.js')}" should export a function! Found: object`);
+    await expect(act()).rejectedWith(
+      `Karma config file "${path.resolve('foo.js')}" should export a function! Found: object`,
+    );
   });
 
   it('should set user configuration from custom karma config', async () => {
@@ -135,7 +142,12 @@ describe('stryker-karma.conf.js', () => {
   });
 
   it("should force some options that relate to karma's life cycle", async () => {
-    config.set({ browserNoActivityTimeout: 1, autoWatch: true, singleRun: true, detached: true });
+    config.set({
+      browserNoActivityTimeout: 1,
+      autoWatch: true,
+      singleRun: true,
+      detached: true,
+    });
     await act();
     expect(config).deep.include({
       autoWatch: false,
@@ -149,7 +161,9 @@ describe('stryker-karma.conf.js', () => {
   it('should force clearContext to false', async () => {
     // Arrange
     sut.setGlobals({ getLogger, karmaConfigFile: 'karma.conf.js' });
-    requireResolveStub.returns((conf: Config) => conf.set({ client: { clearContext: true }, frameworks: ['mocha'] }));
+    requireResolveStub.returns((conf: Config) =>
+      conf.set({ client: { clearContext: true }, frameworks: ['mocha'] }),
+    );
 
     // Act
     await act();
@@ -161,7 +175,12 @@ describe('stryker-karma.conf.js', () => {
   it('should force non-random and failFast options when dealing with jasmine', async () => {
     // Arrange
     sut.setGlobals({ getLogger, karmaConfigFile: 'karma.conf.js' });
-    requireResolveStub.returns((conf: Config) => conf.set({ client: { jasmine: { random: true } } as ClientOptions, frameworks: ['jasmine'] }));
+    requireResolveStub.returns((conf: Config) =>
+      conf.set({
+        client: { jasmine: { random: true } } as ClientOptions,
+        frameworks: ['jasmine'],
+      }),
+    );
 
     // Act
     await act();
@@ -181,7 +200,12 @@ describe('stryker-karma.conf.js', () => {
   it('should force bail options when dealing with mocha', async () => {
     // Arrange
     sut.setGlobals({ getLogger, karmaConfigFile: 'karma.conf.js' });
-    requireResolveStub.returns((conf: Config) => conf.set({ client: { mocha: { bail: false } } as ClientOptions, frameworks: ['mocha'] }));
+    requireResolveStub.returns((conf: Config) =>
+      conf.set({
+        client: { mocha: { bail: false } } as ClientOptions,
+        frameworks: ['mocha'],
+      }),
+    );
 
     // Act
     await act();
@@ -206,23 +230,42 @@ describe('stryker-karma.conf.js', () => {
     await act();
 
     // Assert
-    expect(config.files).deep.include({ pattern: TEST_HOOKS_FILE_NAME, included: true, watched: false, served: false, nocache: true });
+    expect(config.files).deep.include({
+      pattern: TEST_HOOKS_FILE_NAME,
+      included: true,
+      watched: false,
+      served: false,
+      nocache: true,
+    });
     expect(config.plugins).include('karma-*');
-    expect(config.plugins).deep.include({ ['middleware:TestHooksMiddleware']: ['value', TestHooksMiddleware.instance.handler] });
-    expect(TestHooksMiddleware.instance.configureTestFramework).calledWith(['my', 'framework']);
+    expect(config.plugins).deep.include({
+      ['middleware:TestHooksMiddleware']: [
+        'value',
+        TestHooksMiddleware.instance.handler,
+      ],
+    });
+    expect(TestHooksMiddleware.instance.configureTestFramework).calledWith([
+      'my',
+      'framework',
+    ]);
   });
 
   it('should configure the stryker reporter', async () => {
     await act();
     expect(config.reporters).deep.eq(['StrykerReporter']);
     expect(config.plugins).include('karma-*');
-    expect(config.plugins).deep.include({ ['reporter:StrykerReporter']: ['factory', strykerReporterFactory] });
+    expect(config.plugins).deep.include({
+      ['reporter:StrykerReporter']: ['factory', strykerReporterFactory],
+    });
   });
 
   it('should configure the stryker coverage adapter', async () => {
     await act();
     expect(config.files![0]).deep.eq({
-      pattern: path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../../src/karma-plugins/stryker-mutant-coverage-adapter.js'),
+      pattern: path.resolve(
+        path.dirname(fileURLToPath(import.meta.url)),
+        '../../../src/karma-plugins/stryker-mutant-coverage-adapter.js',
+      ),
       included: true,
       watched: false,
       served: true,
@@ -238,7 +281,10 @@ describe('stryker-karma.conf.js', () => {
   });
 
   it('should set basePath to location of karma.conf.js', async () => {
-    sut.setGlobals({ karmaConfigFile: '../foobar.conf.js', disableBail: false });
+    sut.setGlobals({
+      karmaConfigFile: '../foobar.conf.js',
+      disableBail: false,
+    });
     requireResolveStub.returns(() => {
       /* noop */
     });
@@ -252,7 +298,9 @@ describe('stryker-karma.conf.js', () => {
   it('should allow for custom basePath', async () => {
     const expectedBasePath = path.resolve('../baz');
     sut.setGlobals({ karmaConfigFile: '../foobar.conf.js' });
-    requireResolveStub.returns((configuration: Config) => configuration.set({ basePath: expectedBasePath }));
+    requireResolveStub.returns((configuration: Config) =>
+      configuration.set({ basePath: expectedBasePath }),
+    );
     await act();
     expect(config).deep.include({
       basePath: path.resolve(expectedBasePath),

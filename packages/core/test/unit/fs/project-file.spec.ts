@@ -21,7 +21,11 @@ describe(ProjectFile.name, () => {
       fileSystemMock.readFile.resolves('content');
       const result = await sut.readContent();
       expect(result).eq('content');
-      sinon.assert.calledOnceWithExactly(fileSystemMock.readFile, 'foo.js', 'utf-8');
+      sinon.assert.calledOnceWithExactly(
+        fileSystemMock.readFile,
+        'foo.js',
+        'utf-8',
+      );
     });
 
     it('should not read the content from disk when the content is set', async () => {
@@ -48,7 +52,11 @@ describe(ProjectFile.name, () => {
 
       // Assert
       expect(result).eq('content');
-      sinon.assert.calledOnceWithExactly(fileSystemMock.readFile, 'foo.js', 'utf-8');
+      sinon.assert.calledOnceWithExactly(
+        fileSystemMock.readFile,
+        'foo.js',
+        'utf-8',
+      );
     });
   });
 
@@ -58,7 +66,11 @@ describe(ProjectFile.name, () => {
       fileSystemMock.readFile.resolves('content');
       const result = await sut.readOriginal();
       expect(result).eq('content');
-      sinon.assert.calledOnceWithExactly(fileSystemMock.readFile, 'foo.js', 'utf-8');
+      sinon.assert.calledOnceWithExactly(
+        fileSystemMock.readFile,
+        'foo.js',
+        'utf-8',
+      );
     });
 
     it('should read the content from disk only the first time', async () => {
@@ -72,7 +84,11 @@ describe(ProjectFile.name, () => {
 
       // Assert
       expect(result).eq('content');
-      sinon.assert.calledOnceWithExactly(fileSystemMock.readFile, 'foo.js', 'utf-8');
+      sinon.assert.calledOnceWithExactly(
+        fileSystemMock.readFile,
+        'foo.js',
+        'utf-8',
+      );
     });
 
     it('should also cache original when readContent is called', async () => {
@@ -86,7 +102,11 @@ describe(ProjectFile.name, () => {
 
       // Assert
       expect(result).eq('content');
-      sinon.assert.calledOnceWithExactly(fileSystemMock.readFile, 'foo.js', 'utf-8');
+      sinon.assert.calledOnceWithExactly(
+        fileSystemMock.readFile,
+        'foo.js',
+        'utf-8',
+      );
     });
 
     it('should still read the content from disk when the content is set in-memory', async () => {
@@ -106,7 +126,9 @@ describe(ProjectFile.name, () => {
   describe(ProjectFile.prototype.toInstrumenterFile.name, () => {
     it('should read content', async () => {
       // Arrange
-      const mutate = [{ start: { column: 1, line: 2 }, end: { column: 3, line: 4 } }];
+      const mutate = [
+        { start: { column: 1, line: 2 }, end: { column: 3, line: 4 } },
+      ];
       const sut = createSut({ name: 'bar.js', mutate });
       fileSystemMock.readFile.resolves('original');
 
@@ -167,7 +189,12 @@ describe(ProjectFile.name, () => {
       const sut = createSut({ name: 'src/foo.js' });
       sut.setContent('some content');
       await sut.writeInPlace();
-      sinon.assert.calledOnceWithExactly(fileSystemMock.writeFile, 'src/foo.js', 'some content', 'utf-8');
+      sinon.assert.calledOnceWithExactly(
+        fileSystemMock.writeFile,
+        'src/foo.js',
+        'some content',
+        'utf-8',
+      );
     });
 
     it('should not do anything when the content written had no changes', async () => {
@@ -192,11 +219,20 @@ describe(ProjectFile.name, () => {
       sut.setContent('foo();');
 
       // Act
-      const actualSandboxFile = await sut.writeToSandbox(path.resolve('.stryker-tmp', 'sandbox123'));
+      const actualSandboxFile = await sut.writeToSandbox(
+        path.resolve('.stryker-tmp', 'sandbox123'),
+      );
 
       // Assert
-      expect(actualSandboxFile).eq(path.resolve('.stryker-tmp', 'sandbox123', 'src', 'foo.js'));
-      sinon.assert.calledOnceWithExactly(fileSystemMock.writeFile, actualSandboxFile, 'foo();', 'utf-8');
+      expect(actualSandboxFile).eq(
+        path.resolve('.stryker-tmp', 'sandbox123', 'src', 'foo.js'),
+      );
+      sinon.assert.calledOnceWithExactly(
+        fileSystemMock.writeFile,
+        actualSandboxFile,
+        'foo();',
+        'utf-8',
+      );
       sinon.assert.notCalled(fileSystemMock.copyFile);
     });
 
@@ -206,10 +242,14 @@ describe(ProjectFile.name, () => {
       sut.setContent('foo();');
 
       // Act
-      const actualSandboxFile = await sut.writeToSandbox(path.resolve('..', '.stryker-tmp', 'sandbox123'));
+      const actualSandboxFile = await sut.writeToSandbox(
+        path.resolve('..', '.stryker-tmp', 'sandbox123'),
+      );
 
       // Assert
-      expect(actualSandboxFile).eq(path.resolve('..', '.stryker-tmp', 'sandbox123', 'src', 'foo.js'));
+      expect(actualSandboxFile).eq(
+        path.resolve('..', '.stryker-tmp', 'sandbox123', 'src', 'foo.js'),
+      );
     });
 
     it('should make the dir before write', async () => {
@@ -218,10 +258,16 @@ describe(ProjectFile.name, () => {
       sut.setContent('foo();');
 
       // Act
-      const actualSandboxFile = await sut.writeToSandbox(path.resolve('.stryker-tmp', 'sandbox123'));
+      const actualSandboxFile = await sut.writeToSandbox(
+        path.resolve('.stryker-tmp', 'sandbox123'),
+      );
 
       // Assert
-      sinon.assert.calledOnceWithExactly(fileSystemMock.mkdir, path.dirname(actualSandboxFile), { recursive: true });
+      sinon.assert.calledOnceWithExactly(
+        fileSystemMock.mkdir,
+        path.dirname(actualSandboxFile),
+        { recursive: true },
+      );
       sinon.assert.callOrder(fileSystemMock.mkdir, fileSystemMock.writeFile);
     });
 
@@ -231,11 +277,19 @@ describe(ProjectFile.name, () => {
       const sut = createSut({ name: originalFileName });
 
       // Act
-      const actualSandboxFile = await sut.writeToSandbox(path.resolve('.stryker-tmp', 'sandbox123'));
+      const actualSandboxFile = await sut.writeToSandbox(
+        path.resolve('.stryker-tmp', 'sandbox123'),
+      );
 
       // Assert
-      expect(actualSandboxFile).eq(path.resolve('.stryker-tmp', 'sandbox123', 'src', 'foo.js'));
-      sinon.assert.calledOnceWithExactly(fileSystemMock.copyFile, originalFileName, actualSandboxFile);
+      expect(actualSandboxFile).eq(
+        path.resolve('.stryker-tmp', 'sandbox123', 'src', 'foo.js'),
+      );
+      sinon.assert.calledOnceWithExactly(
+        fileSystemMock.copyFile,
+        originalFileName,
+        actualSandboxFile,
+      );
       sinon.assert.notCalled(fileSystemMock.writeFile);
     });
   });
@@ -248,11 +302,19 @@ describe(ProjectFile.name, () => {
       await sut.readOriginal();
 
       // Act
-      const actualBackupFile = await sut.backupTo(path.resolve('.stryker-tmp', 'backup123'));
+      const actualBackupFile = await sut.backupTo(
+        path.resolve('.stryker-tmp', 'backup123'),
+      );
 
       // Assert
-      expect(actualBackupFile).eq(path.resolve('.stryker-tmp', 'backup123', 'src', 'foo.js'));
-      sinon.assert.calledOnceWithExactly(fileSystemMock.writeFile, actualBackupFile, 'original');
+      expect(actualBackupFile).eq(
+        path.resolve('.stryker-tmp', 'backup123', 'src', 'foo.js'),
+      );
+      sinon.assert.calledOnceWithExactly(
+        fileSystemMock.writeFile,
+        actualBackupFile,
+        'original',
+      );
       sinon.assert.notCalled(fileSystemMock.copyFile);
     });
 
@@ -263,10 +325,16 @@ describe(ProjectFile.name, () => {
       await sut.readOriginal();
 
       // Act
-      const actualBackupFile = await sut.backupTo(path.resolve('.stryker-tmp', 'backup123'));
+      const actualBackupFile = await sut.backupTo(
+        path.resolve('.stryker-tmp', 'backup123'),
+      );
 
       // Assert
-      sinon.assert.calledOnceWithExactly(fileSystemMock.mkdir, path.dirname(actualBackupFile), { recursive: true });
+      sinon.assert.calledOnceWithExactly(
+        fileSystemMock.mkdir,
+        path.dirname(actualBackupFile),
+        { recursive: true },
+      );
       sinon.assert.callOrder(fileSystemMock.mkdir, fileSystemMock.writeFile);
     });
 
@@ -276,11 +344,19 @@ describe(ProjectFile.name, () => {
       const sut = createSut({ name: originalFileName });
 
       // Act
-      const actualBackupFile = await sut.backupTo(path.resolve('.stryker-tmp', 'backup-123'));
+      const actualBackupFile = await sut.backupTo(
+        path.resolve('.stryker-tmp', 'backup-123'),
+      );
 
       // Assert
-      expect(actualBackupFile).eq(path.resolve('.stryker-tmp', 'backup-123', 'src', 'foo.js'));
-      sinon.assert.calledOnceWithExactly(fileSystemMock.copyFile, originalFileName, actualBackupFile);
+      expect(actualBackupFile).eq(
+        path.resolve('.stryker-tmp', 'backup-123', 'src', 'foo.js'),
+      );
+      sinon.assert.calledOnceWithExactly(
+        fileSystemMock.copyFile,
+        originalFileName,
+        actualBackupFile,
+      );
       sinon.assert.notCalled(fileSystemMock.writeFile);
     });
 
@@ -298,7 +374,9 @@ describe(ProjectFile.name, () => {
     });
   });
 
-  function createSut(overrides?: Partial<{ name: string; mutate: MutateDescription }>): ProjectFile {
+  function createSut(
+    overrides?: Partial<{ name: string; mutate: MutateDescription }>,
+  ): ProjectFile {
     const { name, mutate } = {
       name: 'foo.js',
       mutate: true,

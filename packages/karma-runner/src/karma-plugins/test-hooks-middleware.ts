@@ -2,7 +2,10 @@ import path from 'path';
 import url, { fileURLToPath } from 'url';
 
 import { RequestHandler } from 'express';
-import { CoverageAnalysis, INSTRUMENTER_CONSTANTS } from '@stryker-mutator/api/core';
+import {
+  CoverageAnalysis,
+  INSTRUMENTER_CONSTANTS,
+} from '@stryker-mutator/api/core';
 import { MutantRunOptions } from '@stryker-mutator/api/test-runner';
 import { escapeRegExpLiteral } from '@stryker-mutator/util';
 
@@ -16,7 +19,9 @@ const SUPPORTED_FRAMEWORKS = Object.freeze(['mocha', 'jasmine'] as const);
 
 type SupportedFramework = 'jasmine' | 'mocha';
 
-function isSupportedFramework(framework: string): framework is SupportedFramework {
+function isSupportedFramework(
+  framework: string,
+): framework is SupportedFramework {
   return (SUPPORTED_FRAMEWORKS as readonly string[]).includes(framework);
 }
 
@@ -25,7 +30,8 @@ function isSupportedFramework(framework: string): framework is SupportedFramewor
  */
 const SHOULD_REPORT_COVERAGE_FLAG = '__strykerShouldReportCoverage__';
 
-const { ACTIVE_MUTANT, NAMESPACE, CURRENT_TEST_ID, HIT_COUNT, HIT_LIMIT } = INSTRUMENTER_CONSTANTS;
+const { ACTIVE_MUTANT, NAMESPACE, CURRENT_TEST_ID, HIT_COUNT, HIT_LIMIT } =
+  INSTRUMENTER_CONSTANTS;
 
 export class TestHooksMiddleware {
   private static _instance?: TestHooksMiddleware;
@@ -57,7 +63,11 @@ export class TestHooksMiddleware {
     }
   }
 
-  public configureMutantRun({ activeMutant, testFilter, hitLimit }: MutantRunOptions): void {
+  public configureMutantRun({
+    activeMutant,
+    testFilter,
+    hitLimit,
+  }: MutantRunOptions): void {
     this.configureCoverageAnalysis('off');
     this.currentTestHooks += `window.${NAMESPACE} = window.${NAMESPACE} || {};`;
     this.currentTestHooks += this.configureHitLimit(hitLimit);
@@ -70,7 +80,9 @@ export class TestHooksMiddleware {
           }})`;
           break;
         case 'mocha': {
-          const metaRegExp = testFilter.map((testId) => `(${escapeRegExpLiteral(testId)})`).join('|');
+          const metaRegExp = testFilter
+            .map((testId) => `(${escapeRegExpLiteral(testId)})`)
+            .join('|');
           this.currentTestHooks += `mocha.grep(/${metaRegExp}/)`;
           break;
         }

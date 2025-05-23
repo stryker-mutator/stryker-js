@@ -1,4 +1,8 @@
-import { declareClassPlugin, declareFactoryPlugin, PluginKind } from '@stryker-mutator/api/plugin';
+import {
+  declareClassPlugin,
+  declareFactoryPlugin,
+  PluginKind,
+} from '@stryker-mutator/api/plugin';
 
 import { ClearTextReporter } from './clear-text-reporter.js';
 import { dashboardReporterFactory } from './dashboard-reporter/index.js';
@@ -15,12 +19,24 @@ export type { StrictReporter } from './strict-reporter.js';
 export const strykerPlugins = [
   declareClassPlugin(PluginKind.Reporter, 'clear-text', ClearTextReporter),
   declareClassPlugin(PluginKind.Reporter, 'progress', ProgressBarReporter),
-  declareClassPlugin(PluginKind.Reporter, 'progress-append-only', ProgressAppendOnlyReporter),
+  declareClassPlugin(
+    PluginKind.Reporter,
+    'progress-append-only',
+    ProgressAppendOnlyReporter,
+  ),
   declareClassPlugin(PluginKind.Reporter, 'dots', DotsReporter),
-  declareClassPlugin(PluginKind.Reporter, 'event-recorder', EventRecorderReporter),
+  declareClassPlugin(
+    PluginKind.Reporter,
+    'event-recorder',
+    EventRecorderReporter,
+  ),
   declareClassPlugin(PluginKind.Reporter, 'html', HtmlReporter),
   declareClassPlugin(PluginKind.Reporter, 'json', JsonReporter),
-  declareFactoryPlugin(PluginKind.Reporter, 'dashboard', dashboardReporterFactory),
+  declareFactoryPlugin(
+    PluginKind.Reporter,
+    'dashboard',
+    dashboardReporterFactory,
+  ),
 ];
 
 export const reporterPluginsFileUrl = import.meta.url;
