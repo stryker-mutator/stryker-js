@@ -27,9 +27,15 @@ import { Stryker } from './stryker.js';
 import { promisify } from 'util';
 import { normalizeReportFileName } from './reporters/mutation-test-report-helper.js';
 import {
-  LoggingBackendProvider,
+  provideLogging,
   provideLoggingBackend,
 } from './logging/provide-logging.js';
+import {
+  LoggingBackend,
+  LoggingServer,
+  LoggingServerAddress,
+} from './logging/index.js';
+import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 
 export const rpcMethods = Object.freeze({
   configure: 'configure',
@@ -54,7 +60,13 @@ export class StrykerServer {
    * Keep track of the logging backend provider, so we can share the logging server between calls.
    * New injectors for discover or mutation test tasks.
    */
-  #loggingBackendProvider?: LoggingBackendProvider;
+  #loggingBackendProvider?: Injector<{
+    getLogger: LoggerFactoryMethod;
+    logger: Logger;
+    loggingSink: LoggingBackend;
+    loggingServer: LoggingServer;
+    loggingServerAddress: LoggingServerAddress;
+  }>;
   #rootInjector?: Injector;
 
   /**
@@ -76,8 +88,8 @@ export class StrykerServer {
       throw new Error(STRYKER_SERVER_ALREADY_STARTED);
     }
     this.#rootInjector = this.injectorFactory();
-    this.#loggingBackendProvider = await provideLoggingBackend(
-      this.#rootInjector,
+    this.#loggingBackendProvider = provideLogging(
+      await provideLoggingBackend(this.#rootInjector),
     );
     return new Promise((resolve) => {
       this.#server = net.createServer((socket) => {
@@ -117,7 +129,9 @@ export class StrykerServer {
         socket.on('data', (data) => {
           const events = deserializer.deserialize(data);
           for (const event of events) {
-            rpc.receiveAndSend(event);
+            rpc.receiveAndSend(event).catch((error) => {
+              console.error(error);
+            });
           }
         });
       });
@@ -146,7 +160,10 @@ export class StrykerServer {
     if (!this.#loggingBackendProvider) {
       throw new Error(STRYKER_SERVER_NOT_STARTED);
     }
-    const discoverInjector = this.#loggingBackendProvider.createChildInjector();
+    const discoverInjector = this.#loggingBackendProvider.provideValue(
+      coreTokens.reporterOverride,
+      undefined,
+    );
     try {
       const prepareExecutor = discoverInjector.injectClass(PrepareExecutor);
       const inj = await prepareExecutor.execute({

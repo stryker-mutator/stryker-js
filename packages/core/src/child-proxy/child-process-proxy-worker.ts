@@ -111,7 +111,7 @@ export class ChildProcessProxyWorker {
         );
         process.chdir(workingDir);
       }
-
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       this.realSubject = injector.injectClass(RealSubjectClass);
       this.send({ kind: ParentMessageKind.Initialized });
     } catch (err) {

@@ -1,8 +1,6 @@
 import path from 'path';
 
 import {
-  Location,
-  Position,
   StrykerOptions,
   MutantTestCoverage,
   MutantResult,

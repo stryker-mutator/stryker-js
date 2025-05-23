@@ -24,12 +24,13 @@ function loggerFactory(
 }
 loggerFactory.inject = [commonTokens.getLogger, commonTokens.target] as const;
 
-function provideLogging<T extends { [coreTokens.loggingSink]: LoggingSink }>(
-  injector: Injector<T>,
-) {
+export function provideLogging<
+  T extends { [coreTokens.loggingSink]: LoggingSink },
+>(injector: Injector<T>) {
   return injector
     .provideFactory(commonTokens.getLogger, getLoggerFactory)
-    .provideFactory(commonTokens.logger, loggerFactory, Scope.Transient);
+    .provideFactory(commonTokens.logger, loggerFactory, Scope.Transient)
+    .provideClass('loggingServer', LoggingServer);
 }
 provideLogging.inject = [
   coreTokens.loggingSink,
@@ -42,26 +43,24 @@ export async function provideLoggingBackend(injector: Injector) {
     .provideClass(coreTokens.loggingServer, LoggingServer);
   const loggingServer = out.resolve(coreTokens.loggingServer);
   const loggingServerAddress = await loggingServer.listen();
-  return provideLogging(
-    out.provideValue(coreTokens.loggingServerAddress, loggingServerAddress),
+  return out.provideValue(
+    coreTokens.loggingServerAddress,
+    loggingServerAddress,
   );
 }
 provideLoggingBackend.inject = [commonTokens.injector] as const;
-export type LoggingBackendProvider = Awaited<
-  ReturnType<typeof provideLoggingBackend>
->;
+
+export type LoggingProvider = ReturnType<typeof provideLogging>;
 
 export async function provideLoggingClient(
   injector: Injector,
   loggingServerAddress: LoggingServerAddress,
   activeLogLevel: LogLevel,
 ) {
-  const out = provideLogging(
-    injector
-      .provideValue(coreTokens.loggingServerAddress, loggingServerAddress)
-      .provideValue(coreTokens.loggerActiveLevel, activeLogLevel)
-      .provideClass(coreTokens.loggingSink, LoggingClient),
-  );
+  const out = injector
+    .provideValue(coreTokens.loggingServerAddress, loggingServerAddress)
+    .provideValue(coreTokens.loggerActiveLevel, activeLogLevel)
+    .provideClass(coreTokens.loggingSink, LoggingClient);
   await out.resolve(coreTokens.loggingSink).openConnection();
   return out;
 }
