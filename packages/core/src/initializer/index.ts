@@ -12,10 +12,10 @@ import { StrykerInquirer } from './stryker-inquirer.js';
 import { createInitializers } from './custom-initializers/index.js';
 import { GitignoreWriter } from './gitignore-writer.js';
 import { createNpmRegistryClient, getRegistry } from './npm-registry.js';
-import { provideLoggingBackend } from '../logging/index.js';
+import { provideLogging, provideLoggingBackend } from '../logging/index.js';
 
 export async function initializerFactory(): Promise<StrykerInitializer> {
-  return (await provideLoggingBackend(createInjector()))
+  return provideLogging(await provideLoggingBackend(createInjector()))
     .provideValue(initializerTokens.out, console.log)
     .provideValue(coreTokens.execa, execaCommand)
     .provideValue(coreTokens.execaSync, execaCommandSync)
