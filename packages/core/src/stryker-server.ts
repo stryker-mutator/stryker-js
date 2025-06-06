@@ -130,9 +130,9 @@ export class StrykerServer {
         socket.on('data', (data) => {
           const events = deserializer.deserialize(data);
           for (const event of events) {
-            rpc.receiveAndSend(event).catch((error) => {
-              console.error(error);
-            });
+            // https://www.npmjs.com/package/json-rpc-2.0#error-handling
+            // errors are already handled by JSON RPC, so we can ignore them here
+            void rpc.receiveAndSend(event);
           }
         });
       });

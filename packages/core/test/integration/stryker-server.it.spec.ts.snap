@@ -411,3 +411,33 @@ Array [
   },
 ]
 `;
+
+exports[`StrykerServer on a happy flow project should be able to run mutation tests with range 1`] = `
+Array [
+  Object {
+    "files": Object {
+      "src/app.js": Object {
+        "mutants": Array [
+          Object {
+            "id": "0",
+            "location": Object {
+              "end": Object {
+                "column": 37,
+                "line": 7,
+              },
+              "start": Object {
+                "column": 30,
+                "line": 7,
+              },
+            },
+            "mutatorName": "StringLiteral",
+            "replacement": "\\"\\"",
+            "status": "Survived",
+            "testsCompleted": 1,
+          },
+        ],
+      },
+    },
+  },
+]
+`;

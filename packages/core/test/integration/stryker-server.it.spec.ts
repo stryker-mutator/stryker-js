@@ -15,7 +15,7 @@ import {
 import { StrykerServer } from '../../src/stryker-server.js';
 import { resolveFromRoot } from '../helpers/test-utils.js';
 import { JsonRpcEventDeserializer } from '../../src/utils/json-rpc-event-deserializer.js';
-import { ReplaySubject } from 'rxjs';
+import { firstValueFrom, ReplaySubject } from 'rxjs';
 import { expect } from 'chai';
 
 describe(StrykerServer.name, () => {
@@ -37,6 +37,49 @@ describe(StrykerServer.name, () => {
       await sut.stop();
     });
 
+    it('should throw an error if discover is called before start()', async () => {
+      const sut = new StrykerServer();
+      const dummyParams: DiscoverParams = { files: [] };
+
+      const act = () => sut.discover(dummyParams);
+
+      await expect(act()).to.be.rejectedWith(
+        "Stryker server isn't started yet, please call `start` first",
+      );
+    });
+
+    it('should throw an error if mutationTest is called before start()', async () => {
+      const sut = new StrykerServer();
+      const dummyParams: MutationTestParams = {};
+
+      await expect(
+        firstValueFrom(sut.mutationTest(dummyParams)),
+      ).to.be.rejectedWith(
+        "Stryker server isn't started yet, please call `start` first",
+      );
+    });
+
+    it('should throw an error when trying to start twice', async () => {
+      const act = () => sut.start();
+
+      await expect(act()).to.be.eventually.rejectedWith(
+        'Server already started',
+      );
+    });
+
+    it('should successfully configure the server', async () => {
+      const configureParam: ConfigureParams = {
+        configFilePath: 'stryker.conf.js',
+      };
+      const expectedResult: ConfigureResult = {
+        version: '1',
+      };
+
+      const result = await client.configure(configureParam);
+
+      expect(result).to.deep.equal(expectedResult);
+    });
+
     it('should be able to discover mutants', async () => {
       expect(await client.discover()).matchSnapshot();
     });
@@ -46,9 +89,6 @@ describe(StrykerServer.name, () => {
         await client.discover({ files: [{ path: 'src/add.js' }] }),
       ).matchSnapshot();
     });
-
-    // @TODO: Fix tests
-    // @TODO: Add ranges
 
     it('should be able to run mutation tests', async () => {
       const results: MutationTestResult[] = [];
@@ -75,6 +115,29 @@ describe(StrykerServer.name, () => {
         ),
       );
       expect(cleanedResults).lengthOf(5);
+      expect(cleanedResults).matchSnapshot();
+    });
+
+    it('should be able to run mutation tests with range', async () => {
+      const results: MutationTestResult[] = [];
+      client.mutationTestResult$.subscribe((result) => results.push(result));
+      const finalResult = await client.mutationTest({
+        files: [
+          {
+            path: 'src/app.js',
+            range: {
+              start: {
+                line: 7,
+                column: 24,
+              },
+              end: { line: 7, column: 40 },
+            },
+          },
+        ],
+      });
+      assertEmptyMutationTestResult(finalResult);
+      const cleanedResults = cleanResults(results);
+      expect(results).lengthOf(1);
       expect(cleanedResults).matchSnapshot();
     });
   });
