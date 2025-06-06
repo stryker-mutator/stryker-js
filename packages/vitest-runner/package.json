@@ -51,10 +51,10 @@
   "devDependencies": {
     "@stryker-mutator/test-helpers": "9.0.1",
     "@types/node": "22.15.30",
-    "@vitest/browser": "3.1.4",
+    "@vitest/browser": "3.2.2",
     "playwright": "1.52.0",
     "ts-node": "10.9.2",
-    "vitest": "3.1.4"
+    "vitest": "3.2.2"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "~9.0.0",
