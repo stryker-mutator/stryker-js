@@ -248,5 +248,5 @@ export class StrykerServer {
 }
 
 function posToMutationRange(pos: NonNullable<FileRange['range']>['start']) {
-  return `${pos.line}:${pos.column}`;
+  return `${pos.line}:${pos.column - 1}`; // MSP expects col-range to be exclusive, Stryker uses inclusive (https://github.com/stryker-mutator/editor-plugins/tree/main/packages/mutation-server-protocol#position-and-location-semantics)
 }
