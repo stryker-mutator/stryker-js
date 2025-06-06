@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { Product } from './Product';
 import { Discount } from './Discount';
+import { expect } from 'chai';
 
 vi.mock('./Discount', () => ({ Discount: vi.fn() }));
 
@@ -14,7 +15,7 @@ describe('Product', () => {
 
     expect(name).toBeInTheDocument();
     expect(price).toBeInTheDocument();
-    expect(Discount).toHaveBeenCalledWith({ discount: 10 }, undefined);
+    expect(Discount).toHaveBeenCalledWith({ discount: 10 }, expect.anything());
   });
   it("doesn't render the discount when 0", () => {
     render(<Product name="Product" price={100} discount={0} />);
