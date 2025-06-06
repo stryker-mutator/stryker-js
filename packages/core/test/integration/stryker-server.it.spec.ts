@@ -42,7 +42,9 @@ describe(StrykerServer.name, () => {
     });
 
     it('should be able to discover mutants based on a list of files', async () => {
-      expect(await client.discover({ files: ['src/add.js'] })).matchSnapshot();
+      expect(
+        await client.discover({ files: [{ path: 'src/add.js' }] }),
+      ).matchSnapshot();
     });
 
     // @TODO: Fix tests
@@ -62,8 +64,8 @@ describe(StrykerServer.name, () => {
       const results: MutationTestResult[] = [];
       client.mutationTestResult$.subscribe((result) => results.push(result));
       const [first, second] = await Promise.all([
-        client.mutationTest({ files: ['src/app.js'] }),
-        client.mutationTest({ files: ['src/math.js'] }),
+        client.mutationTest({ files: [{ path: 'src/app.js' }] }),
+        client.mutationTest({ files: [{ path: 'src/math.js' }] }),
       ]);
       assertEmptyMutationTestResult(first);
       assertEmptyMutationTestResult(second);
