@@ -264,6 +264,43 @@ describe(ProjectReader.name, () => {
         path.resolve('app', 'src', 'index.js'),
       );
     });
+    it('should mutate file when supplied twice', async () => {
+      // Arrange
+      stubFileSystem({
+        'mute1.js': 'mutate 1 content',
+      });
+      testInjector.options.mutate = ['mute1.js', 'mute1.js'];
+      const sut = createSut();
+
+      // Act
+      const result = await sut.read();
+
+      // Assert
+      const expectedFileName = path.resolve('mute1.js');
+      expect([...result.filesToMutate.keys()]).deep.eq([expectedFileName]);
+      expect(result.filesToMutate.get(expectedFileName)!.mutate).to.be.true;
+    });
+    it('should mutate when the full file is negated earlier', async () => {
+      stubFileSystem({
+        'mute1.js': 'mutate 1 content',
+      });
+      testInjector.options.mutate = ['!mute1.js', 'mute1.js'];
+      const sut = createSut();
+      const result = await sut.read();
+      expect(result.filesToMutate).lengthOf(1);
+      expect(result.filesToMutate.get(path.resolve('mute1.js'))!.mutate).to.be
+        .true;
+    });
+
+    it('should not mutate when the full file is negated after', async () => {
+      stubFileSystem({
+        'mute1.js': 'mutate 1 content',
+      });
+      testInjector.options.mutate = ['mute1.js', '!mute1.js'];
+      const sut = createSut();
+      const result = await sut.read();
+      expect(result.filesToMutate).lengthOf(0);
+    });
     describe('without mutate files', () => {
       it('should warn about dry-run', async () => {
         // Arrange
@@ -363,6 +400,44 @@ describe(ProjectReader.name, () => {
           result.filesToMutate.get(path.resolve('mute1.js'))!.mutate,
         ).deep.eq(expectedMutate);
       });
+
+      it('should mutate a specific range when the full file is negated earlier', async () => {
+        testInjector.options.mutate = ['!mute1.js', 'mute1.js:6-12'];
+        const sut = createSut();
+        const result = await sut.read();
+        const expectedMutate: MutateDescription = [
+          mutateRange(5, 0, 11, Number.MAX_SAFE_INTEGER),
+        ];
+        expect(result.filesToMutate).lengthOf(1);
+        expect(
+          result.filesToMutate.get(path.resolve('mute1.js'))!.mutate,
+        ).to.deep.equal(expectedMutate);
+      });
+
+      it('should not mutate a specific range after the full file is negated', async () => {
+        testInjector.options.mutate = ['mute1.js:6-12', '!mute1.js'];
+        const sut = createSut();
+        const result = await sut.read();
+        expect(result.filesToMutate).lengthOf(0);
+      });
+
+      it('should mutate the complete file when both a range and no range are specified', async () => {
+        testInjector.options.mutate = ['mute1.js:6-12', 'mute1.js'];
+        const sut = createSut();
+        const result = await sut.read();
+        expect(result.filesToMutate).lengthOf(1);
+        expect(result.filesToMutate.get(path.resolve('mute1.js'))!.mutate).to.be
+          .true;
+      });
+
+      it('should mutate the complete file when both no range and a range are specified', async () => {
+        testInjector.options.mutate = ['mute1.js', 'mute1.js:6-12'];
+        const sut = createSut();
+        const result = await sut.read();
+        expect(result.filesToMutate).lengthOf(1);
+        expect(result.filesToMutate.get(path.resolve('mute1.js'))!.mutate).to.be
+          .true;
+      });
     });
     describe('with mutate file patterns', () => {
       it('should result in the expected mutate files', async () => {
@@ -380,6 +455,19 @@ describe(ProjectReader.name, () => {
           path.resolve('file3.js'),
           path.resolve('mute1.js'),
           path.resolve('mute2.js'),
+        ]);
+      });
+      it('mutates an explicit file when already mutating all files in a folder', async () => {
+        stubFileSystem({
+          folder: {
+            'mute1.js': 'mutate 1 content',
+          },
+        });
+        testInjector.options.mutate = ['folder/', 'folder/mute1.js'];
+        const sut = createSut();
+        const result = await sut.read();
+        expect([...result.filesToMutate.keys()]).to.deep.equal([
+          path.resolve('folder/mute1.js'),
         ]);
       });
       it('should only report a mutate file when it is included in the resolved files', async () => {

@@ -153,16 +153,15 @@ export class ProjectReader {
     first: FileDescription,
     second?: FileDescription,
   ): FileDescription {
+    // First is always an array or true
     if (second) {
       if (Array.isArray(first.mutate) && Array.isArray(second.mutate)) {
         return { mutate: [...second.mutate, ...first.mutate] };
-      } else if (first.mutate && !second.mutate) {
-        return first;
-      } else if (!first.mutate && second.mutate) {
-        return second;
-      } else {
-        return { mutate: false };
+      } else if (second.mutate === true) {
+        return { mutate: true };
       }
+
+      return { mutate: first.mutate || second.mutate };
     }
     return first;
   }
