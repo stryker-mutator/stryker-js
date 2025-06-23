@@ -32,7 +32,7 @@
     "execa": "9.6.0",
     "glob": "10.4.5",
     "install-local": "3.0.1",
-    "jasmine": "5.7.1",
+    "jasmine": "5.8.0",
     "jasmine-core": "5.8.0",
     "json-schema-to-typescript": "15.0.4",
     "lerna": "8.2.2",
