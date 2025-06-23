@@ -51,6 +51,11 @@ jobs:
       matrix:
         os: ['ubuntu-latest', 'windows-latest']
     steps:
+      # https://github.com/ryanclark/karma-webpack/issues/494
+      - name: Windows temp dir fix
+        run: |
+          echo TEMP="D:\Temp" >> $env:GITHUB_ENV
+          echo TMP="D:\Temp" >> $env:GITHUB_ENV
       - uses: actions/checkout@v4
       - name: Install dependencies
         run: npm ci --engine-strict
