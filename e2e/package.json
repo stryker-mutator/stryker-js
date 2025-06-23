@@ -55,7 +55,7 @@
     "mocha": "11.5.0",
     "mutation-testing-metrics": "3.5.1",
     "mutation-testing-report-schema": "3.5.1",
-    "playwright": "1.52.0",
+    "playwright": "1.53.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "rxjs": "7.8.2",
