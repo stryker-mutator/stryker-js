@@ -38,7 +38,7 @@
   "main": "Gruntfile.js",
   "devDependencies": {
     "@stryker-mutator/api": "9.0.1",
-    "@types/node": "22.15.32"
+    "@types/node": "22.15.33"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "~9.0.0",
