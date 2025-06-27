@@ -6,7 +6,7 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@eslint/js": "9.29.0",
+    "@eslint/js": "9.30.0",
     "@testing-library/jest-dom": "6.6.3",
     "@testing-library/react": "16.3.0",
     "@types/chai-as-promised": "8.0.2",
