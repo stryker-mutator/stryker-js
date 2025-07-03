@@ -71,11 +71,11 @@
     "@stryker-mutator/test-helpers": "9.0.1",
     "@types/node": "22.16.0",
     "@types/semver": "7.7.0",
-    "jest": "30.0.3",
-    "jest-circus": "30.0.3",
-    "jest-environment-jsdom": "30.0.2",
+    "jest": "30.0.4",
+    "jest-circus": "30.0.4",
+    "jest-environment-jsdom": "30.0.4",
     "jest-environment-jsdom-sixteen": "2.0.0",
-    "jest-jasmine2": "30.0.3",
+    "jest-jasmine2": "30.0.4",
     "ts-node": "10.9.2"
   },
   "peerDependencies": {
