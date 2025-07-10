@@ -50,7 +50,7 @@
   "devDependencies": {
     "@stryker-mutator/test-helpers": "9.0.1",
     "@types/express": "5.0.3",
-    "@types/node": "22.16.2",
+    "@types/node": "22.16.3",
     "@types/semver": "7.7.0",
     "jasmine-core": "5.8.0",
     "karma": "6.4.4",
