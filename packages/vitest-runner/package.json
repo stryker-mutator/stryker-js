@@ -52,7 +52,7 @@
     "@stryker-mutator/test-helpers": "9.0.1",
     "@types/node": "22.16.3",
     "@vitest/browser": "3.1.4",
-    "playwright": "1.54.0",
+    "playwright": "1.54.1",
     "ts-node": "10.9.2",
     "vitest": "3.1.4"
   },
