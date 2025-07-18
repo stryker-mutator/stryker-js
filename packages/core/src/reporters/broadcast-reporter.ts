@@ -22,6 +22,7 @@ export class BroadcastReporter implements StrictReporter {
     commonTokens.options,
     coreTokens.pluginCreator,
     commonTokens.logger,
+    coreTokens.reporterOverride,
   );
 
   public readonly reporters: Record<string, Reporter>;
@@ -29,11 +30,16 @@ export class BroadcastReporter implements StrictReporter {
     private readonly options: StrykerOptions,
     private readonly pluginCreator: PluginCreator,
     private readonly log: Logger,
+    private readonly reporterOverride: Reporter | undefined,
   ) {
     this.reporters = {};
-    this.options.reporters.forEach((reporterName) =>
-      this.createReporter(reporterName),
-    );
+    if (this.reporterOverride) {
+      this.reporters['in-memory'] = this.reporterOverride;
+    } else {
+      this.options.reporters.forEach((reporterName) =>
+        this.createReporter(reporterName),
+      );
+    }
     this.logAboutReporters();
   }
 
