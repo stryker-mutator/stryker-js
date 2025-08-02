@@ -52,7 +52,7 @@ async function parse(
     ],
     plugins: [
       [require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
-      [require.resolve('@babel/plugin-proposal-explicit-resource-management')],
+      [require.resolve('@babel/plugin-transform-explicit-resource-management')],
     ],
   });
   if (ast === null) {
