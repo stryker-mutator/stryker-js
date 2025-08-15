@@ -45,7 +45,7 @@
     "@babel/generator": "~7.27.0",
     "@babel/parser": "~7.27.0",
     "@babel/plugin-proposal-decorators": "~7.27.0",
-    "@babel/plugin-proposal-explicit-resource-management": "^7.24.7",
+    "@babel/plugin-transform-explicit-resource-management": "^7.28.0",
     "@babel/preset-typescript": "~7.27.0",
     "@stryker-mutator/api": "9.0.1",
     "@stryker-mutator/util": "9.0.1",
