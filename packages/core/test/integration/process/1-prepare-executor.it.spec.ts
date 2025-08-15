@@ -20,6 +20,7 @@ describe(`${PrepareExecutor.name} integration test`, () => {
       ),
     };
     const sut = testInjector.injector
+      .provideValue(coreTokens.reporterOverride, undefined)
       .provideValue(
         coreTokens.loggingSink,
         sinon.createStubInstance(LoggingBackend),
