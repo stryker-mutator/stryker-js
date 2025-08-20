@@ -24,6 +24,7 @@ import {
   toMutantRunResult,
   determineHitLimitReached,
   TestStatus,
+  DryRunOptions,
 } from '@stryker-mutator/api/test-runner';
 import { escapeRegExp, notEmpty } from '@stryker-mutator/util';
 
@@ -40,6 +41,18 @@ type StrykerNamespace = '__stryker__' | '__stryker2__';
 const STRYKER_SETUP = fileURLToPath(
   new URL('./stryker-setup.js', import.meta.url),
 );
+
+interface RunFilter {
+  /**
+   * Run only tests with the specified IDs
+   */
+  testIds?: string[];
+  /**
+   * Run only tests that cover a list of source files
+   * @see https://vitest.dev/guide/cli.html#vitest-related
+   */
+  relatedFiles?: string[];
+}
 
 export class VitestTestRunner implements TestRunner {
   public static inject = [
@@ -105,10 +118,10 @@ export class VitestTestRunner implements TestRunner {
     }
   }
 
-  public async dryRun(): Promise<DryRunResult> {
+  public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
     this.ctx!.provide('mode', 'dry-run');
 
-    const testResult = await this.run();
+    const testResult = await this.run({ relatedFiles: options.files });
     const mutantCoverage = this.readMutantCoverage();
     if (testResult.status === DryRunStatus.Complete) {
       return {
@@ -125,14 +138,22 @@ export class VitestTestRunner implements TestRunner {
     this.ctx!.provide('hitLimit', options.hitLimit);
     this.ctx!.provide('mutantActivation', options.mutantActivation);
     this.ctx!.provide('activeMutant', options.activeMutant.id);
-    const dryRunResult = await this.run(options.testFilter);
+    const dryRunResult = await this.run({
+      testIds: options.testFilter,
+      relatedFiles: [options.sandboxFileName],
+    });
     const hitCount = this.readHitCount();
     const timeOut = determineHitLimitReached(hitCount, options.hitLimit);
     return toMutantRunResult(timeOut ?? dryRunResult);
   }
 
-  private async run(testIds: string[] = []): Promise<DryRunResult> {
+  private async run({
+    testIds = [],
+    relatedFiles: mutatedFiles,
+  }: RunFilter = {}): Promise<DryRunResult> {
     this.resetContext();
+    this.ctx!.config.related =
+      this.options.vitest.related && mutatedFiles ? mutatedFiles : undefined;
     if (testIds.length > 0) {
       const regexTestNameFilter = testIds
         .map(fromTestId)

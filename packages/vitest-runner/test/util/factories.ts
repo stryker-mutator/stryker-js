@@ -5,6 +5,7 @@ import type {
   RunnerTestSuite,
   Vitest,
 } from 'vitest/node';
+import { VitestRunnerOptions } from '../../src-generated/vitest-runner-options.js';
 
 type ResolvedConfig = Vitest['config'];
 type ResolvedBrowserOptions = ResolvedConfig['browser'];
@@ -73,6 +74,15 @@ export function createVitestTest(
     timeout: 0,
     context: {} as any,
     file: createVitestFile(),
+    ...overrides,
+  };
+}
+
+export function createVitestRunnerOptions(
+  overrides?: Partial<VitestRunnerOptions>,
+): VitestRunnerOptions {
+  return {
+    related: true,
     ...overrides,
   };
 }

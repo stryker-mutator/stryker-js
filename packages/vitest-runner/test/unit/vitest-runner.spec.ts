@@ -23,7 +23,9 @@ describe(VitestTestRunner.name, () => {
       .injectClass(VitestTestRunner);
     createVitestStub = sinon.stub(vitestWrapper, 'createVitest');
     options = testInjector.options as VitestRunnerOptionsWithStrykerOptions;
-    options.vitest = {};
+    options.vitest = {
+      related: true,
+    };
     vitestStub = createVitestMock();
     createVitestStub.resolves(vitestStub);
   });

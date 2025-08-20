@@ -119,6 +119,10 @@ async function main() {
         './packages/vitest-runner/testResources/vi-mock/components/Product.tsx',
       './packages/vitest-runner/testResources/vi-mock/components/Discount.orig.tsx':
         './packages/vitest-runner/testResources/vi-mock/components/Discount.tsx',
+      './packages/vitest-runner/testResources/multiple-files/src/math.orig.ts':
+        './packages/vitest-runner/testResources/multiple-files/src/math.ts',
+      './packages/vitest-runner/testResources/multiple-files/src/string-utils.orig.ts':
+        './packages/vitest-runner/testResources/multiple-files/src/string-utils.ts',
     },
     '__stryker2__',
   );
