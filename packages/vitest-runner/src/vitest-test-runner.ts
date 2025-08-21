@@ -26,7 +26,7 @@ import {
   TestStatus,
   DryRunOptions,
 } from '@stryker-mutator/api/test-runner';
-import { escapeRegExp, notEmpty } from '@stryker-mutator/util';
+import { escapeRegExp, normalizeFileName, notEmpty } from '@stryker-mutator/util';
 
 import { vitestWrapper, Vitest } from './vitest-wrapper.js';
 import {
@@ -153,14 +153,16 @@ export class VitestTestRunner implements TestRunner {
   }: RunFilter = {}): Promise<DryRunResult> {
     this.resetContext();
     this.ctx!.config.related =
-      this.options.vitest.related && mutatedFiles ? mutatedFiles : undefined;
+      this.options.vitest.related && mutatedFiles
+        ? mutatedFiles.map(normalizeFileName)
+        : undefined;
     if (testIds.length > 0) {
-      const regexTestNameFilter = testIds
-        .map(fromTestId)
+      const parsedTests = testIds.map(fromTestId);
+      const regexTestNameFilter = parsedTests
         .map(({ test: name }) => escapeRegExp(name))
         .join('|');
       const regex = new RegExp(regexTestNameFilter);
-      const testFiles = testIds.map(fromTestId).map(({ file }) => file);
+      const testFiles = parsedTests.map(({ file }) => file);
       this.ctx!.projects.forEach((project) => {
         project.config.testNamePattern = regex;
       });
