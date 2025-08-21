@@ -26,7 +26,11 @@ import {
   TestStatus,
   DryRunOptions,
 } from '@stryker-mutator/api/test-runner';
-import { escapeRegExp, normalizeFileName, notEmpty } from '@stryker-mutator/util';
+import {
+  escapeRegExp,
+  normalizeFileName,
+  notEmpty,
+} from '@stryker-mutator/util';
 
 import { vitestWrapper, Vitest } from './vitest-wrapper.js';
 import {
