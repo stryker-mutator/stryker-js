@@ -110,7 +110,7 @@ describe(VitestTestRunner.name, () => {
       ]);
     });
 
-    it('should normalized file paths of related files', async () => {
+    it('should normalize file paths of related files', async () => {
       // Arrange
       vitestStub.config.related = undefined;
 
