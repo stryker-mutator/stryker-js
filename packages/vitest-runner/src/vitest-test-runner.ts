@@ -38,6 +38,8 @@ import {
   fromTestId,
   collectTestsFromSuite,
   normalizeCoverage,
+  isErrorCodeError,
+  VITEST_ERROR_CODES,
 } from './vitest-helpers.js';
 import { VitestRunnerOptionsWithStrykerOptions } from './vitest-runner-options-with-stryker-options.js';
 
@@ -153,29 +155,42 @@ export class VitestTestRunner implements TestRunner {
 
   private async run({
     testIds = [],
-    relatedFiles: mutatedFiles,
+    relatedFiles,
   }: RunFilter = {}): Promise<DryRunResult> {
     this.resetContext();
     this.ctx!.config.related =
-      this.options.vitest.related && mutatedFiles
-        ? mutatedFiles.map(normalizeFileName)
+      this.options.vitest.related && relatedFiles
+        ? relatedFiles.map(normalizeFileName)
         : undefined;
+    let testFiles: string[] | undefined = undefined;
     if (testIds.length > 0) {
       const parsedTests = testIds.map(fromTestId);
       const regexTestNameFilter = parsedTests
         .map(({ test: name }) => escapeRegExp(name))
         .join('|');
       const regex = new RegExp(regexTestNameFilter);
-      const testFiles = parsedTests.map(({ file }) => file);
+      testFiles = parsedTests.map(({ file }) => file);
       this.ctx!.projects.forEach((project) => {
         project.config.testNamePattern = regex;
       });
-      await this.ctx!.start(testFiles);
     } else {
       this.ctx!.projects.forEach((project) => {
         project.config.testNamePattern = undefined;
       });
-      await this.ctx!.start();
+    }
+    try {
+      await this.ctx!.start(testFiles);
+    } catch (error) {
+      if (
+        isErrorCodeError(error) &&
+        VITEST_ERROR_CODES.FILES_NOT_FOUND === error.code &&
+        this.options.vitest?.related
+      ) {
+        this.log.warn(
+          'Vitest failed to find test files related to mutated files. Either disable `vitest.related` or import your source files directly from your test files. See https://stryker-mutator.io/docs/stryker-js/troubleshooting/#vitest-failed-to-find-test-files-related-to-mutated-files',
+        );
+      }
+      throw error;
     }
     const tests = this.ctx!.state.getFiles()
       .flatMap((file) => collectTestsFromSuite(file))
