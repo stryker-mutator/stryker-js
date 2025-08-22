@@ -21,6 +21,7 @@ export function createVitestMock(): sinon.SinonStubbedInstance<Vitest> {
     state: {
       filesMap: new Map(),
       getFiles: () => [] as RunnerTestFile[],
+      errorsSet: new Set(),
     },
     projects: [] as Vitest['projects'],
     start: sinon.stub(),

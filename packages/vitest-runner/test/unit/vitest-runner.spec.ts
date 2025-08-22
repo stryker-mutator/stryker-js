@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { testInjector } from '@stryker-mutator/test-helpers';
+import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
 import { Vitest } from 'vitest/node';
 
@@ -44,18 +44,80 @@ describe(VitestTestRunner.name, () => {
     });
   });
 
-  it('should set the NODE_ENV environment variable to test in init', async () => {
-    delete process.env.NODE_ENV;
+  describe(VitestTestRunner.prototype.init.name, () => {
+    it('should initialize the vitest environment', async () => {
+      await sut.init();
 
-    await sut.init();
+      sinon.assert.calledOnceWithExactly(createVitestStub, 'test', {
+        config: undefined,
+        // @ts-expect-error threads got renamed to "pool: threads" in vitest 1.0.0
+        threads: true,
+        pool: 'threads',
+        coverage: { enabled: false },
+        poolOptions: {
+          threads: {
+            maxThreads: 1,
+            minThreads: 1,
+          },
+        },
+        singleThread: false,
+        maxConcurrency: 1,
+        watch: false,
+        dir: undefined,
+        bail: 1,
+        onConsoleLog: sinon.match.func,
+      });
+    });
 
-    expect(process.env.NODE_ENV).to.equal('test');
+    it('should set the NODE_ENV environment variable to test in init', async () => {
+      delete process.env.NODE_ENV;
+
+      await sut.init();
+
+      expect(process.env.NODE_ENV).to.equal('test');
+    });
+    it('should set the VITEST environment variable to test', async () => {
+      delete process.env.VITEST;
+
+      await sut.init();
+
+      expect(process.env.VITEST).to.equal('1');
+    });
   });
-  it('should set the VITEST environment variable to test in init', async () => {
-    delete process.env.VITEST;
 
-    await sut.init();
+  describe(VitestTestRunner.prototype.dryRun.name, () => {
+    beforeEach(async () => {
+      await sut.init();
+    });
 
-    expect(process.env.VITEST).to.equal('1');
+    it('should set related to the mutated files', async () => {
+      // Arrange
+      vitestStub.config.related = undefined;
+
+      // Act
+      await sut.dryRun(
+        factory.dryRunOptions({ files: ['src/file.js', 'src/file2.js'] }),
+      );
+
+      // Assert
+      expect(vitestStub.config.related).deep.equal([
+        'src/file.js',
+        'src/file2.js',
+      ]);
+    });
+
+    it('should disable related when `vitest.related` is false', async () => {
+      // Arrange
+      options.vitest.related = false;
+      vitestStub.config.related = ['some', 'file'];
+
+      // Act
+      await sut.dryRun(
+        factory.dryRunOptions({ files: ['src/file.js', 'src/file2.js'] }),
+      );
+
+      // Assert
+      expect(vitestStub.config.related).undefined;
+    });
   });
 });
