@@ -147,15 +147,27 @@ describe(VitestTestRunner.name, () => {
       vitestStub.start.rejects(actualError);
 
       // Act
-      await expect(
-        sut.dryRun(factory.dryRunOptions({ files: ['file.js'] })),
-      ).rejectedWith(actualError);
+      await sut.dryRun(factory.dryRunOptions({ files: ['file.js'] }));
 
       // Assert
       sinon.assert.calledWith(
         testInjector.logger.warn,
         'Vitest failed to find test files related to mutated files. Either disable `vitest.related` or import your source files directly from your test files. See https://stryker-mutator.io/docs/stryker-js/troubleshooting/#vitest-failed-to-find-test-files-related-to-mutated-files',
       );
+    });
+
+    it('should not log a warning when `related` is disabled and no files could be found', async () => {
+      // Arrange
+      const actualError = new Error() as Error & { code: string };
+      actualError.code = VITEST_ERROR_CODES.FILES_NOT_FOUND;
+      vitestStub.start.rejects(actualError);
+      options.vitest.related = false;
+
+      // Act
+      await sut.dryRun(factory.dryRunOptions({ files: ['file.js'] }));
+
+      // Assert
+      sinon.assert.notCalled(testInjector.logger.warn);
     });
   });
 });

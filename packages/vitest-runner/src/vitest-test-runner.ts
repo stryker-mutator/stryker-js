@@ -128,6 +128,15 @@ export class VitestTestRunner implements TestRunner {
     this.ctx!.provide('mode', 'dry-run');
 
     const testResult = await this.run({ relatedFiles: options.files });
+    if (
+      testResult.status === DryRunStatus.Complete &&
+      testResult.tests.length === 0 &&
+      this.options.vitest.related
+    ) {
+      this.log.warn(
+        'Vitest failed to find test files related to mutated files. Either disable `vitest.related` or import your source files directly from your test files. See https://stryker-mutator.io/docs/stryker-js/troubleshooting/#vitest-failed-to-find-test-files-related-to-mutated-files',
+      );
+    }
     const mutantCoverage = this.readMutantCoverage();
     if (testResult.status === DryRunStatus.Complete) {
       return {
@@ -183,14 +192,12 @@ export class VitestTestRunner implements TestRunner {
     } catch (error) {
       if (
         isErrorCodeError(error) &&
-        VITEST_ERROR_CODES.FILES_NOT_FOUND === error.code &&
-        this.options.vitest?.related
+        VITEST_ERROR_CODES.FILES_NOT_FOUND === error.code
       ) {
-        this.log.warn(
-          'Vitest failed to find test files related to mutated files. Either disable `vitest.related` or import your source files directly from your test files. See https://stryker-mutator.io/docs/stryker-js/troubleshooting/#vitest-failed-to-find-test-files-related-to-mutated-files',
-        );
+        // No tests found, this isn't a problem, we can continue
+      } else {
+        throw error;
       }
-      throw error;
     }
     const tests = this.ctx!.state.getFiles()
       .flatMap((file) => collectTestsFromSuite(file))
