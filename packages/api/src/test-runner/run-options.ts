@@ -17,7 +17,7 @@ export interface DryRunOptions extends RunOptions {
    */
   coverageAnalysis: CoverageAnalysis;
   /**
-   * Files to run tests for.
+   * Files with mutants to run tests for.
    */
   files?: string[];
 }
@@ -28,6 +28,9 @@ export interface MutantRunOptions extends RunOptions {
   testFilter?: string[];
   hitLimit?: number;
   activeMutant: Mutant;
+  /**
+   * The name of file inside the sandbox in which the mutant resides
+   */
   sandboxFileName: string;
   /**
    * Determine when to active the mutant.

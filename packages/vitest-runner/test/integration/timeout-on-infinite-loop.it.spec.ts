@@ -11,6 +11,7 @@ import {
   VitestTestRunner,
 } from '../../src/vitest-test-runner.js';
 import { VitestRunnerOptionsWithStrykerOptions } from '../../src/vitest-runner-options-with-stryker-options.js';
+import { createVitestRunnerOptions } from '../util/factories.js';
 
 describe('Infinite loop', () => {
   let sut: VitestTestRunner;
@@ -19,7 +20,8 @@ describe('Infinite loop', () => {
   beforeEach(async () => {
     sandbox = new TempTestDirectorySandbox('infinite-loop');
     await sandbox.init();
-    (testInjector.options as VitestRunnerOptionsWithStrykerOptions).vitest = {};
+    (testInjector.options as VitestRunnerOptionsWithStrykerOptions).vitest =
+      createVitestRunnerOptions({ related: false });
     sut = testInjector.injector.injectFunction(
       createVitestTestRunnerFactory('__stryker2__'),
     );

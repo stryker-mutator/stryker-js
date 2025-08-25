@@ -88,3 +88,16 @@ export function collectTestsFromSuite(
     }
   });
 }
+
+export function isErrorCodeError(
+  error: unknown,
+): error is Error & { code: string } {
+  return (
+    error instanceof Error && 'code' in error && typeof error.code === 'string'
+  );
+}
+
+/** @see https://github.com/vitest-dev/vitest/blob/main/packages/vitest/src/node/errors.ts */
+export const VITEST_ERROR_CODES = Object.freeze({
+  FILES_NOT_FOUND: 'VITEST_FILES_NOT_FOUND',
+});

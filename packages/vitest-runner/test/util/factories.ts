@@ -5,6 +5,7 @@ import type {
   RunnerTestSuite,
   Vitest,
 } from 'vitest/node';
+import { VitestRunnerOptions } from '../../src-generated/vitest-runner-options.js';
 
 type ResolvedConfig = Vitest['config'];
 type ResolvedBrowserOptions = ResolvedConfig['browser'];
@@ -20,6 +21,7 @@ export function createVitestMock(): sinon.SinonStubbedInstance<Vitest> {
     state: {
       filesMap: new Map(),
       getFiles: () => [] as RunnerTestFile[],
+      errorsSet: new Set(),
     },
     projects: [] as Vitest['projects'],
     start: sinon.stub(),
@@ -73,6 +75,15 @@ export function createVitestTest(
     timeout: 0,
     context: {} as any,
     file: createVitestFile(),
+    ...overrides,
+  };
+}
+
+export function createVitestRunnerOptions(
+  overrides?: Partial<VitestRunnerOptions>,
+): VitestRunnerOptions {
+  return {
+    related: true,
     ...overrides,
   };
 }

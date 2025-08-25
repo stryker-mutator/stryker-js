@@ -14,6 +14,7 @@ import {
   VitestTestRunner,
 } from '../../src/vitest-test-runner.js';
 import { VitestRunnerOptionsWithStrykerOptions } from '../../src/vitest-runner-options-with-stryker-options.js';
+import { createVitestRunnerOptions } from '../util/factories.js';
 
 describe('VitestRunner integration', () => {
   let sut: VitestTestRunner;
@@ -25,7 +26,7 @@ describe('VitestRunner integration', () => {
       createVitestTestRunnerFactory('__stryker2__'),
     );
     options = testInjector.options as VitestRunnerOptionsWithStrykerOptions;
-    options.vitest = {};
+    options.vitest = createVitestRunnerOptions({ related: false });
   });
 
   afterEach(async () => {
@@ -57,7 +58,7 @@ describe('VitestRunner integration', () => {
       });
 
       it('should run the specs', async () => {
-        const runResult = await sut.dryRun();
+        const runResult = await sut.dryRun(factory.dryRunOptions());
         assertions.expectCompleted(runResult);
         assertions.expectTestResults(runResult, [
           {
@@ -100,7 +101,7 @@ describe('VitestRunner integration', () => {
       });
 
       it('should report mutant coverage', async () => {
-        const runResult = await sut.dryRun();
+        const runResult = await sut.dryRun(factory.dryRunOptions());
         assertions.expectCompleted(runResult);
         expect(runResult.mutantCoverage).deep.eq({
           static: {
@@ -297,7 +298,7 @@ describe('VitestRunner integration', () => {
       options.vitest.configFile = undefined;
 
       await sut.init();
-      const runResult = await sut.dryRun();
+      const runResult = await sut.dryRun(factory.dryRunOptions());
 
       assertions.expectCompleted(runResult);
       expect(runResult.tests).to.have.lengthOf(1);
@@ -310,7 +311,7 @@ describe('VitestRunner integration', () => {
       options.vitest.configFile = 'vitest.only.addOne.config.ts';
 
       await sut.init();
-      const runResult = await sut.dryRun();
+      const runResult = await sut.dryRun(factory.dryRunOptions());
 
       assertions.expectCompleted(runResult);
       expect(runResult.tests).to.have.lengthOf(1);
@@ -333,7 +334,7 @@ describe('VitestRunner integration', () => {
 
     it('should report mutant coverage', async () => {
       await sut.init();
-      const runResult = await sut.dryRun();
+      const runResult = await sut.dryRun(factory.dryRunOptions());
       assertions.expectCompleted(runResult);
       expect(runResult.mutantCoverage).deep.eq({
         static: {},
@@ -410,7 +411,7 @@ describe('VitestRunner integration', () => {
     it('should be able to report an ErrorResult', async () => {
       options.vitest.dir = 'packages';
       await sut.init();
-      const runResult = await sut.dryRun();
+      const runResult = await sut.dryRun(factory.dryRunOptions());
       assertions.expectCompleted(runResult);
       expect(runResult.tests).lengthOf(1);
       assertions.expectTestResults(runResult, [
@@ -430,7 +431,7 @@ describe('VitestRunner integration', () => {
 
     it('should be able to mock a module', async () => {
       await sut.init();
-      const runResult = await sut.dryRun();
+      const runResult = await sut.dryRun(factory.dryRunOptions());
       assertions.expectCompleted(runResult);
       expect(runResult.tests).lengthOf(3);
       assertions.expectTestResults(runResult, [
