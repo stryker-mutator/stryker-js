@@ -5,6 +5,7 @@
       "path": "packages/core"
     },
     {
+      "name": "create-stryker",
       "path": "packages/create-stryker"
     },
     {

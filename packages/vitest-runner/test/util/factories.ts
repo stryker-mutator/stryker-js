@@ -73,6 +73,7 @@ export function createVitestTest(
     timeout: 0,
     context: {} as any,
     file: createVitestFile(),
+    annotations: [],
     ...overrides,
   };
 }
