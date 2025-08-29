@@ -34,7 +34,7 @@ import { FileSystemTestDouble } from '../helpers/file-system-test-double.js';
 import { Project } from '../../src/fs/project.js';
 import { Reporter } from '@stryker-mutator/api/report';
 
-describe.only(StrykerServer.name, () => {
+describe(StrykerServer.name, () => {
   let sut: StrykerServer;
   let injectorMock: sinon.SinonStubbedInstance<
     typedInject.Injector<
@@ -100,12 +100,12 @@ describe.only(StrykerServer.name, () => {
     instrumenterMock.instrument.resolves(instrumentResult);
     pluginCreatorMock = sinon.createStubInstance(PluginCreator);
     const fsTestDouble = new FileSystemTestDouble({
-      'foo.js': 'console.log("bar")',
-      'foo.spec.js': '',
+      'src/foo.js': 'console.log("bar")',
+      'src/foo.spec.js': '',
     });
     const fileDescriptions: FileDescriptions = {
-      'foo.js': { mutate: true },
-      'foo.spec.js': { mutate: false },
+      'src/foo.js': { mutate: true },
+      'src/foo.spec.js': { mutate: false },
     };
     projectMock = new Project(fsTestDouble, fileDescriptions);
     injectorMock.injectClass
@@ -341,6 +341,18 @@ describe.only(StrykerServer.name, () => {
   });
 
   describe('mutationTest', () => {
+    const mutantResult: MutantResult = {
+      fileName: 'foo.js',
+      replacement: 'mutatedCode',
+      id: '1',
+      location: {
+        start: { line: 1, column: 0 },
+        end: { line: 1, column: 10 },
+      },
+      mutatorName: 'TestMutator',
+      status: 'Killed',
+    };
+
     beforeEach(() => {
       sut = new StrykerServer(cliOptions, () => injectorMock);
     });
@@ -354,17 +366,6 @@ describe.only(StrykerServer.name, () => {
     });
 
     it('mutates a file and reports the result', async () => {
-      const mutantResult: MutantResult = {
-        fileName: 'foo.js',
-        replacement: 'mutatedCode',
-        id: '1',
-        location: {
-          start: { line: 1, column: 0 },
-          end: { line: 1, column: 10 },
-        },
-        mutatorName: 'TestMutator',
-        status: 'Killed',
-      };
       setupStart();
       strykerRunStub.resolves([mutantResult]);
       sut.configure({ configFilePath: 'non-existent-test-file' });
@@ -386,6 +387,66 @@ describe.only(StrykerServer.name, () => {
         allowConsoleColors: false,
         configFile: 'non-existent-test-file',
         mutate: ['foo.js'],
+      });
+    });
+
+    it('mutates all files in a directory and reports the result', async () => {
+      setupStart();
+      strykerRunStub.resolves([mutantResult]);
+      sut.configure({ configFilePath: 'non-existent-test-file' });
+      await sut.start();
+
+      const mutationTestPromise = firstValueFrom(
+        sut.mutationTest({ files: [{ path: 'src/' }] }),
+      );
+      const reporter = injectorMock.provideValue
+        .getCalls()
+        .find((v) => v.args[0] === coreTokens.reporterOverride)
+        ?.args[1] as Reporter;
+      reporter.onMutantTested!(mutantResult);
+      const mutant = await mutationTestPromise;
+
+      expect(mutant).to.deep.equal(mutantResult);
+      expect(strykerRunStub).to.have.been.calledWithMatch(sinon.match.any, {
+        ...cliOptions,
+        allowConsoleColors: false,
+        configFile: 'non-existent-test-file',
+        mutate: ['src/**/*'],
+      });
+    });
+
+    it('mutates a range of a file and reports the result', async () => {
+      setupStart();
+      strykerRunStub.resolves([mutantResult]);
+      sut.configure({ configFilePath: 'non-existent-test-file' });
+      await sut.start();
+
+      const mutationTestPromise = firstValueFrom(
+        sut.mutationTest({
+          files: [
+            {
+              path: 'foo.js',
+              range: {
+                start: { line: 1, column: 20 },
+                end: { line: 2, column: 20 },
+              },
+            },
+          ],
+        }),
+      );
+      const reporter = injectorMock.provideValue
+        .getCalls()
+        .find((v) => v.args[0] === coreTokens.reporterOverride)
+        ?.args[1] as Reporter;
+      reporter.onMutantTested!(mutantResult);
+      const mutant = await mutationTestPromise;
+
+      expect(mutant).to.deep.equal(mutantResult);
+      expect(strykerRunStub).to.have.been.calledWithMatch(sinon.match.any, {
+        ...cliOptions,
+        allowConsoleColors: false,
+        configFile: 'non-existent-test-file',
+        mutate: ['foo.js:1:19-2:19'],
       });
     });
   });
