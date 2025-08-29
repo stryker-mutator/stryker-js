@@ -33,7 +33,6 @@ import {
 import { FileSystemTestDouble } from '../helpers/file-system-test-double.js';
 import { Project } from '../../src/fs/project.js';
 import { Reporter } from '@stryker-mutator/api/report';
-import { killedMutantResult } from '../../../test-helpers/src/factory.js';
 
 describe(StrykerServer.name, () => {
   let sut: StrykerServer;
@@ -343,7 +342,7 @@ describe(StrykerServer.name, () => {
 
   describe('mutationTest', () => {
     const createMutantResult = () => {
-      return killedMutantResult({
+      return factory.killedMutantResult({
         fileName: 'foo.js',
         location: {
           start: { line: 1, column: 0 },
