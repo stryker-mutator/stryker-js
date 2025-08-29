@@ -41,10 +41,10 @@
   },
   "homepage": "https://stryker-mutator.io",
   "dependencies": {
-    "@babel/core": "~7.27.0",
-    "@babel/generator": "~7.27.0",
-    "@babel/parser": "~7.27.0",
-    "@babel/plugin-proposal-decorators": "~7.27.0",
+    "@babel/core": "~7.28.0",
+    "@babel/generator": "~7.28.0",
+    "@babel/parser": "~7.28.0",
+    "@babel/plugin-proposal-decorators": "~7.28.0",
     "@babel/plugin-transform-explicit-resource-management": "^7.28.0",
     "@babel/preset-typescript": "~7.27.0",
     "@stryker-mutator/api": "9.0.1",
@@ -59,6 +59,6 @@
     "@types/babel__core": "7.20.5",
     "@types/babel__generator": "7.27.0",
     "@types/estree": "1.0.8",
-    "svelte": "5.36.0"
+    "svelte": "5.38.3"
   }
 }

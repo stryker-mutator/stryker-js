@@ -166,10 +166,11 @@ The possible values are:
 
 ### `dashboard` [`DashboardOptions`]
 
-Default: `{ baseUrl: 'https://dashboard.stryker-mutator.io/api/reports', reportType: 'mutationScore' }`<br />
+Default: `{ baseUrl: 'https://dashboard.stryker-mutator.io/api/reports', reportType: 'full' }`<br />
 Command line:
 
-- `--dashboard.project github.com/my-org/my-project --dashboard.version branch-or-tag`
+- `--dashboard.project github.com/my-org/my-project`
+- `--dashboard.version branch-or-tag`
 - `--dashboard.module my-module`
 - `--dashboard.baseUrl https://dashboard.stryker-mutator.io/api/reports`
 - `--dashboard.reportType full`
