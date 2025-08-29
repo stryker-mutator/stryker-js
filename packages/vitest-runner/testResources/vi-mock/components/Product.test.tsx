@@ -15,7 +15,7 @@ describe('Product', () => {
 
     expect(name).toBeInTheDocument();
     expect(price).toBeInTheDocument();
-    expect(Discount).toHaveBeenCalledWith({ discount: 10 }, expect.anything());
+    expect(Discount).toHaveBeenCalledWith({ discount: 10 }, undefined);
   });
   it("doesn't render the discount when 0", () => {
     render(<Product name="Product" price={100} discount={0} />);
