@@ -1,5 +1,0 @@
-{
-    "strykerMutator.server.path": "../../node_modules/.bin/stryker",
-    "strykerMutator.server.configFile": "stryker.conf.js",
-    "strykerMutator.enable": true
-}
