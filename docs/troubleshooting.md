@@ -370,11 +370,12 @@ To keep using `module-alias`, there are 2 workarounds:
 
 When using the `@stryker-mutator/vitest-runner` you might run into the issue where Vitest fails to find test files related to mutated files, failing the initial test run.
 
-> ```
-> 15:28:27 (21526) WARN VitestTestRunner Vitest failed to find test files related to mutated files. Either disable `vitest.related` or import your source files directly from your test files. See https://stryker-mutator.io/docs/stryker-js/troubleshooting/#vitest-failed-to-find-test-files-related-to-mutated-files
-> 15:28:29 (21460) ERROR DryRunExecutor One or more tests resulted in an error:
->         Test runner crashed. Tried twice to restart it without any luck. Last time the error message was: Error: Error: VITEST_FILES_NOT_FOUND (undefined) Error: No test files found
-> ```
+```
+INFO DryRunExecutor Starting initial test run (vitest test runner with "perTest" coverage analysis). This may take a while.
+WARN VitestTestRunner Vitest failed to find test files related to mutated files. Either disable `vitest.related` or import your source files directly from your test files. See https://stryker-mutator.io/docs/stryker-js/troubleshooting/#vitest-failed-to-find-test-files-related-to-mutated-files
+INFO DryRunExecutor No tests were found
+ERROR Stryker No tests were executed. Stryker will exit prematurely. Please check your configuration.
+```
 
 **Problem**
 
