@@ -81,7 +81,6 @@ describe('Vitest runner related', () => {
       factory.dryRunOptions({ files: [mathFileName] }),
     );
     assertions.expectCompleted(actualResult);
-    expect(actualResult.tests).lengthOf(3);
     expect(actualResult.tests.map(({ id }) => id)).deep.eq([
       mathTest1,
       mathTest2,

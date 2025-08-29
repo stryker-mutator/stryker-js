@@ -191,11 +191,10 @@ export class VitestTestRunner implements TestRunner {
       await this.ctx!.start(testFiles);
     } catch (error) {
       if (
-        isErrorCodeError(error) &&
-        VITEST_ERROR_CODES.FILES_NOT_FOUND === error.code
-      ) {
         // No tests found, this isn't a problem, we can continue
-      } else {
+        !isErrorCodeError(error) ||
+        VITEST_ERROR_CODES.FILES_NOT_FOUND !== error.code
+      ) {
         throw error;
       }
     }
