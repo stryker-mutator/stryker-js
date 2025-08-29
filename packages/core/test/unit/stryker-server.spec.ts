@@ -32,6 +32,7 @@ import {
 } from '@stryker-mutator/instrumenter';
 import { FileSystemTestDouble } from '../helpers/file-system-test-double.js';
 import { Project } from '../../src/fs/project.js';
+import { Reporter } from '@stryker-mutator/api/report';
 
 describe.only(StrykerServer.name, () => {
   let sut: StrykerServer;
@@ -45,6 +46,7 @@ describe.only(StrykerServer.name, () => {
   let loggingServerMock: sinon.SinonStubbedInstance<LoggingServer>;
   let temporaryDirectoryMock: sinon.SinonStubbedInstance<TemporaryDirectory>;
   let getLoggerStub: sinon.SinonStub;
+  let strykerRunStub: sinon.SinonStubbedMember<typeof Stryker.run>;
 
   let prepareExecutorMock: sinon.SinonStubbedInstance<PrepareExecutor>;
   let mutantInstrumenterExecutorMock: sinon.SinonStubbedInstance<MutantInstrumenterExecutor>;
@@ -148,6 +150,8 @@ describe.only(StrykerServer.name, () => {
 
     serverMock = sinon.createStubInstance(net.Server);
     createServerStub = sinon.stub(net, 'createServer').returns(serverMock);
+
+    strykerRunStub = sinon.stub(Stryker, 'run');
   });
 
   afterEach(() => {
@@ -171,9 +175,7 @@ describe.only(StrykerServer.name, () => {
         mutatorName: 'TestMutator',
         status: 'Killed',
       };
-      const strykerRunStub = sinon
-        .stub(Stryker, 'run')
-        .resolves([mutantResult]);
+      strykerRunStub.resolves([mutantResult]);
       setupStart();
 
       const configureParams: ConfigureParams = {
@@ -349,6 +351,42 @@ describe.only(StrykerServer.name, () => {
       await expect(firstValueFrom(act())).to.be.eventually.rejectedWith(
         "Stryker server isn't started yet, please call `start` first",
       );
+    });
+
+    it('mutates a file and reports the result', async () => {
+      const mutantResult: MutantResult = {
+        fileName: 'foo.js',
+        replacement: 'mutatedCode',
+        id: '1',
+        location: {
+          start: { line: 1, column: 0 },
+          end: { line: 1, column: 10 },
+        },
+        mutatorName: 'TestMutator',
+        status: 'Killed',
+      };
+      setupStart();
+      strykerRunStub.resolves([mutantResult]);
+      sut.configure({ configFilePath: 'non-existent-test-file' });
+      await sut.start();
+
+      const mutationTestPromise = firstValueFrom(
+        sut.mutationTest({ files: [{ path: 'foo.js' }] }),
+      );
+      const reporter = injectorMock.provideValue
+        .getCalls()
+        .find((v) => v.args[0] === coreTokens.reporterOverride)
+        ?.args[1] as Reporter;
+      reporter.onMutantTested!(mutantResult);
+      const mutant = await mutationTestPromise;
+
+      expect(mutant).to.deep.equal(mutantResult);
+      expect(strykerRunStub).to.have.been.calledWithMatch(sinon.match.any, {
+        ...cliOptions,
+        allowConsoleColors: false,
+        configFile: 'non-existent-test-file',
+        mutate: ['foo.js'],
+      });
     });
   });
 });
