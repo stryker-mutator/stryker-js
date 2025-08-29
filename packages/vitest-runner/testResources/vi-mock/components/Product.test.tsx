@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { Product } from './Product';
 import { Discount } from './Discount';
+import { expect } from 'chai';
 
 vi.mock('./Discount', () => ({ Discount: vi.fn() }));
 

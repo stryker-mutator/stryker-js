@@ -1,8 +1,6 @@
 import path from 'path';
 
 import {
-  Location,
-  Position,
   StrykerOptions,
   MutantTestCoverage,
   MutantResult,
@@ -79,7 +77,7 @@ export class MutationTestReportHelper {
     mutant: MutantTestCoverage,
     checkResult: Exclude<CheckResult, PassedCheckResult>,
   ): MutantResult {
-    const location = this.toLocation(mutant.location);
+    const location = objectUtils.toSchemaLocation(mutant.location);
     return this.reportOne({
       ...mutant,
       status: this.checkStatusToResultStatus(checkResult.status),
@@ -92,7 +90,7 @@ export class MutationTestReportHelper {
     mutant: MutantTestCoverage,
     status: MutantStatus,
   ): MutantResult {
-    const location = this.toLocation(mutant.location);
+    const location = objectUtils.toSchemaLocation(mutant.location);
     return this.reportOne({
       ...mutant,
       status,
@@ -104,7 +102,7 @@ export class MutationTestReportHelper {
     mutant: MutantTestCoverage,
     result: MutantRunResult,
   ): MutantResult {
-    const location = this.toLocation(mutant.location);
+    const location = objectUtils.toSchemaLocation(mutant.location);
 
     // Prune fields used for Stryker bookkeeping
     switch (result.status) {
@@ -328,7 +326,7 @@ export class MutationTestReportHelper {
       id: remapTestId(test.id),
       name: test.name,
       location: test.startPosition
-        ? { start: this.toPosition(test.startPosition) }
+        ? { start: objectUtils.toSchemaPosition(test.startPosition) }
         : undefined,
     };
   }
@@ -358,20 +356,6 @@ export class MutationTestReportHelper {
       killedBy: remapTestIds(killedBy),
       coveredBy: remapTestIds(coveredBy),
       location,
-    };
-  }
-
-  private toLocation(location: Location): schema.Location {
-    return {
-      end: this.toPosition(location.end),
-      start: this.toPosition(location.start),
-    };
-  }
-
-  private toPosition(pos: Position): schema.Position {
-    return {
-      column: pos.column + 1, // convert from 0-based to 1-based
-      line: pos.line + 1,
     };
   }
 
@@ -424,7 +408,7 @@ export class MutationTestReportHelper {
   }
 }
 
-function normalizeReportFileName(fileName: string | undefined) {
+export function normalizeReportFileName(fileName: string | undefined) {
   if (fileName) {
     return normalizeFileName(path.relative(process.cwd(), fileName));
   }

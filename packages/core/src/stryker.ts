@@ -1,5 +1,5 @@
 import { MutantResult, PartialStrykerOptions } from '@stryker-mutator/api/core';
-import { createInjector } from 'typed-inject';
+import { createInjector, Injector } from 'typed-inject';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 
 import {
@@ -7,10 +7,19 @@ import {
   MutantInstrumenterExecutor,
   DryRunExecutor,
   MutationTestExecutor,
+  PrepareExecutorContext,
 } from './process/index.js';
 import { coreTokens } from './di/index.js';
 import { retrieveCause, ConfigError } from './errors.js';
-import { provideLogging, provideLoggingBackend } from './logging/index.js';
+import {
+  LoggingBackend,
+  provideLogging,
+  provideLoggingBackend,
+} from './logging/index.js';
+
+type MutationRunContext = PrepareExecutorContext & {
+  [coreTokens.loggingSink]: LoggingBackend;
+};
 
 /**
  * The main Stryker class.
@@ -29,16 +38,30 @@ export class Stryker {
 
   public async runMutationTest(): Promise<MutantResult[]> {
     const rootInjector = this.injectorFactory();
-    const loggerProvider = provideLogging(
-      await provideLoggingBackend(rootInjector),
-    );
-
     try {
-      // 1. Prepare. Load Stryker configuration, load the input files and starts the logging server
-      const prepareExecutor = loggerProvider.injectClass(PrepareExecutor);
-      const mutantInstrumenterInjector = await prepareExecutor.execute(
-        this.cliOptions,
-      );
+      const prepareInjector = provideLogging(
+        await provideLoggingBackend(rootInjector),
+      ).provideValue(coreTokens.reporterOverride, undefined);
+      return await Stryker.run(prepareInjector, this.cliOptions);
+    } finally {
+      await rootInjector.dispose();
+    }
+  }
+
+  /**
+   * Does the actual mutation testing.
+   * Note: this is a public static method, so it can be reused from `StrykerServer`
+   * @internal
+   */
+  static async run(
+    mutationRunInjector: Injector<MutationRunContext>,
+    cliOptions: PartialStrykerOptions,
+  ): Promise<MutantResult[]> {
+    try {
+      // 1. Prepare. Load Stryker configuration, load the input files
+      const prepareExecutor = mutationRunInjector.injectClass(PrepareExecutor);
+      const mutantInstrumenterInjector =
+        await prepareExecutor.execute(cliOptions);
 
       try {
         // 2. Mutate and instrument the files and write to the sandbox.
@@ -63,7 +86,7 @@ export class Stryker {
           mutantInstrumenterInjector.resolve(commonTokens.options)
             .cleanTempDir !== 'always'
         ) {
-          const log = loggerProvider.resolve(commonTokens.getLogger)(
+          const log = mutationRunInjector.resolve(commonTokens.getLogger)(
             Stryker.name,
           );
           log.debug('Not removing the temp dir because an error occurred');
@@ -74,7 +97,9 @@ export class Stryker {
         throw error;
       }
     } catch (error) {
-      const log = loggerProvider.resolve(commonTokens.getLogger)(Stryker.name);
+      const log = mutationRunInjector.resolve(commonTokens.getLogger)(
+        Stryker.name,
+      );
       const cause = retrieveCause(error);
       if (cause instanceof ConfigError) {
         log.error(cause.message);
@@ -93,8 +118,6 @@ export class Stryker {
         }
       }
       throw cause;
-    } finally {
-      await rootInjector.dispose();
     }
   }
 }

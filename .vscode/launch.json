@@ -11,6 +11,7 @@
       "skipFiles": [
         "<node_internals>/**"
       ],
+      "runtimeArgs": ["--enable-source-maps"],
       "cwd": "${fileDirname}",
       "type": "node"
     },
