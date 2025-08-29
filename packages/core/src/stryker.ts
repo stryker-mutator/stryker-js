@@ -48,7 +48,11 @@ export class Stryker {
     }
   }
 
-  /** @internal */
+  /**
+   * Does the actual mutation testing.
+   * Note: this is a public static method, so it can be reused from `StrykerServer`
+   * @internal
+   */
   static async run(
     mutationRunInjector: Injector<MutationRunContext>,
     cliOptions: PartialStrykerOptions,
