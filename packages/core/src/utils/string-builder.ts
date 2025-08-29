@@ -1,6 +1,7 @@
 import { EOL } from 'os';
 
-const DEFAULT_MAX_SIZE = 2048;
+// 8kB
+const DEFAULT_MAX_SIZE = 8192;
 
 export class StringBuilder {
   private currentLength = 0;

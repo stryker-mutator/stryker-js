@@ -24,8 +24,13 @@ import {
   toMutantRunResult,
   determineHitLimitReached,
   TestStatus,
+  DryRunOptions,
 } from '@stryker-mutator/api/test-runner';
-import { escapeRegExp, notEmpty } from '@stryker-mutator/util';
+import {
+  escapeRegExp,
+  normalizeFileName,
+  notEmpty,
+} from '@stryker-mutator/util';
 
 import { vitestWrapper, Vitest } from './vitest-wrapper.js';
 import {
@@ -33,6 +38,8 @@ import {
   fromTestId,
   collectTestsFromSuite,
   normalizeCoverage,
+  isErrorCodeError,
+  VITEST_ERROR_CODES,
 } from './vitest-helpers.js';
 import { VitestRunnerOptionsWithStrykerOptions } from './vitest-runner-options-with-stryker-options.js';
 
@@ -40,6 +47,18 @@ type StrykerNamespace = '__stryker__' | '__stryker2__';
 const STRYKER_SETUP = fileURLToPath(
   new URL('./stryker-setup.js', import.meta.url),
 );
+
+interface RunFilter {
+  /**
+   * Run only tests with the specified IDs
+   */
+  testIds?: string[];
+  /**
+   * Run only tests that cover a list of source files
+   * @see https://vitest.dev/guide/cli.html#vitest-related
+   */
+  relatedFiles?: string[];
+}
 
 export class VitestTestRunner implements TestRunner {
   public static inject = [
@@ -105,10 +124,19 @@ export class VitestTestRunner implements TestRunner {
     }
   }
 
-  public async dryRun(): Promise<DryRunResult> {
+  public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
     this.ctx!.provide('mode', 'dry-run');
 
-    const testResult = await this.run();
+    const testResult = await this.run({ relatedFiles: options.files });
+    if (
+      testResult.status === DryRunStatus.Complete &&
+      testResult.tests.length === 0 &&
+      this.options.vitest.related
+    ) {
+      this.log.warn(
+        'Vitest failed to find test files related to mutated files. Either disable `vitest.related` or import your source files directly from your test files. See https://stryker-mutator.io/docs/stryker-js/troubleshooting/#vitest-failed-to-find-test-files-related-to-mutated-files',
+      );
+    }
     const mutantCoverage = this.readMutantCoverage();
     if (testResult.status === DryRunStatus.Complete) {
       return {
@@ -125,30 +153,50 @@ export class VitestTestRunner implements TestRunner {
     this.ctx!.provide('hitLimit', options.hitLimit);
     this.ctx!.provide('mutantActivation', options.mutantActivation);
     this.ctx!.provide('activeMutant', options.activeMutant.id);
-    const dryRunResult = await this.run(options.testFilter);
+    const dryRunResult = await this.run({
+      testIds: options.testFilter,
+      relatedFiles: [options.sandboxFileName],
+    });
     const hitCount = this.readHitCount();
     const timeOut = determineHitLimitReached(hitCount, options.hitLimit);
     return toMutantRunResult(timeOut ?? dryRunResult);
   }
 
-  private async run(testIds: string[] = []): Promise<DryRunResult> {
+  private async run({
+    testIds = [],
+    relatedFiles,
+  }: RunFilter = {}): Promise<DryRunResult> {
     this.resetContext();
+    this.ctx!.config.related =
+      this.options.vitest.related && relatedFiles
+        ? relatedFiles.map(normalizeFileName)
+        : undefined;
+    let testFiles: string[] | undefined = undefined;
     if (testIds.length > 0) {
-      const regexTestNameFilter = testIds
-        .map(fromTestId)
+      const parsedTests = testIds.map(fromTestId);
+      const regexTestNameFilter = parsedTests
         .map(({ test: name }) => escapeRegExp(name))
         .join('|');
       const regex = new RegExp(regexTestNameFilter);
-      const testFiles = testIds.map(fromTestId).map(({ file }) => file);
+      testFiles = parsedTests.map(({ file }) => file);
       this.ctx!.projects.forEach((project) => {
         project.config.testNamePattern = regex;
       });
-      await this.ctx!.start(testFiles);
     } else {
       this.ctx!.projects.forEach((project) => {
         project.config.testNamePattern = undefined;
       });
-      await this.ctx!.start();
+    }
+    try {
+      await this.ctx!.start(testFiles);
+    } catch (error) {
+      if (
+        // No tests found, this isn't a problem, we can continue
+        !isErrorCodeError(error) ||
+        VITEST_ERROR_CODES.FILES_NOT_FOUND !== error.code
+      ) {
+        throw error;
+      }
     }
     const tests = this.ctx!.state.getFiles()
       .flatMap((file) => collectTestsFromSuite(file))

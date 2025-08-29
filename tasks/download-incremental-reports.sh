@@ -2,7 +2,7 @@
 
 for package in api core cucumber-runner instrumenter jasmine-runner jest-runner karma-runner mocha-runner typescript-checker util tap-runner vitest-runner
 do
-    if [ "$BRANCH_NAME" ]
+    if [ "$BRANCH_NAME" ] && [[ "$BRANCH_NAME" != renovate* ]]
     then
         echo "Downloading $package/$BRANCH_NAME..."
         curl -s --dump-header .header.out --create-dirs -o packages/$package/reports/stryker-incremental.json https://dashboard.stryker-mutator.io/api/reports/github.com/stryker-mutator/stryker-js/$BRANCH_NAME?module=$package

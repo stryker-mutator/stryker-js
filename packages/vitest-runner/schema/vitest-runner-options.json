@@ -15,6 +15,11 @@
           "description": "Configure the `--dir <path>` command line option",
           "type": "string"
         },
+        "related": {
+          "description": "Use [related mode](https://vitest.dev/guide/cli.html#vitest-related) to narrow down the tests to run",
+          "type": "boolean",
+          "default": true
+        },
         "configFile": {
           "description": "Path to the config file. Default resolving to `vitest.config.*`, `vite.config.*`",
           "type": "string"

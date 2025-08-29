@@ -28,7 +28,8 @@ You can configure the `@stryker-mutator/vitest-runner` using the `stryker.config
   "testRunner": "vitest",
   "vitest": {
     "configFile": "vitest.config.js",
-    "dir": "packages"
+    "dir": "packages",
+    "related": true
   }
 }
 ```
@@ -46,6 +47,12 @@ _Since v7.1_
 Default: `undefined`
 
 Configure the `--dir <path>` command line option. See https://vitest.dev/guide/cli.html#options.
+
+### `vitest.related` [`boolean`]
+
+Default: `true`
+
+If set to `true`, Vitest will only run tests that are related to the mutated files. It uses the [`related`](https://vitest.dev/guide/cli.html#vitest-related) under the hood. Disable this if your test files don't import your source files directly, for example when using API calls to call your server code in integration tests.
 
 ## Non overridable options
 

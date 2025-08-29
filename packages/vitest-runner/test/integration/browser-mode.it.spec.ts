@@ -15,6 +15,7 @@ import {
   VitestTestRunner,
 } from '../../src/vitest-test-runner.js';
 import { VitestRunnerOptionsWithStrykerOptions } from '../../src/vitest-runner-options-with-stryker-options.js';
+import { createVitestRunnerOptions } from '../util/factories.js';
 
 const test1 =
   'src/heading.component.spec.ts#HeadingComponent should project its content';
@@ -34,7 +35,7 @@ describe('VitestRunner in browser mode', () => {
       createVitestTestRunnerFactory('__stryker2__'),
     );
     options = testInjector.options as VitestRunnerOptionsWithStrykerOptions;
-    options.vitest = {};
+    options.vitest = createVitestRunnerOptions();
 
     sandbox = new TempTestDirectorySandbox('browser-project', { soft: true });
     await sandbox.init();
@@ -48,7 +49,7 @@ describe('VitestRunner in browser mode', () => {
 
   describe(VitestTestRunner.prototype.dryRun.name, () => {
     it('should report the run result', async () => {
-      const runResult = await sut.dryRun();
+      const runResult = await sut.dryRun(factory.dryRunOptions());
       assertions.expectCompleted(runResult);
       assertions.expectTestResults(runResult, [
         {
@@ -73,7 +74,7 @@ describe('VitestRunner in browser mode', () => {
     });
 
     it('should report mutant coverage', async () => {
-      const runResult = await sut.dryRun();
+      const runResult = await sut.dryRun(factory.dryRunOptions());
       assertions.expectCompleted(runResult);
       expect(runResult.mutantCoverage).deep.eq({
         perTest: {
