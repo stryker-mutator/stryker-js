@@ -33,6 +33,7 @@ import {
 import { FileSystemTestDouble } from '../helpers/file-system-test-double.js';
 import { Project } from '../../src/fs/project.js';
 import { Reporter } from '@stryker-mutator/api/report';
+import { killedMutantResult } from '../../../test-helpers/src/factory.js';
 
 describe(StrykerServer.name, () => {
   let sut: StrykerServer;
@@ -341,16 +342,14 @@ describe(StrykerServer.name, () => {
   });
 
   describe('mutationTest', () => {
-    const mutantResult: MutantResult = {
-      fileName: 'foo.js',
-      replacement: 'mutatedCode',
-      id: '1',
-      location: {
-        start: { line: 1, column: 0 },
-        end: { line: 1, column: 10 },
-      },
-      mutatorName: 'TestMutator',
-      status: 'Killed',
+    const createMutantResult = () => {
+      return killedMutantResult({
+        fileName: 'foo.js',
+        location: {
+          start: { line: 1, column: 0 },
+          end: { line: 1, column: 10 },
+        },
+      });
     };
 
     beforeEach(() => {
@@ -366,6 +365,7 @@ describe(StrykerServer.name, () => {
     });
 
     it('mutates a file and reports the result', async () => {
+      const mutantResult = createMutantResult();
       setupStart();
       strykerRunStub.resolves([mutantResult]);
       sut.configure({ configFilePath: 'non-existent-test-file' });
@@ -391,6 +391,7 @@ describe(StrykerServer.name, () => {
     });
 
     it('mutates all files in a directory and reports the result', async () => {
+      const mutantResult = createMutantResult();
       setupStart();
       strykerRunStub.resolves([mutantResult]);
       sut.configure({ configFilePath: 'non-existent-test-file' });
@@ -416,6 +417,7 @@ describe(StrykerServer.name, () => {
     });
 
     it('mutates a range of a file and reports the result', async () => {
+      const mutantResult = createMutantResult();
       setupStart();
       strykerRunStub.resolves([mutantResult]);
       sut.configure({ configFilePath: 'non-existent-test-file' });
