@@ -135,9 +135,15 @@
     "cSpell.flagWords": ["!instrumenter"],
     "cSpell.language": "en",
     "strykerMutator.enable": true,
-    "strykerMutator.server.configFile": "stryker.config.js",
-    "strykerMutator.server.workingDirectory": "./packages/core",
-    "strykerMutator.server.path": "../../node_modules/.bin/stryker"
+    "strykerMutator.server.configFile": "stryker.conf.js",
+    "strykerMutator.watchPattern": "src/**/*.{js,ts,jsx,tsx}",
+    "strykerMutator.server.path": "../core/bin/stryker",
+    "strykerMutator.server.args": [
+      "runServer",
+      "--incremental",
+      "--concurrency",
+      "2"
+    ]
   },
   "extensions": {
     "recommendations": [
