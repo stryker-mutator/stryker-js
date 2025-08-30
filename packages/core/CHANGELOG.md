@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.1.0](https://github.com/stryker-mutator/stryker-js/compare/v9.0.1...v9.1.0) (2025-08-30)
+
+### Bug Fixes
+
+- **child-process:** fix OOM detection on apple silicon ([#5463](https://github.com/stryker-mutator/stryker-js/issues/5463)) ([d872096](https://github.com/stryker-mutator/stryker-js/commit/d872096d950e43709d04b8877ac9bebac5241de3))
+- **deps:** update dependency commander to v14 ([#5318](https://github.com/stryker-mutator/stryker-js/issues/5318)) ([c5ed07b](https://github.com/stryker-mutator/stryker-js/commit/c5ed07b29ef4dee89703e3356e87aab1a841f124))
+- **deps:** update dependency execa to v9.6.0 ([#5337](https://github.com/stryker-mutator/stryker-js/issues/5337)) ([dac62e6](https://github.com/stryker-mutator/stryker-js/commit/dac62e631e1006381aea21a0df88044619d6f555))
+- **deps:** update dependency minimatch to v10.0.3 ([#5399](https://github.com/stryker-mutator/stryker-js/issues/5399)) ([2c85ca6](https://github.com/stryker-mutator/stryker-js/commit/2c85ca6668ffa942c4f1c3f971fc7038b164777f))
+- **deps:** update dependency mutation-testing-elements to v3.5.3 ([#5343](https://github.com/stryker-mutator/stryker-js/issues/5343)) ([4fc697f](https://github.com/stryker-mutator/stryker-js/commit/4fc697f9277d49f0a1cefb5f565e445f13bd10ed))
+- **project-reader:** fix issue where a file isn't set to be mutated ([#5377](https://github.com/stryker-mutator/stryker-js/issues/5377)) ([c556b68](https://github.com/stryker-mutator/stryker-js/commit/c556b681c3f62357435e29d2e6a3a628706a7910))
+
+### Features
+
+- **core:** implement the mutation server protocol (MSP) ([#5086](https://github.com/stryker-mutator/stryker-js/issues/5086)) ([6ab231d](https://github.com/stryker-mutator/stryker-js/commit/6ab231d8d05124a085271b8f55ba7de534042253))
+
 ## [9.0.1](https://github.com/stryker-mutator/stryker-js/compare/v9.0.0...v9.0.1) (2025-05-14)
 
 **Note:** Version bump only for package @stryker-mutator/core

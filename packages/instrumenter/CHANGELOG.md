@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.1.0](https://github.com/stryker-mutator/stryker-js/compare/v9.0.1...v9.1.0) (2025-08-30)
+
+### Bug Fixes
+
+- **deps:** update babel monorepo ([#5415](https://github.com/stryker-mutator/stryker-js/issues/5415)) ([34cff8e](https://github.com/stryker-mutator/stryker-js/commit/34cff8e6d24a901b7d497ac1ca01e6466355d987))
+- **deps:** update dependency angular-html-parser to ~9.2.0 ([#5346](https://github.com/stryker-mutator/stryker-js/issues/5346)) ([ff6897f](https://github.com/stryker-mutator/stryker-js/commit/ff6897f334de3a26ce019f0de392662ced0fb48a))
+
+### Features
+
+- **core:** implement the mutation server protocol (MSP) ([#5086](https://github.com/stryker-mutator/stryker-js/issues/5086)) ([6ab231d](https://github.com/stryker-mutator/stryker-js/commit/6ab231d8d05124a085271b8f55ba7de534042253))
+
 ## [9.0.1](https://github.com/stryker-mutator/stryker-js/compare/v9.0.0...v9.0.1) (2025-05-14)
 
 **Note:** Version bump only for package @stryker-mutator/instrumenter

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.1.0](https://github.com/stryker-mutator/stryker-js/compare/v9.0.1...v9.1.0) (2025-08-30)
+
+### Bug Fixes
+
+- **vitest:** race condition in init ([#5380](https://github.com/stryker-mutator/stryker-js/issues/5380)) ([949a93f](https://github.com/stryker-mutator/stryker-js/commit/949a93fd7a048a9b8de0535c30cdcdb2cdd587ff))
+
+### Features
+
+- **core:** implement the mutation server protocol (MSP) ([#5086](https://github.com/stryker-mutator/stryker-js/issues/5086)) ([6ab231d](https://github.com/stryker-mutator/stryker-js/commit/6ab231d8d05124a085271b8f55ba7de534042253))
+- **vitest:** support `vitest related` ([#5466](https://github.com/stryker-mutator/stryker-js/issues/5466)) ([42767af](https://github.com/stryker-mutator/stryker-js/commit/42767af9317cbddaa610846c2682a8ceb034a68d))
+
 ## [9.0.1](https://github.com/stryker-mutator/stryker-js/compare/v9.0.0...v9.0.1) (2025-05-14)
 
 ### Bug Fixes
