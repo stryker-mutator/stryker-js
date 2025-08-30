@@ -53,8 +53,10 @@ export class StrykerCli {
     private readonly program: Command = new Command(),
     private readonly runMutationTest = async (options: PartialStrykerOptions) =>
       new Stryker(options).runMutationTest(),
-    private readonly runMutationTestingServer = async () => {
-      const server = new StrykerServer();
+    private readonly runMutationTestingServer = async (
+      options: PartialStrykerOptions,
+    ) => {
+      const server = new StrykerServer(options);
       const port = await server.start();
       console.log(JSON.stringify({ port }));
     },
@@ -268,7 +270,7 @@ export class StrykerCli {
     const commands = {
       init: async () => (await initializerFactory()).initialize(),
       run: () => this.runMutationTest(options),
-      runServer: () => this.runMutationTestingServer(),
+      runServer: () => this.runMutationTestingServer(options),
     };
 
     if (Object.keys(commands).includes(this.command)) {

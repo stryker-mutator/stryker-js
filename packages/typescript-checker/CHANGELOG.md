@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.1.1](https://github.com/stryker-mutator/stryker-js/compare/v9.1.0...v9.1.1) (2025-08-30)
+
+**Note:** Version bump only for package @stryker-mutator/typescript-checker
+
 # [9.1.0](https://github.com/stryker-mutator/stryker-js/compare/v9.0.1...v9.1.0) (2025-08-30)
 
 **Note:** Version bump only for package @stryker-mutator/typescript-checker
