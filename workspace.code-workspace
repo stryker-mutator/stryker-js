@@ -134,13 +134,17 @@
     ],
     "cSpell.flagWords": ["!instrumenter"],
     "cSpell.language": "en",
-    "liveServer.settings.multiRootWorkspaceName": "typescript-checker"
+    "strykerMutator.enable": true,
+    "strykerMutator.server.configFile": "stryker.config.js",
+    "strykerMutator.server.workingDirectory": "./packages/core",
+    "strykerMutator.server.path": "../../node_modules/.bin/stryker"
   },
   "extensions": {
     "recommendations": [
       "dbaeumer.vscode-eslint",
       "EditorConfig.EditorConfig",
-      "esbenp.prettier-vscode"
+      "esbenp.prettier-vscode",
+      "stryker-mutator.stryker-mutator"
     ]
   }
 }
