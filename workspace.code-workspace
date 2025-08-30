@@ -134,13 +134,23 @@
     ],
     "cSpell.flagWords": ["!instrumenter"],
     "cSpell.language": "en",
-    "liveServer.settings.multiRootWorkspaceName": "typescript-checker"
+    "strykerMutator.enable": true,
+    "strykerMutator.server.configFile": "stryker.conf.js",
+    "strykerMutator.watchPattern": "src/**/*.{js,ts,jsx,tsx}",
+    "strykerMutator.server.path": "../core/bin/stryker",
+    "strykerMutator.server.args": [
+      "runServer",
+      "--incremental",
+      "--concurrency",
+      "2"
+    ]
   },
   "extensions": {
     "recommendations": [
       "dbaeumer.vscode-eslint",
       "EditorConfig.EditorConfig",
-      "esbenp.prettier-vscode"
+      "esbenp.prettier-vscode",
+      "stryker-mutator.stryker-mutator"
     ]
   }
 }
