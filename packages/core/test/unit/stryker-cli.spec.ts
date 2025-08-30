@@ -10,7 +10,7 @@ import {
 
 import { guardMinimalNodeVersion, StrykerCli } from '../../src/stryker-cli.js';
 
-describe.only(StrykerCli.name, () => {
+describe(StrykerCli.name, () => {
   let runMutationTestingStub: sinon.SinonStub;
   let runMutationTestingServerStub: sinon.SinonStubbedMember<
     NonNullable<ConstructorParameters<typeof StrykerCli>[3]>
