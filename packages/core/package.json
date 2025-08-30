@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/core",
-  "version": "9.1.0",
+  "version": "9.1.1",
   "description": "The extendable JavaScript mutation testing framework",
   "type": "module",
   "files": [
@@ -69,9 +69,9 @@
   },
   "dependencies": {
     "@inquirer/prompts": "^7.0.0",
-    "@stryker-mutator/api": "9.1.0",
-    "@stryker-mutator/instrumenter": "9.1.0",
-    "@stryker-mutator/util": "9.1.0",
+    "@stryker-mutator/api": "9.1.1",
+    "@stryker-mutator/instrumenter": "9.1.1",
+    "@stryker-mutator/util": "9.1.1",
     "ajv": "~8.17.1",
     "chalk": "~5.4.0",
     "commander": "~14.0.0",
@@ -97,7 +97,7 @@
     "typed-rest-client": "~2.1.0"
   },
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "9.1.0",
+    "@stryker-mutator/test-helpers": "9.1.1",
     "@types/diff-match-patch": "1.0.36",
     "@types/lodash.groupby": "4.6.9",
     "@types/node": "22.16.4",

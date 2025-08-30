@@ -1,6 +1,6 @@
 {
   "name": "create-stryker",
-  "version": "9.1.0",
+  "version": "9.1.1",
   "description": "Initializer for StrykerJS",
   "type": "module",
   "files": [
@@ -38,6 +38,6 @@
   "homepage": "https://stryker-mutator.io/",
   "bin": "dist/src/index.js",
   "dependencies": {
-    "@stryker-mutator/core": "9.1.0"
+    "@stryker-mutator/core": "9.1.1"
   }
 }
