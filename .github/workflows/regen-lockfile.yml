@@ -1,0 +1,53 @@
+name: Regen lockfile
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened]
+
+permissions:
+  contents: write
+
+jobs:
+  regen-lockfile:
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      contains(fromJSON('["andreas02-dev"]'), github.actor)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Clean install & regenerate lockfile
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf node_modules packages/*/node_modules package-lock.json
+          npm i
+
+      - name: Commit changes if package-lock.json changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- package-lock.json; then
+            echo "No lockfile changes detected. Nothing to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add package-lock.json
+          git commit -m "Regen lockfile"
+
+          # Push back to the PR branch (or current ref for workflow_dispatch)
+          REF="${{ github.head_ref || github.ref_name }}"
+          git push origin "HEAD:${REF}"
