@@ -3,7 +3,7 @@ name: Regen lockfile
 on:
   workflow_dispatch:
   pull_request:
-    types: [opened, reopened]
+    types: [opened]
 
 permissions:
   contents: write
@@ -12,7 +12,7 @@ jobs:
   regen-lockfile:
     if: >
       github.event_name == 'workflow_dispatch' ||
-      contains(fromJSON('["andreas02-dev"]'), github.actor)
+      contains(fromJSON('["renovate[bot]"]'), github.actor)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
