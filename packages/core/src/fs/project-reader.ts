@@ -119,25 +119,20 @@ export class ProjectReader {
       defaultOptions.mutate,
     );
 
-    // If targetMutatePatterns are provided, first filter the inputFileNames by those patterns.
-    // Otherwise, start with all inputFileNames as not mutated.
-    const mutateInputFileMap = new Map<string, FileDescription>();
+    const targetedInputFileNames = new Set<string>();
     if (targetMutatePatterns) {
       for (const pattern of targetMutatePatterns) {
         const files = this.filterMutatePattern(inputFileNames, pattern);
-        for (const [fileName, file] of files) {
-          mutateInputFileMap.set(
-            fileName,
-            this.mergeFileDescriptions(file, mutateInputFileMap.get(fileName)),
-          );
+        for (const [fileName, _] of files) {
+          targetedInputFileNames.add(fileName);
         }
       }
-    } else {
-      inputFileNames.forEach((fileName) =>
-        mutateInputFileMap.set(fileName, { mutate: false }),
-      );
     }
 
+    const mutateInputFileMap = new Map<string, FileDescription>();
+    inputFileNames.forEach((fileName) =>
+      mutateInputFileMap.set(fileName, { mutate: false }),
+    );
     // Now lets see what we may mutate according to the config mutatePatterns
     for (const pattern of this.mutatePatterns) {
       if (pattern.startsWith(IGNORE_PATTERN_CHARACTER)) {
@@ -162,6 +157,11 @@ export class ProjectReader {
           );
         }
         for (const [fileName, file] of files) {
+          if (targetMutatePatterns && !targetedInputFileNames.has(fileName)) {
+            // If we have a targetMutatePatterns, we should not mutate files that are not in the target set
+            continue;
+          }
+
           mutateInputFileMap.set(
             fileName,
             this.mergeFileDescriptions(file, mutateInputFileMap.get(fileName)),
