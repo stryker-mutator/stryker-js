@@ -47,6 +47,7 @@ export class PrepareExecutor {
 
   public async execute(
     cliOptions: PartialStrykerOptions,
+    targetMutatePatterns?: string[],
   ): Promise<Injector<MutantInstrumenterContext>> {
     // greedy initialize, so the time starts immediately
     const timer = new Timer();
@@ -99,7 +100,7 @@ export class PrepareExecutor {
       .provideValue(coreTokens.pluginsByKind, loadedPlugins.pluginsByKind);
     const project = await projectFileReaderInjector
       .injectClass(ProjectReader)
-      .read();
+      .read(targetMutatePatterns);
 
     if (project.isEmpty) {
       throw new ConfigError('No input files found.');

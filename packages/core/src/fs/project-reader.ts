@@ -83,9 +83,12 @@ export class ProjectReader {
     this.force = force;
   }
 
-  public async read(): Promise<Project> {
+  public async read(targetMutatePatterns?: string[]): Promise<Project> {
     const inputFileNames = await this.resolveInputFileNames();
-    const fileDescriptions = this.resolveFileDescriptions(inputFileNames);
+    const fileDescriptions = this.resolveFileDescriptions(
+      inputFileNames,
+      targetMutatePatterns,
+    );
     const project = new Project(
       this.fs,
       fileDescriptions,
@@ -104,21 +107,38 @@ export class ProjectReader {
    * Takes the list of file names and creates file description object from it, containing logic about wether or not it needs to be mutated.
    * If a mutate pattern starts with a `!`, it negates the pattern.
    * @param inputFileNames the file names to filter
+   * @param targetMutatePatterns optional mutate patterns to limit the initial scope of files to mutate (with ranges)
    */
-  private resolveFileDescriptions(inputFileNames: string[]): FileDescriptions {
+  private resolveFileDescriptions(
+    inputFileNames: string[],
+    targetMutatePatterns?: string[],
+  ): FileDescriptions {
     // Only log about useless patterns when the user actually configured it
     const logAboutUselessPatterns = !isDeepStrictEqual(
       this.mutatePatterns,
       defaultOptions.mutate,
     );
 
-    // Start out without files to mutate
+    // If targetMutatePatterns are provided, first filter the inputFileNames by those patterns.
+    // Otherwise, start with all inputFileNames as not mutated.
     const mutateInputFileMap = new Map<string, FileDescription>();
-    inputFileNames.forEach((fileName) =>
-      mutateInputFileMap.set(fileName, { mutate: false }),
-    );
+    if (targetMutatePatterns) {
+      for (const pattern of targetMutatePatterns) {
+        const files = this.filterMutatePattern(inputFileNames, pattern);
+        for (const [fileName, file] of files) {
+          mutateInputFileMap.set(
+            fileName,
+            this.mergeFileDescriptions(file, mutateInputFileMap.get(fileName)),
+          );
+        }
+      }
+    } else {
+      inputFileNames.forEach((fileName) =>
+        mutateInputFileMap.set(fileName, { mutate: false }),
+      );
+    }
 
-    // Now lets see what we need to mutate
+    // Now lets see what we may mutate according to the config mutatePatterns
     for (const pattern of this.mutatePatterns) {
       if (pattern.startsWith(IGNORE_PATTERN_CHARACTER)) {
         const files = this.filterMutatePattern(
@@ -132,7 +152,10 @@ export class ProjectReader {
           mutateInputFileMap.set(fileName, { mutate: false });
         }
       } else {
-        const files = this.filterMutatePattern(inputFileNames, pattern);
+        const files = this.filterMutatePattern(
+          mutateInputFileMap.keys(),
+          pattern,
+        );
         if (logAboutUselessPatterns && files.size === 0) {
           this.log.warn(
             `Glob pattern "${pattern}" did not result in any files.`,

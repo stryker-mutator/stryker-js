@@ -167,10 +167,12 @@ export class StrykerServer {
     );
     try {
       const prepareExecutor = discoverInjector.injectClass(PrepareExecutor);
-      const inj = await prepareExecutor.execute({
-        ...this.cliOptions,
-        ...this.#overrideMutate(discoverParams.files),
-      });
+      const inj = await prepareExecutor.execute(
+        {
+          ...this.cliOptions,
+        },
+        this.#filesToGlobPatterns(discoverParams.files),
+      );
 
       const instrumenter = inj.injectFunction(createInstrumenter);
       const pluginCreator = inj.resolve(coreTokens.pluginCreator);
@@ -208,7 +210,9 @@ export class StrykerServer {
     }
   }
 
-  public mutationTest(params: MutationTestParams): Observable<MutantResult> {
+  public mutationTest(
+    mutationTestParams: MutationTestParams,
+  ): Observable<MutantResult> {
     return new Observable<MutantResult>((subscriber) => {
       if (!this.#loggingBackendProvider) {
         throw new Error(STRYKER_SERVER_NOT_STARTED);
@@ -228,8 +232,8 @@ export class StrykerServer {
           ...this.cliOptions,
           allowConsoleColors: false,
           configFile: this.#configFilePath,
-          ...this.#overrideMutate(params.files),
         },
+        this.#filesToGlobPatterns(mutationTestParams.files),
       )
         .then(() => subscriber.complete())
         .catch((error) => subscriber.error(error));
@@ -241,9 +245,6 @@ export class StrykerServer {
       ({ path, range }) =>
         `${path.endsWith('/') ? `${path}**/*` : path}${range ? `:${posToMutationRange(range.start)}-${posToMutationRange(range.end)}` : ''}`,
     );
-  }
-  #overrideMutate(files: FileRange[] | undefined) {
-    return files ? { mutate: this.#filesToGlobPatterns(files) } : undefined;
   }
 }
 

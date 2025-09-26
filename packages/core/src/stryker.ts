@@ -56,12 +56,15 @@ export class Stryker {
   static async run(
     mutationRunInjector: Injector<MutationRunContext>,
     cliOptions: PartialStrykerOptions,
+    targetMutatePatterns?: string[],
   ): Promise<MutantResult[]> {
     try {
       // 1. Prepare. Load Stryker configuration, load the input files
       const prepareExecutor = mutationRunInjector.injectClass(PrepareExecutor);
-      const mutantInstrumenterInjector =
-        await prepareExecutor.execute(cliOptions);
+      const mutantInstrumenterInjector = await prepareExecutor.execute(
+        cliOptions,
+        targetMutatePatterns,
+      );
 
       try {
         // 2. Mutate and instrument the files and write to the sandbox.
