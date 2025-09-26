@@ -381,12 +381,15 @@ describe(StrykerServer.name, () => {
       const mutant = await mutationTestPromise;
 
       expect(mutant).to.deep.equal(mutantResult);
-      expect(strykerRunStub).to.have.been.calledWithMatch(sinon.match.any, {
-        ...cliOptions,
-        allowConsoleColors: false,
-        configFile: 'non-existent-test-file',
-        mutate: ['foo.js'],
-      });
+      expect(strykerRunStub).to.have.been.calledWithMatch(
+        sinon.match.any,
+        {
+          ...cliOptions,
+          allowConsoleColors: false,
+          configFile: 'non-existent-test-file',
+        },
+        ['foo.js'],
+      );
     });
 
     it('mutates all files in a directory and reports the result', async () => {
@@ -407,12 +410,15 @@ describe(StrykerServer.name, () => {
       const mutant = await mutationTestPromise;
 
       expect(mutant).to.deep.equal(mutantResult);
-      expect(strykerRunStub).to.have.been.calledWithMatch(sinon.match.any, {
-        ...cliOptions,
-        allowConsoleColors: false,
-        configFile: 'non-existent-test-file',
-        mutate: ['src/**/*'],
-      });
+      expect(strykerRunStub).to.have.been.calledWithMatch(
+        sinon.match.any,
+        {
+          ...cliOptions,
+          allowConsoleColors: false,
+          configFile: 'non-existent-test-file',
+        },
+        ['src/**/*'],
+      );
     });
 
     it('mutates a range of a file and reports the result', async () => {
@@ -443,12 +449,15 @@ describe(StrykerServer.name, () => {
       const mutant = await mutationTestPromise;
 
       expect(mutant).to.deep.equal(mutantResult);
-      expect(strykerRunStub).to.have.been.calledWithMatch(sinon.match.any, {
-        ...cliOptions,
-        allowConsoleColors: false,
-        configFile: 'non-existent-test-file',
-        mutate: ['foo.js:1:19-2:19'],
-      });
+      expect(strykerRunStub).to.have.been.calledWithMatch(
+        sinon.match.any,
+        {
+          ...cliOptions,
+          allowConsoleColors: false,
+          configFile: 'non-existent-test-file',
+        },
+        ['foo.js:1:19-2:19'],
+      );
     });
   });
 });
