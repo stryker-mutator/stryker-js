@@ -29,7 +29,7 @@ describe(`${ProjectReader.name} integration`, () => {
 
   it('should resolve reasonable project source files to be mutated by default', async () => {
     process.chdir(resolveTestResource());
-    const project = await sut.read();
+    const project = await sut.read(undefined);
     expect([...project.filesToMutate.keys()]).deep.eq([
       resolveTestResource('lib', 'string-utils.js'),
       resolveTestResource('src', 'app.ts'),
@@ -56,7 +56,7 @@ describe(`${ProjectReader.name} integration`, () => {
   it('should be able to read files from disk', async () => {
     // Arrange
     process.chdir(resolveTestResource());
-    const project = await sut.read();
+    const project = await sut.read(undefined);
 
     // Act
     const content = await project.files

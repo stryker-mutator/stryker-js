@@ -167,12 +167,12 @@ export class StrykerServer {
     );
     try {
       const prepareExecutor = discoverInjector.injectClass(PrepareExecutor);
-      const inj = await prepareExecutor.execute(
-        {
+      const inj = await prepareExecutor.execute({
+        cliOptions: {
           ...this.cliOptions,
         },
-        this.#filesToGlobPatterns(discoverParams.files),
-      );
+        targetMutatePatterns: this.#filesToGlobPatterns(discoverParams.files),
+      });
 
       const instrumenter = inj.injectFunction(createInstrumenter);
       const pluginCreator = inj.resolve(coreTokens.pluginCreator);
@@ -229,11 +229,15 @@ export class StrykerServer {
           reporter,
         ),
         {
-          ...this.cliOptions,
-          allowConsoleColors: false,
-          configFile: this.#configFilePath,
+          cliOptions: {
+            ...this.cliOptions,
+            allowConsoleColors: false,
+            configFile: this.#configFilePath,
+          },
+          targetMutatePatterns: this.#filesToGlobPatterns(
+            mutationTestParams.files,
+          ),
         },
-        this.#filesToGlobPatterns(mutationTestParams.files),
       )
         .then(() => subscriber.complete())
         .catch((error) => subscriber.error(error));

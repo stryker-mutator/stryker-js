@@ -11,7 +11,14 @@ import {
 } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { ERROR_CODES, I, isErrnoException } from '@stryker-mutator/util';
+import {
+  ERROR_CODES,
+  filter,
+  I,
+  isErrnoException,
+  map,
+  notEmpty,
+} from '@stryker-mutator/util';
 import type { MutationTestResult } from 'mutation-testing-report-schema/api';
 
 import { OpenEndLocation } from 'mutation-testing-report-schema';
@@ -83,7 +90,9 @@ export class ProjectReader {
     this.force = force;
   }
 
-  public async read(targetMutatePatterns?: string[]): Promise<Project> {
+  public async read(
+    targetMutatePatterns: string[] | undefined,
+  ): Promise<Project> {
     const inputFileNames = await this.resolveInputFileNames();
     const fileDescriptions = this.resolveFileDescriptions(
       inputFileNames,
@@ -111,7 +120,7 @@ export class ProjectReader {
    */
   private resolveFileDescriptions(
     inputFileNames: string[],
-    targetMutatePatterns?: string[],
+    targetMutatePatterns: string[] | undefined,
   ): FileDescriptions {
     // Only log about useless patterns when the user actually configured it
     const logAboutUselessPatterns = !isDeepStrictEqual(
@@ -119,21 +128,13 @@ export class ProjectReader {
       defaultOptions.mutate,
     );
 
-    const targetedInputFileNames = new Set<string>();
-    if (targetMutatePatterns) {
-      for (const pattern of targetMutatePatterns) {
-        const files = this.filterMutatePattern(inputFileNames, pattern);
-        for (const [fileName, _] of files) {
-          targetedInputFileNames.add(fileName);
-        }
-      }
-    }
-
+    // Start out without files to mutate
     const mutateInputFileMap = new Map<string, FileDescription>();
     inputFileNames.forEach((fileName) =>
       mutateInputFileMap.set(fileName, { mutate: false }),
     );
-    // Now lets see what we may mutate according to the config mutatePatterns
+
+    // Now lets see what we need to mutate
     for (const pattern of this.mutatePatterns) {
       if (pattern.startsWith(IGNORE_PATTERN_CHARACTER)) {
         const files = this.filterMutatePattern(
@@ -147,36 +148,63 @@ export class ProjectReader {
           mutateInputFileMap.set(fileName, { mutate: false });
         }
       } else {
-        const files = this.filterMutatePattern(
-          mutateInputFileMap.keys(),
-          pattern,
-        );
+        const files = this.filterMutatePattern(inputFileNames, pattern);
         if (logAboutUselessPatterns && files.size === 0) {
           this.log.warn(
             `Glob pattern "${pattern}" did not result in any files.`,
           );
         }
         for (const [fileName, file] of files) {
-          if (targetMutatePatterns && !targetedInputFileNames.has(fileName)) {
-            // If we have a targetMutatePatterns, we should not mutate files that are not in the target set
-            continue;
-          }
-
           mutateInputFileMap.set(
             fileName,
-            this.mergeFileDescriptions(file, mutateInputFileMap.get(fileName)),
+            this.unionFileDescriptions(file, mutateInputFileMap.get(fileName)),
           );
+        }
+      }
+    }
+
+    if (targetMutatePatterns) {
+      // Now filter on the target patterns, but only when specified
+      // First, collect all files that should be mutated in 'seen'
+      const seen = new Map<string, FileDescription>();
+      for (const pattern of targetMutatePatterns) {
+        const files = this.filterMutatePattern(
+          map(
+            filter(mutateInputFileMap, ([, { mutate }]) => mutate),
+            ([fileName]) => fileName,
+          ),
+          pattern,
+        );
+        for (const [fileName, description] of files) {
+          const intersected = this.intersectFileDescriptions(
+            mutateInputFileMap.get(fileName)!,
+            description,
+          );
+          seen.set(
+            fileName,
+            this.unionFileDescriptions(intersected, seen.get(fileName)),
+          );
+        }
+      }
+      // Now, reset the mutateInputFileMap to false for all files that we didn't see, but only mark files to be mutated when they appeared in the configured target patterns
+      for (const [fileName, mutate] of mutateInputFileMap) {
+        if (mutate) {
+          const descriptionInSeen = seen.get(fileName);
+          if (descriptionInSeen) {
+            mutateInputFileMap.set(fileName, descriptionInSeen);
+          } else {
+            mutateInputFileMap.set(fileName, { mutate: false });
+          }
         }
       }
     }
     return Object.fromEntries(mutateInputFileMap);
   }
 
-  private mergeFileDescriptions(
+  private unionFileDescriptions(
     first: FileDescription,
     second?: FileDescription,
   ): FileDescription {
-    // First is always an array or true
     if (second) {
       if (Array.isArray(first.mutate) && Array.isArray(second.mutate)) {
         return { mutate: [...second.mutate, ...first.mutate] };
@@ -187,6 +215,51 @@ export class ProjectReader {
       return { mutate: first.mutate || second.mutate };
     }
     return first;
+  }
+
+  private intersectFileDescriptions(
+    first: FileDescription,
+    second: FileDescription,
+  ): FileDescription {
+    if (Array.isArray(first.mutate) && Array.isArray(second.mutate)) {
+      // Both have mutation ranges, intersect them
+      const secondMutate = second.mutate;
+      const intersectedRanges = first.mutate
+        .flatMap((firstRange) =>
+          secondMutate.map((secondRange) => {
+            const startLine = Math.max(
+              firstRange.start.line,
+              secondRange.start.line,
+            );
+            const endLine = Math.min(firstRange.end.line, secondRange.end.line);
+            if (startLine > endLine) {
+              return;
+            }
+            const startColumn =
+              firstRange.start.line === startLine
+                ? firstRange.start.column
+                : secondRange.start.column;
+            const endColumn =
+              firstRange.end.line === endLine
+                ? firstRange.end.column
+                : secondRange.end.column;
+            return {
+              start: { line: startLine, column: startColumn },
+              end: { line: endLine, column: endColumn },
+            };
+          }),
+        )
+        .filter(notEmpty);
+      return { mutate: intersectedRanges };
+    } else if (first.mutate === true && second.mutate === true) {
+      return { mutate: true };
+    } else if (first.mutate === true) {
+      return second;
+    } else if (second.mutate === true) {
+      return first;
+    }
+    // Both have mutation ranges, but one of them is empty, so the intersection is empty
+    return { mutate: [] };
   }
 
   /**

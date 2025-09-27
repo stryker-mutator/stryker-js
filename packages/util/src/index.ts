@@ -13,3 +13,4 @@ export * from './deep-merge.js';
 export * from './find-unserializables.js';
 export * from './platform.js';
 export * from './split.js';
+export * from './iterator-helpers.js';
