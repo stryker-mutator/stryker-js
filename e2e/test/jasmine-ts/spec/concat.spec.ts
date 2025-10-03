@@ -1,4 +1,4 @@
-import { concat } from '../src/concat';
+import { concat } from '../src/concat.ts';
 
 describe(concat.name, () => {
   it('should concat a and b', () => {

@@ -1,4 +1,4 @@
-import { Song } from "./Song";
+import { Song } from "./Song.ts";
 
 export class Player {
   public currentlyPlayingSong: Song;
