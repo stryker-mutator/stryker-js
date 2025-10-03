@@ -1,5 +1,5 @@
-import { Player } from "../../src/Player";
-import { Song } from "../../src/Song";
+import { Player } from "../../src/Player.ts";
+import { Song } from "../../src/Song.ts";
 
 beforeEach(function () {
   jasmine.addMatchers({

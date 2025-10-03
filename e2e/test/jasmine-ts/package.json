@@ -6,10 +6,6 @@
     "test": "stryker run",
     "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
-  "mocha": {
-    "require": "ts-node/register/transpile-only",
-    "spec": "test/**/*.ts"
-  },
   "devDependencies": {
     "@types/jasmine": "~3.5.11"
   }
