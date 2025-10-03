@@ -6,10 +6,11 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-  "clean:reports": "rimraf \"reports\"",
-  "test:unit": "mocha",
-  "test:mutation": "stryker run",
-  "test": "npm run clean:reports && mocha --no-config --no-package --timeout 0 verify/verify.js"
+    "clean:reports": "rimraf \"reports\"",
+    "test:unit": "mocha",
+    "test:mutation": "stryker run",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test": "npm run clean:reports && test:mutation && node --run verify"
   },
   "author": "",
   "license": "ISC"
