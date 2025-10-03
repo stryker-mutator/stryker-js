@@ -62,7 +62,7 @@
     "download-incremental-reports": "./tasks/download-incremental-reports.sh",
     "test:mutation:incremental": "lerna run stryker --stream --concurrency 1 -- --incremental",
     "e2e": "npm run e2e:install && npm run e2e:lint && npm run e2e:run",
-    "e2e:install": "cd e2e && npm ci",
+    "e2e:install": "cd e2e && npm ci --force",
     "e2e:lint": "cd e2e && npm run lint",
     "e2e:run": "cd e2e && npm t",
     "e2e:update-snapshots": "CHAI_JEST_SNAPSHOT_UPDATE_ALL=true npm run e2e",
