@@ -5,13 +5,13 @@
   "description": "A module to test stryker-babel with stryker-javascript-mutator",
   "main": "index.js",
   "scripts": {
-    "prebuild": "rimraf dist",
     "tmp": "echo %cd%",
-    "build": "babel -d dist --only \"src/**/*.js\" --only \"test/**/*.js\" .",
-    "pretest": "rimraf \"reports\"",
-    "test": "stryker run",
+     "clean:dist": "rimraf dist",
+     "build": "npm run clean:dist && babel -d dist --only \"src/**/*.js\" --only \"test/**/*.js\" .",
+    "clean:reports": "rimraf \"reports\"",
     "test:unit": "mocha",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test": "npm run clean:reports && stryker run && npm run verify"
   },
   "keywords": [],
   "author": "",

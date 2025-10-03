@@ -23,7 +23,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
       - name: Install dependencies
-        run: npm ci --engine-strict
+        run: npm ci --engine-strict && npm run install:chromium
       - name: Build & lint & test
         run: npm run all
 
@@ -32,7 +32,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
-        run: npm ci
+        run: npm ci && npm run install:chromium
       - name: Build
         run: npm run build:no-check
       - name: Download incremental reports
@@ -63,7 +63,7 @@ jobs:
           node-version: 22.x
           cache: 'npm'
       - name: Install dependencies
-        run: npm ci --engine-strict
+        run: npm ci --engine-strict && npm run install:chromium
       - name: Build packages
         run: npm run build:no-check
       - name: e2e install

@@ -10,10 +10,10 @@
   ],
   "main": "index.js",
   "scripts": {
-    "pretest": "rimraf reports stryker.log",
-    "test": "stryker run",
+    "clean:reports": "rimraf reports stryker.log",
+    "test": "npm run clean:reports && stryker run && npm run verify",
     "test:unit": "mocha",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "author": "",
   "license": "ISC"

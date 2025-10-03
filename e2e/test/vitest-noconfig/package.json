@@ -5,9 +5,9 @@
   "description": "A module to perform an integration test",
   "main": "index.js",
   "scripts": {
-    "pretest": "rimraf \"reports\"",
-    "test": "stryker run",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "clean:reports": "rimraf \"reports\"",
+    "test": "npm run clean:reports && stryker run && npm run verify",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
     "test:unit": "vitest run"
   },
   "author": "",

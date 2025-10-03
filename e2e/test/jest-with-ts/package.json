@@ -2,9 +2,9 @@
   "name": "jest-with-ts",
   "description": "A test project for using stryker with jest and jest-ts preprocessor. Inspired by the stryker-dashboard source code.",
   "scripts": {
-    "test": "stryker run",
+    "test": "stryker run && npm run verify",
     "test:unit": "jest",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "type": "module",
   "dependencies": {

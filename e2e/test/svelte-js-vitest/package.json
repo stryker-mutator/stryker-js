@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "vite",
     "test:unit": "vitest run",
-    "test": "stryker run",
-    "posttest": "npm run verify",
+    "test": "stryker run && npm run verify",
     "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   }
 }

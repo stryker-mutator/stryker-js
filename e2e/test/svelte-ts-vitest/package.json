@@ -4,12 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "test:unit": "vitest run",
-    "test": "stryker run",
-    "posttest": "npm run verify",
-    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
-    "build": "vite build",
-    "preview": "vite preview"
+  "dev": "vite",
+  "test:unit": "vitest run",
+  "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+  "test": "stryker run && npm run verify",
+  "build": "vite build",
+  "preview": "vite preview"
   }
 }

@@ -5,9 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test:unit": "cross-env NODE_OPTIONS='--disallow-code-generation-from-strings' mocha",
-    "test": "stryker run",
-    "posttest": "mocha --no-config --no-timeout verify/verify.js"
+  "test:unit": "cross-env NODE_OPTIONS='--disallow-code-generation-from-strings' mocha",
+  "verify": "mocha --no-config --no-timeout verify/verify.js",
+  "test": "stryker run && npm run verify"
   },
   "keywords": [],
   "author": "",

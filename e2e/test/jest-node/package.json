@@ -2,8 +2,8 @@
   "name": "jest-node",
   "description": "Test for jest on node",
   "scripts": {
-    "test:unit": "jest",
-    "test": "stryker run",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+  "test:unit": "jest",
+  "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+  "test": "stryker run && npm run verify"
   }
 }

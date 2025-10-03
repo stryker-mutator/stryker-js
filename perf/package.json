@@ -8,10 +8,10 @@
     "typescript": "5.9.2"
   },
   "scripts": {
-    "postinstall": "npm run merge-config && npm run bootstrap",
-    "merge-config": "node tasks/merge-config.js",
-    "bootstrap": "node tasks/install.js",
-    "lint": "tsc",
-    "test": "node tasks/run-perf-tests.js"
+  "merge-config": "node tasks/merge-config.js",
+  "bootstrap": "node tasks/install.js",
+  "setup": "npm run merge-config && npm run bootstrap",
+  "lint": "tsc",
+  "test": "node tasks/run-perf-tests.js"
   }
 }

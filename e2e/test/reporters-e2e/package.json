@@ -6,10 +6,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "pretest": "rimraf \"reports\"",
-    "test": "mkdir -p reports && stryker run > reports/stdout.txt",
+    "clean:reports": "rimraf \"reports\"",
     "test:unit": "mocha",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test": "npm run clean:reports && mkdir -p reports && stryker run > reports/stdout.txt && npm run verify"
   },
   "author": "",
   "license": "ISC"

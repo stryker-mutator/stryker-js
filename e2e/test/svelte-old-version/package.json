@@ -5,9 +5,8 @@
   "scripts": {
     "test:unit": "cross-env NODE_OPTIONS=--experimental-vm-modules jest src",
     "test:watch": "npm run test -- --watch",
-    "test": "stryker run",
-    "posttest": "npm run verify",
-    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test": "stryker run && npm run verify"
   },
   "localDependencies": {
     "@stryker-mutator/api": "../../../packages/api",

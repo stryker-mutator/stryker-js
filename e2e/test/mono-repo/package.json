@@ -5,11 +5,11 @@
   "description": "A module to perform an integration test",
   "main": "index.js",
   "scripts": {
-    "postinstall": "node tasks/bootstrap.js",
-    "pretest": "rimraf \"reports\"",
-    "test": "stryker run",
+    "bootstrap": "node tasks/bootstrap.js",
+    "clean:reports": "rimraf \"reports\"",
+    "test": "npm run bootstrap && npm run clean:reports && stryker run && npm run verify",
     "test:unit": "mocha",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "author": "",
   "license": "ISC"
