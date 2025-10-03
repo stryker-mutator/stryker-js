@@ -5,10 +5,10 @@
   "description": "A module to perform an integration test",
   "type": "module",
   "scripts": {
-    "pretest": "rimraf \"reports\"",
-    "test": "stryker run",
+    "clean:reports": "rimraf \"reports\"",
+    "test": "npm run clean:reports && stryker run && npm run verify",
     "test:unit": "tap",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "author": "",
   "license": "ISC"

@@ -5,10 +5,10 @@
   "description": "A test package for mocha 5",
   "main": "index.js",
   "scripts": {
-    "pretest": "rimraf \"reports\"",
-    "test": "stryker run",
-    "test:unit": "mocha",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+  "clean:reports": "rimraf \"reports\"",
+  "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+  "test:unit": "mocha",
+  "test": "npm run clean:reports && stryker run && npm run verify"
   },
   "localDependencies": {
     "@stryker-mutator/api": "../../../packages/api",

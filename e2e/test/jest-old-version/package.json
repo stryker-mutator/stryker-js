@@ -3,8 +3,8 @@
   "description": "Test for the lower bound version of jest",
   "scripts": {
     "test:unit": "jest",
-    "test": "stryker run",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+    "test": "stryker run && npm run verify",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "localDependencies": {
     "@stryker-mutator/api": "../../../packages/api",

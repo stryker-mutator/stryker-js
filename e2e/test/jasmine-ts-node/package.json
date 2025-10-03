@@ -3,8 +3,8 @@
   "description": "A test for mocha using ts-node (no transpiler) using mocha package config",
   "scripts": {
     "test:unit": "jasmine",
-    "test": "stryker run",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test": "stryker run && npm run verify"
   },
   "mocha": {
     "require": "ts-node/register/transpile-only",

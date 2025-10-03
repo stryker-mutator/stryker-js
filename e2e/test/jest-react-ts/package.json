@@ -7,8 +7,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test:unit": "SKIP_PREFLIGHT_CHECK=true react-scripts test",
-    "test": "stryker run",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test": "stryker run && npm run verify",
     "eject": "react-scripts eject"
   },
   "browserslist": {

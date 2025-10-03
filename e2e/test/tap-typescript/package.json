@@ -6,10 +6,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "pretest": "rimraf \"reports\"",
-    "test": "stryker run",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js",
-    "test:unit": "NODE_OPTIONS=\"--loader ts-node/esm\" tap --ts"
+    "clean:reports": "rimraf \"reports\"",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test:unit": "NODE_OPTIONS=\"--loader ts-node/esm\" tap --ts",
+    "test": "npm run clean:reports && stryker run && npm run verify"
   },
   "author": "",
   "license": "ISC"

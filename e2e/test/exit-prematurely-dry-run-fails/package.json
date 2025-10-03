@@ -6,9 +6,9 @@
   "description": "A module to perform an integration test",
   "main": "index.js",
   "scripts": {
-    "pretest": "rimraf reports .stryker-tmp stryker.log",
-    "test": "stryker run || node -p \"require('fs').appendFileSync('stryker.log', 'Exited with an error exit code')\"",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+    "clean:reports": "rimraf reports .stryker-tmp stryker.log",
+    "test": "npm run clean:reports && (stryker run || node -p \"require('fs').appendFileSync('stryker.log', 'Exited with an error exit code')\") && npm run verify",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "author": "",
   "license": "ISC"

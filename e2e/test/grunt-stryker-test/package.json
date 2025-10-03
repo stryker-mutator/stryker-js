@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "pretest": "rimraf reports stryker.log",
-    "test": "grunt test",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+    "clean:reports": "rimraf reports stryker.log",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test": "npm run clean:reports && grunt test && npm run verify"
   }
 }

@@ -3,10 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "pretest": "rimraf \"reports\"",
-    "test": "stryker run",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js",
-    "test:unit": "vitest run"
+    "clean:reports": "rimraf \"reports\"",
+    "test:unit": "vitest run",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test": "npm run clean:reports && stryker run && npm run verify"
   },
   "dependencies": {
     "vue": "^3.5.13"

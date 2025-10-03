@@ -5,8 +5,8 @@
   "private": true,
   "description": "A module to test a flow project, see https://flow.org/",
   "scripts": {
-    "test:unit": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --testPathIgnorePatterns verify",
-    "test": "stryker run",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+  "test:unit": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --testPathIgnorePatterns verify",
+  "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+  "test": "stryker run && npm run verify"
   }
 }
