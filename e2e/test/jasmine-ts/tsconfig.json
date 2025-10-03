@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "lib": ["ES2017"],
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "strict": false,
+    "target": "ES2017",
+    "types": ["jasmine"],
+    "erasableSyntaxOnly": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true
+  },
+  "include": ["src", "spec"]
+}
