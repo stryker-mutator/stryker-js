@@ -67,7 +67,7 @@
     "e2e:update-snapshots": "CHAI_JEST_SNAPSHOT_UPDATE_ALL=true npm run e2e",
     "perf": "cd perf && npm ci && npm run setup && npm run lint && npm t && cd ..",
     "start": "tsc -b -w",
-    "release": "lerna version",
+    "release": "npm_config_ignore_scripts=false GH_TOKEN=$(gh auth token) lerna version",
     "version": "node tasks/bump-peer-deps.js"
   },
   "engines": {
