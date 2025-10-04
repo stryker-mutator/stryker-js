@@ -43,9 +43,9 @@ jobs:
           GH_TOKEN: ${{ secrets.STRYKER_MUTATOR_NPA_KEY }}
         shell: bash
         run: |
-          gh auth setup-git
           # Remove checkout's auth header so the credential helper (gh) is used
           git config --unset-all http.https://github.com/.extraheader || true
+          gh auth setup-git
 
       - name: Sync to latest branch tip
         shell: bash
