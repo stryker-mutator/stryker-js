@@ -14,10 +14,24 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       contains(fromJSON('["renovate[bot]"]'), github.actor)
     runs-on: ubuntu-latest
+    env:
+      IS_INTERNAL_PR: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+      GIT_AUTHOR_NAME: 'Stryker Bot'
+      GIT_AUTHOR_EMAIL: 'strykermutator.npa@gmail.com'
+      GIT_COMMITTER_NAME: 'Stryker Bot'
+      GIT_COMMITTER_EMAIL: 'strykermutator.npa@gmail.com'
+
     steps:
-      - name: Checkout
+      - name: Ensure this job is allowed to use secrets
+        if: env.IS_INTERNAL_PR != 'true'
+        run: |
+          echo "This workflow only pushes from same-repo branches or manual runs."
+          exit 0
+
+      - name: Checkout (with NPA PAT)
         uses: actions/checkout@v4
         with:
+          token: ${{ secrets.STRYKER_MUTATOR_NPA_KEY }}
           fetch-depth: 0
           ref: ${{ github.head_ref || github.ref_name }}
 
@@ -27,7 +41,6 @@ jobs:
           set -euo pipefail
           REF="${{ github.head_ref || github.ref_name }}"
           git fetch origin "$REF"
-          # Put HEAD on the branch and match remote tip
           git switch -C "$REF" "origin/$REF"
 
       - name: Set up Node
@@ -52,12 +65,14 @@ jobs:
             exit 0
           fi
 
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name  "${GIT_AUTHOR_NAME}"
+          git config user.email "${GIT_AUTHOR_EMAIL}"
 
           git add package-lock.json
           git commit -m "Regen lockfile"
 
-          # Push back to the PR branch (or current ref for workflow_dispatch)
+          # Ensure pushes go over HTTPS with the NPA PAT
+          git remote set-url origin "https://x-access-token:${{ secrets.NPA_PAT }}@github.com/${{ github.repository }}.git"
+
           REF="${{ github.head_ref || github.ref_name }}"
           git push --force-with-lease origin "HEAD:${REF}"
