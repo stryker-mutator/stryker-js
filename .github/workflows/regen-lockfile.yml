@@ -41,7 +41,11 @@ jobs:
       - name: Configure Git auth via gh cli
         env:
           GH_TOKEN: ${{ secrets.STRYKER_MUTATOR_NPA_KEY }}
-        run: gh auth setup-git
+        shell: bash
+        run: |
+          gh auth setup-git
+          # Remove checkout's auth header so the credential helper (gh) is used
+          git config --unset-all http.https://github.com/.extraheader || true
 
       - name: Sync to latest branch tip
         shell: bash
