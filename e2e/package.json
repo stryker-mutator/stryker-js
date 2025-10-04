@@ -72,6 +72,11 @@
     "webpack": "5.101.3",
     "webpack-cli": "6.0.1"
   },
+  "overrides": {
+    "karma-vite": {
+      "vite": "7.1.3"
+    }
+  },
   "scripts": {
     "setup": "npm ci && npm run bootstrap && npm run install-local-dependencies",
     "bootstrap": "node tasks/bootstrap.js",
