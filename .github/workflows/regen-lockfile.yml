@@ -31,6 +31,7 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.head_ref || github.ref_name }}
+          persist-credentials: false
 
       - name: Set git identity
         shell: bash
@@ -43,8 +44,7 @@ jobs:
           GH_TOKEN: ${{ secrets.STRYKER_MUTATOR_NPA_KEY }}
         shell: bash
         run: |
-          # Remove checkout's auth header so the credential helper (gh) is used
-          git config --unset-all http.https://github.com/.extraheader || true
+          echo "$GH_TOKEN" | gh auth login --with-token
           gh auth setup-git
 
       - name: Sync to latest branch tip
