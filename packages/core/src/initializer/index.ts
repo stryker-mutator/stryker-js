@@ -1,4 +1,4 @@
-import { createInjector } from 'typed-inject';
+import { Injector } from 'typed-inject';
 import { execaCommand, execaCommandSync } from 'execa';
 import { resolveFromCwd } from '@stryker-mutator/util';
 
@@ -14,8 +14,10 @@ import { GitignoreWriter } from './gitignore-writer.js';
 import { createNpmRegistryClient, getRegistry } from './npm-registry.js';
 import { provideLogging, provideLoggingBackend } from '../logging/index.js';
 
-export async function initializerFactory(): Promise<StrykerInitializer> {
-  return provideLogging(await provideLoggingBackend(createInjector()))
+export async function initializerFactory(
+  injector: Injector,
+): Promise<StrykerInitializer> {
+  return provideLogging(await provideLoggingBackend(injector))
     .provideValue(initializerTokens.out, console.log)
     .provideValue(coreTokens.execa, execaCommand)
     .provideValue(coreTokens.execaSync, execaCommandSync)

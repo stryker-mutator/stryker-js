@@ -15,6 +15,7 @@ import { Stryker } from './stryker.js';
 import { defaultOptions } from './config/index.js';
 import { strykerEngines, strykerVersion } from './stryker-package.js';
 import { StrykerServer } from './stryker-server.js';
+import { createInjector } from 'typed-inject';
 
 /**
  * Interpret a command line argument and add it to an object.
@@ -62,7 +63,7 @@ export class StrykerCli {
     },
   ) {}
 
-  public run(): void {
+  public run(createInjectorImpl = createInjector): void {
     const dashboard: Partial<DashboardOptions> = {};
     this.program
 
@@ -268,7 +269,15 @@ export class StrykerCli {
     }
 
     const commands = {
-      init: async () => (await initializerFactory()).initialize(),
+      init: async () => {
+        const inj = createInjectorImpl();
+        try {
+          const initializer = await initializerFactory(inj);
+          await initializer.initialize();
+        } finally {
+          await inj.dispose();
+        }
+      },
       run: () => this.runMutationTest(options),
       runServer: () => this.runMutationTestingServer(options),
     };
