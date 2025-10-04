@@ -186,10 +186,13 @@ describe(StrykerServer.name, () => {
       await sut.start();
       sut.mutationTest({}).subscribe().unsubscribe();
 
-      expect(strykerRunStub).to.have.been.calledWithMatch(
-        sinon.match.any,
-        sinon.match.has('configFile', configureParams.configFilePath),
-      );
+      sinon.assert.calledWithMatch(strykerRunStub, sinon.match.any, {
+        cliOptions: {
+          ...cliOptions,
+          configFile: 'non-existent-test-file',
+        },
+        targetMutatePatterns: undefined,
+      });
     });
 
     it('returns the version after configuring successfully', () => {
@@ -338,6 +341,22 @@ describe(StrykerServer.name, () => {
         },
       });
     });
+
+    it('should use the cli options when discovering', async () => {
+      cliOptions = { configFile: 'stryker.config.ts' };
+      sut = new StrykerServer(cliOptions, () => injectorMock);
+      setupStart();
+      await sut.start();
+
+      await sut.discover({});
+
+      sinon.assert.calledWithMatch(prepareExecutorMock.execute, {
+        cliOptions: {
+          ...cliOptions,
+        },
+        targetMutatePatterns: undefined,
+      });
+    });
   });
 
   describe('mutationTest', () => {
@@ -380,12 +399,15 @@ describe(StrykerServer.name, () => {
       reporter.onMutantTested!(mutantResult);
       const mutant = await mutationTestPromise;
 
+      // Assert
       expect(mutant).to.deep.equal(mutantResult);
-      expect(strykerRunStub).to.have.been.calledWithMatch(sinon.match.any, {
-        ...cliOptions,
-        allowConsoleColors: false,
-        configFile: 'non-existent-test-file',
-        mutate: ['foo.js'],
+      sinon.assert.calledWithMatch(strykerRunStub, sinon.match.any, {
+        cliOptions: {
+          ...cliOptions,
+          allowConsoleColors: false,
+          configFile: 'non-existent-test-file',
+        },
+        targetMutatePatterns: ['foo.js'],
       });
     });
 
@@ -407,11 +429,13 @@ describe(StrykerServer.name, () => {
       const mutant = await mutationTestPromise;
 
       expect(mutant).to.deep.equal(mutantResult);
-      expect(strykerRunStub).to.have.been.calledWithMatch(sinon.match.any, {
-        ...cliOptions,
-        allowConsoleColors: false,
-        configFile: 'non-existent-test-file',
-        mutate: ['src/**/*'],
+      sinon.assert.calledWithMatch(strykerRunStub, sinon.match.any, {
+        cliOptions: {
+          ...cliOptions,
+          allowConsoleColors: false,
+          configFile: 'non-existent-test-file',
+        },
+        targetMutatePatterns: ['src/**/*'],
       });
     });
 
@@ -443,11 +467,13 @@ describe(StrykerServer.name, () => {
       const mutant = await mutationTestPromise;
 
       expect(mutant).to.deep.equal(mutantResult);
-      expect(strykerRunStub).to.have.been.calledWithMatch(sinon.match.any, {
-        ...cliOptions,
-        allowConsoleColors: false,
-        configFile: 'non-existent-test-file',
-        mutate: ['foo.js:1:19-2:19'],
+      sinon.assert.calledWithMatch(strykerRunStub, sinon.match.any, {
+        cliOptions: {
+          ...cliOptions,
+          allowConsoleColors: false,
+          configFile: 'non-existent-test-file',
+        },
+        targetMutatePatterns: ['foo.js:1:19-2:19'],
       });
     });
   });

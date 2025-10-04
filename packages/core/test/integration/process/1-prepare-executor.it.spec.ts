@@ -29,7 +29,7 @@ describe(`${PrepareExecutor.name} integration test`, () => {
         port: 4200,
       } satisfies LoggingServerAddress)
       .injectClass(PrepareExecutor);
-    await sut.execute(cliOptions);
+    await sut.execute({ cliOptions, targetMutatePatterns: undefined });
     expect(testInjector.logger.warn).calledWithMatch(
       sinon.match(
         'Unknown stryker config option "this is an unknown property"',

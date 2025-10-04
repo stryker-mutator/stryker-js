@@ -8,6 +8,7 @@ import {
   DryRunExecutor,
   MutationTestExecutor,
   PrepareExecutorContext,
+  PrepareExecutorArgs,
 } from './process/index.js';
 import { coreTokens } from './di/index.js';
 import { retrieveCause, ConfigError } from './errors.js';
@@ -42,7 +43,10 @@ export class Stryker {
       const prepareInjector = provideLogging(
         await provideLoggingBackend(rootInjector),
       ).provideValue(coreTokens.reporterOverride, undefined);
-      return await Stryker.run(prepareInjector, this.cliOptions);
+      return await Stryker.run(prepareInjector, {
+        cliOptions: this.cliOptions,
+        targetMutatePatterns: undefined,
+      });
     } finally {
       await rootInjector.dispose();
     }
@@ -55,13 +59,12 @@ export class Stryker {
    */
   static async run(
     mutationRunInjector: Injector<MutationRunContext>,
-    cliOptions: PartialStrykerOptions,
+    args: PrepareExecutorArgs,
   ): Promise<MutantResult[]> {
     try {
       // 1. Prepare. Load Stryker configuration, load the input files
       const prepareExecutor = mutationRunInjector.injectClass(PrepareExecutor);
-      const mutantInstrumenterInjector =
-        await prepareExecutor.execute(cliOptions);
+      const mutantInstrumenterInjector = await prepareExecutor.execute(args);
 
       try {
         // 2. Mutate and instrument the files and write to the sandbox.

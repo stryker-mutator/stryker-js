@@ -11,7 +11,12 @@ import {
 } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { ERROR_CODES, I, isErrnoException } from '@stryker-mutator/util';
+import {
+  ERROR_CODES,
+  I,
+  isErrnoException,
+  notEmpty,
+} from '@stryker-mutator/util';
 import type { MutationTestResult } from 'mutation-testing-report-schema/api';
 
 import { OpenEndLocation } from 'mutation-testing-report-schema';
@@ -83,9 +88,14 @@ export class ProjectReader {
     this.force = force;
   }
 
-  public async read(): Promise<Project> {
+  public async read(
+    targetMutatePatterns: string[] | undefined,
+  ): Promise<Project> {
     const inputFileNames = await this.resolveInputFileNames();
-    const fileDescriptions = this.resolveFileDescriptions(inputFileNames);
+    const fileDescriptions = this.resolveFileDescriptions(
+      inputFileNames,
+      targetMutatePatterns,
+    );
     const project = new Project(
       this.fs,
       fileDescriptions,
@@ -104,8 +114,12 @@ export class ProjectReader {
    * Takes the list of file names and creates file description object from it, containing logic about wether or not it needs to be mutated.
    * If a mutate pattern starts with a `!`, it negates the pattern.
    * @param inputFileNames the file names to filter
+   * @param targetMutatePatterns optional mutate patterns to limit the initial scope of files to mutate (with ranges)
    */
-  private resolveFileDescriptions(inputFileNames: string[]): FileDescriptions {
+  private resolveFileDescriptions(
+    inputFileNames: string[],
+    targetMutatePatterns: string[] | undefined,
+  ): FileDescriptions {
     // Only log about useless patterns when the user actually configured it
     const logAboutUselessPatterns = !isDeepStrictEqual(
       this.mutatePatterns,
@@ -141,19 +155,50 @@ export class ProjectReader {
         for (const [fileName, file] of files) {
           mutateInputFileMap.set(
             fileName,
-            this.mergeFileDescriptions(file, mutateInputFileMap.get(fileName)),
+            this.unionFileDescriptions(file, mutateInputFileMap.get(fileName)),
           );
+        }
+      }
+    }
+
+    if (targetMutatePatterns) {
+      // Now filter on the target patterns, but only when specified
+      // First, collect all files that should be mutated in 'seen'
+      const seen = new Map<string, FileDescription>();
+      for (const pattern of targetMutatePatterns) {
+        const files = this.filterMutatePattern(
+          mutateInputFileMap.keys(),
+          pattern,
+        );
+        for (const [fileName, description] of files) {
+          const intersected = this.intersectFileDescriptions(
+            mutateInputFileMap.get(fileName)!,
+            description,
+          );
+          seen.set(
+            fileName,
+            this.unionFileDescriptions(intersected, seen.get(fileName)),
+          );
+        }
+      }
+      // Now, reset the mutateInputFileMap to false for all files that we didn't see, but only mark files to be mutated when they appeared in the configured target patterns
+      // We do this so we return all the input files, with its status on whether or not to mutate it
+      for (const fileName of mutateInputFileMap.keys()) {
+        const descriptionInSeen = seen.get(fileName);
+        if (descriptionInSeen) {
+          mutateInputFileMap.set(fileName, descriptionInSeen);
+        } else {
+          mutateInputFileMap.set(fileName, { mutate: false });
         }
       }
     }
     return Object.fromEntries(mutateInputFileMap);
   }
 
-  private mergeFileDescriptions(
+  private unionFileDescriptions(
     first: FileDescription,
     second?: FileDescription,
   ): FileDescription {
-    // First is always an array or true
     if (second) {
       if (Array.isArray(first.mutate) && Array.isArray(second.mutate)) {
         return { mutate: [...second.mutate, ...first.mutate] };
@@ -164,6 +209,50 @@ export class ProjectReader {
       return { mutate: first.mutate || second.mutate };
     }
     return first;
+  }
+
+  private intersectFileDescriptions(
+    first: FileDescription,
+    second: FileDescription,
+  ): FileDescription {
+    if (Array.isArray(first.mutate) && Array.isArray(second.mutate)) {
+      // Both have mutation ranges, intersect them
+      const secondMutate = second.mutate;
+      const intersectedRanges = first.mutate
+        .flatMap((firstRange) =>
+          secondMutate.map((secondRange) => {
+            const startLine = Math.max(
+              firstRange.start.line,
+              secondRange.start.line,
+            );
+            const endLine = Math.min(firstRange.end.line, secondRange.end.line);
+            if (startLine > endLine) {
+              return;
+            }
+            const startColumn =
+              firstRange.start.line === startLine
+                ? firstRange.start.column
+                : secondRange.start.column;
+            const endColumn =
+              firstRange.end.line === endLine
+                ? firstRange.end.column
+                : secondRange.end.column;
+            return {
+              start: { line: startLine, column: startColumn },
+              end: { line: endLine, column: endColumn },
+            };
+          }),
+        )
+        .filter(notEmpty);
+      return { mutate: intersectedRanges };
+    } else if (first.mutate === true) {
+      return second;
+    } else if (second.mutate === true) {
+      return first;
+    }
+
+    // Both have mutation ranges, but one of them is empty, so the intersection is empty
+    return { mutate: false };
   }
 
   /**

@@ -123,7 +123,10 @@ describe(Stryker.name, () => {
       cliOptions.logLevel = LogLevel.Trace;
       const expectedCliOptions = { ...cliOptions };
       await sut.runMutationTest();
-      sinon.assert.calledWith(prepareExecutorMock.execute, expectedCliOptions);
+      sinon.assert.calledWith(prepareExecutorMock.execute, {
+        cliOptions: expectedCliOptions,
+        targetMutatePatterns: undefined,
+      });
     });
 
     it('should reject when prepare rejects', async () => {

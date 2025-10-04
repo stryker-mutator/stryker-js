@@ -27,7 +27,7 @@ describe(ProjectReader.name, () => {
     it('should log a warning if no files were resolved', async () => {
       stubFileSystem({}); // empty dir
       const sut = createSut();
-      await sut.read();
+      await sut.read(undefined);
       expect(testInjector.logger.warn).calledWith(
         `No files found in directory ${process.cwd()} using ignore rules: ["node_modules",".git","*.tsbuildinfo","/stryker.log",".next",".nuxt",".svelte-kit",".stryker-tmp","reports/stryker-incremental.json","reports/mutation/mutation.html","reports/mutation/mutation.json"]. Make sure you run Stryker from the root directory of your project with the correct "ignorePatterns".`,
       );
@@ -48,7 +48,7 @@ describe(ProjectReader.name, () => {
       const sut = createSut();
 
       // Act
-      const result = await sut.read();
+      const result = await sut.read(undefined);
 
       // Assert
       expect([...result.files.keys()]).deep.eq([
@@ -78,7 +78,7 @@ describe(ProjectReader.name, () => {
       });
       testInjector.options.ignorePatterns = ['dist'];
       const sut = createSut();
-      const result = await sut.read();
+      const result = await sut.read(undefined);
       expect([...result.files.keys()]).deep.eq([
         path.resolve('src', 'index.js'),
       ]);
@@ -94,7 +94,7 @@ describe(ProjectReader.name, () => {
       });
       testInjector.options.ignorePatterns = ['/packages/*/dist'];
       const sut = createSut();
-      const { files } = await sut.read();
+      const { files } = await sut.read(undefined);
       expect(files).lengthOf(1);
       expect(files.keys().next().value).eq(
         path.resolve('packages', 'app', 'src', 'index.js'),
@@ -120,7 +120,7 @@ describe(ProjectReader.name, () => {
       const sut = createSut();
 
       // Act
-      const { files } = await sut.read();
+      const { files } = await sut.read(undefined);
 
       // Assert
       expect(files).lengthOf(1);
@@ -145,7 +145,7 @@ describe(ProjectReader.name, () => {
       const sut = createSut();
 
       // Act
-      const { files } = await sut.read();
+      const { files } = await sut.read(undefined);
 
       // Assert
       expect(files).lengthOf(4);
@@ -168,7 +168,7 @@ describe(ProjectReader.name, () => {
       });
       const sut = createSut();
       // Act
-      const { files } = await sut.read();
+      const { files } = await sut.read(undefined);
       // Assert
       expect(files).lengthOf(1);
       expect(files.keys().next().value).eq(
@@ -184,7 +184,7 @@ describe(ProjectReader.name, () => {
       });
       const sut = createSut();
       // Act
-      const { files } = await sut.read();
+      const { files } = await sut.read(undefined);
       // Assert
       expect(files).lengthOf(0);
     });
@@ -199,7 +199,7 @@ describe(ProjectReader.name, () => {
       testInjector.options.ignorePatterns = ['!node_modules'];
       const sut = createSut();
       // Act
-      const { files } = await sut.read();
+      const { files } = await sut.read(undefined);
       // Assert
       expect(files).lengthOf(2);
       expect(new Set(files.keys())).deep.eq(
@@ -220,7 +220,7 @@ describe(ProjectReader.name, () => {
       testInjector.options.ignorePatterns = ['!testResources/**/node_modules'];
       const sut = createSut();
       // Act
-      const { files } = await sut.read();
+      const { files } = await sut.read(undefined);
       // Assert
       expect(files).lengthOf(1);
       expect(files.keys().next().value).eq(
@@ -236,7 +236,7 @@ describe(ProjectReader.name, () => {
     it('should reject if fs commands fail', async () => {
       const expectedError = factory.fileNotFoundError();
       fsMock.readdir.rejects(expectedError);
-      await expect(createSut().read()).rejectedWith(expectedError);
+      await expect(createSut().read(undefined)).rejectedWith(expectedError);
     });
     it('should allow whitelisting with "**"', async () => {
       stubFileSystem({
@@ -245,7 +245,7 @@ describe(ProjectReader.name, () => {
       });
       testInjector.options.ignorePatterns = ['**', '!src/**/*.js'];
       const sut = createSut();
-      const { files } = await sut.read();
+      const { files } = await sut.read(undefined);
       expect(files).lengthOf(1);
       expect(files.keys().next().value).eq(path.resolve('src', 'index.js'));
     });
@@ -258,7 +258,7 @@ describe(ProjectReader.name, () => {
       });
       testInjector.options.ignorePatterns = ['**', '!app/src/index.js'];
       const sut = createSut();
-      const { files } = await sut.read();
+      const { files } = await sut.read(undefined);
       expect(files).lengthOf(1);
       expect(files.keys().next().value).eq(
         path.resolve('app', 'src', 'index.js'),
@@ -273,7 +273,7 @@ describe(ProjectReader.name, () => {
       const sut = createSut();
 
       // Act
-      const result = await sut.read();
+      const result = await sut.read(undefined);
 
       // Assert
       const expectedFileName = path.resolve('mute1.js');
@@ -286,7 +286,7 @@ describe(ProjectReader.name, () => {
       });
       testInjector.options.mutate = ['!mute1.js', 'mute1.js'];
       const sut = createSut();
-      const result = await sut.read();
+      const result = await sut.read(undefined);
       expect(result.filesToMutate).lengthOf(1);
       expect(result.filesToMutate.get(path.resolve('mute1.js'))!.mutate).to.be
         .true;
@@ -298,7 +298,7 @@ describe(ProjectReader.name, () => {
       });
       testInjector.options.mutate = ['mute1.js', '!mute1.js'];
       const sut = createSut();
-      const result = await sut.read();
+      const result = await sut.read(undefined);
       expect(result.filesToMutate).lengthOf(0);
     });
     describe('without mutate files', () => {
@@ -313,7 +313,7 @@ describe(ProjectReader.name, () => {
         });
         // Act
         const sut = createSut();
-        await sut.read();
+        await sut.read(undefined);
 
         // Assert
         expect(testInjector.logger.warn).calledWith(
@@ -352,7 +352,7 @@ describe(ProjectReader.name, () => {
         const sut = createSut();
 
         // Act
-        const result = await sut.read();
+        const result = await sut.read(undefined);
 
         // Assert
         const expectedFileName = path.resolve('mute1.js');
@@ -377,7 +377,7 @@ describe(ProjectReader.name, () => {
       it('should default column numbers if not present', async () => {
         testInjector.options.mutate = ['mute1.js:6-12'];
         const sut = createSut();
-        const result = await sut.read();
+        const result = await sut.read(undefined);
         const expectedMutate: MutateDescription = [
           mutateRange(5, 0, 11, Number.MAX_SAFE_INTEGER),
         ];
@@ -390,7 +390,7 @@ describe(ProjectReader.name, () => {
       it('should allow multiple mutation ranges', async () => {
         testInjector.options.mutate = ['mute1.js:6-12', 'mute1.js:50-60'];
         const sut = createSut();
-        const result = await sut.read();
+        const result = await sut.read(undefined);
         const expectedMutate: MutateDescription = [
           mutateRange(5, 0, 11, Number.MAX_SAFE_INTEGER),
           mutateRange(49, 0, 59, Number.MAX_SAFE_INTEGER),
@@ -404,7 +404,7 @@ describe(ProjectReader.name, () => {
       it('should mutate a specific range when the full file is negated earlier', async () => {
         testInjector.options.mutate = ['!mute1.js', 'mute1.js:6-12'];
         const sut = createSut();
-        const result = await sut.read();
+        const result = await sut.read(undefined);
         const expectedMutate: MutateDescription = [
           mutateRange(5, 0, 11, Number.MAX_SAFE_INTEGER),
         ];
@@ -417,14 +417,14 @@ describe(ProjectReader.name, () => {
       it('should not mutate a specific range after the full file is negated', async () => {
         testInjector.options.mutate = ['mute1.js:6-12', '!mute1.js'];
         const sut = createSut();
-        const result = await sut.read();
+        const result = await sut.read(undefined);
         expect(result.filesToMutate).lengthOf(0);
       });
 
       it('should mutate the complete file when both a range and no range are specified', async () => {
         testInjector.options.mutate = ['mute1.js:6-12', 'mute1.js'];
         const sut = createSut();
-        const result = await sut.read();
+        const result = await sut.read(undefined);
         expect(result.filesToMutate).lengthOf(1);
         expect(result.filesToMutate.get(path.resolve('mute1.js'))!.mutate).to.be
           .true;
@@ -433,7 +433,7 @@ describe(ProjectReader.name, () => {
       it('should mutate the complete file when both no range and a range are specified', async () => {
         testInjector.options.mutate = ['mute1.js', 'mute1.js:6-12'];
         const sut = createSut();
-        const result = await sut.read();
+        const result = await sut.read(undefined);
         expect(result.filesToMutate).lengthOf(1);
         expect(result.filesToMutate.get(path.resolve('mute1.js'))!.mutate).to.be
           .true;
@@ -444,7 +444,7 @@ describe(ProjectReader.name, () => {
         stubFileSystemWith5Files();
         testInjector.options.mutate = ['mute*'];
         const sut = createSut();
-        const result = await sut.read();
+        const result = await sut.read(undefined);
         expect([...result.filesToMutate.keys()]).to.deep.equal([
           path.resolve('mute1.js'),
           path.resolve('mute2.js'),
@@ -457,6 +457,7 @@ describe(ProjectReader.name, () => {
           path.resolve('mute2.js'),
         ]);
       });
+
       it('mutates an explicit file when already mutating all files in a folder', async () => {
         stubFileSystem({
           folder: {
@@ -465,7 +466,7 @@ describe(ProjectReader.name, () => {
         });
         testInjector.options.mutate = ['folder/', 'folder/mute1.js'];
         const sut = createSut();
-        const result = await sut.read();
+        const result = await sut.read(undefined);
         expect([...result.filesToMutate.keys()]).to.deep.equal([
           path.resolve('folder/mute1.js'),
         ]);
@@ -475,7 +476,7 @@ describe(ProjectReader.name, () => {
         testInjector.options.mutate = ['mute*'];
         testInjector.options.ignorePatterns = ['mute2.js'];
         const sut = createSut();
-        const result = await sut.read();
+        const result = await sut.read(undefined);
         expect([...result.filesToMutate.keys()]).to.deep.equal([
           path.resolve('mute1.js'),
         ]);
@@ -492,7 +493,7 @@ describe(ProjectReader.name, () => {
           },
         });
         const sut = createSut();
-        await sut.read();
+        await sut.read(undefined);
         expect(testInjector.logger.warn).calledTwice;
         expect(testInjector.logger.warn).calledWith(
           'Glob pattern "!src/index.js" did not exclude any files.',
@@ -508,8 +509,250 @@ describe(ProjectReader.name, () => {
           },
         });
         const sut = createSut();
-        await sut.read();
+        await sut.read(undefined);
         expect(testInjector.logger.warn).not.called;
+      });
+
+      describe('with targetMutatePatterns', () => {
+        it('should result in the expected mutate files', async () => {
+          stubFileSystemWith5Files();
+          testInjector.options.mutate = ['mute*'];
+          const sut = createSut();
+          const result = await sut.read(['mute1.js', 'mute2.js']);
+          expect([...result.filesToMutate.keys()]).to.deep.equal([
+            path.resolve('mute1.js'),
+            path.resolve('mute2.js'),
+          ]);
+          expect([...result.files.keys()]).to.deep.equal([
+            path.resolve('file1.js'),
+            path.resolve('file2.js'),
+            path.resolve('file3.js'),
+            path.resolve('mute1.js'),
+            path.resolve('mute2.js'),
+          ]);
+        });
+        it('should not mutate any files if targetMutatePatterns is empty', async () => {
+          stubFileSystemWith5Files();
+          testInjector.options.mutate = ['*'];
+          const sut = createSut();
+          const targetMutatePatterns: string[] = [];
+          const result = await sut.read(targetMutatePatterns);
+          expect([...result.filesToMutate.keys()]).to.deep.equal([]);
+        });
+
+        it('should not mutate any files if mutate patterns is empty', async () => {
+          stubFileSystemWith5Files();
+          testInjector.options.mutate = [];
+          const sut = createSut();
+          const targetMutatePatterns = ['**/*'];
+          const result = await sut.read(targetMutatePatterns);
+          expect([...result.filesToMutate.keys()]).to.deep.equal([]);
+        });
+
+        it('should only mutate files that match both targetMutatePatterns and mutate patterns', async () => {
+          stubFileSystemWith5Files();
+          testInjector.options.mutate = ['mute*'];
+          const sut = createSut();
+          // Only mute1.js is in the target scope and matches mutate
+          const targetMutatePatterns = ['mute1.js'];
+          const result = await sut.read(targetMutatePatterns);
+          expect([...result.filesToMutate.keys()]).to.deep.equal([
+            path.resolve('mute1.js'),
+          ]);
+          expect(result.filesToMutate.get(path.resolve('mute1.js'))!.mutate).to
+            .be.true;
+        });
+
+        it('should not mutate files not in targetMutatePatterns, even if mutate matches files', async () => {
+          stubFileSystemWith5Files();
+          testInjector.options.mutate = ['mute*'];
+          const sut = createSut();
+          // No files in the target scope match mutate
+          const targetMutatePatterns = ['file3.js'];
+          const result = await sut.read(targetMutatePatterns);
+          expect([...result.filesToMutate.keys()]).to.deep.equal([]);
+        });
+
+        it('should have all files in project result', async () => {
+          stubFileSystemWith5Files();
+          testInjector.options.mutate = ['mute*'];
+          const sut = createSut();
+          const targetMutatePatterns = ['**/*'];
+          const result = await sut.read(targetMutatePatterns);
+          expect([...result.filesToMutate.keys()]).to.deep.equal([
+            path.resolve('mute1.js'),
+            path.resolve('mute2.js'),
+          ]);
+          expect([...result.files.keys()]).to.deep.equal([
+            path.resolve('file1.js'),
+            path.resolve('file2.js'),
+            path.resolve('file3.js'),
+            path.resolve('mute1.js'),
+            path.resolve('mute2.js'),
+          ]);
+        });
+
+        describe('with ranges', () => {
+          it('should support targetMutatePatterns with ranges', async () => {
+            stubFileSystemWith5Files();
+            testInjector.options.mutate = ['mute*'];
+            const sut = createSut();
+            // Only mute1.js is in the target scope, and only a range is allowed
+            const targetMutatePatterns = ['mute1.js:2-3'];
+            const result = await sut.read(targetMutatePatterns);
+            expect([...result.filesToMutate.keys()]).to.deep.equal([
+              path.resolve('mute1.js'),
+            ]);
+            expect(
+              result.filesToMutate.get(path.resolve('mute1.js'))!.mutate,
+            ).to.deep.equal([
+              {
+                start: { line: 1, column: 0 },
+                end: { line: 2, column: Number.MAX_SAFE_INTEGER },
+              },
+            ]);
+          });
+
+          it('should mutate only the overlapping part between mutate and targetMutatePatterns when only mutate has ranges', async () => {
+            stubFileSystem({
+              'mute.js': 'file content',
+            });
+
+            testInjector.options.mutate = ['mute.js:3-10'];
+            const sut = createSut();
+            const targetMutatePatterns = ['mute.js'];
+            const result = await sut.read(targetMutatePatterns);
+            expect([...result.filesToMutate.keys()]).to.deep.equal([
+              path.resolve('mute.js'),
+            ]);
+            expect(
+              result.filesToMutate.get(path.resolve('mute.js'))!.mutate,
+            ).to.deep.equal([
+              {
+                start: { line: 2, column: 0 },
+                end: { line: 9, column: Number.MAX_SAFE_INTEGER },
+              },
+            ]);
+          });
+
+          it('should only mutate the single overlapping part between mutate and targetMutatePatterns', async () => {
+            stubFileSystemWith5Files();
+            testInjector.options.mutate = ['mute1.js:3-10'];
+            const sut = createSut();
+            // Only mute1.js is in the target scope, and only a range is allowed
+            const targetMutatePatterns = ['mute1.js:1-4'];
+            const result = await sut.read(targetMutatePatterns);
+            expect([...result.filesToMutate.keys()]).to.deep.equal([
+              path.resolve('mute1.js'),
+            ]);
+            expect(
+              result.filesToMutate.get(path.resolve('mute1.js'))!.mutate,
+            ).to.deep.equal([
+              {
+                start: { line: 2, column: 0 },
+                end: { line: 3, column: Number.MAX_SAFE_INTEGER },
+              },
+            ]);
+          });
+
+          it('should support mutate with multiple overlapping line parts between mutate and targetMutatePatterns', async () => {
+            stubFileSystemWith5Files();
+            testInjector.options.mutate = ['mute1.js:3-10'];
+            const sut = createSut();
+            // Only mute1.js is in the target scope, and only a range is allowed
+            const targetMutatePatterns = ['mute1.js:1-4', 'mute1.js:8-12'];
+            const result = await sut.read(targetMutatePatterns);
+            expect([...result.filesToMutate.keys()]).to.deep.equal([
+              path.resolve('mute1.js'),
+            ]);
+            expect(
+              result.filesToMutate.get(path.resolve('mute1.js'))!.mutate,
+            ).to.deep.equal([
+              {
+                start: { line: 2, column: 0 },
+                end: { line: 3, column: Number.MAX_SAFE_INTEGER },
+              },
+              {
+                start: { line: 7, column: 0 },
+                end: { line: 9, column: Number.MAX_SAFE_INTEGER },
+              },
+            ]);
+          });
+
+          it('should only mutate the overlapping columns parts between mutate and targetMutatePatterns', async () => {
+            stubFileSystem({
+              'mute1.js': 'file content',
+            });
+            testInjector.options.mutate = ['mute1.js:3:4-10:9'];
+            const sut = createSut();
+            // Only mute1.js is in the target scope, and only a range is allowed
+            const targetMutatePatterns = [
+              'mute1.js:1:1-4:6',
+              'mute1.js:8:10-12:10',
+            ];
+            const result = await sut.read(targetMutatePatterns);
+            expect([...result.filesToMutate.keys()]).to.deep.equal([
+              path.resolve('mute1.js'),
+            ]);
+            expect(
+              result.filesToMutate.get(path.resolve('mute1.js'))!.mutate,
+            ).to.deep.equal([
+              {
+                // internally, Stryker works 0-based for lines, not for columns
+                start: { line: 2, column: 4 },
+                end: { line: 3, column: 6 },
+              },
+              {
+                start: { line: 7, column: 10 },
+                end: { line: 9, column: 9 },
+              },
+            ]);
+          });
+
+          it('should not mutate if file is not targeted entirely', async () => {
+            stubFileSystem({
+              'mute1.js': 'file content',
+            });
+            testInjector.options.mutate = ['mute1.js'];
+            const sut = createSut();
+            const targetMutatePatterns: string[] = [];
+            const result = await sut.read(targetMutatePatterns);
+            expect([...result.filesToMutate.keys()]).to.deep.equal([]);
+          });
+
+          it('should not mutate if not targeted but within mutate patterns with specified lines', async () => {
+            stubFileSystem({
+              'mute1.js': 'file content',
+            });
+            testInjector.options.mutate = ['mute1.js:1-2'];
+            const sut = createSut();
+            const targetMutatePatterns: string[] = [];
+            const result = await sut.read(targetMutatePatterns);
+            expect([...result.filesToMutate.keys()]).to.deep.equal([]);
+          });
+
+          it('should not mutate if targeted but file not within mutate pattern', async () => {
+            stubFileSystem({
+              'mute1.js': 'file content',
+            });
+            testInjector.options.mutate = [];
+            const sut = createSut();
+            const targetMutatePatterns: string[] = ['mute1.js'];
+            const result = await sut.read(targetMutatePatterns);
+            expect([...result.filesToMutate.keys()]).to.deep.equal([]);
+          });
+
+          it('should not mutate if targeted with specified lines but file not within mutate pattern', async () => {
+            stubFileSystem({
+              'mute1.js': 'file content',
+            });
+            testInjector.options.mutate = [];
+            const sut = createSut();
+            const targetMutatePatterns: string[] = ['mute1.js:1-2'];
+            const result = await sut.read(targetMutatePatterns);
+            expect([...result.filesToMutate.keys()]).to.deep.equal([]);
+          });
+        });
       });
     });
   });
@@ -518,14 +761,14 @@ describe(ProjectReader.name, () => {
     it('should not be read if incremental = false', async () => {
       stubFileSystem({}); // empty dir
       const sut = createSut();
-      await sut.read();
+      await sut.read(undefined);
       sinon.assert.notCalled(fsMock.readFile);
     });
     it('should be read if incremental = true', async () => {
       testInjector.options.incremental = true;
       stubFileSystem({}); // empty dir
       const sut = createSut();
-      await sut.read();
+      await sut.read(undefined);
       sinon.assert.calledOnceWithExactly(
         fsMock.readFile,
         'reports/stryker-incremental.json',
@@ -543,7 +786,7 @@ describe(ProjectReader.name, () => {
         },
       });
       const sut = createSut();
-      const actualProject = await sut.read();
+      const actualProject = await sut.read(undefined);
       expect(actualProject.incrementalReport).not.undefined;
       sinon.assert.calledOnceWithExactly(
         fsMock.readFile,
@@ -558,7 +801,7 @@ describe(ProjectReader.name, () => {
       const sut = createSut();
 
       // Act
-      const actualProject = await sut.read();
+      const actualProject = await sut.read(undefined);
 
       // Assert
       expect(actualProject.incrementalReport).undefined;
@@ -612,7 +855,7 @@ describe(ProjectReader.name, () => {
       const sut = createSut();
 
       // Act
-      const actualProject = await sut.read();
+      const actualProject = await sut.read(undefined);
 
       // Assert
       const expected = factory.mutationTestReportSchemaMutationTestResult({
@@ -654,7 +897,7 @@ describe(ProjectReader.name, () => {
       testInjector.options.incrementalFile = 'some/other/file.json';
       stubFileSystem({}); // empty dir
       const sut = createSut();
-      await sut.read();
+      await sut.read(undefined);
       sinon.assert.calledOnceWithExactly(
         fsMock.readFile,
         'some/other/file.json',

@@ -99,7 +99,7 @@ describe(PrepareExecutor.name, () => {
   });
 
   it('should provide the cliOptions to the config reader', async () => {
-    await sut.execute(cliOptions);
+    await sut.execute({ cliOptions, targetMutatePatterns: undefined });
     expect(configReaderMock.readConfig).calledWithExactly(cliOptions);
   });
 
@@ -112,7 +112,7 @@ describe(PrepareExecutor.name, () => {
     ];
 
     // Act
-    await sut.execute(cliOptions);
+    await sut.execute({ cliOptions, targetMutatePatterns: undefined });
 
     // Assert
     sinon.assert.calledWithExactly(pluginLoaderMock.load, [
@@ -134,7 +134,7 @@ describe(PrepareExecutor.name, () => {
     loadedPlugins.pluginModulePaths.push(...expectedPluginPaths);
 
     // Act
-    await sut.execute(cliOptions);
+    await sut.execute({ cliOptions, targetMutatePatterns: undefined });
 
     // Assert
     sinon.assert.calledWithExactly(
@@ -154,7 +154,7 @@ describe(PrepareExecutor.name, () => {
     metaSchemaBuilderMock.buildMetaSchema.returns(metaSchema);
 
     // Act
-    await sut.execute(cliOptions);
+    await sut.execute({ cliOptions, targetMutatePatterns: undefined });
 
     // Assert
     sinon.assert.calledWithExactly(
@@ -174,7 +174,7 @@ describe(PrepareExecutor.name, () => {
   });
 
   it('should configure the logging backend', async () => {
-    await sut.execute(cliOptions);
+    await sut.execute({ cliOptions, targetMutatePatterns: undefined });
     sinon.assert.calledWithExactly(
       loggingBackendMock.configure,
       testInjector.options,
@@ -182,7 +182,7 @@ describe(PrepareExecutor.name, () => {
   });
 
   it('should resolve input files', async () => {
-    await sut.execute(cliOptions);
+    await sut.execute({ cliOptions, targetMutatePatterns: undefined });
     expect(projectReaderMock.read).called;
     expect(injectorMock.provideValue).calledWithExactly(
       coreTokens.project,
@@ -191,7 +191,7 @@ describe(PrepareExecutor.name, () => {
   });
 
   it('should provide the reporter the reporter', async () => {
-    await sut.execute(cliOptions);
+    await sut.execute({ cliOptions, targetMutatePatterns: undefined });
     sinon.assert.calledWithExactly(
       injectorMock.provideClass,
       coreTokens.reporter,
@@ -200,7 +200,7 @@ describe(PrepareExecutor.name, () => {
   });
 
   it('should provide the UnexpectedExitRegister', async () => {
-    await sut.execute(cliOptions);
+    await sut.execute({ cliOptions, targetMutatePatterns: undefined });
     sinon.assert.calledWithExactly(
       injectorMock.provideClass,
       coreTokens.unexpectedExitRegistry,
@@ -211,24 +211,26 @@ describe(PrepareExecutor.name, () => {
   it('should reject when input file globbing results in a rejection', async () => {
     const expectedError = Error('expected error');
     projectReaderMock.read.rejects(expectedError);
-    await expect(sut.execute(cliOptions)).rejectedWith(expectedError);
+    await expect(
+      sut.execute({ cliOptions, targetMutatePatterns: undefined }),
+    ).rejectedWith(expectedError);
   });
 
   it('should reject when no input files where found', async () => {
     projectReaderMock.read.resolves(
       new Project(new FileSystemTestDouble(), {}),
     );
-    await expect(sut.execute(cliOptions)).rejectedWith(
-      ConfigError,
-      'No input files found',
-    );
+    await expect(
+      sut.execute({ cliOptions, targetMutatePatterns: undefined }),
+    ).rejectedWith(ConfigError, 'No input files found');
   });
 
   it('should not create the temp directory when no input files where found', async () => {
     projectReaderMock.read.resolves(
       new Project(new FileSystemTestDouble(), {}),
     );
-    await expect(sut.execute(cliOptions)).rejected;
+    await expect(sut.execute({ cliOptions, targetMutatePatterns: undefined }))
+      .rejected;
     expect(temporaryDirectoryMock.initialize).not.called;
   });
 });

@@ -35,6 +35,11 @@ export interface PrepareExecutorContext extends BaseContext {
   [coreTokens.reporterOverride]?: Reporter;
 }
 
+export interface PrepareExecutorArgs {
+  cliOptions: PartialStrykerOptions;
+  targetMutatePatterns: string[] | undefined;
+}
+
 export class PrepareExecutor {
   public static readonly inject = tokens(
     commonTokens.injector,
@@ -45,9 +50,10 @@ export class PrepareExecutor {
     private readonly loggingBackend: LoggingBackend,
   ) {}
 
-  public async execute(
-    cliOptions: PartialStrykerOptions,
-  ): Promise<Injector<MutantInstrumenterContext>> {
+  public async execute({
+    cliOptions,
+    targetMutatePatterns,
+  }: PrepareExecutorArgs): Promise<Injector<MutantInstrumenterContext>> {
     // greedy initialize, so the time starts immediately
     const timer = new Timer();
 
@@ -99,7 +105,7 @@ export class PrepareExecutor {
       .provideValue(coreTokens.pluginsByKind, loadedPlugins.pluginsByKind);
     const project = await projectFileReaderInjector
       .injectClass(ProjectReader)
-      .read();
+      .read(targetMutatePatterns);
 
     if (project.isEmpty) {
       throw new ConfigError('No input files found.');
