@@ -440,6 +440,24 @@ describe(ProjectReader.name, () => {
       });
     });
     describe('with mutate file patterns', () => {
+      it('should result in the expected mutate files', async () => {
+        stubFileSystemWith5Files();
+        testInjector.options.mutate = ['mute*'];
+        const sut = createSut();
+        const result = await sut.read(undefined);
+        expect([...result.filesToMutate.keys()]).to.deep.equal([
+          path.resolve('mute1.js'),
+          path.resolve('mute2.js'),
+        ]);
+        expect([...result.files.keys()]).to.deep.equal([
+          path.resolve('file1.js'),
+          path.resolve('file2.js'),
+          path.resolve('file3.js'),
+          path.resolve('mute1.js'),
+          path.resolve('mute2.js'),
+        ]);
+      });
+
       it('mutates an explicit file when already mutating all files in a folder', async () => {
         stubFileSystem({
           folder: {
@@ -496,6 +514,23 @@ describe(ProjectReader.name, () => {
       });
 
       describe('with targetMutatePatterns', () => {
+        it('should result in the expected mutate files', async () => {
+          stubFileSystemWith5Files();
+          testInjector.options.mutate = ['mute*'];
+          const sut = createSut();
+          const result = await sut.read(['mute1.js', 'mute2.js']);
+          expect([...result.filesToMutate.keys()]).to.deep.equal([
+            path.resolve('mute1.js'),
+            path.resolve('mute2.js'),
+          ]);
+          expect([...result.files.keys()]).to.deep.equal([
+            path.resolve('file1.js'),
+            path.resolve('file2.js'),
+            path.resolve('file3.js'),
+            path.resolve('mute1.js'),
+            path.resolve('mute2.js'),
+          ]);
+        });
         it('should not mutate any files if targetMutatePatterns is empty', async () => {
           stubFileSystemWith5Files();
           testInjector.options.mutate = ['*'];
