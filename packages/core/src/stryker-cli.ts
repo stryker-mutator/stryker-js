@@ -15,6 +15,7 @@ import { Stryker } from './stryker.js';
 import { defaultOptions } from './config/index.js';
 import { strykerEngines, strykerVersion } from './stryker-package.js';
 import { StrykerServer } from './stryker-server.js';
+import { createInjector } from 'typed-inject';
 
 /**
  * Interpret a command line argument and add it to an object.
@@ -60,9 +61,9 @@ export class StrykerCli {
       const port = await server.start();
       console.log(JSON.stringify({ port }));
     },
-  ) {}
+  ) { }
 
-  public run(): void {
+  public run(createInjectorImpl = createInjector): void {
     const dashboard: Partial<DashboardOptions> = {};
     this.program
 
@@ -119,7 +120,7 @@ export class StrykerCli {
       .option(
         '-b, --buildCommand <command>',
         'Configure a build command to run after mutating the code, but before mutants are tested. This is generally used to transpile your code before testing.' +
-          " Only configure this if your test runner doesn't take care of this already and you're not using just-in-time transpiler like `babel/register` or `ts-node`.",
+        " Only configure this if your test runner doesn't take care of this already and you're not using just-in-time transpiler like `babel/register` or `ts-node`.",
       )
       .option(
         '--dryRunOnly',
@@ -268,7 +269,15 @@ export class StrykerCli {
     }
 
     const commands = {
-      init: async () => (await initializerFactory()).initialize(),
+      init: async () => {
+        const inj = createInjectorImpl();
+        try {
+          const initializer = await initializerFactory(inj);
+          await initializer.initialize();
+        } finally {
+          inj.dispose();
+        }
+      },
       run: () => this.runMutationTest(options),
       runServer: () => this.runMutationTestingServer(options),
     };
@@ -278,7 +287,7 @@ export class StrykerCli {
         commands[this.command as keyof typeof commands]();
       promise.catch(() => {
         process.exitCode = 1;
-      }).then(() => process.exit());
+      });
     } else {
       console.error(
         'Unknown command: "%s", supported commands: [%s], or use `stryker --help`.',

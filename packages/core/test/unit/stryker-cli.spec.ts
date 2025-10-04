@@ -9,6 +9,11 @@ import {
 } from '@stryker-mutator/api/core';
 
 import { guardMinimalNodeVersion, StrykerCli } from '../../src/stryker-cli.js';
+import { Injector } from 'typed-inject';
+import { factory, tick } from '@stryker-mutator/test-helpers';
+import { coreTokens } from '../../src/di/index.js';
+import { LoggingBackend } from '../../src/logging/logging-backend.js';
+import { LoggingServer } from '../../src/logging/logging-server.js';
 
 describe(StrykerCli.name, () => {
   let runMutationTestingStub: sinon.SinonStub;
@@ -154,6 +159,37 @@ describe(StrykerCli.name, () => {
       actRun(args);
       expect(runMutationTestingStub).called;
       expect(runMutationTestingStub).calledWith(expectedOptions);
+    }
+  });
+
+  describe('init', () => {
+    it('should injected logging classes', async () => {
+      const injectorMock = factory.injector();
+
+      actInit(() => injectorMock as Injector);
+      await tick();
+
+      expect(injectorMock.provideClass).to.be.calledTwice;
+      expect(injectorMock.provideClass).to.be.calledWith(coreTokens.loggingSink, LoggingBackend);
+      expect(injectorMock.provideClass).to.be.calledWith(coreTokens.loggingServer, LoggingServer);
+    });
+
+    it('should dispose of injected classes', async () => {
+      const injectorMock = factory.injector();
+
+      actInit(() => injectorMock as Injector);
+      await tick();
+
+      expect(injectorMock.dispose).to.be.called;
+    });
+
+    function actInit(injectorStub: () => Injector<{}>): void {
+      new StrykerCli(
+        ['node', 'stryker', 'init'],
+        new Command(),
+        runMutationTestingStub,
+        runMutationTestingServerStub,
+      ).run(injectorStub);
     }
   });
 
