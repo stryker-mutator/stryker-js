@@ -40,8 +40,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          rm -rf node_modules packages/*/node_modules package-lock.json
-          npm i
+          rm -rf node_modules packages/*/node_modules package-lock.json e2e/node_modules e2e/package-lock.json
+          npm i && cd e2e && npm i
 
       - name: Commit changes if package-lock.json changed
         shell: bash
