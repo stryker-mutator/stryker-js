@@ -5,9 +5,9 @@
   "description": "A module to test the alternative flow when Stryker should exit prematurely, see https://github.com/stryker-mutator/stryker-js/issues/1519",
   "main": "index.js",
   "scripts": {
-    "pretest": "rimraf \"reports\" stryker.log .stryker-tmp ",
-    "test": "stryker run || node -e \"require('fs').appendFileSync('stryker.log', 'Exit with non-zero exit code');\"",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+    "clean:reports": "rimraf \"reports\" stryker.log .stryker-tmp ",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test": "npm run clean:reports && (stryker run || node -e \"require('fs').appendFileSync('stryker.log', 'Exit with non-zero exit code');\") && npm run verify"
   },
   "keywords": [],
   "author": "",

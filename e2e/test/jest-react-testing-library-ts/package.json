@@ -4,10 +4,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "pretest": "rimraf \"reports\" \"stryker.log\"",
-    "test:unit": "jest src/*",
-    "test": "stryker run",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+  "clean:reports": "rimraf \"reports\" \"stryker.log\"",
+  "test:unit": "jest src/*",
+  "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+  "test": "npm run clean:reports && stryker run && npm run verify"
   },
   "browserslist": {
     "production": [

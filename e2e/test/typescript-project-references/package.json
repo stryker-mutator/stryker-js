@@ -6,17 +6,15 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "clean": "rimraf dist .stryker-tmp reports",
-    "prebuild": "npm run clean",
-    "build": "tsc -b tsconfig.json",
-    "pretest:unit": "npm run build",
-    "test:unit": "mocha",
-    "pretest": "rimraf \"reports\" \"dist\" \"stryker.log\"",
-    "test": "stryker run",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+  "clean:dist": "rimraf dist .stryker-tmp reports",
+  "build": "npm run clean:dist && tsc -b tsconfig.json",
+    "test:unit": "npm run build && mocha",
+    "clean:reports": "rimraf \"reports\" \"dist\" \"stryker.log\"",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test": "npm run clean:reports && stryker run && npm run verify"
   },
   "mocha": {
-    "spec":  [
+    "spec": [
       "dist/test/*.js"
     ]
   },

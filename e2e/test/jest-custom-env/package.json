@@ -2,9 +2,9 @@
   "name": "jest-custom-env",
   "description": "Tests for jest coverage analysis with custom test env",
   "scripts": {
-    "test:unit": "jest",
-    "test": "stryker run",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+  "test:unit": "jest",
+  "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+  "test": "stryker run && npm run verify"
   },
   "jest": {
     "testEnvironment": "node"

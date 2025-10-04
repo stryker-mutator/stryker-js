@@ -5,10 +5,10 @@
   "description": "The e2e test for the oldest supported vitest version",
   "main": "index.js",
   "scripts": {
-    "pretest": "rimraf \"reports\"",
-    "test": "stryker run",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js",
-    "test:unit": "vitest run"
+    "clean:reports": "rimraf \"reports\"",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test:unit": "vitest run",
+    "test": "npm run clean:reports && stryker run && npm run verify"
   },
   "author": "",
   "license": "ISC",

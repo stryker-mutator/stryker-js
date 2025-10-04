@@ -7,10 +7,10 @@
   "retries": 3,
   "retries_comment": "Unfortunately very unstable on windows and we don't have the time to dive into it.",
   "scripts": {
-    "pretest": "rimraf \"reports\"",
+    "clean:reports": "rimraf \"reports\"",
     "test:unit": "karma start --singleRun",
-    "test": "stryker run --logLevel trace",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+    "test": "npm run clean:reports && stryker run --logLevel trace && npm run verify",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "devDependencies": {
     "chai": "4.4.1",

@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "test:unit": "mocha",
-    "test": "stryker run",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+    "test": "stryker run && npm run verify",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   }
 }

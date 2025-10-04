@@ -12,8 +12,8 @@
   },
   "scripts": {
     "test:unit": "cross-env SKIP_PREFLIGHT_CHECK=true BABEL_ENV=test react-scripts test",
-    "test": "stryker run",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test": "stryker run && npm run verify"
   },
   "eslintConfig": {
     "extends": [

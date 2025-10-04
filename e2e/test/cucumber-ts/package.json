@@ -6,9 +6,9 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "test": "stryker run",
+    "test": "stryker run && npm run verify",
     "test:unit": "cross-env NODE_OPTIONS=\"--loader ts-node/esm\" cucumber-js",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "author": "Nico Jansen",
   "license": "Apache-2.0",

@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       PERF_TEST_GLOB_PATTERN:
-        description: 'Glob pattern'     
+        description: 'Glob pattern'
         required: true
         default: '*'
 
@@ -13,19 +13,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-      with: 
-        submodules: recursive
-    - name: Install dependencies
-      run: npm ci
-    - name: Build packages
-      run: npm run build
-    - name: Run performance tests
-      run: npm run perf
-      env:
-        PERF_TEST_GLOB_PATTERN: ${{ github.event.inputs.PERF_TEST_GLOB_PATTERN }}
-    - name: Store reports
-      uses: actions/upload-artifact@v4
-      with:
-        name: mutation-testing-reports
-        path: perf/test/*/reports/mutation
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install dependencies
+        run: npm ci && npm run install:chromium
+      - name: Build packages
+        run: npm run build
+      - name: Run performance tests
+        run: npm run perf
+        env:
+          PERF_TEST_GLOB_PATTERN: ${{ github.event.inputs.PERF_TEST_GLOB_PATTERN }}
+      - name: Store reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutation-testing-reports
+          path: perf/test/*/reports/mutation

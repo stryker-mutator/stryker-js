@@ -6,10 +6,12 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "pretest": "rimraf \"reports\"",
-    "test": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "clean:reports": "rimraf \"reports\"",
     "test:unit": "mocha",
-    "test:mutation": "stryker run"
+    "test:mutation": "stryker run",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test": "npm run clean:reports && node --run verify",
+    "//": "Stryker is run in verify.js directly"
   },
   "author": "",
   "license": "ISC"

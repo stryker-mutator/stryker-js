@@ -2,9 +2,9 @@
   "name": "karma-webpack-with-ts",
   "description": "A test project for karma with the karma-webpack plugin and the ts-loader.",
   "scripts": {
-    "test": "stryker run",
-    "test:unit": "karma start",
-    "posttest": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+  "test": "stryker run && npm run verify",
+  "test:unit": "karma start",
+  "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "dependencies": {
     "lit-element": "~2.3.1",
