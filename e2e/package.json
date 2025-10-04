@@ -37,7 +37,7 @@
     "execa": "9.6.0",
     "grunt": "1.6.1",
     "jasmine": "5.9.0",
-    "jasmine-core": "5.9.0",
+    "jasmine-core": "5.11.0",
     "jest": "30.1.1",
     "jest-environment-jsdom": "30.1.1",
     "jest-environment-jsdom-sixteen": "2.0.0",
