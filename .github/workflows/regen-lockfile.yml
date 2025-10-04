@@ -26,18 +26,22 @@ jobs:
           echo "This workflow only pushes from same-repo branches or manual runs."
           exit 0
 
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref || github.ref_name }}
+
       - name: Set git identity
         shell: bash
         run: |
-          git config --global user.name  "${GIT_AUTHOR_NAME}"
-          git config --global user.email "${GIT_AUTHOR_EMAIL}"
+          git config user.name  "${GIT_AUTHOR_NAME}"
+          git config user.email "${GIT_AUTHOR_EMAIL}"
 
-      - name: Checkout (with NPA PAT)
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.STRYKER_MUTATOR_NPA_KEY }}
-          fetch-depth: 0
-          ref: ${{ github.head_ref || github.ref_name }}
+      - name: Configure Git auth via gh cli
+        env:
+          GH_TOKEN: ${{ secrets.STRYKER_MUTATOR_NPA_KEY }}
+        run: gh auth setup-git
 
       - name: Sync to latest branch tip
         shell: bash
@@ -60,7 +64,7 @@ jobs:
           rm -rf node_modules packages/*/node_modules package-lock.json
           npm i
 
-      - name: Commit changes if package-lock.json changed
+      - name: Commit changes
         shell: bash
         run: |
           git add -A
