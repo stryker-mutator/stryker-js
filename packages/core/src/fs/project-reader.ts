@@ -245,8 +245,6 @@ export class ProjectReader {
         )
         .filter(notEmpty);
       return { mutate: intersectedRanges };
-    } else if (first.mutate === true && second.mutate === true) {
-      return { mutate: true };
     } else if (first.mutate === true) {
       return second;
     } else if (second.mutate === true) {
