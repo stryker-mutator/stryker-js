@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.2.0](https://github.com/stryker-mutator/stryker-js/compare/v9.1.1...v9.2.0) (2025-10-04)
+
+### Features
+
+- **server:** do not overwrite mutate config with params ([#5498](https://github.com/stryker-mutator/stryker-js/issues/5498)) ([a1519a6](https://github.com/stryker-mutator/stryker-js/commit/a1519a6af68b0970ad2b2ed99ac2a025f523ed30))
+
 ## [9.1.1](https://github.com/stryker-mutator/stryker-js/compare/v9.1.0...v9.1.1) (2025-08-30)
 
 ### Bug Fixes

@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.2.0](https://github.com/stryker-mutator/stryker-js/compare/v9.1.1...v9.2.0) (2025-10-04)
+
+**Note:** Version bump only for package @stryker-mutator/vitest-runner
+
 ## [9.1.1](https://github.com/stryker-mutator/stryker-js/compare/v9.1.0...v9.1.1) (2025-08-30)
 
 **Note:** Version bump only for package @stryker-mutator/vitest-runner
