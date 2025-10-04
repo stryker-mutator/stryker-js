@@ -578,6 +578,28 @@ describe(ProjectReader.name, () => {
             ]);
           });
 
+          it('should mutate only the overlapping part between mutate and targetMutatePatterns when only mutate has ranges', async () => {
+            stubFileSystem({
+              'mute.js': 'file content',
+            });
+
+            testInjector.options.mutate = ['mute.js:3-10'];
+            const sut = createSut();
+            const targetMutatePatterns = ['mute.js'];
+            const result = await sut.read(targetMutatePatterns);
+            expect([...result.filesToMutate.keys()]).to.deep.equal([
+              path.resolve('mute.js'),
+            ]);
+            expect(
+              result.filesToMutate.get(path.resolve('mute.js'))!.mutate,
+            ).to.deep.equal([
+              {
+                start: { line: 2, column: 0 },
+                end: { line: 9, column: Number.MAX_SAFE_INTEGER },
+              },
+            ]);
+          });
+
           it('should only mutate the single overlapping part between mutate and targetMutatePatterns', async () => {
             stubFileSystemWith5Files();
             testInjector.options.mutate = ['mute1.js:3-10'];
@@ -597,7 +619,8 @@ describe(ProjectReader.name, () => {
               },
             ]);
           });
-          it('should support mutate with multiple overlapping parts between mutate and targetMutatePatterns', async () => {
+
+          it('should support mutate with multiple overlapping line parts between mutate and targetMutatePatterns', async () => {
             stubFileSystemWith5Files();
             testInjector.options.mutate = ['mute1.js:3-10'];
             const sut = createSut();
@@ -619,6 +642,80 @@ describe(ProjectReader.name, () => {
                 end: { line: 9, column: Number.MAX_SAFE_INTEGER },
               },
             ]);
+          });
+
+          it('should only mutate the overlapping columns parts between mutate and targetMutatePatterns', async () => {
+            stubFileSystem({
+              'mute1.js': 'file content',
+            });
+            testInjector.options.mutate = ['mute1.js:3:4-10:9'];
+            const sut = createSut();
+            // Only mute1.js is in the target scope, and only a range is allowed
+            const targetMutatePatterns = [
+              'mute1.js:1:1-4:6',
+              'mute1.js:8:10-12:10',
+            ];
+            const result = await sut.read(targetMutatePatterns);
+            expect([...result.filesToMutate.keys()]).to.deep.equal([
+              path.resolve('mute1.js'),
+            ]);
+            expect(
+              result.filesToMutate.get(path.resolve('mute1.js'))!.mutate,
+            ).to.deep.equal([
+              {
+                // internally, Stryker works 0-based for lines, not for columns
+                start: { line: 2, column: 4 },
+                end: { line: 3, column: 6 },
+              },
+              {
+                start: { line: 7, column: 10 },
+                end: { line: 9, column: 9 },
+              },
+            ]);
+          });
+
+          it('should not mutate if file is not targeted entirely', async () => {
+            stubFileSystem({
+              'mute1.js': 'file content',
+            });
+            testInjector.options.mutate = ['mute1.js'];
+            const sut = createSut();
+            const targetMutatePatterns: string[] = [];
+            const result = await sut.read(targetMutatePatterns);
+            expect([...result.filesToMutate.keys()]).to.deep.equal([]);
+          });
+
+          it('should not mutate if not targeted but within mutate patterns with specified lines', async () => {
+            stubFileSystem({
+              'mute1.js': 'file content',
+            });
+            testInjector.options.mutate = ['mute1.js:1-2'];
+            const sut = createSut();
+            const targetMutatePatterns: string[] = [];
+            const result = await sut.read(targetMutatePatterns);
+            expect([...result.filesToMutate.keys()]).to.deep.equal([]);
+          });
+
+          it('should not mutate if targeted but file not within mutate pattern', async () => {
+            stubFileSystem({
+              'mute1.js': 'file content',
+            });
+            testInjector.options.mutate = [];
+            const sut = createSut();
+            const targetMutatePatterns: string[] = ['mute1.js'];
+            const result = await sut.read(targetMutatePatterns);
+            expect([...result.filesToMutate.keys()]).to.deep.equal([]);
+          });
+
+          it('should not mutate if targeted with specified lines but file not within mutate pattern', async () => {
+            stubFileSystem({
+              'mute1.js': 'file content',
+            });
+            testInjector.options.mutate = [];
+            const sut = createSut();
+            const targetMutatePatterns: string[] = ['mute1.js:1-2'];
+            const result = await sut.read(targetMutatePatterns);
+            expect([...result.filesToMutate.keys()]).to.deep.equal([]);
           });
         });
       });

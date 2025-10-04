@@ -169,10 +169,7 @@ export class ProjectReader {
       const seen = new Map<string, FileDescription>();
       for (const pattern of targetMutatePatterns) {
         const files = this.filterMutatePattern(
-          map(
-            filter(mutateInputFileMap, ([, { mutate }]) => mutate),
-            ([fileName]) => fileName,
-          ),
+          mutateInputFileMap.keys(),
           pattern,
         );
         for (const [fileName, description] of files) {
@@ -187,14 +184,13 @@ export class ProjectReader {
         }
       }
       // Now, reset the mutateInputFileMap to false for all files that we didn't see, but only mark files to be mutated when they appeared in the configured target patterns
-      for (const [fileName, mutate] of mutateInputFileMap) {
-        if (mutate) {
-          const descriptionInSeen = seen.get(fileName);
-          if (descriptionInSeen) {
-            mutateInputFileMap.set(fileName, descriptionInSeen);
-          } else {
-            mutateInputFileMap.set(fileName, { mutate: false });
-          }
+      // We do this so we return all the input files, with its status on whether or not to mutate it
+      for (const fileName of mutateInputFileMap.keys()) {
+        const descriptionInSeen = seen.get(fileName);
+        if (descriptionInSeen) {
+          mutateInputFileMap.set(fileName, descriptionInSeen);
+        } else {
+          mutateInputFileMap.set(fileName, { mutate: false });
         }
       }
     }
@@ -258,8 +254,9 @@ export class ProjectReader {
     } else if (second.mutate === true) {
       return first;
     }
+
     // Both have mutation ranges, but one of them is empty, so the intersection is empty
-    return { mutate: [] };
+    return { mutate: false };
   }
 
   /**
