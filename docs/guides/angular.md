@@ -15,11 +15,11 @@ This setup only works with @angular/cli 9.0.0 or higher. If you're using an olde
 
 :::
 
-Install the Stryker packages using the command `npm init stryker`.
+Install the Stryker packages using the command `npm init stryker@latest`.
 
 ### Configuration
 
-The `npm init stryker` command also creates a `stryker.config.json` or `stryker.config.mjs` configuration in your repository. Below is a basic configuration for Angular projects with karma as a test runner:
+The `npm init stryker@latest` command also creates a `stryker.config.json` or `stryker.config.mjs` configuration in your repository. Below is a basic configuration for Angular projects with karma as a test runner:
 
 ```json
 {

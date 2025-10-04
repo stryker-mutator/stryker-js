@@ -19,10 +19,10 @@ cd my-project
 
 ## 2 Install
 
-The easiest way to get started with Stryker is by using the `npm init stryker` command.
+The easiest way to get started with Stryker is by using the `npm init stryker@latest` command.
 
 ```bash
-npm init stryker
+npm init stryker@latest
 ```
 
 This command will first install Stryker and then run the Stryker initializer. During the initialization, you'll be asked a series of questions to help set up Stryker for your project.

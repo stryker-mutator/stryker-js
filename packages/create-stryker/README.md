@@ -4,4 +4,4 @@
 
 # Create Stryker
 
-An initialer for StrykerJS! Run it with: `npm init stryker`. See [getting started](../../docs/getting-started.md) for more information.
+An initialer for StrykerJS! Run it with: `npm init stryker@latest`. See [getting started](../../docs/getting-started.md) for more information.
