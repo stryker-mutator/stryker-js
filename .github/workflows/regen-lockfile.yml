@@ -40,11 +40,9 @@ jobs:
           git config user.email "${GIT_AUTHOR_EMAIL}"
 
       - name: Configure Git auth via gh cli
-        env:
-          GH_TOKEN: ${{ secrets.STRYKER_MUTATOR_NPA_KEY }}
         shell: bash
         run: |
-          echo "$GH_TOKEN" | gh auth login --with-token
+          echo ${{ secrets.STRYKER_MUTATOR_NPA_KEY }} | gh auth login --with-token
           gh auth setup-git
 
       - name: Sync to latest branch tip
