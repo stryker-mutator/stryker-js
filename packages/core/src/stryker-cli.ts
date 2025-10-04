@@ -278,7 +278,7 @@ export class StrykerCli {
         commands[this.command as keyof typeof commands]();
       promise.catch(() => {
         process.exitCode = 1;
-      });
+      }).then(() => process.exit());
     } else {
       console.error(
         'Unknown command: "%s", supported commands: [%s], or use `stryker --help`.',
