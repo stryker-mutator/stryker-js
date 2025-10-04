@@ -71,8 +71,8 @@ jobs:
           git add package-lock.json
           git commit -m "Regen lockfile"
 
-          # Ensure pushes go over HTTPS with the NPA PAT
-          git remote set-url origin "https://x-access-token:${{ secrets.NPA_PAT }}@github.com/${{ github.repository }}.git"
+          # Ensure pushes go over HTTPS with the Stryker Mutator NPA key
+          git remote set-url origin "https://x-access-token:${{ secrets.STRYKER_MUTATOR_NPA_KEY }}@github.com/${{ github.repository }}.git"
 
           REF="${{ github.head_ref || github.ref_name }}"
           git push --force-with-lease origin "HEAD:${REF}"
