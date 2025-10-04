@@ -13,10 +13,8 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import {
   ERROR_CODES,
-  filter,
   I,
   isErrnoException,
-  map,
   notEmpty,
 } from '@stryker-mutator/util';
 import type { MutationTestResult } from 'mutation-testing-report-schema/api';

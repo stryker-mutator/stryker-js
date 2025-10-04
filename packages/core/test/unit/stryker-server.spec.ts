@@ -341,6 +341,22 @@ describe(StrykerServer.name, () => {
         },
       });
     });
+
+    it('should use the cli options when discovering', async () => {
+      cliOptions = { configFile: 'stryker.config.ts' };
+      sut = new StrykerServer(cliOptions, () => injectorMock);
+      setupStart();
+      await sut.start();
+
+      await sut.discover({});
+
+      sinon.assert.calledWithMatch(prepareExecutorMock.execute, {
+        cliOptions: {
+          ...cliOptions,
+        },
+        targetMutatePatterns: undefined,
+      });
+    });
   });
 
   describe('mutationTest', () => {
