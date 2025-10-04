@@ -170,8 +170,14 @@ describe(StrykerCli.name, () => {
       await tick();
 
       expect(injectorMock.provideClass).to.be.calledTwice;
-      expect(injectorMock.provideClass).to.be.calledWith(coreTokens.loggingSink, LoggingBackend);
-      expect(injectorMock.provideClass).to.be.calledWith(coreTokens.loggingServer, LoggingServer);
+      expect(injectorMock.provideClass).to.be.calledWith(
+        coreTokens.loggingSink,
+        LoggingBackend,
+      );
+      expect(injectorMock.provideClass).to.be.calledWith(
+        coreTokens.loggingServer,
+        LoggingServer,
+      );
     });
 
     it('should dispose of injected classes', async () => {
@@ -183,7 +189,7 @@ describe(StrykerCli.name, () => {
       expect(injectorMock.dispose).to.be.called;
     });
 
-    function actInit(injectorStub: () => Injector<{}>): void {
+    function actInit(injectorStub: () => Injector): void {
       new StrykerCli(
         ['node', 'stryker', 'init'],
         new Command(),
