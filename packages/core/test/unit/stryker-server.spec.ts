@@ -383,7 +383,7 @@ describe(StrykerServer.name, () => {
       sinon.assert.calledWithMatch(prepareExecutorMock.execute, {
         cliOptions: {
           ...cliOptions,
-          allowConsoleColors: true,
+          allowConsoleColors: false,
         },
         targetMutatePatterns: ['src/**/*', 'foo/test.js'],
       });
