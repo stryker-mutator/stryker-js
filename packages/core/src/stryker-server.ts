@@ -170,6 +170,8 @@ export class StrykerServer {
       const inj = await prepareExecutor.execute({
         cliOptions: {
           ...this.cliOptions,
+          allowConsoleColors: false,
+          configFile: this.#configFilePath,
         },
         targetMutatePatterns: this.#filesToGlobPatterns(discoverParams.files),
       });

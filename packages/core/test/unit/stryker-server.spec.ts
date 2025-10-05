@@ -342,9 +342,7 @@ describe(StrykerServer.name, () => {
       });
     });
 
-    it('should use the cli options when discovering', async () => {
-      cliOptions = { configFile: 'stryker.config.ts' };
-      sut = new StrykerServer(cliOptions, () => injectorMock);
+    it('should pass along the cli options', async () => {
       setupStart();
       await sut.start();
 
@@ -353,8 +351,41 @@ describe(StrykerServer.name, () => {
       sinon.assert.calledWithMatch(prepareExecutorMock.execute, {
         cliOptions: {
           ...cliOptions,
+          allowConsoleColors: false,
         },
-        targetMutatePatterns: undefined,
+      });
+    });
+
+    it('should pass along the config file from the configure call', async () => {
+      sut.configure({ configFilePath: 'foo/bar/stryker-config.json' });
+      setupStart();
+      await sut.start();
+
+      await sut.discover({});
+
+      sinon.assert.calledWithMatch(prepareExecutorMock.execute, {
+        cliOptions: {
+          ...cliOptions,
+          allowConsoleColors: false,
+          configFile: 'foo/bar/stryker-config.json',
+        },
+      });
+    });
+
+    it('should pass along the files to mutate', async () => {
+      setupStart();
+      await sut.start();
+
+      await sut.discover({
+        files: [{ path: 'src/' }, { path: 'foo/test.js' }],
+      });
+
+      sinon.assert.calledWithMatch(prepareExecutorMock.execute, {
+        cliOptions: {
+          ...cliOptions,
+          allowConsoleColors: true,
+        },
+        targetMutatePatterns: ['src/**/*', 'foo/test.js'],
       });
     });
   });
