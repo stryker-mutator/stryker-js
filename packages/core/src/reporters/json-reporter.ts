@@ -4,9 +4,7 @@ import { schema, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
-
-import fileUrl from 'file-url';
-
+import { pathToFileURL } from 'url';
 import { reporterUtil } from './reporter-util.js';
 
 const INDENTION_LEVEL = 0;
@@ -40,6 +38,8 @@ export class JsonReporter implements Reporter {
       path.resolve(filePath),
       JSON.stringify(report, null, INDENTION_LEVEL),
     );
-    this.log.info(`Your report can be found at: ${fileUrl(filePath)}`);
+    this.log.info(
+      `Your report can be found at: ${pathToFileURL(filePath).href}`,
+    );
   }
 }

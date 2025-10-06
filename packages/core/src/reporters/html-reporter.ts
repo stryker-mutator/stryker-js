@@ -1,14 +1,14 @@
-import path from 'path';
 import fs from 'fs';
+import path from 'path';
 
 import { createRequire } from 'module';
 
-import fileUrl from 'file-url';
 import { schema, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { Reporter } from '@stryker-mutator/api/report';
 
+import { pathToFileURL } from 'url';
 import { reporterUtil } from './reporter-util.js';
 
 export class HtmlReporter implements Reporter {
@@ -37,7 +37,7 @@ export class HtmlReporter implements Reporter {
     const html = await createReportHtml(report);
     await reporterUtil.writeFile(this.options.htmlReporter.fileName, html);
     this.log.info(
-      `Your report can be found at: ${fileUrl(path.resolve(this.options.htmlReporter.fileName))}`,
+      `Your report can be found at: ${pathToFileURL(path.resolve(this.options.htmlReporter.fileName)).href}`,
     );
   }
 }
