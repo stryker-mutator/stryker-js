@@ -284,6 +284,16 @@ describe(StrykerServer.name, () => {
         expectedReportMutationTestProgressNotification,
       );
     });
+
+    it('should configure the logging server to use stderr', async () => {
+      setupStart();
+      await sut.start();
+      sinon.assert.calledWithExactly(
+        injectorMock.provideValue,
+        coreTokens.loggerConsoleOut,
+        process.stderr,
+      );
+    });
   });
 
   describe('stop', () => {

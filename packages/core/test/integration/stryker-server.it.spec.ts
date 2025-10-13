@@ -18,7 +18,7 @@ import { JsonRpcEventDeserializer } from '../../src/utils/json-rpc-event-deseria
 import { firstValueFrom, ReplaySubject } from 'rxjs';
 import { expect } from 'chai';
 
-describe(StrykerServer.name, () => {
+describe.only(StrykerServer.name, () => {
   describe('on a happy flow project', () => {
     let sut: StrykerServer;
     let client: MutationServerClient;

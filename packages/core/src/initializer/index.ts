@@ -17,7 +17,7 @@ import { provideLogging, provideLoggingBackend } from '../logging/index.js';
 export async function initializerFactory(
   injector: Injector,
 ): Promise<StrykerInitializer> {
-  return provideLogging(await provideLoggingBackend(injector))
+  return provideLogging(await provideLoggingBackend(injector, process.stdout))
     .provideValue(initializerTokens.out, console.log)
     .provideValue(coreTokens.execa, execaCommand)
     .provideValue(coreTokens.execaSync, execaCommandSync)

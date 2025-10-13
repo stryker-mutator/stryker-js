@@ -37,6 +37,7 @@ import {
   LoggingServerAddress,
 } from './logging/index.js';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
+import { Task } from '@stryker-mutator/util';
 
 export const rpcMethods = Object.freeze({
   configure: 'configure',
@@ -55,7 +56,6 @@ const STRYKER_SERVER_ALREADY_STARTED = 'Server already started';
  * @see https://github.com/stryker-mutator/editor-plugins/tree/main/packages/mutation-server-protocol#readme
  */
 export class StrykerServer {
-  #server?: net.Server;
   #configFilePath?: string;
   /**
    * Keep track of the logging backend provider, so we can share the logging server between calls.
@@ -76,6 +76,8 @@ export class StrykerServer {
    * @param injectorFactory The injector factory, for testing purposes only
    */
   constructor(
+    private readonly outStream: NodeJS.WritableStream,
+    private readonly inStream: NodeJS.ReadableStream,
     private readonly cliOptions: PartialStrykerOptions = {},
     private readonly injectorFactory = createInjector,
   ) {}
@@ -84,72 +86,76 @@ export class StrykerServer {
    * Starts the server and listens for incoming connections.
    * @returns The port the server is listening on
    */
-  async start(): Promise<number> {
+  async start(): Promise<void> {
     if (this.#rootInjector) {
       throw new Error(STRYKER_SERVER_ALREADY_STARTED);
     }
     this.#rootInjector = this.injectorFactory();
     this.#loggingBackendProvider = provideLogging(
-      await provideLoggingBackend(this.#rootInjector),
+      await provideLoggingBackend(this.#rootInjector, process.stderr),
     );
-    return new Promise((resolve) => {
-      this.#server = net.createServer((socket) => {
-        const deserializer = new JsonRpcEventDeserializer();
-        const rpc = new JSONRPCServerAndClient(
-          new JSONRPCServer(),
-          new JSONRPCClient((jsonRPCRequest) => {
-            const content = Buffer.from(JSON.stringify(jsonRPCRequest));
-            socket.write(`Content-Length: ${content.byteLength}\r\n\r\n`);
-            socket.write(content);
-          }),
-        );
+    const deserializer = new JsonRpcEventDeserializer();
+    const rpc = new JSONRPCServerAndClient(
+      new JSONRPCServer(),
+      new JSONRPCClient((jsonRPCRequest) => {
+        const content = Buffer.from(JSON.stringify(jsonRPCRequest));
+        this.outStream.write(`Content-Length: ${content.byteLength}\r\n\r\n`);
+        this.outStream.write(content);
+      }),
+    );
 
-        rpc.addMethod(rpcMethods.configure, this.configure.bind(this));
-        rpc.addMethod(rpcMethods.discover, this.discover.bind(this));
-        rpc.addMethod(rpcMethods.mutationTest, (params: MutationTestParams) => {
-          return new Promise<MutationTestResult>((resolve, reject) => {
-            this.mutationTest(params).subscribe({
-              next: (mutantResult) => {
-                const { fileName, ...mutant } = mutantResult;
-                rpc.client.notify(
-                  rpcMethods.reportMutationTestProgressNotification,
-                  {
-                    files: {
-                      [normalizeReportFileName(fileName)]: {
-                        mutants: [mutant],
-                      },
-                    },
-                  } satisfies MutationTestResult,
-                );
-              },
-              error: reject,
-              complete: () => resolve({ files: {} }),
-            });
-          });
-        });
-        socket.on('data', (data) => {
-          const events = deserializer.deserialize(data);
-          for (const event of events) {
-            // https://www.npmjs.com/package/json-rpc-2.0#error-handling
-            // errors are already handled by JSON RPC, so we can ignore them here
-            void rpc.receiveAndSend(event);
-          }
+    rpc.addMethod(rpcMethods.configure, this.configure.bind(this));
+    rpc.addMethod(rpcMethods.discover, this.discover.bind(this));
+    rpc.addMethod(rpcMethods.mutationTest, (params: MutationTestParams) => {
+      return new Promise<MutationTestResult>((resolve, reject) => {
+        this.mutationTest(params).subscribe({
+          next: (mutantResult) => {
+            const { fileName, ...mutant } = mutantResult;
+            rpc.client.notify(
+              rpcMethods.reportMutationTestProgressNotification,
+              {
+                files: {
+                  [normalizeReportFileName(fileName)]: {
+                    mutants: [mutant],
+                  },
+                },
+              } satisfies MutationTestResult,
+            );
+          },
+          error: reject,
+          complete: () => resolve({ files: {} }),
         });
       });
-
-      this.#server.listen(() => {
-        resolve((this.#server!.address() as net.AddressInfo).port);
-      });
+    });
+    this.inStream.on('data', (data) => {
+      const events = deserializer.deserialize(data);
+      for (const event of events) {
+        // https://www.npmjs.com/package/json-rpc-2.0#error-handling
+        // errors are already handled by JSON RPC, so we can ignore them here
+        void rpc.receiveAndSend(event);
+      }
     });
   }
 
   async stop(): Promise<void> {
     await this.#rootInjector?.dispose();
-    if (this.#server) {
-      await promisify(this.#server.close.bind(this.#server))();
+    for (const task of this.#closedNotificationTasks) {
+      task.resolve();
     }
-    this.#server = undefined;
+    this.#closedNotificationTasks = [];
     this.#loggingBackendProvider = undefined;
+    this.#rootInjector = undefined;
+  }
+
+  #closedNotificationTasks: Task<void>[] = [];
+
+  public whenClosed(): Promise<void> {
+    if (this.#rootInjector) {
+      const task = new Task<void>();
+      this.#closedNotificationTasks.push(task);
+      return task.promise;
+    }
+    return Promise.resolve();
   }
 
   configure(configureParams: ConfigureParams): ConfigureResult {
