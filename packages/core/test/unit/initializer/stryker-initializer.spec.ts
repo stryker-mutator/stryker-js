@@ -249,7 +249,7 @@ describe(StrykerInitializer.name, () => {
       });
     });
 
-    it('should install any additional dependencies', async () => {
+    it('should install core package and any additional dependencies', async () => {
       arrangeAnswers({
         packageManager: 'npm',
         reporters: ['dimension', 'mars'],
