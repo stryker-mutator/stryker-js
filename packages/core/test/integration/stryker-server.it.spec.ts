@@ -18,7 +18,7 @@ import { JsonRpcEventDeserializer } from '../../src/utils/json-rpc-event-deseria
 import { firstValueFrom, ReplaySubject } from 'rxjs';
 import { expect } from 'chai';
 
-describe.only(StrykerServer.name, () => {
+describe(StrykerServer.name, () => {
   describe('on a happy flow project', () => {
     let sut: StrykerServer;
     let client: MutationServerClient;
@@ -27,9 +27,12 @@ describe.only(StrykerServer.name, () => {
       process.chdir(
         resolveFromRoot('testResources/stryker-server/happy-project'),
       );
-      sut = new StrykerServer({ plugins: [], concurrency: 1 });
+      sut = new StrykerServer(
+        { channel: 'socket' },
+        { plugins: [], concurrency: 1 },
+      );
       const port = await sut.start();
-      client = await MutationServerClient.create(port);
+      client = await MutationServerClient.create(port!);
     });
 
     afterEach(async () => {
@@ -38,7 +41,7 @@ describe.only(StrykerServer.name, () => {
     });
 
     it('should throw an error if discover is called before start()', async () => {
-      const sut = new StrykerServer();
+      const sut = new StrykerServer({ channel: 'stdio' });
       const dummyParams: DiscoverParams = { files: [] };
 
       const act = () => sut.discover(dummyParams);
@@ -49,7 +52,7 @@ describe.only(StrykerServer.name, () => {
     });
 
     it('should throw an error if mutationTest is called before start()', async () => {
-      const sut = new StrykerServer();
+      const sut = new StrykerServer({ channel: 'stdio' });
       const dummyParams: MutationTestParams = {};
 
       await expect(

@@ -60,19 +60,23 @@ export class TemporaryDirectory implements Disposable {
           `Failed to delete stryker temp directory ${this.#temporaryDirectory}`,
         );
       }
-      const lingeringDirectories = await fs.promises.readdir(
-        this.options.tempDirName,
-      );
-      if (!lingeringDirectories.length) {
-        try {
-          await fs.promises.rmdir(this.options.tempDirName);
-        } catch (e) {
-          // It's not THAT important, maybe another StrykerJS process started in the meantime.
-          this.log.debug(
-            `Failed to clean temp ${path.basename(this.options.tempDirName)}`,
-            e,
-          );
+      try {
+        const lingeringDirectories = await fs.promises.readdir(
+          this.options.tempDirName,
+        );
+        if (!lingeringDirectories.length) {
+          try {
+            await fs.promises.rmdir(this.options.tempDirName);
+          } catch (e) {
+            // It's not THAT important, maybe another StrykerJS process started in the meantime.
+            this.log.debug(
+              `Failed to clean temp ${path.basename(this.options.tempDirName)}`,
+              e,
+            );
+          }
         }
+      } catch {
+        // Can safely be ignored, the parent directory doesn't exist
       }
     }
   }

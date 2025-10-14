@@ -1,5 +1,5 @@
 import net from 'net';
-import { factory, testInjector } from '@stryker-mutator/test-helpers';
+import { factory, testInjector, tick } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import * as typedInject from 'typed-inject';
@@ -70,7 +70,7 @@ describe(StrykerServer.name, () => {
   const port = 8080;
   function setupStart() {
     serverMock.address.returns({ port } as net.AddressInfo);
-    serverMock.listen.callsArg(0);
+    serverMock.listen.callsArg(2);
   }
 
   beforeEach(() => {
@@ -160,7 +160,11 @@ describe(StrykerServer.name, () => {
 
   describe('configure', () => {
     beforeEach(() => {
-      sut = new StrykerServer(cliOptions, () => injectorMock);
+      sut = new StrykerServer(
+        { channel: 'socket' },
+        cliOptions,
+        () => injectorMock,
+      );
     });
 
     it('configures options for stryker run', async () => {
@@ -207,7 +211,11 @@ describe(StrykerServer.name, () => {
 
   describe('start', () => {
     beforeEach(() => {
-      sut = new StrykerServer(cliOptions, () => injectorMock);
+      sut = new StrykerServer(
+        { channel: 'socket' },
+        cliOptions,
+        () => injectorMock,
+      );
     });
 
     it('starts the server and resolves with a port number', async () => {
@@ -272,6 +280,7 @@ describe(StrykerServer.name, () => {
             mutationTestRequest,
           ]),
         );
+      await tick();
 
       expect(client.write.called).to.be.true;
       const writeArgs = client.write
@@ -298,7 +307,11 @@ describe(StrykerServer.name, () => {
 
   describe('stop', () => {
     beforeEach(() => {
-      sut = new StrykerServer(cliOptions, () => injectorMock);
+      sut = new StrykerServer(
+        { channel: 'socket' },
+        cliOptions,
+        () => injectorMock,
+      );
     });
 
     it('stops the server after starting', async () => {
@@ -316,7 +329,11 @@ describe(StrykerServer.name, () => {
 
   describe('discover', () => {
     beforeEach(() => {
-      sut = new StrykerServer(cliOptions, () => injectorMock);
+      sut = new StrykerServer(
+        { channel: 'socket' },
+        cliOptions,
+        () => injectorMock,
+      );
     });
 
     it('throws an error when the server has not been started yet', async () => {
@@ -412,7 +429,11 @@ describe(StrykerServer.name, () => {
     };
 
     beforeEach(() => {
-      sut = new StrykerServer(cliOptions, () => injectorMock);
+      sut = new StrykerServer(
+        { channel: 'socket' },
+        cliOptions,
+        () => injectorMock,
+      );
     });
 
     it('throws an error when the server has not been started yet', async () => {

@@ -1,10 +1,8 @@
 import semver from 'semver';
 
 guardMinimalNodeVersion();
-import net from 'net';
 import { Argument, Command } from 'commander';
 import {
-  MutantResult,
   DashboardOptions,
   ALL_REPORT_TYPES,
   PartialStrykerOptions,
@@ -14,7 +12,7 @@ import { initializerFactory } from './initializer/index.js';
 import { Stryker } from './stryker.js';
 import { defaultOptions } from './config/index.js';
 import { strykerEngines, strykerVersion } from './stryker-package.js';
-import { StrykerServer } from './stryker-server.js';
+import { StrykerServer, StrykerServerOptions } from './stryker-server.js';
 import { createInjector } from 'typed-inject';
 
 const list = createSplitter(',');
@@ -39,14 +37,12 @@ export class StrykerCli {
     private readonly program: Command = new Command(),
     private readonly runMutationTest = async (options: PartialStrykerOptions) =>
       new Stryker(options).runMutationTest(),
-    private readonly runMutationTestingServer = async (
-      options: PartialStrykerOptions,
-      outStream: NodeJS.WritableStream,
-      inStream: NodeJS.ReadableStream,
+    private readonly runMutationTestingServer = (
+      cliStrykerOptions: PartialStrykerOptions,
+      serverOptions: StrykerServerOptions,
     ) => {
-      const server = new StrykerServer(outStream, inStream, options);
-      await server.start();
-      await server.whenClosed();
+      const server = new StrykerServer(serverOptions, cliStrykerOptions);
+      return server.start();
     },
   ) {}
 
@@ -81,15 +77,10 @@ export class StrykerCli {
       .action(async (configFile, options) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         const cliOptions = this.#readStrykerOptions(options, configFile);
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        const server = net.createServer(async (socket) => {
-          await this.runMutationTestingServer(cliOptions, socket, socket);
-          server.close();
+        const port = await this.runMutationTestingServer(cliOptions, {
+          channel: 'socket',
         });
-        server.listen(() => {
-          const { port } = server.address() as net.AddressInfo;
-          console.log(JSON.stringify({ port }));
-        });
+        console.log(JSON.stringify({ port }));
       });
 
     this.program
@@ -125,7 +116,7 @@ export class StrykerCli {
             new Command().argument('[configFile]'),
           ).parse(remainingArguments, { from: 'user' });
           const runOptions = command.opts();
-          const configFile = command.args[0];
+          const [configFile] = command.args;
           const strykerOptions = this.#readStrykerOptions(
             runOptions,
             configFile,
@@ -134,27 +125,16 @@ export class StrykerCli {
             if (!socketOptions.port) {
               throw new Error('Please provide a port when using socket mode.');
             }
-            // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            const server = net.createServer(async (socket) => {
-              await this.runMutationTestingServer(
-                strykerOptions,
-                socket,
-                socket,
-              );
-              server.close();
+            await this.runMutationTestingServer(strykerOptions, {
+              channel,
+              ...socketOptions,
             });
-            server.listen(socketOptions.port, socketOptions.address, () => {
-              process.stderr.write(
-                `Stryker server listening on ${socketOptions.address}:${socketOptions.port}`,
-              );
-            });
-          } else {
-            void this.runMutationTestingServer(
-              strykerOptions,
-              process.stdin,
-              process.stdout,
+            process.stderr.write(
+              `Stryker server listening on ${socketOptions.address}:${socketOptions.port}\n`,
             );
-            process.stderr.write(`Stryker server started on stdio channel`);
+          } else {
+            void this.runMutationTestingServer(strykerOptions, { channel });
+            process.stderr.write(`Stryker server started on stdio channel\n`);
           }
         },
       );
