@@ -266,7 +266,7 @@ describe(StrykerInitializer.name, () => {
       );
     });
 
-    it('should install additional dependencies with pnpm', async () => {
+    it('should install core package and additional dependencies with pnpm', async () => {
       arrangeAnswers({
         packageManager: 'pnpm',
         reporters: [],
@@ -274,7 +274,7 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       expect(childExecSync).calledWith(
-        'pnpm add -D @stryker-mutator/awesome-runner',
+        'pnpm add -D @stryker-mutator/core @stryker-mutator/awesome-runner',
         {
           stdio: [0, 1, 2],
         },
