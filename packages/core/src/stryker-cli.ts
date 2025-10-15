@@ -31,6 +31,11 @@ function parseCleanDirOption(val: string) {
   return v === 'always' ? v : v !== 'false' && v !== '0';
 }
 
+const configFileArgument = new Argument(
+  '[configFile]',
+  'Path to the config file',
+);
+
 export class StrykerCli {
   constructor(
     private readonly argv: string[],
@@ -38,8 +43,8 @@ export class StrykerCli {
     private readonly runMutationTest = async (options: PartialStrykerOptions) =>
       new Stryker(options).runMutationTest(),
     private readonly runMutationTestingServer = (
-      cliStrykerOptions: PartialStrykerOptions,
       serverOptions: StrykerServerOptions,
+      cliStrykerOptions: PartialStrykerOptions,
     ) => {
       const server = new StrykerServer(serverOptions, cliStrykerOptions);
       return server.start();
@@ -50,7 +55,7 @@ export class StrykerCli {
     this.program.version(strykerVersion);
 
     this.#provideStrykerOptions(this.program.command('run'))
-      .argument('[configFile]', 'Path to the config file')
+      .addArgument(configFileArgument)
       .action(async (configFile, options) => {
         await this.runMutationTest(
           // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -72,14 +77,17 @@ export class StrykerCli {
       });
 
     this.#provideStrykerOptions(this.program.command('runServer'))
-      .argument('[configFile]', 'Path to the config file')
+      .addArgument(configFileArgument)
       .description('[DEPRECATED] use serve instead')
       .action(async (configFile, options) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         const cliOptions = this.#readStrykerOptions(options, configFile);
-        const port = await this.runMutationTestingServer(cliOptions, {
-          channel: 'socket',
-        });
+        const port = await this.runMutationTestingServer(
+          {
+            channel: 'socket',
+          },
+          cliOptions,
+        );
         console.log(JSON.stringify({ port }));
       });
 
@@ -88,7 +96,7 @@ export class StrykerCli {
       .addArgument(
         new Argument(
           '<channel>',
-          'The channel to use, either "stdio" or "socket"',
+          'The channel to use for communicating with the Stryker server',
         ).choices(['stdio', 'socket']),
       )
       .option(
@@ -113,7 +121,7 @@ export class StrykerCli {
           socketOptions: { port?: number; address: string },
         ) => {
           const command = this.#provideStrykerOptions(
-            new Command().argument('[configFile]'),
+            new Command().addArgument(configFileArgument),
           ).parse(remainingArguments, { from: 'user' });
           const runOptions = command.opts();
           const [configFile] = command.args;
@@ -122,18 +130,18 @@ export class StrykerCli {
             configFile,
           );
           if (channel === 'socket') {
-            if (!socketOptions.port) {
-              throw new Error('Please provide a port when using socket mode.');
-            }
-            await this.runMutationTestingServer(strykerOptions, {
-              channel,
-              ...socketOptions,
-            });
+            const port = await this.runMutationTestingServer(
+              {
+                channel,
+                ...socketOptions,
+              },
+              strykerOptions,
+            );
             process.stderr.write(
-              `Stryker server listening on ${socketOptions.address}:${socketOptions.port}\n`,
+              `Stryker server listening on ${socketOptions.address}:${port}\n`,
             );
           } else {
-            void this.runMutationTestingServer(strykerOptions, { channel });
+            void this.runMutationTestingServer({ channel }, strykerOptions);
             process.stderr.write(`Stryker server started on stdio channel\n`);
           }
         },

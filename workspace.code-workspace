@@ -144,7 +144,7 @@
       "runServer",
       "--incremental",
       "--concurrency",
-      "2",
+      "8",
     ],
   },
   "extensions": {

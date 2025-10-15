@@ -105,7 +105,7 @@ describe(StrykerCli.name, () => {
           version: '1.5.3',
           reportType: ReportType.Full,
         };
-        actRun([
+        actRun(
           '--dashboard.version',
           expectedDashboardOptions.version,
           '--dashboard.project',
@@ -116,14 +116,14 @@ describe(StrykerCli.name, () => {
           expectedDashboardOptions.baseUrl,
           '--dashboard.reportType',
           'full',
-        ]);
+        );
         expect(runMutationTestingStub).calledWithMatch({
           dashboard: expectedDashboardOptions,
         });
       });
 
       it('should remove any lingering options', () => {
-        actRun([
+        actRun(
           '--dashboard.version',
           'foo',
           '--dashboard.project',
@@ -132,7 +132,7 @@ describe(StrykerCli.name, () => {
           'baz',
           '--dashboard.baseUrl',
           'quux',
-        ]);
+        );
         const call = runMutationTestingStub.getCall(0);
         const actualOptions: StrykerOptions = call.args[0];
         const dashboardKeys = Object.keys(actualOptions).filter((key) =>
@@ -142,13 +142,16 @@ describe(StrykerCli.name, () => {
       });
     });
 
-    function actRun(args: string[]): void {
-      new StrykerCli(
-        ['node', 'stryker', 'run', ...args],
-        new Command(),
-        runMutationTestingStub,
-        runMutationTestingServerStub,
-      ).run();
+    it('should provide a meaningful help', () => {
+      const stdoutStub = sinon.stub(process.stdout, 'write');
+      expect(() => actRun('-h')).throws('(outputHelp)');
+      expect(stdoutStub.callCount).eq(1);
+      const helpText = stdoutStub.getCall(0).args[0] as string;
+      expect(helpText).matchSnapshot();
+    });
+
+    function actRun(...args: string[]): void {
+      act(['run', ...args]);
     }
 
     function arrangeActAssertConfigOption(
@@ -156,7 +159,7 @@ describe(StrykerCli.name, () => {
       expectedOptions: PartialStrykerOptions,
     ): void {
       runMutationTestingStub.resolves();
-      actRun(args);
+      actRun(...args);
       expect(runMutationTestingStub).called;
       expect(runMutationTestingStub).calledWith(expectedOptions);
     }
@@ -189,32 +192,142 @@ describe(StrykerCli.name, () => {
       expect(injectorMock.dispose).to.be.called;
     });
 
-    function actInit(injectorStub: () => Injector): void {
-      new StrykerCli(
-        ['node', 'stryker', 'init'],
-        new Command(),
-        runMutationTestingStub,
-        runMutationTestingServerStub,
-      ).run(injectorStub);
+    it('should provide a meaningful help', () => {
+      const stdoutStub = sinon.stub(process.stdout, 'write');
+      expect(() => actInit(() => factory.injector() as Injector, '-h')).throws(
+        '(outputHelp)',
+      );
+      expect(stdoutStub.callCount).eq(1);
+      const helpText = stdoutStub.getCall(0).args[0] as string;
+      expect(helpText).matchSnapshot();
+    });
+
+    function actInit(injectorStub: () => Injector, ...args: string[]): void {
+      act(['init', ...args], injectorStub);
     }
   });
 
-  describe('runServer', () => {
-    it('should pass options to the Stryker Server', () => {
-      actRunServer(['--concurrency', '5']);
-      expect(runMutationTestingServerStub).calledOnceWithExactly({
-        concurrency: 5,
-      });
+  describe('runServer [DEPRECATED]', () => {
+    let consoleLogStub: sinon.SinonStubbedMember<typeof console.log>;
+    let stdoutStub: sinon.SinonStubbedMember<NodeJS.WriteStream['write']>;
+
+    beforeEach(() => {
+      consoleLogStub = sinon.stub(console, 'log');
+      stdoutStub = sinon.stub(process.stdout, 'write');
     });
 
-    function actRunServer(args: string[]): void {
-      runMutationTestingServerStub.resolves();
-      new StrykerCli(
-        ['node', 'stryker', 'runServer', ...args],
-        new Command(),
-        runMutationTestingStub,
+    it('should pass options to the Stryker Server', () => {
+      actRunServer('--concurrency', '5');
+      sinon.assert.calledWithExactly(
         runMutationTestingServerStub,
-      ).run();
+        { channel: 'socket' },
+        {
+          concurrency: 5,
+        },
+      );
+    });
+
+    it('should log the port to the console as JSON', async () => {
+      const expectedPort = 1337;
+      runMutationTestingServerStub.resolves(expectedPort);
+      actRunServer();
+      await tick();
+      sinon.assert.calledWithExactly(
+        consoleLogStub,
+        JSON.stringify({ port: expectedPort }),
+      );
+    });
+
+    it('should provide a meaningful help', () => {
+      expect(() => actRunServer('-h')).throws('(outputHelp)');
+      expect(stdoutStub.callCount).eq(1);
+      const helpText = stdoutStub.getCall(0).args[0] as string;
+      expect(helpText).matchSnapshot();
+    });
+
+    function actRunServer(...args: string[]): void {
+      act(['runServer', ...args]);
+    }
+  });
+
+  describe('serve', () => {
+    let consoleLogStub: sinon.SinonStubbedMember<typeof console.log>;
+    let stdoutStub: sinon.SinonStubbedMember<NodeJS.WriteStream['write']>;
+    let stderrStub: sinon.SinonStubbedMember<NodeJS.WriteStream['write']>;
+
+    beforeEach(() => {
+      consoleLogStub = sinon.stub(console, 'log');
+      stdoutStub = sinon.stub(process.stdout, 'write');
+      stderrStub = sinon.stub(process.stderr, 'write');
+    });
+
+    it('should pass stdio as server options', async () => {
+      await actServe('stdio');
+      sinon.assert.calledWithExactly(
+        runMutationTestingServerStub,
+        { channel: 'stdio' },
+        {},
+      );
+    });
+
+    it('should pass socket as server options', async () => {
+      await actServe('socket', '--port', '1234');
+      sinon.assert.calledWithExactly(
+        runMutationTestingServerStub,
+        { channel: 'socket', port: 1234, address: 'localhost' },
+        {},
+      );
+    });
+
+    it('should allow you to override the address for socket', async () => {
+      await actServe('socket', '--port', '1234', '--address', '0.0.0.0');
+      sinon.assert.calledWithExactly(
+        runMutationTestingServerStub,
+        { channel: 'socket', port: 1234, address: '0.0.0.0' },
+        {},
+      );
+    });
+
+    it('should pass additional options after -- as stryker options', async () => {
+      await actServe('stdio', '--', '--concurrency', '5');
+      sinon.assert.calledWithExactly(
+        runMutationTestingServerStub,
+        { channel: 'stdio' },
+        { concurrency: 5 },
+      );
+    });
+
+    it('should log stdio channel info to stderr and not stdout', async () => {
+      await actServe('stdio');
+      sinon.assert.notCalled(consoleLogStub);
+      sinon.assert.notCalled(stdoutStub);
+      sinon.assert.calledOnceWithExactly(
+        stderrStub,
+        `Stryker server started on stdio channel\n`,
+      );
+    });
+
+    it('should log socket channel info to stderr and not stdout', async () => {
+      runMutationTestingServerStub.resolves(1234);
+      await actServe('socket', '--port', '1234');
+      sinon.assert.notCalled(consoleLogStub);
+      sinon.assert.notCalled(stdoutStub);
+      sinon.assert.calledOnceWithExactly(
+        stderrStub,
+        `Stryker server listening on localhost:1234\n`,
+      );
+    });
+
+    it('should provide a meaningful help', async () => {
+      await expect(actServe('-h')).rejectedWith('(outputHelp)');
+      expect(stdoutStub.callCount).eq(1);
+      const helpText = stdoutStub.getCall(0).args[0] as string;
+      expect(helpText).matchSnapshot();
+    });
+
+    async function actServe(...args: string[]) {
+      act(['serve', ...args]);
+      await tick();
     }
   });
 
@@ -228,4 +341,16 @@ describe(StrykerCli.name, () => {
       expect(() => guardMinimalNodeVersion('v20.0.0')).not.throws();
     });
   });
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  function act(args: string[], createInjectorImpl?: () => Injector<{}>): void {
+    new StrykerCli(
+      ['node', 'stryker', ...args],
+      new Command().exitOverride((err) => {
+        throw err;
+      }),
+      runMutationTestingStub,
+      runMutationTestingServerStub,
+    ).run(createInjectorImpl);
+  }
 });
