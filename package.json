@@ -27,6 +27,7 @@
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-chai-friendly": "1.1.0",
     "eslint-plugin-prettier": "5.5.4",
+    "estree-walker": "^3.0.3",
     "execa": "9.6.0",
     "glob": "11.0.3",
     "install-local": "3.0.1",
