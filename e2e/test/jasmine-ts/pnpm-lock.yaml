@@ -1,0 +1,22 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+importers:
+
+  .:
+    devDependencies:
+      '@types/jasmine':
+        specifier: ~3.5.11
+        version: 3.5.14
+
+packages:
+
+  '@types/jasmine@3.5.14':
+    resolution: {integrity: sha512-Fkgk536sHPqcOtd+Ow+WiUNuk0TSo/BntKkF8wSvcd6M2FvPjeXcUE6Oz/bwDZiUZEaXLslAgw00Q94Pnx6T4w==}
+
+snapshots:
+
+  '@types/jasmine@3.5.14': {}

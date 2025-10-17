@@ -16,7 +16,9 @@ const dirs = (await fs.readdir(new URL('../test', import.meta.url))).filter(
   filter(pattern),
 );
 const concurrency = os.cpus().length;
-const command = process.env.CI ? 'install --frozen-lockfile' : 'install';
+const command = process.env.CI
+  ? 'install --ignore-workspace --frozen-lockfile'
+  : 'install --ignore-workspace';
 
 /**
  * @typedef Package
