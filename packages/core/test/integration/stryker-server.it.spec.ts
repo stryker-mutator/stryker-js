@@ -1,3 +1,4 @@
+import { spawn, ChildProcess } from 'child_process';
 import {
   DiscoverParams,
   DiscoverResult,
@@ -15,61 +16,75 @@ import {
 import { StrykerServer } from '../../src/stryker-server.js';
 import { resolveFromRoot } from '../helpers/test-utils.js';
 import { JsonRpcEventDeserializer } from '../../src/utils/json-rpc-event-deserializer.js';
-import { firstValueFrom, ReplaySubject } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 import { expect } from 'chai';
+import { promisify } from 'util';
 
 describe(StrykerServer.name, () => {
-  describe('on a happy flow project', () => {
-    let sut: StrykerServer;
-    let client: MutationServerClient;
+  let sut: ChildProcess;
+  let client: MutationServerClient;
+
+  afterEach(() => {
+    sut.kill();
+  });
+  describe('using socket channel', () => {
+    let socket: net.Socket;
 
     beforeEach(async () => {
-      process.chdir(
-        resolveFromRoot('testResources/stryker-server/happy-project'),
+      sut = spawn(
+        'node',
+        ['../../../bin/stryker', 'serve', 'socket', '--', '--concurrency', '1'],
+        {
+          cwd: resolveFromRoot('testResources/stryker-server/happy-project'),
+          stdio: ['pipe', 'pipe', 'pipe'],
+        },
       );
-      sut = new StrykerServer(
-        { channel: 'socket' },
-        { plugins: [], concurrency: 1 },
-      );
-      const port = await sut.start();
-      client = await MutationServerClient.create(port!);
+      const port = await new Promise<number>((res, rej) => {
+        sut.stderr!.on('data', (data: Buffer) => {
+          const output = data.toString('utf8');
+          const match = output.match(
+            /Stryker server listening on localhost:(\d+)/,
+          );
+          if (match) {
+            res(parseInt(match[1], 10));
+          }
+        });
+      });
+      socket = new net.Socket();
+      client = new MutationServerClient(socket, socket);
+      await new Promise<void>((res, rej) => {
+        socket.once('error', rej);
+        socket.connect(port, 'localhost', () => {
+          // connected
+          res();
+        });
+      });
     });
 
     afterEach(async () => {
-      await client.end();
-      await sut.stop();
+      await promisify(socket.destroy.bind(socket))(undefined);
     });
 
-    it('should throw an error if discover is called before start()', async () => {
-      const sut = new StrykerServer({ channel: 'stdio' });
-      const dummyParams: DiscoverParams = { files: [] };
+    actFunctionalTestSuite();
+  });
 
-      const act = () => sut.discover(dummyParams);
-
-      await expect(act()).to.be.rejectedWith(
-        "Stryker server isn't started yet, please call `start` first",
+  describe('using stdio channel', () => {
+    beforeEach(() => {
+      sut = spawn(
+        'node',
+        ['../../../bin/stryker', 'serve', 'stdio', '--', '--concurrency', '1'],
+        {
+          cwd: resolveFromRoot('testResources/stryker-server/happy-project'),
+          stdio: ['pipe', 'pipe', 'pipe'],
+        },
       );
+      client = new MutationServerClient(sut.stdout!, sut.stdin!);
     });
 
-    it('should throw an error if mutationTest is called before start()', async () => {
-      const sut = new StrykerServer({ channel: 'stdio' });
-      const dummyParams: MutationTestParams = {};
+    actFunctionalTestSuite();
+  });
 
-      await expect(
-        firstValueFrom(sut.mutationTest(dummyParams)),
-      ).to.be.rejectedWith(
-        "Stryker server isn't started yet, please call `start` first",
-      );
-    });
-
-    it('should throw an error when trying to start twice', async () => {
-      const act = () => sut.start();
-
-      await expect(act()).to.be.eventually.rejectedWith(
-        'Server already started',
-      );
-    });
-
+  function actFunctionalTestSuite() {
     it('should successfully configure the server', async () => {
       const configureParam: ConfigureParams = {
         configFilePath: 'stryker.conf.js',
@@ -143,10 +158,6 @@ describe(StrykerServer.name, () => {
       expect(results).lengthOf(1);
       expect(cleanedResults).matchSnapshot();
     });
-  });
-
-  function assertEmptyMutationTestResult(actualResult: MutationTestResult) {
-    expect(actualResult).deep.eq({ files: {} } satisfies MutationTestResult);
   }
 });
 
@@ -156,18 +167,21 @@ class MutationServerClient {
     new ReplaySubject<MutationTestResult>();
   readonly mutationTestResult$ =
     this.#mutationTestResultsSubject.asObservable();
-  readonly #socket: net.Socket;
-  readonly #port;
+  readonly #inStream: NodeJS.ReadableStream;
+  readonly #outStream: NodeJS.WritableStream;
 
-  private constructor(port: number) {
-    this.#port = port;
-    this.#socket = new net.Socket();
+  constructor(
+    inStream: NodeJS.ReadableStream,
+    outStream: NodeJS.WritableStream,
+  ) {
+    this.#inStream = inStream;
+    this.#outStream = outStream;
     const deserializer = new JsonRpcEventDeserializer();
     const server = new JSONRPCServer();
     const client = new JSONRPCClient((jsonRPCRequest) => {
       const content = Buffer.from(JSON.stringify(jsonRPCRequest));
-      this.#socket.write(`Content-Length: ${content.byteLength}\r\n\r\n`);
-      this.#socket.write(content);
+      this.#outStream.write(`Content-Length: ${content.byteLength}\r\n\r\n`);
+      this.#outStream.write(content);
     });
     this.#rpc = new JSONRPCServerAndClient(server, client);
     this.#rpc.addMethod(
@@ -177,36 +191,13 @@ class MutationServerClient {
       },
     );
 
-    this.#socket.on('data', (data) => {
+    this.#inStream.on('data', (data) => {
       for (const event of deserializer.deserialize(data)) {
         this.#rpc.receiveAndSend(event).catch((error) => {
           console.error(error);
         });
       }
     });
-  }
-
-  private start() {
-    return new Promise<void>((res, rej) => {
-      this.#socket.connect(this.#port, () => {
-        res();
-      });
-      this.#socket.once('error', rej);
-    });
-  }
-
-  public end() {
-    return new Promise<void>((res) => {
-      this.#socket.end(() => {
-        res();
-      });
-    });
-  }
-
-  static async create(port: number) {
-    const client = new MutationServerClient(port);
-    await client.start();
-    return client;
   }
 
   async configure(params: ConfigureParams = {}): Promise<ConfigureResult> {
@@ -241,4 +232,8 @@ function cleanResults(results: MutationTestResult[]): MutationTestResult[] {
       ]),
     ),
   }));
+}
+
+function assertEmptyMutationTestResult(actualResult: MutationTestResult) {
+  expect(actualResult).deep.eq({ files: {} } satisfies MutationTestResult);
 }

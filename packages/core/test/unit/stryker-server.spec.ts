@@ -325,6 +325,19 @@ describe(StrykerServer.name, () => {
 
       expect(serverMock.close).to.have.been.calledOnce;
     });
+
+    it('should stop listening to stdin when using stdio channel', async () => {
+      sut = new StrykerServer(
+        { channel: 'stdio' },
+        cliOptions,
+        () => injectorMock,
+      );
+      await sut.start();
+      expect(process.stdin.listenerCount('data')).to.equal(1);
+
+      await sut.stop();
+      expect(process.stdin.listenerCount('data')).to.equal(0);
+    });
   });
 
   describe('discover', () => {

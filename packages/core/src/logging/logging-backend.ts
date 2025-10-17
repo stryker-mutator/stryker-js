@@ -16,18 +16,18 @@ export class LoggingBackend implements LoggingSink, Disposable {
   activeStdoutLevel: LogLevel = LogLevel.Information;
   activeFileLevel: LogLevel = LogLevel.Off;
   showColors = true;
-  consoleOut;
+  #consoleOut;
 
   static readonly inject = [coreTokens.loggerConsoleOut] as const;
 
   constructor(consoleOut: NodeJS.WritableStream) {
-    this.consoleOut = consoleOut;
+    this.#consoleOut = consoleOut;
   }
 
   log(event: LoggingEvent) {
     const eventPriority = logLevelPriority[event.level];
     if (eventPriority >= logLevelPriority[this.activeStdoutLevel]) {
-      this.consoleOut.write(
+      this.#consoleOut.write(
         `${this.showColors ? event.formatColorized() : event.format()}\n`,
       );
     }

@@ -47,6 +47,19 @@ describe('Provide logging', () => {
         LoggingBackend,
       );
     });
+
+    it('should provide the given console stream', async () => {
+      // Act
+      await provideLoggingBackend(injectorMock, process.stderr);
+
+      // Assert
+      sinon.assert.calledWithExactly(
+        injectorMock.provideValue,
+        coreTokens.loggerConsoleOut,
+        process.stderr,
+      );
+    });
+
     it('should open the logging server and provide the address', async () => {
       // Arrange
       const expectedAddress: LoggingServerAddress = { port: 42 };
