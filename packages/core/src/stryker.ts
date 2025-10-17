@@ -41,7 +41,7 @@ export class Stryker {
     const rootInjector = this.injectorFactory();
     try {
       const prepareInjector = provideLogging(
-        await provideLoggingBackend(rootInjector, process.stderr),
+        await provideLoggingBackend(rootInjector, process.stdout),
       ).provideValue(coreTokens.reporterOverride, undefined);
       return await Stryker.run(prepareInjector, {
         cliOptions: this.cliOptions,
