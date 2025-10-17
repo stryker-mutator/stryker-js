@@ -38,7 +38,6 @@ import {
   LoggingServerAddress,
 } from './logging/index.js';
 import { Logger, LoggerFactoryMethod } from '@stryker-mutator/api/logging';
-import { Task } from '@stryker-mutator/util';
 
 export const rpcMethods = Object.freeze({
   configure: 'configure',
@@ -203,9 +202,9 @@ export class StrykerServer {
     this.#abortController.abort();
     await this.#rootInjector?.dispose();
     if (this.#server) {
-      await promisify(this.#server.close.bind(this.#server))();
+      await promisify(this.#server.close).bind(this.#server)();
+      this.#server = undefined;
     }
-    this.#server = undefined;
     this.#loggingBackendProvider = undefined;
     this.#abortController = new AbortController();
   }
@@ -283,24 +282,36 @@ export class StrykerServer {
         },
       };
 
-      Stryker.run(
-        this.#loggingBackendProvider.provideValue(
-          coreTokens.reporterOverride,
-          reporter,
-        ),
-        {
-          cliOptions: {
-            ...this.#cliOptions,
-            allowConsoleColors: false,
-            configFile: this.#configFilePath,
-          },
-          targetMutatePatterns: this.#filesToGlobPatterns(
-            mutationTestParams.files,
-          ),
+      const runInjector = this.#loggingBackendProvider.provideValue(
+        coreTokens.reporterOverride,
+        reporter,
+      );
+      let caughtError: unknown;
+      Stryker.run(runInjector, {
+        cliOptions: {
+          ...this.#cliOptions,
+          allowConsoleColors: false,
+          configFile: this.#configFilePath,
         },
-      )
-        .then(() => subscriber.complete())
-        .catch((error) => subscriber.error(error));
+        targetMutatePatterns: this.#filesToGlobPatterns(
+          mutationTestParams.files,
+        ),
+      })
+        .catch((error) => (caughtError = error))
+        .finally(() => {
+          runInjector
+            .dispose()
+            .catch((err) => {
+              console.error('Error during dispose', err);
+            })
+            .finally(() => {
+              if (caughtError) {
+                subscriber.error(caughtError);
+              } else {
+                subscriber.complete();
+              }
+            });
+        });
     });
   }
 

@@ -1,4 +1,5 @@
 import { spawn, ChildProcess } from 'child_process';
+import fs from 'fs/promises';
 import {
   DiscoverParams,
   DiscoverResult,
@@ -20,7 +21,7 @@ import { ReplaySubject } from 'rxjs';
 import { expect } from 'chai';
 import { promisify } from 'util';
 
-describe(StrykerServer.name, () => {
+describe.only(StrykerServer.name, () => {
   let sut: ChildProcess;
   let client: MutationServerClient;
 
@@ -54,7 +55,7 @@ describe(StrykerServer.name, () => {
       client = new MutationServerClient(socket, socket);
       await new Promise<void>((res, rej) => {
         socket.once('error', rej);
-        socket.connect(port, 'localhost', () => {
+        socket.connect(port, () => {
           // connected
           res();
         });
@@ -68,11 +69,18 @@ describe(StrykerServer.name, () => {
     actFunctionalTestSuite();
   });
 
-  describe('using stdio channel', () => {
+  describe.only('using stdio channel', () => {
     beforeEach(() => {
       sut = spawn(
         'node',
-        ['../../../bin/stryker', 'serve', 'stdio', '--', '--concurrency', '1'],
+        [
+          resolveFromRoot('bin/stryker'),
+          'serve',
+          'stdio',
+          '--',
+          '--concurrency',
+          '1',
+        ],
         {
           cwd: resolveFromRoot('testResources/stryker-server/happy-project'),
           stdio: ['pipe', 'pipe', 'pipe'],
@@ -136,6 +144,14 @@ describe(StrykerServer.name, () => {
       expect(cleanedResults).matchSnapshot();
     });
 
+    it('should delete the `.stryker-tmp` directory after a run', async () => {
+      await client.mutationTest();
+      const files = await fs.readdir(
+        resolveFromRoot('testResources/stryker-server/happy-project'),
+      );
+      expect(files).not.include('.stryker-tmp');
+    });
+
     it('should be able to run mutation tests with range', async () => {
       const results: MutationTestResult[] = [];
       client.mutationTestResult$.subscribe((result) => results.push(result));
@@ -192,6 +208,7 @@ class MutationServerClient {
     );
 
     this.#inStream.on('data', (data) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       for (const event of deserializer.deserialize(data)) {
         this.#rpc.receiveAndSend(event).catch((error) => {
           console.error(error);

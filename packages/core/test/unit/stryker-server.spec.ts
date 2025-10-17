@@ -1,4 +1,5 @@
 import net from 'net';
+import stream from 'stream';
 import { factory, testInjector, tick } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 import sinon from 'sinon';
@@ -33,12 +34,15 @@ import {
 import { FileSystemTestDouble } from '../helpers/file-system-test-double.js';
 import { Project } from '../../src/fs/project.js';
 import { Reporter } from '@stryker-mutator/api/report';
+import { StrictReporter } from '../../src/reporters/strict-reporter.js';
 
 describe(StrykerServer.name, () => {
   let sut: StrykerServer;
   let injectorMock: sinon.SinonStubbedInstance<
     typedInject.Injector<
-      MutationTestContext & { [coreTokens.loggingServer]: LoggingServer }
+      MutationTestContext & { [coreTokens.loggingServer]: LoggingServer } & {
+        [coreTokens.reporterOverride]: StrictReporter;
+      }
     >
   >;
   let cliOptions: PartialStrykerOptions;
@@ -68,9 +72,25 @@ describe(StrykerServer.name, () => {
   let serverMock: sinon.SinonStubbedInstance<net.Server>;
   let createServerStub: sinon.SinonStubbedMember<typeof net.createServer>;
   const port = 8080;
-  function setupStart() {
+  function arrangeStartSocket() {
     serverMock.address.returns({ port } as net.AddressInfo);
     serverMock.listen.callsArg(2);
+  }
+
+  function arrangeStdioChannel(messages: Buffer[]) {
+    const readable = stream.Readable.from(
+      messages.map((msg) =>
+        Buffer.concat([
+          Buffer.from(`Content-Length: ${msg.length}\r\n\r\n`),
+          msg,
+        ]),
+      ),
+    );
+    const writable = new stream.PassThrough();
+    sinon.stub(process, 'stdin').value(readable);
+    sinon.stub(process, 'stdout').value(writable);
+
+    return writable;
   }
 
   beforeEach(() => {
@@ -145,17 +165,15 @@ describe(StrykerServer.name, () => {
       injectorMock as typedInject.Injector<MutationTestContext>,
     );
     mutationTestExecutorMock.execute.resolves(mutantResults);
-
     cliOptions = {};
-
     serverMock = sinon.createStubInstance(net.Server);
+    serverMock.close.callsArg(0);
     createServerStub = sinon.stub(net, 'createServer').returns(serverMock);
-
     strykerRunStub = sinon.stub(Stryker, 'run');
   });
 
-  afterEach(() => {
-    sinon.restore();
+  afterEach(async () => {
+    await sut.stop();
   });
 
   describe('configure', () => {
@@ -180,7 +198,7 @@ describe(StrykerServer.name, () => {
         status: 'Killed',
       };
       strykerRunStub.resolves([mutantResult]);
-      setupStart();
+      arrangeStartSocket();
 
       const configureParams: ConfigureParams = {
         configFilePath: 'non-existent-test-file',
@@ -219,7 +237,7 @@ describe(StrykerServer.name, () => {
     });
 
     it('starts the server and resolves with a port number', async () => {
-      setupStart();
+      arrangeStartSocket();
 
       const actual = await sut.start();
 
@@ -227,7 +245,7 @@ describe(StrykerServer.name, () => {
     });
 
     it('throws an error when the server has already been started', async () => {
-      setupStart();
+      arrangeStartSocket();
       await sut.start();
 
       const act = () => sut.start();
@@ -257,7 +275,7 @@ describe(StrykerServer.name, () => {
       );
       const expectedReportMutationTestProgressNotification =
         '{"jsonrpc":"2.0","method":"reportMutationTestProgress","params":{"files":{"foo.js":{"mutants":[{"id":"1","status":"Killed","replacement":"mutatedCode","location":{"start":{"line":1,"column":0},"end":{"line":1,"column":10}},"mutatorName":"TestMutator"}]}}}}';
-      setupStart();
+      arrangeStartSocket();
       await sut.start();
       const client = connectClient();
 
@@ -295,7 +313,7 @@ describe(StrykerServer.name, () => {
     });
 
     it('should configure the logging server to use stderr', async () => {
-      setupStart();
+      arrangeStartSocket();
       await sut.start();
       sinon.assert.calledWithExactly(
         injectorMock.provideValue,
@@ -315,18 +333,18 @@ describe(StrykerServer.name, () => {
     });
 
     it('stops the server after starting', async () => {
-      serverMock.close.returns(serverMock);
-      setupStart();
+      arrangeStartSocket();
       await sut.start();
 
       const stopPromise = sut.stop();
-      serverMock.close.callsArg(0);
       await stopPromise;
 
-      expect(serverMock.close).to.have.been.calledOnce;
+      expect(serverMock.close).calledOnce;
     });
 
     it('should stop listening to stdin when using stdio channel', async () => {
+      const readable = stream.Readable.from([]);
+      sinon.stub(process, 'stdin').value(readable);
       sut = new StrykerServer(
         { channel: 'stdio' },
         cliOptions,
@@ -358,7 +376,7 @@ describe(StrykerServer.name, () => {
     });
 
     it('should discover mutants', async () => {
-      setupStart();
+      arrangeStartSocket();
       await sut.start();
 
       const actual = await sut.discover({});
@@ -383,7 +401,7 @@ describe(StrykerServer.name, () => {
     });
 
     it('should pass along the cli options', async () => {
-      setupStart();
+      arrangeStartSocket();
       await sut.start();
 
       await sut.discover({});
@@ -398,7 +416,7 @@ describe(StrykerServer.name, () => {
 
     it('should pass along the config file from the configure call', async () => {
       sut.configure({ configFilePath: 'foo/bar/stryker-config.json' });
-      setupStart();
+      arrangeStartSocket();
       await sut.start();
 
       await sut.discover({});
@@ -413,7 +431,7 @@ describe(StrykerServer.name, () => {
     });
 
     it('should pass along the files to mutate', async () => {
-      setupStart();
+      arrangeStartSocket();
       await sut.start();
 
       await sut.discover({
@@ -459,7 +477,7 @@ describe(StrykerServer.name, () => {
 
     it('mutates a file and reports the result', async () => {
       const mutantResult = createMutantResult();
-      setupStart();
+      arrangeStartSocket();
       strykerRunStub.resolves([mutantResult]);
       sut.configure({ configFilePath: 'non-existent-test-file' });
       await sut.start();
@@ -488,7 +506,7 @@ describe(StrykerServer.name, () => {
 
     it('mutates all files in a directory and reports the result', async () => {
       const mutantResult = createMutantResult();
-      setupStart();
+      arrangeStartSocket();
       strykerRunStub.resolves([mutantResult]);
       sut.configure({ configFilePath: 'non-existent-test-file' });
       await sut.start();
@@ -516,7 +534,7 @@ describe(StrykerServer.name, () => {
 
     it('mutates a range of a file and reports the result', async () => {
       const mutantResult = createMutantResult();
-      setupStart();
+      arrangeStartSocket();
       strykerRunStub.resolves([mutantResult]);
       sut.configure({ configFilePath: 'non-existent-test-file' });
       await sut.start();
@@ -551,5 +569,87 @@ describe(StrykerServer.name, () => {
         targetMutatePatterns: ['foo.js:1:19-2:19'],
       });
     });
+
+    it('should dispose the temporary directory after a successful mutation test run', async () => {
+      arrangeStartSocket();
+      await sut.start();
+      strykerRunStub.resolves([]);
+      injectorMock.dispose.returns(Promise.resolve());
+
+      await finalize(sut.mutationTest({ files: [{ path: 'foo.js' }] }));
+      sinon.assert.calledOnce(injectorMock.dispose);
+    });
+
+    it('should dispose the temporary directory after a failed mutation test run', async () => {
+      arrangeStartSocket();
+      await sut.start();
+      strykerRunStub.rejects(new Error('Foobar'));
+      injectorMock.dispose.returns(Promise.resolve());
+
+      await finalize(sut.mutationTest({ files: [{ path: 'foo.js' }] }));
+      sinon.assert.calledOnce(injectorMock.dispose);
+    });
+  });
+
+  describe('stdio channel', () => {
+    beforeEach(() => {
+      sut = new StrykerServer(
+        { channel: 'stdio' },
+        cliOptions,
+        () => injectorMock,
+      );
+    });
+
+    it('should handle mutationTest RPC and send progress notifications over the socket', async () => {
+      // Arrange
+      const mutantResult: MutantResult = {
+        fileName: 'foo.js',
+        id: '1',
+        status: 'Killed',
+        replacement: 'mutatedCode',
+        location: {
+          start: { line: 1, column: 0 },
+          end: { line: 1, column: 10 },
+        },
+        mutatorName: 'TestMutator',
+      };
+      sinon.stub(sut, 'mutationTest').returns(
+        new Observable<MutantResult>((observer) => {
+          observer.next(mutantResult);
+          observer.complete();
+        }),
+      );
+      const expectedReportMutationTestProgressNotification =
+        'Content-Length: 256\r\n\r\n{"jsonrpc":"2.0","method":"reportMutationTestProgress","params":{"files":{"foo.js":{"mutants":[{"id":"1","status":"Killed","replacement":"mutatedCode","location":{"start":{"line":1,"column":0},"end":{"line":1,"column":10}},"mutatorName":"TestMutator"}]}}}}';
+      const stdoutFake = arrangeStdioChannel([
+        Buffer.from(
+          JSON.stringify({
+            jsonrpc: '2.0',
+            id: 1,
+            method: 'mutationTest',
+            params: {},
+          }),
+        ),
+      ]);
+      let actualMsg = '';
+      stdoutFake.on('data', (chunk) => {
+        actualMsg += chunk.toString();
+      });
+      await sut.start();
+      await tick();
+
+      expect(actualMsg).eq(expectedReportMutationTestProgressNotification);
+    });
   });
 });
+
+function finalize(ob: Observable<unknown>): Promise<void> {
+  return new Promise((resolve) => {
+    ob.subscribe({
+      complete: resolve,
+      error: () => {
+        resolve();
+      },
+    });
+  });
+}
