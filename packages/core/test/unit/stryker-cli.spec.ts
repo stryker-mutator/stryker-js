@@ -346,9 +346,18 @@ describe(StrykerCli.name, () => {
   function act(args: string[], createInjectorImpl?: () => Injector<{}>): void {
     new StrykerCli(
       ['node', 'stryker', ...args],
-      new Command().exitOverride((err) => {
-        throw err;
-      }),
+      new Command()
+        .exitOverride((err) => {
+          throw err;
+        })
+        .configureOutput({
+          getOutHelpWidth() {
+            return 80;
+          },
+          getErrHelpWidth() {
+            return 80;
+          },
+        }),
       runMutationTestingStub,
       runMutationTestingServerStub,
     ).run(createInjectorImpl);
