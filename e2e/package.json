@@ -79,12 +79,12 @@
     }
   },
   "scripts": {
-    "setup": "pnpm install && node --run bootstrap && node --run install-local-dependencies",
+    "setup": "pnpm install && pnpm run bootstrap && pnpm run install-local-dependencies",
     "bootstrap": "node tasks/bootstrap.js",
     "install-local-dependencies": "node tasks/install-local-dependencies.js",
     "lint": "tsc -p tsconfig.json && eslint",
     "test": "node tasks/run-e2e-tests.js",
-    "test:update": "cross-env CHAI_JEST_SNAPSHOT_UPDATE_ALL=true node --run test"
+    "test:update": "cross-env CHAI_JEST_SNAPSHOT_UPDATE_ALL=true pnpm run test"
   },
   "localDependencies": {
     "grunt-stryker": "../packages/grunt-stryker",

@@ -20,7 +20,7 @@ jobs:
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
     - name: Build
-      run: node --run build
+      run: pnpm run build
     - name: Release
       run: npx lerna publish from-git --yes --pre-dist-tag next --no-verify-access
       env:

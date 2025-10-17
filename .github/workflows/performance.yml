@@ -19,11 +19,11 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
       - name: Install dependencies
-        run: pnpm install && node --run install:chromium
+        run: pnpm install && pnpm run install:chromium
       - name: Build packages
-        run: node --run build
+        run: pnpm run build
       - name: Run performance tests
-        run: node --run perf
+        run: pnpm run perf
         env:
           PERF_TEST_GLOB_PATTERN: ${{ github.event.inputs.PERF_TEST_GLOB_PATTERN }}
       - name: Store reports

@@ -15,8 +15,8 @@ jobs:
         uses: pnpm/action-setup@v4
       - name: Install & Build
         run: |
-          pnpm install && node --run install:chromium
-          node --run build:no-check
+          pnpm install && pnpm run install:chromium
+          pnpm run build:no-check
       - name: Run Stryker
         run: npx lerna run --scope "@stryker-mutator/core" --concurrency 1 --stream stryker -- --concurrency 3
         env:
@@ -30,8 +30,8 @@ jobs:
         uses: pnpm/action-setup@v4
       - name: Install & Build
         run: |
-          pnpm install && node --run install:chromium
-          node --run build:no-check
+          pnpm install && pnpm run install:chromium
+          pnpm run build:no-check
       - name: Run Stryker
         run: npx lerna run --scope "@stryker-mutator/{api,instrumenter,util,jest-runner,karma-runner,mocha-runner,jasmine-runner,cucumber-runner}" --concurrency 1 --stream stryker -- --concurrency 3
         env:
@@ -45,8 +45,8 @@ jobs:
         uses: pnpm/action-setup@v4
       - name: Install & Build
         run: |
-          pnpm install && node --run install:chromium
-          node --run build:no-check
+          pnpm install && pnpm run install:chromium
+          pnpm run build:no-check
       - name: Run Stryker
         run: npx lerna run --scope "@stryker-mutator/typescript-checker" --concurrency 1 --stream stryker -- --concurrency 2
         env:
