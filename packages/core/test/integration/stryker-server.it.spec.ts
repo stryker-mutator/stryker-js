@@ -21,7 +21,7 @@ import { ReplaySubject } from 'rxjs';
 import { expect } from 'chai';
 import { promisify } from 'util';
 
-describe.only(StrykerServer.name, () => {
+describe(StrykerServer.name, () => {
   let sut: ChildProcess;
   let client: MutationServerClient;
 
@@ -69,7 +69,7 @@ describe.only(StrykerServer.name, () => {
     actFunctionalTestSuite();
   });
 
-  describe.only('using stdio channel', () => {
+  describe('using stdio channel', () => {
     beforeEach(() => {
       sut = spawn(
         'node',
