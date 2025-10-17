@@ -18,8 +18,6 @@ jobs:
           submodules: recursive
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 10
       - name: Install dependencies
         run: pnpm install && node --run install:chromium
       - name: Build packages
