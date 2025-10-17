@@ -68,7 +68,7 @@
   },
   "homepage": "https://stryker-mutator.io/docs/stryker-js/jest-runner",
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "9.2.0",
+    "@stryker-mutator/test-helpers": "workspace:*",
     "@types/node": "22.18.8",
     "@types/semver": "7.7.0",
     "jest": "30.0.4",

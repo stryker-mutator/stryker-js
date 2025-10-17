@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@10.18.3",
   "devDependencies": {
     "@babel/cli": "7.28.3",
     "@babel/core": "7.28.3",
@@ -78,12 +79,12 @@
     }
   },
   "scripts": {
-    "setup": "npm ci && npm run bootstrap && npm run install-local-dependencies",
+    "setup": "pnpm install && node --run bootstrap && node --run install-local-dependencies",
     "bootstrap": "node tasks/bootstrap.js",
     "install-local-dependencies": "node tasks/install-local-dependencies.js",
     "lint": "tsc -p tsconfig.json && eslint",
     "test": "node tasks/run-e2e-tests.js",
-    "test:update": "cross-env CHAI_JEST_SNAPSHOT_UPDATE_ALL=true npm run test"
+    "test:update": "cross-env CHAI_JEST_SNAPSHOT_UPDATE_ALL=true node --run test"
   },
   "localDependencies": {
     "grunt-stryker": "../packages/grunt-stryker",

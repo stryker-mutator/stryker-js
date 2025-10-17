@@ -49,7 +49,7 @@
   },
   "homepage": "https://stryker-mutator.io/docs/stryker-js/vitest-runner",
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "9.2.0",
+    "@stryker-mutator/test-helpers": "workspace:*",
     "@types/node": "22.18.8",
     "@vitest/browser": "3.1.4",
     "playwright": "1.54.1",

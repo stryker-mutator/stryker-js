@@ -16,7 +16,7 @@ const dirs = (await fs.readdir(new URL('../test', import.meta.url))).filter(
   filter(pattern),
 );
 const concurrency = os.cpus().length;
-const command = process.env.CI ? 'ci' : 'install';
+const command = process.env.CI ? 'install --frozen-lockfile' : 'install';
 
 /**
  * @typedef Package
@@ -24,7 +24,7 @@ const command = process.env.CI ? 'ci' : 'install';
  */
 
 console.info(
-  `Installing ${dirs.length} test dirs using "npm ${command}" (used pattern: "${pattern}", concurrency ${concurrency})`,
+  `Installing ${dirs.length} test dirs using "pnpm ${command}" (used pattern: "${pattern}", concurrency ${concurrency})`,
 );
 let count = 0;
 reportProgress();
@@ -37,13 +37,13 @@ from(dirs)
       const pkg = JSON.parse(await fs.readFile(url, 'utf-8'));
       if (satisfiesPlatform(pkg)) {
         try {
-          await execa('npm', [command], {
+          await execa('pnpm', command.split(' '), {
             timeout: 500000,
             cwd,
             stdio: 'pipe',
           });
         } catch (err) {
-          throw new Error(`Error running "npm ${command}" in ${cwd.href}`, {
+          throw new Error(`Error running "pnpm ${command}" in ${cwd.href}`, {
             cause: err,
           });
         }

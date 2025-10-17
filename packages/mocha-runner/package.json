@@ -55,7 +55,7 @@
     "tslib": "~2.8.0"
   },
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "9.2.0",
+    "@stryker-mutator/test-helpers": "workspace:*",
     "@types/node": "22.18.8"
   },
   "peerDependencies": {

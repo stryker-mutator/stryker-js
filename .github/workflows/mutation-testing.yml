@@ -11,10 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - name: Install & Build
         run: |
-          npm install && npm run install:chromium
-          npm run build:no-check
+          pnpm install && node --run install:chromium
+          node --run build:no-check
       - name: Run Stryker
         run: npx lerna run --scope "@stryker-mutator/core" --concurrency 1 --stream stryker -- --concurrency 3
         env:
@@ -24,10 +28,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - name: Install & Build
         run: |
-          npm install && npm run install:chromium
-          npm run build:no-check
+          pnpm install && node --run install:chromium
+          node --run build:no-check
       - name: Run Stryker
         run: npx lerna run --scope "@stryker-mutator/{api,instrumenter,util,jest-runner,karma-runner,mocha-runner,jasmine-runner,cucumber-runner}" --concurrency 1 --stream stryker -- --concurrency 3
         env:
@@ -37,10 +45,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - name: Install & Build
         run: |
-          npm install && npm run install:chromium
-          npm run build:no-check
+          pnpm install && node --run install:chromium
+          node --run build:no-check
       - name: Run Stryker
         run: npx lerna run --scope "@stryker-mutator/typescript-checker" --concurrency 1 --stream stryker -- --concurrency 2
         env:

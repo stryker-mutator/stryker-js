@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@10.18.3",
   "devDependencies": {
     "rxjs": "7.8.2",
     "typescript": "5.9.2"
@@ -10,7 +11,7 @@
   "scripts": {
   "merge-config": "node tasks/merge-config.js",
   "bootstrap": "node tasks/install.js",
-  "setup": "npm run merge-config && npm run bootstrap",
+  "setup": "node --run merge-config && node --run bootstrap",
   "lint": "tsc",
   "test": "node tasks/run-perf-tests.js"
   }

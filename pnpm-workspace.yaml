@@ -1,0 +1,4 @@
+packages:
+  - 'packages/*'
+  # Note: e2e is excluded from the workspace as it contains 60+ standalone projects
+  # e2e directory uses its own pnpm install process

@@ -2,9 +2,7 @@
   "name": "stryker-parent",
   "private": true,
   "type": "module",
-  "workspaces": [
-    "packages/*"
-  ],
+  "packageManager": "pnpm@10.18.3",
   "devDependencies": {
     "@eslint/js": "9.34.0",
     "@testing-library/jest-dom": "6.8.0",
@@ -49,25 +47,25 @@
     "typescript-eslint": "8.41.0"
   },
   "scripts": {
-    "all": "npm run clean && npm run build && npm run lint && npm run test",
+    "all": "node --run clean && node --run build && node --run lint && node --run test",
     "install:chromium": "playwright install chromium",
     "lint": "eslint",
-    "lint:fix": "npm run lint -- --fix",
+    "lint:fix": "node --run lint -- --fix",
     "clean": "rimraf --glob \"packages/*/{.nyc_output,reports,coverage,src-generated,*.tsbuildinfo,.stryker-tmp,dist,testResources/tmp}\" \"e2e/test/*/{.stryker-tmp,.stryker-tmp-2}\" \"packages/core/schema/stryker-schema.json\"",
     "generate": "node tasks/generate-json-schema-to-ts.js && node tasks/generate-mono-schema.js",
-    "build": "npm run generate && tsc -b",
-    "build:no-check": "npm run build -- --noCheck",
+    "build": "node --run generate && tsc -b",
+    "build:no-check": "node --run build -- --noCheck",
     "test": "lerna run test --stream --concurrency 2",
     "download-incremental-reports": "./tasks/download-incremental-reports.sh",
     "test:mutation:incremental": "lerna run stryker --stream --concurrency 1 -- --incremental",
-    "e2e": "npm run e2e:install && npm run e2e:lint && npm run e2e:run",
-    "e2e:install": "cd e2e && npm ci && npm run setup",
-    "e2e:lint": "cd e2e && npm run lint",
-    "e2e:run": "cd e2e && npm t",
-    "e2e:update-snapshots": "CHAI_JEST_SNAPSHOT_UPDATE_ALL=true npm run e2e",
-    "perf": "cd perf && npm ci && npm run setup && npm run lint && npm t && cd ..",
+    "e2e": "node --run e2e:install && node --run e2e:lint && node --run e2e:run",
+    "e2e:install": "cd e2e && pnpm install && node --run setup",
+    "e2e:lint": "cd e2e && node --run lint",
+    "e2e:run": "cd e2e && pnpm test",
+    "e2e:update-snapshots": "CHAI_JEST_SNAPSHOT_UPDATE_ALL=true node --run e2e",
+    "perf": "cd perf && pnpm install && node --run setup && node --run lint && pnpm test && cd ..",
     "start": "tsc -b -w",
-    "release": "npm_config_ignore_scripts=false GH_TOKEN=$(gh auth token) lerna version",
+    "release": "pnpm_config_ignore_scripts=false GH_TOKEN=$(gh auth token) lerna version",
     "version": "node tasks/bump-peer-deps.js"
   },
   "engines": {
