@@ -600,7 +600,7 @@ describe(StrykerServer.name, () => {
       );
     });
 
-    it('should handle mutationTest RPC and send progress notifications over the socket', async () => {
+    it('should handle mutationTest RPC and send progress notifications over stdout', async () => {
       // Arrange
       const mutantResult: MutantResult = {
         fileName: 'foo.js',
