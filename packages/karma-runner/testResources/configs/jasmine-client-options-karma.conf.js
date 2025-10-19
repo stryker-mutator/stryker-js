@@ -12,5 +12,6 @@ module.exports = function (config) {
       },
     },
     singleRun: true,
+    plugins: ['karma-chrome-launcher', 'karma-jasmine'],
   });
 };

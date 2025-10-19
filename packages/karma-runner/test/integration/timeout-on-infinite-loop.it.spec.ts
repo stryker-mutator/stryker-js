@@ -22,6 +22,7 @@ describe('Infinite loop', () => {
           resolveTestResource('infinite-loop', 'infinite-loop.instrumented.js'),
           resolveTestResource('infinite-loop', 'infinite-loop.spec.js'),
         ],
+        plugins: ['karma-mocha', 'karma-chrome-launcher'],
       },
     };
     testInjector.options.karma = karmaOptions;

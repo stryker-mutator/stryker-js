@@ -39,6 +39,7 @@ function setOptions({
       logLevel: 'off',
       reporters: [],
       frameworks,
+      plugins: ['karma-jasmine', 'karma-chrome-launcher'],
     },
   };
 }
