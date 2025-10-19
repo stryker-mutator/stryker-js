@@ -1,14 +1,15 @@
-import '@testing-library/jest-dom';
-import { render, screen, fireEvent } from '@testing-library/react';
+/// <reference types="@vitest/browser/matchers" />
+import { expect, describe, it } from 'vitest';
+import { render } from 'vitest-browser-react';
 import { Counter } from './Counter';
 
 describe('Counter', () => {
-  it('increments', () => {
-    render(<Counter  />);
+  it('increments', async () => {
+    const screen = render(<Counter />);
     const incrementButton = screen.getByText('Increment');
     const counter = screen.getByTestId('counter');
 
-    fireEvent.click(incrementButton);
-    expect(counter).toHaveTextContent('1');
+    await incrementButton.click();
+    await expect.element(counter).toHaveTextContent('1');
   });
 });
