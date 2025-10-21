@@ -19,9 +19,20 @@ console.log('starting installation of local dependencies');
  * @param {string[]} packageJsonGlobs
  * @returns {Promise<void>}
  */
-export async function bootstrapLocalDependencies(directory, packageJsonGlobs = ['package.json', 'test/*/package.json']) {
-  console.log(`bootstrap ${path.resolve(directory)} (using ${packageJsonGlobs.join(',')})`);
-  const files = (await Promise.all(packageJsonGlobs.map((globPattern) => glob(globPattern, { cwd: path.resolve(directory) })))).flat();
+export async function bootstrapLocalDependencies(
+  directory,
+  packageJsonGlobs = ['package.json', 'test/*/package.json'],
+) {
+  console.log(
+    `bootstrap ${path.resolve(directory)} (using ${packageJsonGlobs.join(',')})`,
+  );
+  const files = (
+    await Promise.all(
+      packageJsonGlobs.map((globPattern) =>
+        glob(globPattern, { cwd: path.resolve(directory) }),
+      ),
+    )
+  ).flat();
   const packages = await Promise.all(
     files.map((fileName) =>
       fs.promises.readFile(fileName, 'utf-8').then((rawContent) => {
@@ -30,8 +41,8 @@ export async function bootstrapLocalDependencies(directory, packageJsonGlobs = [
          */
         const content = JSON.parse(rawContent);
         return { dir: path.dirname(fileName), content };
-      })
-    )
+      }),
+    ),
   );
   /**
    * @type {import('install-local').ListByPackage}
@@ -40,10 +51,15 @@ export async function bootstrapLocalDependencies(directory, packageJsonGlobs = [
   for (const pkg of packages) {
     const localDeps = pkg.content.localDependencies;
     if (localDeps) {
-      sourcesByTarget[path.resolve(pkg.dir)] = Object.keys(localDeps).map((key) => path.resolve(pkg.dir, localDeps[key]));
+      sourcesByTarget[path.resolve(pkg.dir)] = Object.keys(localDeps).map(
+        (key) => path.resolve(pkg.dir, localDeps[key]),
+      );
     }
   }
-  const localInstaller = new LocalInstaller(sourcesByTarget);
+  const localInstaller = new LocalInstaller(sourcesByTarget, {
+    packageManager: 'pnpm',
+    concurrent: 1
+  });
   progress(localInstaller);
   await localInstaller.install();
 }

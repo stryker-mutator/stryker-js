@@ -112,7 +112,7 @@ async function execNpm(command, testDir, { signal }) {
   const currentTestDir = path.resolve(testRootDir, testDir);
   console.log(`Exec ${testDir} pnpm ${command}`);
   try {
-    return await execa('pnpm', [command], {
+    return await execa('npm', [command], {
       cancelSignal: signal,
       cwd: currentTestDir,
     });
