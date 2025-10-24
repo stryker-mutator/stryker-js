@@ -16,7 +16,12 @@ module.exports = function (config) {
     browsers: ['ChromeHeadless'],
     concurrency: Infinity,
     webpack,
-    plugins: ['karma-mocha', 'karma-chrome-launcher', 'karma-webpack', 'karma-sourcemap-loader'],
+    plugins: [
+      require.resolve('karma-mocha'),
+      require.resolve('karma-chrome-launcher'),
+      require.resolve('karma-webpack'),
+      require.resolve('karma-sourcemap-loader'),
+    ],
   });
 
   // Delete regular entry/output. Karma's `files` will be used
