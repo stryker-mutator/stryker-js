@@ -2,7 +2,7 @@
   "name": "stryker-parent",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@10.18.3",
+  "packageManager": "pnpm@10.19.0",
   "devDependencies": {
     "@eslint/js": "9.34.0",
     "@types/chai": "^5.2.3",
