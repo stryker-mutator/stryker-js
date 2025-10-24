@@ -1,5 +1,3 @@
-
-
 module.exports = function (config) {
   config.set({
     files: [__dirname + '/src/*.js', __dirname + '/test-jasmine/*.js'],
@@ -12,6 +10,9 @@ module.exports = function (config) {
     watch: true,
     frameworks: ['jasmine'],
     browsers: ['ChromeHeadless'],
-    plugins: ['karma-chrome-launcher', 'karma-jasmine'],
+    plugins: [
+      require.resolve('karma-chrome-launcher'),
+      require.resolve('karma-jasmine'),
+    ],
   });
-}
+};

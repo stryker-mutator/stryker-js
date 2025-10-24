@@ -37,6 +37,7 @@
       "skipFiles": [
         "<node_internals>/**"
       ],
+      "outputCapture": "std"
     }
   ],
   "compounds": []

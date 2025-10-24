@@ -10,6 +10,9 @@ import {
   KarmaTestRunner,
 } from '../../src/karma-test-runner.js';
 import { resolveTestResource } from '../helpers/resolve-test-resource.js';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
 
 describe('Infinite loop', () => {
   let sut: KarmaTestRunner;
@@ -22,7 +25,10 @@ describe('Infinite loop', () => {
           resolveTestResource('infinite-loop', 'infinite-loop.instrumented.js'),
           resolveTestResource('infinite-loop', 'infinite-loop.spec.js'),
         ],
-        plugins: ['karma-mocha', 'karma-chrome-launcher'],
+        plugins: [
+          require.resolve('karma-mocha'),
+          require.resolve('karma-chrome-launcher'),
+        ],
       },
     };
     testInjector.options.karma = karmaOptions;

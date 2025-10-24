@@ -1,5 +1,3 @@
-
-
 module.exports = function (config) {
   config.set({
     files: [__dirname + '/src/*.js', __dirname + '/test-mocha/*.js'],
@@ -8,6 +6,9 @@ module.exports = function (config) {
     watch: true,
     frameworks: ['mocha'],
     browsers: ['ChromeHeadless'],
-    plugins: ['karma-chrome-launcher', 'karma-mocha'],
+    plugins: [
+      require.resolve('karma-chrome-launcher'),
+      require.resolve('karma-mocha'),
+    ],
   });
-}
+};

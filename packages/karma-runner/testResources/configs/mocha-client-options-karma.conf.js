@@ -11,6 +11,6 @@ module.exports = function (config) {
       },
     },
     singleRun: true,
-    plugins: ['karma-chrome-launcher', 'karma-mocha'],
+    plugins: [require.resolve('karma-chrome-launcher'), require.resolve('karma-mocha')],
   });
 };
