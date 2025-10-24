@@ -29,6 +29,10 @@ module.exports = function (config) {
     singleRun: true,
     concurrency: Infinity,
     vite: { config: { resolve: { alias: { '/base': '' } } } },
-    plugins: ['karma-jasmine', 'karma-chrome-launcher', 'karma-vite'],
+    plugins: [
+      require.resolve('karma-jasmine'),
+      require.resolve('karma-chrome-launcher'),
+      require.resolve('karma-vite'),
+    ],
   });
 };

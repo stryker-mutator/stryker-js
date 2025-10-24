@@ -18,9 +18,9 @@ module.exports = function (config) {
     concurrency: Infinity,
     vite: { config: { resolve: { alias: { '/base': '' } } } },
     plugins: [
-      'karma-jasmine',
-      'karma-chrome-launcher',
-      'karma-vite',
+      require.resolve('karma-jasmine'),
+      require.resolve('karma-chrome-launcher'),
+      require.resolve('karma-vite'),
     ]
   });
 };
