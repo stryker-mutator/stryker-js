@@ -23,7 +23,11 @@ import { coreTokens } from './di/index.js';
 import { objectUtils } from './utils/object-utils.js';
 import { JsonRpcEventDeserializer } from './utils/json-rpc-event-deserializer.js';
 import { Observable } from 'rxjs';
-import { LogLevel, MutantResult, PartialStrykerOptions } from '@stryker-mutator/api/core';
+import {
+  LogLevel,
+  MutantResult,
+  PartialStrykerOptions,
+} from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
 import { Stryker } from './stryker.js';
 import { promisify } from 'util';

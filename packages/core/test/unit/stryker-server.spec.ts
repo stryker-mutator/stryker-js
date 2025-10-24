@@ -411,7 +411,7 @@ describe(StrykerServer.name, () => {
         cliOptions: {
           ...cliOptions,
           allowConsoleColors: false,
-          logLevel: LogLevel.Warning
+          logLevel: LogLevel.Warning,
         },
       });
     });
