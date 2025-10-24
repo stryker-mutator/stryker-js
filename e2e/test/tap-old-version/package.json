@@ -13,14 +13,17 @@
   },
   "author": "",
   "license": "ISC",
-  "localDependencies": {
-    "@stryker-mutator/api": "../../../packages/api",
-    "@stryker-mutator/core": "../../../packages/core",
-    "@stryker-mutator/instrumenter": "../../../packages/instrumenter",
-    "@stryker-mutator/tap-runner": "../../../packages/tap-runner",
-    "@stryker-mutator/util": "../../../packages/util"
-  },
   "devDependencies": {
-    "tap": "12.7.0"
+    "tap": "12.7.0",
+    "@stryker-mutator/core": "workspace:*",
+    "@stryker-mutator/tap-runner": "workspace:*"
+  },
+  "dependenciesMeta": {
+    "@stryker-mutator/core": {
+      "injected": true
+    },
+    "@stryker-mutator/tap-runner": {
+      "injected": true
+    }
   }
 }

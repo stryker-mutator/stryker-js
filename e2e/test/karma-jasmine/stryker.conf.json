@@ -9,8 +9,15 @@
       "files": ["src/*.js", "test/*.js"],
       "client": {
         "clearContext": false
-      }
+      },
+      "plugins": [
+        "karma-jasmine",
+        "karma-chrome-launcher"
+      ]
     }
   },
+  "plugins": [
+    "@stryker-mutator/karma-runner"
+  ],
   "timeoutMS": 120000
 }

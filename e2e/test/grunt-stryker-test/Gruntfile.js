@@ -21,7 +21,10 @@ module.exports = function (grunt) {
           fileLogLevel: 'warn',
           concurrency: 2,
           tempDirName: '.stryker-tmp-2',
-          karma: { config: { files: [ 'sampleProject/**' ] }}
+          karma: { config: { files: [ 'sampleProject/**' ], plugins: [ 'karma-jasmine', 'karma-chrome-launcher' ] } },
+          plugins: [
+            '@stryker-mutator/karma-runner'
+          ]
         },
       },
       withConfigFile: {

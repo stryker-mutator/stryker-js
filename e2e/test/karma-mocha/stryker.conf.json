@@ -7,6 +7,11 @@
       "frameworks": ["mocha", "vite"],
       "files": [
         { "pattern": "test/*.js", "served": false, "watched": false, "type": "module" }
+      ],
+      "plugins": [
+        "karma-mocha",
+        "karma-chrome-launcher",
+        "karma-vite"
       ]
     }
   },

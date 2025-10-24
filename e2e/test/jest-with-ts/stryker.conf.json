@@ -8,13 +8,8 @@
   "testRunner": "jest",
   "tempDirName": "stryker-tmp",
   "concurrency": 2,
-  "checkers": [
-    "typescript"
-  ],
+  "checkers": ["typescript"],
   "coverageAnalysis": "off",
-  "reporters": [
-    "progress",
-    "html",
-    "json"
-  ]
+  "reporters": ["progress", "html", "json"],
+  "plugins": ["@stryker-mutator/jest-runner", "@stryker-mutator/typescript-checker"]
 }

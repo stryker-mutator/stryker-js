@@ -3,6 +3,7 @@ module.exports = function (config) {
     frameworks: ['mocha', 'chai'],
     files: ['src/*.js', 'test/*.js'],
     browsers: ['ChromeHeadless'],
-    listenAddress: '::'
+    listenAddress: '::',
+    plugins: ['karma-chai', 'karma-mocha', 'karma-chrome-launcher']
   });
 };

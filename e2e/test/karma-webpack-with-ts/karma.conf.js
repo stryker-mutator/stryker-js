@@ -1,3 +1,4 @@
+const { plugin } = require('typescript-eslint');
 const webpack = require('./webpack.dev');
 module.exports = function (config) {
   config.set({
@@ -15,6 +16,7 @@ module.exports = function (config) {
     browsers: ['ChromeHeadless'],
     concurrency: Infinity,
     webpack,
+    plugins: ['karma-mocha', 'karma-chrome-launcher', 'karma-webpack', 'karma-sourcemap-loader'],
   });
 
   // Delete regular entry/output. Karma's `files` will be used

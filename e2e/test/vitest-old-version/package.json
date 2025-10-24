@@ -12,14 +12,17 @@
   },
   "author": "",
   "license": "ISC",
-  "localDependencies": {
-    "@stryker-mutator/api": "../../../packages/api",
-    "@stryker-mutator/core": "../../../packages/core",
-    "@stryker-mutator/instrumenter": "../../../packages/instrumenter",
-    "@stryker-mutator/vitest-runner": "../../../packages/vitest-runner",
-    "@stryker-mutator/util": "../../../packages/util"
-  },
   "devDependencies": {
-    "vitest": "^2.0.0"
+    "vitest": "^2.0.0",
+    "@stryker-mutator/core": "workspace:*",
+    "@stryker-mutator/vitest-runner": "workspace:*"
+  },
+  "dependenciesMeta": {
+    "@stryker-mutator/core": {
+      "injected": true
+    },
+    "@stryker-mutator/vitest-runner": {
+      "injected": true
+    }
   }
 }

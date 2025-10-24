@@ -1,15 +1,13 @@
 {
   "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
-  "mutate": [
-    "sampleProject/src/**"
-  ],
+  "mutate": ["sampleProject/src/**"],
   "karma": {
     "config": {
-      "files": [
-        "sampleProject/**"
-      ]
+      "files": ["sampleProject/**"],
+      "plugins": ["karma-jasmine", "karma-chrome-launcher"]
     }
   },
+  "plugins": ["@stryker-mutator/karma-runner"],
   "testRunner": "karma",
   "logLevel": "info",
   "fileLogLevel": "warn",

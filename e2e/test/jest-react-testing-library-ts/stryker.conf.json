@@ -4,15 +4,10 @@
   "testRunner": "jest",
   "tempDirName": "stryker-tmp",
   "concurrency": 2,
-  "reporters": [
-    "json",
-    "event-recorder",
-    "progress",
-    "clear-text",
-    "html"
-  ],
+  "reporters": ["json", "event-recorder", "progress", "clear-text", "html"],
   "jest": {
     "projectType": "custom",
     "configFile": "./jest.config.js"
-  }
+  },
+  "plugins": ["@stryker-mutator/jest-runner"]
 }
