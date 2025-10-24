@@ -1,7 +1,14 @@
 module.exports = function (config) {
   config.set({
     frameworks: ['jasmine', 'vite'],
-    files: [{ pattern: 'test/math.spec.js', type: 'module', watched: false, served: false }],
+    files: [
+      {
+        pattern: 'test/math.spec.js',
+        type: 'module',
+        watched: false,
+        served: false,
+      },
+    ],
     vite: {
       config: {
         resolve: {
@@ -17,6 +24,11 @@ module.exports = function (config) {
     browsers: ['ChromeHeadless'],
     singleRun: true,
     concurrency: Infinity,
-    plugins: ['karma-chrome-launcher', 'karma-jasmine', 'karma-mocha', 'karma-vite'],
+    plugins: [
+      require.resolve('karma-chrome-launcher'),
+      require.resolve('karma-jasmine'),
+      require.resolve('karma-mocha'),
+      require.resolve('karma-vite'),
+    ],
   });
 };
