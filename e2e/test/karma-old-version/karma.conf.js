@@ -4,6 +4,10 @@ module.exports = function (config) {
     files: ['src/*.js', 'test/*.js'],
     browsers: ['ChromeHeadless'],
     listenAddress: '::',
-    plugins: ['karma-chai', 'karma-mocha', 'karma-chrome-launcher']
+    plugins: [
+      require.resolve('karma-chai'),
+      require.resolve('karma-mocha'),
+      require.resolve('karma-chrome-launcher'),
+    ],
   });
 };
