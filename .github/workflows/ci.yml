@@ -72,8 +72,8 @@ jobs:
         run: pnpm install --frozen-lockfile && pnpm run install:chromium
       - name: Build packages
         run: pnpm run build:no-check
-      - name: e2e install
-        run: 'pnpm run e2e:install'
+      - name: install build output
+        run: 'pnpm install --frozen-lockfile'
       - name: e2e lint
         run: 'pnpm run e2e:lint'
       - name: Run e2e tests

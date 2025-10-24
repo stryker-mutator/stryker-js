@@ -1,4 +1,3 @@
-
 export class CoverageAnalysisReporter {
   /**
    * @type {import('mutation-testing-report-schema').MutationTestResult}
