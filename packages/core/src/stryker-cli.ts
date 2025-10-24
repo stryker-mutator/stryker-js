@@ -120,9 +120,10 @@ export class StrykerCli {
           remainingArguments: string[],
           socketOptions: { port?: number; address: string },
         ) => {
-          const command = this.#provideStrykerOptions(
-            new Command().addArgument(configFileArgument),
-          ).parse(remainingArguments, { from: 'user' });
+          const command = this.#provideStrykerOptions(new Command()).parse(
+            remainingArguments,
+            { from: 'user' },
+          );
           const runOptions = command.opts();
           const [configFile] = command.args;
           const strykerOptions = this.#readStrykerOptions(
