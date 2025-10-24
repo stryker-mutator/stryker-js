@@ -42,10 +42,11 @@
   },
   "devDependencies": {
     "@babel/core": "^7.18.2",
-    "@types/reach__router": "~1.3.10",
     "@stryker-mutator/core": "workspace:*",
     "@stryker-mutator/jest-runner": "workspace:*",
-    "@stryker-mutator/typescript-checker": "workspace:*"
+    "@stryker-mutator/typescript-checker": "workspace:*",
+    "@types/reach__router": "~1.3.10",
+    "jest-environment-jsdom": "27.5.1"
   },
   "dependenciesMeta": {
     "@stryker-mutator/core": {
