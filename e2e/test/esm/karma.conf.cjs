@@ -8,7 +8,13 @@ module.exports = function (config) {
     browsers: ['ChromeHeadless'],
     singleRun: true,
     concurrency: Infinity,
-    plugins: ['karma-chrome-launcher', 'karma-jasmine', 'karma-mocha', 'karma-chai', 'karma-vite'],
+    plugins: [
+      require.resolve('karma-chrome-launcher'),
+      require.resolve('karma-jasmine'),
+      require.resolve('karma-mocha'),
+      require.resolve('karma-chai'),
+      require.resolve('karma-vite'),
+    ],
     vite: {
       config: {
         resolve: {

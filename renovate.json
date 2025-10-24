@@ -9,6 +9,17 @@
       "automerge": true,
       "automergeStrategy": "squash",
       "platformAutomerge": true
+    },
+    {
+      "matchFiles": ["e2e/package.json"],
+      "description": "e2e directory uses separate pnpm workspace"
     }
-  ]
+  ],
+  "pnpm": {
+    "rangeStrategy": "bump"
+  },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": "before 3am on Monday"
+  }
 }

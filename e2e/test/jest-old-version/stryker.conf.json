@@ -11,5 +11,8 @@
     "progress",
     "html",
     "event-recorder"
+  ],
+  "plugins": [
+    "@stryker-mutator/jest-runner"
   ]
 }

@@ -21,6 +21,9 @@ import {
 } from '../../src/karma-test-runner.js';
 import { StrykerReporter } from '../../src/karma-plugins/stryker-reporter.js';
 import { KarmaRunnerOptionsWithStrykerOptions } from '../../src/karma-runner-options-with-stryker-options.js';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
 
 function setOptions({
   files = [
@@ -39,6 +42,10 @@ function setOptions({
       logLevel: 'off',
       reporters: [],
       frameworks,
+      plugins: [
+        require.resolve('karma-jasmine'),
+        require.resolve('karma-chrome-launcher'),
+      ],
     },
   };
 }

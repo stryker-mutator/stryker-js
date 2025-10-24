@@ -1,0 +1,4 @@
+packages:
+  - 'packages/*'
+  - 'e2e'
+  - 'e2e/test/*'

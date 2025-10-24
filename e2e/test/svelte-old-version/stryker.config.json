@@ -4,5 +4,6 @@
   "testRunner": "jest",
   "concurrency": 2,
   "testRunnerNodeArgs": ["--experimental-vm-modules"],
-  "timeoutMS": 60000
+  "timeoutMS": 60000,
+  "plugins": ["@stryker-mutator/jest-runner"]
 }

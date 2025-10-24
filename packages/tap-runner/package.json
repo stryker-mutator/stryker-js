@@ -49,14 +49,14 @@
   },
   "homepage": "https://stryker-mutator.io/docs/stryker-js/tap-runner",
   "dependencies": {
-    "@stryker-mutator/api": "9.2.0",
-    "@stryker-mutator/util": "9.2.0",
+    "@stryker-mutator/api": "workspace:*",
+    "@stryker-mutator/util": "workspace:*",
     "glob": "~10.4.5",
     "tap-parser": "~17.0.0",
     "tslib": "~2.8.0"
   },
   "devDependencies": {
-    "@stryker-mutator/test-helpers": "9.2.0",
+    "@stryker-mutator/test-helpers": "workspace:*",
     "@types/node": "22.18.8",
     "ava": "6.4.1",
     "tap": "20.0.3"

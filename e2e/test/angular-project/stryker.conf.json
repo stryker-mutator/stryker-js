@@ -27,5 +27,8 @@
   "concurrency": 1,
   "coverageAnalysis": "perTest",
   "timeoutMS": 60000,
-  "ignorers": ["angular"]
+  "ignorers": ["angular"],
+  "plugins": [
+    "@stryker-mutator/karma-runner"
+  ]
 }

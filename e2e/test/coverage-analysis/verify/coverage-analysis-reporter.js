@@ -1,5 +1,3 @@
-import { PluginKind, declareClassPlugin } from '@stryker-mutator/api/plugin';
-
 export class CoverageAnalysisReporter {
   /**
    * @type {import('mutation-testing-report-schema').MutationTestResult}
@@ -23,9 +21,9 @@ export class CoverageAnalysisReporter {
   }
 }
 export const strykerPlugins = [
-  declareClassPlugin(
-    PluginKind.Reporter,
-    'coverageAnalysis',
-    CoverageAnalysisReporter,
-  ),
+  {
+    kind: 'Reporter',
+    name: 'coverageAnalysis',
+    injectableClass: CoverageAnalysisReporter,
+  },
 ];

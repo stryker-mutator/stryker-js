@@ -8,47 +8,49 @@ import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended'
 import pluginChaiFriendly from 'eslint-plugin-chai-friendly';
 import { rules } from '../eslint.config.js';
 
-export default tseslint.config(
-  eslint.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
-  eslintPluginPrettierRecommended,
-  {
-    languageOptions: {
-      parserOptions: {
-        project: 'tsconfig.json',
-        tsconfigRootDir: path.dirname(fileURLToPath(import.meta.url)),
+export default /** @type {import('typescript-eslint').ConfigArray} */ (
+  tseslint.config(
+    eslint.configs.recommended,
+    ...tseslint.configs.recommendedTypeChecked,
+    eslintPluginPrettierRecommended,
+    {
+      languageOptions: {
+        parserOptions: {
+          project: 'tsconfig.json',
+          tsconfigRootDir: path.dirname(fileURLToPath(import.meta.url)),
+        },
+      },
+      plugins: { 'chai-friendly': pluginChaiFriendly },
+      rules: {
+        ...rules,
+        '@typescript-eslint/no-unused-expressions': 'off',
+        'chai-friendly/no-unused-expressions': 'error',
+
+        // Handled by typescript
+        'no-undef': 'off',
       },
     },
-    plugins: { 'chai-friendly': pluginChaiFriendly },
-    rules: {
-      ...rules,
-      '@typescript-eslint/no-unused-expressions': 'off',
-      'chai-friendly/no-unused-expressions': 'error',
-
-      // Handled by typescript
-      'no-undef': 'off',
+    {
+      ignores: [
+        'test/*/*.js',
+        'test/*/*.ts',
+        'test/*/src/**',
+        'test/*/test/**',
+        'test/*/tests/**',
+        'test/*/client/**',
+        'test/*/spec/**',
+        'test/*/tasks/**',
+        'test/*/features/**',
+        'test/*/cucumber-features/**',
+        'test/*/sampleProject/**',
+        'test/*/__mocks__/**',
+        'test/*/packages/**',
+        'test/*/lib/**',
+        'test/*/karma.conf.cjs',
+        '**/.svelte-kit/**',
+        '**/.stryker-tmp/**',
+        '**/stryker-tmp/**',
+      ],
     },
-  },
-  {
-    ignores: [
-      'test/*/*.js',
-      'test/*/*.ts',
-      'test/*/src/**',
-      'test/*/test/**',
-      'test/*/tests/**',
-      'test/*/client/**',
-      'test/*/spec/**',
-      'test/*/tasks/**',
-      'test/*/features/**',
-      'test/*/cucumber-features/**',
-      'test/*/sampleProject/**',
-      'test/*/__mocks__/**',
-      'test/*/packages/**',
-      'test/*/lib/**',
-      'test/*/karma.conf.cjs',
-      '**/.svelte-kit/**',
-      '**/.stryker-tmp/**',
-      '**/stryker-tmp/**',
-    ],
-  },
+  )
 );

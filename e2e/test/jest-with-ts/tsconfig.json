@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
-    "target": "es2017",
+    "target": "es2022",
     "esModuleInterop": true,
     "module": "commonjs",
     "lib": [
-      "es2017",
+      "es2022",
       "DOM"
     ],
     "types": [
@@ -12,9 +12,7 @@
       "node"
     ],
     "strict": true,
-    "typeRoots": [
-      "./node_modules/@types"
-    ],
+    "skipLibCheck": true,
     "outDir": "dist"
   },
   "include": [

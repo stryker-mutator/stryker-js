@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@10.18.3",
   "devDependencies": {
     "@babel/cli": "7.28.3",
     "@babel/core": "7.28.3",
@@ -11,6 +12,16 @@
     "@babel/preset-env": "7.28.3",
     "@babel/preset-flow": "7.27.1",
     "@cucumber/cucumber": "12.2.0",
+    "@stryker-mutator/api": "workspace:*",
+    "@stryker-mutator/core": "workspace:*",
+    "@stryker-mutator/cucumber-runner": "workspace:*",
+    "@stryker-mutator/jasmine-runner": "workspace:*",
+    "@stryker-mutator/jest-runner": "workspace:*",
+    "@stryker-mutator/karma-runner": "workspace:*",
+    "@stryker-mutator/mocha-runner": "workspace:*",
+    "@stryker-mutator/tap-runner": "workspace:*",
+    "@stryker-mutator/typescript-checker": "workspace:*",
+    "@stryker-mutator/vitest-runner": "workspace:*",
     "@sveltejs/adapter-auto": "6.1.0",
     "@sveltejs/kit": "2.37.0",
     "@sveltejs/vite-plugin-svelte": "6.1.3",
@@ -19,6 +30,8 @@
     "@testing-library/react": "16.3.0",
     "@testing-library/svelte": "5.2.8",
     "@tsconfig/svelte": "5.0.5",
+    "@types/babel__core": "7.20.5",
+    "@types/chai": "^5.2.3",
     "@types/chai-jest-snapshot": "1.3.8",
     "@types/jest": "30.0.0",
     "@types/node": "24.3.0",
@@ -36,11 +49,13 @@
     "enzyme-to-json": "3.6.2",
     "execa": "9.6.0",
     "grunt": "1.6.1",
+    "grunt-stryker": "workspace:*",
     "jasmine": "5.9.0",
     "jasmine-core": "5.9.0",
-    "jest": "30.1.1",
-    "jest-environment-jsdom": "30.1.1",
+    "jest": "30.2.0",
+    "jest-environment-jsdom": "30.2.0",
     "jest-environment-jsdom-sixteen": "2.0.0",
+    "jest-environment-node": "^30.2.0",
     "jsdom": "26.1.0",
     "karma": "6.4.4",
     "karma-chrome-launcher": "3.2.0",
@@ -53,7 +68,6 @@
     "mocha": "11.7.1",
     "mutation-testing-metrics": "3.5.1",
     "mutation-testing-report-schema": "3.5.1",
-    "playwright": "1.55.0",
     "react": "19.1.1",
     "react-dom": "19.1.1",
     "rxjs": "7.8.2",
@@ -72,32 +86,47 @@
     "webpack": "5.101.3",
     "webpack-cli": "6.0.1"
   },
+  "dependenciesMeta": {
+    "@stryker-mutator/api": {
+      "injected": true
+    },
+    "@stryker-mutator/core": {
+      "injected": true
+    },
+    "@stryker-mutator/jasmine-runner": {
+      "injected": true
+    },
+    "@stryker-mutator/jest-runner": {
+      "injected": true
+    },
+    "@stryker-mutator/karma-runner": {
+      "injected": true
+    },
+    "@stryker-mutator/mocha-runner": {
+      "injected": true
+    },
+    "@stryker-mutator/cucumber-runner": {
+      "injected": true
+    },
+    "@stryker-mutator/tap-runner": {
+      "injected": true
+    },
+    "@stryker-mutator/typescript-checker": {
+      "injected": true
+    },
+    "@stryker-mutator/vitest-runner": {
+      "injected": true
+    }
+  },
   "overrides": {
     "karma-vite": {
       "vite": "7.1.3"
     }
   },
   "scripts": {
-    "setup": "npm ci && npm run bootstrap && npm run install-local-dependencies",
     "bootstrap": "node tasks/bootstrap.js",
-    "install-local-dependencies": "node tasks/install-local-dependencies.js",
     "lint": "tsc -p tsconfig.json && eslint",
     "test": "node tasks/run-e2e-tests.js",
-    "test:update": "cross-env CHAI_JEST_SNAPSHOT_UPDATE_ALL=true npm run test"
-  },
-  "localDependencies": {
-    "grunt-stryker": "../packages/grunt-stryker",
-    "@stryker-mutator/core": "../packages/core",
-    "@stryker-mutator/instrumenter": "../packages/instrumenter",
-    "@stryker-mutator/api": "../packages/api",
-    "@stryker-mutator/jasmine-runner": "../packages/jasmine-runner",
-    "@stryker-mutator/jest-runner": "../packages/jest-runner",
-    "@stryker-mutator/karma-runner": "../packages/karma-runner",
-    "@stryker-mutator/mocha-runner": "../packages/mocha-runner",
-    "@stryker-mutator/cucumber-runner": "../packages/cucumber-runner",
-    "@stryker-mutator/util": "../packages/util",
-    "@stryker-mutator/tap-runner": "../packages/tap-runner",
-    "@stryker-mutator/typescript-checker": "../packages/typescript-checker",
-    "@stryker-mutator/vitest-runner": "../packages/vitest-runner"
+    "test:update": "cross-env CHAI_JEST_SNAPSHOT_UPDATE_ALL=true pnpm run test"
   }
 }

@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { fileURLToPath, URL } from 'url';
-import minimatch from 'minimatch';
+import { minimatch } from 'minimatch';
 import { execa } from 'execa';
 
 const testRootDirUrl = new URL('../test', import.meta.url);
@@ -39,6 +39,12 @@ async function install(testDir) {
   let args = [];
   if (packageManager === 'yarn') {
     command = 'yarn';
+    args.push('install', '--frozen-lockfile');
+  } else if (packageManager === 'pnpm') {
+    command = 'pnpm';
+    args.push('install', '--frozen-lockfile');
+  } else if (fs.existsSync(new URL('pnpm-lock.yaml', `${testDirUrl}/`))) {
+    command = 'pnpm';
     args.push('install', '--frozen-lockfile');
   } else if (fs.existsSync(new URL('package-lock.json', `${testDirUrl}/`))) {
     args.push('ci');

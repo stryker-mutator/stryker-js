@@ -38,6 +38,6 @@
   "homepage": "https://stryker-mutator.io/",
   "bin": "dist/src/index.js",
   "dependencies": {
-    "@stryker-mutator/core": "9.2.0"
+    "@stryker-mutator/core": "workspace:*"
   }
 }

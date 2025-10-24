@@ -110,7 +110,7 @@ runE2eTests().subscribe({
  */
 async function execNpm(command, testDir, { signal }) {
   const currentTestDir = path.resolve(testRootDir, testDir);
-  console.log(`Exec ${testDir} npm ${command}`);
+  console.log(`Exec ${testDir} pnpm ${command}`);
   try {
     return await execa('npm', [command], {
       cancelSignal: signal,

@@ -7,7 +7,6 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   test: {
-    globals: true,
     include: ['components/Counter.test.tsx', 'components/Product.test.tsx'],
     browser: {
       headless: true,

@@ -11,5 +11,10 @@
   },
   "commandRunner": {
     "command": "echo 'no-test'"
-  }
+  },
+  "plugins": [
+    "@stryker-mutator/mocha-runner",
+    "@stryker-mutator/jasmine-runner",
+    "@stryker-mutator/karma-runner"
+  ]
 }

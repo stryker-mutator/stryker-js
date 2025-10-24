@@ -17,14 +17,17 @@
     "karma": "6.3.0",
     "karma-chai": "0.1.0",
     "karma-chrome-launcher": "3.1.0",
-    "karma-mocha": "2.0.1"
+    "karma-mocha": "2.0.1",
+    "@stryker-mutator/core": "workspace:*",
+    "@stryker-mutator/karma-runner": "workspace:*"
   },
-  "localDependencies": {
-    "@stryker-mutator/api": "../../../packages/api",
-    "@stryker-mutator/core": "../../../packages/core",
-    "@stryker-mutator/instrumenter": "../../../packages/instrumenter",
-    "@stryker-mutator/karma-runner": "../../../packages/karma-runner",
-    "@stryker-mutator/util": "../../../packages/util"
+  "dependenciesMeta": {
+    "@stryker-mutator/core": {
+      "injected": true
+    },
+    "@stryker-mutator/karma-runner": {
+      "injected": true
+    }
   },
   "license": "ISC"
 }

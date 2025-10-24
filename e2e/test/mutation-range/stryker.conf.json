@@ -6,5 +6,6 @@
   "tempDirName": "stryker-tmp",
   "concurrency": 2,
   "coverageAnalysis": "off",
-  "reporters": ["json", "event-recorder", "progress", "html"]
+  "reporters": ["json", "event-recorder", "progress", "html"],
+  "plugins": ["@stryker-mutator/jest-runner"]
 }

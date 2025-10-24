@@ -6,6 +6,10 @@ module.exports = function(config) {
     ],
     browsers: [
       'ChromeHeadless'
+    ],
+    plugins: [
+      require.resolve('karma-jasmine'),
+      require.resolve('karma-chrome-launcher')
     ]
   });
 }

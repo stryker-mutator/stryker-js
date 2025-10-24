@@ -1,3 +1,4 @@
+// @jest-environment jsdom
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { Badge } from '../';
@@ -5,7 +6,7 @@ import { Badge } from '../';
 describe('Badge', () => {
   it('should render a span by default', () => {
     render(<Badge>Yo!</Badge>);
-    
+
     expect(screen.getByText('Yo!').tagName).toBe('SPAN');
   });
 
@@ -30,18 +31,24 @@ describe('Badge', () => {
   it('should render badges with secondary color', () => {
     render(<Badge>Badge</Badge>);
 
-    expect(screen.getByText('Badge').classList.contains('badge-secondary')).toBe(true);
+    expect(
+      screen.getByText('Badge').classList.contains('badge-secondary'),
+    ).toBe(true);
   });
 
   it('should render Badges with other colors', () => {
     render(<Badge color="danger">Danger Badge</Badge>);
 
-    expect(screen.getByText('Danger Badge').classList.contains('badge-danger')).toBe(true);
+    expect(
+      screen.getByText('Danger Badge').classList.contains('badge-danger'),
+    ).toBe(true);
   });
 
   it('should render Badges as pills', () => {
     render(<Badge pill>Pill Badge</Badge>);
 
-    expect(screen.getByText('Pill Badge').classList.contains('badge-pill')).toBe(true);
+    expect(
+      screen.getByText('Pill Badge').classList.contains('badge-pill'),
+    ).toBe(true);
   });
 });

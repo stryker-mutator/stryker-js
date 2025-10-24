@@ -8,5 +8,6 @@
   },
   "concurrency": 1,
   "coverageAnalysis": "perTest",
-  "mutate": ["client/src/**/*.js", "!client/**/*.test.js"]
+  "mutate": ["client/src/**/*.js", "!client/**/*.test.js"],
+  "plugins": ["@stryker-mutator/jest-runner"]
 }
