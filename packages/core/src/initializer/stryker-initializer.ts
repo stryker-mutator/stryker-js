@@ -113,7 +113,7 @@ export class StrykerInitializer {
     }
     const selectedPackageManager = await this.selectPackageManager();
     this.installNpmDependencies(
-      presetConfig.dependencies,
+      this.ensureCoreDependencyIncluded(presetConfig.dependencies),
       selectedPackageManager,
     );
     return configFileName;
@@ -148,7 +148,7 @@ export class StrykerInitializer {
       isJsonSelected,
     );
     this.installNpmDependencies(
-      npmDependencies.map((pkg) => pkg.name),
+      this.ensureCoreDependencyIncluded(npmDependencies.map((pkg) => pkg.name)),
       selectedPackageManager,
     );
     return configFileName;
@@ -270,5 +270,9 @@ export class StrykerInitializer {
     return await Promise.all(
       dependencies.map((dep) => this.client.getAdditionalConfig(dep)),
     );
+  }
+
+  private ensureCoreDependencyIncluded(dependencies: string[]) {
+    return Array.from(new Set(['@stryker-mutator/core', ...dependencies]));
   }
 }

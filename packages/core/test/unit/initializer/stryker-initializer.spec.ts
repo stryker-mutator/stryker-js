@@ -214,7 +214,7 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
       expect(fsWriteFile).calledOnce;
       expect(childExecSync).calledWith(
-        'npm i --save-dev my-awesome-dependency another-awesome-dependency',
+        'npm i --save-dev @stryker-mutator/core my-awesome-dependency another-awesome-dependency',
         { stdio: [0, 1, 2] },
       );
     });
@@ -249,7 +249,7 @@ describe(StrykerInitializer.name, () => {
       });
     });
 
-    it('should install any additional dependencies', async () => {
+    it('should install core package and any additional dependencies', async () => {
       arrangeAnswers({
         packageManager: 'npm',
         reporters: ['dimension', 'mars'],
@@ -259,14 +259,14 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
       expect(out).calledWith('Installing NPM dependencies...');
       expect(childExecSync).calledWith(
-        'npm i --save-dev @stryker-mutator/awesome-runner stryker-dimension-reporter @stryker-mutator/mars-reporter',
+        'npm i --save-dev @stryker-mutator/core @stryker-mutator/awesome-runner stryker-dimension-reporter @stryker-mutator/mars-reporter',
         {
           stdio: [0, 1, 2],
         },
       );
     });
 
-    it('should install additional dependencies with pnpm', async () => {
+    it('should install core package and additional dependencies with pnpm', async () => {
       arrangeAnswers({
         packageManager: 'pnpm',
         reporters: [],
@@ -274,10 +274,38 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       expect(childExecSync).calledWith(
-        'pnpm add -D @stryker-mutator/awesome-runner',
+        'pnpm add -D @stryker-mutator/core @stryker-mutator/awesome-runner',
         {
           stdio: [0, 1, 2],
         },
+      );
+    });
+
+    it('should install @stryker-mutator/core when using the command test runner with no reporters (npm)', async () => {
+      arrangeAnswers({
+        packageManager: 'npm',
+        reporters: [],
+        testRunner: 'command',
+        configFormat: 'JSON',
+      });
+      await sut.initialize();
+      expect(childExecSync).calledWith(
+        'npm i --save-dev @stryker-mutator/core',
+        { stdio: [0, 1, 2] },
+      );
+    });
+
+    it('should include reporter packages alongside @stryker-mutator/core when using the command test runner (npm)', async () => {
+      arrangeAnswers({
+        packageManager: 'npm',
+        reporters: ['dimension', 'mars'],
+        testRunner: 'command',
+        configFormat: 'JSON',
+      });
+      await sut.initialize();
+      expect(childExecSync).calledWith(
+        'npm i --save-dev @stryker-mutator/core stryker-dimension-reporter @stryker-mutator/mars-reporter',
+        { stdio: [0, 1, 2] },
       );
     });
 
@@ -446,7 +474,7 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
 
       expect(out).calledWith(
-        'An error occurred during installation, please try it yourself: "npm i --save-dev stryker-ghost-runner"',
+        'An error occurred during installation, please try it yourself: "npm i --save-dev @stryker-mutator/core stryker-ghost-runner"',
       );
       expect(fs.promises.writeFile).called;
     });
