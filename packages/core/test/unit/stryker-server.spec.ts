@@ -8,6 +8,7 @@ import {
   PartialStrykerOptions,
   MutantResult,
   FileDescriptions,
+  LogLevel,
 } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens } from '@stryker-mutator/api/plugin';
@@ -219,7 +220,7 @@ describe(StrykerServer.name, () => {
 
     it('returns the version after configuring successfully', () => {
       const configureParams: ConfigureParams = {};
-      const expected: ConfigureResult = { version: '1' };
+      const expected: ConfigureResult = { version: '0.4.0' };
 
       const actual = sut.configure(configureParams);
 
@@ -410,6 +411,7 @@ describe(StrykerServer.name, () => {
         cliOptions: {
           ...cliOptions,
           allowConsoleColors: false,
+          logLevel: LogLevel.Warning
         },
       });
     });
