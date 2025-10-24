@@ -23,7 +23,7 @@ import { coreTokens } from './di/index.js';
 import { objectUtils } from './utils/object-utils.js';
 import { JsonRpcEventDeserializer } from './utils/json-rpc-event-deserializer.js';
 import { Observable } from 'rxjs';
-import { MutantResult, PartialStrykerOptions } from '@stryker-mutator/api/core';
+import { LogLevel, MutantResult, PartialStrykerOptions } from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
 import { Stryker } from './stryker.js';
 import { promisify } from 'util';
@@ -211,7 +211,7 @@ export class StrykerServer {
 
   configure(configureParams: ConfigureParams): ConfigureResult {
     this.#configFilePath = configureParams.configFilePath;
-    return { version: '1' };
+    return { version: '0.4.0' };
   }
 
   async discover(discoverParams: DiscoverParams): Promise<DiscoverResult> {
@@ -229,6 +229,7 @@ export class StrykerServer {
           ...this.#cliOptions,
           allowConsoleColors: false,
           configFile: this.#configFilePath,
+          logLevel: LogLevel.Warning,
         },
         targetMutatePatterns: this.#filesToGlobPatterns(discoverParams.files),
       });
@@ -292,6 +293,7 @@ export class StrykerServer {
           ...this.#cliOptions,
           allowConsoleColors: false,
           configFile: this.#configFilePath,
+          logLevel: LogLevel.Warning,
         },
         targetMutatePatterns: this.#filesToGlobPatterns(
           mutationTestParams.files,
