@@ -58,8 +58,8 @@
     "@types/node": "22.18.8"
   },
   "dependencies": {
-    "@stryker-mutator/api": "9.2.0",
-    "@stryker-mutator/util": "9.2.0"
+    "@stryker-mutator/api": "workspace:*",
+    "@stryker-mutator/util": "workspace:*"
   },
   "initStrykerConfig": {
     "jasmineConfigFile": "spec/support/jasmine.json"

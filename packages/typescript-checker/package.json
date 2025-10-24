@@ -46,8 +46,8 @@
   },
   "homepage": "https://stryker-mutator.io/docs/stryker-js/typescript-checker",
   "dependencies": {
-    "@stryker-mutator/api": "9.2.0",
-    "@stryker-mutator/util": "9.2.0",
+    "@stryker-mutator/api": "workspace:*",
+    "@stryker-mutator/util": "workspace:*",
     "semver": "~7.7.0"
   },
   "devDependencies": {

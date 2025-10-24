@@ -63,8 +63,8 @@
     "@stryker-mutator/core": "~9.2.0"
   },
   "dependencies": {
-    "@stryker-mutator/api": "9.2.0",
-    "@stryker-mutator/util": "9.2.0",
+    "@stryker-mutator/api": "workspace:*",
+    "@stryker-mutator/util": "workspace:*",
     "decamelize": "~6.0.0",
     "semver": "~7.7.0",
     "tslib": "~2.8.0"
