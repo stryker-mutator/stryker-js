@@ -8,7 +8,8 @@ import { expect } from 'chai';
 
 describe(LoggingBackend.name, () => {
   let sut: LoggingBackend;
-  let stdoutStub: sinon.SinonStubbedMember<typeof process.stdout.write>;
+  let consoleStream: NodeJS.WritableStream;
+  let stdoutStub: sinon.SinonStubbedMember<NodeJS.WritableStream['write']>;
   let createWriteStreamStub: sinon.SinonStubbedMember<
     typeof fs.createWriteStream
   >;
@@ -18,14 +19,15 @@ describe(LoggingBackend.name, () => {
   let consoleErrorStub: sinon.SinonStubbedMember<typeof console.error>;
 
   beforeEach(() => {
-    sut = new LoggingBackend();
-    stdoutStub = sinon.stub(process.stdout, 'write');
-    createWriteStreamStub = sinon.stub(fs, 'createWriteStream');
+    consoleStream = new Writable();
     logFileStream = new Writable();
+    sut = new LoggingBackend(consoleStream);
+    createWriteStreamStub = sinon.stub(fs, 'createWriteStream');
     logFileWriteStub = sinon.stub(logFileStream, 'write');
     logFileEndStub = sinon.stub(logFileStream, 'end');
     createWriteStreamStub.returns(logFileStream as unknown as WriteStream);
     consoleErrorStub = sinon.stub(console, 'error');
+    stdoutStub = sinon.stub(consoleStream, 'write');
   });
 
   describe(LoggingBackend.prototype.configure.name, () => {

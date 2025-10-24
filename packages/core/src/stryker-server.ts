@@ -14,6 +14,7 @@ import {
   JSONRPCServerAndClient,
 } from 'json-rpc-2.0';
 import net from 'net';
+import { on } from 'events';
 import { createInjector, Injector } from 'typed-inject';
 import { PrepareExecutor } from './process/1-prepare-executor.js';
 import { createInstrumenter } from '@stryker-mutator/instrumenter';
@@ -22,7 +23,11 @@ import { coreTokens } from './di/index.js';
 import { objectUtils } from './utils/object-utils.js';
 import { JsonRpcEventDeserializer } from './utils/json-rpc-event-deserializer.js';
 import { Observable } from 'rxjs';
-import { MutantResult, PartialStrykerOptions } from '@stryker-mutator/api/core';
+import {
+  LogLevel,
+  MutantResult,
+  PartialStrykerOptions,
+} from '@stryker-mutator/api/core';
 import { Reporter } from '@stryker-mutator/api/report';
 import { Stryker } from './stryker.js';
 import { promisify } from 'util';
@@ -44,6 +49,12 @@ export const rpcMethods = Object.freeze({
   mutationTest: 'mutationTest',
   reportMutationTestProgressNotification: 'reportMutationTestProgress',
 });
+
+export interface StrykerServerOptions {
+  channel: 'stdio' | 'socket';
+  port?: number;
+  address?: string;
+}
 
 const STRYKER_SERVER_NOT_STARTED =
   "Stryker server isn't started yet, please call `start` first";
@@ -69,92 +80,142 @@ export class StrykerServer {
     loggingServerAddress: LoggingServerAddress;
   }>;
   #rootInjector?: Injector;
+  #cliOptions;
+  #injectorFactory;
+  #serverOptions;
+  #abortController = new AbortController();
 
   /**
-   *
    * @param cliOptions The cli options.
+   * @param serverOptions The server options.
    * @param injectorFactory The injector factory, for testing purposes only
    */
   constructor(
-    private readonly cliOptions: PartialStrykerOptions = {},
-    private readonly injectorFactory = createInjector,
-  ) {}
+    serverOptions: StrykerServerOptions,
+    cliOptions: PartialStrykerOptions = {},
+    injectorFactory = createInjector,
+  ) {
+    this.#cliOptions = cliOptions;
+    this.#injectorFactory = injectorFactory;
+    this.#serverOptions = serverOptions;
+  }
 
   /**
    * Starts the server and listens for incoming connections.
-   * @returns The port the server is listening on
+   * @returns The port the server is listening on, or undefined if the server is listening on stdio.
    */
-  async start(): Promise<number> {
+  async start(): Promise<number | undefined> {
     if (this.#rootInjector) {
       throw new Error(STRYKER_SERVER_ALREADY_STARTED);
     }
-    this.#rootInjector = this.injectorFactory();
+    this.#rootInjector = this.#injectorFactory();
     this.#loggingBackendProvider = provideLogging(
-      await provideLoggingBackend(this.#rootInjector),
+      await provideLoggingBackend(this.#rootInjector, process.stderr),
     );
-    return new Promise((resolve) => {
-      this.#server = net.createServer((socket) => {
-        const deserializer = new JsonRpcEventDeserializer();
-        const rpc = new JSONRPCServerAndClient(
-          new JSONRPCServer(),
-          new JSONRPCClient((jsonRPCRequest) => {
-            const content = Buffer.from(JSON.stringify(jsonRPCRequest));
-            socket.write(`Content-Length: ${content.byteLength}\r\n\r\n`);
-            socket.write(content);
-          }),
-        );
 
-        rpc.addMethod(rpcMethods.configure, this.configure.bind(this));
-        rpc.addMethod(rpcMethods.discover, this.discover.bind(this));
-        rpc.addMethod(rpcMethods.mutationTest, (params: MutationTestParams) => {
-          return new Promise<MutationTestResult>((resolve, reject) => {
-            this.mutationTest(params).subscribe({
-              next: (mutantResult) => {
-                const { fileName, ...mutant } = mutantResult;
-                rpc.client.notify(
-                  rpcMethods.reportMutationTestProgressNotification,
-                  {
-                    files: {
-                      [normalizeReportFileName(fileName)]: {
-                        mutants: [mutant],
-                      },
+    return this.#startChannel((inStream, outStream) => {
+      const deserializer = new JsonRpcEventDeserializer();
+      const rpc = new JSONRPCServerAndClient(
+        new JSONRPCServer(),
+        new JSONRPCClient((jsonRPCRequest) => {
+          const content = Buffer.from(JSON.stringify(jsonRPCRequest));
+          outStream.write(`Content-Length: ${content.byteLength}\r\n\r\n`);
+          outStream.write(content);
+        }),
+      );
+
+      rpc.addMethod(rpcMethods.configure, this.configure.bind(this));
+      rpc.addMethod(rpcMethods.discover, this.discover.bind(this));
+      rpc.addMethod(rpcMethods.mutationTest, (params: MutationTestParams) => {
+        return new Promise<MutationTestResult>((resolve, reject) => {
+          this.mutationTest(params).subscribe({
+            next: (mutantResult) => {
+              const { fileName, ...mutant } = mutantResult;
+              rpc.client.notify(
+                rpcMethods.reportMutationTestProgressNotification,
+                {
+                  files: {
+                    [normalizeReportFileName(fileName)]: {
+                      mutants: [mutant],
                     },
-                  } satisfies MutationTestResult,
-                );
-              },
-              error: reject,
-              complete: () => resolve({ files: {} }),
-            });
+                  },
+                } satisfies MutationTestResult,
+              );
+            },
+            error: reject,
+            complete: () => resolve({ files: {} }),
           });
         });
-        socket.on('data', (data) => {
-          const events = deserializer.deserialize(data);
+      });
+
+      (async () => {
+        for await (const [data] of on(inStream, 'data', {
+          signal: this.#abortController.signal,
+        })) {
+          const events = deserializer.deserialize(data as Buffer);
           for (const event of events) {
             // https://www.npmjs.com/package/json-rpc-2.0#error-handling
             // errors are already handled by JSON RPC, so we can ignore them here
             void rpc.receiveAndSend(event);
           }
-        });
-      });
-
-      this.#server.listen(() => {
-        resolve((this.#server!.address() as net.AddressInfo).port);
+        }
+      })().catch((error) => {
+        this.#loggingBackendProvider!.resolve(commonTokens.getLogger)(
+          StrykerServer.name,
+        ).error(
+          'Error while listening for events on the JSON-RPC stream',
+          error,
+        );
       });
     });
   }
 
+  /**
+   * Starts the communication channel, depending on the configured channel.
+   * @param connect A callback to connect the in- and out streams to the JSON-RPC server and client.
+   * @returns The port the server is listening on, or undefined if the server is listening on stdio.
+   */
+  async #startChannel(
+    connect: (
+      inStream: NodeJS.ReadableStream,
+      outStream: NodeJS.WritableStream,
+    ) => void,
+  ) {
+    switch (this.#serverOptions.channel) {
+      case 'stdio':
+        connect(process.stdin, process.stdout);
+        return undefined;
+      case 'socket': {
+        this.#server = net.createServer((socket) => {
+          connect(socket, socket);
+        });
+        return new Promise<number>((res) => {
+          this.#server!.listen(
+            this.#serverOptions.port,
+            this.#serverOptions.address,
+            () => {
+              res((this.#server!.address() as net.AddressInfo).port);
+            },
+          );
+        });
+      }
+    }
+  }
+
   async stop(): Promise<void> {
+    this.#abortController.abort();
     await this.#rootInjector?.dispose();
     if (this.#server) {
-      await promisify(this.#server.close.bind(this.#server))();
+      await promisify(this.#server.close).bind(this.#server)();
+      this.#server = undefined;
     }
-    this.#server = undefined;
     this.#loggingBackendProvider = undefined;
+    this.#abortController = new AbortController();
   }
 
   configure(configureParams: ConfigureParams): ConfigureResult {
     this.#configFilePath = configureParams.configFilePath;
-    return { version: '1' };
+    return { version: '0.4.0' };
   }
 
   async discover(discoverParams: DiscoverParams): Promise<DiscoverResult> {
@@ -169,9 +230,10 @@ export class StrykerServer {
       const prepareExecutor = discoverInjector.injectClass(PrepareExecutor);
       const inj = await prepareExecutor.execute({
         cliOptions: {
-          ...this.cliOptions,
+          ...this.#cliOptions,
           allowConsoleColors: false,
           configFile: this.#configFilePath,
+          logLevel: LogLevel.Warning,
         },
         targetMutatePatterns: this.#filesToGlobPatterns(discoverParams.files),
       });
@@ -225,24 +287,37 @@ export class StrykerServer {
         },
       };
 
-      Stryker.run(
-        this.#loggingBackendProvider.provideValue(
-          coreTokens.reporterOverride,
-          reporter,
-        ),
-        {
-          cliOptions: {
-            ...this.cliOptions,
-            allowConsoleColors: false,
-            configFile: this.#configFilePath,
-          },
-          targetMutatePatterns: this.#filesToGlobPatterns(
-            mutationTestParams.files,
-          ),
+      const runInjector = this.#loggingBackendProvider.provideValue(
+        coreTokens.reporterOverride,
+        reporter,
+      );
+      let caughtError: unknown;
+      Stryker.run(runInjector, {
+        cliOptions: {
+          ...this.#cliOptions,
+          allowConsoleColors: false,
+          configFile: this.#configFilePath,
+          logLevel: LogLevel.Warning,
         },
-      )
-        .then(() => subscriber.complete())
-        .catch((error) => subscriber.error(error));
+        targetMutatePatterns: this.#filesToGlobPatterns(
+          mutationTestParams.files,
+        ),
+      })
+        .catch((error) => (caughtError = error))
+        .finally(() => {
+          runInjector
+            .dispose()
+            .catch((err) => {
+              console.error('Error during dispose', err);
+            })
+            .finally(() => {
+              if (caughtError) {
+                subscriber.error(caughtError);
+              } else {
+                subscriber.complete();
+              }
+            });
+        });
     });
   }
 

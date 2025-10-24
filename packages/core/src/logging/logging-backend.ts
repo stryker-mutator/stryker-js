@@ -5,21 +5,29 @@ import { Disposable } from 'typed-inject';
 import { promisify } from 'util';
 import { LoggingSink } from './logging-sink.js';
 import { logLevelPriority, minPriority } from './priority.js';
+import { coreTokens } from '../di/index.js';
 
 const LOG_FILE_NAME = 'stryker.log';
 
 /**
- * The logging backend that handles the actual logging. So to both a file and the stdout.
+ * The logging backend that handles the actual logging. So to both a file and the stdout, stderr.
  */
 export class LoggingBackend implements LoggingSink, Disposable {
   activeStdoutLevel: LogLevel = LogLevel.Information;
   activeFileLevel: LogLevel = LogLevel.Off;
   showColors = true;
+  #consoleOut;
+
+  static readonly inject = [coreTokens.loggerConsoleOut] as const;
+
+  constructor(consoleOut: NodeJS.WritableStream) {
+    this.#consoleOut = consoleOut;
+  }
 
   log(event: LoggingEvent) {
     const eventPriority = logLevelPriority[event.level];
     if (eventPriority >= logLevelPriority[this.activeStdoutLevel]) {
-      process.stdout.write(
+      this.#consoleOut.write(
         `${this.showColors ? event.formatColorized() : event.format()}\n`,
       );
     }

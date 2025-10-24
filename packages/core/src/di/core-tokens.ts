@@ -15,6 +15,7 @@ export const timer = 'timer';
 export const timeOverheadMS = 'timeOverheadMS';
 export const loggingServerAddress = 'loggingServerAddress';
 export const loggerActiveLevel = 'loggerActiveLevel';
+export const loggerConsoleOut = 'loggerConsoleOut';
 export const loggingSink = 'loggingSink';
 export const loggingServer = 'loggingServer';
 export const mutationTestReportHelper = 'mutationTestReportHelper';

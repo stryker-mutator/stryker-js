@@ -37,7 +37,7 @@ describe('Provide logging', () => {
 
     it('should provide a logging backend', async () => {
       // Act
-      const result = await provideLoggingBackend(injectorMock);
+      const result = await provideLoggingBackend(injectorMock, process.stdout);
 
       // Assert
       expect(result).eq(injectorMock);
@@ -47,13 +47,26 @@ describe('Provide logging', () => {
         LoggingBackend,
       );
     });
+
+    it('should provide the given console stream', async () => {
+      // Act
+      await provideLoggingBackend(injectorMock, process.stderr);
+
+      // Assert
+      sinon.assert.calledWithExactly(
+        injectorMock.provideValue,
+        coreTokens.loggerConsoleOut,
+        process.stderr,
+      );
+    });
+
     it('should open the logging server and provide the address', async () => {
       // Arrange
       const expectedAddress: LoggingServerAddress = { port: 42 };
       loggingServerMock.listen.resolves(expectedAddress);
 
       // Act
-      await provideLoggingBackend(injectorMock);
+      await provideLoggingBackend(injectorMock, process.stdout);
 
       // Assert
       sinon.assert.calledWithExactly(

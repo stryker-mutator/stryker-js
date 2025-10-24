@@ -1,10 +1,8 @@
 import semver from 'semver';
 
 guardMinimalNodeVersion();
-
-import { Command } from 'commander';
+import { Argument, Command } from 'commander';
 import {
-  MutantResult,
   DashboardOptions,
   ALL_REPORT_TYPES,
   PartialStrykerOptions,
@@ -14,20 +12,8 @@ import { initializerFactory } from './initializer/index.js';
 import { Stryker } from './stryker.js';
 import { defaultOptions } from './config/index.js';
 import { strykerEngines, strykerVersion } from './stryker-package.js';
-import { StrykerServer } from './stryker-server.js';
+import { StrykerServer, StrykerServerOptions } from './stryker-server.js';
 import { createInjector } from 'typed-inject';
-
-/**
- * Interpret a command line argument and add it to an object.
- * @param object The object to assign the value to.
- * @param key The property name under which the value needs to be stored.
- */
-function deepOption<T extends string, R>(object: { [K in T]?: R }, key: T) {
-  return (value: R) => {
-    object[key] = value;
-    return undefined;
-  };
-}
 
 const list = createSplitter(',');
 
@@ -45,43 +31,127 @@ function parseCleanDirOption(val: string) {
   return v === 'always' ? v : v !== 'false' && v !== '0';
 }
 
-export class StrykerCli {
-  private command = '';
-  private strykerConfig: string | null = null;
+const configFileArgument = new Argument(
+  '[configFile]',
+  'Path to the config file',
+);
 
+export class StrykerCli {
   constructor(
     private readonly argv: string[],
     private readonly program: Command = new Command(),
     private readonly runMutationTest = async (options: PartialStrykerOptions) =>
       new Stryker(options).runMutationTest(),
-    private readonly runMutationTestingServer = async (
-      options: PartialStrykerOptions,
+    private readonly runMutationTestingServer = (
+      serverOptions: StrykerServerOptions,
+      cliStrykerOptions: PartialStrykerOptions,
     ) => {
-      const server = new StrykerServer(options);
-      const port = await server.start();
-      console.log(JSON.stringify({ port }));
+      const server = new StrykerServer(serverOptions, cliStrykerOptions);
+      return server.start();
     },
   ) {}
 
   public run(createInjectorImpl = createInjector): void {
-    const dashboard: Partial<DashboardOptions> = {};
+    this.program.version(strykerVersion);
+
+    this.#provideStrykerOptions(this.program.command('run'))
+      .addArgument(configFileArgument)
+      .action(async (configFile, options) => {
+        await this.runMutationTest(
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          this.#readStrykerOptions(options, configFile),
+        );
+      });
+
     this.program
+      .command('init')
+      .description('Initialize Stryker for your project')
+      .action(async () => {
+        const inj = createInjectorImpl();
+        try {
+          const initializer = await initializerFactory(inj);
+          await initializer.initialize();
+        } finally {
+          await inj.dispose();
+        }
+      });
 
-      .version(strykerVersion)
-      .usage('<command> [options] [configFile]')
-      .description(
-        `Possible commands:
-        run: Run mutation testing
-        init: Initialize Stryker for your project
-        runServer: Start the mutation testing server (implements the mutation testing server protocol)
+    this.#provideStrykerOptions(this.program.command('runServer'))
+      .addArgument(configFileArgument)
+      .description('[DEPRECATED] use serve instead')
+      .action(async (configFile, options) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        const cliOptions = this.#readStrykerOptions(options, configFile);
+        const port = await this.runMutationTestingServer(
+          {
+            channel: 'socket',
+          },
+          cliOptions,
+        );
+        console.log(JSON.stringify({ port }));
+      });
 
-        Optional location to a JSON or JavaScript config file as the last argument. If it's a JavaScript file, that file should export the config directly.`,
+    this.program
+      .command('serve')
+      .addArgument(
+        new Argument(
+          '<channel>',
+          'The channel to use for communicating with the Stryker server',
+        ).choices(['stdio', 'socket']),
       )
-      .arguments('<command> [configFile]')
-      .action((cmd: string, config: string) => {
-        this.command = cmd;
-        this.strykerConfig = config;
-      })
+      .option(
+        '--port <number>',
+        'The port to listen on (only for socket channel)',
+        parseInt,
+      )
+      .option(
+        '--address <string>',
+        'The host to listen on (only for socket channel)',
+        'localhost',
+      )
+      .description('Start the Stryker server')
+      .argument(
+        '[-- <args>...]',
+        'Override Stryker options here, (see run command)',
+      )
+      .action(
+        async (
+          channel: 'stdio' | 'socket',
+          remainingArguments: string[],
+          socketOptions: { port?: number; address: string },
+        ) => {
+          const command = this.#provideStrykerOptions(new Command()).parse(
+            remainingArguments,
+            { from: 'user' },
+          );
+          const runOptions = command.opts();
+          const [configFile] = command.args;
+          const strykerOptions = this.#readStrykerOptions(
+            runOptions,
+            configFile,
+          );
+          if (channel === 'socket') {
+            const port = await this.runMutationTestingServer(
+              {
+                channel,
+                ...socketOptions,
+              },
+              strykerOptions,
+            );
+            process.stderr.write(
+              `Stryker server listening on ${socketOptions.address}:${port}\n`,
+            );
+          } else {
+            void this.runMutationTestingServer({ channel }, strykerOptions);
+            process.stderr.write(`Stryker server started on stdio channel\n`);
+          }
+        },
+      );
+    this.program.showSuggestionAfterError().parse(this.argv);
+  }
+
+  #provideStrykerOptions(command: Command) {
+    return command
       .option(
         '-f, --files <allFiles>',
         '[DEPRECATED, you probably want to use `--mutate` or less likely `--ignorePatterns` instead] A comma separated list of patterns used for selecting ALL files needed to run the tests. That are NOT ONLY the files you want to actually mutate (which must be selected with `--mutate`), but instead also the other files you need too, like the files containing the tests, configuration files and such. Note: This option will have NO effect when using the --inPlace option. For a more detailed way of selecting input files, please use a configFile. Example: src/**/*.js,!src/index.js,a.js,test/**/*.js.',
@@ -114,7 +184,7 @@ export class StrykerCli {
       )
       .option(
         '-m, --mutate <filesToMutate>',
-        'With `mutate` you configure the subset of files or just one specific file to be mutated. These should be your _production code files_, and definitely not your test files.\n(Whereas with `ignorePatterns` you prevent non-relevant files from being copied to the sandbox directory in the first place)\nThe default will try to guess your production code files based on sane defaults. It reads like this:\n- Include all js-like files inside the `src` or `lib` dir\n- Except files inside `__tests__` directories and file names ending with `test` or `spec`.\nIf the defaults are not sufficient for you, for example in a angular project you might want to\n **exclude** not only the `*.spec.ts` files but other files too, just like the default already does.\nIt is possible to specify exactly which code blocks to mutate by means of a _mutation range_. This can be done postfixing your file with `:startLine[:startColumn]-endLine[:endColumn]`. Example: src/index.js:1:3-1:5',
+        'With `mutate` you configure the subset of files or just one specific file to be mutated. These should be your _production code files_, and definitely not your test files. (Whereas with `ignorePatterns` you prevent non-relevant files from being copied to the sandbox directory in the first place)\nThe default will try to guess your production code files based on sane defaults. It reads like this:\n- Include all js-like files inside the `src` or `lib` dir\n- Except files inside `__tests__` directories and file names ending with `test` or `spec`.\nIf the defaults are not sufficient for you, for example in a angular project you might want to\n**exclude** not only the `*.spec.ts` files but other files too, just like the default already does.\nIt is possible to specify exactly which code blocks to mutate by means of a _mutation range_. This can be done postfixing your file with `:startLine[:startColumn]-endLine[:endColumn]`. Example: src/index.js:1:3-1:5',
         list,
       )
       .option(
@@ -214,27 +284,22 @@ export class StrykerCli {
       .option(
         '--dashboard.project <name>',
         'Indicates which project name to use if the "dashboard" reporter is enabled. Defaults to the git url configured in the environment of your CI server.',
-        deepOption(dashboard, 'project'),
       )
       .option(
         '--dashboard.version <version>',
         'Indicates which version to use if the "dashboard" reporter is enabled. Defaults to the branch name or tag name configured in the environment of your CI server.',
-        deepOption(dashboard, 'version'),
       )
       .option(
         '--dashboard.module <name>',
         'Indicates which module name to use if the "dashboard" reporter is enabled.',
-        deepOption(dashboard, 'module'),
       )
       .option(
         '--dashboard.baseUrl <url>',
         `Indicates which baseUrl to use when reporting to the stryker dashboard. Default: "${defaultOptions.dashboard.baseUrl}"`,
-        deepOption(dashboard, 'baseUrl'),
       )
       .option(
         `--dashboard.reportType <${ALL_REPORT_TYPES.join('|')}>`,
         `Send a full report (inc. source code and mutant results) or only the mutation score. Default: ${defaultOptions.dashboard.reportType}`,
-        deepOption(dashboard, 'reportType'),
       )
       .option(
         '--inPlace',
@@ -246,55 +311,30 @@ export class StrykerCli {
       )
       .option(
         '--cleanTempDir <true | false | always>',
-        `Choose whether or not to clean the temp dir (which is "${defaultOptions.tempDirName}" inside the current working directory by default) after a run.\n - false: Never delete the temp dir;\n - true: Delete the tmp dir after a successful run;\n - always: Always delete the temp dir, regardless of whether the run was successful.`,
+        `Choose whether or not to clean the temp dir (which is "${defaultOptions.tempDirName}" inside the current working directory by default) after a run.\n- false: Never delete the temp dir;\n- true: Delete the tmp dir after a successful run;\n- always: Always delete the temp dir, regardless of whether the run was successful.`,
         parseCleanDirOption,
-      )
-      .showSuggestionAfterError()
-      .parse(this.argv);
+      );
+  }
 
-    // Earliest opportunity to configure the log level based on the logLevel argument
-    const options: PartialStrykerOptions = this.program.opts();
-
+  #readStrykerOptions(
+    options: PartialStrykerOptions,
+    configFile: string,
+  ): PartialStrykerOptions {
     // Cleanup commander state
     delete options.version;
     Object.keys(options)
       .filter((key) => key.startsWith('dashboard.'))
-      .forEach((key) => delete options[key]);
-
-    if (this.strykerConfig) {
-      options.configFile = this.strykerConfig;
-    }
-    if (Object.keys(dashboard).length > 0) {
-      options.dashboard = dashboard;
-    }
-
-    const commands = {
-      init: async () => {
-        const inj = createInjectorImpl();
-        try {
-          const initializer = await initializerFactory(inj);
-          await initializer.initialize();
-        } finally {
-          await inj.dispose();
-        }
-      },
-      run: () => this.runMutationTest(options),
-      runServer: () => this.runMutationTestingServer(options),
-    };
-
-    if (Object.keys(commands).includes(this.command)) {
-      const promise: Promise<MutantResult[] | void> =
-        commands[this.command as keyof typeof commands]();
-      promise.catch(() => {
-        process.exitCode = 1;
+      .forEach((key) => {
+        options.dashboard ??= {};
+        const dashboardOpt = key.split('.')[1] as keyof DashboardOptions;
+        options.dashboard[dashboardOpt] = options[key] as any;
+        delete options[key];
       });
-    } else {
-      console.error(
-        'Unknown command: "%s", supported commands: [%s], or use `stryker --help`.',
-        this.command,
-        Object.keys(commands),
-      );
+
+    if (configFile) {
+      options.configFile = configFile;
     }
+    return options;
   }
 }
 
