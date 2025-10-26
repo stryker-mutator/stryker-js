@@ -1,5 +1,5 @@
 {
-  "name": "karma-mocha",
+  "name": "karma-mocha-e2e",
   "version": "0.0.0",
   "private": true,
   "type": "module",
