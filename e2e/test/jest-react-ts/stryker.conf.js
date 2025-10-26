@@ -1,4 +1,3 @@
-const { config } = require("process");
 
 module.exports = {
   packageManager: 'npm',
