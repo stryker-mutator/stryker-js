@@ -98,7 +98,7 @@ describe(StrykerServer.name, () => {
         configFilePath: 'stryker.conf.js',
       };
       const expectedResult: ConfigureResult = {
-        version: '1',
+        version: '0.4.0',
       };
 
       const result = await client.configure(configureParam);
