@@ -1,4 +1,3 @@
-const { plugin } = require('typescript-eslint');
 const webpack = require('./webpack.dev');
 module.exports = function (config) {
   config.set({
