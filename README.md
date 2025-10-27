@@ -27,7 +27,7 @@ Please follow the [quickstart on the website](https://stryker-mutator.io/docs/st
 For small js projects, you can try the following command:
 
 ```
-npm install --save-dev @stryker-mutator/core
+pnpm add --save-dev @stryker-mutator/core
 # Only for small projects:
 npx stryker run
 ```

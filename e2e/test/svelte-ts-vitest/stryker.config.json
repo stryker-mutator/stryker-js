@@ -5,5 +5,6 @@
   "testRunner": "vitest",
   "coverageAnalysis": "perTest",
   "concurrency": 2,
-  "timeoutMS": 60000
+  "timeoutMS": 60000,
+  "plugins": ["@stryker-mutator/vitest-runner"]
 }

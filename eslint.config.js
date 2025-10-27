@@ -32,48 +32,50 @@ export const rules = {
   '@typescript-eslint/no-explicit-any': 'off',
 };
 
-export default tseslint.config(
-  eslint.configs.recommended,
-  ...tseslint.configs.recommendedTypeChecked,
-  eslintPluginPrettierRecommended,
-  {
-    languageOptions: {
-      parserOptions: {
-        project: 'tsconfig.lint.json',
-        tsconfigRootDir: path.dirname(fileURLToPath(import.meta.url)),
+export default /** @type {import('typescript-eslint').ConfigArray} */ (
+  tseslint.config(
+    eslint.configs.recommended,
+    ...tseslint.configs.recommendedTypeChecked,
+    eslintPluginPrettierRecommended,
+    {
+      languageOptions: {
+        parserOptions: {
+          project: 'tsconfig.lint.json',
+          tsconfigRootDir: path.dirname(fileURLToPath(import.meta.url)),
+        },
+      },
+      rules,
+    },
+    {
+      plugins: { 'chai-friendly': pluginChaiFriendly },
+      files: ['packages/*/test/**/*.@(ts|js|mts|cts)'],
+      rules: {
+        'no-unused-expressions': 'off', // disable original rule
+        '@typescript-eslint/no-unused-expressions': 'off', // disable original rule
+        'chai-friendly/no-unused-expressions': 'error',
       },
     },
-    rules,
-  },
-  {
-    plugins: { 'chai-friendly': pluginChaiFriendly },
-    files: ['packages/*/test/**/*.@(ts|js|mts|cts)'],
-    rules: {
-      'no-unused-expressions': 'off', // disable original rule
-      '@typescript-eslint/no-unused-expressions': 'off', // disable original rule
-      'chai-friendly/no-unused-expressions': 'error',
+    {
+      ignores: [
+        '**/node_modules/**',
+        '*.d.ts',
+        'packages/*/dist/',
+        'packages/*/testResources/**',
+        'packages/*/src-generated/**',
+        'packages/*/reports/**',
+        'packages/*/coverage/**',
+        'packages/*/@(stryker.conf.js|.mocharc.cjs|stryker-karma.conf.cjs)',
+
+        // Ignore specific files
+        'packages/jasmine-runner/typings/jasmine-types.d.ts',
+        'packages/karma-runner/src/karma-plugins/stryker-mutant-coverage-adapter.ts',
+        'packages/grunt-stryker/tasks/stryker.js',
+
+        // e2e is linted in the e2e package
+        'e2e/',
+        'perf/',
+        'helpers/',
+      ],
     },
-  },
-  {
-    ignores: [
-      '**/node_modules/**',
-      '*.d.ts',
-      'packages/*/dist/',
-      'packages/*/testResources/**',
-      'packages/*/src-generated/**',
-      'packages/*/reports/**',
-      'packages/*/coverage/**',
-      'packages/*/@(stryker.conf.js|.mocharc.cjs|stryker-karma.conf.cjs)',
-
-      // Ignore specific files
-      'packages/jasmine-runner/typings/jasmine-types.d.ts',
-      'packages/karma-runner/src/karma-plugins/stryker-mutant-coverage-adapter.ts',
-      'packages/grunt-stryker/tasks/stryker.js',
-
-      // e2e is linted in the e2e package
-      'e2e/',
-      'perf/',
-      'helpers/',
-    ],
-  },
+  )
 );

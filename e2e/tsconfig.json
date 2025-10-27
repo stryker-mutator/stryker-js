@@ -21,6 +21,7 @@
     "test/*/verify/*.js",
     "test/*/stryker-plugins/**/*.js",
     "test/*/stryker-plugins/**/*.ts",
+    "test/*/stryker.conf.cjs",
     "helpers.js",
     "test/*/*.mjs",
     "eslint.config.js"

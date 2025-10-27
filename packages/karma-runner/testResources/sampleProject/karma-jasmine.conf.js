@@ -1,23 +1,18 @@
-
-
 module.exports = function (config) {
   config.set({
-    files: [
-      __dirname + '/src/*.js',
-      __dirname + '/test-jasmine/*.js'
-    ],
+    files: [__dirname + '/src/*.js', __dirname + '/test-jasmine/*.js'],
     exclude: [
       __dirname + '/src/Error.js',
       __dirname + '/src/InfiniteAdd.js',
-      __dirname + '/test-jasmine/AddFailedSpec.js'
+      __dirname + '/test-jasmine/AddFailedSpec.js',
     ],
     singleRun: false,
     watch: true,
-    frameworks: [
-      'jasmine'
+    frameworks: ['jasmine'],
+    browsers: ['ChromeHeadless'],
+    plugins: [
+      require.resolve('karma-chrome-launcher'),
+      require.resolve('karma-jasmine'),
     ],
-    browsers: [
-      'ChromeHeadless'
-    ]
   });
-}
+};

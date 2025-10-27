@@ -10,16 +10,19 @@
   "test:unit": "mocha",
   "test": "npm run clean:reports && stryker run && npm run verify"
   },
-  "localDependencies": {
-    "@stryker-mutator/api": "../../../packages/api",
-    "@stryker-mutator/core": "../../../packages/core",
-    "@stryker-mutator/instrumenter": "../../../packages/instrumenter",
-    "@stryker-mutator/mocha-runner": "../../../packages/mocha-runner",
-    "@stryker-mutator/util": "../../../packages/util"
-  },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "mocha": "7.2"
+    "mocha": "7.2",
+    "@stryker-mutator/core": "workspace:*",
+    "@stryker-mutator/mocha-runner": "workspace:*"
+  },
+  "dependenciesMeta": {
+    "@stryker-mutator/core": {
+      "injected": true
+    },
+    "@stryker-mutator/mocha-runner": {
+      "injected": true
+    }
   }
 }

@@ -20,9 +20,12 @@ import { createTapTestRunnerFactory } from '../../src/tap-test-runner.js';
 import { findTestyLookingFiles } from '../../src/tap-helper.js';
 import { TapRunnerOptionsWithStrykerOptions } from '../../src/tap-runner-options-with-stryker-options.js';
 import { tapRunnerOptions } from '../helpers/factory.js';
+import { createRequire } from 'module';
 
 // This is the setTimeout timer from "testResources/example/tests/bail.spec.js"
 const BAIL_TIMEOUT = 2000;
+
+const require = createRequire(import.meta.url);
 
 describe('tap-runner integration', () => {
   let sut: TapTestRunner;
@@ -288,19 +291,7 @@ describe('tap-runner integration', () => {
     beforeEach(async () => {
       sandbox = new TempTestDirectorySandbox('ava');
       await sandbox.init();
-      const avaLocation = path.resolve(
-        sandbox.tmpDir,
-        ...(process.env.STRYKER_MUTATOR_WORKER ? ['..', '..'] : []),
-        '..',
-        '..',
-        '..',
-        '..',
-        '..',
-        'node_modules',
-        'ava',
-        'entrypoints',
-        'cli.mjs',
-      );
+      const avaLocation = require.resolve('ava').replace('main.cjs', 'cli.mjs');
       options.forceBail = false;
       options.tap = tapRunnerOptions({
         nodeArgs: [avaLocation, '--tap'],

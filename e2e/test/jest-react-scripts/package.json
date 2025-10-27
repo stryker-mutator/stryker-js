@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "classnames": "^2.3.1",
+    "jest-environment-jsdom": "27.5.1",
     "prop-types": "^15.8.1",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
@@ -11,7 +12,7 @@
     "react-transition-group": "^4.4.2"
   },
   "scripts": {
-    "test:unit": "cross-env SKIP_PREFLIGHT_CHECK=true BABEL_ENV=test react-scripts test",
+    "test:unit": "cross-env SKIP_PREFLIGHT_CHECK=true BABEL_ENV=test react-scripts test --env=$(node -p 'require.resolve(\"jest-environment-jsdom\")')",
     "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
     "test": "stryker run && npm run verify"
   },
@@ -34,15 +35,18 @@
     ]
   },
   "devDependencies": {
-    "@testing-library/user-event": "^13.5.0",
+    "@stryker-mutator/core": "workspace:*",
+    "@stryker-mutator/jest-runner": "workspace:*",
     "@testing-library/jest-dom": "^5.16.4",
-    "@testing-library/react": "^13.1.1"
+    "@testing-library/react": "^13.1.1",
+    "@testing-library/user-event": "^13.5.0"
   },
-  "localDependencies": {
-    "@stryker-mutator/api": "../../../packages/api",
-    "@stryker-mutator/core": "../../../packages/core",
-    "@stryker-mutator/instrumenter": "../../../packages/instrumenter",
-    "@stryker-mutator/jest-runner": "../../../packages/jest-runner",
-    "@stryker-mutator/util": "../../../packages/util"
+  "dependenciesMeta": {
+    "@stryker-mutator/core": {
+      "injected": true
+    },
+    "@stryker-mutator/jest-runner": {
+      "injected": true
+    }
   }
 }

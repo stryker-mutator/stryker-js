@@ -9,5 +9,14 @@
   },
   "tap": {
     "testFiles": ["test/*.tap.js"]
-  }
+  },
+  "plugins": [
+    "@stryker-mutator/karma-runner",
+    "@stryker-mutator/tap-runner",
+    "@stryker-mutator/jasmine-runner",
+    "@stryker-mutator/jest-runner",
+    "@stryker-mutator/mocha-runner",
+    "@stryker-mutator/cucumber-runner",
+    "@stryker-mutator/vitest-runner"
+  ]
 }

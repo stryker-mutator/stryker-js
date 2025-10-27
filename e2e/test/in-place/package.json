@@ -10,7 +10,7 @@
     "test:unit": "mocha",
     "test:mutation": "stryker run",
     "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
-    "test": "npm run clean:reports && node --run verify",
+    "test": "pnpm run clean:reports && pnpm run verify",
     "//": "Stryker is run in verify.js directly"
   },
   "author": "",

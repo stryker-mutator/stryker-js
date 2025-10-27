@@ -47,7 +47,7 @@
   "license": "ISC",
   "devDependencies": {
     "@cucumber/cucumber": "11.3.0",
-    "@stryker-mutator/test-helpers": "9.2.0",
+    "@stryker-mutator/test-helpers": "workspace:*",
     "@types/semver": "7.7.0"
   },
   "peerDependencies": {
@@ -56,8 +56,8 @@
   },
   "dependencies": {
     "@cucumber/messages": "^27.0.0",
-    "@stryker-mutator/api": "9.2.0",
-    "@stryker-mutator/util": "9.2.0",
+    "@stryker-mutator/api": "workspace:*",
+    "@stryker-mutator/util": "workspace:*",
     "semver": "^7.6.3"
   }
 }

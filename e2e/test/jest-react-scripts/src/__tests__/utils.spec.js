@@ -1,14 +1,19 @@
+// @jest-environment jsdom
 import * as Utils from '../utils';
 
 describe('Utils', () => {
   describe('mapToCssModules', () => {
     describe('without css module', () => {
       it('should return a string', () => {
-        expect(Utils.mapToCssModules('btn btn-primary')).toEqual(expect.any(String));
+        expect(Utils.mapToCssModules('btn btn-primary')).toEqual(
+          expect.any(String),
+        );
       });
 
       it('should return the classnames it was given, unchanged', () => {
-        expect(Utils.mapToCssModules('btn btn-primary')).toBe('btn btn-primary');
+        expect(Utils.mapToCssModules('btn btn-primary')).toBe(
+          'btn btn-primary',
+        );
       });
     });
 
@@ -19,7 +24,9 @@ describe('Utils', () => {
           'btn-success': 'b1',
           'btn-primary': 'c2',
         };
-        expect(Utils.mapToCssModules('btn btn-primary', cssModule)).toEqual(expect.any(String));
+        expect(Utils.mapToCssModules('btn btn-primary', cssModule)).toEqual(
+          expect.any(String),
+        );
       });
 
       it('should return the mapped classnames', () => {
@@ -28,7 +35,9 @@ describe('Utils', () => {
           'btn-success': 'b1',
           'btn-primary': 'c2',
         };
-        expect(Utils.mapToCssModules('btn btn-primary', cssModule)).toBe('a1 c2');
+        expect(Utils.mapToCssModules('btn btn-primary', cssModule)).toBe(
+          'a1 c2',
+        );
       });
 
       it('should return the original classname when it is not in the map', () => {
@@ -36,7 +45,9 @@ describe('Utils', () => {
           btn: 'a1',
           'btn-success': 'b1',
         };
-        expect(Utils.mapToCssModules('btn btn-primary', cssModule)).toBe('a1 btn-primary');
+        expect(Utils.mapToCssModules('btn btn-primary', cssModule)).toBe(
+          'a1 btn-primary',
+        );
       });
     });
   });
@@ -46,22 +57,28 @@ describe('Utils', () => {
       const input = {
         hello: 'world',
         speed: 'fast',
-        size: 'small'
+        size: 'small',
       };
-      expect(Utils.omit(input, ['hello'])).toEqual({ speed: 'fast', size: 'small' });
+      expect(Utils.omit(input, ['hello'])).toEqual({
+        speed: 'fast',
+        size: 'small',
+      });
     });
 
     it('should not alter source object', () => {
       const input = {
         hello: 'world',
         speed: 'fast',
-        size: 'small'
+        size: 'small',
       };
-      expect(Utils.omit(input, ['hello'])).toEqual({ speed: 'fast', size: 'small' });
+      expect(Utils.omit(input, ['hello'])).toEqual({
+        speed: 'fast',
+        size: 'small',
+      });
       expect(input).toEqual({
         hello: 'world',
         speed: 'fast',
-        size: 'small'
+        size: 'small',
       });
     });
 
@@ -69,14 +86,17 @@ describe('Utils', () => {
       const input = {
         hello: 'world',
         speed: 'fast',
-        size: 'small'
+        size: 'small',
       };
-      expect(Utils.omit(input, ['non-existing', 'hello'])).toEqual({ speed: 'fast', size: 'small' });
+      expect(Utils.omit(input, ['non-existing', 'hello'])).toEqual({
+        speed: 'fast',
+        size: 'small',
+      });
     });
 
     it('should return a new object', () => {
       const input = {
-        hello: 'world'
+        hello: 'world',
       };
       // toBe tests equality using `===` and so will test if it's not the same object.
       expect(Utils.omit(input, [])).not.toBe(input);
@@ -101,10 +121,15 @@ describe('Utils', () => {
       const propName = 'dom';
       const componentName = 'ComponentName';
 
-      expect(Utils.DOMElement(props, propName, componentName)).toEqual(new Error(
-        'Invalid prop `' + propName + '` supplied to `' + componentName +
-        '`. Expected prop to be an instance of Element. Validation failed.'
-      ));
+      expect(Utils.DOMElement(props, propName, componentName)).toEqual(
+        new Error(
+          'Invalid prop `' +
+            propName +
+            '` supplied to `' +
+            componentName +
+            '`. Expected prop to be an instance of Element. Validation failed.',
+        ),
+      );
     });
   });
 
@@ -155,7 +180,9 @@ describe('Utils', () => {
       const target = 'not a target';
       expect(() => {
         Utils.getTarget(target);
-      }).toThrow(`The target '${target}' could not be identified in the dom, tip: check spelling`);
+      }).toThrow(
+        `The target '${target}' could not be identified in the dom, tip: check spelling`,
+      );
     });
 
     it('should return the value of the `current` object if it is a react Ref object', () => {
