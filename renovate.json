@@ -1,25 +1,13 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:js-lib"
-  ],
+  "extends": ["config:js-lib"],
   "packageRules": [
     {
       "matchDepTypes": ["devDependencies"],
       "automerge": true,
       "automergeStrategy": "squash",
       "platformAutomerge": true
-    },
-    {
-      "matchFiles": ["e2e/package.json"],
-      "description": "e2e directory uses separate pnpm workspace"
     }
   ],
-  "pnpm": {
-    "rangeStrategy": "bump"
-  },
-  "lockFileMaintenance": {
-    "enabled": true,
-    "schedule": "before 3am on Monday"
-  }
+  "lockFileMaintenance": { "enabled": true, "schedule": "before 3am on Monday" }
 }
