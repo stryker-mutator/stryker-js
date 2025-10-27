@@ -49,7 +49,7 @@
   "homepage": "https://stryker-mutator.io/docs/stryker-js/karma-runner",
   "devDependencies": {
     "@stryker-mutator/test-helpers": "workspace:*",
-    "@types/express": "5.0.4",
+    "@types/express": "5.0.5",
     "@types/node": "22.18.8",
     "@types/semver": "7.7.1",
     "jasmine-core": "5.12.0",
