@@ -93,8 +93,8 @@ importers:
         specifier: 5.12.0
         version: 5.12.0
       jasmine-core:
-        specifier: 5.9.0
-        version: 5.9.0
+        specifier: 5.12.0
+        version: 5.12.0
       json-schema-to-typescript:
         specifier: 15.0.4
         version: 15.0.4
@@ -297,8 +297,8 @@ importers:
         specifier: 5.12.0
         version: 5.12.0
       jasmine-core:
-        specifier: 5.9.0
-        version: 5.9.0
+        specifier: 5.12.0
+        version: 5.12.0
       jest:
         specifier: 30.2.0
         version: 30.2.0(@types/node@24.3.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.3.0)(typescript@5.9.2))
@@ -1282,8 +1282,8 @@ importers:
         specifier: 7.7.0
         version: 7.7.0
       jasmine-core:
-        specifier: 5.8.0
-        version: 5.8.0
+        specifier: 5.12.0
+        version: 5.12.0
       karma:
         specifier: 6.4.4
         version: 6.4.4
@@ -9554,9 +9554,6 @@ packages:
 
   jasmine-core@5.12.0:
     resolution: {integrity: sha512-QqO4pX33GEML5JoGQU6BM5NHKPgEsg+TXp3jCIDek9MbfEp2JUYEFBo9EF1+hegWy/bCHS1m5nP0BOp18G6rVA==}
-
-  jasmine-core@5.8.0:
-    resolution: {integrity: sha512-Q9dqmpUAfptwyueW3+HqBOkSuYd9I/clZSSfN97wXE/Nr2ROFNCwIBEC1F6kb3QXS9Fcz0LjFYSDQT+BiwjuhA==}
 
   jasmine-core@5.9.0:
     resolution: {integrity: sha512-OMUvF1iI6+gSRYOhMrH4QYothVLN9C3EJ6wm4g7zLJlnaTl8zbaPOr0bTw70l7QxkoM7sVFOWo83u9B2Fe2Zng==}
@@ -26906,8 +26903,6 @@ snapshots:
   jasmine-core@4.6.1: {}
 
   jasmine-core@5.12.0: {}
-
-  jasmine-core@5.8.0: {}
 
   jasmine-core@5.9.0: {}
 
