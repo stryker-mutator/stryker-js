@@ -37,8 +37,12 @@ provideLogging.inject = [
   commonTokens.injector,
 ] as const;
 
-export async function provideLoggingBackend(injector: Injector) {
+export async function provideLoggingBackend(
+  injector: Injector,
+  loggerConsoleOut: NodeJS.WriteStream,
+) {
   const out = injector
+    .provideValue(coreTokens.loggerConsoleOut, loggerConsoleOut)
     .provideClass(coreTokens.loggingSink, LoggingBackend)
     .provideClass(coreTokens.loggingServer, LoggingServer);
   const loggingServer = out.resolve(coreTokens.loggingServer);
