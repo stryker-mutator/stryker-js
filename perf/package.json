@@ -6,7 +6,7 @@
   "packageManager": "pnpm@10.18.3",
   "devDependencies": {
     "rxjs": "7.8.2",
-    "typescript": "5.9.2"
+    "typescript": "5.9.3"
   },
   "scripts": {
   "merge-config": "node tasks/merge-config.js",
