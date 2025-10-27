@@ -12,7 +12,7 @@ importers:
         specifier: 9.34.0
         version: 9.34.0
       '@types/chai':
-        specifier: ^5.2.3
+        specifier: 5.2.3
         version: 5.2.3
       '@types/chai-as-promised':
         specifier: 8.0.2
@@ -42,7 +42,7 @@ importers:
         specifier: 0.5.10
         version: 0.5.10
       '@typescript-eslint/utils':
-        specifier: ^8.46.2
+        specifier: 8.46.2
         version: 8.46.2(eslint@9.34.0(jiti@1.21.7))(typescript@5.9.2)
       '@vitejs/plugin-react':
         specifier: 5.0.2
@@ -78,7 +78,7 @@ importers:
         specifier: 5.5.4
         version: 5.5.4(@types/eslint@9.6.1)(eslint-config-prettier@10.1.8(eslint@9.34.0(jiti@1.21.7)))(eslint@9.34.0(jiti@1.21.7))(prettier@3.6.2)
       estree-walker:
-        specifier: ^3.0.3
+        specifier: 3.0.3
         version: 3.0.3
       execa:
         specifier: 9.6.0
@@ -237,7 +237,7 @@ importers:
         specifier: 7.20.5
         version: 7.20.5
       '@types/chai':
-        specifier: ^5.2.3
+        specifier: 5.2.3
         version: 5.2.3
       '@types/chai-jest-snapshot':
         specifier: 1.3.8
@@ -309,7 +309,7 @@ importers:
         specifier: 2.0.0
         version: 2.0.0
       jest-environment-node:
-        specifier: ^30.2.0
+        specifier: 30.2.0
         version: 30.2.0
       jsdom:
         specifier: 26.1.0
@@ -1039,7 +1039,7 @@ importers:
         specifier: 1.0.36
         version: 1.0.36
       '@types/json-schema':
-        specifier: ^7.0.15
+        specifier: 7.0.15
         version: 7.0.15
       '@types/lodash.groupby':
         specifier: 4.6.9
@@ -1239,7 +1239,7 @@ importers:
         specifier: 2.0.0
         version: 2.0.0
       jest-environment-node:
-        specifier: ^30.2.0
+        specifier: 30.2.0
         version: 30.2.0
       jest-jasmine2:
         specifier: 30.2.0
@@ -21308,8 +21308,8 @@ snapshots:
 
   '@typescript-eslint/project-service@8.41.0(typescript@5.9.2)':
     dependencies:
-      '@typescript-eslint/tsconfig-utils': 8.41.0(typescript@5.9.2)
-      '@typescript-eslint/types': 8.41.0
+      '@typescript-eslint/tsconfig-utils': 8.46.2(typescript@5.9.2)
+      '@typescript-eslint/types': 8.46.2
       debug: 4.4.3(supports-color@8.1.1)
       typescript: 5.9.2
     transitivePeerDependencies:
