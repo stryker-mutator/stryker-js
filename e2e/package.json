@@ -76,7 +76,7 @@
     "svelte-check": "4.3.3",
     "svelte-jester": "5.0.0",
     "tap": "21.1.0",
-    "ts-jest": "29.4.1",
+    "ts-jest": "29.4.5",
     "ts-loader": "9.5.4",
     "ts-node": "10.9.2",
     "tslib": "2.8.1",
