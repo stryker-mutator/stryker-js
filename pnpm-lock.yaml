@@ -90,8 +90,8 @@ importers:
         specifier: 4.1.0
         version: 4.1.0
       jasmine:
-        specifier: 5.9.0
-        version: 5.9.0
+        specifier: 5.12.0
+        version: 5.12.0
       jasmine-core:
         specifier: 5.9.0
         version: 5.9.0
@@ -190,7 +190,7 @@ importers:
         version: file:packages/cucumber-runner(@cucumber/cucumber@12.2.0)(@stryker-mutator/core@file:packages/core(@types/node@24.3.0))
       '@stryker-mutator/jasmine-runner':
         specifier: workspace:*
-        version: file:packages/jasmine-runner(@stryker-mutator/core@file:packages/core(@types/node@24.3.0))(jasmine@5.9.0)
+        version: file:packages/jasmine-runner(@stryker-mutator/core@file:packages/core(@types/node@24.3.0))(jasmine@5.12.0)
       '@stryker-mutator/jest-runner':
         specifier: workspace:*
         version: file:packages/jest-runner(@stryker-mutator/core@file:packages/core(@types/node@24.3.0))
@@ -294,8 +294,8 @@ importers:
         specifier: workspace:*
         version: link:../packages/grunt-stryker
       jasmine:
-        specifier: 5.9.0
-        version: 5.9.0
+        specifier: 5.12.0
+        version: 5.12.0
       jasmine-core:
         specifier: 5.9.0
         version: 5.9.0
@@ -9542,11 +9542,18 @@ packages:
   jasmine-core@4.6.1:
     resolution: {integrity: sha512-VYz/BjjmC3klLJlLwA4Kw8ytk0zDSmbbDLNs794VnWmkcCB7I9aAL/D48VNQtmITyPvea2C3jdUMfc3kAoy0PQ==}
 
+  jasmine-core@5.12.0:
+    resolution: {integrity: sha512-QqO4pX33GEML5JoGQU6BM5NHKPgEsg+TXp3jCIDek9MbfEp2JUYEFBo9EF1+hegWy/bCHS1m5nP0BOp18G6rVA==}
+
   jasmine-core@5.8.0:
     resolution: {integrity: sha512-Q9dqmpUAfptwyueW3+HqBOkSuYd9I/clZSSfN97wXE/Nr2ROFNCwIBEC1F6kb3QXS9Fcz0LjFYSDQT+BiwjuhA==}
 
   jasmine-core@5.9.0:
     resolution: {integrity: sha512-OMUvF1iI6+gSRYOhMrH4QYothVLN9C3EJ6wm4g7zLJlnaTl8zbaPOr0bTw70l7QxkoM7sVFOWo83u9B2Fe2Zng==}
+
+  jasmine@5.12.0:
+    resolution: {integrity: sha512-KmKeTNuH8rgAuPRL5AUsXWSdJVlDu+pgqi2dLXoZUSH/g3kR+7Ho8B7hEhwDu0fu1PLuiXZtfaxmQ/mB5wqihw==}
+    hasBin: true
 
   jasmine@5.9.0:
     resolution: {integrity: sha512-SspK51QMnuC92z5zpF4kOkWN+MyZZDOBv8zgzlMAYvMD0UoGwcq5yYaDe1mrpN7wXZ2CFXh5y8Ua2ugwE4OmXQ==}
@@ -19971,12 +19978,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@stryker-mutator/jasmine-runner@file:packages/jasmine-runner(@stryker-mutator/core@file:packages/core(@types/node@24.3.0))(jasmine@5.9.0)':
+  '@stryker-mutator/jasmine-runner@file:packages/jasmine-runner(@stryker-mutator/core@file:packages/core(@types/node@24.3.0))(jasmine@5.12.0)':
     dependencies:
       '@stryker-mutator/api': link:packages/api
       '@stryker-mutator/core': file:packages/core(@types/node@24.3.0)
       '@stryker-mutator/util': link:packages/util
-      jasmine: 5.9.0
+      jasmine: 5.12.0
 
   '@stryker-mutator/jest-runner@file:packages/jest-runner(@stryker-mutator/core@file:packages/core(@types/node@17.0.45))':
     dependencies:
@@ -26688,9 +26695,16 @@ snapshots:
 
   jasmine-core@4.6.1: {}
 
+  jasmine-core@5.12.0: {}
+
   jasmine-core@5.8.0: {}
 
   jasmine-core@5.9.0: {}
+
+  jasmine@5.12.0:
+    dependencies:
+      glob: 10.4.5
+      jasmine-core: 5.12.0
 
   jasmine@5.9.0:
     dependencies:
