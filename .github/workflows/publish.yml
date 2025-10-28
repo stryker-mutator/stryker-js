@@ -16,11 +16,7 @@ jobs:
       - uses: ./.github/setup
         with:
           install-chromium: false
-      - name: Set NPM Env
-        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
       - name: Build
         run: pnpm run build
       - name: Release
-        run: npx lerna publish from-git --yes --pre-dist-tag next --no-verify-access
-        env:
-          NPM_CONFIG_PROVENANCE: true
+        run: pnpm exec lerna publish from-git --yes --pre-dist-tag next
