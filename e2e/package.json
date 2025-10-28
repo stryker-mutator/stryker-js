@@ -124,7 +124,6 @@
     }
   },
   "scripts": {
-    "bootstrap": "node tasks/bootstrap.js",
     "lint": "tsc -p tsconfig.json && eslint",
     "test": "node tasks/run-e2e-tests.js",
     "test:update": "cross-env CHAI_JEST_SNAPSHOT_UPDATE_ALL=true pnpm run test"

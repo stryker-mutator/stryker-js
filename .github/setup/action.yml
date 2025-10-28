@@ -1,0 +1,36 @@
+name: 'Setup CI environment'
+
+description: 'Sets up the CI environment with Node.js and pnpm'
+
+inputs:
+  node-version:
+    required: true
+    description: 'Node version to use'
+    default: '24.x'
+  install-deps:
+    required: false
+    description: 'Whether to install dependencies'
+    default: 'true'
+  install-chromium:
+    required: false
+    description: 'Whether to install chromium (install-deps must also be true)'
+    default: 'true'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+    - name: Use Node.js ${{ inputs.node-version }}
+      uses: actions/setup-node@v6
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: 'pnpm'
+    - name: Install dependencies
+      if: ${{ inputs.install-deps == 'true' }}
+      run: pnpm install --frozen-lockfile
+      shell: bash
+    - name: Install chromium
+      if: ${{ inputs.install-deps == 'true' && inputs.install-chromium == 'true' }}
+      run: pnpm run install:chromium
+      shell: bash
