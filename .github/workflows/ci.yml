@@ -17,13 +17,10 @@ jobs:
         os: ['ubuntu-latest', 'windows-latest']
     steps:
       - uses: actions/checkout@v4
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
+      - uses: ./.github/setup
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
+          install-deps: false
       - name: Install dependencies
         run: pnpm install --filter "./packages/**" --frozen-lockfile && pnpm run install:chromium
       - name: Build & lint & test
@@ -33,10 +30,7 @@ jobs:
     runs-on: 'ubuntu-latest'
     steps:
       - uses: actions/checkout@v4
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-      - name: Install dependencies
-        run: pnpm install && pnpm run install:chromium
+      - uses: ./.github/setup
       - name: Build
         run: pnpm run build:no-check
       - name: Download incremental reports
@@ -56,20 +50,14 @@ jobs:
         os: ['ubuntu-latest', 'windows-latest']
     steps:
       - uses: actions/checkout@v4
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-      - name: Use Node.js 22.x
-        uses: actions/setup-node@v6
+      - uses: ./.github/setup
         with:
           node-version: 22.x
-          cache: 'pnpm'
       # https://github.com/ryanclark/karma-webpack/issues/494
       - name: Windows temp dir fix
         run: |
           echo TEMP="D:\Temp" >> $env:GITHUB_ENV
           echo TMP="D:\Temp" >> $env:GITHUB_ENV
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile && pnpm run install:chromium
       - name: Build packages
         run: pnpm run build:no-check
       - name: install build output
