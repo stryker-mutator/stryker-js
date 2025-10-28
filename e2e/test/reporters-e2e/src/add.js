@@ -16,7 +16,7 @@ export function notCovered(number) {
 }
 
 export function isNegativeNumber(number) {
-  var isNegative = false;
+  let isNegative = false;
   if(number < 0){
     isNegative = true;
   }
