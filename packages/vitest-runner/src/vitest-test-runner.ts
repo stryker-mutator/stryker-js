@@ -27,6 +27,7 @@ import {
   DryRunOptions,
 } from '@stryker-mutator/api/test-runner';
 import {
+  errorToString,
   escapeRegExp,
   normalizeFileName,
   notEmpty,
@@ -101,6 +102,7 @@ export class VitestTestRunner implements TestRunner {
           minThreads: 1,
         },
       },
+      maxWorkers: 1,
       singleThread: false,
       maxConcurrency: 1,
       watch: false,
@@ -209,11 +211,11 @@ export class VitestTestRunner implements TestRunner {
     });
     if (!failure && this.ctx!.state.errorsSet.size > 0) {
       const errorText = [...this.ctx!.state.errorsSet]
-        .map((val) => JSON.stringify(val))
+        .map(errorToString)
         .join('\n');
       return {
         status: DryRunStatus.Error,
-        errorMessage: `An error occurred outside of a test run, please be sure to properly await your promises! ${errorText}`,
+        errorMessage: `An error occurred outside of a test run: ${errorText}`,
       };
     }
     return { tests: testResults, status: DryRunStatus.Complete };

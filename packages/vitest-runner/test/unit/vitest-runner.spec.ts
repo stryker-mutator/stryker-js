@@ -64,6 +64,7 @@ describe(VitestTestRunner.name, () => {
             minThreads: 1,
           },
         },
+        maxWorkers: 1,
         singleThread: false,
         maxConcurrency: 1,
         watch: false,
