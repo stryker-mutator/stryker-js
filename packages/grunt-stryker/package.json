@@ -41,7 +41,7 @@
     "@types/node": "22.18.8"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "~9.2.0",
+    "@stryker-mutator/core": "workspace:*",
     "grunt": ">=0.4.5"
   }
 }

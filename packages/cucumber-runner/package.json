@@ -52,7 +52,7 @@
   },
   "peerDependencies": {
     "@cucumber/cucumber": ">=8.0.0",
-    "@stryker-mutator/core": "~9.2.0"
+    "@stryker-mutator/core": "workspace:*"
   },
   "dependencies": {
     "@cucumber/messages": "^27.0.0",

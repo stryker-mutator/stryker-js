@@ -62,6 +62,6 @@
     "tap": "20.0.3"
   },
   "peerDependencies": {
-    "@stryker-mutator/core": "~9.2.0"
+    "@stryker-mutator/core": "workspace:*"
   }
 }
