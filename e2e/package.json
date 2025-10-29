@@ -116,6 +116,9 @@
     },
     "@stryker-mutator/vitest-runner": {
       "injected": true
+    },
+    "grunt-stryker": {
+      "injected": true
     }
   },
   "overrides": {
