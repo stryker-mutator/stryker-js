@@ -1,1 +1,1 @@
-module.exports = { default: '--publish-quiet other-features/*.feature' }
+module.exports = { default: 'other-features/*.feature' }
