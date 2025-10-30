@@ -102,8 +102,8 @@ importers:
         specifier: 9.0.0
         version: 9.0.0(@types/node@24.3.0)(babel-plugin-macros@3.1.0)
       minimatch:
-        specifier: 10.0.3
-        version: 10.0.3
+        specifier: 10.1.1
+        version: 10.1.1
       mocha:
         specifier: 11.7.4
         version: 11.7.4
@@ -338,8 +338,8 @@ importers:
         specifier: 5.0.1
         version: 5.0.1(webpack@5.102.1)
       minimatch:
-        specifier: 10.0.3
-        version: 10.0.3
+        specifier: 10.1.1
+        version: 10.1.1
       mocha:
         specifier: 11.7.4
         version: 11.7.4
@@ -992,8 +992,8 @@ importers:
         specifier: ~4.6.0
         version: 4.6.0
       minimatch:
-        specifier: ~10.0.0
-        version: 10.0.3
+        specifier: ~10.1.0
+        version: 10.1.1
       mutation-server-protocol:
         specifier: ~0.3.0
         version: 0.3.0
@@ -10939,8 +10939,8 @@ packages:
   minimalistic-assert@1.0.1:
     resolution: {integrity: sha512-UtJcAD4yEaGtjPezWuO9wC4nwUnVH/8/Im3yEHQP4b67cXlD/Qr9hdITCU1xDbSEXg2XKNaP8jsReV7vQd00/A==}
 
-  minimatch@10.0.3:
-    resolution: {integrity: sha512-IPZ167aShDZZUMdRk66cyQAW3qr0WzbHkPdMYa8bzZhlHhO3jALbKdxcaak7W9FfT2rZNpQuUu4Od7ILEpXSaw==}
+  minimatch@10.1.1:
+    resolution: {integrity: sha512-enIvLvRAFZYXJzkCYG5RKmPfrFArdLv+R+lbQ53BmIMLIry74bjKzX6iHAm8WYamJkhSSEabrWN5D97XnKObjQ==}
     engines: {node: 20 || >=22}
 
   minimatch@3.0.4:
@@ -20343,7 +20343,7 @@ snapshots:
       execa: 9.6.0
       json-rpc-2.0: 1.7.1
       lodash.groupby: 4.6.0
-      minimatch: 10.0.3
+      minimatch: 10.1.1
       mutation-server-protocol: 0.3.0
       mutation-testing-elements: 3.5.3
       mutation-testing-metrics: 3.5.1
@@ -20374,7 +20374,7 @@ snapshots:
       execa: 9.6.0
       json-rpc-2.0: 1.7.1
       lodash.groupby: 4.6.0
-      minimatch: 10.0.3
+      minimatch: 10.1.1
       mutation-server-protocol: 0.3.0
       mutation-testing-elements: 3.5.3
       mutation-testing-metrics: 3.5.1
@@ -20405,7 +20405,7 @@ snapshots:
       execa: 9.6.0
       json-rpc-2.0: 1.7.1
       lodash.groupby: 4.6.0
-      minimatch: 10.0.3
+      minimatch: 10.1.1
       mutation-server-protocol: 0.3.0
       mutation-testing-elements: 3.5.3
       mutation-testing-metrics: 3.5.1
@@ -26147,7 +26147,7 @@ snapshots:
     dependencies:
       foreground-child: 3.3.1
       jackspeak: 4.1.1
-      minimatch: 10.0.3
+      minimatch: 10.1.1
       minipass: 7.1.2
       package-json-from-dist: 1.0.1
       path-scurry: 2.0.0
@@ -26641,7 +26641,7 @@ snapshots:
 
   ignore-walk@8.0.0:
     dependencies:
-      minimatch: 10.0.3
+      minimatch: 10.1.1
 
   ignore@5.3.2: {}
 
@@ -29879,7 +29879,7 @@ snapshots:
 
   minimalistic-assert@1.0.1: {}
 
-  minimatch@10.0.3:
+  minimatch@10.1.1:
     dependencies:
       '@isaacs/brace-expansion': 5.0.0
 
@@ -34102,7 +34102,7 @@ snapshots:
       chalk: 5.6.2
       chokidar: 4.0.3
       foreground-child: 3.3.1
-      minimatch: 10.0.3
+      minimatch: 10.1.1
       mkdirp: 3.0.1
       polite-json: 5.0.0
       resolve-import: 2.1.0
