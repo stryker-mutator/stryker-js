@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@10.18.3",
+  "packageManager": "pnpm@10.20.0",
   "devDependencies": {
     "@babel/cli": "7.28.3",
     "@babel/core": "7.28.5",
