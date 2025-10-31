@@ -1068,8 +1068,8 @@ importers:
   packages/cucumber-runner:
     dependencies:
       '@cucumber/messages':
-        specifier: ^27.0.0
-        version: 27.2.0
+        specifier: ^30.0.0
+        version: 30.1.0
       '@stryker-mutator/api':
         specifier: workspace:*
         version: link:../api
@@ -2678,6 +2678,9 @@ packages:
 
   '@cucumber/messages@28.1.0':
     resolution: {integrity: sha512-2LzZtOwYKNlCuNf31ajkrekoy2M4z0Z1QGiPH40n4gf5t8VOUFb7m1ojtR4LmGvZxBGvJZP8voOmRqDWzBzYKA==}
+
+  '@cucumber/messages@30.1.0':
+    resolution: {integrity: sha512-KxnsSjHz9EGF23GeZc3BRMK2+bagt2p87mwwNfisBK7BfuyvnXJumyBQJJN4xv5SLSzBKxH3FsZnuOf8LwsHhg==}
 
   '@cucumber/pretty-formatter@1.0.1':
     resolution: {integrity: sha512-A1lU4VVP0aUWdOTmpdzvXOyEYuPtBDI0xYwYJnmoMDplzxMdhcHk86lyyvYDoMoPzzq6OkOE3isuosvUU4X7IQ==}
@@ -17637,7 +17640,7 @@ snapshots:
 
   '@cucumber/gherkin@34.0.0':
     dependencies:
-      '@cucumber/messages': 27.2.0
+      '@cucumber/messages': 28.1.0
 
   '@cucumber/html-formatter@19.0.0(@cucumber/messages@17.1.1)':
     dependencies:
@@ -17690,6 +17693,11 @@ snapshots:
       class-transformer: 0.5.1
       reflect-metadata: 0.2.2
       uuid: 11.1.0
+
+  '@cucumber/messages@30.1.0':
+    dependencies:
+      class-transformer: 0.5.1
+      reflect-metadata: 0.2.2
 
   '@cucumber/pretty-formatter@1.0.1(@cucumber/cucumber@12.2.0)(@cucumber/messages@28.1.0)':
     dependencies:
@@ -20195,7 +20203,7 @@ snapshots:
   '@stryker-mutator/cucumber-runner@file:packages/cucumber-runner(@cucumber/cucumber@12.2.0)(@stryker-mutator/core@file:packages/core(@types/node@24.3.0))':
     dependencies:
       '@cucumber/cucumber': 12.2.0
-      '@cucumber/messages': 27.2.0
+      '@cucumber/messages': 30.1.0
       '@stryker-mutator/api': link:packages/api
       '@stryker-mutator/core': file:packages/core(@types/node@24.3.0)
       '@stryker-mutator/util': link:packages/util
@@ -20204,7 +20212,7 @@ snapshots:
   '@stryker-mutator/cucumber-runner@file:packages/cucumber-runner(@cucumber/cucumber@8.0.0)(@stryker-mutator/core@file:packages/core(@types/node@24.3.0))':
     dependencies:
       '@cucumber/cucumber': 8.0.0
-      '@cucumber/messages': 27.2.0
+      '@cucumber/messages': 30.1.0
       '@stryker-mutator/api': link:packages/api
       '@stryker-mutator/core': file:packages/core(@types/node@24.3.0)
       '@stryker-mutator/util': link:packages/util

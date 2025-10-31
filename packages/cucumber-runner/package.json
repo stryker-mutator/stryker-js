@@ -55,7 +55,7 @@
     "@stryker-mutator/core": "workspace:*"
   },
   "dependencies": {
-    "@cucumber/messages": "^27.0.0",
+    "@cucumber/messages": "^30.0.0",
     "@stryker-mutator/api": "workspace:*",
     "@stryker-mutator/util": "workspace:*",
     "semver": "^7.6.3"
