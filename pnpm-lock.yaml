@@ -114,8 +114,8 @@ importers:
         specifier: 3.6.2
         version: 3.6.2
       rimraf:
-        specifier: 6.0.1
-        version: 6.0.1
+        specifier: 6.1.0
+        version: 6.1.0
       sinon:
         specifier: 21.0.0
         version: 21.0.0
@@ -13024,8 +13024,8 @@ packages:
     resolution: {integrity: sha512-l0OE8wL34P4nJH/H2ffoaniAokM2qSmrtXHmlpvYr5AVVX8msAyW0l8NVJFDxlSK4u3Uh/f41cQheDVdnYijwQ==}
     hasBin: true
 
-  rimraf@6.0.1:
-    resolution: {integrity: sha512-9dkvaxAsk/xNXSJzMgFqqMCuFgt2+KsOFek3TMLfo8NCPfWpBmqwyNn5Y+NX56QUYfCtsyhF3ayiboEoUmJk/A==}
+  rimraf@6.1.0:
+    resolution: {integrity: sha512-DxdlA1bdNzkZK7JiNWH+BAx1x4tEJWoTofIopFo6qWUU94jYrFZ0ubY05TqH3nWPJ1nKa1JWVFDINZ3fnrle/A==}
     engines: {node: 20 || >=22}
     hasBin: true
 
@@ -20709,7 +20709,7 @@ snapshots:
     dependencies:
       '@tapjs/core': 4.0.1(@types/node@24.3.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       mkdirp: 3.0.1
-      rimraf: 6.0.1
+      rimraf: 6.1.0
 
   '@tapjs/intercept@3.0.3(@tapjs/core@3.0.3(@types/node@22.18.8)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))':
     dependencies:
@@ -20873,7 +20873,7 @@ snapshots:
       pacote: 18.0.6
       path-scurry: 2.0.0
       resolve-import: 2.1.0
-      rimraf: 6.0.1
+      rimraf: 6.1.0
       semver: 7.7.3
       signal-exit: 4.1.0
       tap-parser: 18.0.0
@@ -20998,7 +20998,7 @@ snapshots:
       mkdirp: 3.0.1
       package-json-from-dist: 1.0.1
       resolve-import: 2.1.0
-      rimraf: 6.0.1
+      rimraf: 6.1.0
       sync-content: 2.0.1
       tap-parser: 18.0.0
       tshy: 3.0.3
@@ -32336,7 +32336,7 @@ snapshots:
     dependencies:
       glob: 10.4.5
 
-  rimraf@6.0.1:
+  rimraf@6.1.0:
     dependencies:
       glob: 11.0.3
       package-json-from-dist: 1.0.1
@@ -33352,7 +33352,7 @@ snapshots:
       glob: 11.0.3
       mkdirp: 3.0.1
       path-scurry: 2.0.0
-      rimraf: 6.0.1
+      rimraf: 6.1.0
       tshy: 3.0.3
 
   synckit@0.11.11:
@@ -33984,7 +33984,7 @@ snapshots:
       mkdirp: 3.0.1
       polite-json: 5.0.0
       resolve-import: 2.1.0
-      rimraf: 6.0.1
+      rimraf: 6.1.0
       sync-content: 2.0.1
       typescript: 5.9.3
       walk-up-path: 4.0.0
