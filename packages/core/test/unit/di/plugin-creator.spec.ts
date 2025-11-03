@@ -128,7 +128,7 @@ describe(PluginCreator.name, () => {
       { kind: PluginKind.Reporter, factory: factory.reporter, name: 'bar' },
     ]);
     expect(() => sut.create(PluginKind.Reporter, 'chess')).throws(
-      'Cannot find Reporter plugin "chess". Did you forget to install it? Loaded Reporter plugins were: foo, bar',
+      'Cannot find Reporter plugin "chess". Did you forget to install it? Loaded Reporter plugins were: "foo" and "bar"',
     );
   });
 });

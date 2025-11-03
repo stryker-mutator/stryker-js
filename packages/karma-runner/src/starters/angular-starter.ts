@@ -86,7 +86,7 @@ function verifyNgTestArguments(ngTestArguments: string[]) {
   );
   if (prefixedArguments.length > 0) {
     throw new Error(
-      `Don't prefix arguments with dashes ('-'). Stryker will do this automatically. Problematic arguments are ${prefixedArguments.join(', ')}.`,
+      `Don't prefix arguments with dashes ('-'). Stryker will do this automatically. Problematic arguments are ${new Intl.ListFormat('en').format(prefixedArguments)}.`,
     );
   }
 }

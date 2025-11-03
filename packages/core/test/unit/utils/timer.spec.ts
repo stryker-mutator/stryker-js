@@ -23,10 +23,10 @@ describe(Timer.name, () => {
     };
 
     arrangeActAssert(59999, '59 seconds');
-    arrangeActAssert(119999, '1 minute 59 seconds');
-    arrangeActAssert(120000, '2 minutes 0 seconds');
-    arrangeActAssert(121999, '2 minutes 1 second');
-    arrangeActAssert(61000, '1 minute 1 second');
+    arrangeActAssert(119999, '1 minute and 59 seconds');
+    arrangeActAssert(120000, '2 minutes and 0 seconds');
+    arrangeActAssert(121999, '2 minutes and 1 second');
+    arrangeActAssert(61000, '1 minute and 1 second');
 
     it('should use the since marker when provided', () => {
       clock.tick(1000);
