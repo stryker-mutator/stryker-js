@@ -5,7 +5,7 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/stryker-mutator/stryker-js.git",
+    "url": "git+https://github.com/stryker-mutator/stryker-js.git",
     "directory": "packages/api"
   },
   "files": [
