@@ -269,8 +269,8 @@ importers:
         specifier: 8.17.1
         version: 8.17.1
       axios:
-        specifier: 1.13.1
-        version: 1.13.1
+        specifier: 1.13.2
+        version: 1.13.2
       chai:
         specifier: 6.2.0
         version: 6.2.0
@@ -6030,8 +6030,8 @@ packages:
     resolution: {integrity: sha512-ilYanEU8vxxBexpJd8cWM4ElSQq4QctCLKih0TSfjIfCQTeyH/6zVrmIJfLPrKTKJRbiG+cfnZbQIjAlJmF1jQ==}
     engines: {node: '>=4'}
 
-  axios@1.13.1:
-    resolution: {integrity: sha512-hU4EGxxt+j7TQijx1oYdAjw4xuIp1wRQSsbMFwSthCWeBQur1eF+qJ5iQ5sN3Tw8YRzQNKb8jszgBdMDVqwJcw==}
+  axios@1.13.2:
+    resolution: {integrity: sha512-VPk9ebNqPcy5lRGuSlKx752IlDatOjT9paPlm8A7yOuW2Fbvp4X3JznJtT4f0GzGLLiWE9W8onz51SqLYwzGaA==}
 
   axobject-query@4.1.0:
     resolution: {integrity: sha512-qIj0G9wZbMGNLjLmg1PT6v2mE9AH2zlnADJD/2tC6E00hgmhUOfEB6greHPAfLRSufHqROIUTkw6E+M3lH0PTQ==}
@@ -13798,6 +13798,7 @@ packages:
   tap@12.7.0:
     resolution: {integrity: sha512-SjglJmRv0pqrQQ7d5ZBEY8ZOqv3nYDBXEX51oyycOH7piuhn82JKT/yDNewwmOsodTD/RZL9MccA96EjDgK+Eg==}
     engines: {node: '>=4'}
+    deprecated: Versions of tap before v18 are no longer maintained. Please upgrade.
     hasBin: true
 
   tap@21.1.1:
@@ -22667,7 +22668,7 @@ snapshots:
 
   axe-core@4.11.0: {}
 
-  axios@1.13.1:
+  axios@1.13.2:
     dependencies:
       follow-redirects: 1.15.11
       form-data: 4.0.4
@@ -30276,7 +30277,7 @@ snapshots:
       '@yarnpkg/lockfile': 1.1.0
       '@yarnpkg/parsers': 3.0.2
       '@zkochan/js-yaml': 0.0.7
-      axios: 1.13.1
+      axios: 1.13.2
       chalk: 4.1.2
       cli-cursor: 3.1.0
       cli-spinners: 2.6.1
