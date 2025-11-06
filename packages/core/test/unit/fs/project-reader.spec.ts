@@ -942,7 +942,7 @@ describe(ProjectReader.name, () => {
             createDirent({
               name,
               isDirectory: typeof value !== 'string',
-            }) as unknown as Dirent<Buffer<ArrayBufferLike>>,
+            }) as unknown as Dirent<Buffer<ArrayBuffer>>,
         ),
       );
       Object.entries(dirEntry).map(([name, value]) =>
