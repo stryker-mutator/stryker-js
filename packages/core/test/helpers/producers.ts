@@ -171,7 +171,6 @@ export function createDirent(
     isFile: () => !isDirectory,
     isSocket: dummy,
     isSymbolicLink: dummy,
-    path: 'foo',
     name,
   };
 }
