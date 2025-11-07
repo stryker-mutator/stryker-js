@@ -1,5 +1,3 @@
-import type { Element } from 'angular-html-parser/lib/compiler/src/ml_parser/ast.js';
-
 import {
   HtmlAst,
   AstFormat,
@@ -41,15 +39,20 @@ export async function parse(
   };
 }
 
+type Element = Parameters<
+  import('angular-html-parser').RecursiveVisitor['visitElement']
+>[0];
+
 async function ngHtmlParser(
   text: string,
   fileName: string,
   parserContext: ParserContext,
 ): Promise<HtmlRootNode> {
-  const parser = (await import('angular-html-parser')).parse;
-  const { RecursiveVisitor, visitAll } = await import(
-    'angular-html-parser/lib/compiler/src/ml_parser/ast.js'
-  );
+  const {
+    parse: parser,
+    visitAll,
+    RecursiveVisitor,
+  } = await import('angular-html-parser');
 
   const { rootNodes, errors } = parser(text, {
     canSelfClose: true,
@@ -67,7 +70,7 @@ async function ngHtmlParser(
   const scriptsAsPromised: Array<Promise<ScriptAst>> = [];
   visitAll(
     new (class extends RecursiveVisitor {
-      public visitElement(el: Element, context: unknown): void {
+      public override visitElement(el: Element, context: unknown): void {
         const scriptFormat = getScriptType(el);
         if (scriptFormat) {
           scriptsAsPromised.push(parseScript(el, scriptFormat));
