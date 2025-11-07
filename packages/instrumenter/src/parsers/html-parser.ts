@@ -6,7 +6,7 @@ import {
   AstByFormat,
   ScriptAst,
 } from '../syntax/index.js';
-
+import type { Ast as NGAst } from 'angular-html-parser';
 import { ParserContext } from './parser-context.js';
 import { ParseError } from './parse-error.js';
 
@@ -39,10 +39,6 @@ export async function parse(
   };
 }
 
-type Element = Parameters<
-  import('angular-html-parser').RecursiveVisitor['visitElement']
->[0];
-
 async function ngHtmlParser(
   text: string,
   fileName: string,
@@ -70,7 +66,7 @@ async function ngHtmlParser(
   const scriptsAsPromised: Array<Promise<ScriptAst>> = [];
   visitAll(
     new (class extends RecursiveVisitor {
-      public override visitElement(el: Element, context: unknown): void {
+      public override visitElement(el: NGAst.Element, context: unknown): void {
         const scriptFormat = getScriptType(el);
         if (scriptFormat) {
           scriptsAsPromised.push(parseScript(el, scriptFormat));
@@ -88,7 +84,7 @@ async function ngHtmlParser(
   return root;
 
   async function parseScript<T extends ScriptFormat>(
-    el: Element,
+    el: NGAst.Element,
     scriptFormat: T,
   ): Promise<AstByFormat[T]> {
     const content = text.substring(
