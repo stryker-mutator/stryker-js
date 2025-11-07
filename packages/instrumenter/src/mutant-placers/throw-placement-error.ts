@@ -16,7 +16,7 @@ export function throwPlacementError(
   fileName: string,
 ): never {
   const location = `${path.relative(process.cwd(), fileName)}:${nodePath.node.loc?.start.line}:${nodePath.node.loc?.start.column}`;
-  const message = `${placer.name} could not place mutants with type(s): "${mutants.map((mutant) => mutant.mutatorName).join(', ')}"`;
+  const message = `${placer.name} could not place mutants with type(s): "${new Intl.ListFormat('en').format(mutants.map((mutant) => mutant.mutatorName))}"`;
   const errorMessage = `${location} ${message}. Either remove this file from the list of files to be mutated, or exclude the mutator (using ${propertyPath<StrykerOptions>()(
     'mutator',
     'excludedMutations',

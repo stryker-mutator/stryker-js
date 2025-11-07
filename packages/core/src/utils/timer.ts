@@ -8,9 +8,11 @@ export class Timer {
   }
   public humanReadableElapsed(sinceMarker?: string): string {
     const elapsedSeconds = this.elapsedSeconds(sinceMarker);
-    return (
-      Timer.humanReadableElapsedMinutes(elapsedSeconds) +
-      Timer.humanReadableElapsedSeconds(elapsedSeconds)
+    return new Intl.ListFormat('en').format(
+      [
+        Timer.humanReadableElapsedMinutes(elapsedSeconds),
+        Timer.humanReadableElapsedSeconds(elapsedSeconds),
+      ].filter(Boolean),
     );
   }
 
@@ -47,8 +49,10 @@ export class Timer {
   }
 
   private static formatTime(word: 'minute' | 'second', elapsed: number) {
-    const s = elapsed === 1 ? '' : 's';
-    const blank = word === 'minute' ? ' ' : '';
-    return `${elapsed} ${word}${s}${blank}`;
+    return elapsed.toLocaleString('en', {
+      unit: word,
+      style: 'unit',
+      unitDisplay: 'long',
+    });
   }
 }
