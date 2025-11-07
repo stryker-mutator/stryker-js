@@ -23,7 +23,6 @@ const JS_SCRIPT_TYPES = Object.freeze([
 The parser implementation in this file is heavily based on prettier's html parser
 https://github.com/prettier/prettier/blob/5a7162d0636a82c5862b9101b845af40918d22d1/src/language-html/parser-html.js
 */
-
 export async function parse(
   text: string,
   originFileName: string,
@@ -44,13 +43,9 @@ async function ngHtmlParser(
   fileName: string,
   parserContext: ParserContext,
 ): Promise<HtmlRootNode> {
-  const {
-    parse: parser,
-    visitAll,
-    RecursiveVisitor,
-  } = await import('angular-html-parser');
+  const ngParser = await import('angular-html-parser');
 
-  const { rootNodes, errors } = parser(text, {
+  const { rootNodes, errors } = ngParser.parse(text, {
     canSelfClose: true,
     allowHtmComponentClosingTags: true,
     isTagNameCaseSensitive: true,
@@ -64,8 +59,8 @@ async function ngHtmlParser(
     );
   }
   const scriptsAsPromised: Array<Promise<ScriptAst>> = [];
-  visitAll(
-    new (class extends RecursiveVisitor {
+  ngParser.visitAll(
+    new (class extends ngParser.RecursiveVisitor {
       public override visitElement(el: NGAst.Element, context: unknown): void {
         const scriptFormat = getScriptType(el);
         if (scriptFormat) {
@@ -116,7 +111,7 @@ function toSourceLocation({ line, col }: { line: number; col: number }): {
   return { line: line + 1, column: col };
 }
 
-function getScriptType(element: Element): ScriptFormat | undefined {
+function getScriptType(element: NGAst.Element): ScriptFormat | undefined {
   if (element.name === 'script') {
     const containsSrc = element.attrs.some((attr) => attr.name === 'src');
     if (!containsSrc) {
