@@ -33,8 +33,8 @@ importers:
         specifier: 24.10.1
         version: 24.10.1
       '@types/sinon':
-        specifier: 17.0.4
-        version: 17.0.4
+        specifier: 20.0.0
+        version: 20.0.0
       '@types/sinon-chai':
         specifier: 4.0.0
         version: 4.0.0
@@ -5004,8 +5004,8 @@ packages:
   '@types/sinon-chai@4.0.0':
     resolution: {integrity: sha512-Uar+qk3TmeFsUWCwtqRNqNUE7vf34+MCJiQJR5M2rd4nCbhtE8RgTiHwN/mVwbfCjhmO6DiOel/MgzHkRMJJFg==}
 
-  '@types/sinon@17.0.4':
-    resolution: {integrity: sha512-RHnIrhfPO3+tJT0s7cFaXGZvsL4bbR3/k7z3P312qMS4JaS2Tk+KiwiLx1S0rQ56ERj00u1/BtdyVd0FY+Pdew==}
+  '@types/sinon@20.0.0':
+    resolution: {integrity: sha512-etYGUC6IEevDGSWvR9WrECRA01ucR2/Oi9XMBUAdV0g4bLkNf4HlZWGiGlDOq5lgwXRwcV+PSeKgFcW4QzzYOg==}
 
   '@types/sinonjs__fake-timers@15.0.0':
     resolution: {integrity: sha512-lqKG4X0fO3aJF7Bz590vuCkFt/inbDyL7FXaVjPEYO+LogMZ2fwSDUiP7bJvdYHaCgCQGNOPxquzSrrnVH3fGw==}
@@ -21445,9 +21445,9 @@ snapshots:
   '@types/sinon-chai@4.0.0':
     dependencies:
       '@types/chai': 5.2.3
-      '@types/sinon': 17.0.4
+      '@types/sinon': 20.0.0
 
-  '@types/sinon@17.0.4':
+  '@types/sinon@20.0.0':
     dependencies:
       '@types/sinonjs__fake-timers': 15.0.0
 
