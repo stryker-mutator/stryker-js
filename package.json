@@ -12,7 +12,7 @@
     "@types/karma": "6.3.9",
     "@types/mocha": "10.0.10",
     "@types/node": "24.10.1",
-    "@types/sinon": "20.0.0",
+    "@types/sinon": "21.0.0",
     "@types/sinon-chai": "4.0.0",
     "@types/source-map-support": "0.5.10",
     "@typescript-eslint/utils": "8.46.2",
