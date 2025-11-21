@@ -4,9 +4,9 @@
   "description": "An e2e test for the cucumber-js lower bound version",
   "private": true,
   "scripts": {
-  "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
-  "test:unit": "cucumber-js",
-  "test": "stryker run && npm run verify"
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test:unit": "cucumber-js",
+    "test": "stryker run && npm run verify"
   },
   "devDependencies": {
     "@cucumber/cucumber": "8.0.0",

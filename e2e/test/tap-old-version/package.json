@@ -4,7 +4,6 @@
   "private": true,
   "description": "A project using the oldest supported version of node-tap",
   "main": "index.js",
-  "type": "commonjs",
   "scripts": {
     "clean:reports": "rimraf \"reports\"",
     "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",

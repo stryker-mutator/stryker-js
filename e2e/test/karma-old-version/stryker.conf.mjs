@@ -1,0 +1,12 @@
+export default {
+  mutate: ['src/*.js'],
+  testRunner: 'karma',
+  reporters: ['json', 'clear-text', 'html', 'event-recorder'],
+  karma: {
+    configFile: 'karma.conf.js',
+  },
+  timeoutMS: 120000,
+  concurrency: 1,
+  coverageAnalysis: 'perTest',
+  plugins: [import.meta.resolve('@stryker-mutator/karma-runner')],
+};
