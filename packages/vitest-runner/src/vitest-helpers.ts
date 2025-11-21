@@ -69,8 +69,7 @@ function findSuiteError(
     return undefined;
   }
 
-  const status = convertTaskStateToTestStatus(suite.result?.state, suite.mode);
-  if (status === TestStatus.Failed) {
+  if (suite.result?.state === 'fail') {
     return suite.result?.errors?.[0]?.message ?? 'Suite execution failed';
   }
 
