@@ -5,8 +5,8 @@ import {
   TestResult,
   TestStatus,
 } from '@stryker-mutator/api/test-runner';
-import type { RunMode, RunnerTestSuite, TaskState } from 'vitest';
-import { RunnerTestCase, RunnerTestFile } from 'vitest/node';
+import { type RunMode, type RunnerTestSuite, type TaskState } from 'vitest';
+import { RunnerTestCase } from 'vitest/node';
 import { MutantCoverage } from '@stryker-mutator/api/core';
 import { collectTestName, toRawTestId } from './test-helpers.js';
 
@@ -45,12 +45,36 @@ export function convertTestToTestResult(test: RunnerTestCase): TestResult {
       failureMessage:
         test.result?.errors?.[0]?.message ?? 'StrykerJS: Unknown test failure',
     };
-  } else {
-    return {
-      ...baseTestResult,
-      status,
-    };
+  } else if (status === TestStatus.Skipped) {
+    const suiteError = findSuiteError(test.suite);
+    if (suiteError) {
+      return {
+        ...baseTestResult,
+        status: TestStatus.Failed,
+        failureMessage: suiteError,
+      };
+    }
   }
+
+  return {
+    ...baseTestResult,
+    status,
+  };
+}
+
+function findSuiteError(
+  suite: RunnerTestSuite | undefined,
+): string | undefined {
+  if (!suite) {
+    return undefined;
+  }
+
+  const status = convertTaskStateToTestStatus(suite.result?.state, suite.mode);
+  if (status === TestStatus.Failed) {
+    return suite.result?.errors?.[0]?.message ?? 'Suite execution failed';
+  }
+
+  return findSuiteError(suite.suite);
 }
 
 export function fromTestId(id: string): { file: string; test: string } {
@@ -87,16 +111,6 @@ export function collectTestsFromSuite(
       return [];
     }
   });
-}
-
-export function hasSuiteFailure(suite: RunnerTestSuite): boolean {
-  if (suite.result?.state === 'fail') {
-    return true;
-  }
-
-  return suite.tasks.some(
-    (task) => task.type === 'suite' && hasSuiteFailure(task),
-  );
 }
 
 export function isErrorCodeError(

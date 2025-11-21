@@ -37,12 +37,10 @@ import {
   convertTestToTestResult,
   fromTestId,
   collectTestsFromSuite,
-  hasSuiteFailure,
   normalizeCoverage,
   isErrorCodeError,
   VITEST_ERROR_CODES,
 } from './vitest-helpers.js';
-import type { RunnerTestCase } from 'vitest/node';
 import { VitestRunnerOptionsWithStrykerOptions } from './vitest-runner-options-with-stryker-options.js';
 
 type StrykerNamespace = '__stryker__' | '__stryker2__';
@@ -201,25 +199,16 @@ export class VitestTestRunner implements TestRunner {
       }
     }
 
-    const files = this.ctx!.state.getFiles();
-    const tests = files
+    const tests = this.ctx!.state.getFiles()
       .flatMap((file) => collectTestsFromSuite(file))
       .filter((test) => test.result); // if no result: it was skipped because of bail
+
     let failure = false;
     const testResults = tests.map((test) => {
       const testResult = convertTestToTestResult(test);
       failure ||= testResult.status === TestStatus.Failed;
       return testResult;
     });
-
-    // Only check for suite-level failures if there are no individual test failures
-    if (!failure && files.some((file) => hasSuiteFailure(file))) {
-      return {
-        status: DryRunStatus.Error,
-        errorMessage:
-          'An error occurred in the suite (e.g., beforeAll hook failure)',
-      };
-    }
 
     if (!failure && this.ctx!.state.errorsSet.size > 0) {
       const errorText = [...this.ctx!.state.errorsSet]
