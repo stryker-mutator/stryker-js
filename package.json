@@ -39,7 +39,7 @@
     "mocha": "11.7.5",
     "playwright": "1.56.1",
     "prettier": "3.6.2",
-    "rimraf": "6.1.0",
+    "rimraf": "6.1.2",
     "sinon": "21.0.0",
     "sinon-chai": "4.0.1",
     "source-map-support": "0.5.21",
