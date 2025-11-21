@@ -39,7 +39,7 @@
     "@types/react-dom": "19.2.3",
     "@types/semver": "7.7.1",
     "@types/tap": "18.0.0",
-    "@vitest/browser-playwright": "^4.0.12",
+    "@vitest/browser-playwright": "4.0.12",
     "ajv": "8.17.1",
     "axios": "1.13.2",
     "chai": "6.2.1",
