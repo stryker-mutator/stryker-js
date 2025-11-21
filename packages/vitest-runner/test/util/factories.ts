@@ -76,6 +76,7 @@ export function createVitestTest(
     context: {} as any,
     file: createVitestFile(),
     annotations: [],
+    artifacts: [],
     ...overrides,
   };
 }
