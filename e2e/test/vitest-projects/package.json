@@ -1,8 +1,8 @@
 {
-  "name": "vitest-workspace",
+  "name": "vitest-projects",
   "version": "0.0.0",
   "private": true,
-  "description": "An integration test for vitest setup using workspaces",
+  "description": "An integration test for vitest setup using projects",
   "type": "module",
   "main": "index.js",
   "scripts": {
@@ -14,6 +14,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "vitest": "3.1.4"
+    "vitest": "4.0.12"
   }
 }
