@@ -66,7 +66,7 @@
     "stryker": "./bin/stryker.js"
   },
   "dependencies": {
-    "@inquirer/prompts": "^7.0.0",
+    "@inquirer/prompts": "^8.0.0",
     "@stryker-mutator/api": "workspace:*",
     "@stryker-mutator/instrumenter": "workspace:*",
     "@stryker-mutator/util": "workspace:*",
