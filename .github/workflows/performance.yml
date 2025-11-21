@@ -13,13 +13,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: recursive
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-      - name: Install dependencies
-        run: pnpm install && pnpm run install:chromium
+      - uses: ./.github/setup
       - name: Build packages
         run: pnpm run build
       - name: Run performance tests
@@ -27,7 +24,7 @@ jobs:
         env:
           PERF_TEST_GLOB_PATTERN: ${{ github.event.inputs.PERF_TEST_GLOB_PATTERN }}
       - name: Store reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: mutation-testing-reports
           path: perf/test/*/reports/mutation

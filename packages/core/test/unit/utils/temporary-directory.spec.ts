@@ -151,7 +151,7 @@ describe(TemporaryDirectory.name, () => {
       await sut.initialize();
       rmStub.resolves();
       readdirStub.resolves(['sandbox-798'] as unknown as fs.Dirent<
-        Buffer<ArrayBufferLike>
+        Buffer<ArrayBuffer>
       >[]);
       await sut.dispose();
       sinon.assert.notCalled(rmdirStub);

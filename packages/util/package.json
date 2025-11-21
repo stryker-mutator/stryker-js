@@ -1,15 +1,13 @@
 {
   "name": "@stryker-mutator/util",
-  "version": "9.2.0",
+  "version": "9.3.0",
   "description": "Contains utilities for Stryker, the mutation testing framework for JavaScript and friends",
   "files": [
     "dist/src",
     "src"
   ],
   "exports": {
-    ".": {
-      "import": "./dist/src/index.js"
-    },
+    ".": "./dist/src/index.js",
     "./package.json": "./package.json"
   },
   "type": "module",
@@ -22,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/stryker-mutator/stryker-js.git",
+    "url": "git+https://github.com/stryker-mutator/stryker-js.git",
     "directory": "packages/util"
   },
   "keywords": [
@@ -40,6 +38,6 @@
   "homepage": "https://github.com/stryker-mutator/stryker-js/tree/master/packages/util#readme",
   "devDependencies": {
     "@stryker-mutator/test-helpers": "workspace:*",
-    "@types/node": "22.18.8"
+    "@types/node": "24.10.1"
   }
 }

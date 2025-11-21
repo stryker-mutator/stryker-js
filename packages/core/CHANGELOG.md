@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.3.0](https://github.com/stryker-mutator/stryker-js/compare/v9.2.0...v9.3.0) (2025-10-28)
+
+### Bug Fixes
+
+- **init:** stryker init process should complete ([#5510](https://github.com/stryker-mutator/stryker-js/issues/5510)) ([b4974e6](https://github.com/stryker-mutator/stryker-js/commit/b4974e6580ccf9e4225df39238573dfa831f693d))
+- **server:** pass config file path to prepareExecutor during discovery ([#5513](https://github.com/stryker-mutator/stryker-js/issues/5513)) ([6b77a5c](https://github.com/stryker-mutator/stryker-js/commit/6b77a5c8ece4e5dd0c383ac15587912d6547c132))
+
+### Features
+
+- **init:** ensure `@stryker-mutator/core` is installed by `npm init stryker` ([37ed82c](https://github.com/stryker-mutator/stryker-js/commit/37ed82c1f3efee3ab18464df10c51c3acd0607ef)), closes [#5505](https://github.com/stryker-mutator/stryker-js/issues/5505)
+- **server:** support stdio transport channel ([#5520](https://github.com/stryker-mutator/stryker-js/issues/5520)) ([43a4123](https://github.com/stryker-mutator/stryker-js/commit/43a4123db7a7a6112bb700fabe818d2a134cbdb2))
+
 # [9.2.0](https://github.com/stryker-mutator/stryker-js/compare/v9.1.1...v9.2.0) (2025-10-04)
 
 ### Features

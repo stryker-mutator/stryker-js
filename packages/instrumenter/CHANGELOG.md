@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.3.0](https://github.com/stryker-mutator/stryker-js/compare/v9.2.0...v9.3.0) (2025-10-28)
+
+### Bug Fixes
+
+- **deps:** update babel monorepo to v7.28.5 ([#5493](https://github.com/stryker-mutator/stryker-js/issues/5493)) ([e66a4f3](https://github.com/stryker-mutator/stryker-js/commit/e66a4f37ba433f94da8700aeeb484d308d31f0c7))
+
 # [9.2.0](https://github.com/stryker-mutator/stryker-js/compare/v9.1.1...v9.2.0) (2025-10-04)
 
 **Note:** Version bump only for package @stryker-mutator/instrumenter

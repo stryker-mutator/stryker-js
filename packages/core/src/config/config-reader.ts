@@ -159,7 +159,7 @@ export class ConfigReader {
         if (namedExports.length === 0) {
           return "In fact, it didn't export anything.";
         } else {
-          return `Found named export(s): ${namedExports.map((name) => `"${name}"`).join(', ')}.`;
+          return `Found named export(s): ${new Intl.ListFormat('en').format(namedExports.map((name) => `"${name}"`))}.`;
         }
       }
     }

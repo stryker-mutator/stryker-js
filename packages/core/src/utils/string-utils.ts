@@ -4,13 +4,6 @@ import emojiRegex from 'emoji-regex';
 
 const emojiRe = emojiRegex();
 
-export function wrapInClosure(codeFragment: string): string {
-  return `
-    (function (window) {
-      ${codeFragment}
-    })((Function('return this'))());`;
-}
-
 export function padLeft(input: string): string {
   return input
     .split('\n')

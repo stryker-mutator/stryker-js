@@ -2,7 +2,7 @@ name: Publish
 
 on:
   push:
-    tags: 
+    tags:
       - '**' # Fine when using locked versioning mode with lerna, as only one tag is pushed to git.
 
 jobs:
@@ -12,16 +12,11 @@ jobs:
       contents: read
       id-token: write # to enable use of OIDC for npm provenance
     steps:
-    - uses: actions/checkout@v4
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v4
-    - name: Set NPM Env
-      run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
-    - name: Install dependencies
-      run: pnpm install --frozen-lockfile
-    - name: Build
-      run: pnpm run build
-    - name: Release
-      run: npx lerna publish from-git --yes --pre-dist-tag next --no-verify-access
-      env:
-        NPM_CONFIG_PROVENANCE: true
+      - uses: actions/checkout@v5
+      - uses: ./.github/setup
+        with:
+          install-chromium: false
+      - name: Build
+        run: pnpm run build
+      - name: Release
+        run: pnpm exec lerna publish from-git --yes --pre-dist-tag next
