@@ -70,7 +70,9 @@ function findSuiteError(
   }
 
   if (suite.result?.state === 'fail') {
-    return suite.result?.errors?.[0]?.message ?? 'Suite execution failed';
+    return (
+      suite.result?.errors?.[0]?.message ?? 'StrykerJS: Suite execution failed'
+    );
   }
 
   return findSuiteError(suite.suite);
