@@ -51,12 +51,12 @@
   "devDependencies": {
     "@stryker-mutator/test-helpers": "workspace:*",
     "@types/node": "22.18.8",
-    "@vitest/browser-playwright": "^4.0.4",
+    "@vitest/browser-playwright": "^4.0.12",
     "react": "19.1.1",
     "ts-node": "10.9.2",
     "vite": "7.1.12",
-    "vitest": "4.0.4",
-    "vitest-browser-react": "1.0.1"
+    "vitest": "4.0.12",
+    "vitest-browser-react": "2.0.2"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "~9.2.0",
