@@ -263,7 +263,7 @@ importers:
         specifier: 18.0.0
         version: 18.0.0(@types/node@24.10.1)(@types/react@19.2.6)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(typescript@5.9.3)
       '@vitest/browser-playwright':
-        specifier: ^4.0.12
+        specifier: 4.0.12
         version: 4.0.12(playwright@1.56.1)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.12)
       ajv:
         specifier: 8.17.1
@@ -1460,7 +1460,7 @@ importers:
         specifier: 3.1.4
         version: 3.1.4(playwright@1.56.1)(vite@7.1.12(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.12)
       '@vitest/browser-playwright':
-        specifier: ^4.0.12
+        specifier: 4.0.12
         version: 4.0.12(playwright@1.56.1)(vite@7.1.12(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.12)
       react:
         specifier: 19.2.0
@@ -27734,7 +27734,9 @@ snapshots:
       pretty-format: 24.9.0
       throat: 4.1.0
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   jest-jasmine2@27.5.1:
     dependencies:
