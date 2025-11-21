@@ -130,9 +130,13 @@ export function expectTestResults(
       );
     }
   });
-  actualPruned.sort((a, b) => a.id.localeCompare(b.id));
+  sortTestResults(actualPruned);
   expectedTestResults.sort((a, b) => a.id.localeCompare(b.id));
   expect(actualPruned).deep.eq(expectedTestResults);
+}
+
+export function sortTestResults(tests: PartialTestResult[]) {
+  return tests.sort((a, b) => a.id.localeCompare(b.id));
 }
 
 /**
