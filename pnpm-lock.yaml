@@ -1016,8 +1016,8 @@ importers:
         specifier: ~10.1.0
         version: 10.1.1
       mutation-server-protocol:
-        specifier: ~0.3.0
-        version: 0.3.0
+        specifier: ~0.4.0
+        version: 0.4.0
       mutation-testing-elements:
         specifier: 3.6.0
         version: 3.6.0
@@ -11216,8 +11216,8 @@ packages:
     resolution: {integrity: sha512-ypMKuglUrZUD99Tk2bUQ+xNQj43lPEfAeX2o9cTteAmShXy2VHDJpuwu1o0xqoKCt9jLVAvwyFKdLTPXKAfJyA==}
     engines: {node: '>=10'}
 
-  mutation-server-protocol@0.3.0:
-    resolution: {integrity: sha512-pQY+lb80vuD33P1NwhDyCWUgwP2w6JAP5+9Hz3CWM2HpIoYxDkT7OXYKabaunKnoSCgutP3MuruzPCXxLX/lnQ==}
+  mutation-server-protocol@0.4.0:
+    resolution: {integrity: sha512-z22ttDtj0RUZuhVzg0wkBkyvcJoauWq99qJ6O7eO4eEudZAhc3qVh5fBeb0qjRy84XzYiSO6m4I9i1Gx8nQcrw==}
     engines: {node: '>=18'}
 
   mutation-testing-elements@3.6.0:
@@ -15669,8 +15669,8 @@ packages:
   zimmerframe@1.1.4:
     resolution: {integrity: sha512-B58NGBEoc8Y9MWWCQGl/gq9xBCe4IiKM0a2x7GZdQKOW5Exr8S1W24J6OgM1njK8xCRGvAJIL/MxXHf6SkmQKQ==}
 
-  zod@3.25.76:
-    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
+  zod@4.1.12:
+    resolution: {integrity: sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ==}
 
   zone.js@0.14.10:
     resolution: {integrity: sha512-YGAhaO7J5ywOXW6InXNlLmfU194F8lVgu7bRntUF3TiG8Y3nBK0x1UJJuHUP/e8IyihkjCYqhCScpSwnlaSRkQ==}
@@ -20246,7 +20246,7 @@ snapshots:
       json-rpc-2.0: 1.7.1
       lodash.groupby: 4.6.0
       minimatch: 10.1.1
-      mutation-server-protocol: 0.3.0
+      mutation-server-protocol: 0.4.0
       mutation-testing-elements: 3.6.0
       mutation-testing-metrics: 3.5.1
       mutation-testing-report-schema: 3.5.1
@@ -20277,7 +20277,7 @@ snapshots:
       json-rpc-2.0: 1.7.1
       lodash.groupby: 4.6.0
       minimatch: 10.1.1
-      mutation-server-protocol: 0.3.0
+      mutation-server-protocol: 0.4.0
       mutation-testing-elements: 3.6.0
       mutation-testing-metrics: 3.5.1
       mutation-testing-report-schema: 3.5.1
@@ -20308,7 +20308,7 @@ snapshots:
       json-rpc-2.0: 1.7.1
       lodash.groupby: 4.6.0
       minimatch: 10.1.1
-      mutation-server-protocol: 0.3.0
+      mutation-server-protocol: 0.4.0
       mutation-testing-elements: 3.6.0
       mutation-testing-metrics: 3.5.1
       mutation-testing-report-schema: 3.5.1
@@ -30115,9 +30115,9 @@ snapshots:
       arrify: 2.0.1
       minimatch: 3.0.5
 
-  mutation-server-protocol@0.3.0:
+  mutation-server-protocol@0.4.0:
     dependencies:
-      zod: 3.25.76
+      zod: 4.1.12
 
   mutation-testing-elements@3.6.0: {}
 
@@ -35580,6 +35580,6 @@ snapshots:
 
   zimmerframe@1.1.4: {}
 
-  zod@3.25.76: {}
+  zod@4.1.12: {}
 
   zone.js@0.14.10: {}

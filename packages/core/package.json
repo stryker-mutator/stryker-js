@@ -79,7 +79,7 @@
     "json-rpc-2.0": "^1.7.0",
     "lodash.groupby": "~4.6.0",
     "minimatch": "~10.1.0",
-    "mutation-server-protocol": "~0.3.0",
+    "mutation-server-protocol": "~0.4.0",
     "mutation-testing-elements": "3.6.0",
     "mutation-testing-metrics": "3.5.1",
     "mutation-testing-report-schema": "3.5.1",
