@@ -101,6 +101,7 @@
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "explicit",
     },
+    "vitest.disableWorkspaceWarning": true,
     "cSpell.words": [
       "Appender",
       "Appenders",
