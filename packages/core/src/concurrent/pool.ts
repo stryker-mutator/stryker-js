@@ -200,6 +200,8 @@ export class Pool<TResource extends Resource> implements Disposable {
       this.todoSubject.subscribe((workItem) => workItem.complete());
       this.todoSubject.complete();
       await Promise.all(
+        // We're mixing promises with undefined values, which triggers the lint warning. We can safely ignore it here.
+        // eslint-disable-next-line @typescript-eslint/await-thenable
         this.createdResources.map((resource) => resource.dispose?.()),
       );
     }
