@@ -200,15 +200,18 @@ export class VitestTestRunner implements TestRunner {
         throw error;
       }
     }
+
     const tests = this.ctx!.state.getFiles()
       .flatMap((file) => collectTestsFromSuite(file))
       .filter((test) => test.result); // if no result: it was skipped because of bail
+
     let failure = false;
     const testResults = tests.map((test) => {
       const testResult = convertTestToTestResult(test);
       failure ||= testResult.status === TestStatus.Failed;
       return testResult;
     });
+
     if (!failure && this.ctx!.state.errorsSet.size > 0) {
       const errorText = [...this.ctx!.state.errorsSet]
         .map(errorToString)

@@ -5,8 +5,8 @@ import {
   TestResult,
   TestStatus,
 } from '@stryker-mutator/api/test-runner';
-import type { RunMode, TaskState } from 'vitest';
-import { RunnerTestCase, RunnerTestSuite } from 'vitest/node';
+import { type RunMode, type RunnerTestSuite, type TaskState } from 'vitest';
+import { RunnerTestCase } from 'vitest/node';
 import { MutantCoverage } from '@stryker-mutator/api/core';
 import { collectTestName, toRawTestId } from './test-helpers.js';
 
@@ -45,12 +45,37 @@ export function convertTestToTestResult(test: RunnerTestCase): TestResult {
       failureMessage:
         test.result?.errors?.[0]?.message ?? 'StrykerJS: Unknown test failure',
     };
-  } else {
-    return {
-      ...baseTestResult,
-      status,
-    };
+  } else if (status === TestStatus.Skipped) {
+    const suiteError = findSuiteError(test.suite);
+    if (suiteError) {
+      return {
+        ...baseTestResult,
+        status: TestStatus.Failed,
+        failureMessage: suiteError,
+      };
+    }
   }
+
+  return {
+    ...baseTestResult,
+    status,
+  };
+}
+
+function findSuiteError(
+  suite: RunnerTestSuite | undefined,
+): string | undefined {
+  if (!suite) {
+    return undefined;
+  }
+
+  if (suite.result?.state === 'fail') {
+    return (
+      suite.result?.errors?.[0]?.message ?? 'StrykerJS: Suite execution failed'
+    );
+  }
+
+  return findSuiteError(suite.suite);
 }
 
 export function fromTestId(id: string): { file: string; test: string } {
