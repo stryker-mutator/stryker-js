@@ -16,7 +16,7 @@ jobs:
         node-version: [20.x, 24.x]
         os: ['ubuntu-latest', 'windows-latest']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./.github/setup
         with:
           node-version: ${{ matrix.node-version }}
@@ -29,7 +29,7 @@ jobs:
   incremental_mutation_test:
     runs-on: 'ubuntu-latest'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./.github/setup
       - name: Build
         run: pnpm run build:no-check
@@ -49,7 +49,7 @@ jobs:
       matrix:
         os: ['ubuntu-latest', 'windows-latest']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ./.github/setup
         with:
           node-version: 22.x
@@ -66,7 +66,7 @@ jobs:
         run: 'pnpm run e2e:lint'
       - name: Run e2e tests
         run: 'pnpm run e2e:run'
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: failure()
         with:
           name: e2e-reports

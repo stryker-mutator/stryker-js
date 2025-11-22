@@ -4,16 +4,14 @@
   "version": "9.3.0",
   "description": "A helper package for testing",
   "exports": {
-    ".": {
-      "import": "./dist/index.js"
-    },
+    ".": "./dist/index.js",
     "./package.json": "./package.json"
   },
   "type": "module",
   "scripts": {},
   "repository": {
     "type": "git",
-    "url": "https://github.com/stryker-mutator/stryker-js.git",
+    "url": "git+https://github.com/stryker-mutator/stryker-js.git",
     "directory": "packages/test-helpers"
   },
   "keywords": [],
@@ -29,7 +27,7 @@
   },
   "devDependencies": {
     "@stryker-mutator/api": "workspace:*",
-    "@types/node": "22.18.8",
+    "@types/node": "24.10.1",
     "typed-inject": "5.0.0"
   }
 }

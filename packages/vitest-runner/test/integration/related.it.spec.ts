@@ -4,6 +4,7 @@ import {
   TempTestDirectorySandbox,
   testInjector,
 } from '@stryker-mutator/test-helpers';
+
 import {
   createVitestTestRunnerFactory,
   VitestTestRunner,
@@ -52,7 +53,9 @@ describe('Vitest runner related', () => {
       factory.dryRunOptions({ files: [stringUtilsFileName] }),
     );
     assertions.expectCompleted(actualResultMath);
-    expect(actualResultMath.tests.map(({ id }) => id)).deep.eq([
+    expect(
+      assertions.sortTestResults(actualResultMath.tests).map(({ id }) => id),
+    ).deep.eq([
       mathTest1,
       mathTest2,
       // other test shouldn't run
@@ -81,11 +84,9 @@ describe('Vitest runner related', () => {
       factory.dryRunOptions({ files: [mathFileName] }),
     );
     assertions.expectCompleted(actualResult);
-    expect(actualResult.tests.map(({ id }) => id)).deep.eq([
-      mathTest1,
-      mathTest2,
-      stringUtilsTest1,
-    ]);
+    expect(
+      assertions.sortTestResults(actualResult.tests).map(({ id }) => id),
+    ).deep.eq([mathTest1, mathTest2, stringUtilsTest1]);
   });
 
   afterEach(async () => {

@@ -320,7 +320,7 @@ describe(ProjectReader.name, () => {
           normalizeWhitespaces(`Warning: No files found for mutation with the given glob expressions.
             As a result, a dry-run will be performed without actually modifying anything. 
             If you intended to mutate files, please check and adjust the configuration. 
-            Current glob pattern(s) used: "{src,lib}/**/!(*.+(s|S)pec|*.+(t|T)est).+(cjs|mjs|js|ts|mts|cts|jsx|tsx|html|vue|svelte)", 
+            Current glob pattern(s) used: "{src,lib}/**/!(*.+(s|S)pec|*.+(t|T)est).+(cjs|mjs|js|ts|mts|cts|jsx|tsx|html|vue|svelte)" and 
             "!{src,lib}/**/__tests__/**/*.+(cjs|mjs|js|ts|mts|cts|jsx|tsx|html|vue|svelte)".
             To enable file mutation, consider configuring the \`mutate\` 
             property in your configuration file or using the --mutate option via the command line.`),
@@ -942,7 +942,7 @@ describe(ProjectReader.name, () => {
             createDirent({
               name,
               isDirectory: typeof value !== 'string',
-            }) as unknown as Dirent<Buffer<ArrayBufferLike>>,
+            }) as unknown as Dirent<Buffer<ArrayBuffer>>,
         ),
       );
       Object.entries(dirEntry).map(([name, value]) =>

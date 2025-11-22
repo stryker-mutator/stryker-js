@@ -66,7 +66,7 @@ export class Project {
           normalizeWhitespaces(`Warning: No files found for mutation with the given glob expressions. As a result, a dry-run will be performed without actually modifying anything. 
           If you intended to mutate files, please check and adjust the configuration.
           Current glob pattern(s) used:
-          ${mutatePatterns.map((pattern) => `"${pattern}"`).join(', ')}.
+          ${new Intl.ListFormat('en').format(mutatePatterns.map((pattern) => `"${pattern}"`))}.
           To enable file mutation, consider configuring the \`${propertyPath<StrykerOptions>()(
             'mutate',
           )}\` property in your configuration file or using the --mutate option via the command line.`);

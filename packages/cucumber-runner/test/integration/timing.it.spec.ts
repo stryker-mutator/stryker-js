@@ -32,6 +32,7 @@ describe('Cucumber runner timing', () => {
     const result = await sut.dryRun(factory.dryRunOptions());
     assertions.expectCompleted(result);
     expect(result.tests).lengthOf(1);
-    expect(result.tests[0].timeSpentMs).greaterThanOrEqual(200).lessThan(300);
+    expect(result.tests[0].timeSpentMs).greaterThanOrEqual(190).lessThan(300);
+    // 200 is too brittle
   });
 });

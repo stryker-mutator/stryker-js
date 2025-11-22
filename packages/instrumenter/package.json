@@ -9,9 +9,7 @@
     "src"
   ],
   "exports": {
-    ".": {
-      "import": "./dist/src/index.js"
-    },
+    ".": "./dist/src/index.js",
     "./package.json": "./package.json"
   },
   "scripts": {
@@ -21,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/stryker-mutator/stryker-js.git",
+    "url": "git+https://github.com/stryker-mutator/stryker-js.git",
     "directory": "packages/instrumenter"
   },
   "engines": {
@@ -49,7 +47,7 @@
     "@babel/preset-typescript": "~7.28.0",
     "@stryker-mutator/api": "workspace:*",
     "@stryker-mutator/util": "workspace:*",
-    "angular-html-parser": "~9.2.0",
+    "angular-html-parser": "~10.1.0",
     "semver": "~7.7.0",
     "weapon-regex": "~1.3.2"
   },
@@ -60,6 +58,6 @@
     "@types/babel__generator": "7.27.0",
     "@types/estree": "1.0.8",
     "@types/semver": "7.7.1",
-    "svelte": "5.43.0"
+    "svelte": "5.43.14"
   }
 }

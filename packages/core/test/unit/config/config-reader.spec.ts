@@ -263,7 +263,7 @@ describe(ConfigReader.name, () => {
       sinon.assert.calledWithMatch(
         testInjector.logger.fatal,
         sinon.match(
-          'Invalid config file. It is missing a default export. Found named export(s): "pi", "foo".',
+          'Invalid config file. It is missing a default export. Found named export(s): "pi" and "foo".',
         ),
       );
     });

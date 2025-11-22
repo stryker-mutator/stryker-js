@@ -5,7 +5,7 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "https://github.com/stryker-mutator/stryker-js.git",
+    "url": "git+https://github.com/stryker-mutator/stryker-js.git",
     "directory": "packages/api"
   },
   "files": [
@@ -63,6 +63,6 @@
     "typed-inject": "~5.0.0"
   },
   "devDependencies": {
-    "@types/node": "22.18.8"
+    "@types/node": "24.10.1"
   }
 }

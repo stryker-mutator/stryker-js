@@ -154,7 +154,7 @@ function describeError(error: ErrorObject): string {
       return `${errorPrefix} has the wrong type. It should be a ${expectedTypeDescription}, but was a ${jsonSchemaType(error.data)}.`;
     }
     case 'enum':
-      return `${errorPrefix} should be one of the allowed values (${error.params.allowedValues.map(stringify).join(', ')}), but was ${stringify(
+      return `${errorPrefix} should be one of the allowed values (${new Intl.ListFormat('en', { type: 'disjunction' }).format((error.params.allowedValues as unknown[]).map(stringify))}), but was ${stringify(
         error.data,
       )}.`;
     case 'minimum':

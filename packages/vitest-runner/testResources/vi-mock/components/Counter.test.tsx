@@ -5,7 +5,7 @@ import { Counter } from './Counter';
 
 describe('Counter', () => {
   it('increments', async () => {
-    const screen = render(<Counter />);
+    const screen = await render(<Counter />);
     const incrementButton = screen.getByText('Increment');
     const counter = screen.getByTestId('counter');
 

@@ -178,7 +178,7 @@ describe(OptionsValidator.name, () => {
     // @ts-expect-error invalid setting
     testInjector.options.logLevel = 'thisTestPasses';
     actValidationErrors(
-      'Config option "logLevel" should be one of the allowed values ("off", "fatal", "error", "warn", "info", "debug", "trace"), but was "thisTestPasses".',
+      'Config option "logLevel" should be one of the allowed values ("off", "fatal", "error", "warn", "info", "debug", or "trace"), but was "thisTestPasses".',
     );
   });
 
@@ -395,7 +395,7 @@ describe(OptionsValidator.name, () => {
     it('should be invalid for a wrong reportType', () => {
       breakConfig('dashboard', { reportType: 'empty' });
       actValidationErrors(
-        'Config option "dashboard.reportType" should be one of the allowed values ("full", "mutationScore"), but was "empty".',
+        'Config option "dashboard.reportType" should be one of the allowed values ("full" or "mutationScore"), but was "empty".',
       );
     });
   });
@@ -465,7 +465,7 @@ describe(OptionsValidator.name, () => {
   it('should be invalid with invalid coverageAnalysis', () => {
     breakConfig('coverageAnalysis', 'invalid');
     actValidationErrors(
-      'Config option "coverageAnalysis" should be one of the allowed values ("off", "all", "perTest"), but was "invalid".',
+      'Config option "coverageAnalysis" should be one of the allowed values ("off", "all", or "perTest"), but was "invalid".',
     );
   });
 

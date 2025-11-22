@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: recursive
       - uses: ./.github/setup
@@ -24,7 +24,7 @@ jobs:
         env:
           PERF_TEST_GLOB_PATTERN: ${{ github.event.inputs.PERF_TEST_GLOB_PATTERN }}
       - name: Store reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: mutation-testing-reports
           path: perf/test/*/reports/mutation

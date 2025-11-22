@@ -68,7 +68,7 @@ export class PluginCreator {
         return pluginFound as Plugins[T];
       } else {
         throw new Error(
-          `Cannot find ${kind} plugin "${name}". Did you forget to install it? Loaded ${kind} plugins were: ${plugins.map((p) => p.name).join(', ')}`,
+          `Cannot find ${kind} plugin "${name}". Did you forget to install it? Loaded ${kind} plugins were: ${new Intl.ListFormat('en').format(plugins.map((p) => `"${p.name}"`))}`,
         );
       }
     } else {

@@ -8,7 +8,7 @@
   "homepage": "https://stryker-mutator.io/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/stryker-mutator/stryker-js.git",
+    "url": "git+https://github.com/stryker-mutator/stryker-js.git",
     "directory": "packages/grunt-stryker"
   },
   "keywords": [
@@ -38,7 +38,7 @@
   "main": "Gruntfile.js",
   "devDependencies": {
     "@stryker-mutator/api": "workspace:*",
-    "@types/node": "22.18.8"
+    "@types/node": "24.10.1"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "workspace:*",
