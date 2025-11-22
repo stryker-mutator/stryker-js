@@ -84,8 +84,8 @@ importers:
         specifier: 9.6.0
         version: 9.6.0
       glob:
-        specifier: 12.0.0
-        version: 12.0.0
+        specifier: 13.0.0
+        version: 13.0.0
       install-local:
         specifier: 4.1.0
         version: 4.1.0
@@ -1077,8 +1077,8 @@ importers:
         specifier: 7.7.1
         version: 7.7.1
       glob:
-        specifier: 10.5.0
-        version: 10.5.0
+        specifier: 13.0.0
+        version: 13.0.0
 
   packages/create-stryker:
     dependencies:
@@ -1360,8 +1360,8 @@ importers:
         specifier: workspace:*
         version: link:../util
       glob:
-        specifier: ~10.5.0
-        version: 10.5.0
+        specifier: ~13.0.0
+        version: 13.0.0
       tap-parser:
         specifier: ~17.0.0
         version: 17.0.0
@@ -8633,10 +8633,6 @@ packages:
 
   glob-to-regexp@0.4.1:
     resolution: {integrity: sha512-lkX1HJXwyMcprw/5YUZc2s7DrpAiHB21/V+E1rHUrVNokkvB6bqMzT0VfV6/86ZNabt1k14YOIaT7nDvOX3Iiw==}
-
-  glob@10.4.5:
-    resolution: {integrity: sha512-7Bv8RF0k6xjo7d4A/PxYLbUCfb6c+Vpd2/mB2yRDlew7Jb5hEXiCD9ibfO7wpk8i4sevK6DFny9h7EYbM3/sHg==}
-    hasBin: true
 
   glob@10.5.0:
     resolution: {integrity: sha512-DfXN8DfhJ7NH3Oe7cFmu3NCu1wKbkReJ8TorzSAFbSKrlNaQSKfIzqYqVY8zlbs2NLBbWpRiU52GX2PbaBVNkg==}
@@ -20158,7 +20154,7 @@ snapshots:
       '@stryker-mutator/api': link:packages/api
       '@stryker-mutator/core': file:packages/core(@types/node@24.10.1)
       '@stryker-mutator/util': link:packages/util
-      glob: 10.5.0
+      glob: 13.0.0
       tap-parser: 17.0.0
       tslib: 2.8.1
 
@@ -25932,15 +25928,6 @@ snapshots:
 
   glob-to-regexp@0.4.1: {}
 
-  glob@10.4.5:
-    dependencies:
-      foreground-child: 3.3.1
-      jackspeak: 3.4.3
-      minimatch: 9.0.5
-      minipass: 7.1.2
-      package-json-from-dist: 1.0.1
-      path-scurry: 1.11.1
-
   glob@10.5.0:
     dependencies:
       foreground-child: 3.3.1
@@ -25979,7 +25966,7 @@ snapshots:
       fs.realpath: 1.0.0
       inflight: 1.0.6
       inherits: 2.0.4
-      minimatch: 3.0.4
+      minimatch: 3.1.2
       once: 1.4.0
       path-is-absolute: 1.0.1
 
@@ -25988,7 +25975,7 @@ snapshots:
       fs.realpath: 1.0.0
       inflight: 1.0.6
       inherits: 2.0.4
-      minimatch: 3.0.8
+      minimatch: 3.1.2
       once: 1.4.0
       path-is-absolute: 1.0.1
 
@@ -27032,7 +27019,7 @@ snapshots:
 
   jasmine@5.12.0:
     dependencies:
-      glob: 10.4.5
+      glob: 10.5.0
       jasmine-core: 5.12.1
 
   jest-changed-files@24.9.0:
@@ -29796,7 +29783,7 @@ snapshots:
       diff: 7.0.0
       escape-string-regexp: 4.0.0
       find-up: 5.0.0
-      glob: 10.4.5
+      glob: 10.5.0
       he: 1.2.0
       is-path-inside: 3.0.3
       js-yaml: 4.1.1
@@ -29868,7 +29855,7 @@ snapshots:
       array-differ: 3.0.0
       array-union: 2.1.0
       arrify: 2.0.1
-      minimatch: 3.0.5
+      minimatch: 3.1.2
 
   mutation-server-protocol@0.3.0:
     dependencies:
