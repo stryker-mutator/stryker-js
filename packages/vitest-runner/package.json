@@ -53,7 +53,7 @@
     "@vitest/browser": "4.0.13",
     "react": "19.2.0",
     "ts-node": "10.9.2",
-    "vite": "7.1.12",
+    "vite": "7.2.4",
     "vitest": "4.0.13",
     "vitest-browser-react": "2.0.2"
   },

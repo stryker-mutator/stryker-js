@@ -46,7 +46,7 @@ importers:
         version: 8.46.2(eslint@9.39.1(jiti@1.21.7))(typescript@5.9.3)
       '@vitejs/plugin-react':
         specifier: 5.1.1
-        version: 5.1.1(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
+        version: 5.1.1(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
       c8:
         specifier: 10.1.3
         version: 10.1.3
@@ -213,13 +213,13 @@ importers:
         version: file:packages/vitest-runner(@stryker-mutator/core@file:packages/core(@types/node@24.10.1))(vitest@4.0.13)
       '@sveltejs/adapter-auto':
         specifier: 7.0.0
-        version: 7.0.0(@sveltejs/kit@2.49.0(@sveltejs/vite-plugin-svelte@6.2.1(svelte@5.43.14)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)))(svelte@5.43.14)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)))
+        version: 7.0.0(@sveltejs/kit@2.49.0(@sveltejs/vite-plugin-svelte@6.2.1(svelte@5.43.14)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)))(svelte@5.43.14)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)))
       '@sveltejs/kit':
         specifier: 2.49.0
-        version: 2.49.0(@sveltejs/vite-plugin-svelte@6.2.1(svelte@5.43.14)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)))(svelte@5.43.14)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
+        version: 2.49.0(@sveltejs/vite-plugin-svelte@6.2.1(svelte@5.43.14)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)))(svelte@5.43.14)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
       '@sveltejs/vite-plugin-svelte':
         specifier: 6.2.1
-        version: 6.2.1(svelte@5.43.14)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
+        version: 6.2.1(svelte@5.43.14)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
       '@testing-library/dom':
         specifier: 10.4.1
         version: 10.4.1
@@ -231,7 +231,7 @@ importers:
         version: 16.3.0(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@testing-library/svelte':
         specifier: 5.2.9
-        version: 5.2.9(svelte@5.43.14)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.13)
+        version: 5.2.9(svelte@5.43.14)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.13)
       '@tsconfig/svelte':
         specifier: 5.0.6
         version: 5.0.6
@@ -264,7 +264,7 @@ importers:
         version: 18.0.0(@types/node@24.10.1)(@types/react@19.2.6)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(typescript@5.9.3)
       '@vitest/browser-playwright':
         specifier: 4.0.13
-        version: 4.0.13(playwright@1.56.1)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.13)
+        version: 4.0.13(playwright@1.56.1)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.13)
       ajv:
         specifier: 8.17.1
         version: 8.17.1
@@ -333,7 +333,7 @@ importers:
         version: 0.4.0
       karma-vite:
         specifier: 1.0.5
-        version: 1.0.5(karma@6.4.4)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
+        version: 1.0.5(karma@6.4.4)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
       karma-webpack:
         specifier: 5.0.1
         version: 5.0.1(webpack@5.103.0)
@@ -389,8 +389,8 @@ importers:
         specifier: 5.9.3
         version: 5.9.3
       vite:
-        specifier: 7.2.2
-        version: 7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
+        specifier: 7.2.4
+        version: 7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
       vitest:
         specifier: 4.0.13
         version: 4.0.13(@types/node@24.10.1)(@vitest/browser-playwright@4.0.13)(jiti@1.21.7)(jsdom@27.2.0)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
@@ -1458,10 +1458,10 @@ importers:
         version: 24.10.1
       '@vitest/browser':
         specifier: 4.0.13
-        version: 4.0.13(vite@7.1.12(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.13)
+        version: 4.0.13(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.13)
       '@vitest/browser-playwright':
         specifier: 4.0.13
-        version: 4.0.13(playwright@1.56.1)(vite@7.1.12(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.13)
+        version: 4.0.13(playwright@1.56.1)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.13)
       react:
         specifier: 19.2.0
         version: 19.2.0
@@ -1469,8 +1469,8 @@ importers:
         specifier: 10.9.2
         version: 10.9.2(@types/node@24.10.1)(typescript@5.9.3)
       vite:
-        specifier: 7.1.12
-        version: 7.1.12(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
+        specifier: 7.2.4
+        version: 7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
       vitest:
         specifier: 4.0.13
         version: 4.0.13(@types/node@24.10.1)(@vitest/browser-playwright@4.0.13)(jiti@1.21.7)(jsdom@27.2.0)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
@@ -14719,48 +14719,8 @@ packages:
       yaml:
         optional: true
 
-  vite@7.1.12:
-    resolution: {integrity: sha512-ZWyE8YXEXqJrrSLvYgrRP7p62OziLW7xI5HYGWFzOvupfAlrLvURSzv/FyGyy0eidogEM3ujU+kUG1zuHgb6Ug==}
-    engines: {node: ^20.19.0 || >=22.12.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': ^20.19.0 || >=22.12.0
-      jiti: '>=1.21.0'
-      less: ^4.0.0
-      lightningcss: ^1.21.0
-      sass: ^1.70.0
-      sass-embedded: ^1.70.0
-      stylus: '>=0.54.8'
-      sugarss: ^5.0.0
-      terser: ^5.16.0
-      tsx: ^4.8.1
-      yaml: ^2.4.2
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      jiti:
-        optional: true
-      less:
-        optional: true
-      lightningcss:
-        optional: true
-      sass:
-        optional: true
-      sass-embedded:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-      tsx:
-        optional: true
-      yaml:
-        optional: true
-
-  vite@7.2.2:
-    resolution: {integrity: sha512-BxAKBWmIbrDgrokdGZH1IgkIk/5mMHDreLDmCJ0qpyJaAteP8NvMhkwr/ZCQNqNH97bw/dANTE9PDzqwJghfMQ==}
+  vite@7.2.4:
+    resolution: {integrity: sha512-NL8jTlbo0Tn4dUEXEsUg8KeyG/Lkmc4Fnzb8JXN/Ykm9G4HNImjtABMJgkQoVjOBN/j2WAwDTRytdqJbZsah7w==}
     engines: {node: ^20.19.0 || >=22.12.0}
     hasBin: true
     peerDependencies:
@@ -15602,7 +15562,7 @@ snapshots:
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@angular-devkit/architect': 0.1703.17(chokidar@3.6.0)
-      '@angular-devkit/build-webpack': 0.1703.17(chokidar@3.6.0)(webpack-dev-server@4.15.1(webpack@5.94.0))(webpack@5.94.0(esbuild@0.20.1))
+      '@angular-devkit/build-webpack': 0.1703.17(chokidar@3.6.0)(webpack-dev-server@4.15.1(webpack@5.94.0))(webpack@5.94.0)
       '@angular-devkit/core': 17.3.17(chokidar@3.6.0)
       '@angular/compiler-cli': 17.3.12(@angular/compiler@17.3.12(@angular/core@17.3.12(rxjs@7.8.2)(zone.js@0.14.10)))(typescript@5.4.5)
       '@babel/core': 7.26.10
@@ -15615,16 +15575,16 @@ snapshots:
       '@babel/preset-env': 7.26.9(@babel/core@7.26.10)
       '@babel/runtime': 7.26.10
       '@discoveryjs/json-ext': 0.5.7
-      '@ngtools/webpack': 17.3.17(@angular/compiler-cli@17.3.12(@angular/compiler@17.3.12(@angular/core@17.3.12(rxjs@7.8.2)(zone.js@0.14.10)))(typescript@5.4.5))(typescript@5.4.5)(webpack@5.94.0(esbuild@0.20.1))
+      '@ngtools/webpack': 17.3.17(@angular/compiler-cli@17.3.12(@angular/compiler@17.3.12(@angular/core@17.3.12(rxjs@7.8.2)(zone.js@0.14.10)))(typescript@5.4.5))(typescript@5.4.5)(webpack@5.94.0)
       '@vitejs/plugin-basic-ssl': 1.1.0(vite@5.4.21(@types/node@24.10.1)(less@4.2.0)(sass@1.71.1)(terser@5.29.1))
       ansi-colors: 4.1.3
       autoprefixer: 10.4.18(postcss@8.4.35)
-      babel-loader: 9.1.3(@babel/core@7.26.10)(webpack@5.94.0(esbuild@0.20.1))
+      babel-loader: 9.1.3(@babel/core@7.26.10)(webpack@5.94.0)
       babel-plugin-istanbul: 6.1.1
       browserslist: 4.28.0
-      copy-webpack-plugin: 11.0.0(webpack@5.94.0(esbuild@0.20.1))
+      copy-webpack-plugin: 11.0.0(webpack@5.94.0)
       critters: 0.0.22
-      css-loader: 6.10.0(webpack@5.94.0(esbuild@0.20.1))
+      css-loader: 6.10.0(webpack@5.94.0)
       esbuild-wasm: 0.20.1
       fast-glob: 3.3.2
       http-proxy-middleware: 2.0.8(@types/express@4.17.25)
@@ -15633,11 +15593,11 @@ snapshots:
       jsonc-parser: 3.2.1
       karma-source-map-support: 1.4.0
       less: 4.2.0
-      less-loader: 11.1.0(less@4.2.0)(webpack@5.94.0(esbuild@0.20.1))
-      license-webpack-plugin: 4.0.2(webpack@5.94.0(esbuild@0.20.1))
+      less-loader: 11.1.0(less@4.2.0)(webpack@5.94.0)
+      license-webpack-plugin: 4.0.2(webpack@5.94.0)
       loader-utils: 3.2.1
       magic-string: 0.30.8
-      mini-css-extract-plugin: 2.8.1(webpack@5.94.0(esbuild@0.20.1))
+      mini-css-extract-plugin: 2.8.1(webpack@5.94.0)
       mrmime: 2.0.0
       open: 8.4.2
       ora: 5.4.1
@@ -15645,13 +15605,13 @@ snapshots:
       picomatch: 4.0.1
       piscina: 4.4.0
       postcss: 8.4.35
-      postcss-loader: 8.1.1(postcss@8.4.35)(typescript@5.4.5)(webpack@5.94.0(esbuild@0.20.1))
+      postcss-loader: 8.1.1(postcss@8.4.35)(typescript@5.4.5)(webpack@5.94.0)
       resolve-url-loader: 5.0.0
       rxjs: 7.8.1
       sass: 1.71.1
-      sass-loader: 14.1.1(sass@1.71.1)(webpack@5.94.0(esbuild@0.20.1))
+      sass-loader: 14.1.1(sass@1.71.1)(webpack@5.94.0)
       semver: 7.6.0
-      source-map-loader: 5.0.0(webpack@5.94.0(esbuild@0.20.1))
+      source-map-loader: 5.0.0(webpack@5.94.0)
       source-map-support: 0.5.21
       terser: 5.29.1
       tree-kill: 1.2.2
@@ -15660,10 +15620,10 @@ snapshots:
       vite: 5.4.21(@types/node@24.10.1)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
       watchpack: 2.4.0
       webpack: 5.94.0(esbuild@0.20.1)
-      webpack-dev-middleware: 6.1.2(webpack@5.94.0(esbuild@0.20.1))
+      webpack-dev-middleware: 6.1.2(webpack@5.94.0)
       webpack-dev-server: 4.15.1(webpack@5.94.0)
       webpack-merge: 5.10.0
-      webpack-subresource-integrity: 5.1.0(html-webpack-plugin@5.6.5(webpack@5.94.0))(webpack@5.94.0(esbuild@0.20.1))
+      webpack-subresource-integrity: 5.1.0(html-webpack-plugin@5.6.5(webpack@5.94.0))(webpack@5.94.0)
     optionalDependencies:
       esbuild: 0.20.1
       jest: 29.7.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.4.5))
@@ -15688,7 +15648,7 @@ snapshots:
       - utf-8-validate
       - webpack-cli
 
-  '@angular-devkit/build-webpack@0.1703.17(chokidar@3.6.0)(webpack-dev-server@4.15.1(webpack@5.94.0))(webpack@5.94.0(esbuild@0.20.1))':
+  '@angular-devkit/build-webpack@0.1703.17(chokidar@3.6.0)(webpack-dev-server@4.15.1(webpack@5.94.0))(webpack@5.94.0)':
     dependencies:
       '@angular-devkit/architect': 0.1703.17(chokidar@3.6.0)
       rxjs: 7.8.1
@@ -19422,7 +19382,7 @@ snapshots:
       '@emnapi/runtime': 1.7.1
       '@tybys/wasm-util': 0.9.0
 
-  '@ngtools/webpack@17.3.17(@angular/compiler-cli@17.3.12(@angular/compiler@17.3.12(@angular/core@17.3.12(rxjs@7.8.2)(zone.js@0.14.10)))(typescript@5.4.5))(typescript@5.4.5)(webpack@5.94.0(esbuild@0.20.1))':
+  '@ngtools/webpack@17.3.17(@angular/compiler-cli@17.3.12(@angular/compiler@17.3.12(@angular/core@17.3.12(rxjs@7.8.2)(zone.js@0.14.10)))(typescript@5.4.5))(typescript@5.4.5)(webpack@5.94.0)':
     dependencies:
       '@angular/compiler-cli': 17.3.12(@angular/compiler@17.3.12(@angular/core@17.3.12(rxjs@7.8.2)(zone.js@0.14.10)))(typescript@5.4.5)
       typescript: 5.4.5
@@ -20257,15 +20217,15 @@ snapshots:
     dependencies:
       acorn: 8.15.0
 
-  '@sveltejs/adapter-auto@7.0.0(@sveltejs/kit@2.49.0(@sveltejs/vite-plugin-svelte@6.2.1(svelte@5.43.14)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)))(svelte@5.43.14)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)))':
+  '@sveltejs/adapter-auto@7.0.0(@sveltejs/kit@2.49.0(@sveltejs/vite-plugin-svelte@6.2.1(svelte@5.43.14)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)))(svelte@5.43.14)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)))':
     dependencies:
-      '@sveltejs/kit': 2.49.0(@sveltejs/vite-plugin-svelte@6.2.1(svelte@5.43.14)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)))(svelte@5.43.14)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
+      '@sveltejs/kit': 2.49.0(@sveltejs/vite-plugin-svelte@6.2.1(svelte@5.43.14)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)))(svelte@5.43.14)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
 
-  '@sveltejs/kit@2.49.0(@sveltejs/vite-plugin-svelte@6.2.1(svelte@5.43.14)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)))(svelte@5.43.14)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))':
+  '@sveltejs/kit@2.49.0(@sveltejs/vite-plugin-svelte@6.2.1(svelte@5.43.14)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)))(svelte@5.43.14)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))':
     dependencies:
       '@standard-schema/spec': 1.0.0
       '@sveltejs/acorn-typescript': 1.0.7(acorn@8.15.0)
-      '@sveltejs/vite-plugin-svelte': 6.2.1(svelte@5.43.14)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
+      '@sveltejs/vite-plugin-svelte': 6.2.1(svelte@5.43.14)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
       '@types/cookie': 0.6.0
       acorn: 8.15.0
       cookie: 0.6.0
@@ -20278,26 +20238,26 @@ snapshots:
       set-cookie-parser: 2.7.2
       sirv: 3.0.2
       svelte: 5.43.14
-      vite: 7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
+      vite: 7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
 
-  '@sveltejs/vite-plugin-svelte-inspector@5.0.1(@sveltejs/vite-plugin-svelte@6.2.1(svelte@5.43.14)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)))(svelte@5.43.14)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))':
+  '@sveltejs/vite-plugin-svelte-inspector@5.0.1(@sveltejs/vite-plugin-svelte@6.2.1(svelte@5.43.14)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)))(svelte@5.43.14)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))':
     dependencies:
-      '@sveltejs/vite-plugin-svelte': 6.2.1(svelte@5.43.14)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
+      '@sveltejs/vite-plugin-svelte': 6.2.1(svelte@5.43.14)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
       debug: 4.4.3(supports-color@8.1.1)
       svelte: 5.43.14
-      vite: 7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
+      vite: 7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
     transitivePeerDependencies:
       - supports-color
 
-  '@sveltejs/vite-plugin-svelte@6.2.1(svelte@5.43.14)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))':
+  '@sveltejs/vite-plugin-svelte@6.2.1(svelte@5.43.14)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))':
     dependencies:
-      '@sveltejs/vite-plugin-svelte-inspector': 5.0.1(@sveltejs/vite-plugin-svelte@6.2.1(svelte@5.43.14)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)))(svelte@5.43.14)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
+      '@sveltejs/vite-plugin-svelte-inspector': 5.0.1(@sveltejs/vite-plugin-svelte@6.2.1(svelte@5.43.14)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)))(svelte@5.43.14)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
       debug: 4.4.3(supports-color@8.1.1)
       deepmerge: 4.3.1
       magic-string: 0.30.21
       svelte: 5.43.14
-      vite: 7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
-      vitefu: 1.1.1(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
+      vite: 7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
+      vitefu: 1.1.1(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
     transitivePeerDependencies:
       - supports-color
 
@@ -20919,12 +20879,12 @@ snapshots:
       '@testing-library/dom': 8.20.1
       svelte: 3.30.1
 
-  '@testing-library/svelte@5.2.9(svelte@5.43.14)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.13)':
+  '@testing-library/svelte@5.2.9(svelte@5.43.14)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.13)':
     dependencies:
       '@testing-library/dom': 10.4.1
       svelte: 5.43.14
     optionalDependencies:
-      vite: 7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
+      vite: 7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
       vitest: 4.0.13(@types/node@24.10.1)(@vitest/browser-playwright@4.0.13)(jiti@1.21.7)(jsdom@27.2.0)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
 
   '@testing-library/user-event@13.5.0(@testing-library/dom@10.4.1)':
@@ -21737,7 +21697,7 @@ snapshots:
     dependencies:
       vite: 5.4.21(@types/node@24.10.1)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
-  '@vitejs/plugin-react@5.1.1(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))':
+  '@vitejs/plugin-react@5.1.1(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))':
     dependencies:
       '@babel/core': 7.28.5
       '@babel/plugin-transform-react-jsx-self': 7.27.1(@babel/core@7.28.5)
@@ -21745,7 +21705,7 @@ snapshots:
       '@rolldown/pluginutils': 1.0.0-beta.47
       '@types/babel__core': 7.20.5
       react-refresh: 0.18.0
-      vite: 7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
+      vite: 7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -21768,10 +21728,10 @@ snapshots:
       - vite
     optional: true
 
-  '@vitest/browser-playwright@4.0.12(playwright@1.56.1)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.12)':
+  '@vitest/browser-playwright@4.0.12(playwright@1.56.1)(vite@6.4.1(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.12)':
     dependencies:
-      '@vitest/browser': 4.0.12(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.12)
-      '@vitest/mocker': 4.0.12(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
+      '@vitest/browser': 4.0.12(vite@6.4.1(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.12)
+      '@vitest/mocker': 4.0.12(vite@6.4.1(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
       playwright: 1.56.1
       tinyrainbow: 3.0.3
       vitest: 4.0.12(@types/node@24.10.1)(@vitest/browser-playwright@4.0.12)(jiti@1.21.7)(jsdom@27.2.0)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
@@ -21782,23 +21742,10 @@ snapshots:
       - vite
     optional: true
 
-  '@vitest/browser-playwright@4.0.13(playwright@1.56.1)(vite@7.1.12(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.13)':
+  '@vitest/browser-playwright@4.0.13(playwright@1.56.1)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.13)':
     dependencies:
-      '@vitest/browser': 4.0.13(vite@7.1.12(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.13)
-      '@vitest/mocker': 4.0.13(vite@7.1.12(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
-      playwright: 1.56.1
-      tinyrainbow: 3.0.3
-      vitest: 4.0.13(@types/node@24.10.1)(@vitest/browser-playwright@4.0.13)(jiti@1.21.7)(jsdom@27.2.0)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
-    transitivePeerDependencies:
-      - bufferutil
-      - msw
-      - utf-8-validate
-      - vite
-
-  '@vitest/browser-playwright@4.0.13(playwright@1.56.1)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.13)':
-    dependencies:
-      '@vitest/browser': 4.0.13(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.13)
-      '@vitest/mocker': 4.0.13(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
+      '@vitest/browser': 4.0.13(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.13)
+      '@vitest/mocker': 4.0.13(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
       playwright: 1.56.1
       tinyrainbow: 3.0.3
       vitest: 4.0.13(@types/node@24.10.1)(@vitest/browser-playwright@4.0.13)(jiti@1.21.7)(jsdom@27.2.0)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
@@ -21846,9 +21793,9 @@ snapshots:
       - vite
     optional: true
 
-  '@vitest/browser@4.0.12(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.12)':
+  '@vitest/browser@4.0.12(vite@6.4.1(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.12)':
     dependencies:
-      '@vitest/mocker': 4.0.12(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
+      '@vitest/mocker': 4.0.12(vite@6.4.1(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
       '@vitest/utils': 4.0.12
       magic-string: 0.30.21
       pixelmatch: 7.1.0
@@ -21864,26 +21811,9 @@ snapshots:
       - vite
     optional: true
 
-  '@vitest/browser@4.0.13(vite@7.1.12(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.13)':
+  '@vitest/browser@4.0.13(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.13)':
     dependencies:
-      '@vitest/mocker': 4.0.13(vite@7.1.12(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
-      '@vitest/utils': 4.0.13
-      magic-string: 0.30.21
-      pixelmatch: 7.1.0
-      pngjs: 7.0.0
-      sirv: 3.0.2
-      tinyrainbow: 3.0.3
-      vitest: 4.0.13(@types/node@24.10.1)(@vitest/browser-playwright@4.0.13)(jiti@1.21.7)(jsdom@27.2.0)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
-      ws: 8.18.3
-    transitivePeerDependencies:
-      - bufferutil
-      - msw
-      - utf-8-validate
-      - vite
-
-  '@vitest/browser@4.0.13(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.13)':
-    dependencies:
-      '@vitest/mocker': 4.0.13(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
+      '@vitest/mocker': 4.0.13(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
       '@vitest/utils': 4.0.13
       magic-string: 0.30.21
       pixelmatch: 7.1.0
@@ -21953,23 +21883,14 @@ snapshots:
       magic-string: 0.30.21
     optionalDependencies:
       vite: 6.4.1(@types/node@22.19.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
-    optional: true
 
-  '@vitest/mocker@4.0.12(vite@7.2.2(@types/node@22.19.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))':
+  '@vitest/mocker@4.0.12(vite@6.4.1(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))':
     dependencies:
       '@vitest/spy': 4.0.12
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 7.2.2(@types/node@22.19.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
-
-  '@vitest/mocker@4.0.12(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))':
-    dependencies:
-      '@vitest/spy': 4.0.12
-      estree-walker: 3.0.3
-      magic-string: 0.30.21
-    optionalDependencies:
-      vite: 7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
+      vite: 6.4.1(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
 
   '@vitest/mocker@4.0.13(vite@6.4.1(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))':
     dependencies:
@@ -21979,21 +21900,13 @@ snapshots:
     optionalDependencies:
       vite: 6.4.1(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
 
-  '@vitest/mocker@4.0.13(vite@7.1.12(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))':
+  '@vitest/mocker@4.0.13(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))':
     dependencies:
       '@vitest/spy': 4.0.13
       estree-walker: 3.0.3
       magic-string: 0.30.21
     optionalDependencies:
-      vite: 7.1.12(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
-
-  '@vitest/mocker@4.0.13(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))':
-    dependencies:
-      '@vitest/spy': 4.0.13
-      estree-walker: 3.0.3
-      magic-string: 0.30.21
-    optionalDependencies:
-      vite: 7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
+      vite: 7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
 
   '@vitest/pretty-format@2.1.9':
     dependencies:
@@ -22873,7 +22786,7 @@ snapshots:
       schema-utils: 2.7.1
       webpack: 5.103.0(webpack-cli@6.0.1)
 
-  babel-loader@9.1.3(@babel/core@7.26.10)(webpack@5.94.0(esbuild@0.20.1)):
+  babel-loader@9.1.3(@babel/core@7.26.10)(webpack@5.94.0):
     dependencies:
       '@babel/core': 7.26.10
       find-cache-dir: 4.0.0
@@ -23837,7 +23750,7 @@ snapshots:
 
   copy-descriptor@0.1.1: {}
 
-  copy-webpack-plugin@11.0.0(webpack@5.94.0(esbuild@0.20.1)):
+  copy-webpack-plugin@11.0.0(webpack@5.94.0):
     dependencies:
       fast-glob: 3.3.2
       glob-parent: 6.0.2
@@ -23954,7 +23867,7 @@ snapshots:
       dom-serializer: 2.0.0
       domhandler: 5.0.3
       htmlparser2: 8.0.2
-      postcss: 8.4.35
+      postcss: 8.5.6
       postcss-media-query-parser: 0.2.3
 
   cross-env@10.1.0:
@@ -23997,14 +23910,14 @@ snapshots:
       postcss: 8.5.6
       postcss-selector-parser: 6.1.2
 
-  css-loader@6.10.0(webpack@5.94.0(esbuild@0.20.1)):
+  css-loader@6.10.0(webpack@5.94.0):
     dependencies:
-      icss-utils: 5.1.0(postcss@8.4.35)
-      postcss: 8.4.35
-      postcss-modules-extract-imports: 3.1.0(postcss@8.4.35)
-      postcss-modules-local-by-default: 4.2.0(postcss@8.4.35)
-      postcss-modules-scope: 3.2.1(postcss@8.4.35)
-      postcss-modules-values: 4.0.0(postcss@8.4.35)
+      icss-utils: 5.1.0(postcss@8.5.6)
+      postcss: 8.5.6
+      postcss-modules-extract-imports: 3.1.0(postcss@8.5.6)
+      postcss-modules-local-by-default: 4.2.0(postcss@8.5.6)
+      postcss-modules-scope: 3.2.1(postcss@8.5.6)
+      postcss-modules-values: 4.0.0(postcss@8.5.6)
       postcss-value-parser: 4.2.0
       semver: 7.7.3
     optionalDependencies:
@@ -26516,10 +26429,6 @@ snapshots:
   iconv-lite@0.7.0:
     dependencies:
       safer-buffer: 2.1.2
-
-  icss-utils@5.1.0(postcss@8.4.35):
-    dependencies:
-      postcss: 8.4.35
 
   icss-utils@5.1.0(postcss@8.5.6):
     dependencies:
@@ -29087,12 +28996,12 @@ snapshots:
     dependencies:
       graceful-fs: 4.2.11
 
-  karma-vite@1.0.5(karma@6.4.4)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)):
+  karma-vite@1.0.5(karma@6.4.4)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)):
     dependencies:
       connect: 3.7.0
       karma: 6.4.4
       local-pkg: 0.4.3
-      vite: 7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
+      vite: 7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
       vite-plugin-istanbul: 3.0.4
     transitivePeerDependencies:
       - supports-color
@@ -29293,7 +29202,7 @@ snapshots:
       - debug
       - supports-color
 
-  less-loader@11.1.0(less@4.2.0)(webpack@5.94.0(esbuild@0.20.1)):
+  less-loader@11.1.0(less@4.2.0)(webpack@5.94.0):
     dependencies:
       klona: 2.0.6
       less: 4.2.0
@@ -29345,7 +29254,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  license-webpack-plugin@4.0.2(webpack@5.94.0(esbuild@0.20.1)):
+  license-webpack-plugin@4.0.2(webpack@5.94.0):
     dependencies:
       webpack-sources: 3.3.3
     optionalDependencies:
@@ -29726,7 +29635,7 @@ snapshots:
 
   min-indent@1.0.1: {}
 
-  mini-css-extract-plugin@2.8.1(webpack@5.94.0(esbuild@0.20.1)):
+  mini-css-extract-plugin@2.8.1(webpack@5.94.0):
     dependencies:
       schema-utils: 4.3.3
       tapable: 2.3.0
@@ -31123,7 +31032,7 @@ snapshots:
       semver: 7.7.3
       webpack: 5.103.0(webpack-cli@6.0.1)
 
-  postcss-loader@8.1.1(postcss@8.4.35)(typescript@5.4.5)(webpack@5.94.0(esbuild@0.20.1)):
+  postcss-loader@8.1.1(postcss@8.4.35)(typescript@5.4.5)(webpack@5.94.0):
     dependencies:
       cosmiconfig: 9.0.0(typescript@5.4.5)
       jiti: 1.21.7
@@ -31182,20 +31091,9 @@ snapshots:
       postcss: 8.5.6
       postcss-selector-parser: 6.1.2
 
-  postcss-modules-extract-imports@3.1.0(postcss@8.4.35):
-    dependencies:
-      postcss: 8.4.35
-
   postcss-modules-extract-imports@3.1.0(postcss@8.5.6):
     dependencies:
       postcss: 8.5.6
-
-  postcss-modules-local-by-default@4.2.0(postcss@8.4.35):
-    dependencies:
-      icss-utils: 5.1.0(postcss@8.4.35)
-      postcss: 8.4.35
-      postcss-selector-parser: 7.1.0
-      postcss-value-parser: 4.2.0
 
   postcss-modules-local-by-default@4.2.0(postcss@8.5.6):
     dependencies:
@@ -31204,20 +31102,10 @@ snapshots:
       postcss-selector-parser: 7.1.0
       postcss-value-parser: 4.2.0
 
-  postcss-modules-scope@3.2.1(postcss@8.4.35):
-    dependencies:
-      postcss: 8.4.35
-      postcss-selector-parser: 7.1.0
-
   postcss-modules-scope@3.2.1(postcss@8.5.6):
     dependencies:
       postcss: 8.5.6
       postcss-selector-parser: 7.1.0
-
-  postcss-modules-values@4.0.0(postcss@8.4.35):
-    dependencies:
-      icss-utils: 5.1.0(postcss@8.4.35)
-      postcss: 8.4.35
 
   postcss-modules-values@4.0.0(postcss@8.5.6):
     dependencies:
@@ -32225,7 +32113,7 @@ snapshots:
       adjust-sourcemap-loader: 4.0.0
       convert-source-map: 1.9.0
       loader-utils: 2.0.4
-      postcss: 8.4.35
+      postcss: 8.5.6
       source-map: 0.6.1
 
   resolve-url@0.2.1: {}
@@ -32413,7 +32301,7 @@ snapshots:
     optionalDependencies:
       sass: 1.71.1
 
-  sass-loader@14.1.1(sass@1.71.1)(webpack@5.94.0(esbuild@0.20.1)):
+  sass-loader@14.1.1(sass@1.71.1)(webpack@5.94.0):
     dependencies:
       neo-async: 2.6.2
     optionalDependencies:
@@ -32814,7 +32702,7 @@ snapshots:
       source-map-js: 1.2.1
       webpack: 5.103.0(webpack-cli@6.0.1)
 
-  source-map-loader@5.0.0(webpack@5.94.0(esbuild@0.20.1)):
+  source-map-loader@5.0.0(webpack@5.94.0):
     dependencies:
       iconv-lite: 0.6.3
       source-map-js: 1.2.1
@@ -34410,7 +34298,7 @@ snapshots:
       terser: 5.44.1
       yaml: 2.8.1
 
-  vite@7.1.12(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1):
+  vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1):
     dependencies:
       esbuild: 0.25.12
       fdir: 6.5.0(picomatch@4.0.3)
@@ -34427,43 +34315,9 @@ snapshots:
       terser: 5.44.1
       yaml: 2.8.1
 
-  vite@7.2.2(@types/node@22.19.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1):
-    dependencies:
-      esbuild: 0.25.12
-      fdir: 6.5.0(picomatch@4.0.3)
-      picomatch: 4.0.3
-      postcss: 8.5.6
-      rollup: 4.53.3
-      tinyglobby: 0.2.15
+  vitefu@1.1.1(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)):
     optionalDependencies:
-      '@types/node': 22.19.1
-      fsevents: 2.3.3
-      jiti: 1.21.7
-      less: 4.2.0
-      sass: 1.71.1
-      terser: 5.44.1
-      yaml: 2.8.1
-
-  vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1):
-    dependencies:
-      esbuild: 0.25.12
-      fdir: 6.5.0(picomatch@4.0.3)
-      picomatch: 4.0.3
-      postcss: 8.5.6
-      rollup: 4.53.3
-      tinyglobby: 0.2.15
-    optionalDependencies:
-      '@types/node': 24.10.1
-      fsevents: 2.3.3
-      jiti: 1.21.7
-      less: 4.2.0
-      sass: 1.71.1
-      terser: 5.44.1
-      yaml: 2.8.1
-
-  vitefu@1.1.1(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)):
-    optionalDependencies:
-      vite: 7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
+      vite: 7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
 
   vitest-browser-react@2.0.2(@types/react-dom@19.2.3(@types/react@19.2.6))(@types/react@19.2.6)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(vitest@4.0.13):
     dependencies:
@@ -34554,7 +34408,7 @@ snapshots:
   vitest@4.0.12(@types/node@22.19.1)(@vitest/browser-playwright@4.0.12)(jiti@1.21.7)(jsdom@26.1.0)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1):
     dependencies:
       '@vitest/expect': 4.0.12
-      '@vitest/mocker': 4.0.12(vite@7.2.2(@types/node@22.19.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
+      '@vitest/mocker': 4.0.12(vite@6.4.1(@types/node@22.19.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
       '@vitest/pretty-format': 4.0.12
       '@vitest/runner': 4.0.12
       '@vitest/snapshot': 4.0.12
@@ -34571,7 +34425,7 @@ snapshots:
       tinyexec: 0.3.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.0.3
-      vite: 7.2.2(@types/node@22.19.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
+      vite: 6.4.1(@types/node@22.19.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 22.19.1
@@ -34594,7 +34448,7 @@ snapshots:
   vitest@4.0.12(@types/node@24.10.1)(@vitest/browser-playwright@4.0.12)(jiti@1.21.7)(jsdom@27.2.0)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1):
     dependencies:
       '@vitest/expect': 4.0.12
-      '@vitest/mocker': 4.0.12(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
+      '@vitest/mocker': 4.0.12(vite@6.4.1(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
       '@vitest/pretty-format': 4.0.12
       '@vitest/runner': 4.0.12
       '@vitest/snapshot': 4.0.12
@@ -34611,11 +34465,11 @@ snapshots:
       tinyexec: 0.3.2
       tinyglobby: 0.2.15
       tinyrainbow: 3.0.3
-      vite: 7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
+      vite: 6.4.1(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 24.10.1
-      '@vitest/browser-playwright': 4.0.12(playwright@1.56.1)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.12)
+      '@vitest/browser-playwright': 4.0.12(playwright@1.56.1)(vite@6.4.1(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.12)
       jsdom: 27.2.0
     transitivePeerDependencies:
       - jiti
@@ -34655,7 +34509,7 @@ snapshots:
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 24.10.1
-      '@vitest/browser-playwright': 4.0.13(playwright@1.56.1)(vite@7.2.2(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.13)
+      '@vitest/browser-playwright': 4.0.13(playwright@1.56.1)(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))(vitest@4.0.13)
       jsdom: 27.2.0
     transitivePeerDependencies:
       - jiti
@@ -34780,7 +34634,7 @@ snapshots:
       schema-utils: 4.3.3
       webpack: 5.94.0(esbuild@0.20.1)
 
-  webpack-dev-middleware@6.1.2(webpack@5.94.0(esbuild@0.20.1)):
+  webpack-dev-middleware@6.1.2(webpack@5.94.0):
     dependencies:
       colorette: 2.0.20
       memfs: 3.5.3
@@ -34904,7 +34758,7 @@ snapshots:
 
   webpack-sources@3.3.3: {}
 
-  webpack-subresource-integrity@5.1.0(html-webpack-plugin@5.6.5(webpack@5.94.0))(webpack@5.94.0(esbuild@0.20.1)):
+  webpack-subresource-integrity@5.1.0(html-webpack-plugin@5.6.5(webpack@5.94.0))(webpack@5.94.0):
     dependencies:
       typed-assert: 1.0.9
       webpack: 5.94.0(esbuild@0.20.1)
