@@ -40,6 +40,8 @@ export function createSuite(
     tasks: [],
     type: 'suite',
     file: createVitestFile(),
+    fullName: 'test/foo.test.ts > suite',
+    fullTestName: 'suite',
     ...overrides,
   };
 }
@@ -56,6 +58,7 @@ export function createVitestFile(
     mode: 'run',
     tasks: [],
     meta: {},
+    fullName: 'test/foo.test.ts',
     ...overrides,
   } as RunnerTestFile;
   file.file = file;
@@ -77,6 +80,8 @@ export function createVitestTest(
     file: createVitestFile(),
     annotations: [],
     artifacts: [],
+    fullName: 'test/foo.test.ts > name > test1',
+    fullTestName: 'name > test1',
     ...overrides,
   };
 }
