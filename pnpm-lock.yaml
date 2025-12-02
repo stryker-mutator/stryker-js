@@ -93,8 +93,8 @@ importers:
         specifier: 5.13.0
         version: 5.13.0
       jasmine-core:
-        specifier: 5.12.1
-        version: 5.12.1
+        specifier: 5.13.0
+        version: 5.13.0
       json-schema-to-typescript:
         specifier: 15.0.4
         version: 15.0.4
@@ -299,8 +299,8 @@ importers:
         specifier: 5.13.0
         version: 5.13.0
       jasmine-core:
-        specifier: 5.12.1
-        version: 5.12.1
+        specifier: 5.13.0
+        version: 5.13.0
       jest:
         specifier: 30.2.0
         version: 30.2.0(@types/node@24.10.1)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
@@ -1305,8 +1305,8 @@ importers:
         specifier: 7.7.1
         version: 7.7.1
       jasmine-core:
-        specifier: 5.12.1
-        version: 5.12.1
+        specifier: 5.13.0
+        version: 5.13.0
       karma:
         specifier: 6.4.4
         version: 6.4.4
