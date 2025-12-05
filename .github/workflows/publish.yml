@@ -12,7 +12,7 @@ jobs:
       contents: read
       id-token: write # to enable use of OIDC for npm provenance
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ./.github/setup
         with:
           install-chromium: false

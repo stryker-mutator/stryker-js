@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/core",
-  "version": "9.3.0",
+  "version": "9.4.0",
   "description": "The extendable JavaScript mutation testing framework",
   "type": "module",
   "files": [
@@ -66,7 +66,7 @@
     "stryker": "./bin/stryker.js"
   },
   "dependencies": {
-    "@inquirer/prompts": "^7.0.0",
+    "@inquirer/prompts": "^8.0.0",
     "@stryker-mutator/api": "workspace:*",
     "@stryker-mutator/instrumenter": "workspace:*",
     "@stryker-mutator/util": "workspace:*",
@@ -79,10 +79,10 @@
     "json-rpc-2.0": "^1.7.0",
     "lodash.groupby": "~4.6.0",
     "minimatch": "~10.1.0",
-    "mutation-server-protocol": "~0.3.0",
-    "mutation-testing-elements": "3.6.0",
-    "mutation-testing-metrics": "3.5.1",
-    "mutation-testing-report-schema": "3.5.1",
+    "mutation-server-protocol": "~0.4.0",
+    "mutation-testing-elements": "3.7.1",
+    "mutation-testing-metrics": "3.7.1",
+    "mutation-testing-report-schema": "3.7.1",
     "npm-run-path": "~6.0.0",
     "progress": "~2.0.3",
     "rxjs": "~7.8.1",
@@ -101,6 +101,6 @@
     "@types/node": "24.10.1",
     "@types/progress": "2.0.7",
     "@types/semver": "7.7.1",
-    "glob": "10.4.5"
+    "glob": "13.0.0"
   }
 }

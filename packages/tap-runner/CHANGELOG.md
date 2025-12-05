@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.4.0](https://github.com/stryker-mutator/stryker-js/compare/v9.3.0...v9.4.0) (2025-11-23)
+
+### Bug Fixes
+
+- **deps:** update dependency glob to v10.5.0 [security] ([#5613](https://github.com/stryker-mutator/stryker-js/issues/5613)) ([d59cbd5](https://github.com/stryker-mutator/stryker-js/commit/d59cbd533b3b390c2460b0f1d52c3bb1c9cc002a))
+- **deps:** update dependency glob to v13 ([#5633](https://github.com/stryker-mutator/stryker-js/issues/5633)) ([fe2f1b1](https://github.com/stryker-mutator/stryker-js/commit/fe2f1b1a371a8003d2530a6d5180241632a8f3ca))
+
 # [9.3.0](https://github.com/stryker-mutator/stryker-js/compare/v9.2.0...v9.3.0) (2025-10-28)
 
 **Note:** Version bump only for package @stryker-mutator/tap-runner

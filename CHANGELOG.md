@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.4.0](https://github.com/stryker-mutator/stryker-js/compare/v9.3.0...v9.4.0) (2025-11-23)
+
+### Bug Fixes
+
+- **deps:** update dependency @inquirer/prompts to v8 ([#5609](https://github.com/stryker-mutator/stryker-js/issues/5609)) ([c706aed](https://github.com/stryker-mutator/stryker-js/commit/c706aedbd4652a5cc91ab7d6e31cf9530969c319))
+- **deps:** update dependency angular-html-parser to ~10.1.0 ([#5630](https://github.com/stryker-mutator/stryker-js/issues/5630)) ([2233f00](https://github.com/stryker-mutator/stryker-js/commit/2233f00192599e78b0d05cc8436ecb4b106a8c0d))
+- **deps:** update dependency glob to v10.5.0 [security] ([#5613](https://github.com/stryker-mutator/stryker-js/issues/5613)) ([d59cbd5](https://github.com/stryker-mutator/stryker-js/commit/d59cbd533b3b390c2460b0f1d52c3bb1c9cc002a))
+- **deps:** update dependency glob to v13 ([#5633](https://github.com/stryker-mutator/stryker-js/issues/5633)) ([fe2f1b1](https://github.com/stryker-mutator/stryker-js/commit/fe2f1b1a371a8003d2530a6d5180241632a8f3ca))
+- **deps:** update dependency mutation-server-protocol to ~0.4.0 ([#5587](https://github.com/stryker-mutator/stryker-js/issues/5587)) ([f1650b3](https://github.com/stryker-mutator/stryker-js/commit/f1650b32b72bce4b3f6864591fb69f4282dd3ddd))
+- **vitest-runner:** detect suite-level failures when test is skipped ([#5588](https://github.com/stryker-mutator/stryker-js/issues/5588)) ([2b7e98d](https://github.com/stryker-mutator/stryker-js/commit/2b7e98d2a2254ec3e1556641f0920c0ed668bcd9))
+
+### Features
+
+- **vitest:** support vitest v4 ([#5360](https://github.com/stryker-mutator/stryker-js/issues/5360)) ([3ba417d](https://github.com/stryker-mutator/stryker-js/commit/3ba417d2595c41710ad79776732e59bcf391c231))
+
 # [9.3.0](https://github.com/stryker-mutator/stryker-js/compare/v9.2.0...v9.3.0) (2025-10-28)
 
 ### Bug Fixes

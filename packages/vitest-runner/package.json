@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/vitest-runner",
-  "version": "9.3.0",
+  "version": "9.4.0",
   "description": "A plugin to use the vitest test runner and framework in Stryker, the JavaScript mutation testing framework",
   "files": [
     "dist/schema",
@@ -48,13 +48,13 @@
   "homepage": "https://stryker-mutator.io/docs/stryker-js/vitest-runner",
   "devDependencies": {
     "@stryker-mutator/test-helpers": "workspace:*",
-    "@vitest/browser-playwright": "^4.0.12",
     "@types/node": "24.10.1",
-    "@vitest/browser": "3.1.4",
-    "react": "19.2.0",
+    "@vitest/browser": "4.0.13",
+    "@vitest/browser-playwright": "4.0.13",
+    "react": "19.2.1",
     "ts-node": "10.9.2",
-    "vite": "7.1.12",
-    "vitest": "4.0.12",
+    "vite": "7.2.4",
+    "vitest": "4.0.13",
     "vitest-browser-react": "2.0.2"
   },
   "peerDependencies": {

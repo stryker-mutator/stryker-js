@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { TestStatus } from '@stryker-mutator/api/test-runner';
+import { FailedTestResult, TestStatus } from '@stryker-mutator/api/test-runner';
 
 import {
   collectTestsFromSuite,
@@ -18,10 +18,78 @@ describe('vitest-helpers', () => {
   });
 
   describe(convertTestToTestResult.name, () => {
-    it('should have status skipped if taskState is skipped', () => {
-      const test = createVitestTest({ result: { state: 'skip' } });
-      const result = convertTestToTestResult(test);
-      expect(result.status).to.be.equal(TestStatus.Skipped);
+    describe('taskState of test is skipped', () => {
+      it('should have status skipped', () => {
+        const test = createVitestTest({ result: { state: 'skip' } });
+        const result = convertTestToTestResult(test);
+        expect(result.status).to.be.equal(TestStatus.Skipped);
+      });
+
+      it('should have status failed in a failed suite', () => {
+        const failureMessage =
+          "Cannot read properties of undefined (reading 'get')";
+        const suite = createSuite({
+          result: {
+            state: 'fail',
+            errors: [{ message: failureMessage }],
+          },
+        });
+        const test = createVitestTest({
+          suite,
+          result: { state: 'skip' },
+        });
+        const result = convertTestToTestResult(test);
+        expect(result.status).to.be.equal(TestStatus.Failed);
+        expect((result as FailedTestResult).failureMessage).to.be.equal(
+          failureMessage,
+        );
+      });
+
+      it('should have status failed in a deeply nested failed suite', () => {
+        const failureMessage =
+          "Cannot read properties of undefined (reading 'get')";
+        const rootSuite = createSuite({
+          result: {
+            state: 'fail',
+            errors: [{ message: failureMessage }],
+          },
+        });
+        const nestedSuite = createSuite({
+          suite: rootSuite,
+          result: { state: 'skip' },
+        });
+        const deeplyNestedSuite = createSuite({
+          suite: nestedSuite,
+          result: { state: 'skip' },
+        });
+        const test = createVitestTest({
+          suite: deeplyNestedSuite,
+          result: { state: 'skip' },
+        });
+        const result = convertTestToTestResult(test);
+        expect(result.status).to.be.equal(TestStatus.Failed);
+        expect((result as FailedTestResult).failureMessage).to.be.equal(
+          failureMessage,
+        );
+      });
+
+      it('should have default error message if suite failed without error message', () => {
+        const suite = createSuite({
+          result: {
+            state: 'fail',
+            errors: undefined,
+          },
+        });
+        const test = createVitestTest({
+          suite,
+          result: { state: 'skip' },
+        });
+        const result = convertTestToTestResult(test);
+        expect(result.status).to.be.equal(TestStatus.Failed);
+        expect((result as FailedTestResult).failureMessage).to.be.equal(
+          'StrykerJS: Suite execution failed',
+        );
+      });
     });
 
     it('should have status skipped if task state is todo', () => {
@@ -34,6 +102,12 @@ describe('vitest-helpers', () => {
       const test = createVitestTest({ result: undefined });
       const result = convertTestToTestResult(test);
       expect(result.status).to.be.equal(TestStatus.Failed);
+    });
+
+    it('should have status Success if task state is pass', () => {
+      const test = createVitestTest({ result: { state: 'pass' } });
+      const result = convertTestToTestResult(test);
+      expect(result.status).to.be.equal(TestStatus.Success);
     });
   });
 

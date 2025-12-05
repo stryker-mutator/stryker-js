@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/karma-runner",
-  "version": "9.3.0",
+  "version": "9.4.0",
   "description": "A plugin to use the karma test runner in Stryker, the JavaScript mutation testing framework",
   "files": [
     "dist/schema",
@@ -47,10 +47,10 @@
   "homepage": "https://stryker-mutator.io/docs/stryker-js/karma-runner",
   "devDependencies": {
     "@stryker-mutator/test-helpers": "workspace:*",
-    "@types/express": "5.0.5",
+    "@types/express": "5.0.6",
     "@types/node": "24.10.1",
     "@types/semver": "7.7.1",
-    "jasmine-core": "5.12.1",
+    "jasmine-core": "5.13.0",
     "karma": "6.4.4",
     "karma-chai": "0.1.0",
     "karma-chrome-launcher": "3.2.0",

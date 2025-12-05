@@ -10,7 +10,7 @@ jobs:
   core:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ./.github/setup
       - name: Build
         run: pnpm run build:no-check
@@ -22,7 +22,7 @@ jobs:
   dependencies_and_plugins:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ./.github/setup
       - name: Build
         run: pnpm run build:no-check
@@ -34,7 +34,7 @@ jobs:
   typescript-checker:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ./.github/setup
       - name: Build
         run: pnpm run build:no-check

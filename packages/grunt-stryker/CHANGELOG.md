@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.4.0](https://github.com/stryker-mutator/stryker-js/compare/v9.3.0...v9.4.0) (2025-11-23)
+
+**Note:** Version bump only for package grunt-stryker
+
 # [9.3.0](https://github.com/stryker-mutator/stryker-js/compare/v9.2.0...v9.3.0) (2025-10-28)
 
 **Note:** Version bump only for package grunt-stryker

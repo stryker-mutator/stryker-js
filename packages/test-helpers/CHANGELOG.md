@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.4.0](https://github.com/stryker-mutator/stryker-js/compare/v9.3.0...v9.4.0) (2025-11-23)
+
+### Features
+
+- **vitest:** support vitest v4 ([#5360](https://github.com/stryker-mutator/stryker-js/issues/5360)) ([3ba417d](https://github.com/stryker-mutator/stryker-js/commit/3ba417d2595c41710ad79776732e59bcf391c231))
+
 # [9.3.0](https://github.com/stryker-mutator/stryker-js/compare/v9.2.0...v9.3.0) (2025-10-28)
 
 **Note:** Version bump only for package @stryker-mutator/test-helpers
