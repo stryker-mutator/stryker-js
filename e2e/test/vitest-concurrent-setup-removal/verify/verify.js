@@ -8,6 +8,6 @@ describe('Verify stryker has ran correctly', () => {
   });
 
   it("should not have any warnings, errors or fatal logs, so doesn't create 'stryker.log'", () => {
-    expect(fs.existsSync('../stryker.log')).to.be.false;
+    expect(fs.existsSync('./stryker.log')).to.be.false;
   });
 });
