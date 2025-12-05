@@ -293,8 +293,10 @@ export class VitestTestRunner implements TestRunner {
   }
 
   public async dispose(): Promise<void> {
+    this.ctx?.onClose(async () => {
+      await fs.promises.rm(this.localSetupFile, { force: true });
+    });
     await this.ctx?.close();
-    await fs.promises.rm(this.localSetupFile, { force: true });
   }
 }
 
