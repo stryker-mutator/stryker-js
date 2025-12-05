@@ -1,0 +1,13 @@
+{
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "testRunner": "vitest",
+  "concurrency": 8,
+  "coverageAnalysis": "perTest",
+  "reporters": ["json"],
+  "fileLogLevel": "warn",
+  "mutate": [
+    "packages/**/!(*.+(s|S)pec|*.+(t|T)est).+(cjs|mjs|js|ts|jsx|tsx|html|vue)",
+    "!packages/**/vitest.*.js"
+  ],
+  "plugins": ["@stryker-mutator/vitest-runner"]
+}

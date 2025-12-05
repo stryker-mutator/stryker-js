@@ -1,0 +1,19 @@
+{
+  "name": "vitest-concurrent-setup-removal",
+  "version": "0.0.0",
+  "private": true,
+  "description": "An integration test for vitest setup removal using projects and >=2 test processes",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "clean:reports": "rimraf \"reports\"",
+    "test": "npm run clean:reports && stryker run && npm run verify",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test:unit": "vitest run"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "vitest": "4.0.12"
+  }
+}
