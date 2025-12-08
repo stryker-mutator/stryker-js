@@ -45,8 +45,8 @@ importers:
         specifier: 8.48.1
         version: 8.48.1(eslint@9.39.1(jiti@1.21.7))(typescript@5.9.3)
       '@vitejs/plugin-react':
-        specifier: 5.1.1
-        version: 5.1.1(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
+        specifier: 5.1.2
+        version: 5.1.2(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))
       c8:
         specifier: 10.1.3
         version: 10.1.3
@@ -4230,8 +4230,8 @@ packages:
   '@polka/url@1.0.0-next.29':
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
 
-  '@rolldown/pluginutils@1.0.0-beta.47':
-    resolution: {integrity: sha512-8QagwMH3kNCuzD8EWL8R2YPW5e4OrHNSAHRFDdmFqEwEaD/KcNKjVoumo+gP2vW5eKB2UPbM6vTYiGZX0ixLnw==}
+  '@rolldown/pluginutils@1.0.0-beta.53':
+    resolution: {integrity: sha512-vENRlFU4YbrwVqNDZ7fLvy+JR1CRkyr01jhSiDpE1u6py3OMzQfztQU2jxykW3ALNxO4kSlqIDeYyD0Y9RcQeQ==}
 
   '@rollup/plugin-babel@5.3.1':
     resolution: {integrity: sha512-WFfdLWU/xVWKeRQnKmIAQULUI7Il0gZnBIH/ZFO069wYIfPu+8zrfp/KMW0atmELoRDq8FbiP3VCss9MhCut7Q==}
@@ -5435,8 +5435,8 @@ packages:
     peerDependencies:
       vite: ^3.0.0 || ^4.0.0 || ^5.0.0
 
-  '@vitejs/plugin-react@5.1.1':
-    resolution: {integrity: sha512-WQfkSw0QbQ5aJ2CHYw23ZGkqnRwqKHD/KYsMeTkZzPT4Jcf0DcBxBtwMJxnu6E7oxw5+JC6ZAiePgh28uJ1HBA==}
+  '@vitejs/plugin-react@5.1.2':
+    resolution: {integrity: sha512-EcA07pHJouywpzsoTUqNh5NwGayl2PPVEJKUSinGGSxFGYn+shYbqMGBg6FXDqgXum9Ou/ecb+411ssw8HImJQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
     peerDependencies:
       vite: ^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
@@ -19966,7 +19966,7 @@ snapshots:
 
   '@polka/url@1.0.0-next.29': {}
 
-  '@rolldown/pluginutils@1.0.0-beta.47': {}
+  '@rolldown/pluginutils@1.0.0-beta.53': {}
 
   '@rollup/plugin-babel@5.3.1(@babel/core@7.28.5)(@types/babel__core@7.20.5)(rollup@2.79.2)':
     dependencies:
@@ -21863,12 +21863,12 @@ snapshots:
     dependencies:
       vite: 5.4.21(@types/node@24.10.1)(less@4.2.0)(sass@1.71.1)(terser@5.29.1)
 
-  '@vitejs/plugin-react@5.1.1(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))':
+  '@vitejs/plugin-react@5.1.2(vite@7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1))':
     dependencies:
       '@babel/core': 7.28.5
       '@babel/plugin-transform-react-jsx-self': 7.27.1(@babel/core@7.28.5)
       '@babel/plugin-transform-react-jsx-source': 7.27.1(@babel/core@7.28.5)
-      '@rolldown/pluginutils': 1.0.0-beta.47
+      '@rolldown/pluginutils': 1.0.0-beta.53
       '@types/babel__core': 7.20.5
       react-refresh: 0.18.0
       vite: 7.2.4(@types/node@24.10.1)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.1)
