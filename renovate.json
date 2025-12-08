@@ -1,6 +1,9 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:js-lib"],
+  "extends": [
+    "config:js-lib", 
+    "security:minimumReleaseAgeNpm"
+  ],
   "packageRules": [
     {
       "matchDepTypes": ["devDependencies"],
