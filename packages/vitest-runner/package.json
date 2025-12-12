@@ -51,7 +51,7 @@
     "@types/node": "24.10.3",
     "@vitest/browser": "4.0.13",
     "@vitest/browser-playwright": "4.0.13",
-    "react": "19.2.2",
+    "react": "19.2.3",
     "ts-node": "10.9.2",
     "vite": "7.2.4",
     "vitest": "4.0.13",
