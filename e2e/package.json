@@ -42,7 +42,7 @@
     "@vitest/browser-playwright": "4.0.13",
     "ajv": "8.17.1",
     "axios": "1.13.2",
-    "chai": "6.2.1",
+    "chai": "6.2.2",
     "chai-as-promised": "8.0.2",
     "chai-jest-snapshot": "2.0.0",
     "cross-env": "10.1.0",
