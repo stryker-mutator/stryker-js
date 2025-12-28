@@ -230,8 +230,8 @@ importers:
         specifier: 16.3.1
         version: 16.3.1(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       '@testing-library/svelte':
-        specifier: 5.3.0
-        version: 5.3.0(svelte@5.46.1)(vite@7.3.0(@types/node@24.10.4)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.2))(vitest@4.0.13)
+        specifier: 5.3.1
+        version: 5.3.1(svelte@5.46.1)(vite@7.3.0(@types/node@24.10.4)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.2))(vitest@4.0.13)
       '@tsconfig/svelte':
         specifier: 5.0.6
         version: 5.0.6
@@ -5027,8 +5027,8 @@ packages:
     peerDependencies:
       svelte: 3.x
 
-  '@testing-library/svelte@5.3.0':
-    resolution: {integrity: sha512-N1b+OAZNF34iMmtTbj5TyE0Ff+NJ/Mp6E483qOIeyzRUKOTcj2N5jEEl56RJeNq5jeQ4kZp/oMA0hCybXydrtQ==}
+  '@testing-library/svelte@5.3.1':
+    resolution: {integrity: sha512-8Ez7ZOqW5geRf9PF5rkuopODe5RGy3I9XR+kc7zHh26gBiktLaxTfKmhlGaSHYUOTQE7wFsLMN9xCJVCszw47w==}
     engines: {node: '>= 10'}
     peerDependencies:
       svelte: ^3 || ^4 || ^5 || ^5.0.0-next.0
@@ -15444,10 +15444,12 @@ packages:
 
   whatwg-encoding@1.0.5:
     resolution: {integrity: sha512-b5lim54JOPN9HtzvK9HFXvBma/rnfFeqsic0hSpjtDbVxR3dJKLc+KB4V6GgiGOvl7CY/KNh8rxSo9DKQrnUEw==}
+    deprecated: Use @exodus/bytes instead for a more spec-conformant and faster implementation
 
   whatwg-encoding@3.1.1:
     resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
     engines: {node: '>=18'}
+    deprecated: Use @exodus/bytes instead for a more spec-conformant and faster implementation
 
   whatwg-fetch@3.6.20:
     resolution: {integrity: sha512-EqhiFU6daOA8kpjOWTL0olhVOF3i7OrFzSYiGsEMB8GcXS+RrzauAERX65xMeNWVqxA6HXH2m69Z9LaKKdisfg==}
@@ -21422,7 +21424,7 @@ snapshots:
       '@testing-library/dom': 8.20.1
       svelte: 3.30.1
 
-  '@testing-library/svelte@5.3.0(svelte@5.46.1)(vite@7.3.0(@types/node@24.10.4)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.2))(vitest@4.0.13)':
+  '@testing-library/svelte@5.3.1(svelte@5.46.1)(vite@7.3.0(@types/node@24.10.4)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.2))(vitest@4.0.13)':
     dependencies:
       '@testing-library/dom': 10.4.1
       '@testing-library/svelte-core': 1.0.0(svelte@5.46.1)
