@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+ import { expect } from 'chai';
 
 import { blockStatementMutator as sut } from '../../../src/mutators/block-statement-mutator.js';
 import { expectJSMutation } from '../../helpers/expect-mutation.js';

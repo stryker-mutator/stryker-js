@@ -32,7 +32,9 @@ export const switchCaseMutantPlacer: MutantPlacer<types.SwitchCase> = {
     for (const [mutant, appliedMutant] of appliedMutants) {
       consequence = babel.types.ifStatement(
         mutantTestExpression(mutant.id),
-        babel.types.blockStatement(appliedMutant.consequent),
+        babel.types.blockStatement(
+          appliedMutant ? appliedMutant.consequent : [],
+        ),
         consequence,
       );
     }

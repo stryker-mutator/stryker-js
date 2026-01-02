@@ -52,7 +52,8 @@ export function expectJSMutation(
   babel.traverse(ast, {
     enter(path) {
       for (const replacement of sut.mutate(path)) {
-        const mutatedCode = generate(replacement).code;
+        // const mutatedCode = generate(replacement).code;
+        const mutatedCode = replacement ? generate(replacement).code : '';
         const beforeMutatedCode = originalCode.substring(
           0,
           path.node.start ?? 0,
@@ -60,6 +61,10 @@ export function expectJSMutation(
         const afterMutatedCode = originalCode.substring(path.node.end ?? 0);
         const mutant = `${beforeMutatedCode}${mutatedCode}${afterMutatedCode}`;
         mutants.push(mutant);
+
+        if (replacement === undefined) {
+          continue;
+        }
 
         for (const replacementNode of nodeSet(replacement, path)) {
           if (originalNodeSet.has(replacementNode)) {

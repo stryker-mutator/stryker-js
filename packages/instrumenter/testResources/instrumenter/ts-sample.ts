@@ -13,3 +13,9 @@ class Person {
     this.#name = value;
   }
 }
+
+const foo = () => {}
+
+foo();
+
+bar === 42 ? foo() : bar;

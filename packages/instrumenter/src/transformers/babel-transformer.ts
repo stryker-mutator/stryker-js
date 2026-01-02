@@ -27,7 +27,7 @@ import { AstTransformer } from './index.js';
 const { traverse } = babel;
 
 interface MutantsPlacement<TNode extends types.Node> {
-  appliedMutants: Map<Mutant, TNode>;
+  appliedMutants: Map<Mutant, TNode | undefined>;
   placer: MutantPlacer<TNode>;
 }
 
@@ -80,9 +80,9 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
         path.skip();
       } else {
         ignorerBookkeeper.enterNode(path);
-        addToPlacementMapIfPossible(path);
         if (shouldMutate(path)) {
           const mutantsToPlace = collectMutants(path);
+          addToPlacementMapIfPossible(path, mutantsToPlace);
           if (mutantsToPlace.length) {
             registerInPlacementMap(path, mutantsToPlace);
           }
@@ -116,11 +116,13 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
     }
   }
 
+  // https://ts-ast-viewer.com/#code/MYewdgzgLgBAHjAvDARgQwE5McgLAJhgH4YAzEEACgEoYAuVTAbgCg30sc9CTyraGHJkA
+
   /**
    * If this node can be used to place mutants on, add to the placement map
    */
-  function addToPlacementMapIfPossible(path: NodePath) {
-    const placer = mutantPlacers.find((p) => p.canPlace(path));
+  function addToPlacementMapIfPossible(path: NodePath, mutantsToPlace: Mutant[]) {
+    const placer = mutantPlacers.find((p) => p.canPlace(path, mutantsToPlace));
     if (placer) {
       placementMap.set(path.node, { appliedMutants: new Map(), placer });
     }

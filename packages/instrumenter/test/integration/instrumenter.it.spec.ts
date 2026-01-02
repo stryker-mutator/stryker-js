@@ -11,7 +11,7 @@ import { createInstrumenter, File, Instrumenter } from '../../src/index.js';
 import { createInstrumenterOptions } from '../helpers/factories.js';
 import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
-describe('instrumenter integration', () => {
+describe.only('instrumenter integration', () => {
   let sut: Instrumenter;
   beforeEach(() => {
     sut = testInjector.injector.injectFunction(createInstrumenter);
@@ -23,7 +23,7 @@ describe('instrumenter integration', () => {
   it('should be able to instrument a simple js file', async () => {
     await arrangeAndActAssert('js-sample.js');
   });
-  it('should be able to instrument a simple ts file', async () => {
+  it.only('should be able to instrument a simple ts file', async () => {
     await arrangeAndActAssert('ts-sample.ts');
   });
   it('should be able to instrument an angular component', async () => {

@@ -15,12 +15,14 @@ const generator = generate.default;
 export interface Mutable {
   mutatorName: string;
   ignoreReason?: string;
-  replacement: types.Node;
+  // replacement: types.Node;
+  replacement: types.Node | undefined;
 }
 
 export class Mutant implements Mutable {
   public readonly replacementCode: string;
-  public readonly replacement: types.Node;
+  // public readonly replacement: types.Node;
+  public readonly replacement: types.Node | undefined;
   public readonly mutatorName: string;
   public readonly ignoreReason: string | undefined;
 
@@ -34,7 +36,9 @@ export class Mutant implements Mutable {
     this.replacement = specs.replacement;
     this.mutatorName = specs.mutatorName;
     this.ignoreReason = specs.ignoreReason;
-    this.replacementCode = generator(this.replacement).code;
+    // this.replacementCode = generator(this.replacement).code;
+    this.replacementCode =
+      this.replacement === undefined ? '' : generator(this.replacement).code;
   }
 
   public toApiMutant(): ApiMutant {
@@ -66,7 +70,13 @@ export class Mutant implements Mutable {
         noScope: true,
         enter(path) {
           if (eqNode(path.node, original)) {
-            path.replaceWith(replacement);
+            // path.replaceWith(replacement);
+            if (replacement === undefined) {
+              path.remove();
+            } else {
+              path.replaceWith(replacement);
+            }
+
             path.stop();
             applied = true;
           }

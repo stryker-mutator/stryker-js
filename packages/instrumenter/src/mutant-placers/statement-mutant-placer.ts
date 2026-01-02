@@ -28,7 +28,7 @@ export const statementMutantPlacer: MutantPlacer<types.Statement> = {
     for (const [mutant, appliedMutant] of appliedMutants) {
       statement = t.ifStatement(
         mutantTestExpression(mutant.id),
-        t.blockStatement([appliedMutant]),
+        t.blockStatement(appliedMutant ? [appliedMutant] : []),
         statement,
       );
     }

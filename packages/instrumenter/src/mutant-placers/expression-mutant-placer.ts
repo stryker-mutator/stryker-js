@@ -179,6 +179,8 @@ function isValidExpression(path: NodePath<babel.types.Expression>) {
   }
 }
 
+const noop = types.unaryExpression('void', types.numericLiteral(0)); // or dummy function call with StrykerWasHere
+
 /**
  * Places the mutants with a conditional expression: `global.activeMutant === 1? mutatedCode : originalCode`;
  */
@@ -201,7 +203,7 @@ export const expressionMutantPlacer = {
     for (const [mutant, appliedMutant] of appliedMutants) {
       expression = types.conditionalExpression(
         mutantTestExpression(mutant.id),
-        appliedMutant,
+        appliedMutant === undefined ? noop : appliedMutant,
         expression,
       );
     }
