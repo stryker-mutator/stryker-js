@@ -59,6 +59,10 @@ interface RunFilter {
    * @see https://vitest.dev/guide/cli.html#vitest-related
    */
   relatedFiles?: string[];
+  /**
+   * Run only tests from the specified test files (absolute paths)
+   */
+  testFiles?: string[];
 }
 
 export class VitestTestRunner implements TestRunner {
@@ -110,18 +114,22 @@ export class VitestTestRunner implements TestRunner {
       bail: this.options.disableBail ? 0 : 1,
       onConsoleLog: () => false,
     });
-    this.ctx.provide('globalNamespace', this.globalNamespace);
-    this.ctx.config.browser.screenshotFailures = false;
-    this.ctx.projects.forEach((project) => {
+    this.ctx!.provide('globalNamespace', this.globalNamespace);
+    if (this.ctx!.config.browser) {
+      this.ctx!.config.browser.screenshotFailures = false;
+    }
+    this.ctx!.projects.forEach((project) => {
       project.config.setupFiles = [
         this.localSetupFile,
         ...project.config.setupFiles,
       ];
-      project.config.browser.screenshotFailures = false;
+      if (project.config.browser) {
+        project.config.browser.screenshotFailures = false;
+      }
     });
     if (this.log.isDebugEnabled()) {
       this.log.debug(
-        `vitest final config: ${JSON.stringify(this.ctx.config, null, 2)}`,
+        `vitest final config: ${JSON.stringify(this.ctx!.config, null, 2)}`,
       );
     }
   }
@@ -129,11 +137,20 @@ export class VitestTestRunner implements TestRunner {
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
     this.ctx!.provide('mode', 'dry-run');
 
-    const testResult = await this.run({ relatedFiles: options.files });
+    // If testFilter is provided, use those files directly instead of relying on related files
+    // We still need to pass relatedFiles for vitest to properly resolve the test files
+    const testResult =
+      options.testFilter && options.testFilter.length > 0
+        ? await this.run({
+            testFiles: options.testFilter,
+            relatedFiles: options.files,
+          })
+        : await this.run({ relatedFiles: options.files });
     if (
       testResult.status === DryRunStatus.Complete &&
       testResult.tests.length === 0 &&
-      this.options.vitest.related
+      this.options.vitest.related &&
+      !options.testFilter
     ) {
       this.log.warn(
         'Vitest failed to find test files related to mutated files. Either disable `vitest.related` or import your source files directly from your test files. See https://stryker-mutator.io/docs/stryker-js/troubleshooting/#vitest-failed-to-find-test-files-related-to-mutated-files',
@@ -167,20 +184,21 @@ export class VitestTestRunner implements TestRunner {
   private async run({
     testIds = [],
     relatedFiles,
+    testFiles: explicitTestFiles,
   }: RunFilter = {}): Promise<DryRunResult> {
     this.resetContext();
     this.ctx!.config.related =
       this.options.vitest.related && relatedFiles
         ? relatedFiles.map(normalizeFileName)
         : undefined;
-    let testFiles: string[] | undefined = undefined;
+    let testFilesToRun: string[] | undefined = explicitTestFiles;
     if (testIds.length > 0) {
       const parsedTests = testIds.map(fromTestId);
       const regexTestNameFilter = parsedTests
         .map(({ test: name }) => escapeRegExp(name))
         .join('|');
       const regex = new RegExp(regexTestNameFilter);
-      testFiles = parsedTests.map(({ file }) => file);
+      testFilesToRun = parsedTests.map(({ file }) => file);
       this.ctx!.projects.forEach((project) => {
         project.config.testNamePattern = regex;
       });
@@ -190,7 +208,7 @@ export class VitestTestRunner implements TestRunner {
       });
     }
     try {
-      await this.ctx!.start(testFiles);
+      await this.ctx!.start(testFilesToRun);
     } catch (error) {
       if (
         // No tests found, this isn't a problem, we can continue
@@ -201,7 +219,8 @@ export class VitestTestRunner implements TestRunner {
       }
     }
 
-    const tests = this.ctx!.state.getFiles()
+    const tests = this.ctx!.state
+      .getFiles()
       .flatMap((file) => collectTestsFromSuite(file))
       .filter((test) => test.result); // if no result: it was skipped because of bail
 

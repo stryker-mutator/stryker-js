@@ -544,6 +544,14 @@
         "type": "string"
       },
       "default": []
+    },
+    "testFiles": {
+      "description": "With `testFiles` you can limit which test files are executed during mutation testing. When specified, only tests from these files will be run, allowing you to verify that a module's dedicated unit tests can kill all its mutants independently. Glob patterns are supported.",
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
     }
   }
 }

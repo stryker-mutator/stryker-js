@@ -171,6 +171,24 @@ describe(DryRunExecutor.name, () => {
     });
   });
 
+  describe('testFilter', () => {
+    it('should pass testFiles as testFilter to the test runner', async () => {
+      const runResult = factory.completeDryRunResult();
+      runResult.tests.push(factory.successTestResult());
+      testRunnerMock.dryRun.resolves(runResult);
+      testInjector.options.testFiles = ['src/**/*.spec.ts'];
+      sandbox.sandboxFileFor
+        .withArgs('src/**/*.spec.ts')
+        .returns('.stryker-tmp/sandbox-123/src/**/*.spec.ts');
+
+      await sut.execute();
+
+      expect(testRunnerMock.dryRun).calledWithMatch({
+        testFilter: ['.stryker-tmp/sandbox-123/src/**/*.spec.ts'],
+      });
+    });
+  });
+
   describe('when the dryRun completes', () => {
     let runResult: CompleteDryRunResult;
 

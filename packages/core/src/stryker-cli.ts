@@ -188,6 +188,11 @@ export class StrykerCli {
         list,
       )
       .option(
+        '-t, --testFiles <testFilesToRun>',
+        "With `testFiles` you can limit which test files are executed during mutation testing. When specified, only tests from these files will be run. This allows you to verify that a module's dedicated unit tests can kill all its mutants independently.",
+        list,
+      )
+      .option(
         '-b, --buildCommand <command>',
         'Configure a build command to run after mutating the code, but before mutants are tested. This is generally used to transpile your code before testing.' +
           " Only configure this if your test runner doesn't take care of this already and you're not using just-in-time transpiler like `babel/register` or `ts-node`.",
