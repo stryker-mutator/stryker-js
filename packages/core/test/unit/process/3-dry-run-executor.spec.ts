@@ -177,7 +177,7 @@ describe(DryRunExecutor.name, () => {
       runResult.tests.push(factory.successTestResult());
       testRunnerMock.dryRun.resolves(runResult);
       testInjector.options.testFiles = ['src/**/*.spec.ts'];
-      sandbox.sandboxFileFor
+      sandbox.sandboxPatternFor
         .withArgs('src/**/*.spec.ts')
         .returns('.stryker-tmp/sandbox-123/src/**/*.spec.ts');
 

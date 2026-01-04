@@ -219,8 +219,7 @@ export class VitestTestRunner implements TestRunner {
       }
     }
 
-    const tests = this.ctx!.state
-      .getFiles()
+    const tests = this.ctx!.state.getFiles()
       .flatMap((file) => collectTestsFromSuite(file))
       .filter((test) => test.result); // if no result: it was skipped because of bail
 

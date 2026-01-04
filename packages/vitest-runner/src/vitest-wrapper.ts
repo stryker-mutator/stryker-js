@@ -5,7 +5,9 @@ import path from 'path';
 export type * from 'vitest/node';
 
 // Try to use vitest from the project's node_modules if available
-async function createVitestFromProject(...args: Parameters<typeof createVitestOriginal>) {
+async function createVitestFromProject(
+  ...args: Parameters<typeof createVitestOriginal>
+) {
   try {
     // Try to resolve vitest from the current working directory (the sandbox)
     const require = createRequire(path.join(process.cwd(), 'package.json'));
