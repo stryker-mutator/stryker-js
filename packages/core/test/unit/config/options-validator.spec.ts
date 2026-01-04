@@ -107,6 +107,7 @@ describe(OptionsValidator.name, () => {
         warnings: true,
         disableBail: false,
         ignorers: [],
+        testFiles: [],
       };
       expect(options).deep.eq(expectedOptions);
     });

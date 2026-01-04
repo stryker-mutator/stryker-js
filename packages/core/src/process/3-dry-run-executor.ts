@@ -154,6 +154,12 @@ export class DryRunExecutor {
     const dryRunFiles = objectUtils.map(project.filesToMutate, (_, name) =>
       this.sandbox.sandboxFileFor(name),
     );
+    const testFilter =
+      this.options.testFiles && this.options.testFiles.length > 0
+        ? this.options.testFiles.map((pattern) =>
+            this.sandbox.sandboxPatternFor(pattern),
+          )
+        : undefined;
     this.timer.mark(INITIAL_TEST_RUN_MARKER);
     this.log.info(
       `Starting initial test run (${this.options.testRunner} test runner with "${this.options.coverageAnalysis}" coverage analysis). This may take a while.`,
@@ -164,6 +170,7 @@ export class DryRunExecutor {
       coverageAnalysis: this.options.coverageAnalysis,
       disableBail: this.options.disableBail,
       files: dryRunFiles,
+      testFilter,
     });
     const grossTimeMS = this.timer.elapsedMs(INITIAL_TEST_RUN_MARKER);
     const capabilities = await testRunner.capabilities();
