@@ -114,22 +114,18 @@ export class VitestTestRunner implements TestRunner {
       bail: this.options.disableBail ? 0 : 1,
       onConsoleLog: () => false,
     });
-    this.ctx!.provide('globalNamespace', this.globalNamespace);
-    if (this.ctx!.config.browser) {
-      this.ctx!.config.browser.screenshotFailures = false;
-    }
-    this.ctx!.projects.forEach((project) => {
+    this.ctx.provide('globalNamespace', this.globalNamespace);
+    this.ctx.config.browser.screenshotFailures = false;
+    this.ctx.projects.forEach((project) => {
       project.config.setupFiles = [
         this.localSetupFile,
         ...project.config.setupFiles,
       ];
-      if (project.config.browser) {
-        project.config.browser.screenshotFailures = false;
-      }
+      project.config.browser.screenshotFailures = false;
     });
     if (this.log.isDebugEnabled()) {
       this.log.debug(
-        `vitest final config: ${JSON.stringify(this.ctx!.config, null, 2)}`,
+        `vitest final config: ${JSON.stringify(this.ctx.config, null, 2)}`,
       );
     }
   }
@@ -140,9 +136,9 @@ export class VitestTestRunner implements TestRunner {
     // If testFilter is provided, use those files directly instead of relying on related files
     // We still need to pass relatedFiles for vitest to properly resolve the test files
     const testResult =
-      options.testFilter && options.testFilter.length > 0
+      options.testFiles && options.testFiles.length > 0
         ? await this.run({
-            testFiles: options.testFilter,
+            testFiles: options.testFiles,
             relatedFiles: options.files,
           })
         : await this.run({ relatedFiles: options.files });
@@ -150,7 +146,7 @@ export class VitestTestRunner implements TestRunner {
       testResult.status === DryRunStatus.Complete &&
       testResult.tests.length === 0 &&
       this.options.vitest.related &&
-      !options.testFilter
+      !options.testFiles
     ) {
       this.log.warn(
         'Vitest failed to find test files related to mutated files. Either disable `vitest.related` or import your source files directly from your test files. See https://stryker-mutator.io/docs/stryker-js/troubleshooting/#vitest-failed-to-find-test-files-related-to-mutated-files',

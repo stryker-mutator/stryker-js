@@ -85,23 +85,6 @@ export class Sandbox implements Disposable {
     return sandboxFileName;
   }
 
-  /**
-   * Resolves a file pattern (e.g., test file glob) to its sandbox path.
-   * Falls back to path manipulation if the file is not in the sandbox fileMap.
-   * @param pattern The file pattern or path to resolve
-   */
-  public sandboxPatternFor(pattern: string): string {
-    try {
-      return this.sandboxFileFor(pattern);
-    } catch {
-      const cwd = process.cwd();
-      const absolutePattern = pattern.startsWith('/')
-        ? pattern
-        : path.join(cwd, pattern);
-      return absolutePattern.replace(cwd, this.workingDirectory);
-    }
-  }
-
   public originalFileFor(sandboxFileName: string): string {
     return path
       .resolve(sandboxFileName)

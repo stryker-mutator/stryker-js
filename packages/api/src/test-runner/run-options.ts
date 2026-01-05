@@ -21,9 +21,9 @@ export interface DryRunOptions extends RunOptions {
    */
   files?: string[];
   /**
-   * If provided, only tests matching these patterns will be executed.
+   * If provided, only tests from these files will be executed.
    */
-  testFilter?: string[];
+  testFiles?: string[];
 }
 
 export type MutantActivation = 'runtime' | 'static';

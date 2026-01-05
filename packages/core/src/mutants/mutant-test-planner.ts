@@ -68,9 +68,9 @@ export class MutantTestPlanner {
       this.testCoverage.testsById.values(),
     );
     this.globalTestFilter =
-      this.options.testFiles && this.options.testFiles.length > 0
-        ? this.options.testFiles.map((pattern) =>
-            this.sandbox.sandboxPatternFor(pattern),
+      this.project.testFiles.length > 0
+        ? this.project.testFiles.map((file) =>
+            this.sandbox.sandboxFileFor(file),
           )
         : undefined;
   }
