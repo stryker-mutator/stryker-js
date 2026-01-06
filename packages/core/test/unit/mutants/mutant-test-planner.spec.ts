@@ -459,9 +459,15 @@ describe(MutantTestPlanner.name, () => {
         // Arrange
         testCoverage.hasCoverage = false; // Coverage off
         const mutant = factory.mutant({ id: '1' });
+        const project = new Project(
+          fileSystemTestDouble,
+          fileSystemTestDouble.toFileDescriptions(),
+          undefined,
+          ['src/foo.spec.ts'],
+        );
 
         // Act
-        const [plan] = await act([mutant]);
+        const [plan] = await act([mutant], project);
 
         // Assert
         assertIsRunPlan(plan);
@@ -479,9 +485,15 @@ describe(MutantTestPlanner.name, () => {
         );
         testCoverage.addCoverage(1, ['spec1']); // Covered by spec1 (static)
         const mutant = factory.mutant({ id: '1' });
+        const project = new Project(
+          fileSystemTestDouble,
+          fileSystemTestDouble.toFileDescriptions(),
+          undefined,
+          ['src/foo.spec.ts'],
+        );
 
         // Act
-        const [plan] = await act([mutant]);
+        const [plan] = await act([mutant], project);
 
         // Assert
         assertIsRunPlan(plan);

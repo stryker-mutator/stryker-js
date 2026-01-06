@@ -31,6 +31,7 @@ import {
   escapeRegExp,
   normalizeFileName,
   notEmpty,
+  testFilesProvided,
 } from '@stryker-mutator/util';
 
 import { vitestWrapper, Vitest } from './vitest-wrapper.js';
@@ -135,13 +136,12 @@ export class VitestTestRunner implements TestRunner {
 
     // If testFilter is provided, use those files directly instead of relying on related files
     // We still need to pass relatedFiles for vitest to properly resolve the test files
-    const testResult =
-      options.testFiles && options.testFiles.length > 0
-        ? await this.run({
-            testFiles: options.testFiles,
-            relatedFiles: options.files,
-          })
-        : await this.run({ relatedFiles: options.files });
+    const testResult = testFilesProvided(options)
+      ? await this.run({
+          testFiles: options.testFiles,
+          relatedFiles: options.files,
+        })
+      : await this.run({ relatedFiles: options.files });
     if (
       testResult.status === DryRunStatus.Complete &&
       testResult.tests.length === 0 &&

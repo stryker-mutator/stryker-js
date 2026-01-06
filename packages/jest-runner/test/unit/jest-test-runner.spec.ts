@@ -120,12 +120,27 @@ describe(JestTestRunner.name, () => {
 
     it("should set bail = false (process is exited if we don't)", async () => {
       const sut = await arrangeInitializedSut();
-      await sut.dryRun({ coverageAnalysis: 'off' });
+      await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
       expect(jestTestAdapterMock.run).calledWithMatch(
         sinon.match({
           jestConfig: sinon.match({
             bail: false,
           }),
+        }),
+      );
+    });
+
+    it('should pass explicitTestFiles to the test adapter', async () => {
+      const sut = await arrangeInitializedSut();
+      await sut.dryRun(
+        factory.dryRunOptions({
+          coverageAnalysis: 'off',
+          testFiles: ['/path/to/test.js'],
+        }),
+      );
+      expect(jestTestAdapterMock.run).calledWithMatch(
+        sinon.match({
+          explicitTestFiles: ['/path/to/test.js'],
         }),
       );
     });

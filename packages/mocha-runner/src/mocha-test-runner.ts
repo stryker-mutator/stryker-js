@@ -5,7 +5,7 @@ import {
 } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
-import { I, escapeRegExp } from '@stryker-mutator/util';
+import { I, escapeRegExp, testFilesProvided } from '@stryker-mutator/util';
 
 import {
   TestRunner,
@@ -66,6 +66,10 @@ export class MochaTestRunner implements TestRunner {
     const mochaOptions = this.loader.load(
       this.options as MochaRunnerWithStrykerOptions,
     );
+    if (testFilesProvided(this.options)) {
+      mochaOptions.spec = this.options.testFiles;
+      delete mochaOptions.files;
+    }
     const testFileNames = this.mochaAdapter.collectFiles(mochaOptions);
     let rootHooks: RootHookObject | undefined;
     if (mochaOptions.require) {

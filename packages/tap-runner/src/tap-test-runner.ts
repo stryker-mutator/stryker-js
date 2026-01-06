@@ -31,7 +31,7 @@ import {
   StrykerOptions,
 } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
-import { normalizeFileName } from '@stryker-mutator/util';
+import { normalizeFileName, testFilesProvided } from '@stryker-mutator/util';
 
 import * as pluginTokens from './plugin-tokens.js';
 import {
@@ -117,7 +117,13 @@ export class TapTestRunner implements TestRunner {
   }
 
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
-    return this.run({ disableBail: options.disableBail, dryRun: true });
+    const testFilesToRun = testFilesProvided(options)
+      ? options.testFiles!
+      : this.testFiles;
+    return this.run(
+      { disableBail: options.disableBail, dryRun: true },
+      testFilesToRun,
+    );
   }
 
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
@@ -128,6 +134,7 @@ export class TapTestRunner implements TestRunner {
           activeMutant: options.activeMutant.id,
           hitLimit: options.hitLimit,
         },
+        this.testFiles,
         options.testFilter,
       ),
     );
@@ -135,9 +142,10 @@ export class TapTestRunner implements TestRunner {
 
   private async run(
     testOptions: TapRunOptions,
+    testFilesToRun: string[],
     testFilter?: string[],
   ): Promise<DryRunResult> {
-    const testFiles = testFilter ?? this.testFiles;
+    const testFiles = testFilter ?? testFilesToRun;
 
     const runs: TestResult[] = [];
     const totalCoverage: MutantCoverage = {

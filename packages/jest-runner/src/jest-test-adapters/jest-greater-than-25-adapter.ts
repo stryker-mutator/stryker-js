@@ -11,15 +11,18 @@ export class JestGreaterThan25TestAdapter implements JestTestAdapter {
   public async run({
     jestConfig,
     fileNamesUnderTest,
+    explicitTestFiles,
     testNamePattern,
     testLocationInResults,
   }: RunSettings): Promise<JestRunResult> {
     const config = JSON.stringify(jestConfig);
+    const testFilesToRun = explicitTestFiles ?? fileNamesUnderTest ?? [];
+    const shouldFindRelatedTests = !explicitTestFiles && !!fileNamesUnderTest;
     const result = await this.jestWrapper.runCLI(
       {
         $0: 'stryker',
-        _: fileNamesUnderTest ? fileNamesUnderTest : [],
-        findRelatedTests: !!fileNamesUnderTest,
+        _: testFilesToRun,
+        findRelatedTests: shouldFindRelatedTests,
         config,
         runInBand: true,
         silent: true,

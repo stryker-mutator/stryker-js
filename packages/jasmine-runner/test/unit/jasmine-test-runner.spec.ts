@@ -61,6 +61,12 @@ describe(JasmineTestRunner.name, () => {
     });
   });
 
+  describe('init', () => {
+    it('should resolve', async () => {
+      await expect(sut.init()).eventually.undefined;
+    });
+  });
+
   describe('mutantRun', () => {
     it('should configure jasmine on run', async () => {
       await actEmptyMutantRun();
@@ -195,6 +201,16 @@ describe(JasmineTestRunner.name, () => {
   });
 
   describe('dryRun', () => {
+    it('should use "testFiles" when provided', async () => {
+      jasmineStub.execute.resolves(createJasmineDoneInfo());
+
+      await sut.dryRun(
+        factory.dryRunOptions({ testFiles: ['some-file.spec.js'] }),
+      );
+
+      expect(jasmineStub.execute).calledWith(['some-file.spec.js']);
+    });
+
     it('should time spec duration', async () => {
       // Arrange
       clock.setSystemTime(new Date(2010, 1, 1));

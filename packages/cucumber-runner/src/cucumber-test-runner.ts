@@ -29,6 +29,7 @@ import {
   INSTRUMENTER_CONSTANTS,
   StrykerOptions,
 } from '@stryker-mutator/api/core';
+import { testFilesProvided } from '@stryker-mutator/util';
 import type {
   IConfiguration,
   IRunOptions,
@@ -108,9 +109,17 @@ export class CucumberTestRunner implements TestRunner {
     return { reloadEnvironment: false };
   }
 
+  public init(): Promise<void> {
+    return Promise.resolve();
+  }
+
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
     StrykerFormatter.coverageAnalysis = options.coverageAnalysis;
-    const result = await this.run(options.disableBail);
+    const result = await this.run(
+      options.disableBail,
+      undefined,
+      options.testFiles,
+    );
     if (
       result.status === DryRunStatus.Complete &&
       options.coverageAnalysis !== 'off'
@@ -131,6 +140,7 @@ export class CucumberTestRunner implements TestRunner {
   private async run(
     disableBail: boolean,
     testFilter?: string[],
+    testFiles?: string[],
   ): Promise<DryRunResult> {
     const href = semver.satisfies(cucumberVersion, '>=10')
       ? strykerFormatterFile.href
@@ -152,6 +162,7 @@ export class CucumberTestRunner implements TestRunner {
     config.sources.paths = this.determinePaths(
       testFilter,
       config.sources.paths,
+      testFiles,
     );
 
     if (this.logger.isDebugEnabled()) {
@@ -198,6 +209,7 @@ export class CucumberTestRunner implements TestRunner {
   private determinePaths(
     testFilter: string[] | undefined,
     defaultPaths: string[],
+    testFiles?: string[],
   ): string[] {
     if (testFilter) {
       return Object.entries(
@@ -210,6 +222,8 @@ export class CucumberTestRunner implements TestRunner {
           return acc;
         }, {}),
       ).map(([fileName, lines]) => [fileName, ...lines].join(':'));
+    } else if (testFilesProvided({ testFiles })) {
+      return testFiles!;
     } else if (this.options.features) {
       return this.options.features;
     } else {

@@ -17,6 +17,7 @@ import {
   TestRunnerCapabilities,
 } from '@stryker-mutator/api/test-runner';
 import type { Config } from 'karma';
+import { testFilesProvided } from '@stryker-mutator/util';
 
 import { StrykerKarmaSetup } from '../src-generated/karma-runner-options.js';
 
@@ -48,6 +49,7 @@ export class KarmaTestRunner implements TestRunner {
   private exitPromise: Promise<number> | undefined;
   private runConfig!: Config;
   private isDisposed = false;
+  private readonly testFilesProvided: boolean;
 
   public static inject = tokens(
     commonTokens.logger,
@@ -61,6 +63,7 @@ export class KarmaTestRunner implements TestRunner {
     options: StrykerOptions,
     private readonly starter: ProjectStarter,
   ) {
+    this.testFilesProvided = testFilesProvided(options);
     const setup = this.loadSetup(options);
     configureKarma.setGlobals({
       getLogger,
@@ -75,6 +78,11 @@ export class KarmaTestRunner implements TestRunner {
   }
 
   public async init(): Promise<void> {
+    if (this.testFilesProvided) {
+      throw new Error(
+        `The karma test runner does not support the --testFiles option.`,
+      );
+    }
     const version = semver.coerce(karma.VERSION);
     if (!version || semver.lt(version, MIN_KARMA_VERSION)) {
       throw new Error(

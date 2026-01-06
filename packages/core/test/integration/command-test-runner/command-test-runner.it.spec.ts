@@ -14,7 +14,7 @@ describe(`${CommandTestRunner.name} integration`, () => {
   describe(CommandTestRunner.prototype.dryRun.name, () => {
     it('should report test as successful', async () => {
       const sut = createSut();
-      const result = await sut.dryRun();
+      const result = await sut.dryRun(factory.dryRunOptions());
       assertions.expectCompleted(result);
       expect(result.tests).lengthOf(1);
       expect(result.tests[0].status).eq(TestStatus.Success);
@@ -25,7 +25,7 @@ describe(`${CommandTestRunner.name} integration`, () => {
 
     it('should report test as failed if exit code != 0', async () => {
       const sut = createSut({ command: 'npm run fail' });
-      const result = await sut.dryRun();
+      const result = await sut.dryRun(factory.dryRunOptions());
       assertions.expectCompleted(result);
       expect(result.tests).lengthOf(1);
       expect(TestStatus[result.tests[0].status]).eq(
@@ -41,7 +41,7 @@ describe(`${CommandTestRunner.name} integration`, () => {
       // Arrange
       const killSpy = sinon.spy(objectUtils, 'kill');
       const sut = createSut({ command: 'npm run wait' });
-      const runPromise = sut.dryRun();
+      const runPromise = sut.dryRun(factory.dryRunOptions());
 
       // Act
       await sut.dispose();
