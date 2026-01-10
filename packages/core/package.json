@@ -91,7 +91,7 @@
     "tree-kill": "~1.2.2",
     "tslib": "2.8.1",
     "typed-inject": "~5.0.0",
-    "typed-rest-client": "~2.1.0"
+    "typed-rest-client": "~2.2.0"
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "workspace:*",
