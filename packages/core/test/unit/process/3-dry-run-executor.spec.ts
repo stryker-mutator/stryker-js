@@ -171,6 +171,40 @@ describe(DryRunExecutor.name, () => {
     });
   });
 
+  describe('testFilter', () => {
+    it('should pass testFiles as testFilter to the test runner', async () => {
+      const runResult = factory.completeDryRunResult();
+      runResult.tests.push(factory.successTestResult());
+      testRunnerMock.dryRun.resolves(runResult);
+
+      // Create a project with testFiles
+      const fsTestDouble = new FileSystemTestDouble({
+        'bar.js': 'console.log("bar")',
+        'src/app.spec.ts': 'test("foo", () => {})',
+      });
+      const testFilePath = '/absolute/path/src/app.spec.ts';
+      const projectWithTestFiles = new Project(
+        fsTestDouble,
+        fsTestDouble.toFileDescriptions(),
+        undefined,
+        [testFilePath],
+      );
+      injectorMock.resolve
+        .withArgs(coreTokens.project)
+        .returns(projectWithTestFiles);
+
+      sandbox.sandboxFileFor
+        .withArgs(testFilePath)
+        .returns('.stryker-tmp/sandbox-123/src/app.spec.ts');
+
+      await sut.execute();
+
+      expect(testRunnerMock.dryRun).calledWithMatch({
+        testFiles: ['.stryker-tmp/sandbox-123/src/app.spec.ts'],
+      });
+    });
+  });
+
   describe('when the dryRun completes', () => {
     let runResult: CompleteDryRunResult;
 

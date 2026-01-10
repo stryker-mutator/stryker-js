@@ -27,7 +27,7 @@ import {
   TestRunnerCapabilities,
   MutantActivation,
 } from '@stryker-mutator/api/test-runner';
-import { errorToString } from '@stryker-mutator/util';
+import { errorToString, testFilesProvided } from '@stryker-mutator/util';
 import jasmine from 'jasmine';
 
 import { JasmineRunnerOptions } from '../src-generated/jasmine-runner-options.js';
@@ -79,6 +79,10 @@ export class JasmineTestRunner implements TestRunner {
     return { reloadEnvironment: false };
   }
 
+  public init(): Promise<void> {
+    return Promise.resolve();
+  }
+
   public dryRun(options: DryRunOptions): Promise<DryRunResult> {
     return this.run(
       undefined,
@@ -86,6 +90,7 @@ export class JasmineTestRunner implements TestRunner {
       options.disableBail,
       undefined,
       undefined,
+      options.testFiles,
     );
   }
 
@@ -114,6 +119,7 @@ export class JasmineTestRunner implements TestRunner {
     disableBail: boolean,
     activeMutantId: string | undefined,
     mutantActivation: MutantActivation | undefined,
+    testFiles?: string[],
   ): Promise<DryRunResult> {
     try {
       if (!this.jasmine) {
@@ -161,7 +167,11 @@ export class JasmineTestRunner implements TestRunner {
       };
       jasmineInstance.env.clearReporters();
       jasmineInstance.env.addReporter(reporter);
-      await jasmineInstance.execute();
+      if (testFilesProvided({ testFiles })) {
+        await jasmineInstance.execute([...testFiles!]);
+      } else {
+        await jasmineInstance.execute();
+      }
       if (!result) {
         throw new Error(
           'Jasmine reporter didn\'t report "jasmineDone", this shouldn\'t happen',

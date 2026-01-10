@@ -6,6 +6,7 @@ export interface RunSettings {
   jestConfig: Config.InitialOptions;
   testNamePattern?: string;
   fileNamesUnderTest?: string[];
+  explicitTestFiles?: string[]; // Added: used for --testFiles
   testLocationInResults?: boolean;
 }
 

@@ -52,6 +52,7 @@ export class MutantTestPlanner {
     commonTokens.logger,
   );
   private readonly timeSpentAllTests: number;
+  private readonly globalTestFilter: string[] | undefined;
 
   constructor(
     private readonly testCoverage: I<TestCoverage>,
@@ -66,6 +67,12 @@ export class MutantTestPlanner {
     this.timeSpentAllTests = calculateTotalTime(
       this.testCoverage.testsById.values(),
     );
+    this.globalTestFilter =
+      this.project.testFiles.length > 0
+        ? this.project.testFiles.map((file) =>
+            this.sandbox.sandboxFileFor(file),
+          )
+        : undefined;
   }
 
   public async makePlan(
@@ -118,12 +125,14 @@ export class MutantTestPlanner {
           netTime: this.timeSpentAllTests,
           isStatic,
           coveredBy,
+          testFilter: this.globalTestFilter,
         });
       }
     } else {
       // No coverage information exists, all tests need to run
       return this.createMutantRunPlan(mutant, {
         netTime: this.timeSpentAllTests,
+        testFilter: this.globalTestFilter,
       });
     }
   }
@@ -177,6 +186,11 @@ export class MutantTestPlanner {
     const hitLimit =
       hitCount === undefined ? undefined : hitCount * HIT_LIMIT_FACTOR;
 
+    // Hot swap is only safe when:
+    // 1. We have a specific test filter (not running all tests)
+    // 2. The mutant is NOT static (static mutants require full reload)
+    const canHotSwap = !!testFilter && isStatic === false;
+
     return {
       plan: PlanKind.Run,
       netTime,
@@ -200,7 +214,7 @@ export class MutantTestPlanner {
         sandboxFileName: this.sandbox.sandboxFileFor(mutant.fileName),
         hitLimit,
         disableBail,
-        reloadEnvironment: !testFilter,
+        reloadEnvironment: !canHotSwap,
       },
     };
   }
