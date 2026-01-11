@@ -32,22 +32,22 @@ if (mode === 'mutant') {
       ns.activeMutant = inject('activeMutant');
     });
   }
-  afterAll((suite) => {
-    suite.meta.hitCount = ns.hitCount;
+  afterAll(({ meta }) => {
+    meta.hitCount = ns.hitCount;
   });
 } else {
   ns.activeMutant = undefined;
 
-  beforeEach((test) => {
-    ns.currentTestId = toRawTestId(test.task);
+  beforeEach(({ task }) => {
+    ns.currentTestId = toRawTestId(task);
   });
 
   afterEach(() => {
     ns.currentTestId = undefined;
   });
 
-  afterAll((suite) => {
-    suite.meta.mutantCoverage = ns.mutantCoverage;
+  afterAll(({ meta }) => {
+    meta.mutantCoverage = ns.mutantCoverage;
   });
 }
 

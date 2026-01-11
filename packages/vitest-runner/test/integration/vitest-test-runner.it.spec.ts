@@ -450,4 +450,67 @@ describe('VitestRunner integration', () => {
       ]);
     });
   });
+
+  // Vitest fixtures (test.extend) require hooks like beforeEach to use object destructuring,
+  // e.g. ({ task }) => {} instead of (test) => {}, otherwise Vitest throws an error.
+  describe('using vitest fixtures', () => {
+    const test1 =
+      'tests/math-with-fixtures.spec.ts#math with fixtures should be able to add two numbers using fixture';
+    const test2 =
+      'tests/math-with-fixtures.spec.ts#math with fixtures should be able to add negative numbers using fixture';
+
+    beforeEach(async () => {
+      sandbox = new TempTestDirectorySandbox('vitest-fixtures');
+      await sandbox.init();
+    });
+
+    it('should run tests that use vitest fixtures', async () => {
+      await sut.init();
+      const runResult = await sut.dryRun(factory.dryRunOptions());
+      assertions.expectCompleted(runResult);
+      expect(runResult.tests).lengthOf(2);
+      assertions.expectTestResults(runResult, [
+        {
+          id: test1,
+          status: TestStatus.Success,
+        },
+        {
+          id: test2,
+          status: TestStatus.Success,
+        },
+      ]);
+    });
+
+    it('should report mutant coverage for tests using fixtures', async () => {
+      await sut.init();
+      const runResult = await sut.dryRun(factory.dryRunOptions());
+      assertions.expectCompleted(runResult);
+      expect(runResult.mutantCoverage).to.deep.include({
+        perTest: {
+          [test1]: {
+            '1': 1,
+            '2': 1,
+          },
+          [test2]: {
+            '1': 1,
+            '2': 1,
+          },
+        },
+      });
+    });
+
+    it('should be able to kill a mutant in fixture-based tests', async () => {
+      await sut.init();
+      const runResult = await sut.mutantRun(
+        factory.mutantRunOptions({
+          activeMutant: factory.mutant({ id: '2' }),
+          sandboxFileName: path.resolve(sandbox.tmpDir, 'math.ts'),
+          mutantActivation: 'runtime',
+          testFilter: [test1],
+        }),
+      );
+      assertions.expectKilled(runResult);
+      expect(runResult.killedBy).deep.eq([test1]);
+    });
+  });
 });
