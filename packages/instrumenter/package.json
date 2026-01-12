@@ -47,7 +47,7 @@
     "@babel/preset-typescript": "~7.28.0",
     "@stryker-mutator/api": "workspace:*",
     "@stryker-mutator/util": "workspace:*",
-    "angular-html-parser": "~10.2.0",
+    "angular-html-parser": "~10.3.0",
     "semver": "~7.7.0",
     "weapon-regex": "~1.3.2"
   },
