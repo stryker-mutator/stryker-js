@@ -222,13 +222,12 @@ export class MutationTestReportHelper {
       testFiles: await this.toTestFiles(remapTestId),
       projectRoot: process.cwd(),
       config: this.options,
-      // The report schema doesn't (yet) include this in our pinned version. We still include it in the json output.
-      performance: performanceStats as unknown as never,
+      performance: performanceStats,
       framework: {
         ...STRYKER_FRAMEWORK,
         dependencies: this.discoverDependencies(),
       },
-    } as schema.MutationTestResult;
+    };
   }
 
   private async toFileResults(
