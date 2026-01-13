@@ -115,9 +115,8 @@ export class MutationTestExecutor {
         earlyResult$,
       ).pipe(toArray()),
     );
-    await this.mutationTestReportHelper.reportAll(results);
-    await this.reporter.wrapUp();
-    this.logDone();
+    // Note: reportAll, wrapUp, and logDone are now called from Stryker.run()
+    // after performance statistics are calculated
     return results;
   }
 

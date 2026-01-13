@@ -489,20 +489,6 @@ describe(MutationTestExecutor.name, () => {
     });
   });
 
-  it('should log a done message when it is done', async () => {
-    // Arrange
-    timerMock.humanReadableElapsed.returns('2 seconds, tops!');
-
-    // Act
-    await sut.execute();
-
-    // Assert
-    expect(testInjector.logger.info).calledWithExactly(
-      'Done in %s.',
-      '2 seconds, tops!',
-    );
-  });
-
   it('should short circuit when dryRunOnly is enabled', async () => {
     // Arrange
     testInjector.options.dryRunOnly = true;

@@ -41,6 +41,9 @@ describe(Stryker.name, () => {
   let mutantInstrumenterExecutorMock: sinon.SinonStubbedInstance<MutantInstrumenterExecutor>;
   let dryRunExecutorMock: sinon.SinonStubbedInstance<DryRunExecutor>;
   let mutationTestExecutorMock: sinon.SinonStubbedInstance<MutationTestExecutor>;
+  let mutationTestReportHelperMock: { reportAll: sinon.SinonStub };
+  let reporterMock: { wrapUp: sinon.SinonStub };
+  let timerMock: { humanReadableElapsed: sinon.SinonStub };
 
   beforeEach(() => {
     injectorMock = factory.injector();
@@ -55,6 +58,9 @@ describe(Stryker.name, () => {
     );
     dryRunExecutorMock = sinon.createStubInstance(DryRunExecutor);
     mutationTestExecutorMock = sinon.createStubInstance(MutationTestExecutor);
+    mutationTestReportHelperMock = { reportAll: sinon.stub().resolves() };
+    reporterMock = { wrapUp: sinon.stub().resolves() };
+    timerMock = { humanReadableElapsed: sinon.stub().returns('1 second') };
     injectorMock.injectClass
       .withArgs(PrepareExecutor)
       .returns(prepareExecutorMock)
@@ -67,8 +73,16 @@ describe(Stryker.name, () => {
     injectorMock.resolve
       .withArgs(commonTokens.getLogger)
       .returns(getLoggerStub)
+      .withArgs(commonTokens.logger)
+      .returns(loggerMock)
       .withArgs(coreTokens.temporaryDirectory)
       .returns(temporaryDirectoryMock)
+      .withArgs(coreTokens.mutationTestReportHelper)
+      .returns(mutationTestReportHelperMock as any)
+      .withArgs(coreTokens.reporter)
+      .returns(reporterMock as any)
+      .withArgs(coreTokens.timer)
+      .returns(timerMock as any)
       .withArgs(commonTokens.options)
       .returns(testInjector.options)
       .withArgs(coreTokens.loggingServer)

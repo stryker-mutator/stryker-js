@@ -573,7 +573,12 @@ describe(MutationTestReportHelper.name, () => {
       input: MutantResult[] = [],
     ): Promise<Parameters<Required<Reporter>['onMutationTestReportReady']>> {
       const sut = createSut();
-      await sut.reportAll(input);
+      const mockPerformanceStats = {
+        setup: 100,
+        initialRun: 200,
+        mutation: 300,
+      };
+      await sut.reportAll(input, mockPerformanceStats);
       return reporterMock.onMutationTestReportReady.firstCall.args;
     }
   });

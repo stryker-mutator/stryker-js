@@ -25,6 +25,20 @@ describe('Verify stryker has ran correctly', () => {
     expectExists('reports/mutation/mutation.json');
   });
 
+  it('should have performance statistics in the report', async () => {
+    const report = JSON.parse(
+      await fs.promises.readFile('reports/mutation/mutation.json', 'utf8'),
+    );
+
+    expect(report).to.have.property('performance');
+    expect(report.performance).to.have.property('setup');
+    expect(report.performance).to.have.property('initialRun');
+    expect(report.performance).to.have.property('mutation');
+    expect(report.performance.setup).to.be.a('number');
+    expect(report.performance.initialRun).to.be.a('number');
+    expect(report.performance.mutation).to.be.a('number');
+  });
+
   it('should report json report with expected results', async () => {
     const result = await readMutationTestingJsonResult();
     const files = Object.fromEntries(

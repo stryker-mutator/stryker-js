@@ -153,8 +153,11 @@ export class MutationTestReportHelper {
     }
   }
 
-  public async reportAll(results: MutantResult[]): Promise<void> {
-    const report = await this.mutationTestReport(results);
+  public async reportAll(
+    results: MutantResult[],
+    performanceStats: schema.PerformanceStatistics,
+  ): Promise<void> {
+    const report = await this.mutationTestReport(results, performanceStats);
     const metrics = calculateMutationTestMetrics(report);
     this.reporter.onMutationTestReportReady(report, metrics);
     if (this.options.incremental) {
@@ -197,6 +200,7 @@ export class MutationTestReportHelper {
 
   private async mutationTestReport(
     results: readonly MutantResult[],
+    performanceStats: schema.PerformanceStatistics,
   ): Promise<schema.MutationTestResult> {
     // Mocha, jest and karma use test titles as test ids.
     // This can mean a lot of duplicate strings in the json report.
@@ -218,11 +222,13 @@ export class MutationTestReportHelper {
       testFiles: await this.toTestFiles(remapTestId),
       projectRoot: process.cwd(),
       config: this.options,
+      // The report schema doesn't (yet) include this in our pinned version. We still include it in the json output.
+      performance: performanceStats as unknown as never,
       framework: {
         ...STRYKER_FRAMEWORK,
         dependencies: this.discoverDependencies(),
       },
-    };
+    } as schema.MutationTestResult;
   }
 
   private async toFileResults(
