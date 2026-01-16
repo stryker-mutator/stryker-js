@@ -4,6 +4,6 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "mocha verify.js"
+    "test": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   }
 }
