@@ -70,6 +70,7 @@ describe('Filtering tests with --testFiles', () => {
         jest: {
           configFile: 'jest.config.js',
         },
+        tempDirName: 'not-ignored-temp-dir', // Default temp dir is ignored by jest due to being hidden (Windows-only)
       });
 
       const result = await stryker.runMutationTest();
@@ -89,6 +90,7 @@ describe('Filtering tests with --testFiles', () => {
         jest: {
           configFile: 'jest.config.js',
         },
+        tempDirName: 'not-ignored-temp-dir', // Default temp dir is ignored by jest due to being hidden (Windows-only)
       });
 
       const result = await stryker.runMutationTest();
