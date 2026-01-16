@@ -1,6 +1,0 @@
-/node_modules
-/dist
-/reports
-package.lock.json
-package.json
-.eslintrc.js

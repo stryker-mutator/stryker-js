@@ -1,8 +1,8 @@
 import { Resource } from './pool.js';
 
-export abstract class ResourceDecorator<T extends Resource>
-  implements Resource
-{
+export abstract class ResourceDecorator<
+  T extends Resource,
+> implements Resource {
   protected innerResource: T;
 
   constructor(private readonly producer: () => T) {
