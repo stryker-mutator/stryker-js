@@ -53,6 +53,8 @@ You might run into issues like this when using the `@stryker-mutator/jest-runner
 > Run with `--passWithNoTests` to exit with code 0
 > ```
 
+This issue specifically occurs on Windows machines because Jest doesn't match hidden folders, and by default Stryker uses `.stryker-tmp` as the temporary directory name (which is hidden due to the leading dot).
+
 You will need to override the `tempDirName` to a directory without a `.` in front of it.
 
 ```json
