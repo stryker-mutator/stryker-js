@@ -5,8 +5,5 @@
   "type": "module",
   "scripts": {
     "test": "mocha verify.js"
-  },
-  "devDependencies": {
-    "jest": "^30.2.0"
   }
 }

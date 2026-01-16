@@ -848,6 +848,8 @@ importers:
 
   e2e/test/tap-using-node-test: {}
 
+  e2e/test/test-files-filtering: {}
+
   e2e/test/typescript-project-references: {}
 
   e2e/test/typescript-transpiling: {}
