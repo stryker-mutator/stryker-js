@@ -47,10 +47,10 @@ function isInvalidConstructorBody(
 ): boolean {
   return Boolean(
     blockStatement.parentPath.isClassMethod() &&
-      blockStatement.parentPath.node.kind === 'constructor' &&
-      (containsTSParameterProperties(blockStatement.parentPath) ||
-        containsInitializedClassProperties(blockStatement.parentPath)) &&
-      hasSuperExpression(blockStatement),
+    blockStatement.parentPath.node.kind === 'constructor' &&
+    (containsTSParameterProperties(blockStatement.parentPath) ||
+      containsInitializedClassProperties(blockStatement.parentPath)) &&
+    hasSuperExpression(blockStatement),
   );
 }
 

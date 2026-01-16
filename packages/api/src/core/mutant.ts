@@ -7,19 +7,18 @@ export type { MutantStatus } from 'mutation-testing-report-schema/api';
 /**
  * Represents a mutant in its initial state.
  */
-export interface Mutant
-  extends Pick<
-    schema.MutantResult,
-    | 'coveredBy'
-    | 'id'
-    | 'killedBy'
-    | 'location'
-    | 'mutatorName'
-    | 'replacement'
-    | 'static'
-    | 'statusReason'
-    | 'testsCompleted'
-  > {
+export interface Mutant extends Pick<
+  schema.MutantResult,
+  | 'coveredBy'
+  | 'id'
+  | 'killedBy'
+  | 'location'
+  | 'mutatorName'
+  | 'replacement'
+  | 'static'
+  | 'statusReason'
+  | 'testsCompleted'
+> {
   /**
    * The file name from which this mutant originated
    */
