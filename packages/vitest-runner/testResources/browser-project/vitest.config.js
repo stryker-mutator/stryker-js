@@ -6,7 +6,11 @@ export default defineConfig({
     globals: true,
     browser: {
       enabled: true,
-      provider: playwright(),
+      provider: playwright({
+        launchOptions: {
+          executablePath: process.env.PLAYWRIGHT_LAUNCH_OPTIONS_EXECUTABLE_PATH,
+        },
+      }),
       headless: true,
       instances: [{ browser: 'chromium' }],
     },

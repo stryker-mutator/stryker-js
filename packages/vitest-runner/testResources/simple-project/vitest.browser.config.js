@@ -6,7 +6,11 @@ export default defineConfig({
     browser: {
       instances: [{ browser: 'chromium' }],
       headless: true,
-      provider: playwright(),
+      provider: playwright({
+        launchOptions: {
+          executablePath: process.env.PLAYWRIGHT_LAUNCH_OPTIONS_EXECUTABLE_PATH,
+        },
+      }),
       enabled: true,
     },
     include: ['tests/*.ts'],
