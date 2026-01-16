@@ -529,6 +529,14 @@ It will be created if it not exists and is **entirely deleted** after a successf
 It is advised to use a directory inside the directory that holds your repository. This way `node_modules` are resolved as expected. Be sure to
 not check-in your chosen temp directory in your `.gitignore` file.
 
+### `testFiles` [`string[]`]
+
+Default: `[]`<br />
+Command line: `--testFiles "foo/tests/**/*.spec.js","bar/tests/**/*.test.js"`<br />
+Config file: `"testFiles": ["foo/tests/**/*.spec.js", "bar/tests/**/*.test.js"]`
+
+With `testFiles` you can limit which test files are executed during mutation testing. When specified, only tests from these files will be run. This allows you to verify that a module's dedicated unit tests can kill all its mutants independently.",
+
 ### `testFramework` (DEPRECATED)
 
 _Note: Use of "testFramework" is no longer needed. You can remove it from your configuration. Your test runner plugin now handles its own test framework integration_
