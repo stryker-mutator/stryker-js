@@ -1,0 +1,9 @@
+{
+  "name": "test-files-filtering",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+  }
+}

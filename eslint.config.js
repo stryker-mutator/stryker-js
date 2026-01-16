@@ -65,6 +65,7 @@ export default /** @type {import('typescript-eslint').ConfigArray} */ (
         'packages/*/reports/**',
         'packages/*/coverage/**',
         'packages/*/@(stryker.conf.js|.mocharc.cjs|stryker-karma.conf.cjs)',
+        'packages/*/stryker-setup-*.js',
 
         // Ignore specific files
         'packages/jasmine-runner/typings/jasmine-types.d.ts',

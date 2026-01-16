@@ -50,6 +50,7 @@ export const MUTATION_RANGE_REGEX =
 
 export class ProjectReader {
   private readonly mutatePatterns: readonly string[];
+  private readonly testFilePatterns: readonly string[];
   private readonly ignoreRules: readonly string[];
   private readonly incremental: boolean;
   private readonly force: boolean;
@@ -72,9 +73,11 @@ export class ProjectReader {
       force,
       htmlReporter,
       jsonReporter,
+      testFiles,
     }: StrykerOptions,
   ) {
     this.mutatePatterns = mutate;
+    this.testFilePatterns = testFiles ?? [];
     this.ignoreRules = [
       ...ALWAYS_IGNORE,
       tempDirName,
@@ -96,18 +99,47 @@ export class ProjectReader {
       inputFileNames,
       targetMutatePatterns,
     );
+    const testFiles = this.resolveTestFiles(inputFileNames);
     const project = new Project(
       this.fs,
       fileDescriptions,
       await this.readIncrementalReport(),
+      testFiles,
     );
     project.logFiles(
       this.log,
       this.ignoreRules,
       this.force,
       this.mutatePatterns,
+      this.testFilePatterns,
     );
     return project;
+  }
+
+  /**
+   * Resolves test file patterns to actual file paths.
+   * @param inputFileNames The list of all input file names to filter
+   * @returns Array of resolved test file paths
+   */
+  private resolveTestFiles(inputFileNames: string[]): string[] {
+    if (this.testFilePatterns.length === 0) {
+      return [];
+    }
+    const resolvedTestFiles: string[] = [];
+    for (const pattern of this.testFilePatterns) {
+      const matcher = new FileMatcher(pattern, /* allowHiddenFiles */ false);
+      const matchedFiles = inputFileNames.filter((fileName) =>
+        matcher.matches(fileName),
+      );
+      if (matchedFiles.length === 0) {
+        this.log.warn(
+          `Glob pattern "${pattern}" did not match any test files.`,
+        );
+      }
+      resolvedTestFiles.push(...matchedFiles);
+    }
+    // Remove duplicates
+    return [...new Set(resolvedTestFiles)];
   }
 
   /**

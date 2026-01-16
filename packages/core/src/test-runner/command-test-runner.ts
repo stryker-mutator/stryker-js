@@ -17,8 +17,9 @@ import {
   CompleteDryRunResult,
   toMutantRunResult,
   TestRunnerCapabilities,
+  DryRunOptions,
 } from '@stryker-mutator/api/test-runner';
-import { errorToString } from '@stryker-mutator/util';
+import { errorToString, testFilesProvided } from '@stryker-mutator/util';
 
 import { objectUtils } from '../utils/object-utils.js';
 import { Timer } from '../utils/timer.js';
@@ -46,6 +47,7 @@ export class CommandTestRunner implements TestRunner {
   }
 
   private readonly settings: CommandRunnerOptions;
+  private readonly testFilesProvided: boolean;
 
   private timeoutHandler: (() => Promise<void>) | undefined;
 
@@ -54,6 +56,7 @@ export class CommandTestRunner implements TestRunner {
     options: StrykerOptions,
   ) {
     this.settings = options.commandRunner;
+    this.testFilesProvided = testFilesProvided(options);
   }
 
   public capabilities(): TestRunnerCapabilities {
@@ -61,7 +64,16 @@ export class CommandTestRunner implements TestRunner {
     return { reloadEnvironment: true };
   }
 
-  public async dryRun(): Promise<DryRunResult> {
+  public async init(): Promise<void> {
+    if (this.testFilesProvided) {
+      throw new Error(
+        `The ${CommandTestRunner.runnerName} test runner does not support the --testFiles option.`,
+      );
+    }
+    return Promise.resolve();
+  }
+
+  public async dryRun(_options: DryRunOptions): Promise<DryRunResult> {
     return this.run({});
   }
 

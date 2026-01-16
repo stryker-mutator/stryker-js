@@ -4,14 +4,14 @@ import sinon from 'sinon';
 
 import { Config } from '@jest/types';
 
-import { JestGreaterThan25TestAdapter } from '../../../src/jest-test-adapters/jest-greater-than-25-adapter.js';
+import { JestTestAdapter } from '../../../src/jest-test-adapters/jest-test-adapter.js';
 import { JestWrapper } from '../../../src/utils/index.js';
 import { createJestRunResult } from '../../helpers/producers.js';
 import { JestRunResult } from '../../../src/jest-run-result.js';
 import { pluginTokens } from '../../../src/plugin-di.js';
 
-describe(JestGreaterThan25TestAdapter.name, () => {
-  let sut: JestGreaterThan25TestAdapter;
+describe(JestTestAdapter.name, () => {
+  let sut: JestTestAdapter;
   let jestWrapperMock: sinon.SinonStubbedInstance<JestWrapper>;
 
   const fileNamesUnderTest = ['/path/to/file'];
@@ -26,7 +26,7 @@ describe(JestGreaterThan25TestAdapter.name, () => {
 
     sut = testInjector.injector
       .provideValue(pluginTokens.jestWrapper, jestWrapperMock)
-      .injectClass(JestGreaterThan25TestAdapter);
+      .injectClass(JestTestAdapter);
   });
 
   it('should call the runCLI method with the correct --projectRoot', async () => {

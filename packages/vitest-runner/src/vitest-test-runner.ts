@@ -31,6 +31,7 @@ import {
   escapeRegExp,
   normalizeFileName,
   notEmpty,
+  testFilesProvided,
 } from '@stryker-mutator/util';
 
 import { vitestWrapper, Vitest } from './vitest-wrapper.js';
@@ -59,6 +60,10 @@ interface RunFilter {
    * @see https://vitest.dev/guide/cli.html#vitest-related
    */
   relatedFiles?: string[];
+  /**
+   * Run only tests from the specified test files (absolute paths)
+   */
+  testFiles?: string[];
 }
 
 export class VitestTestRunner implements TestRunner {
@@ -129,11 +134,19 @@ export class VitestTestRunner implements TestRunner {
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
     this.ctx!.provide('mode', 'dry-run');
 
-    const testResult = await this.run({ relatedFiles: options.files });
+    // If testFilter is provided, use those files directly instead of relying on related files
+    // We still need to pass relatedFiles for vitest to properly resolve the test files
+    const testResult = testFilesProvided(options)
+      ? await this.run({
+          testFiles: options.testFiles,
+          relatedFiles: options.files,
+        })
+      : await this.run({ relatedFiles: options.files });
     if (
       testResult.status === DryRunStatus.Complete &&
       testResult.tests.length === 0 &&
-      this.options.vitest.related
+      this.options.vitest.related &&
+      !options.testFiles
     ) {
       this.log.warn(
         'Vitest failed to find test files related to mutated files. Either disable `vitest.related` or import your source files directly from your test files. See https://stryker-mutator.io/docs/stryker-js/troubleshooting/#vitest-failed-to-find-test-files-related-to-mutated-files',
@@ -167,20 +180,21 @@ export class VitestTestRunner implements TestRunner {
   private async run({
     testIds = [],
     relatedFiles,
+    testFiles: explicitTestFiles,
   }: RunFilter = {}): Promise<DryRunResult> {
     this.resetContext();
     this.ctx!.config.related =
       this.options.vitest.related && relatedFiles
         ? relatedFiles.map(normalizeFileName)
         : undefined;
-    let testFiles: string[] | undefined = undefined;
+    let testFilesToRun: string[] | undefined = explicitTestFiles;
     if (testIds.length > 0) {
       const parsedTests = testIds.map(fromTestId);
       const regexTestNameFilter = parsedTests
         .map(({ test: name }) => escapeRegExp(name))
         .join('|');
       const regex = new RegExp(regexTestNameFilter);
-      testFiles = parsedTests.map(({ file }) => file);
+      testFilesToRun = parsedTests.map(({ file }) => file);
       this.ctx!.projects.forEach((project) => {
         project.config.testNamePattern = regex;
       });
@@ -190,7 +204,7 @@ export class VitestTestRunner implements TestRunner {
       });
     }
     try {
-      await this.ctx!.start(testFiles);
+      await this.ctx!.start(testFilesToRun);
     } catch (error) {
       if (
         // No tests found, this isn't a problem, we can continue

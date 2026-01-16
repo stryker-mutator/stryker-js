@@ -132,24 +132,24 @@ export class JestTestRunner implements TestRunner {
     return { reloadEnvironment: true };
   }
 
-  public async dryRun({
-    coverageAnalysis,
-    files,
-  }: Pick<DryRunOptions, 'coverageAnalysis' | 'files'>): Promise<DryRunResult> {
-    state.coverageAnalysis = coverageAnalysis;
-    const fileNamesUnderTest = this.enableFindRelatedTests ? files : undefined;
+  public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
+    state.coverageAnalysis = options.coverageAnalysis;
+    const fileNamesUnderTest = this.enableFindRelatedTests
+      ? options.files
+      : undefined;
     const { dryRunResult, jestResult } = await this.run({
       fileNamesUnderTest,
+      testFiles: options.testFiles,
       jestConfig: this.configForDryRun(
         fileNamesUnderTest,
-        coverageAnalysis,
+        options.coverageAnalysis,
         this.jestWrapper,
       ),
       testLocationInResults: true,
     });
     if (
       dryRunResult.status === DryRunStatus.Complete &&
-      coverageAnalysis !== 'off'
+      options.coverageAnalysis !== 'off'
     ) {
       const errorMessage = verifyAllTestFilesHaveCoverage(
         jestResult,

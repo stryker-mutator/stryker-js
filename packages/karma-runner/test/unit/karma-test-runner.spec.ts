@@ -99,6 +99,14 @@ describe(KarmaTestRunner.name, () => {
   describe('init', () => {
     let sut: KarmaTestRunner;
 
+    it('should throw when testFiles is provided', async () => {
+      testInjector.options.testFiles = ['some-file.spec.js'];
+      sut = createSut();
+      await expect(sut.init()).rejectedWith(
+        'does not support the --testFiles option',
+      );
+    });
+
     async function actInit() {
       const initPromise = sut.init();
       StrykerReporter.instance.onBrowsersReady();

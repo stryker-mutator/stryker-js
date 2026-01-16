@@ -9,8 +9,6 @@ import {
   JestTestAdapter,
   jestTestAdapterFactory,
 } from '../../../src/jest-test-adapters/index.js';
-import { JestGreaterThan25TestAdapter } from '../../../src/jest-test-adapters/jest-greater-than-25-adapter.js';
-import { JestLessThan25TestAdapter } from '../../../src/jest-test-adapters/jest-less-than-25-adapter.js';
 import { pluginTokens } from '../../../src/plugin-di.js';
 import { JestWrapper } from '../../../src/utils/jest-wrapper.js';
 import { JestConfigWrapper } from '../../../src/utils/index.js';
@@ -46,31 +44,18 @@ describe(jestTestAdapterFactory.name, () => {
     );
   });
 
-  it('should return a JestGreaterThan25Adapter when the Jest version is greater or equal to 25.0.0', () => {
+  it('should return a JestTestAdapter when the Jest version is greater or equal to 25.0.0', () => {
     jestWrapperMock.getVersion.returns('25.0.0');
     const testAdapter = act();
 
-    expect(testAdapter).instanceOf(JestGreaterThan25TestAdapter);
+    expect(testAdapter).instanceOf(JestTestAdapter);
   });
-  it('should return a JestGreaterThan25Adapter when the Jest version is an alpha version greater than 25.0.0', () => {
+
+  it('should return a JestTestAdapter when the Jest version is an alpha version', () => {
     jestWrapperMock.getVersion.returns('30.0.0-alpha.6');
     const testAdapter = act();
 
-    expect(testAdapter).instanceOf(JestGreaterThan25TestAdapter);
-  });
-  it('should return a JestLessThan25Adapter when the Jest version is greater or equal to 22.0.0, but less then 25 and coverage analysis is disabled', () => {
-    testInjector.options.coverageAnalysis = 'off';
-    jestWrapperMock.getVersion.returns('22.0.0');
-    const testAdapter = act();
-
-    expect(testAdapter).instanceOf(JestLessThan25TestAdapter);
-  });
-  it('should return a JestLessThan25Adapter when the Jest version is an alpha version greater than 22.0.0, lower than 25', () => {
-    testInjector.options.coverageAnalysis = 'off';
-    jestWrapperMock.getVersion.returns('23.0.0-alpha.6');
-    const testAdapter = act();
-
-    expect(testAdapter).instanceOf(JestLessThan25TestAdapter);
+    expect(testAdapter).instanceOf(JestTestAdapter);
   });
 
   it('should throw an error when the Jest version is lower than 22.0.0', () => {

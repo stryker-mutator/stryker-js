@@ -429,6 +429,79 @@ describe(MutantTestPlanner.name, () => {
         expect(plan2.runOptions.timeout).eq(calculateTimeout(10)); // spec2
       });
     });
+    describe('with testFiles option', () => {
+      beforeEach(() => {
+        testInjector.options.testFiles = ['src/**/*.spec.ts'];
+        sandboxMock.sandboxFileFor.returns('sandbox/src/foo.spec.ts');
+      });
+
+      it('should use the testFiles as filter, disable reloadEnvironment and enable runtime activation when known not to be static', async () => {
+        // Arrange
+        const mutant = factory.mutant({ id: '1' });
+        testCoverage.addTest(
+          factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }),
+        );
+        testCoverage.addCoverage(1, ['spec1']);
+        testCoverage.staticCoverage['1'] = false; // Known not static
+
+        // Act
+        const [plan] = await act([mutant]);
+
+        // Assert
+        assertIsRunPlan(plan);
+        // Note: when coverage is present, the test filter is derived from coverage, NOT testFiles option (which is used for global fallback)
+        expect(plan.runOptions.testFilter).deep.eq(['spec1']);
+        expect(plan.runOptions.mutantActivation).eq('runtime');
+        expect(plan.runOptions.reloadEnvironment).false;
+      });
+
+      it('should use the testFiles as filter, enable reloadEnvironment and enable static activation when coverage analysis is off (unknown static status)', async () => {
+        // Arrange
+        testCoverage.hasCoverage = false; // Coverage off
+        const mutant = factory.mutant({ id: '1' });
+        const project = new Project(
+          fileSystemTestDouble,
+          fileSystemTestDouble.toFileDescriptions(),
+          undefined,
+          ['src/foo.spec.ts'],
+        );
+
+        // Act
+        const [plan] = await act([mutant], project);
+
+        // Assert
+        assertIsRunPlan(plan);
+        expect(plan.runOptions.testFilter).deep.eq(['sandbox/src/foo.spec.ts']);
+        expect(plan.runOptions.mutantActivation).eq('runtime');
+        expect(plan.runOptions.reloadEnvironment).true;
+      });
+
+      it('should use the testFiles as filter, enable reloadEnvironment and enable static activation when known to be static', async () => {
+        // Arrange
+        testInjector.options.ignoreStatic = false;
+        testCoverage.staticCoverage['1'] = true; // Known static
+        testCoverage.addTest(
+          factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }),
+        );
+        testCoverage.addCoverage(1, ['spec1']); // Covered by spec1 (static)
+        const mutant = factory.mutant({ id: '1' });
+        const project = new Project(
+          fileSystemTestDouble,
+          fileSystemTestDouble.toFileDescriptions(),
+          undefined,
+          ['src/foo.spec.ts'],
+        );
+
+        // Act
+        const [plan] = await act([mutant], project);
+
+        // Assert
+        assertIsRunPlan(plan);
+        expect(plan.runOptions.testFilter).deep.eq(['sandbox/src/foo.spec.ts']);
+        expect(plan.runOptions.mutantActivation).eq('runtime');
+        expect(plan.runOptions.reloadEnvironment).true;
+      });
+    });
   });
 
   describe('static mutants warning', () => {

@@ -32,6 +32,7 @@ import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-optio
 import { JestRunResult } from '../../src/jest-run-result.js';
 import { state } from '../../src/jest-plugins/messaging.cjs';
 import { JestWrapper } from '../../src/utils/jest-wrapper.js';
+import { RunSettings } from '../../src/jest-test-adapters/jest-test-adapter.js';
 
 describe(JestTestRunner.name, () => {
   const basePath = '/path/to/project/root';
@@ -45,7 +46,7 @@ describe(JestTestRunner.name, () => {
   beforeEach(() => {
     options = testInjector.options as JestRunnerOptionsWithStrykerOptions;
     jestWrapperMock = sinon.createStubInstance(JestWrapper);
-    jestTestAdapterMock = { run: sinon.stub() };
+    jestTestAdapterMock = sinon.createStubInstance(JestTestAdapter);
     jestRunResult = producers.createJestRunResult({
       results: producers.createJestAggregatedResult({ testResults: [] }),
     });
@@ -120,13 +121,28 @@ describe(JestTestRunner.name, () => {
 
     it("should set bail = false (process is exited if we don't)", async () => {
       const sut = await arrangeInitializedSut();
-      await sut.dryRun({ coverageAnalysis: 'off' });
+      await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'off' }));
       expect(jestTestAdapterMock.run).calledWithMatch(
         sinon.match({
           jestConfig: sinon.match({
             bail: false,
           }),
         }),
+      );
+    });
+
+    it('should pass testFiles to the test adapter', async () => {
+      const sut = await arrangeInitializedSut();
+      await sut.dryRun(
+        factory.dryRunOptions({
+          coverageAnalysis: 'off',
+          testFiles: ['/path/to/test.js'],
+        }),
+      );
+      expect(jestTestAdapterMock.run).calledWithMatch(
+        sinon.match({
+          testFiles: ['/path/to/test.js'],
+        } satisfies Partial<RunSettings>),
       );
     });
 

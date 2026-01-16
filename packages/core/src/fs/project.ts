@@ -14,12 +14,15 @@ import { ProjectFile } from './project-file.js';
 export class Project {
   public readonly files = new Map<string, ProjectFile>();
   public readonly filesToMutate = new Map<string, ProjectFile>();
+  public readonly testFiles: readonly string[];
 
   constructor(
     fs: I<FileSystem>,
     public readonly fileDescriptions: FileDescriptions,
     public readonly incrementalReport?: MutationTestResult,
+    testFiles: readonly string[] = [],
   ) {
+    this.testFiles = testFiles;
     Object.entries(fileDescriptions).forEach(([name, desc]) => {
       const file = new ProjectFile(fs, name, desc.mutate);
       this.files.set(name, file);
@@ -38,6 +41,7 @@ export class Project {
     ignoreRules: readonly string[],
     force: boolean,
     mutatePatterns: readonly string[],
+    testFilePatterns: readonly string[] = [],
   ): void {
     if (this.isEmpty) {
       log.warn(
@@ -67,10 +71,16 @@ export class Project {
           If you intended to mutate files, please check and adjust the configuration.
           Current glob pattern(s) used:
           ${new Intl.ListFormat('en').format(mutatePatterns.map((pattern) => `"${pattern}"`))}.
+
           To enable file mutation, consider configuring the \`${propertyPath<StrykerOptions>()(
             'mutate',
           )}\` property in your configuration file or using the --mutate option via the command line.`);
         log.warn(msg);
+      }
+      if (this.testFiles.length > 0) {
+        log.info(
+          `Found ${this.testFiles.length} test file(s) matching --testFiles patterns.`,
+        );
       }
       if (log.isDebugEnabled()) {
         log.debug(
@@ -79,6 +89,9 @@ export class Project {
         log.debug(
           `Files to mutate: ${JSON.stringify([...this.filesToMutate.keys()], null, 2)}`,
         );
+        if (this.testFiles.length > 0) {
+          log.debug(`Test files: ${JSON.stringify(this.testFiles, null, 2)}`);
+        }
       }
     }
   }

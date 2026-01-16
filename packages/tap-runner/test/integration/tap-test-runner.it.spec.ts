@@ -67,6 +67,14 @@ describe('tap-runner integration', () => {
       );
     });
 
+    it('should use "testFiles" when provided', async () => {
+      const [testFile] = testFilter;
+      const run = await sut.dryRun(
+        factory.dryRunOptions({ testFiles: [testFile] }),
+      );
+      assertions.expectCompleted(run);
+    });
+
     it('should be able complete a dry run', async () => {
       // Act
       const run = await sut.dryRun(
@@ -255,7 +263,9 @@ describe('tap-runner integration', () => {
 
     it('should report an error on dry run', async () => {
       // Act
-      const run = await sut.dryRun(factory.dryRunOptions());
+      const run = await sut.dryRun(
+        factory.dryRunOptions({ testFiles: ['readme.md'] }),
+      );
 
       // Assert
       assertions.expectErrored(run);

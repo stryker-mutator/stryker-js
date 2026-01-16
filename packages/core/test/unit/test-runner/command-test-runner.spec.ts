@@ -33,6 +33,17 @@ describe(CommandTestRunner.name, () => {
     syncBuiltinESMExports();
   });
 
+  describe('init', () => {
+    it('should throw when testFiles is provided', async () => {
+      const strykerOptions = factory.strykerOptions();
+      strykerOptions.testFiles = ['some-file.spec.js'];
+      const sut = new CommandTestRunner('workingDir', strykerOptions);
+      await expect(sut.init()).rejectedWith(
+        'The command test runner does not support the --testFiles option.',
+      );
+    });
+  });
+
   describe(CommandTestRunner.prototype.dryRun.name, () => {
     it('should run `npm test` by default', async () => {
       await actDryRun(createSut(undefined, 'foobarDir'));
@@ -65,7 +76,7 @@ describe(CommandTestRunner.name, () => {
 
     it('should report failed test when the exit code != 0', async () => {
       const sut = createSut();
-      const resultPromise = sut.dryRun();
+      const resultPromise = sut.dryRun(factory.dryRunOptions());
       childProcessMock.stdout.emit('data', 'x Test 1 failed');
       childProcessMock.stderr.emit('data', '1 != 2');
       childProcessMock.emit('exit', 1);
@@ -89,7 +100,7 @@ describe(CommandTestRunner.name, () => {
       killStub.resolves();
       const expectedError = new Error('foobar error');
       const sut = createSut();
-      const resultPromise = sut.dryRun();
+      const resultPromise = sut.dryRun(factory.dryRunOptions());
       childProcessMock.emit('error', expectedError);
       const result = await resultPromise;
       const expectedResult: DryRunResult = {
@@ -134,14 +145,14 @@ describe(CommandTestRunner.name, () => {
     it('should kill any running process', async () => {
       killStub.resolves();
       const sut = createSut();
-      void sut.dryRun();
+      void sut.dryRun(factory.dryRunOptions());
       await sut.dispose();
       expect(killStub).calledWith(childProcessMock.pid);
     });
 
     it('should resolve running processes in a timeout', async () => {
       const sut = createSut();
-      const resultPromise = sut.dryRun();
+      const resultPromise = sut.dryRun(factory.dryRunOptions());
       await sut.dispose();
       const result = await resultPromise;
       expect(result.status).eq(DryRunStatus.Timeout);
@@ -160,7 +171,7 @@ describe(CommandTestRunner.name, () => {
     exitCode = 0,
     elapsedTimeMS = 0,
   ) {
-    const resultPromise = sut.dryRun();
+    const resultPromise = sut.dryRun(factory.dryRunOptions());
     clock.tick(elapsedTimeMS);
     actTestProcessEnds(exitCode);
     return resultPromise;
