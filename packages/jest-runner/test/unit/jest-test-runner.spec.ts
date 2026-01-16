@@ -32,6 +32,7 @@ import { JestRunnerOptionsWithStrykerOptions } from '../../src/jest-runner-optio
 import { JestRunResult } from '../../src/jest-run-result.js';
 import { state } from '../../src/jest-plugins/messaging.cjs';
 import { JestWrapper } from '../../src/utils/jest-wrapper.js';
+import { RunSettings } from '../../src/jest-test-adapters/jest-test-adapter.js';
 
 describe(JestTestRunner.name, () => {
   const basePath = '/path/to/project/root';
@@ -45,7 +46,7 @@ describe(JestTestRunner.name, () => {
   beforeEach(() => {
     options = testInjector.options as JestRunnerOptionsWithStrykerOptions;
     jestWrapperMock = sinon.createStubInstance(JestWrapper);
-    jestTestAdapterMock = { run: sinon.stub() };
+    jestTestAdapterMock = sinon.createStubInstance(JestTestAdapter);
     jestRunResult = producers.createJestRunResult({
       results: producers.createJestAggregatedResult({ testResults: [] }),
     });
@@ -130,7 +131,7 @@ describe(JestTestRunner.name, () => {
       );
     });
 
-    it('should pass explicitTestFiles to the test adapter', async () => {
+    it('should pass testFiles to the test adapter', async () => {
       const sut = await arrangeInitializedSut();
       await sut.dryRun(
         factory.dryRunOptions({
@@ -140,8 +141,8 @@ describe(JestTestRunner.name, () => {
       );
       expect(jestTestAdapterMock.run).calledWithMatch(
         sinon.match({
-          explicitTestFiles: ['/path/to/test.js'],
-        }),
+          testFiles: ['/path/to/test.js'],
+        } satisfies Partial<RunSettings>),
       );
     });
 

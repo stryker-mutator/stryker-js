@@ -5,9 +5,8 @@ import semver, { SemVer } from 'semver';
 
 import { JestPluginContext, pluginTokens } from '../plugin-di.js';
 import { JestWrapper } from '../utils/jest-wrapper.js';
+import { JestTestAdapter } from './jest-test-adapter.js';
 
-import { JestLessThan25TestAdapter } from './jest-less-than-25-adapter.js';
-import { JestGreaterThan25TestAdapter } from './jest-greater-than-25-adapter.js';
 interface CoercedVersion {
   version: SemVer;
   raw: string;
@@ -22,16 +21,12 @@ export function jestTestAdapterFactory(
   jestWrapper: JestWrapper,
   options: StrykerOptions,
   injector: Injector<JestPluginContext>,
-): JestGreaterThan25TestAdapter | JestLessThan25TestAdapter {
+): JestTestAdapter {
   const coercedVersion = coerceVersion(jestWrapper.getVersion());
   log.debug('Detected Jest version %s', coercedVersion.raw);
   guardJestVersion(coercedVersion, options, log);
 
-  if (semver.satisfies(coercedVersion.version, '<25.0.0')) {
-    return injector.injectClass(JestLessThan25TestAdapter);
-  } else {
-    return injector.injectClass(JestGreaterThan25TestAdapter);
-  }
+  return injector.injectClass(JestTestAdapter);
 }
 jestTestAdapterFactory.inject = tokens(
   commonTokens.logger,

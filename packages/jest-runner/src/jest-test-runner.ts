@@ -139,7 +139,7 @@ export class JestTestRunner implements TestRunner {
       : undefined;
     const { dryRunResult, jestResult } = await this.run({
       fileNamesUnderTest,
-      explicitTestFiles: options.testFiles,
+      testFiles: options.testFiles,
       jestConfig: this.configForDryRun(
         fileNamesUnderTest,
         options.coverageAnalysis,
