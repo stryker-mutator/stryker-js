@@ -50,7 +50,7 @@
     "@types/express": "5.0.6",
     "@types/node": "24.10.9",
     "@types/semver": "7.7.1",
-    "jasmine-core": "5.13.0",
+    "jasmine-core": "6.0.0",
     "karma": "6.4.4",
     "karma-chai": "0.1.0",
     "karma-chrome-launcher": "3.2.0",
