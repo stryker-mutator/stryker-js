@@ -1483,8 +1483,8 @@ importers:
         specifier: 4.0.13
         version: 4.0.13(@types/node@24.10.9)(@vitest/browser-playwright@4.0.13)(jiti@1.21.7)(jsdom@27.4.0)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.2)
       vitest-browser-react:
-        specifier: 2.0.2
-        version: 2.0.2(@types/react-dom@19.2.3(@types/react@19.2.9))(@types/react@19.2.9)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.13)
+        specifier: 2.0.3
+        version: 2.0.3(@types/react-dom@19.2.3(@types/react@19.2.9))(@types/react@19.2.9)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.13)
 
 packages:
 
@@ -15095,8 +15095,8 @@ packages:
       vite:
         optional: true
 
-  vitest-browser-react@2.0.2:
-    resolution: {integrity: sha512-zuSgTe/CKODU3ip+w4ls6Qm4xZ9+A4OHmDf0obt/mwAqavpOtqtq2YcioZt8nfDQE50EWmhdnRfDmpS1jCsbTQ==}
+  vitest-browser-react@2.0.3:
+    resolution: {integrity: sha512-5f1gWtpQVxTFcSYtblaPQs63l7ab6kyfs/CeT4cznUxpTaqojK0V5vPazpnOfVVnLaDr2LIl3R93+7Tyku6M5A==}
     peerDependencies:
       '@types/react': ^18.0.0 || ^19.0.0
       '@types/react-dom': ^18.0.0 || ^19.0.0
@@ -34861,7 +34861,7 @@ snapshots:
     optionalDependencies:
       vite: 7.3.1(@types/node@24.10.9)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.44.1)(yaml@2.8.2)
 
-  vitest-browser-react@2.0.2(@types/react-dom@19.2.3(@types/react@19.2.9))(@types/react@19.2.9)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.13):
+  vitest-browser-react@2.0.3(@types/react-dom@19.2.3(@types/react@19.2.9))(@types/react@19.2.9)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.13):
     dependencies:
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
