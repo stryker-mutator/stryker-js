@@ -115,9 +115,9 @@ export class VitestTestRunner implements TestRunner {
       bail: this.options.disableBail ? 0 : 1,
       onConsoleLog: () => false,
     });
-    this.ctx.provide('globalNamespace', this.globalNamespace);
-    this.ctx.config.browser.screenshotFailures = false;
-    this.ctx.projects.forEach((project) => {
+    this.ctx!.provide('globalNamespace', this.globalNamespace);
+    this.ctx!.config.browser.screenshotFailures = false;
+    this.ctx!.projects.forEach((project) => {
       project.config.setupFiles = [
         this.localSetupFile,
         ...project.config.setupFiles,
@@ -126,7 +126,7 @@ export class VitestTestRunner implements TestRunner {
     });
     if (this.log.isDebugEnabled()) {
       this.log.debug(
-        `vitest final config: ${JSON.stringify(this.ctx.config, null, 2)}`,
+        `vitest final config: ${JSON.stringify(this.ctx!.config, null, 2)}`,
       );
     }
   }

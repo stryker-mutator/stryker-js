@@ -1,0 +1,20 @@
+{
+  "name": "vitest-fastcheck",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A module to perform an integration test with fast-check",
+  "main": "index.js",
+  "scripts": {
+    "clean:reports": "rimraf \"reports\"",
+    "test": "npm run clean:reports && stryker run && npm run verify",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test:unit": "vitest run"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@fast-check/vitest": "^0.1.4",
+    "vitest": "^2.1.8"
+  }
+}
