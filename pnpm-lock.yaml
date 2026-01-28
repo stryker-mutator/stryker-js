@@ -1097,8 +1097,8 @@ importers:
   packages/cucumber-runner:
     dependencies:
       '@cucumber/messages':
-        specifier: ^31.0.0
-        version: 31.2.0
+        specifier: ^32.0.0
+        version: 32.0.1
       '@stryker-mutator/api':
         specifier: workspace:*
         version: link:../api
@@ -2709,6 +2709,9 @@ packages:
 
   '@cucumber/messages@31.2.0':
     resolution: {integrity: sha512-3urzBNCwmU/YKrKR0b3XdioFcOFNuxlLwEImsxeP8rXnweLs+Ky04QURcbKpFom3T6a6v9zVioLCfHUuSQ72pg==}
+
+  '@cucumber/messages@32.0.1':
+    resolution: {integrity: sha512-1OSoW+GQvFUNAl6tdP2CTBexTXMNJF0094goVUcvugtQeXtJ0K8sCP0xbq7GGoiezs/eJAAOD03+zAPT64orHQ==}
 
   '@cucumber/pretty-formatter@1.0.1':
     resolution: {integrity: sha512-A1lU4VVP0aUWdOTmpdzvXOyEYuPtBDI0xYwYJnmoMDplzxMdhcHk86lyyvYDoMoPzzq6OkOE3isuosvUU4X7IQ==}
@@ -17992,6 +17995,11 @@ snapshots:
       class-transformer: 0.5.1
       reflect-metadata: 0.2.2
 
+  '@cucumber/messages@32.0.1':
+    dependencies:
+      class-transformer: 0.5.1
+      reflect-metadata: 0.2.2
+
   '@cucumber/pretty-formatter@1.0.1(@cucumber/cucumber@12.6.0)(@cucumber/messages@31.2.0)':
     dependencies:
       '@cucumber/cucumber': 12.6.0
@@ -20603,7 +20611,7 @@ snapshots:
   '@stryker-mutator/cucumber-runner@file:packages/cucumber-runner(@cucumber/cucumber@12.6.0)(@stryker-mutator/core@file:packages/core(@types/node@24.10.9))':
     dependencies:
       '@cucumber/cucumber': 12.6.0
-      '@cucumber/messages': 31.2.0
+      '@cucumber/messages': 32.0.1
       '@stryker-mutator/api': link:packages/api
       '@stryker-mutator/core': file:packages/core(@types/node@24.10.9)
       '@stryker-mutator/util': link:packages/util
@@ -20612,7 +20620,7 @@ snapshots:
   '@stryker-mutator/cucumber-runner@file:packages/cucumber-runner(@cucumber/cucumber@8.0.0)(@stryker-mutator/core@file:packages/core(@types/node@24.10.9))':
     dependencies:
       '@cucumber/cucumber': 8.0.0
-      '@cucumber/messages': 31.2.0
+      '@cucumber/messages': 32.0.1
       '@stryker-mutator/api': link:packages/api
       '@stryker-mutator/core': file:packages/core(@types/node@24.10.9)
       '@stryker-mutator/util': link:packages/util
