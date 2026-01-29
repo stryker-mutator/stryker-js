@@ -1,4 +1,8 @@
-import { MutantResult, PartialStrykerOptions } from '@stryker-mutator/api/core';
+import {
+  MutantResult,
+  PartialStrykerOptions,
+  schema,
+} from '@stryker-mutator/api/core';
 import { createInjector, Injector } from 'typed-inject';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 
@@ -17,6 +21,7 @@ import {
   provideLogging,
   provideLoggingBackend,
 } from './logging/index.js';
+import { Timer } from './utils/timer.js';
 
 type MutationRunContext = PrepareExecutorContext & {
   [coreTokens.loggingSink]: LoggingBackend;
@@ -61,8 +66,11 @@ export class Stryker {
     mutationRunInjector: Injector<MutationRunContext>,
     args: PrepareExecutorArgs,
   ): Promise<MutantResult[]> {
+    const performanceTimer = new Timer();
+
     try {
       // 1. Prepare. Load Stryker configuration, load the input files
+      performanceTimer.mark('setup-start');
       const prepareExecutor = mutationRunInjector.injectClass(PrepareExecutor);
       const mutantInstrumenterInjector = await prepareExecutor.execute(args);
 
@@ -72,16 +80,53 @@ export class Stryker {
           MutantInstrumenterExecutor,
         );
         const dryRunExecutorInjector = await mutantInstrumenter.execute();
+        performanceTimer.mark('setup-end');
 
         // 3. Perform a 'dry run' (initial test run). Runs the tests without active mutants and collects coverage.
+        performanceTimer.mark('initialRun-start');
         const dryRunExecutor =
           dryRunExecutorInjector.injectClass(DryRunExecutor);
         const mutationRunExecutorInjector = await dryRunExecutor.execute();
+        performanceTimer.mark('initialRun-end');
 
         // 4. Actual mutation testing. Will check every mutant and if valid run it in an available test runner.
+        performanceTimer.mark('mutation-start');
         const mutationRunExecutor =
           mutationRunExecutorInjector.injectClass(MutationTestExecutor);
         const mutantResults = await mutationRunExecutor.execute();
+        performanceTimer.mark('mutation-end');
+
+        // Calculate performance statistics
+        const performanceStats: schema.PerformanceStatistics = {
+          setup:
+            performanceTimer.elapsedMs('setup-start') -
+            performanceTimer.elapsedMs('setup-end'),
+          initialRun:
+            performanceTimer.elapsedMs('initialRun-start') -
+            performanceTimer.elapsedMs('initialRun-end'),
+          mutation:
+            performanceTimer.elapsedMs('mutation-start') -
+            performanceTimer.elapsedMs('mutation-end'),
+        };
+
+        // Report results with performance statistics
+        const mutationTestReportHelper = mutationRunExecutorInjector.resolve(
+          coreTokens.mutationTestReportHelper,
+        );
+        await mutationTestReportHelper.reportAll(
+          mutantResults,
+          performanceStats,
+        );
+
+        // Wrap up reporting and log completion
+        const reporter = mutationRunExecutorInjector.resolve(
+          coreTokens.reporter,
+        );
+        await reporter.wrapUp();
+
+        const timer = mutationRunExecutorInjector.resolve(coreTokens.timer);
+        const log = mutationRunExecutorInjector.resolve(commonTokens.logger);
+        log.info('Done in %s.', timer.humanReadableElapsed());
 
         return mutantResults;
       } catch (error) {
