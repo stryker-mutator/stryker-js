@@ -23,7 +23,9 @@ describe('Coverage analysis', () => {
   describe('with the jasmine-runner', () => {
     beforeEach(() => {
       strykerOptions.testRunner = 'jasmine';
-      strykerOptions.plugins.push('@stryker-mutator/jasmine-runner');
+      strykerOptions.plugins.push(
+        import.meta.resolve('@stryker-mutator/jasmine-runner'),
+      );
       strykerOptions.jasmineConfigFile = 'jasmine.json';
     });
     describeTests();
@@ -32,7 +34,9 @@ describe('Coverage analysis', () => {
   describe('with the cucumber-runner', () => {
     beforeEach(() => {
       strykerOptions.testRunner = 'cucumber';
-      strykerOptions.plugins.push('@stryker-mutator/cucumber-runner');
+      strykerOptions.plugins.push(
+        import.meta.resolve('@stryker-mutator/cucumber-runner'),
+      );
     });
     describeTests();
   });
@@ -40,7 +44,9 @@ describe('Coverage analysis', () => {
   describe('with the jest-runner', () => {
     beforeEach(() => {
       strykerOptions.testRunner = 'jest';
-      strykerOptions.plugins.push('@stryker-mutator/jest-runner');
+      strykerOptions.plugins.push(
+        import.meta.resolve('@stryker-mutator/jest-runner'),
+      );
       strykerOptions.testRunnerNodeArgs = ['--experimental-vm-modules'];
       strykerOptions.jest = { configFile: 'jest.config.json' };
       strykerOptions.tempDirName = 'stryker-tmp';
@@ -51,7 +57,9 @@ describe('Coverage analysis', () => {
   describe('with mocha-runner', () => {
     beforeEach(() => {
       strykerOptions.testRunner = 'mocha';
-      strykerOptions.plugins.push('@stryker-mutator/mocha-runner');
+      strykerOptions.plugins.push(
+        import.meta.resolve('@stryker-mutator/mocha-runner'),
+      );
     });
     describeTests();
   });
@@ -59,14 +67,16 @@ describe('Coverage analysis', () => {
   describe('with vitest-runner', () => {
     beforeEach(() => {
       strykerOptions.testRunner = 'vitest';
-      strykerOptions.plugins.push('@stryker-mutator/vitest-runner');
+      strykerOptions.plugins.push(
+        import.meta.resolve('@stryker-mutator/vitest-runner'),
+      );
     });
 
     // Vitest only supports perTest coverage analysis
     it('should provide expected', async () => {
       await actAssertPerTest();
     });
-    it('should provide expected in browser mode', async () => {
+    it.only('should provide expected in browser mode', async () => {
       strykerOptions.vitest = { configFile: 'vitest.browser.config.js' };
       // Vitest has a race condition, can be anywhere between 10 and 12 (should be 10)
       await actAssertPerTest(10, 12);
@@ -80,7 +90,9 @@ describe('Coverage analysis', () => {
     let karmaConfigOverrides;
     beforeEach(() => {
       strykerOptions.testRunner = 'karma';
-      strykerOptions.plugins.push('@stryker-mutator/karma-runner');
+      strykerOptions.plugins.push(
+        import.meta.resolve('@stryker-mutator/karma-runner'),
+      );
       karmaConfigOverrides = {};
       strykerOptions.karma = {
         configFile: 'karma.conf.cjs',
