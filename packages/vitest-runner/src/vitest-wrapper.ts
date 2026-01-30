@@ -1,7 +1,7 @@
 import { createRequire } from 'module';
+import { pathToFileURL } from "node:url";
 import path from 'path';
 import { createVitest as createVitestOriginal } from 'vitest/node';
-import { platform } from '@stryker-mutator/util';
 
 /**
  * Creates a Vitest instance, preferring the project's local installation.
@@ -22,13 +22,7 @@ async function createVitest(...args: Parameters<typeof createVitestOriginal>) {
     const require = createRequire(path.join(process.cwd(), 'package.json'));
     const vitestPath = require.resolve('vitest/node');
 
-    // On Windows, convert absolute path to file:// URL for ESM import
-    const vitestUrl =
-      !platform.caseSensitiveFs() && path.isAbsolute(vitestPath)
-        ? `file:///${vitestPath.replace(/\\/g, '/')}`
-        : vitestPath;
-
-    const { createVitest: createVitestProject } = await import(vitestUrl);
+    const { createVitest: createVitestProject } = await import(pathToFileURL(vitestPath).href);
     return createVitestProject(...args);
   } catch {
     // Fallback to Stryker's bundled Vitest if project doesn't have it
