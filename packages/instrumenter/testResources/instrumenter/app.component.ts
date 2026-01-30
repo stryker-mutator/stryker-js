@@ -1,8 +1,7 @@
-import { input, model, output, Component } from '@angular/core';
+import { input, model, output, Component, contentChild, contentChildren, viewChild, viewChildren, TemplateRef, Directive } from '@angular/core';
 
-const inputOutsideClass = input('', { alias: 'input-outside-class' });
-const modelOutsideClass = model('', { alias: 'model-outside-class' });
-const outputOutsideClass = output<string>({ alias: 'output-outside-class' });
+@Directive({ selector: '[stepDetail]' })
+class StepDetailDirective {}
 
 @Component({
   selector: 'app-root',
@@ -21,11 +20,15 @@ export class AppComponent {
   inputFalseAlias = input({ alias: 'this-is-actually-the-default-value' });
   modelFalseAlias = model({ alias: 'this-is-actually-the-default-value' });
 
-  title = 'angular-app';
+  readonly contentChildField = contentChild(StepDetailDirective, { read: TemplateRef });
+  readonly contentChildrenField = contentChildren(StepDetailDirective, { read: TemplateRef, descendants: true });
+  readonly viewChildField = viewChild('tpl', { read: TemplateRef });
+  readonly viewChildrenField = viewChildren('tpl', { read: TemplateRef });
 
-  public publicFunction(): void {
-    const inputInsideFunction = input('', { alias: 'input-inside-function' });
-    const modelInsideFunction = model('', { alias: 'model-inside-function' });
-    const outputInsideFunction = output<string>({ alias: 'output-inside-function' });
-  }
+  readonly contentChildRequiredField = contentChild.required(StepDetailDirective, { read: TemplateRef });
+  readonly viewChildRequiredField = viewChild.required('tpl', { read: TemplateRef });
+
+  readonly contentChildNoOptionsField = contentChild(StepDetailDirective);
+
+  title = 'angular-app';
 }

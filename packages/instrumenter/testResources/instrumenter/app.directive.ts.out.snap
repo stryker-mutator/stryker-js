@@ -47,27 +47,22 @@ function stryMutAct_9fa48(id) {
   stryMutAct_9fa48 = isActive;
   return isActive(id);
 }
-import { input, model, output, Directive } from '@angular/core';
-const inputOutsideClass = input(stryMutAct_9fa48(\\"0\\") ? \\"Stryker was here!\\" : (stryCov_9fa48(\\"0\\"), ''), stryMutAct_9fa48(\\"1\\") ? {} : (stryCov_9fa48(\\"1\\"), {
-  alias: stryMutAct_9fa48(\\"2\\") ? \\"\\" : (stryCov_9fa48(\\"2\\"), 'input-outside-class')
-}));
-const modelOutsideClass = model(stryMutAct_9fa48(\\"3\\") ? \\"Stryker was here!\\" : (stryCov_9fa48(\\"3\\"), ''), stryMutAct_9fa48(\\"4\\") ? {} : (stryCov_9fa48(\\"4\\"), {
-  alias: stryMutAct_9fa48(\\"5\\") ? \\"\\" : (stryCov_9fa48(\\"5\\"), 'model-outside-class')
-}));
-const outputOutsideClass = output<string>(stryMutAct_9fa48(\\"6\\") ? {} : (stryCov_9fa48(\\"6\\"), {
-  alias: stryMutAct_9fa48(\\"7\\") ? \\"\\" : (stryCov_9fa48(\\"7\\"), 'output-outside-class')
-}));
+import { input, model, output, Directive, contentChild, contentChildren, viewChild, viewChildren, TemplateRef } from '@angular/core';
+@Directive({
+  selector: '[stepDetail]'
+})
+class StepDetailDirective {}
 @Directive({
   selector: '[appDirective]'
 })
 export class AppDirective {
-  normalInput = input(stryMutAct_9fa48(\\"8\\") ? \\"Stryker was here!\\" : (stryCov_9fa48(\\"8\\"), ''), {
+  normalInput = input(stryMutAct_9fa48(\\"0\\") ? \\"Stryker was here!\\" : (stryCov_9fa48(\\"0\\"), ''), {
     alias: 'normal-input'
   });
   requiredInput = input.required<string>({
     alias: 'required-input'
   });
-  normalModel = model(stryMutAct_9fa48(\\"13\\") ? \\"Stryker was here!\\" : (stryCov_9fa48(\\"13\\"), ''), {
+  normalModel = model(stryMutAct_9fa48(\\"5\\") ? \\"Stryker was here!\\" : (stryCov_9fa48(\\"5\\"), ''), {
     alias: 'normal-model'
   });
   requiredModel = model.required<string>({
@@ -76,21 +71,31 @@ export class AppDirective {
   normalOutput = output<string>({
     alias: 'normal-output'
   });
-  public publicFunction(): void {
-    if (stryMutAct_9fa48(\\"20\\")) {
-      {}
-    } else {
-      stryCov_9fa48(\\"20\\");
-      const inputInsideFunction = input(stryMutAct_9fa48(\\"21\\") ? \\"Stryker was here!\\" : (stryCov_9fa48(\\"21\\"), ''), stryMutAct_9fa48(\\"22\\") ? {} : (stryCov_9fa48(\\"22\\"), {
-        alias: stryMutAct_9fa48(\\"23\\") ? \\"\\" : (stryCov_9fa48(\\"23\\"), 'input-inside-function')
-      }));
-      const modelInsideFunction = model(stryMutAct_9fa48(\\"24\\") ? \\"Stryker was here!\\" : (stryCov_9fa48(\\"24\\"), ''), stryMutAct_9fa48(\\"25\\") ? {} : (stryCov_9fa48(\\"25\\"), {
-        alias: stryMutAct_9fa48(\\"26\\") ? \\"\\" : (stryCov_9fa48(\\"26\\"), 'model-inside-function')
-      }));
-      const outputInsideFunction = output<string>(stryMutAct_9fa48(\\"27\\") ? {} : (stryCov_9fa48(\\"27\\"), {
-        alias: stryMutAct_9fa48(\\"28\\") ? \\"\\" : (stryCov_9fa48(\\"28\\"), 'output-inside-function')
-      }));
-    }
-  }
+  inputFalseAlias = input(stryMutAct_9fa48(\\"12\\") ? {} : (stryCov_9fa48(\\"12\\"), {
+    alias: stryMutAct_9fa48(\\"13\\") ? \\"\\" : (stryCov_9fa48(\\"13\\"), 'this-is-actually-the-default-value')
+  }));
+  modelFalseAlias = model(stryMutAct_9fa48(\\"14\\") ? {} : (stryCov_9fa48(\\"14\\"), {
+    alias: stryMutAct_9fa48(\\"15\\") ? \\"\\" : (stryCov_9fa48(\\"15\\"), 'this-is-actually-the-default-value')
+  }));
+  readonly contentChildField = contentChild(StepDetailDirective, {
+    read: TemplateRef
+  });
+  readonly contentChildrenField = contentChildren(StepDetailDirective, {
+    read: TemplateRef,
+    descendants: true
+  });
+  readonly viewChildField = viewChild(stryMutAct_9fa48(\\"19\\") ? \\"\\" : (stryCov_9fa48(\\"19\\"), 'tpl'), {
+    read: TemplateRef
+  });
+  readonly viewChildrenField = viewChildren(stryMutAct_9fa48(\\"21\\") ? \\"\\" : (stryCov_9fa48(\\"21\\"), 'tpl'), {
+    read: TemplateRef
+  });
+  readonly contentChildRequiredField = contentChild.required(StepDetailDirective, {
+    read: TemplateRef
+  });
+  readonly viewChildRequiredField = viewChild.required(stryMutAct_9fa48(\\"24\\") ? \\"\\" : (stryCov_9fa48(\\"24\\"), 'tpl'), {
+    read: TemplateRef
+  });
+  readonly contentChildNoOptionsField = contentChild(StepDetailDirective);
 }"
 `;

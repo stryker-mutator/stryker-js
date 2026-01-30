@@ -3,20 +3,20 @@
 exports[`After running stryker on angular project should report mutation score 1`] = `
 Object {
   "compileErrors": 0,
-  "ignored": 20,
-  "killed": 2,
-  "mutationScore": 16.666666666666664,
-  "mutationScoreBasedOnCoveredCode": 40,
+  "ignored": 27,
+  "killed": 5,
+  "mutationScore": 33.33333333333333,
+  "mutationScoreBasedOnCoveredCode": 62.5,
   "noCoverage": 7,
   "pending": 0,
   "runtimeErrors": 0,
   "survived": 3,
   "timeout": 0,
-  "totalCovered": 5,
-  "totalDetected": 2,
+  "totalCovered": 8,
+  "totalDetected": 5,
   "totalInvalid": 0,
-  "totalMutants": 32,
+  "totalMutants": 42,
   "totalUndetected": 10,
-  "totalValid": 12,
+  "totalValid": 15,
 }
 `;
