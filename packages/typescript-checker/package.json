@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/typescript-checker",
-  "version": "9.4.0",
+  "version": "9.5.0",
   "description": "A typescript type checker plugin to be used in Stryker, the JavaScript mutation testing framework",
   "files": [
     "dist/schema",

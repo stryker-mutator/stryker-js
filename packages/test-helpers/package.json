@@ -1,7 +1,7 @@
 {
   "name": "@stryker-mutator/test-helpers",
   "private": true,
-  "version": "9.4.0",
+  "version": "9.5.0",
   "description": "A helper package for testing",
   "exports": {
     ".": "./dist/index.js",
