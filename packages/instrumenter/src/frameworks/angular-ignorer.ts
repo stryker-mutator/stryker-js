@@ -10,10 +10,10 @@ const ANGULAR_SIGNAL_QUERY_FUNCTIONS = Object.freeze([
 ]);
 
 const INPUT_MODEL_OUTPUT_CONFIG_MSG =
-  'Angular signal based input, model and output functions configuration object cannot be mutated as that causes issues with the ivy compiler.';
+  'Angular signal based input, model and output functions configuration object cannot be mutated as that causes issues with the Angular compiler.';
 
 const SIGNAL_QUERY_OPTIONS_MSG =
-  'Angular signal query options object cannot be mutated as that causes issues with the ivy compiler.';
+  'Angular signal query options object cannot be mutated as that causes issues with the Angular compiler.';
 
 export class AngularIgnorer implements Ignorer {
   public shouldIgnore(path: NodePath): string | undefined {
@@ -30,9 +30,9 @@ export class AngularIgnorer implements Ignorer {
 
   #isClassFieldLike(path: NodePath): boolean {
     return (
-      path.isClassProperty() === true ||
-      path.isClassPrivateProperty() === true ||
-      path.isClassAccessorProperty() === true
+      path.isClassProperty() ||
+      path.isClassPrivateProperty() ||
+      path.isClassAccessorProperty()
     );
   }
 
