@@ -96,7 +96,7 @@ describe('incremental', () => {
           strykerOptions.testRunner = testRunner;
           if (testRunner !== 'command') {
             strykerOptions.plugins.push(
-              `@stryker-mutator/${testRunner}-runner`,
+              import.meta.resolve(`@stryker-mutator/${testRunner}-runner`),
             );
           }
           const stryker = new Stryker({

@@ -139,7 +139,11 @@ function addPlugin(
   karmaPlugin: Record<string, InlinePluginType> | string,
 ) {
   karmaConfig.plugins = karmaConfig.plugins ?? ['karma-*'];
-  karmaConfig.plugins.push(karmaPlugin);
+  karmaConfig.plugins.push(
+    typeof karmaPlugin === 'string'
+      ? import.meta.resolve(karmaPlugin)
+      : karmaPlugin,
+  );
 }
 
 /**
