@@ -1,4 +1,7 @@
-import { booleanAttribute, Component, EventEmitter, Input, input, model, output, Output } from '@angular/core';
+import { booleanAttribute, Component, contentChild, contentChildren, Directive, EventEmitter, Input, input, model, output, Output, TemplateRef, viewChild, viewChildren } from '@angular/core';
+
+@Directive({ selector: '[stepDetail]' })
+class StepDetailDirective {}
 
 @Component({
   selector: 'app-root',
@@ -17,4 +20,14 @@ export class AppComponent {
   signalOutput = output({ alias: 'signal-output' });
 
   public title = 'angular' + '-project';
+
+  public contentChildSignal = contentChild(StepDetailDirective, { read: TemplateRef })
+  public contentChildrenSignal = contentChildren(StepDetailDirective, { read: TemplateRef, descendants: true })
+  public viewChildSignal = viewChild('tpl', { read: TemplateRef })
+  public viewChildrenSignal = viewChildren('tpl', { read: TemplateRef })
+
+  public contentChildRequiredSignal = contentChild.required(StepDetailDirective, { read: TemplateRef })
+  public viewChildRequiredSignal = viewChild.required('tpl', { read: TemplateRef })
+
+  public contentChildNoOptionsSignal = contentChild(StepDetailDirective)
 }
