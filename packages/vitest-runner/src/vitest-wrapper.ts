@@ -1,5 +1,5 @@
 import { createRequire } from 'module';
-import { pathToFileURL } from "node:url";
+import { pathToFileURL } from 'node:url';
 import path from 'path';
 import { createVitest as createVitestOriginal } from 'vitest/node';
 
@@ -22,7 +22,9 @@ async function createVitest(...args: Parameters<typeof createVitestOriginal>) {
     const require = createRequire(path.join(process.cwd(), 'package.json'));
     const vitestPath = require.resolve('vitest/node');
 
-    const { createVitest: createVitestProject } = await import(pathToFileURL(vitestPath).href);
+    const { createVitest: createVitestProject } = await import(
+      pathToFileURL(vitestPath).href
+    );
     return createVitestProject(...args);
   } catch {
     // Fallback to Stryker's bundled Vitest if project doesn't have it
