@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.5.1](https://github.com/stryker-mutator/stryker-js/compare/v9.4.0...v9.5.1) (2026-02-02)
+
+### Bug Fixes
+
+- **deps:** update dependency angular-html-parser to ~10.3.0 ([#5723](https://github.com/stryker-mutator/stryker-js/issues/5723)) ([4d33b96](https://github.com/stryker-mutator/stryker-js/commit/4d33b96a34d00aa9d251559a3ed83778ad846d73))
+- **deps:** update dependency angular-html-parser to ~10.4.0 ([#5738](https://github.com/stryker-mutator/stryker-js/issues/5738)) ([3e49329](https://github.com/stryker-mutator/stryker-js/commit/3e4932938cc9eac6635c70c7cac4ae693af25540))
+- **deps:** update dependency typed-rest-client to ~2.2.0 ([#5720](https://github.com/stryker-mutator/stryker-js/issues/5720)) ([33a0eb0](https://github.com/stryker-mutator/stryker-js/commit/33a0eb05601dd13e82c5032b5d6810b9b3bce18b))
+- **deps:** update mutation-testing-elements monorepo to v3.7.1 ([#5631](https://github.com/stryker-mutator/stryker-js/issues/5631)) ([07a1171](https://github.com/stryker-mutator/stryker-js/commit/07a117167718f3e03353698c8886f0c46051f2c7))
+- **vitest-runner:** fix ebusy warning on windows when concurrency >=2 ([#5671](https://github.com/stryker-mutator/stryker-js/issues/5671)) ([25a6d48](https://github.com/stryker-mutator/stryker-js/commit/25a6d48b73ea1e0d5b82e9df42b39af03becfb3e)), closes [#5670](https://github.com/stryker-mutator/stryker-js/issues/5670)
+- **vitest-runner:** support Vitest fixtures (test.extend) ([#5721](https://github.com/stryker-mutator/stryker-js/issues/5721)) ([d8ac0e9](https://github.com/stryker-mutator/stryker-js/commit/d8ac0e9e6dcdfb3878bce37f3ac53ae6c6369677)), closes [#5459](https://github.com/stryker-mutator/stryker-js/issues/5459)
+- **vitest:** resolve dual instance problem with Vitest plugins ([#5745](https://github.com/stryker-mutator/stryker-js/issues/5745)) ([c0169e8](https://github.com/stryker-mutator/stryker-js/commit/c0169e855e3a7bd218aba330c90fa0a5658f6944))
+
+### Features
+
+- add --testFiles option to limit which tests are executing ([#5713](https://github.com/stryker-mutator/stryker-js/issues/5713)) ([6a96659](https://github.com/stryker-mutator/stryker-js/commit/6a96659f3626a6d6674446dbd304370e33e4cbd3))
+- **instrumenter:** ignore mutations of the signal query options object ([#5767](https://github.com/stryker-mutator/stryker-js/issues/5767)) ([32b9e81](https://github.com/stryker-mutator/stryker-js/commit/32b9e81bed74999e8210198e253ce78df34d436f)), closes [#5729](https://github.com/stryker-mutator/stryker-js/issues/5729)
+
 # [9.5.0](https://github.com/stryker-mutator/stryker-js/compare/v9.4.0...v9.5.0) (2026-01-30)
 
 ### Bug Fixes

@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/instrumenter",
-  "version": "9.5.0",
+  "version": "9.5.1",
   "description": "The code instrumenter used in Stryker, the JavaScript mutation testing framework",
   "main": "dist/src/index.js",
   "type": "module",

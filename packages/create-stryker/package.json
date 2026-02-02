@@ -1,6 +1,6 @@
 {
   "name": "create-stryker",
-  "version": "9.5.0",
+  "version": "9.5.1",
   "description": "Initializer for StrykerJS",
   "type": "module",
   "files": [

@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/karma-runner",
-  "version": "9.5.0",
+  "version": "9.5.1",
   "description": "A plugin to use the karma test runner in Stryker, the JavaScript mutation testing framework",
   "files": [
     "dist/schema",
