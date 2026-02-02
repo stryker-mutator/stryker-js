@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.5.0](https://github.com/stryker-mutator/stryker-js/compare/v9.4.0...v9.5.0) (2026-01-30)
+
+### Bug Fixes
+
+- **vitest-runner:** fix ebusy warning on windows when concurrency >=2 ([#5671](https://github.com/stryker-mutator/stryker-js/issues/5671)) ([25a6d48](https://github.com/stryker-mutator/stryker-js/commit/25a6d48b73ea1e0d5b82e9df42b39af03becfb3e)), closes [#5670](https://github.com/stryker-mutator/stryker-js/issues/5670)
+- **vitest-runner:** support Vitest fixtures (test.extend) ([#5721](https://github.com/stryker-mutator/stryker-js/issues/5721)) ([d8ac0e9](https://github.com/stryker-mutator/stryker-js/commit/d8ac0e9e6dcdfb3878bce37f3ac53ae6c6369677)), closes [#5459](https://github.com/stryker-mutator/stryker-js/issues/5459)
+- **vitest:** resolve dual instance problem with Vitest plugins ([#5745](https://github.com/stryker-mutator/stryker-js/issues/5745)) ([c0169e8](https://github.com/stryker-mutator/stryker-js/commit/c0169e855e3a7bd218aba330c90fa0a5658f6944))
+
+### Features
+
+- add --testFiles option to limit which tests are executing ([#5713](https://github.com/stryker-mutator/stryker-js/issues/5713)) ([6a96659](https://github.com/stryker-mutator/stryker-js/commit/6a96659f3626a6d6674446dbd304370e33e4cbd3))
+
 # [9.4.0](https://github.com/stryker-mutator/stryker-js/compare/v9.3.0...v9.4.0) (2025-11-23)
 
 ### Bug Fixes

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.5.0](https://github.com/stryker-mutator/stryker-js/compare/v9.4.0...v9.5.0) (2026-01-30)
+
+### Bug Fixes
+
+- **deps:** update dependency angular-html-parser to ~10.3.0 ([#5723](https://github.com/stryker-mutator/stryker-js/issues/5723)) ([4d33b96](https://github.com/stryker-mutator/stryker-js/commit/4d33b96a34d00aa9d251559a3ed83778ad846d73))
+- **deps:** update dependency angular-html-parser to ~10.4.0 ([#5738](https://github.com/stryker-mutator/stryker-js/issues/5738)) ([3e49329](https://github.com/stryker-mutator/stryker-js/commit/3e4932938cc9eac6635c70c7cac4ae693af25540))
+
+### Features
+
+- **instrumenter:** ignore mutations of the signal query options object ([#5767](https://github.com/stryker-mutator/stryker-js/issues/5767)) ([32b9e81](https://github.com/stryker-mutator/stryker-js/commit/32b9e81bed74999e8210198e253ce78df34d436f)), closes [#5729](https://github.com/stryker-mutator/stryker-js/issues/5729)
+
 # [9.4.0](https://github.com/stryker-mutator/stryker-js/compare/v9.3.0...v9.4.0) (2025-11-23)
 
 ### Bug Fixes

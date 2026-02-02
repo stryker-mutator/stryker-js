@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/core",
-  "version": "9.4.0",
+  "version": "9.5.0",
   "description": "The extendable JavaScript mutation testing framework",
   "type": "module",
   "files": [

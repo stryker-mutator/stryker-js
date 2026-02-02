@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/vitest-runner",
-  "version": "9.4.0",
+  "version": "9.5.0",
   "description": "A plugin to use the vitest test runner and framework in Stryker, the JavaScript mutation testing framework",
   "files": [
     "dist/schema",

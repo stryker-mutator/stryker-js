@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [9.5.0](https://github.com/stryker-mutator/stryker-js/compare/v9.4.0...v9.5.0) (2026-01-30)
+
+### Features
+
+- add --testFiles option to limit which tests are executing ([#5713](https://github.com/stryker-mutator/stryker-js/issues/5713)) ([6a96659](https://github.com/stryker-mutator/stryker-js/commit/6a96659f3626a6d6674446dbd304370e33e4cbd3))
+
 # [9.4.0](https://github.com/stryker-mutator/stryker-js/compare/v9.3.0...v9.4.0) (2025-11-23)
 
 **Note:** Version bump only for package @stryker-mutator/jasmine-runner
