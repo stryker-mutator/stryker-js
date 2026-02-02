@@ -37,7 +37,7 @@
     "lerna": "9.0.3",
     "minimatch": "10.1.1",
     "mocha": "11.7.5",
-    "playwright": "1.58.0",
+    "playwright": "1.58.1",
     "prettier": "3.8.1",
     "rimraf": "6.1.2",
     "sinon": "21.0.1",
