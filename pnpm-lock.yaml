@@ -102,8 +102,8 @@ importers:
         specifier: 9.0.3
         version: 9.0.3(@types/node@24.10.10)(babel-plugin-macros@3.1.0)
       minimatch:
-        specifier: 10.1.1
-        version: 10.1.1
+        specifier: 10.1.2
+        version: 10.1.2
       mocha:
         specifier: 11.7.5
         version: 11.7.5
@@ -338,8 +338,8 @@ importers:
         specifier: 5.0.1
         version: 5.0.1(webpack@5.105.0)
       minimatch:
-        specifier: 10.1.1
-        version: 10.1.1
+        specifier: 10.1.2
+        version: 10.1.2
       mocha:
         specifier: 11.7.5
         version: 11.7.5
@@ -20109,7 +20109,7 @@ snapshots:
       hosted-git-info: 9.0.2
       json-stringify-nice: 1.1.4
       lru-cache: 11.2.5
-      minimatch: 10.1.1
+      minimatch: 10.1.2
       nopt: 8.1.0
       npm-install-checks: 7.1.2
       npm-package-arg: 13.0.1
@@ -20196,7 +20196,7 @@ snapshots:
       '@npmcli/name-from-folder': 4.0.0
       '@npmcli/package-json': 7.0.2
       glob: 13.0.1
-      minimatch: 10.1.1
+      minimatch: 10.1.2
 
   '@npmcli/metavuln-calculator@9.0.3':
     dependencies:
@@ -20666,7 +20666,7 @@ snapshots:
       execa: 9.6.1
       json-rpc-2.0: 1.7.1
       lodash.groupby: 4.6.0
-      minimatch: 10.1.1
+      minimatch: 10.1.2
       mutation-server-protocol: 0.4.1
       mutation-testing-elements: 3.7.1
       mutation-testing-metrics: 3.7.1
@@ -20697,7 +20697,7 @@ snapshots:
       execa: 9.6.1
       json-rpc-2.0: 1.7.1
       lodash.groupby: 4.6.0
-      minimatch: 10.1.1
+      minimatch: 10.1.2
       mutation-server-protocol: 0.4.1
       mutation-testing-elements: 3.7.1
       mutation-testing-metrics: 3.7.1
@@ -20728,7 +20728,7 @@ snapshots:
       execa: 9.6.1
       json-rpc-2.0: 1.7.1
       lodash.groupby: 4.6.0
-      minimatch: 10.1.1
+      minimatch: 10.1.2
       mutation-server-protocol: 0.4.1
       mutation-testing-elements: 3.7.1
       mutation-testing-metrics: 3.7.1
@@ -21604,7 +21604,7 @@ snapshots:
   '@tufjs/models@4.1.0':
     dependencies:
       '@tufjs/canonical-json': 2.0.0
-      minimatch: 10.1.1
+      minimatch: 10.1.2
 
   '@tybys/wasm-util@0.10.1':
     dependencies:
@@ -26559,14 +26559,14 @@ snapshots:
     dependencies:
       foreground-child: 3.3.1
       jackspeak: 4.1.1
-      minimatch: 10.1.1
+      minimatch: 10.1.2
       minipass: 7.1.2
       package-json-from-dist: 1.0.1
       path-scurry: 2.0.1
 
   glob@13.0.0:
     dependencies:
-      minimatch: 10.1.1
+      minimatch: 10.1.2
       minipass: 7.1.2
       path-scurry: 2.0.1
 
@@ -27076,7 +27076,7 @@ snapshots:
 
   ignore-walk@8.0.0:
     dependencies:
-      minimatch: 10.1.1
+      minimatch: 10.1.2
 
   ignore@5.3.2: {}
 
@@ -34484,7 +34484,7 @@ snapshots:
       chalk: 5.6.2
       chokidar: 4.0.3
       foreground-child: 3.3.1
-      minimatch: 10.1.1
+      minimatch: 10.1.2
       mkdirp: 3.0.1
       polite-json: 5.0.0
       resolve-import: 2.1.1
