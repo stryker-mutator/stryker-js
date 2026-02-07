@@ -233,8 +233,8 @@ importers:
         specifier: 5.3.1
         version: 5.3.1(svelte@5.49.1)(vite@7.3.1(@types/node@24.10.10)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.46.0)(yaml@2.8.2))(vitest@4.0.18)
       '@tsconfig/svelte':
-        specifier: 5.0.6
-        version: 5.0.6
+        specifier: 5.0.7
+        version: 5.0.7
       '@types/babel__core':
         specifier: 7.20.5
         version: 7.20.5
@@ -5151,8 +5151,8 @@ packages:
   '@tsconfig/node20@20.1.8':
     resolution: {integrity: sha512-Em+IdPfByIzWRRpqWL4Z7ArLHZGxmc36BxE3jCz9nBFSm+5aLaPMZyjwu4yetvyKXeogWcxik4L1jB5JTWfw7A==}
 
-  '@tsconfig/svelte@5.0.6':
-    resolution: {integrity: sha512-yGxYL0I9eETH1/DR9qVJey4DAsCdeau4a9wYPKuXfEhm8lFO8wg+LLYJjIpAm6Fw7HSlhepPhYPDop75485yWQ==}
+  '@tsconfig/svelte@5.0.7':
+    resolution: {integrity: sha512-NOtJF9LQnV7k6bpzcXwL/rXdlFHvAT9e0imrftiMc6/+FUNBHRZ8UngDrM+jciA6ENzFYNoFs8rfwumuGF+Dhw==}
 
   '@tufjs/canonical-json@2.0.0':
     resolution: {integrity: sha512-yVtV8zsdo8qFHe+/3kw81dSLyF7D576A5cCFCi4X7B39tWT7SekaEFUnvnWJHz+9qO7qJTah1JbrDjWKqFtdWA==}
@@ -21592,7 +21592,7 @@ snapshots:
 
   '@tsconfig/node20@20.1.8': {}
 
-  '@tsconfig/svelte@5.0.6': {}
+  '@tsconfig/svelte@5.0.7': {}
 
   '@tufjs/canonical-json@2.0.0': {}
 
