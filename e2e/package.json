@@ -71,7 +71,7 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "rxjs": "7.8.2",
-    "semver": "7.7.3",
+    "semver": "7.7.4",
     "svelte": "5.49.2",
     "svelte-check": "4.3.6",
     "svelte-jester": "5.0.0",
