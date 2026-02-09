@@ -57,7 +57,7 @@
     "@stryker-mutator/test-helpers": "workspace:*",
     "@types/node": "24.10.11",
     "ava": "6.4.1",
-    "tap": "21.5.0"
+    "tap": "21.5.1"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "workspace:*"
