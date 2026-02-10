@@ -3,3 +3,6 @@ packages:
   - 'e2e'
   - 'e2e/test/*'
 minimumReleaseAge: 4320 # 3 days, see: https://pnpm.io/settings#minimumreleaseage
+minimumReleaseAgeExclude:
+  # Renovate security update: axios@1.13.5
+  - axios@1.13.5
