@@ -54,7 +54,7 @@
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "workspace:*",
-    "@types/node": "24.10.11"
+    "@types/node": "24.10.12"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "workspace:*",
