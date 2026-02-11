@@ -52,6 +52,7 @@ export class ReactScriptsJestConfigLoader implements JestConfigLoader {
             'jest',
             'projectType',
           )}" is set to "create-react-app".`,
+          { cause: e },
         );
       }
       throw e;

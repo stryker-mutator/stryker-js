@@ -106,7 +106,7 @@ class DiscoverRegexTestRunner extends NotImplementedTestRunner {
 
 class ErroredTestRunner extends NotImplementedTestRunner {
   public async dryRun(): Promise<DryRunResult> {
-    let expectedError: any = null;
+    let expectedError: any;
     try {
       throw new SyntaxError('This is invalid syntax!');
     } catch (error) {
