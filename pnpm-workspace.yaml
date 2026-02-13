@@ -6,3 +6,6 @@ minimumReleaseAge: 4320 # 3 days, see: https://pnpm.io/settings#minimumreleaseag
 minimumReleaseAgeExclude:
   # Renovate security update: axios@1.13.5
   - axios@1.13.5
+  - mutation-testing-elements@3.7.2
+  - mutation-testing-metrics@3.7.2
+  - mutation-testing-report-schema@3.7.2
