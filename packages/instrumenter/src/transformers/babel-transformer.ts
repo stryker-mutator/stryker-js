@@ -23,6 +23,7 @@ import { DirectiveBookkeeper } from './directive-bookkeeper.js';
 import { IgnorerBookkeeper } from './ignorer-bookkeeper.js';
 
 import { AstTransformer } from './index.js';
+import { notEmpty } from '@stryker-mutator/util';
 
 const { traverse } = babel;
 
@@ -90,6 +91,49 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
       }
     },
     exit(path) {
+      // Get mutants for current node
+      const mutantsForCurrentNode = mutantCollector.mutants.filter(
+        (mutant) => mutant.original === path.node,
+      );
+      // Get mutators that created those mutants
+      // @TODO: Save mutator in mutant instead of performing this lookup here
+      const mutatorsThatCreatedMutantsForThisNode = mutantsForCurrentNode
+        .map((mutant) =>
+          mutators.find((mutator) => mutator.name === mutant.mutatorName),
+        )
+        .filter(notEmpty);
+      // If we can filter mutants:
+      if (
+        mutatorsThatCreatedMutantsForThisNode.some((mutator) => mutator.filter)
+      ) {
+        const mutantsInScope: Mutant[] = [];
+        // Traverse down to find all mutants in scope
+        path.traverse({
+          enter(path) {
+            // Mutant is in scope
+            mutantsInScope.push(
+              ...mutantCollector.mutants.filter(
+                (mutant) => mutant.original === path.node,
+              ),
+            );
+          },
+        });
+
+        // filter mutants and remove them from the collector and placement map
+        for (const mutator of mutatorsThatCreatedMutantsForThisNode) {
+          if (mutator.filter) {
+            if (!mutator.filter(mutantsInScope)) {
+              const mutantsToFilterOut = mutantsInScope.filter(
+                (mutant) => mutant.mutatorName === mutator.name,
+              );
+              console.error(mutantsToFilterOut);
+              removeFromPlacementMap(mutantsToFilterOut);
+              mutantCollector.remove(mutantsToFilterOut);
+            }
+          }
+        }
+      }
+
       placeMutantsIfNeeded(path);
       ignorerBookkeeper.leaveNode(path);
     },
@@ -123,6 +167,14 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
     const placer = mutantPlacers.find((p) => p.canPlace(path));
     if (placer) {
       placementMap.set(path.node, { appliedMutants: new Map(), placer });
+    }
+  }
+
+  function removeFromPlacementMap(mutantsToRemove: Mutant[]) {
+    for (const mutantToRemove of mutantsToRemove) {
+      for (const [node, placementMapEntry] of placementMap) {
+        placementMapEntry.appliedMutants.delete(mutantToRemove);
+      }
     }
   }
 
@@ -169,6 +221,9 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
           [...mutantsPlacement.appliedMutants.keys()],
           originFileName,
         );
+      } finally {
+        // Done with this node, apply cleanup
+        placementMap.delete(path.node);
       }
     }
   }

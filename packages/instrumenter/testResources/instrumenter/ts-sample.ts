@@ -14,11 +14,12 @@ class Person {
   }
 }
 
-const foo = () => {
+const foo = (string?: string) => {
   return false;
 };
 
 foo();
+foo('test');
 console.log();
 throw new Error();
 

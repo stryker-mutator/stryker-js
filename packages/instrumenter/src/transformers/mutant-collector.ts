@@ -36,6 +36,15 @@ export class MutantCollector {
     return mutant;
   }
 
+  /**
+   * Removes mutants from the internal mutant list.
+   * @param mutantsToRemove all mutants to be removed
+   * @returns The mutant (for testability)
+   */
+  public remove(mutantsToRemove: Mutant[]) {
+    this._mutants.filter((mutant) => mutantsToRemove.includes(mutant));
+  }
+
   public hasPlacedMutants(fileName: string): boolean {
     return this.mutants.some(
       (mutant) => mutant.fileName === fileName && !mutant.ignoreReason,
