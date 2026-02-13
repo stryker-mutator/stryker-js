@@ -88,5 +88,28 @@ if (stryMutAct_9fa48(\\"12\\")) {
 } else {
   stryCov_9fa48(\\"12\\");
   foo();
-}"
+}
+if (stryMutAct_9fa48(\\"13\\")) {
+  ;
+} else {
+  stryCov_9fa48(\\"13\\");
+  console.log();
+}
+if (stryMutAct_9fa48(\\"14\\")) {
+  ;
+} else {
+  stryCov_9fa48(\\"14\\");
+  throw new Error();
+}
+const add = (a: number, b: number) => {
+  if (stryMutAct_9fa48(\\"15\\")) {
+    {}
+  } else {
+    stryCov_9fa48(\\"15\\");
+    return stryMutAct_9fa48(\\"16\\") ? a - b : (stryCov_9fa48(\\"16\\"), a + b);
+  }
+};
+const a = 1;
+const b = 2;
+add(a, b);"
 `;

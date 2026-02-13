@@ -19,3 +19,13 @@ const foo = () => {
 };
 
 foo();
+console.log();
+throw new Error();
+
+const add = (a: number, b: number) => {
+  return a + b;
+};
+
+const a = 1;
+const b = 2;
+add(a, b);
