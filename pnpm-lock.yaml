@@ -84,8 +84,8 @@ importers:
         specifier: 9.6.1
         version: 9.6.1
       glob:
-        specifier: 13.0.1
-        version: 13.0.1
+        specifier: 13.0.2
+        version: 13.0.2
       install-local:
         specifier: 4.1.0
         version: 4.1.0
@@ -1094,8 +1094,8 @@ importers:
         specifier: 7.7.1
         version: 7.7.1
       glob:
-        specifier: 13.0.1
-        version: 13.0.1
+        specifier: 13.0.2
+        version: 13.0.2
 
   packages/create-stryker:
     dependencies:
@@ -9043,6 +9043,10 @@ packages:
 
   glob@13.0.1:
     resolution: {integrity: sha512-B7U/vJpE3DkJ5WXTgTpTRN63uV42DseiXXKMwG14LQBXmsdeIoHAPbU/MEo6II0k5ED74uc2ZGTC6MwHFQhF6w==}
+    engines: {node: 20 || >=22}
+
+  glob@13.0.2:
+    resolution: {integrity: sha512-035InabNu/c1lW0tzPhAgapKctblppqsKKG9ZaNzbr+gXwWMjXoiyGSyB9sArzrjG7jY+zntRq5ZSUYemrnWVQ==}
     engines: {node: 20 || >=22}
 
   glob@7.1.3:
@@ -18032,7 +18036,7 @@ snapshots:
       debug: 4.4.3(supports-color@8.1.1)
       error-stack-parser: 2.1.4
       figures: 3.2.0
-      glob: 13.0.1
+      glob: 13.0.2
       has-ansi: 4.0.1
       indent-string: 4.0.0
       is-installed-globally: 0.4.0
@@ -20247,7 +20251,7 @@ snapshots:
     dependencies:
       '@npmcli/name-from-folder': 4.0.0
       '@npmcli/package-json': 7.0.2
-      glob: 13.0.1
+      glob: 13.0.2
       minimatch: 10.1.2
 
   '@npmcli/metavuln-calculator@9.0.3':
@@ -20876,7 +20880,7 @@ snapshots:
       '@stryker-mutator/api': link:packages/api
       '@stryker-mutator/core': file:packages/core(@types/node@24.10.13)
       '@stryker-mutator/util': link:packages/util
-      glob: 13.0.1
+      glob: 13.0.2
       tap-parser: 17.0.0
       tslib: 2.8.1
 
@@ -21317,7 +21321,7 @@ snapshots:
       chalk: 5.6.2
       chokidar: 4.0.3
       foreground-child: 4.0.3
-      glob: 13.0.1
+      glob: 13.0.2
       minipass: 7.1.2
       mkdirp: 3.0.1
       node-options-to-argv: 1.0.0
@@ -21361,7 +21365,7 @@ snapshots:
       chalk: 5.6.2
       chokidar: 4.0.3
       foreground-child: 4.0.3
-      glob: 13.0.1
+      glob: 13.0.2
       minipass: 7.1.2
       mkdirp: 3.0.1
       node-options-to-argv: 1.0.0
@@ -21448,7 +21452,7 @@ snapshots:
       '@tapjs/stdin': 4.3.1(@tapjs/core@4.4.1(@types/node@24.10.13)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))
       '@tapjs/typescript': 3.5.1(@tapjs/core@4.4.1(@types/node@24.10.13)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(@types/node@24.10.13)(typescript@5.9.3)
       '@tapjs/worker': 4.3.1(@tapjs/core@4.4.1(@types/node@24.10.13)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))
-      glob: 13.0.1
+      glob: 13.0.2
       jackspeak: 4.2.3
       mkdirp: 3.0.1
       package-json-from-dist: 1.0.1
@@ -21486,7 +21490,7 @@ snapshots:
       '@tapjs/stdin': 4.3.1(@tapjs/core@4.4.1(@types/node@24.10.13))
       '@tapjs/typescript': 3.5.1(@tapjs/core@4.4.1(@types/node@24.10.13))(@types/node@24.10.13)(typescript@5.9.3)
       '@tapjs/worker': 4.3.1(@tapjs/core@4.4.1(@types/node@24.10.13))
-      glob: 13.0.1
+      glob: 13.0.2
       jackspeak: 4.2.3
       mkdirp: 3.0.1
       package-json-from-dist: 1.0.1
@@ -23815,7 +23819,7 @@ snapshots:
     dependencies:
       '@npmcli/fs': 5.0.0
       fs-minipass: 3.0.3
-      glob: 13.0.1
+      glob: 13.0.2
       lru-cache: 11.2.5
       minipass: 7.1.2
       minipass-collect: 2.0.1
@@ -26639,6 +26643,12 @@ snapshots:
       minipass: 7.1.2
       path-scurry: 2.0.1
 
+  glob@13.0.2:
+    dependencies:
+      minimatch: 10.1.2
+      minipass: 7.1.2
+      path-scurry: 2.0.1
+
   glob@7.1.3:
     dependencies:
       fs.realpath: 1.0.0
@@ -27705,7 +27715,7 @@ snapshots:
   jasmine@6.0.0:
     dependencies:
       '@jasminejs/reporters': 1.0.0
-      glob: 13.0.1
+      glob: 13.0.2
       jasmine-core: 6.0.1
 
   jest-changed-files@24.9.0:
@@ -32831,7 +32841,7 @@ snapshots:
 
   resolve-import@2.1.1:
     dependencies:
-      glob: 13.0.1
+      glob: 13.0.2
       walk-up-path: 4.0.0
 
   resolve-pkg@2.0.0:
@@ -32914,7 +32924,7 @@ snapshots:
 
   rimraf@6.1.2:
     dependencies:
-      glob: 13.0.1
+      glob: 13.0.2
       package-json-from-dist: 1.0.1
 
   rollup-plugin-terser@7.0.2(rollup@2.79.2):
@@ -33915,7 +33925,7 @@ snapshots:
 
   sync-content@2.0.3:
     dependencies:
-      glob: 13.0.1
+      glob: 13.0.2
       mkdirp: 3.0.1
       path-scurry: 2.0.1
       rimraf: 6.1.2
