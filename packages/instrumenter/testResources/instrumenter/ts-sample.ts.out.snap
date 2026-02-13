@@ -74,5 +74,19 @@ class Person {
       this.#name = value;
     }
   }
+}
+const foo = () => {
+  if (stryMutAct_9fa48(\\"10\\")) {
+    {}
+  } else {
+    stryCov_9fa48(\\"10\\");
+    return stryMutAct_9fa48(\\"11\\") ? true : (stryCov_9fa48(\\"11\\"), false);
+  }
+};
+if (stryMutAct_9fa48(\\"12\\")) {
+  ;
+} else {
+  stryCov_9fa48(\\"12\\");
+  foo();
 }"
 `;

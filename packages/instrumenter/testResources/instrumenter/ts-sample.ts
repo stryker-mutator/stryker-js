@@ -7,9 +7,15 @@ class Person {
     return this.#name;
   }
   set name(value: string) {
-    if(value.length < 2){
+    if (value.length < 2) {
       throw new Error('Name should be at least 2 characters long');
     }
     this.#name = value;
   }
 }
+
+const foo = () => {
+  return false;
+};
+
+foo();
