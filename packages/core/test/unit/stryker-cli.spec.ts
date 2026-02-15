@@ -81,9 +81,12 @@ describe(StrykerCli.name, () => {
         [['--force'], { force: true }],
         [['--ignoreStatic'], { ignoreStatic: true }],
         [['--concurrency', '5'], { concurrency: 5 }],
+        [['--concurrency', '50%'], { concurrency: '50%' }],
         [['--cleanTempDir', 'false'], { cleanTempDir: false }],
         [['--cleanTempDir', 'always'], { cleanTempDir: 'always' }],
         [['-c', '6'], { concurrency: 6 }],
+        [['-c', '12'], { concurrency: 12 }],
+        [['-c', '100%'], { concurrency: '100%' }],
         [['--maxTestRunnerReuse', '3'], { maxTestRunnerReuse: 3 }],
       ];
       testCases.forEach(([args, expected]) => {

@@ -24,9 +24,11 @@ export class ConcurrencyTokenProvider implements Disposable {
     options: Pick<StrykerOptions, 'checkers' | 'concurrency'>,
     private readonly log: Logger,
   ) {
-    const cpuCount = os.cpus().length;
-    const concurrency =
-      options.concurrency ?? (cpuCount > 4 ? cpuCount - 1 : cpuCount);
+    const availableParallelism = os.availableParallelism();
+    const concurrency = this.computeConcurrency(
+      options.concurrency,
+      availableParallelism,
+    );
     if (options.checkers.length > 0) {
       this.concurrencyCheckers = Math.max(Math.ceil(concurrency / 2), 1);
       this.checkerToken$ = range(this.concurrencyCheckers);
@@ -48,6 +50,36 @@ export class ConcurrencyTokenProvider implements Disposable {
     Array.from({ length: this.concurrencyTestRunners }).forEach(() =>
       this.testRunnerTokenSubject.next(this.tick()),
     );
+  }
+
+  private computeConcurrency(
+    concurrencyOption: number | string | undefined,
+    availableParallelism: number,
+  ): number {
+    if (typeof concurrencyOption === 'string') {
+      const percentageMatch = concurrencyOption.match(/^(100|[1-9]?[0-9])%$/);
+      if (percentageMatch) {
+        const percentage = parseInt(percentageMatch[1], 10);
+        const computed = Math.max(
+          1,
+          Math.round((availableParallelism * percentage) / 100),
+        );
+        this.log.debug(
+          'Computed concurrency %s from "%s" based on %s available parallelism.',
+          computed,
+          concurrencyOption,
+          availableParallelism,
+        );
+        return computed;
+      }
+    }
+    if (typeof concurrencyOption === 'number') {
+      return concurrencyOption;
+    }
+    // Default: n-1 for n > 4, else n
+    return availableParallelism > 4
+      ? availableParallelism - 1
+      : availableParallelism;
   }
 
   public freeCheckers(): void {
