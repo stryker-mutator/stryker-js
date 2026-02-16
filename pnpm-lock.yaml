@@ -1036,14 +1036,14 @@ importers:
         specifier: ~0.4.0
         version: 0.4.1
       mutation-testing-elements:
-        specifier: 3.7.1
-        version: 3.7.1
+        specifier: 3.7.2
+        version: 3.7.2
       mutation-testing-metrics:
-        specifier: 3.7.1
-        version: 3.7.1
+        specifier: 3.7.2
+        version: 3.7.2
       mutation-testing-report-schema:
-        specifier: 3.7.1
-        version: 3.7.1
+        specifier: 3.7.2
+        version: 3.7.2
       npm-run-path:
         specifier: ~6.0.0
         version: 6.0.0
@@ -11477,8 +11477,8 @@ packages:
     resolution: {integrity: sha512-SBGK0j8hLDne7bktgThKI8kGvGTx3rY3LAeQTmOKZ5bVnL/7TorLMvcVF7dIPJCu5RNUWhkkuF53kurygYVt3g==}
     engines: {node: '>=18'}
 
-  mutation-testing-elements@3.7.1:
-    resolution: {integrity: sha512-R8uWHQLpQbKRCWnF1D1DB0ldft2s33KuR0xvFm+V/kam6hCz1L57INSHAFTtVJmGhaKqTeH2yXsFwtjjrVDi3A==}
+  mutation-testing-elements@3.7.2:
+    resolution: {integrity: sha512-i7X2Q4X5eYon72W2QQ9HND7plVhQcqTnv+Xc3KeYslRZSJ4WYJoal8LFdbWm7dKWLNE0rYkCUrvboasWzF3MMA==}
 
   mutation-testing-metrics@1.7.10:
     resolution: {integrity: sha512-wQnfnvMoSkV/5AHurRaDouiXf2ENoo23cXNZw70ks+mftEGPwLMStlyQZytQrcY/9lQDdrNSdMSPt2Zri75OcA==}
@@ -11486,11 +11486,17 @@ packages:
   mutation-testing-metrics@3.7.1:
     resolution: {integrity: sha512-vtRtoYNdQpz9d8Qx/K5Anem0afHRzrKf8K8WRAhCs0/oziM8wwOEVn7iWBJESFmSIghkq/1vG8YEzLR2O9rC/A==}
 
+  mutation-testing-metrics@3.7.2:
+    resolution: {integrity: sha512-ichXZSC4FeJbcVHYOWzWUhNuTJGogc0WiQol8lqEBrBSp+ADl3fmcZMqrx0ogInEUiImn+A8JyTk6uh9vd25TQ==}
+
   mutation-testing-report-schema@1.7.10:
     resolution: {integrity: sha512-lPbEVTAlx0XCXA5GKpb6+0mtDk9MoepYVsXhEtRcwiHRjmqBn2frwXL1Xmkh6HxYnEDIQddzZAgk8SIbkV7p+g==}
 
   mutation-testing-report-schema@3.7.1:
     resolution: {integrity: sha512-aKnIreO4je4B0mWD/pAPWw0IZ35de6ScL2nexUOKI/Lt0Qd7nGq1sH7JqmQUd7iqEokg0JlgmeiW5ghpOuP1og==}
+
+  mutation-testing-report-schema@3.7.2:
+    resolution: {integrity: sha512-fN5M61SDzIOeJyatMOhGPLDOFz5BQIjTNPjo4PcHIEUWrejO4i4B5PFuQ/2l43709hEsTxeiXX00H73WERKcDw==}
 
   mute-stream@1.0.0:
     resolution: {integrity: sha512-avsJQhyd+680gKXyG/sQc0nXaC6rBkPOfyHYcFb9+hdkqQkR9bdnkJ0AMZhke0oesPqIO+mFFJ+IdBc7mst4IA==}
@@ -19599,7 +19605,9 @@ snapshots:
       source-map: 0.6.1
       string-length: 2.0.0
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   '@jest/reporters@27.5.1':
     dependencies:
@@ -20698,9 +20706,9 @@ snapshots:
       lodash.groupby: 4.6.0
       minimatch: 10.1.2
       mutation-server-protocol: 0.4.1
-      mutation-testing-elements: 3.7.1
-      mutation-testing-metrics: 3.7.1
-      mutation-testing-report-schema: 3.7.1
+      mutation-testing-elements: 3.7.2
+      mutation-testing-metrics: 3.7.2
+      mutation-testing-report-schema: 3.7.2
       npm-run-path: 6.0.0
       progress: 2.0.3
       rxjs: 7.8.2
@@ -20729,9 +20737,9 @@ snapshots:
       lodash.groupby: 4.6.0
       minimatch: 10.1.2
       mutation-server-protocol: 0.4.1
-      mutation-testing-elements: 3.7.1
-      mutation-testing-metrics: 3.7.1
-      mutation-testing-report-schema: 3.7.1
+      mutation-testing-elements: 3.7.2
+      mutation-testing-metrics: 3.7.2
+      mutation-testing-report-schema: 3.7.2
       npm-run-path: 6.0.0
       progress: 2.0.3
       rxjs: 7.8.2
@@ -20760,9 +20768,9 @@ snapshots:
       lodash.groupby: 4.6.0
       minimatch: 10.1.2
       mutation-server-protocol: 0.4.1
-      mutation-testing-elements: 3.7.1
-      mutation-testing-metrics: 3.7.1
-      mutation-testing-report-schema: 3.7.1
+      mutation-testing-elements: 3.7.2
+      mutation-testing-metrics: 3.7.2
+      mutation-testing-report-schema: 3.7.2
       npm-run-path: 6.0.0
       progress: 2.0.3
       rxjs: 7.8.2
@@ -30524,7 +30532,7 @@ snapshots:
     dependencies:
       zod: 4.3.6
 
-  mutation-testing-elements@3.7.1: {}
+  mutation-testing-elements@3.7.2: {}
 
   mutation-testing-metrics@1.7.10:
     dependencies:
@@ -30534,9 +30542,15 @@ snapshots:
     dependencies:
       mutation-testing-report-schema: 3.7.1
 
+  mutation-testing-metrics@3.7.2:
+    dependencies:
+      mutation-testing-report-schema: 3.7.2
+
   mutation-testing-report-schema@1.7.10: {}
 
   mutation-testing-report-schema@3.7.1: {}
+
+  mutation-testing-report-schema@3.7.2: {}
 
   mute-stream@1.0.0: {}
 
