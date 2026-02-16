@@ -102,8 +102,8 @@ importers:
         specifier: 9.0.4
         version: 9.0.4(@types/node@24.10.13)(babel-plugin-macros@3.1.0)
       minimatch:
-        specifier: 10.1.2
-        version: 10.1.2
+        specifier: 10.2.0
+        version: 10.2.0
       mocha:
         specifier: 11.7.5
         version: 11.7.5
@@ -338,8 +338,8 @@ importers:
         specifier: 5.0.1
         version: 5.0.1(webpack@5.105.2)
       minimatch:
-        specifier: 10.1.2
-        version: 10.1.2
+        specifier: 10.2.0
+        version: 10.2.0
       mocha:
         specifier: 11.7.5
         version: 11.7.5
@@ -1030,8 +1030,8 @@ importers:
         specifier: ~4.6.0
         version: 4.6.0
       minimatch:
-        specifier: ~10.1.0
-        version: 10.1.2
+        specifier: ~10.2.0
+        version: 10.2.0
       mutation-server-protocol:
         specifier: ~0.4.0
         version: 0.4.1
@@ -11305,10 +11305,6 @@ packages:
     resolution: {integrity: sha512-enIvLvRAFZYXJzkCYG5RKmPfrFArdLv+R+lbQ53BmIMLIry74bjKzX6iHAm8WYamJkhSSEabrWN5D97XnKObjQ==}
     engines: {node: 20 || >=22}
 
-  minimatch@10.1.2:
-    resolution: {integrity: sha512-fu656aJ0n2kcXwsnwnv9g24tkU5uSmOlTjd6WyyaKm2Z+h1qmY6bAjrcaIxF/BslFqbZ8UBtbJi7KgQOZD2PTw==}
-    engines: {node: 20 || >=22}
-
   minimatch@10.2.0:
     resolution: {integrity: sha512-ugkC31VaVg9cF0DFVoADH12k6061zNZkZON+aX8AWsR9GhPcErkcMBceb6znR8wLERM2AkkOxy2nWRLpT9Jq5w==}
     engines: {node: 20 || >=22}
@@ -14322,6 +14318,7 @@ packages:
   tar@7.5.7:
     resolution: {integrity: sha512-fov56fJiRuThVFXD6o6/Q354S7pnWMJIVlDBYijsTNx6jKSE4pvrDTs6lUnmGvNyfJwFQQwWy3owKz1ucIhveQ==}
     engines: {node: '>=18'}
+    deprecated: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
 
   tcompare@9.3.0:
     resolution: {integrity: sha512-6kFTU2xlXNFU88/DAAIQvjBu5znTGx8QPnFtaKiLin2OtspHXyevSu0iUTZt4UrSfuRC6fIahRCqaQIhXlsTVQ==}
@@ -18605,7 +18602,7 @@ snapshots:
     dependencies:
       '@eslint/object-schema': 3.0.1
       debug: 4.4.3(supports-color@8.1.1)
-      minimatch: 10.1.2
+      minimatch: 10.2.0
     transitivePeerDependencies:
       - supports-color
 
@@ -20138,7 +20135,7 @@ snapshots:
       hosted-git-info: 9.0.2
       json-stringify-nice: 1.1.4
       lru-cache: 11.2.5
-      minimatch: 10.1.2
+      minimatch: 10.2.0
       nopt: 8.1.0
       npm-install-checks: 7.1.2
       npm-package-arg: 13.0.1
@@ -20225,7 +20222,7 @@ snapshots:
       '@npmcli/name-from-folder': 4.0.0
       '@npmcli/package-json': 7.0.2
       glob: 13.0.3
-      minimatch: 10.1.2
+      minimatch: 10.2.0
 
   '@npmcli/metavuln-calculator@9.0.3':
     dependencies:
@@ -20695,7 +20692,7 @@ snapshots:
       execa: 9.6.1
       json-rpc-2.0: 1.7.1
       lodash.groupby: 4.6.0
-      minimatch: 10.1.2
+      minimatch: 10.2.0
       mutation-server-protocol: 0.4.1
       mutation-testing-elements: 3.7.1
       mutation-testing-metrics: 3.7.1
@@ -20726,7 +20723,7 @@ snapshots:
       execa: 9.6.1
       json-rpc-2.0: 1.7.1
       lodash.groupby: 4.6.0
-      minimatch: 10.1.2
+      minimatch: 10.2.0
       mutation-server-protocol: 0.4.1
       mutation-testing-elements: 3.7.1
       mutation-testing-metrics: 3.7.1
@@ -20757,7 +20754,7 @@ snapshots:
       execa: 9.6.1
       json-rpc-2.0: 1.7.1
       lodash.groupby: 4.6.0
-      minimatch: 10.1.2
+      minimatch: 10.2.0
       mutation-server-protocol: 0.4.1
       mutation-testing-elements: 3.7.1
       mutation-testing-metrics: 3.7.1
@@ -21633,7 +21630,7 @@ snapshots:
   '@tufjs/models@4.1.0':
     dependencies:
       '@tufjs/canonical-json': 2.0.0
-      minimatch: 10.1.2
+      minimatch: 10.2.0
 
   '@tybys/wasm-util@0.10.1':
     dependencies:
@@ -25838,7 +25835,7 @@ snapshots:
       imurmurhash: 0.1.4
       is-glob: 4.0.3
       json-stable-stringify-without-jsonify: 1.0.1
-      minimatch: 10.1.2
+      minimatch: 10.2.0
       natural-compare: 1.4.0
       optionator: 0.9.4
     optionalDependencies:
@@ -26600,14 +26597,14 @@ snapshots:
     dependencies:
       foreground-child: 3.3.1
       jackspeak: 4.2.3
-      minimatch: 10.1.2
+      minimatch: 10.2.0
       minipass: 7.1.2
       package-json-from-dist: 1.0.1
       path-scurry: 2.0.1
 
   glob@13.0.1:
     dependencies:
-      minimatch: 10.1.2
+      minimatch: 10.2.0
       minipass: 7.1.2
       path-scurry: 2.0.1
 
@@ -27108,7 +27105,7 @@ snapshots:
 
   ignore-walk@8.0.0:
     dependencies:
-      minimatch: 10.1.2
+      minimatch: 10.2.0
 
   ignore@5.3.2: {}
 
@@ -30302,10 +30299,6 @@ snapshots:
   minimalistic-assert@1.0.1: {}
 
   minimatch@10.1.1:
-    dependencies:
-      '@isaacs/brace-expansion': 5.0.1
-
-  minimatch@10.1.2:
     dependencies:
       '@isaacs/brace-expansion': 5.0.1
 
@@ -34504,7 +34497,7 @@ snapshots:
       chalk: 5.6.2
       chokidar: 4.0.3
       foreground-child: 4.0.3
-      minimatch: 10.1.2
+      minimatch: 10.2.0
       mkdirp: 3.0.1
       polite-json: 5.0.0
       resolve-import: 2.1.1
