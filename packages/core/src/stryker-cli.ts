@@ -31,6 +31,15 @@ function parseCleanDirOption(val: string) {
   return v === 'always' ? v : v !== 'false' && v !== '0';
 }
 
+function parseConcurrency(val: string): number | string {
+  // If it's a pure number, parse as integer
+  if (/^\d+$/.test(val)) {
+    return parseInt(val, 10);
+  }
+  // Otherwise keep as string (for percentage values like "50%")
+  return val;
+}
+
 const configFileArgument = new Argument(
   '[configFile]',
   'Path to the config file',
@@ -262,7 +271,7 @@ export class StrykerCli {
       .option(
         '-c, --concurrency <n>',
         'Set the concurrency of workers. Stryker will always run checkers and test runners in parallel by creating worker processes (default: cpuCount - 1)',
-        parseInt,
+        parseConcurrency,
       )
       .option(
         '--disableBail',

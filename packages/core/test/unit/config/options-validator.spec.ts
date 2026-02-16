@@ -13,7 +13,6 @@ import { expect } from 'chai';
 
 import { OptionsValidator } from '../../../src/config/options-validator.js';
 import { coreTokens } from '../../../src/di/index.js';
-import { createCpuInfo } from '../../helpers/producers.js';
 import { optionsPath } from '../../../src/utils/index.js';
 
 describe(OptionsValidator.name, () => {
@@ -410,22 +409,64 @@ describe(OptionsValidator.name, () => {
       );
     });
 
-    it('should not configure "concurrency" if "maxConcurrentTestRunners" is >= cpus-1', () => {
+    it('should not configure "concurrency" if "maxConcurrentTestRunners" is >= availableParallelism-1', () => {
       testInjector.options.maxConcurrentTestRunners = 2;
-      sinon
-        .stub(os, 'cpus')
-        .returns([createCpuInfo(), createCpuInfo(), createCpuInfo()]);
+      sinon.stub(os, 'availableParallelism').returns(3);
       sut.validate(testInjector.options);
       expect(testInjector.options.concurrency).undefined;
     });
 
     it('should configure "concurrency" if "maxConcurrentTestRunners" is set with a lower value', () => {
       testInjector.options.maxConcurrentTestRunners = 1;
-      sinon
-        .stub(os, 'cpus')
-        .returns([createCpuInfo(), createCpuInfo(), createCpuInfo()]);
+      sinon.stub(os, 'availableParallelism').returns(3);
       sut.validate(testInjector.options);
       expect(testInjector.options.concurrency).eq(1);
+    });
+  });
+
+  describe('concurrency percentage', () => {
+    it('should accept "50%" as a valid percentage', () => {
+      testInjector.options.concurrency = '50%';
+      sut.validate(testInjector.options);
+      expect(testInjector.options.concurrency).eq('50%');
+    });
+
+    it('should accept "100%" as a valid percentage', () => {
+      testInjector.options.concurrency = '100%';
+      sut.validate(testInjector.options);
+      expect(testInjector.options.concurrency).eq('100%');
+    });
+
+    it('should accept "0%" as a valid percentage', () => {
+      testInjector.options.concurrency = '0%';
+      sut.validate(testInjector.options);
+      expect(testInjector.options.concurrency).eq('0%');
+    });
+
+    it('should reject percentages over 100%', () => {
+      testInjector.options.concurrency = '101%';
+      expect(() => sut.validate(testInjector.options)).throws();
+    });
+
+    it('should reject invalid percentage format', () => {
+      testInjector.options.concurrency = '50';
+      expect(() => sut.validate(testInjector.options)).throws();
+    });
+
+    it('should reject percentages with prefix like "abc50%"', () => {
+      testInjector.options.concurrency = 'abc50%';
+      expect(() => sut.validate(testInjector.options)).throws();
+    });
+
+    it('should reject percentages with suffix like "50%abc"', () => {
+      testInjector.options.concurrency = '50%abc';
+      expect(() => sut.validate(testInjector.options)).throws();
+    });
+
+    it('should not modify numeric concurrency values', () => {
+      testInjector.options.concurrency = 4;
+      sut.validate(testInjector.options);
+      expect(testInjector.options.concurrency).eq(4);
     });
   });
 

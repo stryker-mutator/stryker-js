@@ -126,13 +126,15 @@ Settings for the `clear-text` reporter.
 - `reportScoreTable`: Indicates whether or not to log score table.
 - `skipFull`: Indicates whether rows with 100% mutation score are hidden in the score table.
 
-### `concurrency` [`number`]
+### `concurrency` [`number` \| `string`]
 
 Default: `cpuCoreCount <= 4? cpuCoreCount : cpuCoreCount - 1`<br />
-Command line: `--concurrency 4`<br />
-Config file: `"concurrency": 4`
+Command line: `--concurrency 4` or `--concurrency 50%`<br />
+Config file: `"concurrency": 4` or `"concurrency": "50%"`
 
 Set the concurrency of workers. This defaults to `n-1` where `n` is the number of logical CPU cores available on your machine, unless `n <= 4`, in that case it uses `n`. This is a sane default for most use cases.
+
+You can also specify a percentage string (e.g., `"50%"`) to compute the worker count as a percentage of the available CPU cores. For example, on an 8-core machine, `"50%"` results in 4 workers. The minimum is always 1 worker.
 
 ### `commandRunner` [`object`]
 

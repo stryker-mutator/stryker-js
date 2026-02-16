@@ -3,7 +3,7 @@ title: Parallel Workers
 custom_edit_url: https://github.com/stryker-mutator/stryker-js/edit/master/docs/parallel-workers.md
 ---
 
-Stryker will always run checkers and test runners in parallel by creating worker processes (note, not `worker_threads`). The number of such processes forked is determined by the configuration option [`--concurrency`](./configuration.md#concurrency-number). 
+Stryker will always run checkers and test runners in parallel by creating worker processes (note, not `worker_threads`). The number of such processes forked is determined by the configuration option [`--concurrency`](./configuration.md#concurrency-number--string). You can specify a number (e.g., `4`) or a percentage of CPU cores (e.g., `"50%"`). 
 
 However, imagine running these parallel processes on a test suite which uses resources like a database connection, web server or file system. This means these processes can conflict if they write to the same database, file or utilize the same port.
 

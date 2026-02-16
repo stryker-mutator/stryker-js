@@ -292,8 +292,18 @@
       }
     },
     "concurrency": {
-      "description": "Set the concurrency of workers. Stryker will always run checkers and test runners in parallel by creating worker processes (note, not `worker_threads`). This defaults to `n-1` where `n` is the number of logical CPU cores available on your machine, unless `n <= 4`, in that case it uses `n`. This is a sane default for most use cases.",
-      "type": "number"
+      "description": "Set the concurrency of workers. Stryker will always run checkers and test runners in parallel by creating worker processes (note, not `worker_threads`). This defaults to `n-1` where `n` is the number of logical CPU cores available on your machine, unless `n <= 4`, in that case it uses `n`. This is a sane default for most use cases. You can also specify a percentage string (e.g., \"50%\") to compute the worker count as a percentage of the logical CPU cores available (0%-100%).",
+      "oneOf": [
+        {
+          "type": "number",
+          "minimum": 1
+        },
+        {
+          "type": "string",
+          "pattern": "^(100|[1-9]?[0-9])%$"
+        }
+      ],
+      "examples": [4, "50%", "100%"]
     },
     "commandRunner": {
       "description": "Options used by the command test runner. Note: these options will only be used when the command test runner is activated (this is the default)",

@@ -175,7 +175,7 @@ export class OptionsValidator {
       );
       if (
         !options.concurrency &&
-        options.maxConcurrentTestRunners < os.cpus().length - 1
+        options.maxConcurrentTestRunners < os.availableParallelism() - 1
       ) {
         options.concurrency = options.maxConcurrentTestRunners;
       }
