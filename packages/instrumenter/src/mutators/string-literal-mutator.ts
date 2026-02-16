@@ -43,6 +43,7 @@ function isValidParent(child: NodePath<babel.types.StringLiteral>): boolean {
     (types.isCallExpression(parent) &&
       types.isIdentifier(parent.callee, { name: 'require' })) ||
     (types.isCallExpression(parent) &&
-      types.isIdentifier(parent.callee, { name: 'Symbol' }))
+      types.isIdentifier(parent.callee, { name: 'Symbol' })) ||
+    (types.isCallExpression(parent) && types.isImport(parent.callee))
   );
 }

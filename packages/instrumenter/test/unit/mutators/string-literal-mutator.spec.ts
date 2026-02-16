@@ -88,6 +88,10 @@ describe(sut.name, () => {
       expectJSMutation(sut, 'require("./lib/square");');
     });
 
+    it('should not mutate import call expressions', () => {
+      expectJSMutation(sut, 'import("foo/bar");');
+    });
+
     it('should mutate other call statements', () => {
       expectJSMutation(sut, 'require2("./lib/square");', 'require2("");');
     });
