@@ -78,7 +78,7 @@
     "execa": "~9.6.0",
     "json-rpc-2.0": "^1.7.0",
     "lodash.groupby": "~4.6.0",
-    "minimatch": "~10.1.0",
+    "minimatch": "~10.2.0",
     "mutation-server-protocol": "~0.4.0",
     "mutation-testing-elements": "3.7.1",
     "mutation-testing-metrics": "3.7.1",
