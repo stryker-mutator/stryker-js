@@ -29,7 +29,7 @@
     "eslint-plugin-prettier": "5.5.5",
     "estree-walker": "3.0.3",
     "execa": "9.6.1",
-    "glob": "13.0.3",
+    "glob": "13.0.4",
     "install-local": "4.1.0",
     "jasmine": "6.0.0",
     "jasmine-core": "6.0.1",
