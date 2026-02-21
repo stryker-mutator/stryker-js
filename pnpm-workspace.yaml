@@ -6,3 +6,5 @@ minimumReleaseAge: 4320 # 3 days, see: https://pnpm.io/settings#minimumreleaseag
 minimumReleaseAgeExclude:
   # Renovate security update: axios@1.13.5
   - axios@1.13.5
+  # Renovate security update: @sveltejs/kit@2.52.2
+  - "@sveltejs/kit@2.52.2"
