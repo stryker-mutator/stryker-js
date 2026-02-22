@@ -101,6 +101,6 @@
     "@types/node": "24.10.13",
     "@types/progress": "2.0.7",
     "@types/semver": "7.7.1",
-    "glob": "13.0.5"
+    "glob": "13.0.6"
   }
 }
