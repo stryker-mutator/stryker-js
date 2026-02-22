@@ -72,7 +72,7 @@
     "react-dom": "19.2.4",
     "rxjs": "7.8.2",
     "semver": "7.7.4",
-    "svelte": "5.51.5",
+    "svelte": "5.53.0",
     "svelte-check": "4.4.1",
     "svelte-jester": "5.0.0",
     "tap": "21.6.1",
