@@ -64,7 +64,7 @@
     "karma-sourcemap-loader": "0.4.0",
     "karma-vite": "1.0.5",
     "karma-webpack": "5.0.1",
-    "minimatch": "10.1.2",
+    "minimatch": "10.2.2",
     "mocha": "11.7.5",
     "mutation-testing-metrics": "3.7.1",
     "mutation-testing-report-schema": "3.7.1",
