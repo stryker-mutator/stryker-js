@@ -15,7 +15,7 @@
     "@types/sinon": "21.0.0",
     "@types/sinon-chai": "4.0.0",
     "@types/source-map-support": "0.5.10",
-    "@typescript-eslint/utils": "8.56.0",
+    "@typescript-eslint/utils": "8.56.1",
     "@vitejs/plugin-react": "5.1.4",
     "c8": "11.0.0",
     "chai": "6.2.2",
@@ -45,7 +45,7 @@
     "source-map-support": "0.5.21",
     "ts-node": "10.9.2",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.56.0"
+    "typescript-eslint": "8.56.1"
   },
   "scripts": {
     "all": "pnpm run clean && pnpm run build && pnpm run lint && pnpm run test",
