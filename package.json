@@ -17,7 +17,7 @@
     "@types/source-map-support": "0.5.10",
     "@typescript-eslint/utils": "8.56.0",
     "@vitejs/plugin-react": "5.1.4",
-    "c8": "10.1.3",
+    "c8": "11.0.0",
     "chai": "6.2.2",
     "chai-as-promised": "8.0.2",
     "chai-jest-snapshot": "2.0.0",
