@@ -66,7 +66,7 @@ jobs:
         run: 'pnpm run e2e:lint'
       - name: Run e2e tests
         run: 'pnpm run e2e:run'
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: e2e-reports
