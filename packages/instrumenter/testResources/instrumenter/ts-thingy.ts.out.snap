@@ -47,10 +47,5 @@ function stryMutAct_9fa48(id) {
   stryMutAct_9fa48 = isActive;
   return isActive(id);
 }
-if (stryMutAct_9fa48(\\"0\\")) {
-  ;
-} else {
-  stryCov_9fa48(\\"0\\");
-  foo(stryMutAct_9fa48(\\"1\\") ? \\"\\" : (stryCov_9fa48(\\"1\\"), 'test'));
-}"
+foo(stryMutAct_9fa48(\\"1\\") ? \\"\\" : (stryCov_9fa48(\\"1\\"), 'test'));"
 `;

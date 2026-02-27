@@ -106,7 +106,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
       if (
         mutatorsThatCreatedMutantsForThisNode.some((mutator) => mutator.filter)
       ) {
-        const mutantsInScope: Mutant[] = [];
+        const mutantsInScope = Array.from(mutantsForCurrentNode);
         // Traverse down to find all mutants in scope
         path.traverse({
           enter(path) {

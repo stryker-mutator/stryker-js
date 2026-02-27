@@ -20,10 +20,6 @@ export const emptyExpressionMutator: NodeMutator = {
   },
 
   filter(mutantsInScope) {
-    if (mutantsInScope.length > 0) {
-      return false;
-    }
-
-    return true;
+    return mutantsInScope.length === 1;
   },
 };
