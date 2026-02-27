@@ -12,5 +12,5 @@ minimumReleaseAgeExclude:
   - svelte@5.51.5 || 5.53.5
   # Renovate security update: ajv@8.18.0
   - ajv@8.18.0
-  # Renovate security update: minimatch@10.2.3
-  - minimatch@10.2.3
+  # Renovate security update: minimatch@10.2.4
+  - minimatch@10.2.4
