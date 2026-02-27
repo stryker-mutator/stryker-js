@@ -1030,7 +1030,7 @@ importers:
         specifier: ~4.6.0
         version: 4.6.0
       minimatch:
-        specifier: ~10.2.0
+        specifier: ~10.2.3
         version: 10.2.3
       mutation-server-protocol:
         specifier: ~0.4.0
@@ -28473,9 +28473,7 @@ snapshots:
       pretty-format: 24.9.0
       throat: 4.1.0
     transitivePeerDependencies:
-      - bufferutil
       - supports-color
-      - utf-8-validate
 
   jest-jasmine2@27.5.1:
     dependencies:
