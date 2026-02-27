@@ -728,6 +728,35 @@ describe(MutationTestReportHelper.name, () => {
           end: { column: 1, line: 1 },
         });
       });
+
+      it('should preserve executedTests for reused incremental results', () => {
+        const input = factory.killedMutantResult({
+          fileName: 'add.js',
+          id: '3',
+        });
+        input.executedTests = [
+          {
+            id: '1',
+            name: 'foo should be bar',
+            status: TestStatus.Failed,
+            timeSpentMs: 21,
+            fileName: 'test/add.spec.js',
+          },
+        ];
+        const sut = createSut();
+
+        const actual = sut.reportMutantStatus(input, 'Killed');
+
+        expect(actual.executedTests).deep.eq([
+          {
+            id: '1',
+            name: 'foo should be bar',
+            status: TestStatus.Failed,
+            timeSpentMs: 21,
+            fileName: 'test/add.spec.js',
+          },
+        ]);
+      });
     });
 
     describe(
