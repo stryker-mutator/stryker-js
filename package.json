@@ -23,7 +23,7 @@
     "chai-jest-snapshot": "2.0.0",
     "concurrently": "9.2.1",
     "cross-env": "10.1.0",
-    "eslint": "10.0.1",
+    "eslint": "10.0.2",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-chai-friendly": "1.1.0",
     "eslint-plugin-prettier": "5.5.5",
