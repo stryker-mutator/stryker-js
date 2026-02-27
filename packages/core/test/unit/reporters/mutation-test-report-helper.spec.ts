@@ -7,6 +7,7 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import type { requireResolve } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import { CheckStatus } from '@stryker-mutator/api/check';
+import { TestStatus } from '@stryker-mutator/api/test-runner';
 import { calculateMutationTestMetrics } from 'mutation-testing-metrics';
 
 import { coreTokens } from '../../../src/di/index.js';
@@ -279,6 +280,33 @@ describe(MutationTestReportHelper.name, () => {
         expect(actualReport.files['6.js'].mutants[0]).include({
           status: 'CompileError',
         });
+      });
+
+      it('should not include executedTests in schema mutation report output', async () => {
+        // Arrange
+        const inputMutants: MutantResult[] = [
+          {
+            ...factory.killedMutantResult({ fileName: 'foo.js' }),
+            executedTests: [
+              {
+                id: 'spec-1',
+                name: 'spec one',
+                status: TestStatus.Success,
+                timeSpentMs: 7,
+                fileName: 'test/foo.spec.js',
+              },
+            ],
+          },
+        ];
+        fileSystemTestDouble.files['foo.js'] = '';
+
+        // Act
+        const [actualReport] = await actReportAll(inputMutants);
+
+        // Assert
+        const reportedMutant = actualReport.files['foo.js']
+          .mutants[0] as unknown as Record<string, unknown>;
+        expect(reportedMutant).not.to.have.property('executedTests');
       });
 
       it('should not offset the location when reporting all mutants', async () => {
@@ -719,6 +747,15 @@ describe(MutationTestReportHelper.name, () => {
               killedBy: ['1'],
               nrOfTests: 42,
               failureMessage: 'foo should have been bar at line 1',
+              executedTests: [
+                {
+                  id: '1',
+                  name: 'foo should be bar',
+                  status: TestStatus.Failed,
+                  timeSpentMs: 18,
+                  fileName: 'test/add.spec.js',
+                },
+              ],
             }),
           );
 
@@ -728,6 +765,15 @@ describe(MutationTestReportHelper.name, () => {
             killedBy: ['1'],
             testsCompleted: 42,
             statusReason: 'foo should have been bar at line 1',
+            executedTests: [
+              {
+                id: '1',
+                name: 'foo should be bar',
+                status: TestStatus.Failed,
+                timeSpentMs: 18,
+                fileName: 'test/add.spec.js',
+              },
+            ],
           };
           expect(actual).deep.include(expected);
         });

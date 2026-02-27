@@ -1,6 +1,7 @@
 import path from 'path';
 
 import { Mutant, MutantStatus, schema } from '@stryker-mutator/api/core';
+import { TestStatus } from '@stryker-mutator/api/test-runner';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { deepFreeze } from '@stryker-mutator/util';
 import { expect } from 'chai';
@@ -597,6 +598,56 @@ describe(IncrementalDiffer.name, () => {
         testsCompleted: 1,
       };
       expect(actualMutant).deep.contains(expected);
+    });
+
+    it('should copy executedTests from incremental report when mutant is reused', () => {
+      // Arrange
+      const scenario = new ScenarioBuilder().withMathProjectExample();
+      (
+        scenario.incrementalFiles[srcAdd].mutants[0] as schema.MutantResult & {
+          executedTests?: Array<{
+            id: string;
+            name: string;
+            status: TestStatus;
+            timeSpentMs: number;
+            fileName?: string;
+          }>;
+        }
+      ).executedTests = [
+        {
+          id: 'spec-1',
+          name: 'add(2, 0) = 2',
+          status: TestStatus.Failed,
+          timeSpentMs: 11,
+          fileName: path.resolve(testAdd),
+        },
+      ];
+
+      // Act
+      const [actualMutant] = scenario.act();
+
+      // Assert
+      expect(
+        (
+          actualMutant as Mutant & {
+            executedTests?: Array<{
+              id: string;
+              name: string;
+              status: TestStatus;
+              timeSpentMs: number;
+              fileName?: string;
+            }>;
+          }
+        ).executedTests,
+      ).deep.eq([
+        {
+          id: 'spec-1',
+          name: 'add(2, 0) = 2',
+          status: TestStatus.Failed,
+          timeSpentMs: 11,
+          fileName: path.resolve(testAdd),
+        },
+      ]);
     });
 
     it('should not reuse the result when --force is active', () => {

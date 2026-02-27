@@ -185,11 +185,14 @@ export class IncrementalDiffer {
           ) {
             reusedMutantCount++;
             const { status, statusReason, testsCompleted } = oldMutant;
+            const executedTests = (oldMutant as { executedTests?: unknown })
+              .executedTests;
             return {
               ...mutant,
               status,
               statusReason,
               testsCompleted,
+              executedTests,
               coveredBy: [...(coveringTests ?? [])].map(({ id }) => id),
               killedBy: testKeysToId(killedByTestKeys),
             };
