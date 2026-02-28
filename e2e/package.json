@@ -11,7 +11,7 @@
     "@babel/plugin-proposal-pipeline-operator": "7.28.6",
     "@babel/preset-env": "7.29.0",
     "@babel/preset-flow": "7.27.1",
-    "@cucumber/cucumber": "12.6.0",
+    "@cucumber/cucumber": "12.7.0",
     "@stryker-mutator/api": "workspace:*",
     "@stryker-mutator/core": "workspace:*",
     "@stryker-mutator/cucumber-runner": "workspace:*",
