@@ -98,7 +98,7 @@
     "@types/diff-match-patch": "1.0.36",
     "@types/json-schema": "7.0.15",
     "@types/lodash.groupby": "4.6.9",
-    "@types/node": "24.10.13",
+    "@types/node": "24.10.14",
     "@types/progress": "2.0.7",
     "@types/semver": "7.7.1",
     "glob": "13.0.6"
