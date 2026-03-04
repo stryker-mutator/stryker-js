@@ -410,7 +410,7 @@ Thus, to see logging output from the test runner set the `logLevel` to `all` or 
 
 ### `maxConcurrentTestRunners` (DEPRECATED)
 
-**DEPRECATED**. Please use [concurrency](#concurrency-number) instead.
+**DEPRECATED**. Please use [concurrency](#concurrency-number--string) instead.
 
 ### `maxTestRunnerReuse` [`number`]
 
