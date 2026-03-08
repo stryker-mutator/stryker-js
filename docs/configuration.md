@@ -215,13 +215,12 @@ _Note: Disable bail needs to be supported by the test runner plugin in order to 
 
 ### `disableTypeChecks` [`boolean` | `string`]
 
-
 <details>
 
 <summary>History</summary>
 
-| Version | Changes                     |
-| ------- | --------------------------- |
+| Version | Changes                                                                         |
+| ------- | ------------------------------------------------------------------------------- |
 | 7.0     | Default changed from `"{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue}"` to `true` |
 
 </details>
@@ -230,11 +229,9 @@ Default: `true`<br />
 Command: _none_<br />
 Config file: `"disableTypeChecks": false`
 
-Set to `true` to disable type checking, or `false` to enable it. For more control, configure a pattern that matches the files of which type checking has to be disabled, for example: `"{test,src,lib}/**/*.{js,ts,jsx,tsx}"`. Setting it to `true` will disable type checking for all TypeScript-ish files (currently *.ts, *.js, *.tsx, *.jsx, *.mjs, *.mts, *.cts, *.cjs, *.html and *.vue files).
+Set to `true` to disable type checking, or `false` to enable it. For more control, configure a pattern that matches the files of which type checking has to be disabled, for example: `"{test,src,lib}/**/*.{js,ts,jsx,tsx}"`. Setting it to `true` will disable type checking for all TypeScript-ish files (currently _.ts, _.js, _.tsx, _.jsx, _.mjs, _.mts, _.cts, _.cjs, _.html and _.vue files).
 
 Disabling type checking is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`).
-
-
 
 ### `dryRunOnly` [`boolean`]
 
@@ -326,7 +323,7 @@ Default: `[]`<br />
 Command line: _none_<br />
 Config file: `"ignorers": ["console.debug"]`<br />
 
-Specify which ignore-plugins to use. With an ignore-plugin, you can skip mutating specific code patterns that you don't want to test or cannot be mutated. For example, you may use an ignore-plugin to exclude all `console.debug()` statements from mutation testing. 
+Specify which ignore-plugins to use. With an ignore-plugin, you can skip mutating specific code patterns that you don't want to test or cannot be mutated. For example, you may use an ignore-plugin to exclude all `console.debug()` statements from mutation testing.
 
 Here's a list of built-in ignore plugins:
 
@@ -487,7 +484,7 @@ Default: `['clear-text', 'progress', 'html']`<br />
 Command line: `--reporters clear-text,progress,dots,dashboard,html,json`<br />
 Config file: `"reporters": ["clear-text", "progress", "dots", "dashboard", "html", "json"]`
 
-Set the reporters for Stryker to use. These reporters can be used out of the box: `html`, `json`, `progress`, `clear-text`, `dots`, `dashboard` and `event-recorder`.
+Set the reporters for Stryker to use. These reporters can be used out of the box: `html`, `json`, `progress`, `clear-text`, `dots`, `dashboard`, `event-recorder` and `mutation-timings`.
 By default, `clear-text`, `progress`, `html` are active if no reporters are configured. See [reporter plugins](./plugins.md#reporters)
 for a full description of each reporter.
 
@@ -499,6 +496,28 @@ To configure specific reporters, see their configuration:
 - [dashboard](#dashboard-dashboardoptions)
 - [htmlReporter](#htmlreporter-object)
 - [jsonReporter](#jsonreporter-object)
+
+#### Mutation timing diagnostics
+
+Use the `mutation-timings` reporter to write a sidecar diagnostics artifact with per-mutant executed test timings.
+
+Example:
+
+```json
+{
+  "reporters": ["progress", "clear-text", "mutation-timings"]
+}
+```
+
+The reporter writes to `reports/mutation/mutant-test-timings.json` by default.
+
+Use the following environment variables to control behavior:
+
+- `STRYKER_MUTATION_TEST_TIMINGS=1` to include `executedTests` timing payloads in mutant run results.
+- `STRYKER_MUTATION_TEST_TIMINGS_MAX_TESTS=<N>` to cap the number of `executedTests` per mutant.
+- `STRYKER_MUTATION_TEST_TIMINGS_FILE=<path>` to override the sidecar output path.
+
+The `executedTests` payload is runtime diagnostics data and is not added to the final mutation testing report schema output (`mutation.json`).
 
 ### `symlinkNodeModules` [`boolean`]
 

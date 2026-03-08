@@ -21,6 +21,8 @@ _Setting `"incremental": true` in your stryker.config.json file is also supporte
 
 StrykerJS stores the previous result in a "reports/stryker-incremental.json" file (determined by the [--incrementalFile](./configuration.md#incrementalfile-string) option). The next time StrykerJS runs, it will read this JSON file and try to reuse as much of it as possible.
 
+When mutation timing diagnostics are enabled (`STRYKER_MUTATION_TEST_TIMINGS=1`), reused mutant results also keep their `executedTests` timing payloads from the incremental file.
+
 Reuse is possible when:
 
 - A mutant was "Killed"; the culprit test still exists, and it didn't change.
@@ -54,16 +56,16 @@ Running in incremental mode, Stryker will do its best to produce an accurate mut
 - Any other changes to your environment are not detected, such as updates to other files, updated (dev) dependencies, changes to environment variables, changes to `.snap` files, readme files, etc.
 - [Static mutants](../../mutation-testing-elements/static-mutants/) don't have test coverage; thus, Stryker won't detect test changes for them.
 
-| Test runner plugin | Test reporting                    |
-| ------------------ | --------------------------------- |
-| 🃏 Jest            | ✅ Full                           |
+| Test runner plugin | Test reporting                     |
+| ------------------ | ---------------------------------- |
+| 🃏 Jest            | ✅ Full                            |
 | ☕ Mocha           | ⚠ Tests per file without location |
 | 🟣 Jasmine         | ⚠ Test names only                 |
 | 🔵 Karma           | ⚠ Test names only                 |
-| 🥒 CucumberJS      | ✅ Full                           |
+| 🥒 CucumberJS      | ✅ Full                            |
 | 📼 Tap             | ⚠ Tests per file without location |
 | ⚡ Vitest          | ⚠ Tests per file without location |
-| ▶ Command          | ❌ Nothing                        |
+| ▶ Command         | ❌ Nothing                         |
 
 You can use this table to understand why StrykerJS decides not to rerun a specific mutant even though you've changed tests covering that mutant.
 
