@@ -1,14 +1,25 @@
 import sinon from 'sinon';
 import { expect } from 'chai';
 import fs from 'fs';
-import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import { TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
+import {
+  assertions,
+  factory,
+  testInjector,
+} from '@stryker-mutator/test-helpers';
+import {
+  TestRunnerCapabilities,
+  TestStatus,
+} from '@stryker-mutator/api/test-runner';
 import { Vitest } from 'vitest/node';
 
 import { VitestTestRunner } from '../../src/vitest-test-runner.js';
 import { VitestRunnerOptionsWithStrykerOptions } from '../../src/vitest-runner-options-with-stryker-options.js';
 import { vitestWrapper } from '../../src/vitest-wrapper.js';
-import { createVitestMock } from '../util/factories.js';
+import {
+  createVitestFile,
+  createVitestMock,
+  createVitestTest,
+} from '../util/factories.js';
 import { VITEST_ERROR_CODES } from '../../src/vitest-helpers.js';
 
 describe(VitestTestRunner.name, () => {
@@ -169,6 +180,69 @@ describe(VitestTestRunner.name, () => {
 
       // Assert
       sinon.assert.notCalled(testInjector.logger.warn);
+    });
+  });
+
+  describe(VitestTestRunner.prototype.mutantRun.name, () => {
+    let originalMutationTestTimings: string | undefined;
+
+    beforeEach(async () => {
+      originalMutationTestTimings = process.env.STRYKER_MUTATION_TEST_TIMINGS;
+      delete process.env.STRYKER_MUTATION_TEST_TIMINGS;
+      await sut.init();
+    });
+
+    afterEach(() => {
+      if (originalMutationTestTimings !== undefined) {
+        process.env.STRYKER_MUTATION_TEST_TIMINGS = originalMutationTestTimings;
+      } else {
+        delete process.env.STRYKER_MUTATION_TEST_TIMINGS;
+      }
+    });
+
+    it('should include executedTests when mutation timing export is enabled', async () => {
+      process.env.STRYKER_MUTATION_TEST_TIMINGS = '1';
+      vitestStub.state.getFiles = () => [
+        createVitestFile({
+          tasks: [
+            createVitestTest({
+              id: 'file.spec.ts#suite > pass',
+              name: 'pass',
+              fullName: 'file.spec.ts > suite > pass',
+              result: { state: 'pass', duration: 4 },
+            }),
+            createVitestTest({
+              id: 'file.spec.ts#suite > fail',
+              name: 'fail',
+              fullName: 'file.spec.ts > suite > fail',
+              result: {
+                state: 'fail',
+                duration: 9,
+                errors: [{ message: 'boom' }],
+              },
+            }),
+          ],
+        }),
+      ];
+
+      const result = await sut.mutantRun(factory.mutantRunOptions());
+
+      assertions.expectKilled(result);
+      expect(result.executedTests).to.have.length(2);
+      expect(result.executedTests?.[0]).deep.include({
+        id: 'file.spec.js#suite pass',
+        name: 'suite pass',
+        status: TestStatus.Success,
+        timeSpentMs: 4,
+      });
+      expect(result.executedTests?.[0]?.fileName).to.match(/file\.spec\.js$/);
+      expect(result.executedTests?.[1]).deep.include({
+        id: 'file.spec.js#suite fail',
+        name: 'suite fail',
+        status: TestStatus.Failed,
+        timeSpentMs: 9,
+      });
+      expect(result.executedTests?.[1]?.fileName).to.match(/file\.spec\.js$/);
     });
   });
 });
