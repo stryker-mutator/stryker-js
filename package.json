@@ -34,7 +34,7 @@
     "jasmine": "6.1.0",
     "jasmine-core": "6.1.0",
     "json-schema-to-typescript": "15.0.4",
-    "lerna": "9.0.6",
+    "lerna": "9.0.7",
     "minimatch": "10.2.4",
     "mocha": "11.7.5",
     "playwright": "1.58.2",
