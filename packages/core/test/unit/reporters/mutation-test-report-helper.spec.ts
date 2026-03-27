@@ -14,8 +14,34 @@ import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-r
 import { objectUtils } from '../../../src/utils/object-utils.js';
 import { strykerVersion } from '../../../src/stryker-package.js';
 import { Project } from '../../../src/fs/index.js';
+import type {
+  AsyncExitHandler,
+  ExitHandler,
+} from '../../../src/unexpected-exit-handler.js';
 import { FileSystemTestDouble } from '../../helpers/file-system-test-double.js';
 import { TestCoverageTestDouble } from '../../helpers/test-coverage-test-double.js';
+
+class UnexpectedExitRegistryStub {
+  private readonly exitHandlers: ExitHandler[] = [];
+  private readonly asyncHandlers: AsyncExitHandler[] = [];
+
+  public registerHandler(handler: ExitHandler): void {
+    this.exitHandlers.push(handler);
+  }
+
+  public registerAsyncHandler(handler: AsyncExitHandler): void {
+    this.asyncHandlers.push(handler);
+  }
+
+  public dispose(): void {
+    this.exitHandlers.length = 0;
+    this.asyncHandlers.length = 0;
+  }
+
+  public async triggerUnexpectedExit(): Promise<void> {
+    await Promise.allSettled(this.asyncHandlers.map((handler) => handler()));
+  }
+}
 
 describe(MutationTestReportHelper.name, () => {
   let reporterMock: sinon.SinonStubbedInstance<Required<Reporter>>;
@@ -23,6 +49,7 @@ describe(MutationTestReportHelper.name, () => {
   let testCoverage: TestCoverageTestDouble;
   let requireFromCwdStub: sinon.SinonStubbedMember<typeof requireResolve>;
   let fileSystemTestDouble: FileSystemTestDouble;
+  let unexpectedExitRegistry: UnexpectedExitRegistryStub;
 
   beforeEach(() => {
     requireFromCwdStub = sinon.stub();
@@ -30,6 +57,7 @@ describe(MutationTestReportHelper.name, () => {
     setExitCodeStub = sinon.stub(objectUtils, 'setExitCode');
     fileSystemTestDouble = new FileSystemTestDouble();
     testCoverage = new TestCoverageTestDouble();
+    unexpectedExitRegistry = new UnexpectedExitRegistryStub();
   });
 
   function createSut() {
@@ -43,6 +71,7 @@ describe(MutationTestReportHelper.name, () => {
       .provideValue(coreTokens.testCoverage, testCoverage)
       .provideValue(coreTokens.requireFromCwd, requireFromCwdStub)
       .provideValue(coreTokens.fs, fileSystemTestDouble)
+      .provideValue(coreTokens.unexpectedExitRegistry, unexpectedExitRegistry)
       .injectClass(MutationTestReportHelper);
   }
 
@@ -524,6 +553,89 @@ describe(MutationTestReportHelper.name, () => {
         testInjector.options.incremental = true;
         await actReportAll();
         expect(fileSystemTestDouble.dirs).contains('reports');
+      });
+
+      it('should write partial results to the incremental file on unexpected exit', async () => {
+        testInjector.options.incremental = true;
+        fileSystemTestDouble.files['partial.js'] = 'const answer = 42;\n';
+        const sut = createSut();
+
+        sut.reportMutantStatus(
+          factory.mutantTestCoverage({
+            fileName: 'partial.js',
+            id: '1',
+            location: factory.location(),
+          }),
+          'NoCoverage',
+        );
+
+        await unexpectedExitRegistry.triggerUnexpectedExit();
+
+        const incrementalReportContent: string =
+          await fileSystemTestDouble.readFile(
+            'reports/stryker-incremental.json',
+          );
+        const actualReport = JSON.parse(
+          incrementalReportContent,
+        ) as schema.MutationTestResult;
+        expect(actualReport.files['partial.js'].mutants).lengthOf(1);
+        expect(actualReport.files['partial.js'].mutants[0].status).eq(
+          'NoCoverage',
+        );
+        expect(testInjector.logger.info).calledWith(
+          'Saved a partial incremental report to "%s" after an unexpected interrupt.',
+          'reports/stryker-incremental.json',
+        );
+      });
+
+      it('should not overwrite the incremental file on unexpected exit when no results were reported', async () => {
+        testInjector.options.incremental = true;
+        fileSystemTestDouble.files['reports/stryker-incremental.json'] =
+          'existing-report';
+        createSut();
+
+        await unexpectedExitRegistry.triggerUnexpectedExit();
+
+        expect(
+          await fileSystemTestDouble.readFile(
+            'reports/stryker-incremental.json',
+          ),
+        ).eq('existing-report');
+        expect(reporterMock.onMutationTestReportReady).not.called;
+        expect(testInjector.logger.info).not.calledWith(
+          'Saved a partial incremental report to "%s" after an unexpected interrupt.',
+          'reports/stryker-incremental.json',
+        );
+      });
+
+      it('should not write partial results on unexpected exit after the complete report was written', async () => {
+        testInjector.options.incremental = true;
+        fileSystemTestDouble.files['foo.js'] = '';
+        const sut = createSut();
+        const completeResults = [
+          factory.mutantResult({
+            fileName: 'foo.js',
+            id: '1',
+            status: 'Killed',
+          }),
+          factory.mutantResult({
+            fileName: 'foo.js',
+            id: '2',
+            status: 'Survived',
+          }),
+        ];
+
+        await sut.reportAll(completeResults);
+        fileSystemTestDouble.files['reports/stryker-incremental.json'] =
+          'full-report';
+
+        await unexpectedExitRegistry.triggerUnexpectedExit();
+
+        expect(
+          await fileSystemTestDouble.readFile(
+            'reports/stryker-incremental.json',
+          ),
+        ).eq('full-report');
       });
     });
 

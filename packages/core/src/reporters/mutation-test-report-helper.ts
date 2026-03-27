@@ -36,6 +36,7 @@ import { coreTokens } from '../di/index.js';
 import { objectUtils } from '../utils/object-utils.js';
 import { Project, FileSystem } from '../fs/index.js';
 import { TestCoverage } from '../mutants/index.js';
+import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
 
 const STRYKER_FRAMEWORK: Readonly<
   Pick<schema.FrameworkInformation, 'branding' | 'name' | 'version'>
@@ -53,6 +54,9 @@ const STRYKER_FRAMEWORK: Readonly<
  * A helper class to convert and report mutants that survived or get killed
  */
 export class MutationTestReportHelper {
+  private readonly partialResults: MutantResult[] = [];
+  private reportCompleted = false;
+
   public static inject = tokens(
     coreTokens.reporter,
     commonTokens.options,
@@ -61,6 +65,7 @@ export class MutationTestReportHelper {
     coreTokens.testCoverage,
     coreTokens.fs,
     coreTokens.requireFromCwd,
+    coreTokens.unexpectedExitRegistry,
   );
 
   constructor(
@@ -71,7 +76,22 @@ export class MutationTestReportHelper {
     private readonly testCoverage: I<TestCoverage>,
     private readonly fs: I<FileSystem>,
     private readonly requireFromCwd: typeof requireResolve,
-  ) {}
+    unexpectedExitHandler: I<UnexpectedExitHandler>,
+  ) {
+    unexpectedExitHandler.registerAsyncHandler(async () => {
+      if (
+        this.options.incremental &&
+        !this.reportCompleted &&
+        this.partialResults.length > 0
+      ) {
+        await this.writeIncrementalReport(this.partialResults);
+        this.log.info(
+          'Saved a partial incremental report to "%s" after an unexpected interrupt.',
+          this.options.incrementalFile,
+        );
+      }
+    });
+  }
 
   public reportCheckFailed(
     mutant: MutantTestCoverage,
@@ -140,6 +160,7 @@ export class MutationTestReportHelper {
   }
 
   private reportOne(result: MutantResult): MutantResult {
+    this.partialResults.push(result);
     this.reporter.onMutantTested(result);
     return result;
   }
@@ -158,16 +179,26 @@ export class MutationTestReportHelper {
     const metrics = calculateMutationTestMetrics(report);
     this.reporter.onMutationTestReportReady(report, metrics);
     if (this.options.incremental) {
-      await this.fs.mkdir(path.dirname(this.options.incrementalFile), {
-        recursive: true,
-      });
-      await this.fs.writeFile(
-        this.options.incrementalFile,
-        JSON.stringify(report, null, 2),
-        'utf-8',
-      );
+      await this.writeIncrementalReport(report);
     }
+    this.reportCompleted = true;
     this.determineExitCode(metrics);
+  }
+
+  private async writeIncrementalReport(
+    resultsOrReport: readonly MutantResult[] | schema.MutationTestResult,
+  ): Promise<void> {
+    const report = Array.isArray(resultsOrReport)
+      ? await this.mutationTestReport(resultsOrReport)
+      : resultsOrReport;
+    await this.fs.mkdir(path.dirname(this.options.incrementalFile), {
+      recursive: true,
+    });
+    await this.fs.writeFile(
+      this.options.incrementalFile,
+      JSON.stringify(report, null, 2),
+      'utf-8',
+    );
   }
 
   private determineExitCode(metrics: MutationTestMetricsResult) {
