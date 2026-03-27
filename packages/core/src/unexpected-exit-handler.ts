@@ -3,10 +3,13 @@ import { Disposable } from '@stryker-mutator/api/plugin';
 import { coreTokens } from './di/index.js';
 
 export type ExitHandler = () => void;
+export type AsyncExitHandler = () => Promise<void>;
 
 const signals = Object.freeze(['SIGABRT', 'SIGINT', 'SIGHUP', 'SIGTERM']);
+
 export class UnexpectedExitHandler implements Disposable {
   private readonly unexpectedExitHandlers: ExitHandler[] = [];
+  private readonly unexpectedAsyncExitHandlers: AsyncExitHandler[] = [];
 
   public static readonly inject = [coreTokens.process] as const;
   constructor(
@@ -15,10 +18,24 @@ export class UnexpectedExitHandler implements Disposable {
     process.on('exit', this.handleExit);
     signals.forEach((signal) => process.on(signal, this.processSignal));
   }
+
   private readonly processSignal = (_signal: string, signalNumber: number) => {
-    // Just call 'exit' with correct exitCode.
     // See https://nodejs.org/api/process.html#process_signal_events, we should exit with 128 + signal number
-    this.process.exit(128 + signalNumber);
+    const exitCode = 128 + signalNumber;
+    if (this.unexpectedAsyncExitHandlers.length === 0) {
+      // No async handlers, just call 'exit' with correct exitCode.
+      this.process.exit(exitCode);
+    }
+
+    // Run async handlers before exiting. Signal handlers keep the event loop alive,
+    // so we can await async work here, unlike process.on('exit') handlers.
+    // "Listener functions must only perform synchronous operations."
+    // https://nodejs.org/api/process.html#event-exit
+    void Promise.allSettled(
+      this.unexpectedAsyncExitHandlers.map((handler) => handler()),
+    ).then(() => {
+      this.process.exit(exitCode);
+    });
   };
 
   private readonly handleExit = () => {
@@ -27,6 +44,10 @@ export class UnexpectedExitHandler implements Disposable {
 
   public registerHandler(handler: ExitHandler): void {
     this.unexpectedExitHandlers.push(handler);
+  }
+
+  public registerAsyncHandler(handler: AsyncExitHandler): void {
+    this.unexpectedAsyncExitHandlers.push(handler);
   }
 
   public dispose(): void {

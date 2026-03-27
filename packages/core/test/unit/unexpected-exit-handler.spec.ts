@@ -72,4 +72,64 @@ describe(UnexpectedExitHandler.name, () => {
       expect(exitHandler).called;
     });
   });
+
+  describe(UnexpectedExitHandler.prototype.registerAsyncHandler.name, () => {
+    let clock: sinon.SinonFakeTimers;
+
+    beforeEach(() => {
+      clock = sinon.useFakeTimers();
+    });
+
+    afterEach(() => {
+      clock.restore();
+    });
+
+    it('should call the provided async handler on signal', async () => {
+      const asyncHandler = sinon.stub().resolves();
+      const sut = createSut();
+      sut.registerAsyncHandler(asyncHandler);
+      processMock.emit('SIGINT', 'SIGINT', 2);
+      await clock.runAllAsync();
+      expect(asyncHandler).called;
+    });
+
+    it('should call process.exit with the correct exit code after async handlers complete', async () => {
+      const asyncHandler = sinon.stub().resolves();
+      const sut = createSut();
+      sut.registerAsyncHandler(asyncHandler);
+      processMock.emit('SIGINT', 'SIGINT', 2);
+      await clock.runAllAsync();
+      expect(processMock.exit).calledWith(130); // 128 + 2
+    });
+
+    it('should call process.exit even when an async handler rejects', async () => {
+      const asyncHandler = sinon.stub().rejects(new Error('handler failed'));
+      const sut = createSut();
+      sut.registerAsyncHandler(asyncHandler);
+      processMock.emit('SIGTERM', 'SIGTERM', 15);
+      await clock.runAllAsync();
+      expect(processMock.exit).calledWith(143); // 128 + 15
+    });
+
+    it('should call all async handlers even if one rejects', async () => {
+      const failingHandler = sinon.stub().rejects(new Error('handler failed'));
+      const successHandler = sinon.stub().resolves();
+      const sut = createSut();
+      sut.registerAsyncHandler(failingHandler);
+      sut.registerAsyncHandler(successHandler);
+      processMock.emit('SIGTERM', 'SIGTERM', 15);
+      await clock.runAllAsync();
+      expect(failingHandler).called;
+      expect(successHandler).called;
+    });
+
+    it('should not call the async handler on the "exit" event', async () => {
+      const asyncHandler = sinon.stub().resolves();
+      const sut = createSut();
+      sut.registerAsyncHandler(asyncHandler);
+      processMock.emit('exit');
+      await clock.runAllAsync();
+      expect(asyncHandler).not.called;
+    });
+  });
 });
