@@ -1,5 +1,5 @@
 import babel, { type types } from '@babel/core';
-import generate from '@babel/generator';
+import generator from '@babel/generator';
 import {
   Mutant as ApiMutant,
   Location,
@@ -10,7 +10,7 @@ import { deepCloneNode, eqNode } from './util/index.js';
 
 const { traverse } = babel;
 
-const generator = generate.default;
+const generate = generator.default ?? generator;
 
 export interface Mutable {
   mutatorName: string;
@@ -34,7 +34,7 @@ export class Mutant implements Mutable {
     this.replacement = specs.replacement;
     this.mutatorName = specs.mutatorName;
     this.ignoreReason = specs.ignoreReason;
-    this.replacementCode = generator(this.replacement).code;
+    this.replacementCode = generate(this.replacement).code;
   }
 
   public toApiMutant(): ApiMutant {
