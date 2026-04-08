@@ -344,11 +344,11 @@ importers:
         specifier: 11.7.5
         version: 11.7.5
       mutation-testing-metrics:
-        specifier: 3.7.2
-        version: 3.7.2
+        specifier: 3.7.3
+        version: 3.7.3
       mutation-testing-report-schema:
-        specifier: 3.7.2
-        version: 3.7.2
+        specifier: 3.7.3
+        version: 3.7.3
       react:
         specifier: 19.2.4
         version: 19.2.4
@@ -975,11 +975,11 @@ importers:
   packages/api:
     dependencies:
       mutation-testing-metrics:
-        specifier: 3.7.2
-        version: 3.7.2
+        specifier: 3.7.3
+        version: 3.7.3
       mutation-testing-report-schema:
-        specifier: 3.7.2
-        version: 3.7.2
+        specifier: 3.7.3
+        version: 3.7.3
       tslib:
         specifier: ~2.8.0
         version: 2.8.1
@@ -1036,14 +1036,14 @@ importers:
         specifier: ~0.4.0
         version: 0.4.1
       mutation-testing-elements:
-        specifier: 3.7.2
-        version: 3.7.2
+        specifier: 3.7.3
+        version: 3.7.3
       mutation-testing-metrics:
-        specifier: 3.7.2
-        version: 3.7.2
+        specifier: 3.7.3
+        version: 3.7.3
       mutation-testing-report-schema:
-        specifier: 3.7.2
-        version: 3.7.2
+        specifier: 3.7.3
+        version: 3.7.3
       npm-run-path:
         specifier: ~6.0.0
         version: 6.0.0
@@ -1408,8 +1408,8 @@ importers:
         specifier: ~8.18.0
         version: 8.18.0
       mutation-testing-metrics:
-        specifier: 3.7.2
-        version: 3.7.2
+        specifier: 3.7.3
+        version: 3.7.3
     devDependencies:
       '@stryker-mutator/api':
         specifier: workspace:*
@@ -11483,20 +11483,20 @@ packages:
     resolution: {integrity: sha512-SBGK0j8hLDne7bktgThKI8kGvGTx3rY3LAeQTmOKZ5bVnL/7TorLMvcVF7dIPJCu5RNUWhkkuF53kurygYVt3g==}
     engines: {node: '>=18'}
 
-  mutation-testing-elements@3.7.2:
-    resolution: {integrity: sha512-i7X2Q4X5eYon72W2QQ9HND7plVhQcqTnv+Xc3KeYslRZSJ4WYJoal8LFdbWm7dKWLNE0rYkCUrvboasWzF3MMA==}
+  mutation-testing-elements@3.7.3:
+    resolution: {integrity: sha512-SMeIPxngJpfjfNYctFpYQQtlBlZaVO0aoB3FKdwrI8Ee/2bkyUuCZzAOCLv1U9fnmfA37dPFq0Owduoxs2XgGQ==}
 
   mutation-testing-metrics@1.7.10:
     resolution: {integrity: sha512-wQnfnvMoSkV/5AHurRaDouiXf2ENoo23cXNZw70ks+mftEGPwLMStlyQZytQrcY/9lQDdrNSdMSPt2Zri75OcA==}
 
-  mutation-testing-metrics@3.7.2:
-    resolution: {integrity: sha512-ichXZSC4FeJbcVHYOWzWUhNuTJGogc0WiQol8lqEBrBSp+ADl3fmcZMqrx0ogInEUiImn+A8JyTk6uh9vd25TQ==}
+  mutation-testing-metrics@3.7.3:
+    resolution: {integrity: sha512-B8QrP0ZomErzTPNlhrzKWPNBln+3afwBZPHv0Q7N8wZZTYxMptzb/Gdm3ExXVmioVYrtZAtsDs7W/T/b2AixOQ==}
 
   mutation-testing-report-schema@1.7.10:
     resolution: {integrity: sha512-lPbEVTAlx0XCXA5GKpb6+0mtDk9MoepYVsXhEtRcwiHRjmqBn2frwXL1Xmkh6HxYnEDIQddzZAgk8SIbkV7p+g==}
 
-  mutation-testing-report-schema@3.7.2:
-    resolution: {integrity: sha512-fN5M61SDzIOeJyatMOhGPLDOFz5BQIjTNPjo4PcHIEUWrejO4i4B5PFuQ/2l43709hEsTxeiXX00H73WERKcDw==}
+  mutation-testing-report-schema@3.7.3:
+    resolution: {integrity: sha512-BHm3MYq+ckO+t5CtlG8zpqxc75rdJCkxVlE+fGuGJM3F7tNCQ/OW2N+TQVHN3BHsYa84+BFc6g3AwDYkUsw2MA==}
 
   mute-stream@1.0.0:
     resolution: {integrity: sha512-avsJQhyd+680gKXyG/sQc0nXaC6rBkPOfyHYcFb9+hdkqQkR9bdnkJ0AMZhke0oesPqIO+mFFJ+IdBc7mst4IA==}
@@ -20556,9 +20556,9 @@ snapshots:
       lodash.groupby: 4.6.0
       minimatch: 10.2.5
       mutation-server-protocol: 0.4.1
-      mutation-testing-elements: 3.7.2
-      mutation-testing-metrics: 3.7.2
-      mutation-testing-report-schema: 3.7.2
+      mutation-testing-elements: 3.7.3
+      mutation-testing-metrics: 3.7.3
+      mutation-testing-report-schema: 3.7.3
       npm-run-path: 6.0.0
       progress: 2.0.3
       rxjs: 7.8.2
@@ -20587,9 +20587,9 @@ snapshots:
       lodash.groupby: 4.6.0
       minimatch: 10.2.5
       mutation-server-protocol: 0.4.1
-      mutation-testing-elements: 3.7.2
-      mutation-testing-metrics: 3.7.2
-      mutation-testing-report-schema: 3.7.2
+      mutation-testing-elements: 3.7.3
+      mutation-testing-metrics: 3.7.3
+      mutation-testing-report-schema: 3.7.3
       npm-run-path: 6.0.0
       progress: 2.0.3
       rxjs: 7.8.2
@@ -20618,9 +20618,9 @@ snapshots:
       lodash.groupby: 4.6.0
       minimatch: 10.2.5
       mutation-server-protocol: 0.4.1
-      mutation-testing-elements: 3.7.2
-      mutation-testing-metrics: 3.7.2
-      mutation-testing-report-schema: 3.7.2
+      mutation-testing-elements: 3.7.3
+      mutation-testing-metrics: 3.7.3
+      mutation-testing-report-schema: 3.7.3
       npm-run-path: 6.0.0
       progress: 2.0.3
       rxjs: 7.8.2
@@ -30385,19 +30385,19 @@ snapshots:
     dependencies:
       zod: 4.3.6
 
-  mutation-testing-elements@3.7.2: {}
+  mutation-testing-elements@3.7.3: {}
 
   mutation-testing-metrics@1.7.10:
     dependencies:
       mutation-testing-report-schema: 1.7.10
 
-  mutation-testing-metrics@3.7.2:
+  mutation-testing-metrics@3.7.3:
     dependencies:
-      mutation-testing-report-schema: 3.7.2
+      mutation-testing-report-schema: 3.7.3
 
   mutation-testing-report-schema@1.7.10: {}
 
-  mutation-testing-report-schema@3.7.2: {}
+  mutation-testing-report-schema@3.7.3: {}
 
   mute-stream@1.0.0: {}
 
