@@ -1069,8 +1069,8 @@ importers:
         specifier: ~5.0.0
         version: 5.0.0
       typed-rest-client:
-        specifier: ~2.2.0
-        version: 2.2.0
+        specifier: ~2.3.0
+        version: 2.3.0
     devDependencies:
       '@stryker-mutator/test-helpers':
         specifier: workspace:*
@@ -14794,8 +14794,8 @@ packages:
     resolution: {integrity: sha512-0Ql2ORqBORLMdAW89TQKZsb1PQkFGImFfVmncXWe7a+AA3+7dh7Se9exxZowH4kbnlvKEFkMxUYdHUpjYWFJaA==}
     engines: {node: '>=18'}
 
-  typed-rest-client@2.2.0:
-    resolution: {integrity: sha512-/e2Rk9g20N0r44kaQLb3v6QGuryOD8SPb53t43Y5kqXXA+SqWuU7zLiMxetw61jNn/JFrxTdr5nPDhGY/eTNhQ==}
+  typed-rest-client@2.3.0:
+    resolution: {integrity: sha512-FfBj5tjviexjIus3La4n4s9i+f81Zj7HU+lUlQWK219HMRfmzLsbIf4PZF2+X6EouJKyuANpvvef5VrUWM4AFw==}
     engines: {node: '>= 16.0.0'}
 
   typedarray-to-buffer@3.1.5:
@@ -20567,7 +20567,7 @@ snapshots:
       tree-kill: 1.2.2
       tslib: 2.8.1
       typed-inject: 5.0.0
-      typed-rest-client: 2.2.0
+      typed-rest-client: 2.3.0
     transitivePeerDependencies:
       - '@types/node'
 
@@ -20598,7 +20598,7 @@ snapshots:
       tree-kill: 1.2.2
       tslib: 2.8.1
       typed-inject: 5.0.0
-      typed-rest-client: 2.2.0
+      typed-rest-client: 2.3.0
     transitivePeerDependencies:
       - '@types/node'
 
@@ -20629,7 +20629,7 @@ snapshots:
       tree-kill: 1.2.2
       tslib: 2.8.1
       typed-inject: 5.0.0
-      typed-rest-client: 2.2.0
+      typed-rest-client: 2.3.0
     transitivePeerDependencies:
       - '@types/node'
 
@@ -34518,7 +34518,7 @@ snapshots:
 
   typed-inject@5.0.0: {}
 
-  typed-rest-client@2.2.0:
+  typed-rest-client@2.3.0:
     dependencies:
       des.js: 1.1.0
       js-md4: 0.3.2
