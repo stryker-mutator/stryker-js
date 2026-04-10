@@ -35,11 +35,11 @@ if (mode === 'mutant') {
   }
 
   if (isGreaterThanVitest4Point1) {
-    // @ts-expect-error This was changed in Vitest v4.1
     afterAll(({}, suite) => {
       suite.meta.hitCount = ns.hitCount;
     });
   } else {
+    // @ts-expect-error This was changed in Vitest v4.1
     afterAll(({ meta }) => {
       meta.hitCount = ns.hitCount;
     });
@@ -56,11 +56,11 @@ if (mode === 'mutant') {
   });
 
   if (isGreaterThanVitest4Point1) {
-    // @ts-expect-error This was changed in Vitest v4.1
     afterAll(({}, suite) => {
       suite.meta.mutantCoverage = ns.mutantCoverage;
     });
   } else {
+    // @ts-expect-error This was changed in Vitest v4.1
     afterAll(({ meta }) => {
       meta.mutantCoverage = ns.mutantCoverage;
     });
