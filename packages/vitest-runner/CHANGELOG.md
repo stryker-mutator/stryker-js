@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.6.1](https://github.com/stryker-mutator/stryker-js/compare/v9.6.0...v9.6.1) (2026-04-10)
+
+### Bug Fixes
+
+- **vitest-runner:** fix vitest runner mutant hitcount and coverage for v4.1 ([#5928](https://github.com/stryker-mutator/stryker-js/issues/5928)) ([56c1ae2](https://github.com/stryker-mutator/stryker-js/commit/56c1ae23c823d618c8ca591d2959ab2b6d7df44d))
+
 # [9.6.0](https://github.com/stryker-mutator/stryker-js/compare/v9.5.1...v9.6.0) (2026-02-27)
 
 **Note:** Version bump only for package @stryker-mutator/vitest-runner

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [9.6.1](https://github.com/stryker-mutator/stryker-js/compare/v9.6.0...v9.6.1) (2026-04-10)
+
+### Bug Fixes
+
+- **deps:** update dependency typed-rest-client to ~2.3.0 ([#5933](https://github.com/stryker-mutator/stryker-js/issues/5933)) ([5a24298](https://github.com/stryker-mutator/stryker-js/commit/5a242981292e9cd4cb1ec4e5d0a5215db35c8f4a))
+- **deps:** update mutation-testing-elements monorepo to v3.7.3 ([#5912](https://github.com/stryker-mutator/stryker-js/issues/5912)) ([1f68437](https://github.com/stryker-mutator/stryker-js/commit/1f68437fceee0a1bfcbcc838d3251cdc42410a4c))
+
 # [9.6.0](https://github.com/stryker-mutator/stryker-js/compare/v9.5.1...v9.6.0) (2026-02-27)
 
 ### Bug Fixes
