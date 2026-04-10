@@ -35,6 +35,8 @@ if (mode === 'mutant') {
   }
 
   if (isGreaterThanVitest4Point1) {
+    // Vitest's hooks API requires this empty destructure to allow access to suite.meta
+    // eslint-disable-next-line no-empty-pattern
     afterAll(({}, suite) => {
       suite.meta.hitCount = ns.hitCount;
     });
@@ -56,6 +58,8 @@ if (mode === 'mutant') {
   });
 
   if (isGreaterThanVitest4Point1) {
+    // Vitest's hooks API requires this empty destructure to allow access to suite.meta
+    // eslint-disable-next-line no-empty-pattern
     afterAll(({}, suite) => {
       suite.meta.mutantCoverage = ns.mutantCoverage;
     });
