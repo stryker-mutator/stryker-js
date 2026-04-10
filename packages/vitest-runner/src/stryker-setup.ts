@@ -19,6 +19,7 @@ const mode = inject('mode');
 
 const ns = globalThis[globalNamespace] || (globalThis[globalNamespace] = {});
 ns.hitLimit = inject('hitLimit');
+const isGreaterThanVitest4Point1 = inject('isGreaterThanVitest4Point1');
 
 if (mode === 'mutant') {
   beforeAll(() => {
@@ -32,9 +33,17 @@ if (mode === 'mutant') {
       ns.activeMutant = inject('activeMutant');
     });
   }
-  afterAll(({ meta }) => {
-    meta.hitCount = ns.hitCount;
-  });
+
+  if (isGreaterThanVitest4Point1) {
+    // @ts-expect-error This was changed in Vitest v4.1
+    afterAll(({}, suite) => {
+      suite.meta.hitCount = ns.hitCount;
+    });
+  } else {
+    afterAll(({ meta }) => {
+      meta.hitCount = ns.hitCount;
+    });
+  }
 } else {
   ns.activeMutant = undefined;
 
@@ -46,9 +55,16 @@ if (mode === 'mutant') {
     ns.currentTestId = undefined;
   });
 
-  afterAll(({ meta }) => {
-    meta.mutantCoverage = ns.mutantCoverage;
-  });
+  if (isGreaterThanVitest4Point1) {
+    // @ts-expect-error This was changed in Vitest v4.1
+    afterAll(({}, suite) => {
+      suite.meta.mutantCoverage = ns.mutantCoverage;
+    });
+  } else {
+    afterAll(({ meta }) => {
+      meta.mutantCoverage = ns.mutantCoverage;
+    });
+  }
 }
 
 // Stryker disable all: this file is copied to the sandbox dir
@@ -80,6 +96,7 @@ declare module 'vitest' {
     mutantActivation: MutantActivation;
     activeMutant: string | undefined;
     mode: 'mutant' | 'dry-run';
+    isGreaterThanVitest4Point1: boolean;
   }
   interface TaskMeta {
     hitCount: number | undefined;

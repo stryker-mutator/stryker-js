@@ -1,5 +1,6 @@
 import { fileURLToPath } from 'url';
 import path from 'path';
+import semver from 'semver';
 import fs from 'fs';
 import {
   CoverageData,
@@ -164,6 +165,10 @@ export class VitestTestRunner implements TestRunner {
   }
 
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
+    this.ctx!.provide(
+      'isGreaterThanVitest4Point1',
+      semver.satisfies(vitestWrapper.version, '>=4.1.0'),
+    );
     this.ctx!.provide('mode', 'mutant');
     this.ctx!.provide('hitLimit', options.hitLimit);
     this.ctx!.provide('mutantActivation', options.mutantActivation);
