@@ -1,21 +1,23 @@
 import { createRequire } from 'module';
 import { pathToFileURL } from 'node:url';
 import path from 'path';
-import {
-  createVitest as createVitestOriginal,
-  version as originalVersion,
-} from 'vitest/node';
+import { createVitest as createVitestOriginal } from 'vitest/node';
 
 // Try to load the project's local Vitest installation
 let createVitest = createVitestOriginal;
-let version = originalVersion;
+let version: string;
 
 try {
   const require = createRequire(path.join(process.cwd(), 'package.json'));
-  const vitestPath = require.resolve('vitest/node');
-  ({ createVitest, version } = await import(pathToFileURL(vitestPath).href));
+
+  const vitestNodePath = require.resolve('vitest/node');
+  const vitestNode = await import(pathToFileURL(vitestNodePath).href);
+  createVitest = vitestNode.createVitest ?? createVitestOriginal;
+
+  version = require(require.resolve('vitest/package.json')).version;
 } catch {
-  // Idle, fallback is 'vitest/node' which is already assigned
+  const require = createRequire(import.meta.url);
+  version = require(require.resolve('vitest/package.json')).version;
 }
 
 export const vitestWrapper = {
