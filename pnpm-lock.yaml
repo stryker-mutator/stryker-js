@@ -117,11 +117,11 @@ importers:
         specifier: 6.1.3
         version: 6.1.3
       sinon:
-        specifier: 21.0.3
-        version: 21.0.3
+        specifier: 21.1.0
+        version: 21.1.0
       sinon-chai:
         specifier: 4.0.1
-        version: 4.0.1(chai@6.2.2)(sinon@21.0.3)
+        version: 4.0.1(chai@6.2.2)(sinon@21.1.0)
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
@@ -4734,8 +4734,8 @@ packages:
   '@sinonjs/fake-timers@8.1.0':
     resolution: {integrity: sha512-OAPJUAtgeINhh/TAlUID4QTs53Njm7xzddaVlEs/SXwgtiD1tW22zAB/W1wdqfrpmikgaWQ9Fw6Ws+hsiRm5Vg==}
 
-  '@sinonjs/samsam@9.0.3':
-    resolution: {integrity: sha512-ZgYY7Dc2RW+OUdnZ1DEHg00lhRt+9BjymPKHog4PRFzr1U3MbK57+djmscWyKxzO1qfunHqs4N45WWyKIFKpiQ==}
+  '@sinonjs/samsam@10.0.1':
+    resolution: {integrity: sha512-q2mHXfkviqX+roGbzFJF6r5GR4TJDGngJuPrtj0IZRZZGnFlYTjdeoiZ6vCISmOjTLsZm0+CqHPupXR/BRVZjA==}
 
   '@socket.io/component-emitter@3.1.2':
     resolution: {integrity: sha512-9BCxFwvbGg/RsZK9tjXd8s4UcwR0MWeFQ1XEKIQVVvAGJyINdrqKMcTRyLoK8Rse1GjzLV9cwjWV1olXRWEXVA==}
@@ -13808,8 +13808,8 @@ packages:
       chai: ^5.0.0 || ^6.0.0
       sinon: '>=4.0.0'
 
-  sinon@21.0.3:
-    resolution: {integrity: sha512-0x8TQFr8EjADhSME01u1ZK31yv2+bd6Z5NrBCHVM+n4qL1wFqbxftmeyi3bwlr49FbbzRfrqSFOpyHCOh/YmYA==}
+  sinon@21.1.0:
+    resolution: {integrity: sha512-eyGgN8TGu8LZ3cNFatmeK+kM3T3ZjxZ+742ua4wMcm1yK6AQoQVibm2HnM+b1DT/a5ErAtmYL0R0c4ooDEcqNQ==}
 
   sirv@3.0.2:
     resolution: {integrity: sha512-2wcC/oGxHis/BoHkkPwldgiPSYcpZK3JU28WoMVv55yHJgcZ8rlXvuG9iZggz+sU1d4bRgIGASwyWqjxu3FM0g==}
@@ -14232,6 +14232,10 @@ packages:
   supertap@3.0.1:
     resolution: {integrity: sha512-u1ZpIBCawJnO+0QePsEiOknOfCRq0yERxiAchT0i4li0WHNUJbf0evXXSXOcCAR4M8iMDoajXYmstm/qO81Isw==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+
+  supports-color@10.2.2:
+    resolution: {integrity: sha512-SS+jx45GF1QjgEXQx4NJZV9ImqmO2NPz5FNsIHrsDjh2YsHnawpan7SNQ1o8NuhrbHZy9AZhIoCUiCeaW/C80g==}
+    engines: {node: '>=18'}
 
   supports-color@5.5.0:
     resolution: {integrity: sha512-QjVjwdXIt408MIiAqCX4oUKsgU2EqAGzs2Ppkm4aQYbjm+ZEWEcW4SfFNTr4uMNZma0ey4f5lgLrkB0aX0QMow==}
@@ -20610,7 +20614,7 @@ snapshots:
     dependencies:
       '@sinonjs/commons': 1.8.6
 
-  '@sinonjs/samsam@9.0.3':
+  '@sinonjs/samsam@10.0.1':
     dependencies:
       '@sinonjs/commons': 3.0.1
       type-detect: 4.1.0
@@ -33224,18 +33228,18 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  sinon-chai@4.0.1(chai@6.2.2)(sinon@21.0.3):
+  sinon-chai@4.0.1(chai@6.2.2)(sinon@21.1.0):
     dependencies:
       chai: 6.2.2
-      sinon: 21.0.3
+      sinon: 21.1.0
 
-  sinon@21.0.3:
+  sinon@21.1.0:
     dependencies:
       '@sinonjs/commons': 3.0.1
       '@sinonjs/fake-timers': 15.3.0
-      '@sinonjs/samsam': 9.0.3
+      '@sinonjs/samsam': 10.0.1
       diff: 8.0.4
-      supports-color: 7.2.0
+      supports-color: 10.2.2
 
   sirv@3.0.2:
     dependencies:
@@ -33754,6 +33758,8 @@ snapshots:
       js-yaml: 3.14.2
       serialize-error: 7.0.1
       strip-ansi: 7.2.0
+
+  supports-color@10.2.2: {}
 
   supports-color@5.5.0:
     dependencies:
