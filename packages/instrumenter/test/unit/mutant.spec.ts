@@ -9,7 +9,7 @@ import { parseJS, findNodePath } from '../helpers/syntax-test-helpers.js';
 
 const { types } = babel;
 
-const generate = generator.default;
+const generate = generator.default ?? generator;
 
 describe(Mutant.name, () => {
   describe('constructor', () => {
