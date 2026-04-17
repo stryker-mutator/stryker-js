@@ -179,8 +179,8 @@ importers:
         specifier: 7.27.1
         version: 7.27.1(@babel/core@7.29.0)
       '@cucumber/cucumber':
-        specifier: 12.8.0
-        version: 12.8.0
+        specifier: 12.8.1
+        version: 12.8.1
       '@stryker-mutator/api':
         specifier: workspace:*
         version: link:../packages/api
@@ -189,7 +189,7 @@ importers:
         version: file:packages/core(@types/node@24.12.2)
       '@stryker-mutator/cucumber-runner':
         specifier: workspace:*
-        version: file:packages/cucumber-runner(@cucumber/cucumber@12.8.0)(@stryker-mutator/core@file:packages/core(@types/node@24.12.2))
+        version: file:packages/cucumber-runner(@cucumber/cucumber@12.8.1)(@stryker-mutator/core@file:packages/core(@types/node@24.12.2))
       '@stryker-mutator/jasmine-runner':
         specifier: workspace:*
         version: file:packages/jasmine-runner(@stryker-mutator/core@file:packages/core(@types/node@24.12.2))(jasmine@6.2.0)
@@ -1122,8 +1122,8 @@ importers:
         version: 7.7.4
     devDependencies:
       '@cucumber/cucumber':
-        specifier: 12.8.0
-        version: 12.8.0
+        specifier: 12.8.1
+        version: 12.8.1
       '@stryker-mutator/test-helpers':
         specifier: workspace:*
         version: link:../test-helpers
@@ -2689,8 +2689,8 @@ packages:
   '@cucumber/cucumber-expressions@19.0.0':
     resolution: {integrity: sha512-4FKoOQh2Uf6F6/Ln+1OxuK8LkTg6PyAqekhf2Ix8zqV2M54sH+m7XNJNLhOFOAW/t9nxzRbw2CcvXbCLjcvHZg==}
 
-  '@cucumber/cucumber@12.8.0':
-    resolution: {integrity: sha512-sRG2QMAgCic4Uq1q+5LRzApEHiNGX5rhQY/GuOJZ9BIySrGPA9pevB0imJsZvdzt9scaWyIM3c7dIf4Dp1YQRA==}
+  '@cucumber/cucumber@12.8.1':
+    resolution: {integrity: sha512-hCXxiStjbZsRVZlV+CMywkqBtJ6RZTQeXSBZGPHm1YoIOI6YB8pCo0KlnJMmxfKfoeUKagtQMNPnpJBXwhkUjQ==}
     engines: {node: 20 || 22 || >=24}
     hasBin: true
 
@@ -2738,8 +2738,8 @@ packages:
     peerDependencies:
       '@cucumber/messages': '>=18'
 
-  '@cucumber/junit-xml-formatter@0.13.2':
-    resolution: {integrity: sha512-worYkxjeOWJV+b7WkgJekWgFHlIhbuocnFK3hP+pMYXqZMmkXsxAorYPjeF8KyLnZXajw5fKHS2bM9rQIUI7Zw==}
+  '@cucumber/junit-xml-formatter@0.13.3':
+    resolution: {integrity: sha512-w9ujOxiuKDtU6fLzJz+wp4Sgp5Xu6ba7ls00LHJccVmQU0Ba7zs+AHnv3iIgPjKZAQe1w8x93dr8Gaubh7Vqkg==}
     peerDependencies:
       '@cucumber/messages': '*'
 
@@ -2763,8 +2763,8 @@ packages:
       '@cucumber/cucumber': '>=7.0.0'
       '@cucumber/messages': '*'
 
-  '@cucumber/query@14.7.0':
-    resolution: {integrity: sha512-fiqZ4gMEgYjmbuWproF/YeCdD5y+gD2BqgBIGbpihOsx6UlNsyzoDSfO+Tny0q65DxfK+pHo2UkPyEl7dO7wmQ==}
+  '@cucumber/query@15.0.1':
+    resolution: {integrity: sha512-FMfT3orJblRsOxvU2doECBvQmauizYlj+5JsM8atAKKPbnQTj7v2/OrnuykvQpfZNBf19DYbRq1e832vllRP/g==}
     peerDependencies:
       '@cucumber/messages': '*'
 
@@ -18041,7 +18041,7 @@ snapshots:
     dependencies:
       regexp-match-indices: 1.0.2
 
-  '@cucumber/cucumber@12.8.0':
+  '@cucumber/cucumber@12.8.1':
     dependencies:
       '@cucumber/ci-environment': 13.0.0
       '@cucumber/cucumber-expressions': 19.0.0
@@ -18049,10 +18049,10 @@ snapshots:
       '@cucumber/gherkin-streams': 6.0.0(@cucumber/gherkin@38.0.0)(@cucumber/message-streams@4.1.1(@cucumber/messages@32.2.0))(@cucumber/messages@32.2.0)
       '@cucumber/gherkin-utils': 11.0.0
       '@cucumber/html-formatter': 23.0.0(@cucumber/messages@32.2.0)
-      '@cucumber/junit-xml-formatter': 0.13.2(@cucumber/messages@32.2.0)
+      '@cucumber/junit-xml-formatter': 0.13.3(@cucumber/messages@32.2.0)
       '@cucumber/message-streams': 4.1.1(@cucumber/messages@32.2.0)
       '@cucumber/messages': 32.2.0
-      '@cucumber/pretty-formatter': 1.0.1(@cucumber/cucumber@12.8.0)(@cucumber/messages@32.2.0)
+      '@cucumber/pretty-formatter': 1.0.1(@cucumber/cucumber@12.8.1)(@cucumber/messages@32.2.0)
       '@cucumber/tag-expressions': 9.1.0
       assertion-error-formatter: 3.0.0
       capital-case: 1.0.4
@@ -18172,10 +18172,10 @@ snapshots:
     dependencies:
       '@cucumber/messages': 32.2.0
 
-  '@cucumber/junit-xml-formatter@0.13.2(@cucumber/messages@32.2.0)':
+  '@cucumber/junit-xml-formatter@0.13.3(@cucumber/messages@32.2.0)':
     dependencies:
       '@cucumber/messages': 32.2.0
-      '@cucumber/query': 14.7.0(@cucumber/messages@32.2.0)
+      '@cucumber/query': 15.0.1(@cucumber/messages@32.2.0)
       '@teppeis/multimaps': 3.0.0
       luxon: 3.7.2
       xmlbuilder: 15.1.1
@@ -18201,16 +18201,16 @@ snapshots:
       class-transformer: 0.5.1
       reflect-metadata: 0.2.2
 
-  '@cucumber/pretty-formatter@1.0.1(@cucumber/cucumber@12.8.0)(@cucumber/messages@32.2.0)':
+  '@cucumber/pretty-formatter@1.0.1(@cucumber/cucumber@12.8.1)(@cucumber/messages@32.2.0)':
     dependencies:
-      '@cucumber/cucumber': 12.8.0
+      '@cucumber/cucumber': 12.8.1
       '@cucumber/messages': 32.2.0
       ansi-styles: 5.2.0
       cli-table3: 0.6.5
       figures: 3.2.0
       ts-dedent: 2.2.0
 
-  '@cucumber/query@14.7.0(@cucumber/messages@32.2.0)':
+  '@cucumber/query@15.0.1(@cucumber/messages@32.2.0)':
     dependencies:
       '@cucumber/messages': 32.2.0
       '@teppeis/multimaps': 3.0.0
@@ -20718,9 +20718,9 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@stryker-mutator/cucumber-runner@file:packages/cucumber-runner(@cucumber/cucumber@12.8.0)(@stryker-mutator/core@file:packages/core(@types/node@24.12.2))':
+  '@stryker-mutator/cucumber-runner@file:packages/cucumber-runner(@cucumber/cucumber@12.8.1)(@stryker-mutator/core@file:packages/core(@types/node@24.12.2))':
     dependencies:
-      '@cucumber/cucumber': 12.8.0
+      '@cucumber/cucumber': 12.8.1
       '@cucumber/messages': 32.2.0
       '@stryker-mutator/api': link:packages/api
       '@stryker-mutator/core': file:packages/core(@types/node@24.12.2)
