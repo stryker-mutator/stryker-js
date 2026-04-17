@@ -290,11 +290,11 @@ importers:
         specifier: 9.6.1
         version: 9.6.1
       grunt:
-        specifier: 1.6.1
-        version: 1.6.1
+        specifier: 1.6.2
+        version: 1.6.2
       grunt-stryker:
         specifier: workspace:*
-        version: file:packages/grunt-stryker(@stryker-mutator/core@file:packages/core(@types/node@24.12.2))(grunt@1.6.1)
+        version: file:packages/grunt-stryker(@stryker-mutator/core@file:packages/core(@types/node@24.12.2))(grunt@1.6.2)
       jasmine:
         specifier: 6.2.0
         version: 6.2.0
@@ -9200,6 +9200,11 @@ packages:
     engines: {node: '>=16'}
     hasBin: true
 
+  grunt@1.6.2:
+    resolution: {integrity: sha512-bUzh5nA/P5L66ihXTDP6J5BGnMB/8lXJXejYWSbH4Y4TvWM9t2S39sggQDYYQlx06cYcCsmu63HMYHGCIzUVfg==}
+    engines: {node: '>=16'}
+    hasBin: true
+
   gzip-size@6.0.0:
     resolution: {integrity: sha512-ax7ZYomf6jqPTQ4+XCpUGyXKHk5WweS+e05MBO4/y3WJ5RkmPXNKvX+bx1behVILVwr6JSQvZAku021CHPXG3Q==}
     engines: {node: '>=10'}
@@ -11694,6 +11699,11 @@ packages:
 
   nopt@4.0.3:
     resolution: {integrity: sha512-CvaGwVMztSMJLOeXPrez7fyfObdZqNUK1cPAEzLHrTybIua9pMdmmPR5YwtfNftIOMv3DPUhFaxsZMNTQO20Kg==}
+    hasBin: true
+
+  nopt@5.0.0:
+    resolution: {integrity: sha512-Tbj67rffqceeLpcRXrT7vKAN8CwfPeIBgM7E6iBkmKLV7bEMwpGgYLGv0jACUsECaa/vuxP0IjEont6umdMgtQ==}
+    engines: {node: '>=6'}
     hasBin: true
 
   nopt@7.2.1:
@@ -26608,7 +26618,7 @@ snapshots:
       fs.realpath: 1.0.0
       inflight: 1.0.6
       inherits: 2.0.4
-      minimatch: 3.0.4
+      minimatch: 3.1.5
       once: 1.4.0
       path-is-absolute: 1.0.1
 
@@ -26617,7 +26627,7 @@ snapshots:
       fs.realpath: 1.0.0
       inflight: 1.0.6
       inherits: 2.0.4
-      minimatch: 3.0.8
+      minimatch: 3.1.5
       once: 1.4.0
       path-is-absolute: 1.0.1
 
@@ -26730,10 +26740,10 @@ snapshots:
       underscore.string: 3.3.6
       which: 2.0.2
 
-  grunt-stryker@file:packages/grunt-stryker(@stryker-mutator/core@file:packages/core(@types/node@24.12.2))(grunt@1.6.1):
+  grunt-stryker@file:packages/grunt-stryker(@stryker-mutator/core@file:packages/core(@types/node@24.12.2))(grunt@1.6.2):
     dependencies:
       '@stryker-mutator/core': file:packages/core(@types/node@24.12.2)
-      grunt: 1.6.1
+      grunt: 1.6.2
 
   grunt@1.6.1:
     dependencies:
@@ -26750,6 +26760,22 @@ snapshots:
       js-yaml: 3.14.2
       minimatch: 3.0.8
       nopt: 3.0.6
+
+  grunt@1.6.2:
+    dependencies:
+      dateformat: 4.6.3
+      eventemitter2: 0.4.14
+      exit: 0.1.2
+      findup-sync: 5.0.0
+      glob: 7.1.7
+      grunt-cli: 1.4.3
+      grunt-known-options: 2.0.0
+      grunt-legacy-log: 3.0.0
+      grunt-legacy-util: 2.0.1
+      iconv-lite: 0.6.3
+      js-yaml: 3.14.2
+      minimatch: 3.1.5
+      nopt: 5.0.0
 
   gzip-size@6.0.0:
     dependencies:
@@ -30672,6 +30698,10 @@ snapshots:
     dependencies:
       abbrev: 1.1.1
       osenv: 0.1.5
+
+  nopt@5.0.0:
+    dependencies:
+      abbrev: 1.1.1
 
   nopt@7.2.1:
     dependencies:
