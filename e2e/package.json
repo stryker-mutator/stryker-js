@@ -48,7 +48,7 @@
     "cross-env": "10.1.0",
     "enzyme-to-json": "3.6.2",
     "execa": "9.6.1",
-    "grunt": "1.6.1",
+    "grunt": "1.6.2",
     "grunt-stryker": "workspace:*",
     "jasmine": "6.2.0",
     "jasmine-core": "6.2.0",
