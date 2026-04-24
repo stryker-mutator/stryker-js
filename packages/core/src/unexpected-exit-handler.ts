@@ -35,7 +35,6 @@ export class UnexpectedExitHandler implements Disposable {
     if (this.unexpectedAsyncExitHandlers.length === 0) {
       // No async handlers, just call 'exit' with correct exitCode.
       this.process.exit(exitCode);
-      return;
     }
 
     // Run async handlers before exiting. Signal handlers keep the event loop alive,
