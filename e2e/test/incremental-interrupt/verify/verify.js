@@ -84,6 +84,7 @@ describe('incremental interrupt', () => {
     const report = JSON.parse(reportContent);
 
     // Verify it contains at least some mutant results (reused + freshly tested)
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const totalMutants = Object.values(report.files).reduce(
       (sum, file) => sum + file.mutants.length,
       0,
