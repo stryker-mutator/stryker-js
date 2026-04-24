@@ -1,6 +1,6 @@
 {
   "name": "@stryker-mutator/tap-runner",
-  "version": "9.6.0",
+  "version": "9.6.1",
   "description": "A plugin to use the TAP (test anything protocol) test runner in Stryker, the JavaScript mutation testing framework",
   "files": [
     "dist/schema",
@@ -55,9 +55,9 @@
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "workspace:*",
-    "@types/node": "24.12.0",
+    "@types/node": "24.12.2",
     "ava": "7.0.0",
-    "tap": "21.6.2"
+    "tap": "21.7.1"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "workspace:*"
