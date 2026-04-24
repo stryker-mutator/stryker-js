@@ -14,34 +14,9 @@ import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-r
 import { objectUtils } from '../../../src/utils/object-utils.js';
 import { strykerVersion } from '../../../src/stryker-package.js';
 import { Project } from '../../../src/fs/index.js';
-import type {
-  AsyncExitHandler,
-  ExitHandler,
-} from '../../../src/unexpected-exit-handler.js';
 import { FileSystemTestDouble } from '../../helpers/file-system-test-double.js';
 import { TestCoverageTestDouble } from '../../helpers/test-coverage-test-double.js';
-
-class UnexpectedExitRegistryStub {
-  private readonly exitHandlers: ExitHandler[] = [];
-  private readonly asyncHandlers: AsyncExitHandler[] = [];
-
-  public registerHandler(handler: ExitHandler): void {
-    this.exitHandlers.push(handler);
-  }
-
-  public registerAsyncHandler(handler: AsyncExitHandler): void {
-    this.asyncHandlers.push(handler);
-  }
-
-  public dispose(): void {
-    this.exitHandlers.length = 0;
-    this.asyncHandlers.length = 0;
-  }
-
-  public async triggerUnexpectedExit(): Promise<void> {
-    await Promise.allSettled(this.asyncHandlers.map((handler) => handler()));
-  }
-}
+import { UnexpectedExitHandlerTestDouble } from '../../helpers/unexpected-exit-handler-test-double.js';
 
 describe(MutationTestReportHelper.name, () => {
   let reporterMock: sinon.SinonStubbedInstance<Required<Reporter>>;
@@ -49,7 +24,7 @@ describe(MutationTestReportHelper.name, () => {
   let testCoverage: TestCoverageTestDouble;
   let requireFromCwdStub: sinon.SinonStubbedMember<typeof requireResolve>;
   let fileSystemTestDouble: FileSystemTestDouble;
-  let unexpectedExitRegistry: UnexpectedExitRegistryStub;
+  let unexpectedExitRegistry: UnexpectedExitHandlerTestDouble;
 
   beforeEach(() => {
     requireFromCwdStub = sinon.stub();
@@ -57,7 +32,7 @@ describe(MutationTestReportHelper.name, () => {
     setExitCodeStub = sinon.stub(objectUtils, 'setExitCode');
     fileSystemTestDouble = new FileSystemTestDouble();
     testCoverage = new TestCoverageTestDouble();
-    unexpectedExitRegistry = new UnexpectedExitRegistryStub();
+    unexpectedExitRegistry = new UnexpectedExitHandlerTestDouble();
   });
 
   function createSut() {
