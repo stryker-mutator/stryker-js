@@ -3,7 +3,7 @@
   "testRunner": "mocha",
   "concurrency": 1,
   "coverageAnalysis": "perTest",
-  "reporters": ["clear-text"],
-  "plugins": ["@stryker-mutator/mocha-runner"],
+  "reporters": ["clear-text", "signal"],
+  "plugins": ["@stryker-mutator/mocha-runner", "./signal-reporter.js"],
   "incremental": true
 }

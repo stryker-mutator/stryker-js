@@ -7,8 +7,9 @@
  *
  * Strategy:
  * 1. Spawn `stryker run` (configured with --incremental via stryker.conf.json)
- * 2. Wait for stdout to indicate mutation testing has started
- * 3. Send SIGTERM after a short delay to simulate user interruption
+ * 2. A custom "signal" reporter writes __MUTANT_TESTED__ to stdout when the
+ *    first mutant result is produced — guaranteeing partialResults has ≥1 entry
+ * 3. On seeing the marker, send SIGTERM to simulate user interruption
  * 4. Assert the incremental report file was written with valid content
  */
 import { promises as fsPromises } from 'fs';
@@ -39,19 +40,14 @@ describe('incremental interrupt', () => {
     const onGoingStrykerRun = execa('stryker', ['run']);
     let killed = false;
 
-    // Listen for "Initial test run succeeded" in stdout, which indicates the
-    // dry run completed and mutation testing is about to start.
+    // A custom "signal" reporter plugin (signal-reporter.js) writes
+    // __MUTANT_TESTED__ to stdout when the first mutant result is produced.
+    // This guarantees partialResults contains at least 1 entry when we kill.
     onGoingStrykerRun.stdout.on('data', (data) => {
       const output = data.toString();
-      if (!killed && output.includes('Initial test run succeeded')) {
+      if (!killed && output.includes('__MUTANT_TESTED__')) {
         killed = true;
-        // Wait 1 second to let mutation testing start and produce results.
-        // The tests have a 200ms delay each, ensuring the mutation testing
-        // phase takes several seconds — enough time for this kill to land
-        // mid-run.
-        setTimeout(() => {
-          onGoingStrykerRun.kill('SIGTERM');
-        }, 1000);
+        onGoingStrykerRun.kill('SIGTERM');
       }
     });
 
@@ -66,8 +62,6 @@ describe('incremental interrupt', () => {
     }
 
     // Guard: verify the process was actually interrupted (not a normal completion).
-    // If Stryker completed normally before the kill arrived, the test would be
-    // a false positive so the incremental file would exist from normal flow.
     expect(
       execaError,
       'Stryker should have been killed, not completed normally',
