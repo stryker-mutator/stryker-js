@@ -1,12 +1,13 @@
 import { add, addOne, negate, isNegativeNumber, multiply, subtract, isPositive, absolute, max, min } from '../../src/math.js';
 
-// A helper that introduces a delay per test invocation.
-// This slows down each mutant run enough to keep the mutation testing
-// phase running long enough for the e2e test to send SIGTERM mid-run.
+// A helper that introduces a small delay per test invocation.
+// This ensures the mutation testing phase doesn't complete instantly,
+// giving the e2e test time to receive the __MUTANT_TESTED__ signal
+// and send SIGTERM before all mutants are tested.
 function slow(fn) {
   return function (done) {
     fn();
-    setTimeout(done, 200);
+    setTimeout(done, 50);
   };
 }
 
