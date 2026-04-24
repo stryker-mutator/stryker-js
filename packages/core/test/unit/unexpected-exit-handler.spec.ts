@@ -62,12 +62,12 @@ describe(UnexpectedExitHandler.name, () => {
       expect(processMock.exit).calledWith(132);
     });
 
-    it(`should remove all signal listeners on "${signal}" signal to prevent re-entrant handling`, () => {
+    it(`should force-exit on second "${signal}" signal`, () => {
       createSut();
       processMock.emit(signal, signal, 4);
-      signals.forEach((s) => {
-        expect(processMock.listenerCount(s)).eq(0);
-      });
+      processMock.exit.resetHistory();
+      processMock.emit(signal, signal, 4);
+      expect(processMock.exit).calledWith(132);
     });
   });
 
@@ -140,26 +140,28 @@ describe(UnexpectedExitHandler.name, () => {
       expect(asyncHandler).not.called;
     });
 
-    it('should remove signal listeners on first signal to prevent re-entrant handling', async () => {
+    it('should force-exit on second signal without running async handlers again', async () => {
       const asyncHandler = sinon.stub().resolves();
       const sut = createSut();
       sut.registerAsyncHandler(asyncHandler);
       processMock.emit('SIGINT', 'SIGINT', 2);
-      signals.forEach((signal) => {
-        expect(processMock.listenerCount(signal)).eq(0);
-      });
-      await clock.runAllAsync();
-    });
-
-    it('should not run async handlers again on a second signal', async () => {
-      const asyncHandler = sinon.stub().resolves();
-      const sut = createSut();
-      sut.registerAsyncHandler(asyncHandler);
-      processMock.emit('SIGINT', 'SIGINT', 2);
-      // Second signal should be a no-op (listeners removed)
-      processMock.emit('SIGINT', 'SIGINT', 2);
+      // Second signal should force-exit immediately
+      processMock.emit('SIGTERM', 'SIGTERM', 15);
       await clock.runAllAsync();
       expect(asyncHandler).calledOnce;
+      expect(processMock.exit).calledWith(143); // 128 + 15
+    });
+
+    it('should log "Forced exit." to stderr on second signal', async () => {
+      const consoleErrorStub = sinon.stub(console, 'error');
+      const asyncHandler = sinon.stub().resolves();
+      const sut = createSut();
+      sut.registerAsyncHandler(asyncHandler);
+      processMock.emit('SIGINT', 'SIGINT', 2);
+      processMock.emit('SIGINT', 'SIGINT', 2);
+      expect(consoleErrorStub).calledWith('Forced exit. Received signal again while shutting down.');
+      consoleErrorStub.restore();
+      await clock.runAllAsync();
     });
   });
 });

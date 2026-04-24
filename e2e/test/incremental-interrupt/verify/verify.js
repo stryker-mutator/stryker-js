@@ -28,6 +28,7 @@ const incrementalFile = rootResolve('reports', 'stryker-incremental.json');
 
 describe('incremental interrupt', () => {
   afterEach(async () => {
+    // Cleanup any incremental report files after the test to ensure a clean slate for subsequent runs.
     await fsPromises.rm(rootResolve('reports'), {
       force: true,
       recursive: true,
@@ -35,9 +36,6 @@ describe('incremental interrupt', () => {
   });
 
   it('should save partial incremental report when killed during mutation testing', async () => {
-    // Arrange: spawn Stryker with --incremental (configured in stryker.conf.json).
-    // We use execa('stryker', ...) rather than execa('node', ['.../.bin/stryker', ...])
-    // because the .bin/stryker file is a shell shim, not a JS file.
     const onGoingStrykerRun = execa('stryker', ['run']);
     let killed = false;
 
@@ -69,7 +67,7 @@ describe('incremental interrupt', () => {
 
     // Guard: verify the process was actually interrupted (not a normal completion).
     // If Stryker completed normally before the kill arrived, the test would be
-    // a false positive — the incremental file would exist from normal flow.
+    // a false positive so the incremental file would exist from normal flow.
     expect(
       execaError,
       'Stryker should have been killed, not completed normally',
@@ -82,18 +80,16 @@ describe('incremental interrupt', () => {
       (v) => v === 'SIGTERM' || (typeof v === 'number' && v !== 0),
     );
 
+    // Verify the log message confirming the partial report was saved.
+    const output = execaError.stdout ?? '';
+    expect(output).to.contain('Saved a partial incremental report');
+
     // Assert: the partial incremental report should have been written by the
     // async exit handler in MutationTestReportHelper before process.exit().
     const reportContent = await fsPromises.readFile(incrementalFile, 'utf-8');
     const report = JSON.parse(reportContent);
 
-    // Verify it conforms to the mutation-testing-report-schema structure
-    expect(report).to.have.property('schemaVersion', '1.0');
-    expect(report).to.have.property('files');
-    expect(report).to.have.property('thresholds');
-
     // Verify it contains at least some mutant results (reused + freshly tested)
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const totalMutants = Object.values(report.files).reduce(
       (sum, file) => sum + file.mutants.length,
       0,

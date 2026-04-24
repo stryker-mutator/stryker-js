@@ -10,6 +10,7 @@ const signals = Object.freeze(['SIGABRT', 'SIGINT', 'SIGHUP', 'SIGTERM']);
 export class UnexpectedExitHandler implements Disposable {
   private readonly unexpectedExitHandlers: ExitHandler[] = [];
   private readonly unexpectedAsyncExitHandlers: AsyncExitHandler[] = [];
+  private shuttingDown = false;
 
   public static readonly inject = [coreTokens.process] as const;
   constructor(
@@ -20,15 +21,21 @@ export class UnexpectedExitHandler implements Disposable {
   }
 
   private readonly processSignal = (_signal: string, signalNumber: number) => {
-    // Remove signal listeners to prevent re-entrant handling.
-    // A second signal will use Node's default behavior (terminate immediately).
-    signals.forEach((signal) => this.process.off(signal, this.processSignal));
-
-    // See https://nodejs.org/api/process.html#process_signal_events, we should exit with 128 + signal number
+    // See https://nodejs.org/api/process.html#signal-events, we should exit with 128 + signal number
     const exitCode = 128 + signalNumber;
+
+    if (this.shuttingDown) {
+      // Second signal: force immediate exit without waiting for async handlers.
+      console.error('Forced exit. Received signal again while shutting down.');
+      this.process.exit(exitCode);
+      return;
+    }
+    this.shuttingDown = true;
+
     if (this.unexpectedAsyncExitHandlers.length === 0) {
       // No async handlers, just call 'exit' with correct exitCode.
       this.process.exit(exitCode);
+      return;
     }
 
     // Run async handlers before exiting. Signal handlers keep the event loop alive,
