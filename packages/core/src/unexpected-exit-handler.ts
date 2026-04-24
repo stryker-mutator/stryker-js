@@ -20,6 +20,10 @@ export class UnexpectedExitHandler implements Disposable {
   }
 
   private readonly processSignal = (_signal: string, signalNumber: number) => {
+    // Remove signal listeners to prevent re-entrant handling.
+    // A second signal will use Node's default behavior (terminate immediately).
+    signals.forEach((signal) => this.process.off(signal, this.processSignal));
+
     // See https://nodejs.org/api/process.html#process_signal_events, we should exit with 128 + signal number
     const exitCode = 128 + signalNumber;
     if (this.unexpectedAsyncExitHandlers.length === 0) {

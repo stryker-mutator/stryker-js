@@ -61,6 +61,14 @@ describe(UnexpectedExitHandler.name, () => {
       processMock.emit(signal, signal, 4);
       expect(processMock.exit).calledWith(132);
     });
+
+    it(`should remove all signal listeners on "${signal}" signal to prevent re-entrant handling`, () => {
+      createSut();
+      processMock.emit(signal, signal, 4);
+      signals.forEach((s) => {
+        expect(processMock.listenerCount(s)).eq(0);
+      });
+    });
   });
 
   describe(UnexpectedExitHandler.prototype.registerHandler.name, () => {
@@ -130,6 +138,28 @@ describe(UnexpectedExitHandler.name, () => {
       processMock.emit('exit');
       await clock.runAllAsync();
       expect(asyncHandler).not.called;
+    });
+
+    it('should remove signal listeners on first signal to prevent re-entrant handling', async () => {
+      const asyncHandler = sinon.stub().resolves();
+      const sut = createSut();
+      sut.registerAsyncHandler(asyncHandler);
+      processMock.emit('SIGINT', 'SIGINT', 2);
+      signals.forEach((signal) => {
+        expect(processMock.listenerCount(signal)).eq(0);
+      });
+      await clock.runAllAsync();
+    });
+
+    it('should not run async handlers again on a second signal', async () => {
+      const asyncHandler = sinon.stub().resolves();
+      const sut = createSut();
+      sut.registerAsyncHandler(asyncHandler);
+      processMock.emit('SIGINT', 'SIGINT', 2);
+      // Second signal should be a no-op (listeners removed)
+      processMock.emit('SIGINT', 'SIGINT', 2);
+      await clock.runAllAsync();
+      expect(asyncHandler).calledOnce;
     });
   });
 });
