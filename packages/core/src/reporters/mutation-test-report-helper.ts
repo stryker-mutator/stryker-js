@@ -84,7 +84,8 @@ export class MutationTestReportHelper {
         !this.reportCompleted &&
         this.partialResults.length > 0
       ) {
-        await this.writeIncrementalReport(this.partialResults);
+        const report = await this.mutationTestReport(this.partialResults);
+        await this.writeIncrementalReport(report);
         this.log.info(
           'Saved a partial incremental report to "%s" after an unexpected interrupt.',
           this.options.incrementalFile,
@@ -186,11 +187,8 @@ export class MutationTestReportHelper {
   }
 
   private async writeIncrementalReport(
-    resultsOrReport: readonly MutantResult[] | schema.MutationTestResult,
+    report: schema.MutationTestResult,
   ): Promise<void> {
-    const report = Array.isArray(resultsOrReport)
-      ? await this.mutationTestReport(resultsOrReport)
-      : resultsOrReport;
     await this.fs.mkdir(path.dirname(this.options.incrementalFile), {
       recursive: true,
     });
