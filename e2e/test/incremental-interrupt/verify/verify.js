@@ -30,7 +30,7 @@ const rootResolve = path.resolve.bind(
 const incrementalFile = rootResolve('reports', 'stryker-incremental.json');
 
 describe('incremental interrupt', () => {
-  afterEach(async () => {
+  beforeEach(async () => {
     // Cleanup any incremental report files after the test to ensure a clean slate for subsequent runs.
     await fsPromises.rm(rootResolve('reports'), {
       force: true,
