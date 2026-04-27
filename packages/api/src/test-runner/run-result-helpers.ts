@@ -20,7 +20,6 @@ export function determineHitLimitReached(
 export function toMutantRunResult(
   dryRunResult: DryRunResult,
   reportAllKillers = true,
-  includeExecutedTests = process.env.STRYKER_MUTATION_TEST_TIMINGS === '1',
 ): MutantRunResult {
   switch (dryRunResult.status) {
     case DryRunStatus.Complete: {
@@ -30,7 +29,9 @@ export function toMutantRunResult(
       const nrOfTests = dryRunResult.tests.filter(
         (test) => test.status !== TestStatus.Skipped,
       ).length;
-      const executedTests = includeExecutedTests
+      const shouldIncludeExecutedTests =
+        process.env.STRYKER_MUTATION_TEST_TIMINGS === '1';
+      const executedTests = shouldIncludeExecutedTests
         ? dryRunResult.tests
             .filter((test) => test.status !== TestStatus.Skipped)
             .map((test) => ({

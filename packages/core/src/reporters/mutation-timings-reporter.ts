@@ -41,10 +41,7 @@ export class MutationTimingsReporter implements Reporter {
   }
 
   public onMutationTestReportReady(): void {
-    if (
-      this.entries.length === 0 &&
-      process.env.STRYKER_MUTATION_TEST_TIMINGS !== '1'
-    ) {
+    if (this.entries.length === 0) {
       this.log.debug(
         'Skipping mutation-timings report because no timing entries were captured.',
       );

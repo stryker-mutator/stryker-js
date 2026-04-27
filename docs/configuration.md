@@ -496,10 +496,14 @@ To configure specific reporters, see their configuration:
 - [dashboard](#dashboard-dashboardoptions)
 - [htmlReporter](#htmlreporter-object)
 - [jsonReporter](#jsonreporter-object)
+- [mutation-timings reporter](#mutation-timings-reporter)
 
-#### Mutation timing diagnostics
+### `mutation-timings` reporter
 
-Use the `mutation-timings` reporter to write a sidecar diagnostics artifact with per-mutant executed test timings.
+Default: `{ fileName: "reports/mutation/mutant-test-timings.json" }`<br />
+Command line: _none_<br />
+
+The mutation-timings reporter writes a sidecar diagnostics artifact with per-mutant executed test timings.
 
 Example:
 
@@ -508,8 +512,6 @@ Example:
   "reporters": ["progress", "clear-text", "mutation-timings"]
 }
 ```
-
-The reporter writes to `reports/mutation/mutant-test-timings.json` by default.
 
 Use the following environment variables to control behavior:
 

@@ -244,5 +244,29 @@ describe(VitestTestRunner.name, () => {
       });
       expect(result.executedTests?.[1]?.fileName).to.match(/file\.spec\.js$/);
     });
+
+    it('should not include executedTests when mutation timing export is disabled', async () => {
+      vitestStub.state.getFiles = () => [
+        createVitestFile({
+          tasks: [
+            createVitestTest({
+              id: 'file.spec.ts#suite > fail',
+              name: 'fail',
+              fullName: 'file.spec.ts > suite > fail',
+              result: {
+                state: 'fail',
+                duration: 9,
+                errors: [{ message: 'boom' }],
+              },
+            }),
+          ],
+        }),
+      ];
+
+      const result = await sut.mutantRun(factory.mutantRunOptions());
+
+      assertions.expectKilled(result);
+      expect(result).not.to.have.property('executedTests');
+    });
   });
 });

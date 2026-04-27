@@ -828,6 +828,17 @@ describe(JestTestRunner.name, () => {
         },
       ]);
     });
+
+    it('should not include executedTests when mutation timing export is disabled', async () => {
+      jestRunResult = producers.createJestRunResult({
+        results: producers.createFailResult(),
+      });
+
+      const result = await actMutantRun();
+
+      assertions.expectKilled(result);
+      expect(result).not.to.have.property('executedTests');
+    });
   });
 
   function createSut() {

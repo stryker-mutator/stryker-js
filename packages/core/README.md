@@ -48,25 +48,6 @@ See our website for the [list of currently supported mutators](https://stryker-m
 
 See [configuration on stryker-mutator.io](https://stryker-mutator.io/docs/stryker-js/configuration).
 
-## Mutation timing diagnostics
-
-For mutation-phase diagnostics, enable the built-in `mutation-timings` reporter and
-set `STRYKER_MUTATION_TEST_TIMINGS=1`.
-
-Example `stryker.conf.json` snippet:
-
-```json
-{
-  "reporters": ["progress", "clear-text", "mutation-timings"]
-}
-```
-
-Environment variables:
-
-- `STRYKER_MUTATION_TEST_TIMINGS=1` enables per-mutant `executedTests` capture.
-- `STRYKER_MUTATION_TEST_TIMINGS_MAX_TESTS=<N>` caps `executedTests` length per mutant.
-- `STRYKER_MUTATION_TEST_TIMINGS_FILE=<path>` overrides sidecar output path (default: `reports/mutation/mutant-test-timings.json`).
-
 ## Programmatic use
 
 Stryker can also be used programmatically from nodejs. It exports 2 classes for you to use: `Stryker` and `StrykerCli`.

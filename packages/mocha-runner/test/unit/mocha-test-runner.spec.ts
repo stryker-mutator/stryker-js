@@ -492,6 +492,29 @@ describe(MochaTestRunner.name, () => {
       ]);
     });
 
+    it('should not include executedTests when mutation timing export is disabled', async () => {
+      reporterMock.tests = [
+        factory.successTestResult({
+          id: 'pass-1',
+          name: 'pass 1',
+          fileName: 'test/pass.spec.ts',
+          timeSpentMs: 6,
+        }),
+        factory.failedTestResult({
+          id: 'fail-1',
+          name: 'fail 1',
+          fileName: 'test/fail.spec.ts',
+          timeSpentMs: 9,
+          failureMessage: 'boom',
+        }),
+      ];
+
+      const result = await actMutantRun();
+
+      assertions.expectKilled(result);
+      expect(result).not.to.have.property('executedTests');
+    });
+
     async function actMutantRun(
       options = factory.mutantRunOptions(),
       hitCount?: number,

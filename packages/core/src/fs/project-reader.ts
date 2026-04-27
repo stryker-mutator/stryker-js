@@ -15,7 +15,6 @@ import {
   ERROR_CODES,
   I,
   isErrnoException,
-  normalizeFileName,
   notEmpty,
 } from '@stryker-mutator/util';
 import type { MutationTestResult } from 'mutation-testing-report-schema/api';
@@ -419,7 +418,7 @@ export class ProjectReader {
     try {
       // TODO: Validate against the schema or stryker version?
       const contents = await this.fs.readFile(this.incrementalFile, 'utf-8');
-      const result = this.rebaseIncrementalReport(JSON.parse(contents));
+      const result: MutationTestResult = JSON.parse(contents);
       return {
         ...result,
         files: Object.fromEntries(
@@ -465,36 +464,6 @@ export class ProjectReader {
       // Whoops, didn't mean to catch this one!
       throw err;
     }
-  }
-
-  private rebaseIncrementalReport(
-    report: MutationTestResult,
-  ): MutationTestResult {
-    const reportProjectRoot = report.projectRoot;
-    if (!reportProjectRoot || reportProjectRoot === process.cwd()) {
-      return report;
-    }
-    const toCurrentWorkingDir = (fileName: string): string =>
-      normalizeFileName(
-        path.relative(process.cwd(), path.resolve(reportProjectRoot, fileName)),
-      );
-    return {
-      ...report,
-      files: Object.fromEntries(
-        Object.entries(report.files).map(([fileName, fileResult]) => [
-          toCurrentWorkingDir(fileName),
-          fileResult,
-        ]),
-      ),
-      testFiles:
-        report.testFiles &&
-        Object.fromEntries(
-          Object.entries(report.testFiles).map(([fileName, testFile]) => [
-            toCurrentWorkingDir(fileName),
-            testFile,
-          ]),
-        ),
-    };
   }
 }
 

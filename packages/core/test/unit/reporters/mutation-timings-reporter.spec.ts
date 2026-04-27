@@ -73,6 +73,18 @@ describe(MutationTimingsReporter.name, () => {
     process.env.STRYKER_MUTATION_TEST_TIMINGS = '1';
     process.env.STRYKER_MUTATION_TEST_TIMINGS_FILE =
       '.reports/custom-timings.json';
+    sut.onMutantTested({
+      ...factory.survivedMutantResult(),
+      executedTests: [
+        {
+          id: 'spec-1',
+          name: 'should survive mutant',
+          status: TestStatus.Success,
+          timeSpentMs: 5,
+          fileName: 'test/foo.spec.ts',
+        },
+      ],
+    } as MutantResult);
 
     sut.onMutationTestReportReady();
     await sut.wrapUp();
@@ -84,6 +96,15 @@ describe(MutationTimingsReporter.name, () => {
   });
 
   it('should not write a report when timings are disabled and no entries exist', async () => {
+    sut.onMutationTestReportReady();
+    await sut.wrapUp();
+
+    expect(writeFileStub).not.called;
+  });
+
+  it('should not write a report when timings are enabled but no entries exist', async () => {
+    process.env.STRYKER_MUTATION_TEST_TIMINGS = '1';
+
     sut.onMutationTestReportReady();
     await sut.wrapUp();
 
