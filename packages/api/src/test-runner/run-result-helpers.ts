@@ -29,21 +29,52 @@ export function toMutantRunResult(
       const nrOfTests = dryRunResult.tests.filter(
         (test) => test.status !== TestStatus.Skipped,
       ).length;
+      const shouldIncludeExecutedTests =
+        process.env.STRYKER_MUTATION_TEST_TIMINGS === '1';
+      const executedTests = shouldIncludeExecutedTests
+        ? dryRunResult.tests
+            .filter((test) => test.status !== TestStatus.Skipped)
+            .map((test) => ({
+              id: test.id,
+              name: test.name,
+              status: test.status,
+              timeSpentMs: test.timeSpentMs,
+              fileName: test.fileName,
+            }))
+        : undefined;
+      const maxExecutedTests = Number.parseInt(
+        process.env.STRYKER_MUTATION_TEST_TIMINGS_MAX_TESTS ?? '',
+        10,
+      );
+      const boundedExecutedTests =
+        executedTests &&
+        Number.isFinite(maxExecutedTests) &&
+        maxExecutedTests > 0
+          ? executedTests.slice(0, maxExecutedTests)
+          : executedTests;
 
       if (failedTests.length > 0) {
-        return {
-          status: MutantRunStatus.Killed,
+        const killedResult = {
+          status: MutantRunStatus.Killed as const,
           failureMessage: failedTests[0].failureMessage,
           killedBy: reportAllKillers
             ? failedTests.map<string>((test) => test.id)
             : [failedTests[0].id],
           nrOfTests,
         };
+
+        return boundedExecutedTests
+          ? { ...killedResult, executedTests: boundedExecutedTests }
+          : killedResult;
       } else {
-        return {
-          status: MutantRunStatus.Survived,
+        const survivedResult = {
+          status: MutantRunStatus.Survived as const,
           nrOfTests,
         };
+
+        return boundedExecutedTests
+          ? { ...survivedResult, executedTests: boundedExecutedTests }
+          : survivedResult;
       }
     }
     case DryRunStatus.Error:

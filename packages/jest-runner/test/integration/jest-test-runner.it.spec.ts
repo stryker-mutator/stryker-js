@@ -259,5 +259,29 @@ describe(`${JestTestRunner.name} integration test`, () => {
       assertions.expectKilled(result);
       expect(result.killedBy).to.have.length(2);
     });
+
+    it('should cap executedTests when STRYKER_MUTATION_TEST_TIMINGS_MAX_TESTS is set', async () => {
+      process.env.STRYKER_MUTATION_TEST_TIMINGS = '1';
+      process.env.STRYKER_MUTATION_TEST_TIMINGS_MAX_TESTS = '1';
+      try {
+        process.chdir(resolveFromProject());
+        const sut = createSut();
+        await sut.init();
+
+        const mutantRunOptions = factory.mutantRunOptions({
+          sandboxFileName: resolveFromProject('src', 'Add.js'),
+          activeMutant: factory.mutant({ id: '0' }),
+          disableBail: true,
+        });
+
+        const result = await sut.mutantRun(mutantRunOptions);
+
+        assertions.expectKilled(result);
+        expect(result.executedTests).to.have.length(1);
+      } finally {
+        delete process.env.STRYKER_MUTATION_TEST_TIMINGS;
+        delete process.env.STRYKER_MUTATION_TEST_TIMINGS_MAX_TESTS;
+      }
+    });
   });
 });

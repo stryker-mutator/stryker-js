@@ -119,6 +119,7 @@ export class MutationTestReportHelper {
           status: 'Killed',
           testsCompleted: result.nrOfTests,
           killedBy: result.killedBy,
+          executedTests: result.executedTests,
           statusReason: result.failureMessage,
           location,
         });
@@ -134,6 +135,7 @@ export class MutationTestReportHelper {
           ...mutant,
           status: 'Survived',
           testsCompleted: result.nrOfTests,
+          executedTests: result.executedTests,
           location,
         });
     }
@@ -349,8 +351,14 @@ export class MutationTestReportHelper {
     mutantResult: MutantResult,
     remapTestIds: (ids: string[] | undefined) => string[] | undefined,
   ): schema.MutantResult {
-    const { fileName, location, killedBy, coveredBy, ...apiMutant } =
-      mutantResult;
+    const {
+      fileName,
+      location,
+      killedBy,
+      coveredBy,
+      executedTests: _executedTests,
+      ...apiMutant
+    } = mutantResult;
     return {
       ...apiMutant,
       killedBy: remapTestIds(killedBy),
