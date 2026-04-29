@@ -1174,8 +1174,8 @@ importers:
         specifier: workspace:*
         version: link:../util
       angular-html-parser:
-        specifier: ~10.4.0
-        version: 10.4.0
+        specifier: ~10.5.0
+        version: 10.5.0
       semver:
         specifier: ~7.7.0
         version: 7.7.4
@@ -6185,8 +6185,8 @@ packages:
   alien-signals@1.0.13:
     resolution: {integrity: sha512-OGj9yyTnJEttvzhTUWuscOvtqxq5vrhF7vL9oS0xJ2mK0ItPYP1/y+vCFebfxoEyAz0++1AIwJ5CMr+Fk3nDmg==}
 
-  angular-html-parser@10.4.0:
-    resolution: {integrity: sha512-++nLNyZwRfHqFh7akH5Gw/JYizoFlMRz0KRigfwfsLqV8ZqlcVRb1LkPEWdYvEKDnbktknM2J4BXaYUGrQZPww==}
+  angular-html-parser@10.5.0:
+    resolution: {integrity: sha512-A0+1/CReiHlw6/zomxay8VtPNelD0uYb5RknyMeFDubMHPAJmqFAq9cqUO+U0+xlVB9FqPJuqa4DVSHX7RBN6g==}
     engines: {node: '>= 14'}
 
   ansi-colors@3.2.3:
@@ -15056,11 +15056,12 @@ packages:
 
   uuid@3.4.0:
     resolution: {integrity: sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==}
-    deprecated: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
 
   v8-compile-cache-lib@3.0.1:
@@ -22909,7 +22910,7 @@ snapshots:
 
   alien-signals@1.0.13: {}
 
-  angular-html-parser@10.4.0: {}
+  angular-html-parser@10.5.0: {}
 
   ansi-colors@3.2.3: {}
 
