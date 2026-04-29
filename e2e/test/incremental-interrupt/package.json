@@ -1,0 +1,16 @@
+{
+  "name": "incremental-interrupt",
+  "version": "0.0.0",
+  "private": true,
+  "description": "E2E test to verify incremental report is saved when Stryker is interrupted",
+  "type": "module",
+  "scripts": {
+    "clean:reports": "rimraf reports stryker.log",
+    "test:unit": "mocha",
+    "verify": "mocha --no-config --no-package --timeout 60000 verify/verify.js",
+    "test": "pnpm run clean:reports && pnpm run verify",
+    "//": "Stryker is run from verify.js directly"
+  },
+  "author": "",
+  "license": "ISC"
+}

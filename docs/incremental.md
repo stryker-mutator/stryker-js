@@ -44,6 +44,14 @@ Here you can see that:
 
 **Note**: The dry run remains required; as it discovers tests, mutation coverage per test, and ensures Stryker runs successfully when no mutant is active.
 
+## Interrupted runs
+
+If a mutation testing run is interrupted (for example by pressing CTRL+C),
+StrykerJS saves the partial results collected so far to the incremental
+report file. This means the next incremental run can pick up where
+the interrupted run left off, instead of having to redo the work from
+the interrupted run.
+
 ## Limitations
 
 Running in incremental mode, Stryker will do its best to produce an accurate mutation testing report. However, there are some limitations here:

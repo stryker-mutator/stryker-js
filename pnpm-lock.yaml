@@ -531,6 +531,8 @@ importers:
 
   e2e/test/incremental: {}
 
+  e2e/test/incremental-interrupt: {}
+
   e2e/test/jasmine-javascript: {}
 
   e2e/test/jasmine-ts:

@@ -41,6 +41,7 @@ describe(Sandbox.name, () => {
     execaCommandMock = sinon.stub();
     unexpectedExitHandlerMock = {
       registerHandler: sinon.stub(),
+      registerAsyncHandler: sinon.stub(),
       dispose: sinon.stub(),
     };
     fsTestDouble = new FileSystemTestDouble(
