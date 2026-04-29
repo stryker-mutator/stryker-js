@@ -4,7 +4,7 @@ import { JSAst } from '../syntax/index.js';
 
 import { Printer } from './index.js';
 
-const generate = generator.default;
+const generate = generator.default ?? generator;
 
 export const print: Printer<JSAst> = (file) => {
   return generate(file.root, { sourceMaps: false }).code;

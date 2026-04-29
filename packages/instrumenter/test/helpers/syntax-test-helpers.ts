@@ -7,7 +7,7 @@ import generator from '@babel/generator';
 // @ts-expect-error The babel types don't define "File" yet
 import { File } from '@babel/core';
 
-const generate = generator.default;
+const generate = generator.default ?? generator;
 
 export type AstExpectation = (nodePath: NodePath) => boolean;
 
