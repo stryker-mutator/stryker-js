@@ -16,7 +16,7 @@
     "@types/sinon-chai": "4.0.0",
     "@types/source-map-support": "0.5.10",
     "@typescript-eslint/utils": "8.58.2",
-    "@vitejs/plugin-react": "5.2.0",
+    "@vitejs/plugin-react": "6.0.1",
     "c8": "11.0.0",
     "chai": "6.2.2",
     "chai-as-promised": "8.0.2",
