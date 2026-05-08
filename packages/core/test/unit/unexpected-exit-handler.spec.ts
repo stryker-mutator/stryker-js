@@ -29,11 +29,6 @@ describe(UnexpectedExitHandler.name, () => {
   }
 
   describe('constructor', () => {
-    it('should register an exit handler', () => {
-      createSut();
-      expect(processMock.listenerCount('exit')).eq(1);
-    });
-
     signals.forEach((signal) => {
       it(`should register a "${signal}" signal handler`, () => {
         createSut();
@@ -43,10 +38,6 @@ describe(UnexpectedExitHandler.name, () => {
   });
 
   describe('dispose', () => {
-    it('should remove the "exit" handler', () => {
-      createSut().dispose();
-      expect(processMock.listenerCount('exit')).eq(0);
-    });
     signals.forEach((signal) => {
       it(`should remove the "${signal}" signal handler`, () => {
         createSut().dispose();
@@ -80,16 +71,6 @@ describe(UnexpectedExitHandler.name, () => {
   });
 
   describe(UnexpectedExitHandler.prototype.registerHandler.name, () => {
-    it('should call the provided handler on exit', () => {
-      const exitHandler = sinon.stub();
-      const sut = createSut();
-      sut.registerHandler(exitHandler);
-      processMock.emit('exit');
-      expect(exitHandler).called;
-    });
-  });
-
-  describe(UnexpectedExitHandler.prototype.registerAsyncHandler.name, () => {
     let clock: sinon.SinonFakeTimers;
 
     beforeEach(() => {
@@ -102,20 +83,20 @@ describe(UnexpectedExitHandler.name, () => {
       clock.restore();
     });
 
-    it('should call the provided async handler on signal', async () => {
-      const asyncHandler = sinon.stub().resolves();
+    it('should call the provided handler on signal', async () => {
+      const handler = sinon.stub().resolves();
       const sut = createSut();
-      sut.registerAsyncHandler(asyncHandler);
+      sut.registerHandler(handler);
       processMock.emit('SIGINT', 'SIGINT', 2);
       // Drain the Promise queue so the async handler and all .then() callbacks complete.
       await clock.runAllAsync();
-      expect(asyncHandler).called;
+      expect(handler).called;
     });
 
-    it('should call process.exit with the correct exit code after async handlers complete', async () => {
-      const asyncHandler = sinon.stub().resolves();
+    it('should call process.exit with the correct exit code after handlers complete', async () => {
+      const handler = sinon.stub().resolves();
       const sut = createSut();
-      sut.registerAsyncHandler(asyncHandler);
+      sut.registerHandler(handler);
       processMock.emit('SIGINT', 'SIGINT', 2);
       // Drain the Promise queue so the .then(() => process.exit()) callback fires.
       await clock.runAllAsync();
@@ -123,10 +104,10 @@ describe(UnexpectedExitHandler.name, () => {
       expect(processMock.exit).calledWith(130);
     });
 
-    it('should call process.exit even when an async handler rejects', async () => {
-      const asyncHandler = sinon.stub().rejects(new Error('handler failed'));
+    it('should call process.exit even when a handler rejects', async () => {
+      const handler = sinon.stub().rejects(new Error('handler failed'));
       const sut = createSut();
-      sut.registerAsyncHandler(asyncHandler);
+      sut.registerHandler(handler);
       processMock.emit('SIGTERM', 'SIGTERM', 15);
       // Promise.allSettled() is used internally, so a rejection does not prevent
       // the .then() callback (which calls process.exit()) from running.
@@ -134,12 +115,12 @@ describe(UnexpectedExitHandler.name, () => {
       expect(processMock.exit).calledWith(143); // 128 + 15
     });
 
-    it('should call all async handlers even if one rejects', async () => {
+    it('should call all handlers even if one rejects', async () => {
       const failingHandler = sinon.stub().rejects(new Error('handler failed'));
       const successHandler = sinon.stub().resolves();
       const sut = createSut();
-      sut.registerAsyncHandler(failingHandler);
-      sut.registerAsyncHandler(successHandler);
+      sut.registerHandler(failingHandler);
+      sut.registerHandler(successHandler);
       processMock.emit('SIGTERM', 'SIGTERM', 15);
       // Promise.allSettled() runs all handlers concurrently and collects all results,
       // regardless of individual rejections, so the successHandler must still run.
@@ -148,39 +129,28 @@ describe(UnexpectedExitHandler.name, () => {
       expect(successHandler).called;
     });
 
-    it('should not call the async handler on the "exit" event', async () => {
-      const asyncHandler = sinon.stub().resolves();
+    it('should force-exit on second signal without running handlers again', async () => {
+      const handler = sinon.stub().resolves();
       const sut = createSut();
-      sut.registerAsyncHandler(asyncHandler);
-      // The 'exit' event is synchronous. Node.js does not allow async work in 'exit' listeners.
-      // Async handlers are only invoked when a signal (SIGINT, SIGTERM, etc.) is received.
-      processMock.emit('exit');
-      await clock.runAllAsync();
-      expect(asyncHandler).not.called;
-    });
-
-    it('should force-exit on second signal without running async handlers again', async () => {
-      const asyncHandler = sinon.stub().resolves();
-      const sut = createSut();
-      sut.registerAsyncHandler(asyncHandler);
+      sut.registerHandler(handler);
       // First signal: async handlers are running, shuttingDown = true.
       processMock.emit('SIGINT', 'SIGINT', 2);
-      // Second signal arrives while handlers are still awaited (Promises not yet resolved).
+      // Second signal arrives while handlers promises are not yet resolved).
       // The force-exit branch fires: process.exit() is called immediately with the
-      // second signal's exit code, without waiting for the async handlers or re-invoking them.
+      // second signal's exit code, without waiting for the handlers or re-invoking them.
       processMock.emit('SIGTERM', 'SIGTERM', 15);
       await clock.runAllAsync();
       // The async handler was only triggered by the first signal, not the second.
-      expect(asyncHandler).calledOnce;
+      expect(handler).calledOnce;
       // 128 + 15 (SIGTERM signal number), per POSIX convention for signal-terminated processes
       expect(processMock.exit).calledWith(143);
     });
 
     it('should log "Forced exit." to stderr on second signal', async () => {
       const consoleErrorStub = sinon.stub(console, 'error');
-      const asyncHandler = sinon.stub().resolves();
+      const handler = sinon.stub().resolves();
       const sut = createSut();
-      sut.registerAsyncHandler(asyncHandler);
+      sut.registerHandler(handler);
       // First signal starts async shutdown; second signal hits the force-exit branch.
       processMock.emit('SIGINT', 'SIGINT', 2);
       processMock.emit('SIGINT', 'SIGINT', 2);

@@ -78,7 +78,7 @@ export class MutationTestReportHelper {
     private readonly requireFromCwd: typeof requireResolve,
     unexpectedExitHandler: I<UnexpectedExitHandler>,
   ) {
-    unexpectedExitHandler.registerAsyncHandler(async () => {
+    unexpectedExitHandler.registerHandler(async () => {
       if (
         this.options.incremental &&
         !this.reportCompleted &&
