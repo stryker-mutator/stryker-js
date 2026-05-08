@@ -25,11 +25,13 @@ export class UnexpectedExitHandler implements Disposable {
       // Second signal: force immediate exit without waiting for exit handlers.
       console.error('Forced exit. Received signal again while shutting down.');
       this.process.exit(exitCode);
+      return; // `process.exit` is stubbed in tests, so return explicitly to prevent fall-through
     }
     this.shuttingDown = true;
 
     if (this.unexpectedExitHandlers.length === 0) {
       this.process.exit(exitCode);
+      return; // `process.exit` is stubbed in tests, so return explicitly to prevent fall-through
     }
 
     // Run async handlers before exiting. Signal handlers keep the event loop alive,
