@@ -11,7 +11,7 @@
   "scripts": {
   "merge-config": "node tasks/merge-config.js",
   "bootstrap": "node tasks/install.js",
-  "setup": "pnpm run merge-config && pnpm run bootstrap",
+  "setup": "node --run merge-config && node --run bootstrap",
   "lint": "tsc",
   "test": "node tasks/run-perf-tests.js"
   }

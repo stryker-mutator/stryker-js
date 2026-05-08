@@ -17,6 +17,6 @@ jobs:
         with:
           install-chromium: false
       - name: Build
-        run: pnpm run build
+        run: node --run build
       - name: Release
         run: pnpm exec lerna publish from-git --yes --pre-dist-tag next
