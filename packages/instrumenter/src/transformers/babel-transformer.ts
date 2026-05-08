@@ -126,7 +126,6 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
               const mutantsToFilterOut = mutantsInScope.filter(
                 (mutant) => mutant.mutatorName === mutator.name,
               );
-              console.error(mutantsToFilterOut);
               removeFromPlacementMap(mutantsToFilterOut);
               mutantCollector.remove(mutantsToFilterOut);
             }

@@ -3,12 +3,19 @@ import { NodeMutator } from './node-mutator.js';
 
 const { types } = babel;
 
+function isSuperCall(expression: babel.types.CallExpression): boolean {
+  return expression.callee.type === 'Super';
+}
+
 export const emptyExpressionMutator: NodeMutator = {
   name: 'CallExpression',
 
   *mutate(path) {
     if (path.node.type === 'ExpressionStatement') {
-      if (path.node.expression.type === 'CallExpression') {
+      if (
+        path.node.expression.type === 'CallExpression' &&
+        !isSuperCall(path.node.expression)
+      ) {
         yield types.emptyStatement();
       }
     }

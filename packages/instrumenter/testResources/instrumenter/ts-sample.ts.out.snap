@@ -68,12 +68,7 @@ class Person {
           {}
         } else {
           stryCov_9fa48(\\"8\\");
-          if (stryMutAct_9fa48(\\"9\\")) {
-            ;
-          } else {
-            stryCov_9fa48(\\"9\\");
-            throw new Error(stryMutAct_9fa48(\\"10\\") ? \\"\\" : (stryCov_9fa48(\\"10\\"), 'Name should be at least 2 characters long'));
-          }
+          throw new Error(stryMutAct_9fa48(\\"10\\") ? \\"\\" : (stryCov_9fa48(\\"10\\"), 'Name should be at least 2 characters long'));
         }
       }
       this.#name = value;
@@ -94,12 +89,7 @@ if (stryMutAct_9fa48(\\"13\\")) {
   stryCov_9fa48(\\"13\\");
   foo();
 }
-if (stryMutAct_9fa48(\\"14\\")) {
-  ;
-} else {
-  stryCov_9fa48(\\"14\\");
-  foo(stryMutAct_9fa48(\\"15\\") ? \\"\\" : (stryCov_9fa48(\\"15\\"), 'test'));
-}
+foo(stryMutAct_9fa48(\\"15\\") ? \\"\\" : (stryCov_9fa48(\\"15\\"), 'test'));
 if (stryMutAct_9fa48(\\"16\\")) {
   ;
 } else {
