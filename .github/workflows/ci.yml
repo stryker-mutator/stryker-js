@@ -22,9 +22,9 @@ jobs:
           node-version: ${{ matrix.node-version }}
           install-deps: false
       - name: Install dependencies
-        run: pnpm install --filter "./packages/**" --frozen-lockfile && node --run install:chromium
+        run: pnpm install --filter "./packages/**" --frozen-lockfile && pnpm run install:chromium
       - name: Build & lint & test
-        run: node --run all
+        run: pnpm run all
 
   incremental_mutation_test:
     runs-on: 'ubuntu-latest'
@@ -32,13 +32,13 @@ jobs:
       - uses: actions/checkout@v6
       - uses: ./.github/setup
       - name: Build
-        run: node --run build:no-check
+        run: pnpm run build:no-check
       - name: Download incremental reports
-        run: node --run download-incremental-reports
+        run: pnpm run download-incremental-reports
         env:
           BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
       - name: Run stryker run --incremental
-        run: node --run test:mutation:incremental -- --dashboard.version ${{ github.head_ref || github.ref_name }}
+        run: pnpm run test:mutation:incremental --dashboard.version ${{ github.head_ref || github.ref_name }}
         env:
           STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
 
@@ -59,13 +59,13 @@ jobs:
           echo TEMP="D:\Temp" >> $env:GITHUB_ENV
           echo TMP="D:\Temp" >> $env:GITHUB_ENV
       - name: Build packages
-        run: node --run build:no-check
+        run: pnpm run build:no-check
       - name: install build output
         run: 'pnpm install --frozen-lockfile'
       - name: e2e lint
-        run: 'node --run e2e:lint'
+        run: 'pnpm run e2e:lint'
       - name: Run e2e tests
-        run: 'node --run e2e:run'
+        run: 'pnpm run e2e:run'
       - uses: actions/upload-artifact@v7
         if: failure()
         with:
