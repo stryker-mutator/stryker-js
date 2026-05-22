@@ -52,7 +52,7 @@ if (stryMutAct_9fa48(\\"0\\")) {
 } else {
   stryCov_9fa48(\\"0\\");
   require('foo');
-} // no mutation
+}
 import 'foo'; // no mutation
 
 class Foo {
