@@ -39,29 +39,29 @@ export const fileUtils = {
   },
 
   /**
-   * Recursively walks the from directory and copy the content to the target directory synchronously
+   * Recursively walks the from directory and copy the content to the target directory
    * @param from The source directory to move from
    * @param to The target directory to move to
    */
-  moveDirectoryRecursiveSync(from: string, to: string): void {
-    if (!fs.existsSync(from)) {
+  async moveDirectoryRecursive(from: string, to: string): Promise<void> {
+    try {
+      await fs.promises.access(from);
+    } catch {
       return;
     }
-    if (!fs.existsSync(to)) {
-      fs.mkdirSync(to);
-    }
-    const files = fs.readdirSync(from);
+    await fs.promises.mkdir(to, { recursive: true });
+    const files = await fs.promises.readdir(from);
     for (const file of files) {
       const fromFileName = path.join(from, file);
       const toFileName = path.join(to, file);
-      const stats = fs.lstatSync(fromFileName);
+      const stats = await fs.promises.lstat(fromFileName);
       if (stats.isFile()) {
-        fs.renameSync(fromFileName, toFileName);
+        await fs.promises.rename(fromFileName, toFileName);
       } else {
-        this.moveDirectoryRecursiveSync(fromFileName, toFileName);
+        await this.moveDirectoryRecursive(fromFileName, toFileName);
       }
     }
-    fs.rmdirSync(from);
+    await fs.promises.rmdir(from);
   },
 
   /**

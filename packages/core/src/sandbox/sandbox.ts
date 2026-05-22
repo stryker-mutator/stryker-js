@@ -178,7 +178,7 @@ export class Sandbox implements Disposable {
     }
   }
 
-  public dispose(unexpected = false): void {
+  public async dispose(unexpected = false): Promise<void> {
     if (this.backupDirectory) {
       if (unexpected) {
         console.error(
@@ -189,7 +189,7 @@ export class Sandbox implements Disposable {
           `Resetting your original files from ${path.relative(process.cwd(), this.backupDirectory)}.`,
         );
       }
-      fileUtils.moveDirectoryRecursiveSync(
+      await fileUtils.moveDirectoryRecursive(
         this.backupDirectory,
         this.workingDirectory,
       );
