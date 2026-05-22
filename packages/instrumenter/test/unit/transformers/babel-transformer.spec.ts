@@ -224,6 +224,29 @@ describe('babel-transformer', () => {
       expect(mutatorNames).to.include('FilterableFoo');
     });
 
+    it('should not pass ignored mutants to the filter scope', () => {
+      const filterablePlusMutator: NodeMutator = {
+        ...plusMutator,
+        name: 'FilterablePlus',
+        filter(mutantsInScope) {
+          filterCalls.push([...mutantsInScope]);
+          return true;
+        },
+      };
+      context.options.excludedMutations = ['FilterableFoo'];
+      mutators = [filterableFooMutator, filterablePlusMutator];
+
+      const ast = createJSAst({ rawContent: 'foo + foo;' });
+      act(ast);
+
+      const plusFilterCall = filterCalls.find((call) =>
+        call.some((m) => m.mutatorName === 'FilterablePlus'),
+      );
+      expect(plusFilterCall, 'plus filter was not called').ok;
+      expect(plusFilterCall!.every((m) => m.mutatorName !== 'FilterableFoo'))
+        .true;
+    });
+
     it('should only filter out mutants from the mutator whose filter returned false', () => {
       filterResult = false;
       const ast = createJSAst({ rawContent: 'foo + foo;' });
@@ -290,6 +313,48 @@ describe('babel-transformer', () => {
           (mutant) => mutant.mutatorName === 'FilterablePlus',
         ),
       ).true;
+    });
+
+    it('should remove only current-node mutants when a filter rejects', () => {
+      const filterablePlusMutator: NodeMutator = {
+        ...plusMutator,
+        name: 'FilterablePlus',
+        filter(mutantsInScope) {
+          const plusMutantsInScope = mutantsInScope.filter(
+            (m) => m.mutatorName === 'FilterablePlus',
+          ).length;
+          return plusMutantsInScope === 1;
+        },
+      };
+      mutators = [filterablePlusMutator];
+      const ast = createJSAst({ rawContent: '1 + (2 + 3);' });
+
+      act(ast);
+
+      const code = normalizeWhitespaces(generate(ast.root).code);
+      expect(code).contains('1 + (2 - 3)');
+      expect(code).not.contain('1 - (2 + 3)');
+    });
+
+    it('should keep ignored mutants when a filter rejects', () => {
+      const filterablePlusMutator: NodeMutator = {
+        ...plusMutator,
+        name: 'FilterablePlus',
+        filter() {
+          return false;
+        },
+      };
+      context.options.excludedMutations = ['FilterablePlus'];
+      mutators = [filterablePlusMutator];
+      const ast = createJSAst({ rawContent: '1 + 1;' });
+
+      act(ast);
+
+      expect(mutantCollector.mutants).lengthOf(1);
+      expect(mutantCollector.mutants[0].mutatorName).eq('FilterablePlus');
+      expect(mutantCollector.mutants[0].ignoreReason).eq(
+        'Ignored because of excluded mutation "FilterablePlus"',
+      );
     });
 
     it('should not call the filter when the mutator did not produce mutants on the current node', () => {
