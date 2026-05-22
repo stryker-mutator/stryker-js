@@ -102,6 +102,62 @@ describe('svelte-transformer', () => {
     );
   });
 
+  it('should exclude CallExpression for template expression scripts only', () => {
+    // Arrange
+    const script = 'let name = "test"';
+    const expression = 'sum(1, 2)';
+    const jsScriptAst = createJSAst({ rawContent: script });
+    const jsExpressionAst = createJSAst({ rawContent: expression });
+    const additionalScripts = [
+      createTemplateScript({
+        ast: jsScriptAst,
+        range: createRange(8, 25),
+        isExpression: false,
+      }),
+      createTemplateScript({
+        ast: jsExpressionAst,
+        range: createRange(40, 49),
+        isExpression: true,
+      }),
+    ];
+    const svelteAst = createSvelteAst({
+      rawContent: `<script>${script}</script><p>{${expression}}</p>`,
+      root: { additionalScripts },
+    });
+    const mutantCollector = new MutantCollector();
+    const context = transformerContextStub();
+
+    // Act
+    transformSvelte(svelteAst, mutantCollector, context);
+
+    // Assert
+    sinon.assert.calledWithExactly(
+      context.transform,
+      jsScriptAst,
+      mutantCollector,
+      {
+        ...context,
+        options: { ...context.options, noHeader: true },
+      },
+    );
+    sinon.assert.calledWithExactly(
+      context.transform,
+      jsExpressionAst,
+      mutantCollector,
+      {
+        ...context,
+        options: {
+          ...context.options,
+          excludedMutations: [
+            ...context.options.excludedMutations,
+            'CallExpression',
+          ],
+          noHeader: true,
+        },
+      },
+    );
+  });
+
   describe('header placement', () => {
     it('should not place a header when no mutants were added', () => {
       // Act

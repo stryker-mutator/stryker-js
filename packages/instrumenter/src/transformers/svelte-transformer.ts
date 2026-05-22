@@ -19,10 +19,17 @@ export const transformSvelte: AstTransformer<AstFormat.Svelte> = (
   [root.moduleScript, ...root.additionalScripts]
     .filter(notEmpty)
     .forEach((script) => {
+      // Template expressions are expression-only contexts. Excluding the
+      // statement-producing CallExpression mutator prevents invalid Svelte
+      // output (for example `if (...) {}` inside `{ ... }`).
+      const excludedMutations = script.isExpression
+        ? [...new Set([...context.options.excludedMutations, 'CallExpression'])]
+        : context.options.excludedMutations;
       context.transform(script.ast, mutantCollector, {
         ...context,
         options: {
           ...context.options,
+          excludedMutations,
           noHeader: true,
         },
       });
