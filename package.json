@@ -69,6 +69,6 @@
     "release": "pnpm_config_ignore_scripts=false GH_TOKEN=$(gh auth token) lerna version"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   }
 }

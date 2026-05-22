@@ -54,7 +54,7 @@
   },
   "homepage": "https://stryker-mutator.io/",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "dependencies": {
     "mutation-testing-metrics": "3.7.3",
