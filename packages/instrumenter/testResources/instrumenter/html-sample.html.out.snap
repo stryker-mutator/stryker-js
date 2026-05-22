@@ -66,12 +66,7 @@ function add(a, b) {
     return stryMutAct_9fa48(\\"1\\") ? a - b : (stryCov_9fa48(\\"1\\"), a + b);
   }
 }
-if (stryMutAct_9fa48(\\"2\\")) {
-  ;
-} else {
-  stryCov_9fa48(\\"2\\");
-  add(40, 2);
-}
+add(40, 2);
 </script>
 </body>
 

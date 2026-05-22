@@ -80,10 +80,10 @@ describe('instrumenter performance', () => {
   }
 
   it('should instrument ts-sample.ts with expected mutant count and within performance threshold', async () => {
-    await benchmarkFile('ts-sample.ts', 11, 15);
+    await benchmarkFile('ts-sample.ts', 10, 15);
   });
 
   it('should instrument benchmark-big.ts with expected mutant count and within performance threshold', async () => {
-    await benchmarkFile('benchmark-big.ts', 966, 90);
+    await benchmarkFile('benchmark-big.ts', 933, 90);
   });
 });
