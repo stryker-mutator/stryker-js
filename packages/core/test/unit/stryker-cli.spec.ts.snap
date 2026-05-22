@@ -33,6 +33,7 @@ Options:
   It is possible to specify exactly which code blocks to mutate by means of a _mutation range_. This can be done postfixing your file with \`:startLine[:startColumn]-endLine[:endColumn]\`. Example: src/index.js:1:3-1:5
   -t, --testFiles <testFilesToRun>             With \`testFiles\` you can limit which test files are executed during mutation testing. When specified, only tests from these files will be run. This allows you to verify that a module's dedicated unit tests can kill all its mutants independently.
   -b, --buildCommand <command>                 Configure a build command to run after mutating the code, but before mutants are tested. This is generally used to transpile your code before testing. Only configure this if your test runner doesn't take care of this already and you're not using just-in-time transpiler like \`babel/register\` or \`ts-node\`.
+  --commandRunner.command <command>            Configure the command used by the test runner. Example: \\"npm run mocha\\". This maps to the \`commandRunner.command\` config option.
   --dryRunOnly                                 Execute the initial test run only, without doing actual mutation testing. Doing a dry run only can be used to test that StrykerJS can run your test setup, for example, in CI pipelines.
   --checkers <listOfCheckersOrEmptyString>     A comma separated list of checkers to use, for example --checkers typescript
   --checkerNodeArgs <listOfNodeArgs>           A list of node args to be passed to checker child processes.
@@ -94,6 +95,7 @@ Options:
   It is possible to specify exactly which code blocks to mutate by means of a _mutation range_. This can be done postfixing your file with \`:startLine[:startColumn]-endLine[:endColumn]\`. Example: src/index.js:1:3-1:5
   -t, --testFiles <testFilesToRun>             With \`testFiles\` you can limit which test files are executed during mutation testing. When specified, only tests from these files will be run. This allows you to verify that a module's dedicated unit tests can kill all its mutants independently.
   -b, --buildCommand <command>                 Configure a build command to run after mutating the code, but before mutants are tested. This is generally used to transpile your code before testing. Only configure this if your test runner doesn't take care of this already and you're not using just-in-time transpiler like \`babel/register\` or \`ts-node\`.
+  --commandRunner.command <command>            Configure the command used by the test runner. Example: \\"npm run mocha\\". This maps to the \`commandRunner.command\` config option.
   --dryRunOnly                                 Execute the initial test run only, without doing actual mutation testing. Doing a dry run only can be used to test that StrykerJS can run your test setup, for example, in CI pipelines.
   --checkers <listOfCheckersOrEmptyString>     A comma separated list of checkers to use, for example --checkers typescript
   --checkerNodeArgs <listOfNodeArgs>           A list of node args to be passed to checker child processes.

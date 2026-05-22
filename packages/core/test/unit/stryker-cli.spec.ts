@@ -96,11 +96,12 @@ describe(StrykerCli.name, () => {
       });
     });
 
-    describe('dashboard options', () => {
+    describe('dotted options', () => {
       beforeEach(() => {
         runMutationTestingStub.resolves();
       });
-      it('should parse options to a deep object', () => {
+
+      it('should parse dotted options to nested objects', () => {
         const expectedDashboardOptions: Required<DashboardOptions> = {
           baseUrl: 'https://dashboard.qux.io',
           module: 'baz/module',
@@ -119,13 +120,17 @@ describe(StrykerCli.name, () => {
           expectedDashboardOptions.baseUrl,
           '--dashboard.reportType',
           'full',
+          '--commandRunner.command',
+          'npm run tests-only',
         );
+
         expect(runMutationTestingStub).calledWithMatch({
           dashboard: expectedDashboardOptions,
+          commandRunner: { command: 'npm run tests-only' },
         });
       });
 
-      it('should remove any lingering options', () => {
+      it('should remove any lingering dotted keys', () => {
         actRun(
           '--dashboard.version',
           'foo',
@@ -135,13 +140,15 @@ describe(StrykerCli.name, () => {
           'baz',
           '--dashboard.baseUrl',
           'quux',
+          '--commandRunner.command',
+          'npm run tests-only',
         );
         const call = runMutationTestingStub.getCall(0);
         const actualOptions: StrykerOptions = call.args[0];
-        const dashboardKeys = Object.keys(actualOptions).filter((key) =>
-          key.startsWith('dashboard.'),
+        const dottedKeys = Object.keys(actualOptions).filter((key) =>
+          key.includes('.'),
         );
-        expect(dashboardKeys, JSON.stringify(dashboardKeys)).lengthOf(0);
+        expect(dottedKeys, JSON.stringify(dottedKeys)).lengthOf(0);
       });
     });
 

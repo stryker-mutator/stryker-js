@@ -3,9 +3,9 @@ import semver from 'semver';
 guardMinimalNodeVersion();
 import { Argument, Command } from 'commander';
 import {
-  DashboardOptions,
   ALL_REPORT_TYPES,
   PartialStrykerOptions,
+  StrykerOptions,
 } from '@stryker-mutator/api/core';
 
 import { initializerFactory } from './initializer/index.js';
@@ -14,6 +14,7 @@ import { defaultOptions } from './config/index.js';
 import { strykerEngines, strykerVersion } from './stryker-package.js';
 import { StrykerServer, StrykerServerOptions } from './stryker-server.js';
 import { createInjector } from 'typed-inject';
+import { DeepPartial } from '@stryker-mutator/util';
 
 const list = createSplitter(',');
 
@@ -207,6 +208,10 @@ export class StrykerCli {
           " Only configure this if your test runner doesn't take care of this already and you're not using just-in-time transpiler like `babel/register` or `ts-node`.",
       )
       .option(
+        '--commandRunner.command <command>',
+        'Configure the command used by the test runner. Example: "npm run mocha". This maps to the `commandRunner.command` config option.',
+      )
+      .option(
         '--dryRunOnly',
         'Execute the initial test run only, without doing actual mutation testing. Doing a dry run only can be used to test that StrykerJS can run your test setup, for example, in CI pipelines.',
       )
@@ -337,11 +342,17 @@ export class StrykerCli {
     // Cleanup commander state
     delete options.version;
     Object.keys(options)
-      .filter((key) => key.startsWith('dashboard.'))
+      .filter((key) => key.includes('.'))
       .forEach((key) => {
-        options.dashboard ??= {};
-        const dashboardOpt = key.split('.')[1] as keyof DashboardOptions;
-        options.dashboard[dashboardOpt] = options[key] as any;
+        const parts = key.split('.');
+        let target = options;
+
+        for (let i = 0; i < parts.length - 1; i++) {
+          const part = parts[i];
+          target[part] ??= {};
+          target = target[part] as DeepPartial<StrykerOptions>;
+        }
+        target[parts[parts.length - 1]] = options[key];
         delete options[key];
       });
 
