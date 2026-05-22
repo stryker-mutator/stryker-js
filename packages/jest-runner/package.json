@@ -80,8 +80,7 @@
     "jest-environment-jsdom": "30.3.0",
     "jest-environment-jsdom-sixteen": "2.0.0",
     "jest-environment-node": "30.3.0",
-    "jest-jasmine2": "30.3.0",
-    "ts-node": "10.9.2"
+    "jest-jasmine2": "30.3.0"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "workspace:*"

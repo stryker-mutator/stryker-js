@@ -1,6 +1,6 @@
 {
-  "name": "jasmine-ts-node",
-  "description": "A test for mocha using ts-node (no transpiler) using mocha package config",
+  "name": "jasmine-ts",
+  "description": "A test for jasmine using TypeScript with native Node strip-types",
   "scripts": {
     "test:unit": "jasmine",
     "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",

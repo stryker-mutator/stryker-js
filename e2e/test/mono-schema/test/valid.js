@@ -21,7 +21,7 @@ const config = {
   },
   tap: {
     testFiles: ['{**/@(test|tests|__test__|__tests__)/**,**/*.@(test|tests|spec)}.@(cjs|mjs|js|jsx|ts|tsx)'],
-    nodeArgs: ['--loader', 'ts-node/esm'],
+    nodeArgs: ['--import', 'tsx'],
   },
 };
 export default config;

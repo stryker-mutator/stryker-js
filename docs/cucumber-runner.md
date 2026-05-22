@@ -72,22 +72,22 @@ As of `@stryker-mutator/cucumber-runner` version 6.1, non-standard feature file 
 
 ## TypeScript
 
-If you're using ts-node to just-in-time transpile your TypeScript code with native ESM using a custom `--loader`, you will also need to add that to Stryker. For example, if you use this setup:
+If you're using a TypeScript loader like `tsx` to just-in-time transpile your TypeScript code with native ESM, you will also need to add that to Stryker. For example, if you use this setup:
 
 ```json
 {
   "scripts": {
-    "test": "cross-env NODE_OPTIONS=\"--loader ts-node/esm\" cucumber-js",
+    "test": "cross-env NODE_OPTIONS=\"--import tsx\" cucumber-js",
     "test:mutation": "stryker run"
   }
 }
 ```
 
-You will also need to add the `--loader` to your 'stryker.config.json' file:
+You will also need to add `--import` to your 'stryker.config.json' file:
 
 ```json
 {
-  "testRunnerNodeArgs": ["--loader", "ts-node/esm"],
+  "testRunnerNodeArgs": ["--import", "tsx"],
   "testRunner": "cucumber"
 }
 ```

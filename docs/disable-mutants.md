@@ -260,6 +260,6 @@ declare module '@stryker-mutator/api/ignore' {
 }
 ```
 
-If you want to write the plugin itself as TypeScript as well, you will need to transpile it to JavaScript yourself. Either by doing it before you run Stryker, or using a just-in-time compiler like `ts-node`.
+If you want to write the plugin itself as TypeScript as well, you will need to transpile it to JavaScript yourself. Either by doing it before you run Stryker, or using a just-in-time compiler like `tsx`.
 
 :::

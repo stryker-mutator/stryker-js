@@ -36,7 +36,7 @@ You can configure the tap test runner in the `stryker.config.json` (or `stryker.
   "testRunner": "tap",
   "tap": {
     "testFiles": ["test/**/*.@(js|ts)"],
-    "nodeArgs": ["--loader", "ts-node/esm"],
+    "nodeArgs": ["--import", "tsx"],
     "forceBail": true
   }
 }
@@ -79,7 +79,7 @@ When the placeholder are not used, the defaults will be applied as described abo
 | Config                                                                                    | Generated actual node arguments                                                                                  | Explanation                                                      |
 | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | `[]`                                                                                      | `["-r", "actual/hook.cjs", "test/foo.spec.js"]`                                                                  | The default, works when using raw JavaScript test files as input |
-| `["--loader", "ts-node/esm"]`                                                             | `["-r", "actual/hook.cjs", "--loader", "ts-node/esm", "test/foo.spec.js"]`                                       | If you want to use `ts-node` to run your tests                   |
+| `["--import", "tsx"]`                                                                      | `["-r", "actual/hook.cjs", "--import", "tsx", "test/foo.spec.js"]`                                               | If you want to use `tsx` to run your TypeScript tests            |
 | `["node_modules/ava/entrypoints/cli.mjs", "--tap", "--node-arguments='-r {{hookFile}}'"]` | `["node_modules/ava/entrypoints/cli.mjs", "--tap", "--node-arguments='-r actual/hook.cjs'", "test/foo.spec.js"]` | If you are running test with [Ava](https://github.com/avajs/ava) |
 
 :::info
@@ -97,18 +97,18 @@ This option is typically set to false when a test runner uses child processes to
 ## Tips and tricks
 
 - **Configuring**  
-  When you rely on your test runner to compile your typescript files, you should first try to run them yourself, for example by using `node --loader ts-node/esm test/my-test-file.spec.ts`. If that succeeds, you can proceed to add `"nodeArgs": ["--loader", "ts-node/esm"]` to your `tap` configuration.
+  When you rely on your test runner to compile your typescript files, you should first try to run them yourself, for example by using `node --import tsx test/my-test-file.spec.ts`. If that succeeds, you can proceed to add `"nodeArgs": ["--import", "tsx"]` to your `tap` configuration.
 - **Debugging**  
   You can run Stryker with `--logLevel debug` to see the actual node arguments that are used to run your tests.
 - **Performance**  
-  When you're normally using a JIT compiler like `ts-node` to run your tests, you can speed up mutation testing considerably by using a [`buildCommand`](./configuration.md#buildcommand-string) to compile your files before running them.
+  When you're normally using a JIT compiler like `tsx` to run your tests, you can speed up mutation testing considerably by using a [`buildCommand`](./configuration.md#buildcommand-string) to compile your files before running them.
 
   ```diff
   {
   + "buildCommand": "tsc",
     "tap": {
   +   "testFiles": ["dist/test/**/*.js"],
-  -   "nodeArgs": ["--loader", "ts-node/esm"],
+  -   "nodeArgs": ["--import", "tsx"],
   -   "testFiles": ["test/**/*.ts"]
     }
   }
@@ -119,5 +119,5 @@ This option is typically set to false when a test runner uses child processes to
 The tap runner is a simple test runner. As such, it has some limitations:
 
 - It doesn't support fine-grained test reporting. A test is always a test file.
-- Each test file is always run in a separate process. This can become slow when you have a lot of test files and a lot of mutants, especially when you're using a JIT compiler like `ts-node`.
+- Each test file is always run in a separate process. This can become slow when you have a lot of test files and a lot of mutants, especially when you're using a JIT compiler like `tsx`.
 - Coverage is always recorded per test, which means that coverage is measured per test file. [Static mutants](../mutation-testing-elements/static-mutants.md) are undetectable.

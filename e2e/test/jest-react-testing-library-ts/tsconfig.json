@@ -9,6 +9,7 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "module": "NodeNext",
+    "rootDir": "./src",
     "isolatedModules": true,
     "noEmit": true,
     "types": ["@testing-library/jest-dom", "jest"],
