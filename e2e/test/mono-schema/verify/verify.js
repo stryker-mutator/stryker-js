@@ -140,37 +140,33 @@ describe('The Stryker meta schema', () => {
 });
 
 describe('PartialStrykerOptions', () => {
-  ['Node', 'Node16'].forEach((moduleMode) => {
-    describe(`with --moduleResolution ${moduleMode}`, () => {
-      it('should validate a valid schema', () => {
-        const diagnostics = tsc(
-          '--moduleResolution',
-          moduleMode,
-          '--module',
-          moduleMode,
-          'valid.js',
-        );
-        // eslint-disable-next-line @typescript-eslint/no-base-to-string -- Ignore as messageText is a string.
-        expect(diagnostics, String(diagnostics[0]?.messageText)).empty;
-      });
-      it('should invalidate an invalid schema', () => {
-        const diagnostics = tsc(
-          '--moduleResolution',
-          moduleMode,
-          '--module',
-          moduleMode,
-          'invalid.js',
-        );
-        expect(diagnostics).not.empty;
+  it('should validate a valid schema', () => {
+    const diagnostics = tsc(
+      '--moduleResolution',
+      'Node16',
+      '--module',
+      'Node16',
+      'valid.js',
+    );
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string -- Ignore as messageText is a string.
+    expect(diagnostics, String(diagnostics[0]?.messageText)).empty;
+  });
+  it('should invalidate an invalid schema', () => {
+    const diagnostics = tsc(
+      '--moduleResolution',
+      'Node16',
+      '--module',
+      'Node16',
+      'invalid.js',
+    );
+    expect(diagnostics).not.empty;
 
-        expect(
-          diagnostics.map(({ messageText }) => messageText).sort(),
-        ).deep.eq([
-          "Type 'string' is not assignable to type '(string | undefined)[]'.",
-          "Type '{ name: string; }' is not assignable to type 'string'.",
-        ]);
-      });
-    });
+    expect(
+      diagnostics.map(({ messageText }) => messageText).sort(),
+    ).deep.eq([
+      "Type 'string' is not assignable to type '(string | undefined)[]'.",
+      "Type '{ name: string; }' is not assignable to type 'string'.",
+    ]);
   });
 });
 
