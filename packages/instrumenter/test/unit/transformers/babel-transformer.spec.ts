@@ -261,9 +261,9 @@ describe('babel-transformer', () => {
       class RemovingSpyMutantCollector extends MutantCollector {
         public readonly removeCalls: Mutant[][] = [];
 
-        public override remove(mutantsToRemove: Mutant[]) {
+        public override remove(mutantsToRemove: Mutant[]): Mutant[] {
           this.removeCalls.push(mutantsToRemove);
-          super.remove(mutantsToRemove);
+          return super.remove(mutantsToRemove);
         }
       }
 

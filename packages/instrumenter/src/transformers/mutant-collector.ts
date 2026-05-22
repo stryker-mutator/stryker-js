@@ -41,8 +41,19 @@ export class MutantCollector {
    * @param mutantsToRemove all mutants to be removed
    * @returns The mutant (for testability)
    */
-  public remove(mutantsToRemove: Mutant[]) {
-    this._mutants.filter((mutant) => mutantsToRemove.includes(mutant));
+  public remove(mutantsToRemove: Mutant[]): Mutant[] {
+    const toRemove = new Set(mutantsToRemove);
+    const removedMutants: Mutant[] = [];
+    let writeIndex = 0;
+    for (const mutant of this._mutants) {
+      if (toRemove.has(mutant)) {
+        removedMutants.push(mutant);
+      } else {
+        this._mutants[writeIndex++] = mutant;
+      }
+    }
+    this._mutants.length = writeIndex;
+    return removedMutants;
   }
 
   public hasPlacedMutants(fileName: string): boolean {

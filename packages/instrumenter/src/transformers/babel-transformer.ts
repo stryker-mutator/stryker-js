@@ -214,11 +214,13 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
    */
   function placeMutantsIfNeeded(path: NodePath) {
     const mutantsPlacement = placementMap.get(path.node);
-    if (mutantsPlacement?.appliedMutants.size) {
-      try {
+    try {
+      if (mutantsPlacement?.appliedMutants.size) {
         mutantsPlacement.placer.place(path, mutantsPlacement.appliedMutants);
         path.skip();
-      } catch (error) {
+      }
+    } catch (error) {
+      if (mutantsPlacement) {
         throwPlacementError(
           error as Error,
           path,
@@ -226,10 +228,10 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
           [...mutantsPlacement.appliedMutants.keys()],
           originFileName,
         );
-      } finally {
-        // Done with this node, apply cleanup
-        placementMap.delete(path.node);
       }
+    } finally {
+      // Done with this node, apply cleanup
+      placementMap.delete(path.node);
     }
   }
 

@@ -78,6 +78,48 @@ describe(MutantCollector.name, () => {
     });
   });
 
+  describe(MutantCollector.prototype.remove.name, () => {
+    it('should remove the provided mutants', () => {
+      const fileName = 'file.js';
+      const original = types.identifier('bar');
+      const firstMutant = sut.collect(fileName, original, {
+        mutatorName: 'fooMutator',
+        replacement: types.identifier('foo'),
+      });
+      const secondMutant = sut.collect(fileName, original, {
+        mutatorName: 'barMutator',
+        replacement: types.identifier('baz'),
+      });
+      const thirdMutant = sut.collect(fileName, original, {
+        mutatorName: 'bazMutator',
+        replacement: types.identifier('qux'),
+      });
+
+      const removedMutants = sut.remove([firstMutant, thirdMutant]);
+
+      expect(sut.mutants).deep.eq([secondMutant]);
+      expect(removedMutants).deep.eq([firstMutant, thirdMutant]);
+    });
+
+    it('should keep the same mutants array instance', () => {
+      const fileName = 'file.js';
+      const original = types.identifier('bar');
+      const firstMutant = sut.collect(fileName, original, {
+        mutatorName: 'fooMutator',
+        replacement: types.identifier('foo'),
+      });
+      sut.collect(fileName, original, {
+        mutatorName: 'barMutator',
+        replacement: types.identifier('baz'),
+      });
+      const originalArrayRef = sut.mutants;
+
+      sut.remove([firstMutant]);
+
+      expect(sut.mutants).eq(originalArrayRef);
+    });
+  });
+
   describe(MutantCollector.prototype.hasPlacedMutants.name, () => {
     it('should return true when a mutant is placed for the file', () => {
       const input = [
