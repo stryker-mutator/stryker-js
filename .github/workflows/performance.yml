@@ -18,9 +18,9 @@ jobs:
           submodules: recursive
       - uses: ./.github/setup
       - name: Build packages
-        run: node --run build
+        run: pnpm run build
       - name: Run performance tests
-        run: node --run perf
+        run: pnpm run perf
         env:
           PERF_TEST_GLOB_PATTERN: ${{ github.event.inputs.PERF_TEST_GLOB_PATTERN }}
       - name: Store reports

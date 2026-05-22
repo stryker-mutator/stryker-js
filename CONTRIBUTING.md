@@ -30,8 +30,8 @@ We configured the tslint extension to run on save in or [vscode workspace](#vsco
 We use [Lerna](https://lerna.js.org/) to manage the packages in this repository. You don't have to install it globally. The packages themselves can be found in the [packages folder](https://github.com/stryker-mutator/stryker-js/tree/master/packages). Commands such as `pnpm test` can be executed from the root of the project but executing them inside of a package folder is more time efficient. However, we suggest running `pnpm test` in the root of the project before a commit to ensure that everything still works. To get Stryker running locally, please follow these steps:
 
 1. Clone the repository
-1. Install dependencies using `pnpm install` and `node --run install:chromium` in the root of the project
-1. Run `node --run build` in the root of the project once.
+1. Install dependencies using `pnpm install` and `pnpm run install:chromium` in the root of the project
+1. Run `pnpm run build` in the root of the project once.
 1. Use `pnpm start` to run the TypeScript compiler in watch mode. Any changes you make to TypeScript files will automatically compile.
 
 After that, you're ready to go. If you're using [vscode, please setup that as well](#vscode-environment-configuration).
@@ -39,8 +39,8 @@ After that, you're ready to go. If you're using [vscode, please setup that as we
 Here are some common tasks to use. Just remember that they don't include compiling of the sources. So they all assume the latest code is compiled and ready to go:
 
 - Use `pnpm test` to run the unit tests. Using `pnpm test` in one of the package folders also works.
-- Use `node --run e2e` will install and execute the end to end tests (located in the e2e folder). These take a while.
-- Use `node --run perf` will install and execute the performance tests (located in the perf folder). These take a while.
+- Use `pnpm run e2e` will install and execute the end to end tests (located in the e2e folder). These take a while.
+- Use `pnpm run perf` will install and execute the performance tests (located in the perf folder). These take a while.
 
 To run local changes you made in StrykerJS in an actual project you have two options:
 
@@ -88,9 +88,9 @@ Have fun!
 
 We support mutation testing Stryker with Stryker! After you got Stryker working locally, you can follow these steps to mutation test Stryker:
 
-1. Make sure all Stryker packages are build: `node --run build`
+1. Make sure all Stryker packages are build: `pnpm run build`
 1. Navigate to the package you want to mutation test, for example `cd packages/core`
-1. Run `node --run stryker`
+1. Run `pnpm run stryker`
 
 ## Adding new features
 
@@ -100,8 +100,8 @@ New features are welcome! Either as requests or proposals.
 1. Create a fork on your github account.
 1. When writing your code, please conform to the existing coding style.
    See [.editorconfig](https://github.com/stryker-mutator/stryker-js/blob/master/.editorconfig), the [typescript guidelines](https://github.com/Microsoft/TypeScript/wiki/Coding-guidelines) and our tslint.json
-   - You can check if there are lint issues using `node --run lint`.
-   - You can automatically fix a lot of lint issues using `node --run lint:fix`
+   - You can check if there are lint issues using `pnpm run lint`.
+   - You can automatically fix a lot of lint issues using `pnpm run lint:fix`
 1. Please create or edit unit tests or integration tests.
 1. Run the tests using `pnpm test`
 1. When creating commits, please conform to [the angular commit message style](https://docs.google.com/document/d/1rk04jEuGfk9kYzfqCuOlPTSJw3hEDZJTBN5E5f1SALo/edit).
