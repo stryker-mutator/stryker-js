@@ -16,6 +16,7 @@ import { ScriptAst, ScriptFormat } from '../../../src/syntax/index.js';
 import { instrumentationBabelHeader } from '../../../src/util/index.js';
 import { MutantPlacer } from '../../../src/mutant-placers/index.js';
 import { NodeMutator } from '../../../src/mutators/index.js';
+import { Mutable, Mutant } from '../../../src/mutant.js';
 import { createJSAst, createTSAst } from '../../helpers/factories.js';
 
 const generate = generator.default;
@@ -152,6 +153,242 @@ describe('babel-transformer', () => {
       expect(mutantCollector.mutants[0].ignoreReason).eq(
         'Ignored because of excluded mutation "Foo"',
       );
+    });
+  });
+
+  describe('mutant filtering', () => {
+    let filterResult: boolean;
+    let filterCalls: Array<readonly Mutable[]>;
+    let filterableFooMutator: NodeMutator;
+
+    beforeEach(() => {
+      filterResult = true;
+      filterCalls = [];
+      filterableFooMutator = {
+        ...fooMutator,
+        name: 'FilterableFoo',
+        filter(mutantsInScope) {
+          filterCalls.push([...mutantsInScope]);
+          return filterResult;
+        },
+      };
+      mutators = [filterableFooMutator, plusMutator];
+    });
+
+    it('should call the filter with the mutants produced by that mutator', () => {
+      const ast = createJSAst({ rawContent: 'foo;' });
+      act(ast);
+      expect(filterCalls).lengthOf(1);
+      expect(filterCalls[0]).lengthOf(1);
+      expect(filterCalls[0][0].mutatorName).eq('FilterableFoo');
+    });
+
+    it('should keep the mutants when the filter returns true', () => {
+      filterResult = true;
+      const ast = createJSAst({ rawContent: 'foo;' });
+      act(ast);
+      expect(mutantCollector.mutants).lengthOf(1);
+      expect(mutantCollector.mutants[0].mutatorName).eq('FilterableFoo');
+      expect(normalizeWhitespaces(generate(ast.root).code)).contains(
+        'bar; foo;',
+      );
+    });
+
+    it('should not place the filtered mutants in the generated code when the filter returns false', () => {
+      filterResult = false;
+      const ast = createJSAst({ rawContent: 'foo;' });
+      act(ast);
+      expect(normalizeWhitespaces(generate(ast.root).code)).not.contain('bar;');
+    });
+
+    it('should pass mutants from descendant nodes to the filter', () => {
+      const filterablePlusMutator: NodeMutator = {
+        ...plusMutator,
+        name: 'FilterablePlus',
+        filter(mutantsInScope) {
+          filterCalls.push([...mutantsInScope]);
+          return true;
+        },
+      };
+      mutators = [filterableFooMutator, filterablePlusMutator];
+
+      const ast = createJSAst({ rawContent: 'foo + bar;' });
+      act(ast);
+
+      const plusFilterCall = filterCalls.find((call) =>
+        call.some((m) => m.mutatorName === 'FilterablePlus'),
+      );
+      expect(plusFilterCall, 'plus filter was not called').ok;
+      const mutatorNames = plusFilterCall!.map((m) => m.mutatorName);
+      expect(mutatorNames).to.include('FilterablePlus');
+      expect(mutatorNames).to.include('FilterableFoo');
+    });
+
+    it('should not pass ignored mutants to the filter scope', () => {
+      const filterablePlusMutator: NodeMutator = {
+        ...plusMutator,
+        name: 'FilterablePlus',
+        filter(mutantsInScope) {
+          filterCalls.push([...mutantsInScope]);
+          return true;
+        },
+      };
+      context.options.excludedMutations = ['FilterableFoo'];
+      mutators = [filterableFooMutator, filterablePlusMutator];
+
+      const ast = createJSAst({ rawContent: 'foo + foo;' });
+      act(ast);
+
+      const plusFilterCall = filterCalls.find((call) =>
+        call.some((m) => m.mutatorName === 'FilterablePlus'),
+      );
+      expect(plusFilterCall, 'plus filter was not called').ok;
+      expect(plusFilterCall!.every((m) => m.mutatorName !== 'FilterableFoo'))
+        .true;
+    });
+
+    it('should only filter out mutants from the mutator whose filter returned false', () => {
+      filterResult = false;
+      const ast = createJSAst({ rawContent: 'foo + foo;' });
+      act(ast);
+      const code = normalizeWhitespaces(generate(ast.root).code);
+      expect(code).contains('foo - foo');
+      expect(code).not.contain('bar');
+    });
+
+    it('should pass only subtree mutants to the filter', () => {
+      const filterablePlusMutator: NodeMutator = {
+        ...plusMutator,
+        name: 'FilterablePlus',
+        filter(mutantsInScope) {
+          filterCalls.push([...mutantsInScope]);
+          return true;
+        },
+      };
+      mutators = [filterableFooMutator, filterablePlusMutator];
+
+      const ast = createJSAst({ rawContent: 'foo;\nfoo + foo;' });
+      act(ast);
+
+      const plusFilterCall = filterCalls.find((call) =>
+        call.some((m) => m.mutatorName === 'FilterablePlus'),
+      );
+      expect(plusFilterCall, 'plus filter was not called').ok;
+      const fooMutantsInPlusScope = plusFilterCall!.filter(
+        (m) => m.mutatorName === 'FilterableFoo',
+      );
+      expect(fooMutantsInPlusScope).lengthOf(2);
+    });
+
+    it('should remove only rejected mutator mutants and call collector remove', () => {
+      class RemovingSpyMutantCollector extends MutantCollector {
+        public readonly removeCalls: Mutant[][] = [];
+
+        public override remove(mutantsToRemove: Mutant[]): Mutant[] {
+          this.removeCalls.push(mutantsToRemove);
+          return super.remove(mutantsToRemove);
+        }
+      }
+
+      const filterablePlusMutator: NodeMutator = {
+        ...plusMutator,
+        name: 'FilterablePlus',
+        filter() {
+          return false;
+        },
+      };
+      const removingSpyMutantCollector = new RemovingSpyMutantCollector();
+      mutantCollector = removingSpyMutantCollector;
+      mutators = [filterableFooMutator, filterablePlusMutator];
+      const ast = createJSAst({ rawContent: 'foo + foo;' });
+
+      act(ast);
+
+      const code = normalizeWhitespaces(generate(ast.root).code);
+      expect(code).contains('bar');
+      expect(code).not.contain('foo - foo');
+      expect(removingSpyMutantCollector.removeCalls).lengthOf(1);
+      expect(
+        removingSpyMutantCollector.removeCalls[0].every(
+          (mutant) => mutant.mutatorName === 'FilterablePlus',
+        ),
+      ).true;
+    });
+
+    it('should remove only current-node mutants when a filter rejects', () => {
+      const filterablePlusMutator: NodeMutator = {
+        ...plusMutator,
+        name: 'FilterablePlus',
+        filter(mutantsInScope) {
+          const plusMutantsInScope = mutantsInScope.filter(
+            (m) => m.mutatorName === 'FilterablePlus',
+          ).length;
+          return plusMutantsInScope === 1;
+        },
+      };
+      mutators = [filterablePlusMutator];
+      const ast = createJSAst({ rawContent: '1 + (2 + 3);' });
+
+      act(ast);
+
+      const code = normalizeWhitespaces(generate(ast.root).code);
+      expect(code).contains('1 + (2 - 3)');
+      expect(code).not.contain('1 - (2 + 3)');
+    });
+
+    it('should keep ignored mutants when a filter rejects', () => {
+      const filterablePlusMutator: NodeMutator = {
+        ...plusMutator,
+        name: 'FilterablePlus',
+        filter() {
+          return false;
+        },
+      };
+      context.options.excludedMutations = ['FilterablePlus'];
+      mutators = [filterablePlusMutator];
+      const ast = createJSAst({ rawContent: '1 + 1;' });
+
+      act(ast);
+
+      expect(mutantCollector.mutants).lengthOf(1);
+      expect(mutantCollector.mutants[0].mutatorName).eq('FilterablePlus');
+      expect(mutantCollector.mutants[0].ignoreReason).eq(
+        'Ignored because of excluded mutation "FilterablePlus"',
+      );
+    });
+
+    it('should not call the filter when the mutator did not produce mutants on the current node', () => {
+      const ast = createJSAst({ rawContent: 'a + b;' });
+      act(ast);
+      expect(filterCalls).lengthOf(0);
+    });
+
+    it('should not require a filter on the mutator', () => {
+      const ast = createJSAst({ rawContent: '1 + 1;' });
+      act(ast);
+      expect(mutantCollector.mutants).lengthOf(1);
+      expect(mutantCollector.mutants[0].mutatorName).eq('Plus');
+    });
+
+    it('should not do filter bookkeeping when no mutator has a filter', () => {
+      class CountingMutantCollector extends MutantCollector {
+        public mutantsGetterCalls = 0;
+
+        public override get mutants(): readonly Mutant[] {
+          this.mutantsGetterCalls++;
+          return super.mutants;
+        }
+      }
+
+      const countingMutantCollector = new CountingMutantCollector();
+      mutantCollector = countingMutantCollector;
+      mutators = [fooMutator, plusMutator];
+      const ast = createJSAst({ rawContent: 'foo + foo;' });
+
+      act(ast);
+
+      expect(mutantCollector.mutants).lengthOf(3);
+      expect(countingMutantCollector.mutantsGetterCalls).eq(2);
     });
   });
 

@@ -74,5 +74,28 @@ class Person {
       this.#name = value;
     }
   }
-}"
+}
+const foo = (string?: string) => {
+  if (stryMutAct_9fa48(\\"10\\")) {
+    {}
+  } else {
+    stryCov_9fa48(\\"10\\");
+    return stryMutAct_9fa48(\\"11\\") ? true : (stryCov_9fa48(\\"11\\"), false);
+  }
+};
+foo();
+foo(stryMutAct_9fa48(\\"12\\") ? \\"\\" : (stryCov_9fa48(\\"12\\"), 'test'));
+console.log();
+throw new Error();
+const add = (a: number, b: number) => {
+  if (stryMutAct_9fa48(\\"13\\")) {
+    {}
+  } else {
+    stryCov_9fa48(\\"13\\");
+    return stryMutAct_9fa48(\\"14\\") ? a - b : (stryCov_9fa48(\\"14\\"), a + b);
+  }
+};
+const a = 1;
+const b = 2;
+add(a, b);"
 `;

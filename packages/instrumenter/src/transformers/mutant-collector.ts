@@ -5,6 +5,7 @@ import { Mutant, Mutable } from '../mutant.js';
 
 export class MutantCollector {
   private readonly _mutants: Mutant[] = [];
+  private nextMutantId = 0;
 
   public get mutants(): readonly Mutant[] {
     return this._mutants;
@@ -26,14 +27,35 @@ export class MutantCollector {
     offset: Position = { line: 0, column: 0 },
   ): Mutant {
     const mutant = new Mutant(
-      this._mutants.length.toString(),
+      this.nextMutantId.toString(),
       fileName,
       original,
       mutable,
       offset,
     );
     this._mutants.push(mutant);
+    this.nextMutantId++;
     return mutant;
+  }
+
+  /**
+   * Removes mutants from the internal mutant list.
+   * @param mutantsToRemove all mutants to be removed
+   * @returns The mutant (for testability)
+   */
+  public remove(mutantsToRemove: Mutant[]): Mutant[] {
+    const toRemove = new Set(mutantsToRemove);
+    const removedMutants: Mutant[] = [];
+    let writeIndex = 0;
+    for (const mutant of this._mutants) {
+      if (toRemove.has(mutant)) {
+        removedMutants.push(mutant);
+      } else {
+        this._mutants[writeIndex++] = mutant;
+      }
+    }
+    this._mutants.length = writeIndex;
+    return removedMutants;
   }
 
   public hasPlacedMutants(fileName: string): boolean {
