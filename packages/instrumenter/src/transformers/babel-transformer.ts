@@ -17,7 +17,7 @@ import {
   throwPlacementError,
 } from '../mutant-placers/index.js';
 import { Mutable, Mutant } from '../mutant.js';
-import { allMutators, NodeMutator } from '../mutators/index.js';
+import { allMutators, type NodeMutator } from '../mutators/index.js';
 
 import { DirectiveBookkeeper } from './directive-bookkeeper.js';
 import { IgnorerBookkeeper } from './ignorer-bookkeeper.js';
