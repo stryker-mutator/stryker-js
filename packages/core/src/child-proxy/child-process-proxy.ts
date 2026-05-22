@@ -201,7 +201,6 @@ export class ChildProcessProxy<T> implements Disposable {
           this.initTask.resolve(undefined);
           break;
         case ParentMessageKind.CallResult:
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           this.workerTasks.get(message.correlationId)!.resolve(message.result);
           this.workerTasks.delete(message.correlationId);
           break;
@@ -253,9 +252,10 @@ export class ChildProcessProxy<T> implements Disposable {
   }
 
   private reportError(error: Error) {
-    const onGoingWorkerTasks = [...this.workerTasks.values()].filter(
-      (task) => !task.isCompleted,
-    );
+    const onGoingWorkerTasks = this.workerTasks
+      .values()
+      .filter((task) => !task.isCompleted)
+      .toArray();
     if (!this.initTask.isCompleted) {
       onGoingWorkerTasks.push(this.initTask);
     }

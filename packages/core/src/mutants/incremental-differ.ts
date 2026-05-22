@@ -119,10 +119,10 @@ export class IncrementalDiffer {
       oldKilledByMutantKey: oldKilledTestKeysByMutantKey,
     } = collectOldKilledAndCoverageMatrix();
     const oldTestKeys = new Set(
-      [...oldTestsById.values()].map(({ key }) => key),
+      oldTestsById.values().map(({ key }) => key),
     );
     const newTestKeys = new Set(
-      [...testCoverage.testsById].map(([, test]) =>
+      testCoverage.testsById.values().map((test) =>
         testToIdentifyingKey(test, toRelativeNormalizedFileName(test.fileName)),
       ),
     );

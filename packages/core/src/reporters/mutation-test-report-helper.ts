@@ -231,10 +231,9 @@ export class MutationTestReportHelper {
     // This can mean a lot of duplicate strings in the json report.
     // Therefore we remap the test ids here to numbers.
     const testIdMap = new Map(
-      [...this.testCoverage.testsById.values()].map((test, index) => [
-        test.id,
-        index.toString(),
-      ]),
+      this.testCoverage.testsById
+        .values()
+        .map((test, index) => [test.id, index.toString()]),
     );
     const remapTestId = (id: string): string => testIdMap.get(id) ?? id;
     const remapTestIds = (ids: string[] | undefined): string[] | undefined =>
@@ -260,10 +259,12 @@ export class MutationTestReportHelper {
   ): Promise<schema.FileResultDictionary> {
     const fileResultsByName = new Map<string, schema.FileResult>(
       await Promise.all(
-        [...new Set(results.map(({ fileName }) => fileName))].map(
-          async (fileName) =>
-            [fileName, await this.toFileResult(fileName)] as const,
-        ),
+        new Set(results.map(({ fileName }) => fileName))
+          .values()
+          .map(
+            async (fileName) =>
+              [fileName, await this.toFileResult(fileName)] as const,
+          ),
       ),
     );
 
@@ -282,33 +283,31 @@ export class MutationTestReportHelper {
   ): Promise<schema.TestFileDefinitionDictionary> {
     const testFilesByName = new Map<string, schema.TestFile>(
       await Promise.all(
-        [
-          ...new Set(
-            [...this.testCoverage.testsById.values()].map(
-              ({ fileName }) => fileName,
-            ),
+        new Set(
+          this.testCoverage.testsById.values().map(({ fileName }) => fileName),
+        )
+          .values()
+          .map(
+            async (fileName) =>
+              [
+                normalizeReportFileName(fileName),
+                await this.toTestFile(fileName),
+              ] as const,
           ),
-        ].map(
-          async (fileName) =>
-            [
-              normalizeReportFileName(fileName),
-              await this.toTestFile(fileName),
-            ] as const,
-        ),
       ),
     );
 
-    return [
-      ...this.testCoverage.testsById.values(),
-    ].reduce<schema.TestFileDefinitionDictionary>((acc, testResult) => {
-      const test = this.toTestDefinition(testResult, remapTestId);
-      const reportFileName = normalizeReportFileName(testResult.fileName);
-      const testFile =
-        acc[reportFileName] ??
-        (acc[reportFileName] = testFilesByName.get(reportFileName)!);
-      testFile.tests.push(test);
-      return acc;
-    }, {});
+    return this.testCoverage.testsById
+      .values()
+      .reduce<schema.TestFileDefinitionDictionary>((acc, testResult) => {
+        const test = this.toTestDefinition(testResult, remapTestId);
+        const reportFileName = normalizeReportFileName(testResult.fileName);
+        const testFile =
+          acc[reportFileName] ??
+          (acc[reportFileName] = testFilesByName.get(reportFileName)!);
+        testFile.tests.push(test);
+        return acc;
+      }, {});
   }
 
   private async toFileResult(fileName: string): Promise<schema.FileResult> {
