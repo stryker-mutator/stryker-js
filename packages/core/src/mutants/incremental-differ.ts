@@ -118,13 +118,16 @@ export class IncrementalDiffer {
       oldCoverageByMutantKey: oldCoverageTestKeysByMutantKey,
       oldKilledByMutantKey: oldKilledTestKeysByMutantKey,
     } = collectOldKilledAndCoverageMatrix();
-    const oldTestKeys = new Set(
-      oldTestsById.values().map(({ key }) => key),
-    );
+    const oldTestKeys = new Set(oldTestsById.values().map(({ key }) => key));
     const newTestKeys = new Set(
-      testCoverage.testsById.values().map((test) =>
-        testToIdentifyingKey(test, toRelativeNormalizedFileName(test.fileName)),
-      ),
+      testCoverage.testsById
+        .values()
+        .map((test) =>
+          testToIdentifyingKey(
+            test,
+            toRelativeNormalizedFileName(test.fileName),
+          ),
+        ),
     );
 
     // Create a dictionary to more easily get test information

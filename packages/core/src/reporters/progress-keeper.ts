@@ -57,10 +57,9 @@ export abstract class ProgressKeeper implements Reporter {
       }),
     );
     this.progress.mutants = this.ticksByMutantId.size;
-    this.progress.total = this.ticksByMutantId.values().reduce(
-      (acc, n) => acc + n,
-      0,
-    );
+    this.progress.total = this.ticksByMutantId
+      .values()
+      .reduce((acc, n) => acc + n, 0);
   }
 
   public onMutantTested(result: MutantResult): number {

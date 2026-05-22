@@ -201,7 +201,9 @@ export class ChildProcessProxy<T> implements Disposable {
           this.initTask.resolve(undefined);
           break;
         case ParentMessageKind.CallResult:
-          this.workerTasks.get(message.correlationId)!.resolve(message.result);
+          this.workerTasks
+            .get(message.correlationId)!
+            .resolve(message.result as void);
           this.workerTasks.delete(message.correlationId);
           break;
         case ParentMessageKind.CallRejection:
