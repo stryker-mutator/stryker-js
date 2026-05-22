@@ -17,13 +17,12 @@ import {
   throwPlacementError,
 } from '../mutant-placers/index.js';
 import { Mutable, Mutant } from '../mutant.js';
-import { allMutators } from '../mutators/index.js';
+import { allMutators, NodeMutator } from '../mutators/index.js';
 
 import { DirectiveBookkeeper } from './directive-bookkeeper.js';
 import { IgnorerBookkeeper } from './ignorer-bookkeeper.js';
 
 import { AstTransformer } from './index.js';
-import { notEmpty } from '@stryker-mutator/util';
 
 const { traverse } = babel;
 
@@ -61,6 +60,15 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   // The ignorer bookkeeper is responsible for keeping track of the ignored node and the reason why it is ignored
   const ignorerBookkeeper = new IgnorerBookkeeper(options.ignorers);
 
+  // Mutant-filter bookkeeping. When no mutator declares a `filter` we bypass
+  // all of this and traversal cost matches the unfiltered case.
+  const mutatorsByName = new Map(mutators.map((m) => [m.name, m] as const));
+  const hasAnyMutatorFilter = mutators.some((mutator) => mutator.filter);
+  // Stack of `mutantCollector.mutants.length` captured on enter. The slice
+  // [subtreeStart, mutants.length) on exit yields every mutant collected in
+  // the subtree in O(1) — no need to re-traverse descendants.
+  const subtreeMutantStartStack: number[] = [];
+
   // Now start the actual traversing of the AST
   //
   // On the way down:
@@ -76,6 +84,9 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   traverse(file.ast, {
     enter(path) {
+      if (hasAnyMutatorFilter) {
+        subtreeMutantStartStack.push(mutantCollector.mutants.length);
+      }
       directiveBookkeeper.processStrykerDirectives(path.node);
       if (shouldSkip(path)) {
         path.skip();
@@ -91,54 +102,49 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
       }
     },
     exit(path) {
-      // Get mutants for current node
-      const mutantsForCurrentNode = mutantCollector.mutants.filter(
-        (mutant) => mutant.original === path.node,
-      );
-      // Get mutators that created those mutants
-      // @TODO: Save mutator in mutant instead of performing this lookup here
-      const mutatorsThatCreatedMutantsForThisNode = mutantsForCurrentNode
-        .map((mutant) =>
-          mutators.find((mutator) => mutator.name === mutant.mutatorName),
-        )
-        .filter(notEmpty);
-      // If we can filter mutants:
-      if (
-        mutatorsThatCreatedMutantsForThisNode.some((mutator) => mutator.filter)
-      ) {
-        const mutantsInScope = Array.from(mutantsForCurrentNode);
-        // Traverse down to find all mutants in scope
-        path.traverse({
-          enter(path) {
-            // Mutant is in scope
-            mutantsInScope.push(
-              ...mutantCollector.mutants.filter(
-                (mutant) => mutant.original === path.node,
-              ),
-            );
-          },
-        });
-
-        // filter mutants and remove them from the collector and placement map
-        for (const mutator of mutatorsThatCreatedMutantsForThisNode) {
-          if (mutator.filter) {
-            if (!mutator.filter(mutantsInScope)) {
-              const mutantsToFilterOut = mutantsInScope.filter(
-                (mutant) => mutant.mutatorName === mutator.name,
-              );
-              removeFromPlacementMap(mutantsToFilterOut);
-              mutantCollector.remove(mutantsToFilterOut);
-            }
-          }
-        }
+      if (hasAnyMutatorFilter) {
+        applyMutantFilters(path, subtreeMutantStartStack.pop()!);
       }
-
       placeMutantsIfNeeded(path);
       ignorerBookkeeper.leaveNode(path);
     },
   });
 
   placeHeaderIfNeeded(mutantCollector, originFileName, options, root);
+
+  /**
+   * Apply mutator filters on exit. Only mutators that (a) declare a `filter`
+   * and (b) produced a mutant on this exact node are considered. The
+   * `mutantsInScope` passed to the filter is every mutant collected for this
+   * node and its descendants (the slice since this node was entered).
+   */
+  function applyMutantFilters(path: NodePath, subtreeStart: number) {
+    // Identify mutators-with-filter that produced a mutant on this exact node
+    // by scanning only the subtree slice (not the full collector).
+    let filteringMutators: Set<NodeMutator> | undefined;
+    for (let i = subtreeStart; i < mutantCollector.mutants.length; i++) {
+      const mutant = mutantCollector.mutants[i];
+      if (mutant.original === path.node) {
+        const mutator = mutatorsByName.get(mutant.mutatorName);
+        if (mutator?.filter) {
+          (filteringMutators ??= new Set()).add(mutator);
+        }
+      }
+    }
+    if (!filteringMutators) {
+      return;
+    }
+    const mutantsInScope = mutantCollector.mutants.slice(subtreeStart);
+    for (const mutator of filteringMutators) {
+      if (!mutator.filter!(mutantsInScope)) {
+        const mutantsToFilterOut = mutantsInScope.filter(
+          (mutant) => mutant.mutatorName === mutator.name,
+        );
+        removeFromPlacementMap(mutantsToFilterOut);
+        mutantCollector.remove(mutantsToFilterOut);
+      }
+    }
+  }
 
   /**
    *  If mutants were collected, be sure to register them in the placement map.
@@ -171,7 +177,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
 
   function removeFromPlacementMap(mutantsToRemove: Mutant[]) {
     for (const mutantToRemove of mutantsToRemove) {
-      for (const [node, placementMapEntry] of placementMap) {
+      for (const [, placementMapEntry] of placementMap) {
         placementMapEntry.appliedMutants.delete(mutantToRemove);
       }
     }
