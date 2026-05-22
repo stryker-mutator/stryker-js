@@ -5,6 +5,7 @@ import { Mutant, Mutable } from '../mutant.js';
 
 export class MutantCollector {
   private readonly _mutants: Mutant[] = [];
+  private nextMutantId = 0;
 
   public get mutants(): readonly Mutant[] {
     return this._mutants;
@@ -26,13 +27,14 @@ export class MutantCollector {
     offset: Position = { line: 0, column: 0 },
   ): Mutant {
     const mutant = new Mutant(
-      this._mutants.length.toString(),
+      this.nextMutantId.toString(),
       fileName,
       original,
       mutable,
       offset,
     );
     this._mutants.push(mutant);
+    this.nextMutantId++;
     return mutant;
   }
 

@@ -134,11 +134,16 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
     if (!filteringMutators) {
       return;
     }
-    const mutantsInScope = mutantCollector.mutants.slice(subtreeStart);
+    const mutantsInScope = mutantCollector.mutants
+      .slice(subtreeStart)
+      .filter((m) => !m.ignoreReason);
     for (const mutator of filteringMutators) {
       if (!mutator.filter!(mutantsInScope)) {
         const mutantsToFilterOut = mutantsInScope.filter(
-          (mutant) => mutant.mutatorName === mutator.name,
+          (mutant) =>
+            mutant.ignoreReason === undefined &&
+            mutant.mutatorName === mutator.name &&
+            mutant.original === path.node,
         );
         removeFromPlacementMap(mutantsToFilterOut);
         mutantCollector.remove(mutantsToFilterOut);
