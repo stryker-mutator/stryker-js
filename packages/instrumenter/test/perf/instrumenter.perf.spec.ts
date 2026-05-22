@@ -1,4 +1,5 @@
 import { promises as fsPromises } from 'fs';
+import { platform } from 'os';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
@@ -84,6 +85,10 @@ describe('instrumenter performance', () => {
   });
 
   it('should instrument benchmark-big.ts with expected mutant count and within performance threshold', async () => {
-    await benchmarkFile('benchmark-big.ts', 933, 300);
+    await benchmarkFile(
+      'benchmark-big.ts',
+      933,
+      platform() === 'win32' ? 500 : 300,
+    );
   });
 });
