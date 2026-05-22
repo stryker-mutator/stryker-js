@@ -12,7 +12,7 @@ There are multiple scenarios of transpiling code when running your tests.
 * **Ahead-of-time**  
   Use `tsc` or [`@babel/cli`](https://babeljs.io/docs/en/babel-cli) to compile your code before testing or use [webpack](https://webpack.js.org/api/cli/) or another bundler to create a bundle before running tests. 
 * **Just-in-time**  
-  Use [`ts-node`](https://www.npmjs.com/package/ts-node) or [`@babel/register`](https://babeljs.io/docs/en/babel-register/) as a just-in-time compiler to compile your code on the fly.
+  Use [`tsx`](https://www.npmjs.com/package/tsx) or [`@babel/register`](https://babeljs.io/docs/en/babel-register/) as a just-in-time compiler to compile your code on the fly.
 
 Both scenarios are supported, however using just-in-time transpiling during mutation testing is not recommended because it means running the compiler a large number of times. Since [Stryker uses mutation switching](https://stryker-mutator.io/blog/announcing-stryker-4-mutation-switching/), compiling only once is preferred. Don't worry; this guide will help you configuring Stryker correctly.
 
@@ -40,9 +40,9 @@ Use the `buildCommand` to configure a command that Stryker can run in its sandbo
 
 Don't worry about your [PATH environment variable](https://en.wikipedia.org/wiki/PATH_(variable)); Stryker will make sure your local dependencies are available there before executing the build command inside the sandbox. 
 
-If you're using `ts-node` or `@babel/register` to just-in-time compile during unit testing, then it's a good idea to configure your build command-equivalent here. Some examples:
+If you're using `tsx` or `@babel/register` to just-in-time compile during unit testing, then it's a good idea to configure your build command-equivalent here. Some examples:
 
-* For ts-node: `tsc -b path/to/tsconfig.json`
+* For tsx: `tsc -b path/to/tsconfig.json`
 * For @babel/register: `babel src --out-dir lib`
 (using the [@babel/cli](https://babeljs.io/docs/en/babel-cli))
 
@@ -71,15 +71,7 @@ Use the `mochaOptions` to configure the mocha test runner. If your project uses 
 
 If you're using a `buildCommand`, be sure to configure the _js output files in the `mochaOptions.spec` instead of the ts input files_, otherwise mocha won't be able to find your test files.
 
-If you choose to keep using your just-in-time compiler and accept the performance penalty, you can use [mochaOptions.require](../mocha-runner.md#mochaoptionsrequire-string) to configure your `ts-node` or `@babel/register` transpiler. Also, you may want to override the ts-node configuration options via environment variables. You can do so using environment variables, for example:
-
-```json
-{
-  "scripts": {
-    "test:mutation": "cross-env TS_NODE_PROJECT=path/to/your/tsconfig.json stryker run"
-  }
-}
-```
+If you choose to keep using your just-in-time compiler and accept the performance penalty, you can use [mochaOptions.require](../mocha-runner.md#mochaoptionsrequire-string) to configure your `tsx` or `@babel/register` transpiler.
 
 > [`cross-env`](https://www.npmjs.com/package/cross-env) is a tool to help you set environment variables across platforms.
 

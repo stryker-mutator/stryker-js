@@ -52,7 +52,7 @@ Command line: `[-b|--buildCommand] "npm run build"`<br />
 Config file: `"buildCommand": 'npm run build'`
 
 Configure a build command to run after mutating the code, but before mutants are tested. This is generally used to transpile your code before testing.
-Only configure this if your test runner doesn't take care of this already and you're not using just-in-time transpiler like `babel/register` or `ts-node`.
+Only configure this if your test runner doesn't take care of this already and you're not using just-in-time transpiler like `babel/register` or `tsx`.
 
 ### `checkers` [`string[]`]
 

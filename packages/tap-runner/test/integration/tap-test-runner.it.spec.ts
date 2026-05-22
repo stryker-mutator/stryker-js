@@ -280,7 +280,7 @@ describe('tap-runner integration', () => {
       sandbox = new TempTestDirectorySandbox('ts-example');
       await sandbox.init();
       options.tap = tapRunnerOptions({
-        nodeArgs: ['--loader', 'ts-node/esm'],
+        nodeArgs: ['--import', 'tsx'],
       });
       sut = testInjector.injector.injectFunction(
         createTapTestRunnerFactory('__stryker2__'),
@@ -288,7 +288,7 @@ describe('tap-runner integration', () => {
       await sut.init();
     });
 
-    it('should be able to run with a --loader', async () => {
+    it('should be able to run TypeScript test files', async () => {
       // Act
       const run = await sut.dryRun(factory.dryRunOptions());
 
