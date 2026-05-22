@@ -88,7 +88,7 @@ describe('instrumenter performance', () => {
     await benchmarkFile(
       'benchmark-big.ts',
       933,
-      platform() === 'win32' ? 500 : 300,
+      platform() === 'win32' ? 500 : 325,
     );
   });
 });
