@@ -3,7 +3,7 @@ import { HtmlAst } from '../syntax/index.js';
 import { Printer } from './index.js';
 
 export const print: Printer<HtmlAst> = (ast, context) => {
-  const sortedScripts = [...ast.root.scripts].sort(
+  const sortedScripts = ast.root.scripts.toSorted(
     (a, b) => a.root.start! - b.root.start!,
   );
   let currentIndex = 0;
