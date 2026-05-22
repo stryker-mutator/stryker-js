@@ -161,9 +161,7 @@ describe('PartialStrykerOptions', () => {
     );
     expect(diagnostics).not.empty;
 
-    expect(
-      diagnostics.map(({ messageText }) => messageText).sort(),
-    ).deep.eq([
+    expect(diagnostics.map(({ messageText }) => messageText).sort()).deep.eq([
       "Type 'string' is not assignable to type '(string | undefined)[]'.",
       "Type '{ name: string; }' is not assignable to type 'string'.",
     ]);
