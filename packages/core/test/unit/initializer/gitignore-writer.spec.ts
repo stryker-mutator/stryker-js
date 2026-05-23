@@ -44,14 +44,14 @@ describe(GitignoreWriter.name, () => {
         fsReadFile.returns(Buffer.from('node_modules'));
       });
 
-      it('should append the stryker gitignore configuration', async () => {
+      it('should append both stryker entries when neither is present', async () => {
         // Act
         await sut.addStrykerTempFolder();
 
         // Assert
         expect(fsAppendFile).calledWithExactly(
           GITIGNORE_FILE,
-          `${os.EOL}# stryker temp files${os.EOL}.stryker-tmp${os.EOL}`,
+          `${os.EOL}# stryker temp files${os.EOL}.stryker-tmp${os.EOL}${os.EOL}# stryker reports${os.EOL}reports/${os.EOL}`,
         );
       });
 
@@ -68,9 +68,39 @@ describe(GitignoreWriter.name, () => {
         );
       });
 
-      it("should not append the stryker gitignore configuration if it's already present", async () => {
+      it('should append only the reports entry when the temp dir is already present', async () => {
         // Arrange
         fsReadFile.returns(`node_modules${os.EOL}.stryker-tmp${os.EOL}temp`);
+
+        // Act
+        await sut.addStrykerTempFolder();
+
+        // Assert
+        expect(fsAppendFile).calledWithExactly(
+          GITIGNORE_FILE,
+          `${os.EOL}# stryker reports${os.EOL}reports/${os.EOL}`,
+        );
+      });
+
+      it('should append only the temp dir entry when the reports dir is already present', async () => {
+        // Arrange
+        fsReadFile.returns(`node_modules${os.EOL}reports/${os.EOL}temp`);
+
+        // Act
+        await sut.addStrykerTempFolder();
+
+        // Assert
+        expect(fsAppendFile).calledWithExactly(
+          GITIGNORE_FILE,
+          `${os.EOL}# stryker temp files${os.EOL}.stryker-tmp${os.EOL}`,
+        );
+      });
+
+      it('should not append anything if both entries are already present', async () => {
+        // Arrange
+        fsReadFile.returns(
+          `node_modules${os.EOL}.stryker-tmp${os.EOL}reports/${os.EOL}temp`,
+        );
 
         // Act
         await sut.addStrykerTempFolder();
@@ -91,7 +121,7 @@ describe(GitignoreWriter.name, () => {
 
         // Assert
         expect(out).calledWithExactly(
-          'No .gitignore file could be found. Please add the following to your .gitignore file: *.stryker-tmp',
+          'No .gitignore file could be found. Please add the following to your .gitignore file: .stryker-tmp, reports/',
         );
       });
     });
