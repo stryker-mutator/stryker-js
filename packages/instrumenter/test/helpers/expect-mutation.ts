@@ -5,7 +5,7 @@ import { expect } from 'chai';
 
 import { NodeMutator } from '../../src/mutators/node-mutator.js';
 
-const generate = generator.default;
+const generate = generator.default ?? generator;
 
 const plugins = [
   'doExpressions',
