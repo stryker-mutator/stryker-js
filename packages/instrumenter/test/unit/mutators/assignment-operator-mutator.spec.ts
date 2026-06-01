@@ -19,16 +19,16 @@ describe(sut.name, () => {
     expectJSMutation(sut, 'a %= b', 'a *= b');
   });
 
-  it('should mutate *=, %= and /=', () => {
-    expectJSMutation(sut, 'a *= b', 'a /= b');
-    expectJSMutation(sut, 'a /= b', 'a *= b');
-    expectJSMutation(sut, 'a %= b', 'a *= b');
+  it('should mutate <<=, >>=, &= and |=', () => {
+    expectJSMutation(sut, 'a <<= b', 'a >>= b');
+    expectJSMutation(sut, 'a >>= b', 'a <<= b');
+    expectJSMutation(sut, 'a &= b', 'a |= b');
+    expectJSMutation(sut, 'a |= b', 'a &= b');
   });
 
-  it('should mutate <<=, >>=, &= and |=', () => {
-    expectJSMutation(sut, 'a *= b', 'a /= b');
-    expectJSMutation(sut, 'a /= b', 'a *= b');
-    expectJSMutation(sut, 'a %= b', 'a *= b');
+  it('should mutate ^= and >>>=', () => {
+    expectJSMutation(sut, 'a ^= b', 'a &= b');
+    expectJSMutation(sut, 'a >>>= b', 'a >>= b');
   });
 
   it('should mutate &&=, ||= and ??=', () => {
@@ -47,6 +47,8 @@ describe(sut.name, () => {
     expectJSMutation(sut, 'a >>= "b"');
     expectJSMutation(sut, 'a &= "b"');
     expectJSMutation(sut, 'a |= "b"');
+    expectJSMutation(sut, 'a ^= "b"');
+    expectJSMutation(sut, 'a >>>= "b"');
   });
 
   it('should mutate a string literal using &&=, ||=, ??=', () => {
@@ -65,6 +67,8 @@ describe(sut.name, () => {
     expectJSMutation(sut, 'a >>= `b`');
     expectJSMutation(sut, 'a &= `b`');
     expectJSMutation(sut, 'a |= `b`');
+    expectJSMutation(sut, 'a ^= `b`');
+    expectJSMutation(sut, 'a >>>= `b`');
   });
 
   it('should mutate string template using &&=, ||=, ??=', () => {
