@@ -1,6 +1,6 @@
 #!/bin/bash
 
-for package in api core cucumber-runner instrumenter jasmine-runner jest-runner karma-runner mocha-runner typescript-checker util tap-runner vitest-runner
+for package in api core cucumber-runner instrumenter jasmine-runner jest-runner karma-runner mocha-runner node-test-runner typescript-checker util tap-runner vitest-runner
 do
     if [ "$BRANCH_NAME" ] && [[ "$BRANCH_NAME" != renovate* ]]
     then

@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "title": "StrykerNodeTestRunnerOptions",
+  "properties": {
+    "nodeTest": {
+      "description": "Configuration for @stryker-mutator/node-test-runner",
+      "title": "NodeTestRunnerOptions",
+      "additionalProperties": false,
+      "type": "object",
+      "default": {},
+      "properties": {
+        "testFiles": {
+          "description": "Specify glob expressions to the test files to run. Defaults to [\"**/*.@(test|spec).@(js|mjs|cjs)\", \"**/test/**/*.@(js|mjs|cjs)\"]",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "**/*.@(test|spec).@(js|mjs|cjs)",
+            "**/test/**/*.@(js|mjs|cjs)"
+          ]
+        },
+        "concurrency": {
+          "description": "Run tests concurrently within a single mutant run. The dry run is always serialized so that perTest coverage attribution cannot race; this option only affects mutant runs. Defaults to false.",
+          "type": "boolean",
+          "default": false
+        },
+        "nodeArgs": {
+          "description": "Additional Node.js arguments to pass when running your test files (e.g. [\"--experimental-strip-types\"] for TypeScript, or a loader via [\"--import\", \"tsx\"]). Defaults to [].",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        }
+      }
+    }
+  }
+}
