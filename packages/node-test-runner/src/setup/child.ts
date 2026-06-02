@@ -70,6 +70,14 @@ process.once('message', (config: ChildConfig) => {
 
   const send = (message: unknown) => process.send?.(message);
 
+  const finish = (message: unknown) => {
+    if (process.send) {
+      process.send(message, () => process.exit(0));
+    } else {
+      process.exit(0);
+    }
+  };
+
   try {
     const stream = run({
       files: [setupFile, ...testFiles],
@@ -104,16 +112,16 @@ process.once('message', (config: ChildConfig) => {
       }
     });
     stream.on('end', () =>
-      send({
+      finish({
         type: 'done',
         coverage: ns.mutantCoverage,
         hitCount: ns.hitCount,
       }),
     );
     stream.on('error', (error: Error) =>
-      send({ type: 'error', error: String(error?.stack ?? error) }),
+      finish({ type: 'error', error: String(error?.stack ?? error) }),
     );
   } catch (error) {
-    send({ type: 'error', error: String((error as Error)?.stack ?? error) });
+    finish({ type: 'error', error: String((error as Error)?.stack ?? error) });
   }
 });
