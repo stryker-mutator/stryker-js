@@ -1350,9 +1350,6 @@ importers:
       '@stryker-mutator/util':
         specifier: workspace:*
         version: link:../util
-      mocha:
-        specifier: '>= 7.2 < 12'
-        version: 11.7.5
       tslib:
         specifier: ~2.8.0
         version: 2.8.1
@@ -1363,6 +1360,9 @@ importers:
       '@types/node':
         specifier: 24.12.4
         version: 24.12.4
+      mocha:
+        specifier: 11.7.5
+        version: 11.7.5
 
   packages/tap-runner:
     dependencies:
@@ -4945,7 +4945,7 @@ packages:
     engines: {node: '>=22.0.0'}
     peerDependencies:
       '@stryker-mutator/core': workspace:*
-      mocha: '>= 7.2 < 12'
+      mocha: '>= 7.2 < 13'
 
   '@stryker-mutator/tap-runner@file:packages/tap-runner':
     resolution: {directory: packages/tap-runner, type: directory}
