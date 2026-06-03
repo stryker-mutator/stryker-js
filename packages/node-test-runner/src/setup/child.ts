@@ -1,11 +1,3 @@
-// Runs one dryRun/mutantRun, forked as a *detached* child process (its own
-// process group) so the parent can kill the whole group to (a) stop the run on
-// the first failure when bailing — `AbortController` is ignored under
-// isolation:'none' — and (b) reap any child processes the tests spawned when a
-// run times out. node:test's run() is not re-entrant (ESM can't be unloaded),
-// so a fresh process per run is what gives a clean test registry each time;
-// isolation:'none' keeps the instrumented SUT and the Stryker global in *this*
-// process so a mutant can be activated and coverage read.
 import { run } from 'node:test';
 
 import { toReportedTest, type TestEvent } from '../parse-test-event.js';
@@ -34,10 +26,7 @@ process.once('message', (config: ChildConfig) => {
   } = config;
 
   const g = globalThis as Record<string, unknown>;
-  // Tell setup.ts which namespace to write currentTestId into.
   g.__STRYKER_NS__ = namespace;
-  // Activate before the SUT is imported (during run()), so static mutants — code
-  // that runs at module load — are already switched on.
   if (activeMutant !== undefined)
     process.env[activeMutantEnvVar] = activeMutant;
   g[namespace] = {

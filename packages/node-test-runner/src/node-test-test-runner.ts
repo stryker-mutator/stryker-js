@@ -36,14 +36,7 @@ import { isSupportedNodeVersion, MIN_NODE_VERSION } from './node-version.js';
 
 const moduleDir = path.dirname(fileURLToPath(import.meta.url));
 const CHILD_FILE = path.resolve(moduleDir, 'setup', 'child.js');
-/**
- * A node:test file loaded first in every run. Its root `beforeEach` runs
- * synchronously before each test, recording the active test id so that
- * Stryker's instrumented coverage counters can be attributed per test.
- */
 const SETUP_FILE = path.resolve(moduleDir, 'setup', 'setup.js');
-/** Keep only the tail of the child's output so a crash report stays bounded
- * however chatty the test process is. */
 const OUTPUT_TAIL_LIMIT = 8192;
 
 interface ReportedTest {
@@ -55,13 +48,11 @@ interface ReportedTest {
   failureMessage?: string;
 }
 
-/** A message streamed from the child process. */
 type ChildMessage =
   | { type: 'test'; test: ReportedTest; hitCount?: number }
   | { type: 'done'; coverage?: MutantCoverage; hitCount?: number }
   | { type: 'error'; error: string };
 
-/** The outcome the runner derives from a child process run. */
 interface RunOutcome {
   tests: ReportedTest[];
   coverage?: MutantCoverage;
@@ -118,10 +109,6 @@ export class NodeTestRunner implements TestRunner {
   }
 
   public capabilities(): TestRunnerCapabilities {
-    // A fresh worker thread is spawned per run, so the test environment is
-    // effectively reloaded every time — including activating a mutant before the
-    // SUT is imported, which is what static mutants need. Reporting `true` lets
-    // Stryker rely on us for that instead of restarting the whole runner process.
     return { reloadEnvironment: true };
   }
 
@@ -153,8 +140,6 @@ export class NodeTestRunner implements TestRunner {
         testFiles: options.testFiles?.length
           ? options.testFiles
           : this.testFiles,
-        // Collect coverage for both 'all' and 'perTest'; serialize so the
-        // per-test attribution in setup.ts can't race between tests.
         collectCoverage: options.coverageAnalysis !== 'off',
         concurrency: false,
       },
@@ -164,10 +149,6 @@ export class NodeTestRunner implements TestRunner {
   }
 
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
-    // node:test ignores testNamePatterns under isolation:'none', so filter to
-    // the test *files* that hold a covering test — always a safe superset of the
-    // covering tests, never fewer. The file is encoded in each test id, so this
-    // works without sharing state between the dry-run and mutant-run processes.
     const testFiles = this.filesFor(options.testFilter) ?? this.testFiles;
     return toMutantRunResult(
       await this.run(
@@ -237,14 +218,6 @@ export class NodeTestRunner implements TestRunner {
     };
   }
 
-  /**
-   * Forks a detached child process (its own process group) for one run and
-   * streams its test events. On a clean finish the child exits itself; on a
-   * timeout or — when bailing — the first failure, the group is killed to stop
-   * the remaining tests (run() ignores AbortSignal under isolation:'none') and
-   * reap any child processes the tests spawned. The group is not signalled after
-   * a clean exit, when the pid could already be freed and reused.
-   */
   private runInChild(
     spec: RunSpec,
     timeout: number,
@@ -340,8 +313,6 @@ export class NodeTestRunner implements TestRunner {
     });
   }
 
-  /** Kill the child's whole process group (Unix) so spawned grandchildren are
-   * reaped too; fall back to killing just the child elsewhere. */
   private killGroup(child: ChildProcess) {
     try {
       if (child.pid) process.kill(-child.pid, 'SIGKILL');
