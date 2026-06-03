@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import sinon from 'sinon';
 import {
   assertions,
   factory,
@@ -12,6 +13,7 @@ import {
   createNodeTestRunnerFactory,
 } from '../../src/index.js';
 import { NodeTestRunnerOptionsWithStrykerOptions } from '../../src/node-test-runner-options-with-stryker-options.js';
+import { toTestId } from '../../src/test-id.js';
 import { nodeTestRunnerOptions } from '../helpers/factory.js';
 
 describe('node-test-runner integration', () => {
@@ -54,6 +56,35 @@ describe('node-test-runner integration', () => {
         'slowAdd',
         'this test always fails',
       ]);
+      // Files were discovered, so the no-test-files warning must not fire.
+      expect(testInjector.logger.warn).not.called;
+    });
+
+    it('should report the reloadEnvironment capability', () => {
+      expect(sut.capabilities()).deep.eq({ reloadEnvironment: true });
+    });
+
+    it('should not collect coverage when coverageAnalysis is "off"', async () => {
+      const run = await sut.dryRun(
+        factory.dryRunOptions({ coverageAnalysis: 'off' }),
+      );
+
+      assertions.expectCompleted(run);
+      expect(run.mutantCoverage).eq(undefined);
+    });
+
+    it('should not signal the process group on a clean completion', async () => {
+      const killSpy = sinon.spy(process, 'kill');
+
+      await sut.dryRun(factory.dryRunOptions());
+
+      // The child exits itself after a clean run, so signalling its process
+      // group (negative pid) is unnecessary — and unsafe once the pid is freed
+      // and possibly reused. Only still-running children are killed.
+      const signalledGroup = killSpy
+        .getCalls()
+        .some((call) => typeof call.args[0] === 'number' && call.args[0] < 0);
+      expect(signalledGroup).eq(false);
     });
 
     it('should discover tests with the default globs when none are configured', async () => {
@@ -64,6 +95,16 @@ describe('node-test-runner integration', () => {
 
       assertions.expectCompleted(run);
       expect(run.tests.length).greaterThan(0);
+    });
+
+    it('should warn when no test files are discovered', async () => {
+      options.nodeTest = nodeTestRunnerOptions({
+        testFiles: ['no-such-dir/**/*.spec.mjs'],
+      });
+
+      await sut.init();
+
+      expect(testInjector.logger.warn).calledWithMatch(/No test files found/);
     });
 
     it('should report a valid timeSpentMs', async () => {
@@ -138,10 +179,21 @@ describe('node-test-runner integration', () => {
       });
       await sut.init();
 
+      const killSpy = sinon.spy(process, 'kill');
       const run = await sut.dryRun(factory.dryRunOptions({ timeout: 500 }));
 
-      // The process group is killed once the timeout elapses.
+      // The process is still running when the timeout elapses, so its group is
+      // signalled (negative pid, SIGKILL) to stop the remaining tests.
       expect(run.status).eq(DryRunStatus.Timeout);
+      const signalledGroup = killSpy
+        .getCalls()
+        .some(
+          (call) =>
+            typeof call.args[0] === 'number' &&
+            call.args[0] < 0 &&
+            call.args[1] === 'SIGKILL',
+        );
+      expect(signalledGroup).eq(true);
     });
 
     it('should report an error when the test process exits unexpectedly', async () => {
@@ -155,6 +207,45 @@ describe('node-test-runner integration', () => {
       // A test that calls process.exit must not look like a clean (empty) run.
       assertions.expectErrored(run);
       expect(run.errorMessage).contains('exited unexpectedly');
+    });
+
+    it('should surface the test process stdout and stderr in the crash error', async () => {
+      options.nodeTest = nodeTestRunnerOptions({
+        testFiles: ['prints-then-exits.spec.mjs'],
+      });
+      await sut.init();
+
+      const run = await sut.dryRun(factory.dryRunOptions());
+
+      // stdout must not be discarded and stderr must not be raw-inherited into
+      // Stryker's own output — both are captured and surfaced on a crash.
+      assertions.expectErrored(run);
+      expect(run.errorMessage).contains('STDOUT_MARKER_NTR');
+      expect(run.errorMessage).contains('STDERR_MARKER_NTR');
+    });
+
+    it('should forward the test process output to the trace log', async () => {
+      options.nodeTest = nodeTestRunnerOptions({
+        testFiles: ['prints-then-exits.spec.mjs'],
+      });
+      await sut.init();
+
+      await sut.dryRun(factory.dryRunOptions());
+
+      // 'close' fires only after the piped stdio has flushed, so every chunk
+      // has been forwarded by the time the run resolves.
+      expect(testInjector.logger.trace).calledWithMatch(/STDOUT_MARKER_NTR/);
+    });
+
+    it('should log the crash error at debug level', async () => {
+      options.nodeTest = nodeTestRunnerOptions({
+        testFiles: ['exits.spec.mjs'],
+      });
+      await sut.init();
+
+      await sut.dryRun(factory.dryRunOptions());
+
+      expect(testInjector.logger.debug).calledWithMatch(/exited unexpectedly/);
     });
 
     it('should pass nodeArgs to the test process', async () => {
@@ -205,5 +296,66 @@ describe('node-test-runner integration', () => {
       // Both the failing and the slow-but-passing test ran.
       expect(run.nrOfTests).eq(2);
     });
+  });
+
+  describe('Grouped and nested tests', () => {
+    beforeEach(async () => {
+      sandbox = new TempTestDirectorySandbox('grouped');
+      await sandbox.init();
+      sut = testInjector.injector.injectFunction(
+        createNodeTestRunnerFactory('__stryker2__'),
+      );
+    });
+
+    it('should not report describe/it suite containers as tests', async () => {
+      options.nodeTest = nodeTestRunnerOptions({
+        testFiles: ['tests/groups.spec.mjs'],
+      });
+      await sut.init();
+
+      const run = await sut.dryRun(factory.dryRunOptions());
+
+      assertions.expectCompleted(run);
+      // The `describe('outer suite')` container is dropped; its `it`s, the
+      // `test()` parent, and its subtest are all reported.
+      expect(run.tests.map((test) => test.name).sort()).deep.eq([
+        'nested child',
+        'parent test',
+        'passes a',
+        'passes b',
+      ]);
+    });
+
+    it('should attribute a killing failure to the leaf test, not its suite', async () => {
+      options.nodeTest = nodeTestRunnerOptions({
+        testFiles: ['tests/failing-group.spec.mjs'],
+      });
+      await sut.init();
+
+      // disableBail so every event flows: the leaf fails and the suite bubbles
+      // up a `subtestsFailed` failure that must be filtered out of killedBy.
+      const run = await sut.mutantRun(
+        factory.mutantRunOptions({ disableBail: true }),
+      );
+
+      assertions.expectKilled(run);
+      expect(run.killedBy).deep.eq([
+        toTestId('tests/failing-group.spec.mjs', 'this nested test fails'),
+      ]);
+    });
+  });
+});
+
+describe('node-test-runner Node.js version gating', () => {
+  it('should reject init() on an unsupported Node.js version', async () => {
+    const sut = testInjector.injector.injectFunction(
+      createNodeTestRunnerFactory('__stryker2__'),
+    );
+    // The version check runs first in init(), before any file discovery.
+    sinon
+      .stub(process, 'versions')
+      .value({ ...process.versions, node: '21.0.0' });
+
+    await expect(sut.init()).rejectedWith(/requires Node\.js >=/);
   });
 });

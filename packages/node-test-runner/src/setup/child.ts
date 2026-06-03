@@ -6,23 +6,9 @@
 // so a fresh process per run is what gives a clean test registry each time;
 // isolation:'none' keeps the instrumented SUT and the Stryker global in *this*
 // process so a mutant can be activated and coverage read.
-import path from 'node:path';
 import { run } from 'node:test';
 
-import { toTestId } from '../test-id.js';
-
-/** The subset of a node:test reporter event that this runner reads. */
-interface TestEvent {
-  type: string;
-  data: {
-    name: string;
-    file?: string;
-    details?: {
-      duration_ms?: number;
-      error?: { message?: string } | string;
-    };
-  };
-}
+import { toReportedTest, type TestEvent } from '../parse-test-event.js';
 
 interface ChildConfig {
   setupFile: string;
@@ -63,11 +49,6 @@ process.once('message', (config: ChildConfig) => {
   const ns = g[namespace] as { mutantCoverage?: unknown; hitCount?: number };
 
   const cwd = process.cwd();
-  const toRelative = (file?: string): string | undefined =>
-    file ? path.relative(cwd, file).split(path.sep).join('/') : undefined;
-  const isSetup = (file?: string): boolean =>
-    !!file && path.resolve(file) === path.resolve(setupFile);
-
   const send = (message: unknown) => process.send?.(message);
 
   const finish = (message: unknown) => {
@@ -87,29 +68,8 @@ process.once('message', (config: ChildConfig) => {
     } as Parameters<typeof run>[0]);
 
     stream.on('data', (event: TestEvent) => {
-      const d = event.data;
-      if (
-        (event.type === 'test:pass' || event.type === 'test:fail') &&
-        !isSetup(d.file)
-      ) {
-        const file = toRelative(d.file);
-        const failed = event.type === 'test:fail';
-        const error = d.details?.error;
-        const failureMessage =
-          typeof error === 'string' ? error : (error?.message ?? 'test failed');
-        send({
-          type: 'test',
-          hitCount: ns.hitCount,
-          test: {
-            id: toTestId(file ?? '', d.name),
-            name: d.name,
-            file,
-            status: failed ? 'fail' : 'pass',
-            timeSpentMs: d.details?.duration_ms ?? 0,
-            failureMessage: failed ? failureMessage : undefined,
-          },
-        });
-      }
+      const test = toReportedTest(event, cwd, setupFile);
+      if (test) send({ type: 'test', hitCount: ns.hitCount, test });
     });
     stream.on('end', () =>
       finish({

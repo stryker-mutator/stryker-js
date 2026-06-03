@@ -1,6 +1,6 @@
-import { ChildProcess, fork } from 'child_process';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { ChildProcess, fork } from 'node:child_process';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import {
   commonTokens,
@@ -42,6 +42,9 @@ const CHILD_FILE = path.resolve(moduleDir, 'setup', 'child.js');
  * Stryker's instrumented coverage counters can be attributed per test.
  */
 const SETUP_FILE = path.resolve(moduleDir, 'setup', 'setup.js');
+/** Keep only the tail of the child's output so a crash report stays bounded
+ * however chatty the test process is. */
+const OUTPUT_TAIL_LIMIT = 8192;
 
 interface ReportedTest {
   id: string;
@@ -128,11 +131,20 @@ export class NodeTestRunner implements TestRunner {
       '**/*.@(test|spec).@(js|mjs|cjs)',
       '**/test/**/*.@(js|mjs|cjs)',
     ];
-    const files = await glob(patterns, { ignore: 'node_modules/**' });
+    const files = await glob(patterns, {
+      ignore: '**/node_modules/**',
+      posix: true,
+    });
     this.testFiles = [...new Set(files)].sort();
     this.log.debug(
       `node-test runner discovered ${this.testFiles.length} test file(s)`,
     );
+    if (this.testFiles.length === 0) {
+      this.log.warn(
+        `No test files found for pattern(s): ${patterns.join(', ')}. ` +
+          'Configure "nodeTest.testFiles" to point at your test files.',
+      );
+    }
   }
 
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
@@ -226,11 +238,12 @@ export class NodeTestRunner implements TestRunner {
   }
 
   /**
-   * Forks a detached child process (its own process group) for one run, streams
-   * its test events, and kills the group on completion, timeout, or — when
-   * bailing — the first failure. Killing the group is what actually stops the
-   * remaining tests (run() ignores AbortSignal under isolation:'none') and reaps
-   * any child processes the tests spawned.
+   * Forks a detached child process (its own process group) for one run and
+   * streams its test events. On a clean finish the child exits itself; on a
+   * timeout or — when bailing — the first failure, the group is killed to stop
+   * the remaining tests (run() ignores AbortSignal under isolation:'none') and
+   * reap any child processes the tests spawned. The group is not signalled after
+   * a clean exit, when the pid could already be freed and reused.
    */
   private runInChild(
     spec: RunSpec,
@@ -238,24 +251,48 @@ export class NodeTestRunner implements TestRunner {
     bail: boolean,
   ): Promise<RunOutcome> {
     return new Promise<RunOutcome>((resolve) => {
-      const child = fork(CHILD_FILE, [], {
-        detached: true,
-        execArgv: this.options.nodeTest?.nodeArgs ?? [],
-        stdio: ['ignore', 'ignore', 'inherit', 'ipc'],
-      });
       const tests: ReportedTest[] = [];
       let settled = false;
-      const finish = (outcome: RunOutcome) => {
+      let output = '';
+      let child: ChildProcess | undefined;
+
+      const finish = (outcome: RunOutcome, kill = false) => {
         if (settled) return;
         settled = true;
         clearTimeout(timer);
-        this.killGroup(child);
-        resolve(outcome);
+        if (kill && child) this.killGroup(child);
+        const error =
+          outcome.error && output
+            ? `${outcome.error}\nLast output from the test process:\n${output}`
+            : outcome.error;
+        if (error) this.log.debug(error);
+        resolve(error ? { ...outcome, error } : outcome);
       };
+
       const timer = setTimeout(
-        () => finish({ tests, timedOut: true }),
+        () => finish({ tests, timedOut: true }, true),
         timeout,
       );
+
+      try {
+        child = fork(CHILD_FILE, [], {
+          detached: true,
+          execArgv: this.options.nodeTest?.nodeArgs ?? [],
+          stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
+        });
+      } catch (error) {
+        finish({ tests, error: String((error as Error)?.stack ?? error) });
+        return;
+      }
+
+      const captureOutput = (data: Buffer | string) => {
+        if (settled) return; // ignore output from a killed-but-not-yet-dead child
+        const text = data.toString();
+        this.log.trace(text);
+        output = (output + text).slice(-OUTPUT_TAIL_LIMIT);
+      };
+      child.stdout?.on('data', captureOutput);
+      child.stderr?.on('data', captureOutput);
 
       child.on('message', (message: ChildMessage) => {
         if (settled) return;
@@ -265,7 +302,7 @@ export class NodeTestRunner implements TestRunner {
             determineHitLimitReached(message.hitCount, spec.hitLimit) ||
             (bail && message.test.status === 'fail')
           ) {
-            finish({ tests, hitCount: message.hitCount });
+            finish({ tests, hitCount: message.hitCount }, true);
           }
         } else if (message.type === 'done') {
           finish({
@@ -280,11 +317,7 @@ export class NodeTestRunner implements TestRunner {
       child.on('error', (error) =>
         finish({ tests, error: String(error?.stack ?? error) }),
       );
-      // A clean run keeps the IPC channel open until we kill it, so any exit
-      // before a terminal message means the test process crashed (e.g. called
-      // process.exit, ran out of memory, or got a bad node arg). Report it as an
-      // error rather than a (false) empty/partial completion.
-      child.on('exit', (code, signal) =>
+      child.on('close', (code, signal) =>
         finish({
           tests,
           error: `Test process exited unexpectedly (code ${code}, signal ${signal}) before completing.`,
@@ -299,7 +332,10 @@ export class NodeTestRunner implements TestRunner {
           ...spec,
         });
       } catch (error) {
-        finish({ tests, error: String((error as Error)?.stack ?? error) });
+        finish(
+          { tests, error: String((error as Error)?.stack ?? error) },
+          true,
+        );
       }
     });
   }

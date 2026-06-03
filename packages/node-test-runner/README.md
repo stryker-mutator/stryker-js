@@ -58,15 +58,26 @@ Configure the `testRunner` setting and (optionally) the test file globs:
   `AbortSignal` under `isolation: 'none'`, so the only reliable way to stop the remaining tests on
   the first failure (when bail is enabled) — or on a timeout — is to kill the group. This also reaps
   any child processes the tests spawned, so they don't leak.
+- **Test process output** (stdout/stderr) is captured rather than printed directly, so it can't
+  garble Stryker's progress reporter across mutant runs. It is streamed at `trace` log level (run
+  with `--logLevel trace` to follow it live), and the tail is included in the error message when a
+  run crashes — so a test that prints a diagnostic and then exits still surfaces it.
 
 ## Limitations
 
 - Mutant-level test selection is file-granular: a covering test pulls in its whole file. (Test ids
   encode the file, so cross-file name collisions are handled correctly — only two identically-named
   tests in the *same* file share a coverage entry, which is cosmetic.)
+- A `test()` block that *wraps subtests* is reported as a test in its own right, in addition to each
+  subtest, because `node:test` exposes no way to tell such a parent apart from a leaf. Grouping with
+  `describe`/`it` avoids this — the suite block itself is recognized and not counted as a test.
 - Requires Node.js >= 22.8.0 (when `run({ isolation: 'none' })` became available). The runner throws
   on older versions rather than silently mis-reporting.
 - On Windows, killing the process group is best-effort (only the direct child is signalled), so a
   test that spawns grandchild processes and then times out may leave them running.
 - A test that calls `process.exit()` is reported as an errored run (the test process can't be
   distinguished from a crash), not as a passing/surviving one.
+- Coverage produced inside a **file-top-level** `afterEach` (one registered outside any `describe`)
+  is attributed to `static` rather than the test that just ran, because the runner's own cleanup
+  hook fires first. This only affects precision (such a mutant runs against the whole suite); it
+  never mis-credits another test. A `describe`-nested `afterEach` is attributed normally.

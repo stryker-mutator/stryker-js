@@ -67,7 +67,7 @@ Run tests concurrently within a single mutant run. The dry run is always seriali
 - **TypeScript**  
   When you rely on a loader like `tsx` to run your TypeScript files, first try to run them yourself, for example with `node --import tsx test/my-test-file.spec.ts`. If that succeeds, add `"nodeArgs": ["--import", "tsx"]` to your `nodeTest` configuration and point `testFiles` at your `.ts` files.
 - **Debugging**  
-  Run Stryker with `--logLevel debug` to see how many test files were discovered and how runs are executed.
+  Run Stryker with `--logLevel debug` to see how many test files were discovered and how runs are executed. The test process's own `stdout`/`stderr` is captured (not printed directly, so it can't garble the progress reporter); follow it live with `--logLevel trace`, or read the tail in the error message when a run crashes.
 - **Performance**  
   When you're normally using a JIT compiler like `tsx` to run your tests, you can speed up mutation testing considerably by using a [`buildCommand`](./configuration.md#buildcommand-string) to compile your files first, then pointing `testFiles` at the compiled output.
 
@@ -75,3 +75,6 @@ Run tests concurrently within a single mutant run. The dry run is always seriali
 
 - A fresh process is forked per run. This keeps the `node:test` registry clean and lets static mutants be activated before the code under test is imported, but it does add per-run process startup overhead.
 - Bailing on the first failing test is implemented by killing the test process group. On non-Unix platforms (e.g. Windows) only the test process itself is terminated; child processes that your tests spawn may not be reaped.
+- A `test()` (or `t.test()`) block that *wraps subtests* is reported as a test in its own right, in addition to each of its subtests, because `node:test` does not expose a way to tell such a parent apart from a leaf test. Grouping with `describe`/`it` avoids this — `describe` blocks are recognized as suites and are not counted as tests.
+- When `coverageAnalysis` is set to `"all"`, coverage is still attributed per test (as with `"perTest"`). Mutation results are identical, but a purely static mutant may be reported as a regular (runtime) mutant rather than a static one.
+- Coverage produced inside a *file-top-level* `afterEach` (one registered outside any `describe`) is attributed to `static` rather than the test that just ran, because the runner's own cleanup hook runs first. This affects only precision — such a mutant is run against the whole suite — and never mis-credits a different test. An `afterEach` nested in a `describe` is attributed normally.
