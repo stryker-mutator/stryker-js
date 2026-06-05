@@ -103,11 +103,9 @@ export class OptionsValidator {
       );
       delete rawOptions.transpilers;
     }
-    if (
-      !mark &&
-      Object.hasOwn(rawOptions, 'coverageAnalysis') &&
-      rawOptions.coverageAnalysis !== 'perTest'
-    ) {
+    // `mark = true` indicates a second validation pass for marking unknown/unserializable options.
+    // Only report this deprecation in the first pass to avoid duplicate warnings.
+    if (!mark && Object.hasOwn(rawOptions, 'coverageAnalysis')) {
       this.log.warn(
         'DEPRECATED. Use of "coverageAnalysis" is deprecated. This option will be removed in a future major version.',
       );
