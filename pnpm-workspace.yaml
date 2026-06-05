@@ -7,6 +7,7 @@ allowBuilds:
   core-js-pure: false
   es5-ext: false
   esbuild: false
+  fsevents: false
   nice-napi: false
   nx: false
   unrs-resolver: false
@@ -22,3 +23,7 @@ minimumReleaseAgeExclude:
   - ajv@8.18.0
   # Renovate security update: minimatch@10.2.4
   - minimatch@10.2.4
+syncInjectedDepsAfterScripts:
+  - build
+  - build:no-check
+dedupeInjectedDeps: false
