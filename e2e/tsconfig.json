@@ -6,6 +6,9 @@
     "allowJs": true,
     "checkJs": true,
     "composite": false,
+    "paths": {
+      "@stryker-mutator/core": ["../packages/core/dist/src/index.d.ts"]
+    },
     "importHelpers": false,
     "strictNullChecks": false, // hard to handle without a non-null assertion
     "useUnknownInCatchVariables": false, // hard to handle without type assertions
