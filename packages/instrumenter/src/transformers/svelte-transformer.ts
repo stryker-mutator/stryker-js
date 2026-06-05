@@ -44,6 +44,8 @@ export const createTransformSvelte = Object.assign(
         });
 
       if (mutantCollector.hasPlacedMutants(originFileName)) {
+        // We need to place the instrumentation header inside the `<script context="module">` script
+        // If there already is a module script, place it there. If not, we need to add it.
         if (!root.moduleScript) {
           root.moduleScript = {
             ast: {
