@@ -74,6 +74,22 @@ async function main() {
   );
   await instrument(
     {
+      './packages/node-test-runner/testResources/example/src/math.mjs':
+        './packages/node-test-runner/testResources/example-instrumented/src/math.mjs',
+      './packages/node-test-runner/testResources/example/src/formatter.mjs':
+        './packages/node-test-runner/testResources/example-instrumented/src/formatter.mjs',
+    },
+    '__stryker2__',
+  );
+  await instrument(
+    {
+      './packages/node-test-runner/testResources/static/src/constants.mjs':
+        './packages/node-test-runner/testResources/static-instrumented/src/constants.mjs',
+    },
+    '__stryker2__',
+  );
+  await instrument(
+    {
       './packages/vitest-runner/testResources/simple-project/math.orig.ts':
         './packages/vitest-runner/testResources/simple-project/math.ts',
     },

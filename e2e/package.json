@@ -19,6 +19,7 @@
     "@stryker-mutator/jest-runner": "workspace:*",
     "@stryker-mutator/karma-runner": "workspace:*",
     "@stryker-mutator/mocha-runner": "workspace:*",
+    "@stryker-mutator/node-test-runner": "workspace:*",
     "@stryker-mutator/tap-runner": "workspace:*",
     "@stryker-mutator/typescript-checker": "workspace:*",
     "@stryker-mutator/vitest-runner": "workspace:*",
@@ -106,6 +107,9 @@
       "injected": true
     },
     "@stryker-mutator/cucumber-runner": {
+      "injected": true
+    },
+    "@stryker-mutator/node-test-runner": {
       "injected": true
     },
     "@stryker-mutator/tap-runner": {

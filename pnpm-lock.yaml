@@ -148,6 +148,8 @@ importers:
         injected: true
       '@stryker-mutator/mocha-runner':
         injected: true
+      '@stryker-mutator/node-test-runner':
+        injected: true
       '@stryker-mutator/tap-runner':
         injected: true
       '@stryker-mutator/typescript-checker':
@@ -199,6 +201,9 @@ importers:
       '@stryker-mutator/mocha-runner':
         specifier: workspace:*
         version: file:packages/mocha-runner(@stryker-mutator/core@file:packages/core(@types/node@24.12.4))(mocha@11.7.5)
+      '@stryker-mutator/node-test-runner':
+        specifier: workspace:*
+        version: file:packages/node-test-runner(@stryker-mutator/core@file:packages/core(@types/node@24.12.4))
       '@stryker-mutator/tap-runner':
         specifier: workspace:*
         version: file:packages/tap-runner(@stryker-mutator/core@file:packages/core(@types/node@24.12.4))
@@ -780,6 +785,8 @@ importers:
 
   e2e/test/node-tap-javascript: {}
 
+  e2e/test/node-test-runner: {}
+
   e2e/test/options-validation: {}
 
   e2e/test/reporters-e2e: {}
@@ -1353,6 +1360,31 @@ importers:
       mocha:
         specifier: '>= 7.2 < 12'
         version: 11.7.5
+      tslib:
+        specifier: ~2.8.0
+        version: 2.8.1
+    devDependencies:
+      '@stryker-mutator/test-helpers':
+        specifier: workspace:*
+        version: link:../test-helpers
+      '@types/node':
+        specifier: 24.12.4
+        version: 24.12.4
+
+  packages/node-test-runner:
+    dependencies:
+      '@stryker-mutator/api':
+        specifier: workspace:*
+        version: link:../api
+      '@stryker-mutator/core':
+        specifier: workspace:*
+        version: link:../core
+      '@stryker-mutator/util':
+        specifier: workspace:*
+        version: link:../util
+      glob:
+        specifier: ~13.0.0
+        version: 13.0.6
       tslib:
         specifier: ~2.8.0
         version: 2.8.1
@@ -4946,6 +4978,12 @@ packages:
     peerDependencies:
       '@stryker-mutator/core': workspace:*
       mocha: '>= 7.2 < 12'
+
+  '@stryker-mutator/node-test-runner@file:packages/node-test-runner':
+    resolution: {directory: packages/node-test-runner, type: directory}
+    engines: {node: '>=22.8.0'}
+    peerDependencies:
+      '@stryker-mutator/core': workspace:*
 
   '@stryker-mutator/tap-runner@file:packages/tap-runner':
     resolution: {directory: packages/tap-runner, type: directory}
@@ -19934,7 +19972,9 @@ snapshots:
       source-map: 0.6.1
       string-length: 2.0.0
     transitivePeerDependencies:
+      - bufferutil
       - supports-color
+      - utf-8-validate
 
   '@jest/reporters@27.5.1':
     dependencies:
@@ -21099,6 +21139,14 @@ snapshots:
       '@stryker-mutator/core': file:packages/core(@types/node@24.12.4)
       '@stryker-mutator/util': link:packages/util
       mocha: 7.2.0
+      tslib: 2.8.1
+
+  '@stryker-mutator/node-test-runner@file:packages/node-test-runner(@stryker-mutator/core@file:packages/core(@types/node@24.12.4))':
+    dependencies:
+      '@stryker-mutator/api': link:packages/api
+      '@stryker-mutator/core': file:packages/core(@types/node@24.12.4)
+      '@stryker-mutator/util': link:packages/util
+      glob: 13.0.6
       tslib: 2.8.1
 
   '@stryker-mutator/tap-runner@file:packages/tap-runner(@stryker-mutator/core@file:packages/core(@types/node@24.12.4))':
@@ -26987,7 +27035,7 @@ snapshots:
       fs.realpath: 1.0.0
       inflight: 1.0.6
       inherits: 2.0.4
-      minimatch: 3.0.4
+      minimatch: 3.1.5
       once: 1.4.0
       path-is-absolute: 1.0.1
 

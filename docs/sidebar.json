@@ -13,6 +13,7 @@
   "stryker-js/jest-runner",
   "stryker-js/karma-runner",
   "stryker-js/mocha-runner",
+  "stryker-js/node-test-runner",
   "stryker-js/tap-runner",
   "stryker-js/vitest-runner",
   "stryker-js/typescript-checker",
