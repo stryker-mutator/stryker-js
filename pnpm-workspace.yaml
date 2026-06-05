@@ -22,5 +22,3 @@ minimumReleaseAgeExclude:
   - ajv@8.18.0
   # Renovate security update: minimatch@10.2.4
   - minimatch@10.2.4
-injectWorkspacePackages: true
-dedupeInjectedDeps: false
