@@ -79,7 +79,7 @@ function prefixWithNoCheck(code: string): string {
 }
 
 function disableTypeCheckingInHtml(ast: HtmlAst): string {
-  const sortedScripts = [...ast.root.scripts].sort(
+  const sortedScripts = ast.root.scripts.toSorted(
     (a, b) => a.root.start! - b.root.start!,
   );
   let currentIndex = 0;

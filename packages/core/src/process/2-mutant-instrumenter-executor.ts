@@ -108,9 +108,9 @@ export class MutantInstrumenterExecutor {
 
   private readFilesToMutate() {
     return Promise.all(
-      [...this.project.filesToMutate.values()].map((file) =>
-        file.toInstrumenterFile(),
-      ),
+      this.project.filesToMutate
+        .values()
+        .map((file) => file.toInstrumenterFile()),
     );
   }
 

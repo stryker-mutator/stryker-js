@@ -2,7 +2,7 @@
   "compilerOptions": {
     "strict": true,
     "module": "Node16",
-    "target": "es2022",
+    "target": "es2025",
     "moduleResolution": "Node16",
     "esModuleInterop": true,
     "sourceMap": true,
@@ -16,6 +16,6 @@
     "noImplicitReturns": true,
     "skipLibCheck": true,
     "types": ["node"],
-    "lib": ["es2022"]
+    "lib": ["es2025"]
   }
 }

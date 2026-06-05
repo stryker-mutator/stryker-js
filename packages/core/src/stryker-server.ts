@@ -243,9 +243,7 @@ export class StrykerServer {
       const options = inj.resolve(commonTokens.options);
       const project = inj.resolve(coreTokens.project);
       const filesToMutate = await Promise.all(
-        [...project.filesToMutate.values()].map((file) =>
-          file.toInstrumenterFile(),
-        ),
+        project.filesToMutate.values().map((file) => file.toInstrumenterFile()),
       );
       const ignorers = options.ignorers.map((name) =>
         pluginCreator.create(PluginKind.Ignore, name),

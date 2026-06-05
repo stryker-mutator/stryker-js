@@ -8,10 +8,10 @@ export class Task<T = void> {
   private _isCompleted = false;
 
   constructor() {
-    this._promise = new Promise<T>((resolve, reject) => {
-      this.resolveFn = resolve;
-      this.rejectFn = reject;
-    });
+    const { promise, resolve, reject } = Promise.withResolvers<T>();
+    this._promise = promise;
+    this.resolveFn = resolve;
+    this.rejectFn = reject;
   }
 
   public get promise(): Promise<T> {

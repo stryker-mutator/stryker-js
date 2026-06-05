@@ -214,15 +214,15 @@ export class PluginLoader {
 /**
  * Distills organization name from a package expression.
  * @example
- *  '@stryker-mutator/core' => { org: '@stryker-mutator', 'core' }
+ *  '@stryker-mutator/core' => { org: '@stryker-mutator', pkg: 'core' }
  *  'glob' => { org: '', 'glob' }
  */
 function parsePluginExpression(pluginExpression: string) {
   const parts = pluginExpression.split('/');
   if (parts.length > 1) {
     return {
-      org: parts.slice(0, parts.length - 1).join('/'),
-      pkg: parts[parts.length - 1],
+      org: parts.slice(0, -1).join('/'),
+      pkg: parts.at(-1)!,
     };
   } else {
     return {

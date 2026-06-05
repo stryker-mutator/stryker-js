@@ -33,7 +33,7 @@ const replacements = new Map([
 
 const noReverseRemplacements = ['getUTCDate', 'setUTCDate'];
 
-for (const [key, value] of Array.from(replacements)) {
+for (const [key, value] of replacements) {
   if (value && !noReverseRemplacements.includes(key)) {
     replacements.set(value, key);
   }
