@@ -58,10 +58,10 @@ jobs:
         run: |
           echo TEMP="D:\Temp" >> $env:GITHUB_ENV
           echo TMP="D:\Temp" >> $env:GITHUB_ENV
-      - name: install dependencies
-        run: 'pnpm install --frozen-lockfile'
       - name: Build packages
         run: pnpm run build:no-check
+      - name: install build output
+        run: 'pnpm install --frozen-lockfile'
       - name: e2e lint
         run: 'pnpm run e2e:lint'
       - name: Run e2e tests
