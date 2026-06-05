@@ -16,9 +16,12 @@ import type { JSONSchema7 } from 'json-schema';
 
 import { coreTokens } from '../di/index.js';
 import { ConfigError } from '../errors.js';
+import {
+  IGNORE_PATTERN_CHARACTER,
+  MUTATION_RANGE_REGEX,
+} from '../fs/mutate-pattern-constants.js';
 import { objectUtils, optionsPath } from '../utils/index.js';
 import { CommandTestRunner } from '../test-runner/command-test-runner.js';
-import { IGNORE_PATTERN_CHARACTER, MUTATION_RANGE_REGEX } from '../fs/index.js';
 
 import { describeErrors } from './validation-errors.js';
 
