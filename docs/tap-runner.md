@@ -80,7 +80,8 @@ When the placeholder are not used, the defaults will be applied as described abo
 | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | `[]`                                                                                      | `["-r", "actual/hook.cjs", "test/foo.spec.js"]`                                                                  | The default, works when using raw JavaScript test files as input |
 | `["--import", "tsx"]`                                                                      | `["-r", "actual/hook.cjs", "--import", "tsx", "test/foo.spec.js"]`                                               | If you want to use `tsx` to run your TypeScript tests            |
-| `["node_modules/ava/entrypoints/cli.mjs", "--tap", "--node-arguments='-r {{hookFile}}'"]` | `["node_modules/ava/entrypoints/cli.mjs", "--tap", "--node-arguments='-r actual/hook.cjs'", "test/foo.spec.js"]` | If you are running test with [Ava](https://github.com/avajs/ava) |
+| `["node_modules/ava/entrypoints/cli.mjs", "--tap", "--node-arguments='-r {{hookFile}}'"]` | `["node_modules/ava/entrypoints/cli.mjs", "--tap", "--node-arguments='-r actual/hook.cjs'", "test/foo.spec.js"]` | If you are running tests with [Ava](https://github.com/avajs/ava) < v8 |
+| `["node_modules/ava/entrypoints/cli.js", "--tap", "--node-arguments='-r {{hookFile}}'"]` | `["node_modules/ava/entrypoints/cli.js", "--tap", "--node-arguments='-r actual/hook.cjs'", "test/foo.spec.js"]` | If you are running tests with [Ava](https://github.com/avajs/ava) >= v8 |
 
 :::info
 
