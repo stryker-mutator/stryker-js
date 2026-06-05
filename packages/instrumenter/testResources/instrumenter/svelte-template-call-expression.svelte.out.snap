@@ -63,7 +63,7 @@ export function sum(a, b) {
 </script>
 
 <main>
-  <p>1 + 2 = {sum(1, 2)}</p>
+  <p>1 + 2 = {stryMutAct_9fa48(\\"2\\") ? void 0 : (stryCov_9fa48(\\"2\\"), sum(1, 2))}</p>
 </main>
 "
 `;
