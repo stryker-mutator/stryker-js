@@ -7,7 +7,7 @@
     "@stryker-mutator/tap-runner"
   ],
   "tap": {
-    "nodeArgs": ["node_modules/ava/entrypoints/cli.mjs", "--tap", "--node-arguments='-r {{hookFile}}'"],
+    "nodeArgs": ["node_modules/ava/entrypoints/cli.js", "--tap", "--node-arguments='-r {{hookFile}}'"],
     "forceBail": false
   }
 }
