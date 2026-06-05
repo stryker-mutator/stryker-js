@@ -3,21 +3,21 @@
 exports[`Verify stryker has ran correctly should report correct score 1`] = `
 Object {
   "compileErrors": 0,
-  "ignored": 2,
+  "ignored": 0,
   "killed": 14,
-  "mutationScore": 65.38461538461539,
-  "mutationScoreBasedOnCoveredCode": 85,
+  "mutationScore": 60.71428571428571,
+  "mutationScoreBasedOnCoveredCode": 77.27272727272727,
   "noCoverage": 6,
   "pending": 0,
   "runtimeErrors": 0,
-  "survived": 3,
+  "survived": 5,
   "timeout": 3,
-  "totalCovered": 20,
+  "totalCovered": 22,
   "totalDetected": 17,
   "totalInvalid": 0,
   "totalMutants": 28,
-  "totalUndetected": 9,
-  "totalValid": 26,
+  "totalUndetected": 11,
+  "totalValid": 28,
 }
 `;
 
@@ -121,12 +121,12 @@ Array [
   Object {
     "location": "31:15-31:24",
     "mutatorName": "CallExpression",
-    "replacement": ";",
+    "replacement": "void 0",
   },
   Object {
     "location": "32:32-32:47",
     "mutatorName": "CallExpression",
-    "replacement": ";",
+    "replacement": "void 0",
   },
   Object {
     "location": "33:21-33:33",
