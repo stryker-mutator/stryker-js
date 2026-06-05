@@ -22,14 +22,16 @@
   }
 </script>
 
-<script>
+<script lang="ts">
+  interface User { name: string; age: number }
   let hits = 0;
+  let user: User | null = { name: 'world', age: 18 };
 </script>
 
 <main>
-  <p>Hello world!</p>
+  <p>Hello {user!.name}!</p>
   <p>1 + 2 = {sum(1, 2)}</p>
-  <p>Over legal drinking age: {isOldEnough(18)}</p>
+  <p>Over legal drinking age: {isOldEnough(user!.age)}</p>
   <button on:click={() => hits++}>Hits {hits}</button>
   <button on:click={() => (hits += 10)}>Add 10 ({hits + 10})</button>
 </main>
