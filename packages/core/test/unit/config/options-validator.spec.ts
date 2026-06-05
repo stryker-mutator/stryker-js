@@ -494,6 +494,14 @@ describe(OptionsValidator.name, () => {
     );
   });
 
+  it('should report a deprecation warning for coverageAnalysis', () => {
+    testInjector.options.coverageAnalysis = 'all';
+    sut.validate(testInjector.options);
+    expect(testInjector.logger.warn).calledWith(
+      'DEPRECATED. Use of "coverageAnalysis" is deprecated. This option will be removed in a future major version.',
+    );
+  });
+
   describe('transpilers', () => {
     it('should report a deprecation warning', () => {
       testInjector.options.transpilers = ['stryker-jest'];
