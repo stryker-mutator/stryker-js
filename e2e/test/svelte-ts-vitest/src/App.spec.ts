@@ -33,8 +33,7 @@ describe("App.svelte", () => {
     let result = 0;
     loop(5, (n: any) => (result += n));
     expect(result).toEqual(15);
-  });
-  
+  });  
 })
 
 
