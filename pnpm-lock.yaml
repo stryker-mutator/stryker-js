@@ -362,8 +362,8 @@ importers:
         specifier: 5.56.1
         version: 5.56.1(@typescript-eslint/types@8.58.2)
       svelte-check:
-        specifier: 4.4.6
-        version: 4.4.6(picomatch@4.0.4)(svelte@5.56.1(@typescript-eslint/types@8.58.2))(typescript@6.0.3)
+        specifier: 4.5.0
+        version: 4.5.0(picomatch@4.0.4)(svelte@5.56.1(@typescript-eslint/types@8.58.2))(typescript@6.0.3)
       svelte-jester:
         specifier: 5.0.0
         version: 5.0.0(jest@30.3.0(@types/node@24.12.4)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.12.4)(typescript@6.0.3)))(svelte@5.56.1(@typescript-eslint/types@8.58.2))
@@ -14373,8 +14373,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  svelte-check@4.4.6:
-    resolution: {integrity: sha512-kP1zG81EWaFe9ZyTv4ZXv44Csi6Pkdpb7S3oj6m+K2ec/IcDg/a8LsFsnVLqm2nxtkSwsd5xPj/qFkTBgXHXjg==}
+  svelte-check@4.5.0:
+    resolution: {integrity: sha512-9lNwPxCLWniFvQIcEv1LFqjIxcFtO3smb5+5BKbRJ3ttL4o2lXCej5rLF4DAnfLPI66oaA81vAxw6ILdIWI7kA==}
     engines: {node: '>= 18.0.0'}
     hasBin: true
     peerDependencies:
@@ -34038,7 +34038,7 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  svelte-check@4.4.6(picomatch@4.0.4)(svelte@5.56.1(@typescript-eslint/types@8.58.2))(typescript@6.0.3):
+  svelte-check@4.5.0(picomatch@4.0.4)(svelte@5.56.1(@typescript-eslint/types@8.58.2))(typescript@6.0.3):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       chokidar: 4.0.3
