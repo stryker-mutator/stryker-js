@@ -73,7 +73,7 @@
     "rxjs": "7.8.2",
     "semver": "7.7.4",
     "svelte": "5.56.1",
-    "svelte-check": "4.4.6",
+    "svelte-check": "4.5.0",
     "svelte-jester": "5.0.0",
     "tap": "21.7.1",
     "ts-jest": "29.4.11",
