@@ -59,7 +59,10 @@ interface RunOutcome {
   hitCount?: number;
   error?: string;
   timedOut?: boolean;
+  exitCode?: number | null;
 }
+
+const PROCESS_EXIT_TEST_ID = '__stryker__process-exit';
 
 interface RunSpec {
   testFiles: string[];
@@ -185,6 +188,31 @@ export class NodeTestRunner implements TestRunner {
     if (outcome.timedOut) {
       return { status: DryRunStatus.Timeout, reason: 'Test run timed out' };
     }
+
+    const tests = this.toTestResults(outcome.tests);
+
+    if (
+      spec.activeMutant !== undefined &&
+      outcome.exitCode != null &&
+      outcome.exitCode !== 0
+    ) {
+      return {
+        status: DryRunStatus.Complete,
+        tests: [
+          {
+            id: PROCESS_EXIT_TEST_ID,
+            name: `test process exited with code ${outcome.exitCode}`,
+            timeSpentMs: 0,
+            status: TestStatus.Failed,
+            failureMessage:
+              outcome.error ??
+              `Test process exited with code ${outcome.exitCode}.`,
+          },
+          ...tests,
+        ],
+      };
+    }
+
     if (outcome.error) {
       return { status: DryRunStatus.Error, errorMessage: outcome.error };
     }
@@ -195,7 +223,16 @@ export class NodeTestRunner implements TestRunner {
     );
     if (hitLimitReached) return hitLimitReached;
 
-    const tests: TestResult[] = outcome.tests.map((t) => {
+    return {
+      status: DryRunStatus.Complete,
+      tests,
+      mutantCoverage: outcome.coverage,
+    };
+  }
+
+  /** Map the child's reported tests into Stryker's {@link TestResult} shape. */
+  private toTestResults(reported: ReportedTest[]): TestResult[] {
+    return reported.map((t) => {
       const base = {
         id: t.id,
         name: t.name,
@@ -210,12 +247,6 @@ export class NodeTestRunner implements TestRunner {
           }
         : { ...base, status: TestStatus.Success };
     });
-
-    return {
-      status: DryRunStatus.Complete,
-      tests,
-      mutantCoverage: outcome.coverage,
-    };
   }
 
   private runInChild(
@@ -293,6 +324,7 @@ export class NodeTestRunner implements TestRunner {
       child.on('close', (code, signal) =>
         finish({
           tests,
+          exitCode: code,
           error: `Test process exited unexpectedly (code ${code}, signal ${signal}) before completing.`,
         }),
       );

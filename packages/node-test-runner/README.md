@@ -75,8 +75,12 @@ Configure the `testRunner` setting and (optionally) the test file globs:
   on older versions rather than silently mis-reporting.
 - On Windows, killing the process group is best-effort (only the direct child is signalled), so a
   test that spawns grandchild processes and then times out may leave them running.
-- A test that calls `process.exit()` is reported as an errored run (the test process can't be
-  distinguished from a crash), not as a passing/surviving one.
+- A test that calls `process.exit()` (or a SUT that does) terminates the test process before it can
+  report. On a **mutant run** a non-zero exit code is treated as a **kill** — the clean baseline never
+  exits abnormally, so the mutant must have caused it (the same way the command runner reads a
+  non-zero exit as a failing test). A zero exit code stays an **errored** run, because an early
+  *success* exit is ambiguous and must not be scored as a (false) kill. On a **dry run** any such exit
+  is always an error (the baseline is expected to complete cleanly).
 - Coverage produced inside a **file-top-level** `afterEach` (one registered outside any `describe`)
   is attributed to `static` rather than the test that just ran, because the runner's own cleanup
   hook fires first. This only affects precision (such a mutant runs against the whole suite); it

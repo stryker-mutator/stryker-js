@@ -209,6 +209,31 @@ describe('node-test-runner integration', () => {
       expect(run.errorMessage).contains('exited unexpectedly');
     });
 
+    it('should kill the mutant when the test process exits with a non-zero code', async () => {
+      options.nodeTest = nodeTestRunnerOptions({
+        testFiles: ['exits-nonzero.spec.mjs'],
+      });
+      await sut.init();
+
+      const run = await sut.mutantRun(factory.mutantRunOptions());
+
+      assertions.expectKilled(run);
+    });
+
+    it('should not turn a zero-exit crash into a false kill on a mutant run', async () => {
+      options.nodeTest = nodeTestRunnerOptions({
+        testFiles: ['exits.spec.mjs'], // calls process.exit(0)
+      });
+      await sut.init();
+
+      const run = await sut.mutantRun(factory.mutantRunOptions());
+
+      // A clean (zero) exit code is ambiguous — an early *success* exit is not
+      // evidence the mutant was detected, so it must stay an error, never a
+      // (false) kill.
+      assertions.expectErrored(run);
+    });
+
     it('should surface the test process stdout and stderr in the crash error', async () => {
       options.nodeTest = nodeTestRunnerOptions({
         testFiles: ['prints-then-exits.spec.mjs'],
