@@ -5,7 +5,7 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { MutateDescription } from '@stryker-mutator/api/core';
 
 import { createParser } from './parsers/index.js';
-import { transform, MutantCollector } from './transformers/index.js';
+import { createTransform, MutantCollector } from './transformers/index.js';
 import { print } from './printers/index.js';
 import { InstrumentResult } from './instrument-result.js';
 import { InstrumenterOptions } from './instrumenter-options.js';
@@ -31,7 +31,7 @@ export class Instrumenter {
     private readonly logger: Logger,
     private readonly _createParser = createParser,
     private readonly _print = print,
-    private readonly _transform = transform,
+    private readonly _transform: ReturnType<typeof createTransform>,
   ) {}
 
   public async instrument(

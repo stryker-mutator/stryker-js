@@ -11,7 +11,7 @@ import {
   TransformerContext,
 } from '../../../src/transformers/index.js';
 import { MutantCollector } from '../../../src/transformers/mutant-collector.js';
-import { transformBabel } from '../../../src/transformers/babel-transformer.js';
+import { createTransformBabel } from '../../../src/transformers/babel-transformer.js';
 import { ScriptAst, ScriptFormat } from '../../../src/syntax/index.js';
 import { instrumentationBabelHeader } from '../../../src/util/index.js';
 import { MutantPlacer } from '../../../src/mutant-placers/index.js';
@@ -1043,14 +1043,14 @@ describe('babel-transformer', () => {
   });
 
   function act(ast: ScriptAst) {
+    const transformBabel = createTransformBabel(mutators);
     (
       transformBabel as (
         ...args: [
           ...Parameters<AstTransformer<ScriptFormat>>,
-          mutators: NodeMutator[],
           mutantPlacers: MutantPlacer[],
         ]
       ) => void
-    )(ast, mutantCollector, context, mutators, mutantPlacers);
+    )(ast, mutantCollector, context, mutantPlacers);
   }
 });
