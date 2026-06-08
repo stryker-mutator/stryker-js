@@ -1,6 +1,7 @@
 import path from 'path';
 
 import { createRequire } from 'module';
+import { pathToFileURL } from 'url';
 
 import Mocha, { type RootHookObject } from 'mocha';
 
@@ -24,11 +25,23 @@ let collectFiles:
  * @see https://mochajs.org/api/module-lib_cli_options.html#.loadOptions
  */
 
-const loadOptions: (
+type LoadOptions = (
   argv?: string[] | string,
-) => Record<string, any> | undefined = require(
-  `${mochaRoot}/lib/cli/options`,
-).loadOptions;
+) => Record<string, any> | undefined;
+
+async function resolveLoadOptions(): Promise<LoadOptions> {
+  try {
+    return require(`${mochaRoot}/lib/cli/options`).loadOptions;
+  } catch {
+    // Since Mocha 12 the cli is distributed as ECMAScript modules
+    const options = await import(
+      pathToFileURL(path.join(mochaRoot, 'lib/cli/options.mjs')).href
+    );
+    return options.loadOptions;
+  }
+}
+
+const loadOptions = await resolveLoadOptions();
 
 const handleRequires: (requires?: string[]) => Promise<RootHookObject> =
   runHelpers.handleRequires;
