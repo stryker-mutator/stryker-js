@@ -59,6 +59,33 @@ export class CustomJestConfigLoader implements JestConfigLoader {
     } else {
       this.log.debug(`No config file read ${hint}.`);
     }
+    // `readInitialOptions` returns the *raw* options and deliberately does not apply
+    // a `preset`. A `testEnvironment` supplied through a preset is therefore absent
+    // here. Consumers that read `testEnvironment` directly (e.g. the coverage-analysis
+    // environment override) would otherwise silently fall back to jest's default
+    // (`node`) and run tests in the wrong environment. Resolve the merged value via
+    // jest's own `normalize` (once, at config-load time) so presets — and any other
+    // config merging jest performs — are honored. Best-effort: on any failure we keep
+    // the raw config, so behavior never regresses.
+    if (config.testEnvironment === undefined) {
+      try {
+        const { options } = await this.jestConfig.normalize(
+          { ...config },
+          { _: [], $0: 'stryker' } as Config.Argv,
+          configPath,
+        );
+        if (options.testEnvironment) {
+          config.testEnvironment = options.testEnvironment;
+          this.log.debug(
+            `Resolved testEnvironment "${options.testEnvironment}" from preset/defaults ${hint}.`,
+          );
+        }
+      } catch (err) {
+        this.log.debug(
+          `Could not resolve testEnvironment via jest's normalize: ${String(err)}`,
+        );
+      }
+    }
     return config;
   }
 
