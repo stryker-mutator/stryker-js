@@ -2,6 +2,15 @@ packages:
   - 'packages/*'
   - 'e2e'
   - 'e2e/test/*'
+allowBuilds:
+  core-js: false
+  core-js-pure: false
+  es5-ext: false
+  esbuild: false
+  fsevents: false
+  nice-napi: false
+  nx: false
+  unrs-resolver: false
 minimumReleaseAge: 4320 # 3 days, see: https://pnpm.io/settings#minimumreleaseage
 minimumReleaseAgeExclude:
   # Renovate security update: axios@1.13.5 || 1.15.0
@@ -14,3 +23,4 @@ minimumReleaseAgeExclude:
   - ajv@8.18.0
   # Renovate security update: minimatch@10.2.4
   - minimatch@10.2.4
+optimisticRepeatInstall: false
