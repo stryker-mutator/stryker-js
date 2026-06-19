@@ -374,8 +374,8 @@ importers:
         specifier: 29.4.11
         version: 29.4.11(@babel/core@7.29.0)(@jest/transform@30.3.0)(@jest/types@30.3.0)(babel-jest@30.3.0(@babel/core@7.29.0))(esbuild@0.28.0)(jest-util@30.3.0)(jest@30.3.0(@types/node@24.12.4)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.12.4)(typescript@6.0.3)))(typescript@6.0.3)
       ts-loader:
-        specifier: 9.6.0
-        version: 9.6.0(loader-utils@3.3.1)(typescript@6.0.3)(webpack@5.107.2)
+        specifier: 9.6.1
+        version: 9.6.1(loader-utils@3.3.1)(typescript@6.0.3)(webpack@5.107.2)
       tslib:
         specifier: 2.8.1
         version: 2.8.1
@@ -14885,8 +14885,8 @@ packages:
       jest-util:
         optional: true
 
-  ts-loader@9.6.0:
-    resolution: {integrity: sha512-dsJO0S+T7grTDWTc4a0nTygXGjKncVUpx8Y+af8EvI/D5WgTJby5UEk5eoMCB9EcLQmnvitqh99MqtjtHgAwFQ==}
+  ts-loader@9.6.1:
+    resolution: {integrity: sha512-8FMHnmxtpncUAu0ZjkqpXnOTlwc9eY95esH8WVN94guTPPdkg2ofVdiVM5j8L2lmjiGerXd56zXb/D2JyVQPLg==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
       loader-utils: '*'
@@ -27236,7 +27236,7 @@ snapshots:
       html-minifier-terser: 6.1.0
       lodash: 4.18.1
       pretty-error: 4.0.0
-      tapable: 2.3.2
+      tapable: 2.3.3
     optionalDependencies:
       webpack: 5.107.2(esbuild@0.28.0)(postcss@8.5.10)
 
@@ -27246,7 +27246,7 @@ snapshots:
       html-minifier-terser: 6.1.0
       lodash: 4.18.1
       pretty-error: 4.0.0
-      tapable: 2.3.2
+      tapable: 2.3.3
     optionalDependencies:
       webpack: 5.94.0(esbuild@0.20.1)
     optional: true
@@ -30614,7 +30614,7 @@ snapshots:
   mini-css-extract-plugin@2.10.2(webpack@5.107.2(esbuild@0.28.0)(postcss@8.5.10)):
     dependencies:
       schema-utils: 4.3.3
-      tapable: 2.3.2
+      tapable: 2.3.3
       webpack: 5.107.2(esbuild@0.28.0)(postcss@8.5.10)
 
   mini-css-extract-plugin@2.8.1(webpack@5.94.0(esbuild@0.20.1)):
@@ -34770,7 +34770,7 @@ snapshots:
       esbuild: 0.28.0
       jest-util: 30.3.0
 
-  ts-loader@9.6.0(loader-utils@3.3.1)(typescript@6.0.3)(webpack@5.107.2):
+  ts-loader@9.6.1(loader-utils@3.3.1)(typescript@6.0.3)(webpack@5.107.2):
     dependencies:
       chalk: 4.1.2
       enhanced-resolve: 5.22.1
@@ -35782,7 +35782,7 @@ snapshots:
 
   webpack-manifest-plugin@4.1.1(webpack@5.107.2(esbuild@0.28.0)(postcss@8.5.10)):
     dependencies:
-      tapable: 2.3.2
+      tapable: 2.3.3
       webpack: 5.107.2(esbuild@0.28.0)(postcss@8.5.10)
       webpack-sources: 2.3.1
 
