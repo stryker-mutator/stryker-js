@@ -16,6 +16,7 @@
  */
 import { promises as fsPromises } from 'fs';
 import path from 'path';
+import os from 'os';
 import { fileURLToPath, URL } from 'url';
 
 import { expect } from 'chai';
