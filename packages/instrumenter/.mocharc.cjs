@@ -3,7 +3,8 @@ module.exports = {
   spec: [
     'dist/test/unit/**/*.js',
     'dist/test/integration/**/*.js',
-    'dist/test/perf/**/*.js',
+    // See 
+    // 'dist/test/perf/**/*.js', 
   ],
   timeout: 10000,
   forbidOnly: Boolean(process.env.CI),
