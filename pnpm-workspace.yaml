@@ -14,3 +14,25 @@ minimumReleaseAgeExclude:
   - ajv@8.18.0
   # Renovate security update: minimatch@10.2.4
   - minimatch@10.2.4
+  # Try out TS 7.0.1-rc
+  - typescript
+  - '@typescript/typescript-linux-ppc64'
+  - '@typescript/typescript-win32-x64'
+  - '@typescript/typescript-linux-riscv64'
+  - '@typescript/typescript-linux-arm64'
+  - '@typescript/typescript-linux-s390x'
+  - '@typescript/typescript-freebsd-arm64'
+  - '@typescript/typescript-darwin-x64'
+  - '@typescript/typescript-linux-x64'
+  - '@typescript/typescript-aix-ppc64'
+  - '@typescript/typescript-freebsd-x64'
+  - '@typescript/typescript-netbsd-x64'
+  - '@typescript/typescript-linux-mips64el'
+  - '@typescript/typescript-win32-arm64'
+  - '@typescript/typescript-netbsd-arm64'
+  - '@typescript/typescript-openbsd-x64'
+  - '@typescript/typescript-linux-loong64'
+  - '@typescript/typescript-sunos-x64'
+  - '@typescript/typescript-darwin-arm64'
+  - '@typescript/typescript-openbsd-arm64'
+  - '@typescript/typescript-linux-arm'
