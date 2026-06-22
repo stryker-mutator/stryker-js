@@ -48,13 +48,13 @@
   "homepage": "https://stryker-mutator.io/docs/stryker-js/vitest-runner",
   "devDependencies": {
     "@stryker-mutator/test-helpers": "workspace:*",
-    "@types/node": "24.12.4",
+    "@types/node": "24.13.2",
     "@types/semver": "7.7.1",
-    "@vitest/browser": "4.1.8",
-    "@vitest/browser-playwright": "4.1.8",
+    "@vitest/browser": "4.1.9",
+    "@vitest/browser-playwright": "4.1.9",
     "react": "19.2.7",
     "vite": "8.0.16",
-    "vitest": "4.1.8",
+    "vitest": "4.1.9",
     "vitest-browser-react": "2.2.0"
   },
   "peerDependencies": {
