@@ -126,7 +126,7 @@ importers:
         specifier: 0.5.21
         version: 0.5.21
       typescript:
-        specifier: npm:@typescript/typescript6@^6.0.1
+        specifier: npm:@typescript/typescript6@6.0.1
         version: '@typescript/typescript6@6.0.1'
       typescript-eslint:
         specifier: 8.58.2
