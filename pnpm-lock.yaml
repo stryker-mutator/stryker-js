@@ -1185,8 +1185,8 @@ importers:
         specifier: 2.8.1
         version: 2.8.1
       weapon-regex:
-        specifier: ~1.3.2
-        version: 1.3.6
+        specifier: ~1.4.0
+        version: 1.4.1
     devDependencies:
       '@babel/preset-react':
         specifier: 7.28.5
@@ -15838,8 +15838,8 @@ packages:
   wcwidth@1.0.1:
     resolution: {integrity: sha512-XHPEwS0q6TaxcvG85+8EYkbiCux2XtWG2mkc47Ng2A77BQu9+DqIOJldST4HgPkuea7dvKSj5VgX3P1d4rW8Tg==}
 
-  weapon-regex@1.3.6:
-    resolution: {integrity: sha512-wsf1m1jmMrso5nhwVFJJHSubEBf3+pereGd7+nBKtYJ18KoB/PWJOHS3WRkwS04VrOU0iJr2bZU+l1QaTJ+9nA==}
+  weapon-regex@1.4.1:
+    resolution: {integrity: sha512-C/OXqup+tu7z5Taoqp0g/hZ7tCYhHyO7Ww5OebqOpHdWwZpAR9j0gg3UjUzkqNmyCssIs6JVrQYlnLV5veKx0A==}
 
   web-vitals@2.1.4:
     resolution: {integrity: sha512-sVWcwhU5mX6crfI5Vd2dC4qchyTqxV8URinzt25XqVh+bHEPGH4C3NPrNionCP7Obx59wrYEbNlw4Z8sjALzZg==}
@@ -36057,7 +36057,7 @@ snapshots:
     dependencies:
       defaults: 1.0.4
 
-  weapon-regex@1.3.6: {}
+  weapon-regex@1.4.1: {}
 
   web-vitals@2.1.4: {}
 
