@@ -6,6 +6,7 @@ import { stringLiteralMutator } from './string-literal-mutator.js';
 import { arrayDeclarationMutator } from './array-declaration-mutator.js';
 import { arrowFunctionMutator } from './arrow-function-mutator.js';
 import { booleanLiteralMutator } from './boolean-literal-mutator.js';
+import { EmptyExpressionMutator } from './empty-expression-mutator.js';
 import { equalityOperatorMutator } from './equality-operator-mutator.js';
 import { methodExpressionMutator } from './method-expression-mutator.js';
 import { logicalOperatorMutator } from './logical-operator-mutator.js';
@@ -15,22 +16,32 @@ import { updateOperatorMutator } from './update-operator-mutator.js';
 import { regexMutator } from './regex-mutator.js';
 import { optionalChainingMutator } from './optional-chaining-mutator.js';
 import { assignmentOperatorMutator } from './assignment-operator-mutator.js';
+import { SvelteTemplateExpressionContext } from '../frameworks/svelte-template-expression-context.js';
+import { instrumenterTokens } from '../instrumenter-tokens.js';
 
-export const allMutators: NodeMutator[] = [
-  arithmeticOperatorMutator,
-  arrayDeclarationMutator,
-  arrowFunctionMutator,
-  blockStatementMutator,
-  booleanLiteralMutator,
-  conditionalExpressionMutator,
-  equalityOperatorMutator,
-  logicalOperatorMutator,
-  methodExpressionMutator,
-  objectLiteralMutator,
-  stringLiteralMutator,
-  unaryOperatorMutator,
-  updateOperatorMutator,
-  regexMutator,
-  optionalChainingMutator,
-  assignmentOperatorMutator,
-];
+export const createAllMutators = Object.assign(
+  (
+    svelteTemplateExpressionContext: SvelteTemplateExpressionContext,
+  ): NodeMutator[] => [
+    arithmeticOperatorMutator,
+    arrayDeclarationMutator,
+    arrowFunctionMutator,
+    blockStatementMutator,
+    booleanLiteralMutator,
+    conditionalExpressionMutator,
+    new EmptyExpressionMutator(svelteTemplateExpressionContext),
+    equalityOperatorMutator,
+    logicalOperatorMutator,
+    methodExpressionMutator,
+    objectLiteralMutator,
+    stringLiteralMutator,
+    unaryOperatorMutator,
+    updateOperatorMutator,
+    regexMutator,
+    optionalChainingMutator,
+    assignmentOperatorMutator,
+  ],
+  {
+    inject: [instrumenterTokens.svelteTemplateExpressionContext] as const,
+  },
+);

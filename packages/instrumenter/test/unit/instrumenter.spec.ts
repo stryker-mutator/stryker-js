@@ -21,9 +21,8 @@ describe(Instrumenter.name, () => {
 
   class Helper {
     public parserStub = sinon.stub();
-    public transformerStub: sinon.SinonStubbedMember<
-      typeof transformers.transform
-    > = sinon.stub();
+    public transformerStub: sinon.SinonStubbedMember<transformers.Transform> =
+      sinon.stub();
     public printerStub: sinon.SinonStubbedMember<typeof printers.print> =
       sinon.stub();
     public createParserStub: sinon.SinonStubbedMember<
@@ -129,7 +128,7 @@ describe(Instrumenter.name, () => {
     // Arrange
     testInjector.logger.isDebugEnabled.returns(true);
     const { input, asts } = arrangeTwoFiles();
-    const fakeTransform: typeof transformers.transform = (ast, collector) => {
+    const fakeTransform: transformers.Transform = (ast, collector) => {
       if (ast === asts[0]) {
         collector.collect(
           'foo.js',
