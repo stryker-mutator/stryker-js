@@ -58,7 +58,7 @@ export class OptionsValidator {
     options: Record<string, unknown>,
     mark = false,
   ): asserts options is StrykerOptions {
-    this.removeDeprecatedOptions(options);
+    this.removeDeprecatedOptions(options, mark);
     this.schemaValidate(options);
     this.customValidation(options);
     if (mark) {
@@ -66,7 +66,10 @@ export class OptionsValidator {
     }
   }
 
-  private removeDeprecatedOptions(rawOptions: Record<string, unknown>) {
+  private removeDeprecatedOptions(
+    rawOptions: Record<string, unknown>,
+    mark: boolean,
+  ) {
     if (typeof rawOptions.mutator === 'string') {
       this.log.warn(
         'DEPRECATED. Use of "mutator" as string is no longer needed. You can remove it from your configuration. Stryker now supports mutating of JavaScript and friend files out of the box.',
@@ -99,6 +102,13 @@ export class OptionsValidator {
         `DEPRECATED. Support for "transpilers" is removed. You can now configure your own "${optionsPath('buildCommand')}". For example, ${example}.`,
       );
       delete rawOptions.transpilers;
+    }
+    // `mark = true` indicates a second validation pass for marking unknown/unserializable options.
+    // Only report this deprecation in the first pass to avoid duplicate warnings.
+    if (!mark && Object.hasOwn(rawOptions, 'coverageAnalysis')) {
+      this.log.warn(
+        'DEPRECATED. Use of "coverageAnalysis" is deprecated. This option will be removed in a future major version.',
+      );
     }
     if (Array.isArray(rawOptions.files)) {
       const ignorePatternsName = optionsPath('ignorePatterns');
