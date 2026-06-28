@@ -1176,8 +1176,8 @@ importers:
         specifier: workspace:*
         version: link:../util
       angular-html-parser:
-        specifier: ~10.6.0
-        version: 10.6.1
+        specifier: ~10.10.0
+        version: 10.10.0
       semver:
         specifier: ~7.7.0
         version: 7.7.4
@@ -6428,8 +6428,8 @@ packages:
   alien-signals@1.0.13:
     resolution: {integrity: sha512-OGj9yyTnJEttvzhTUWuscOvtqxq5vrhF7vL9oS0xJ2mK0ItPYP1/y+vCFebfxoEyAz0++1AIwJ5CMr+Fk3nDmg==}
 
-  angular-html-parser@10.6.1:
-    resolution: {integrity: sha512-d49rV6cIh8yEYhEs2+YYDOiDLzlRYTKwbBxzitNo21nksKmi0sdU2pypsYi5i6bzV/sL743XrrV/jZZA0VUVIw==}
+  angular-html-parser@10.10.0:
+    resolution: {integrity: sha512-cYHfKIeua6/EG6SG9+Dz4iY0CDCK3R8JcyNP1CwyoO8yU929Wef/HCyt3AeUk7ukkPZ8RwS6k20jn8nPPglI2Q==}
     engines: {node: '>= 14'}
 
   ansi-colors@3.2.3:
@@ -7552,6 +7552,7 @@ packages:
   conventional-changelog-core@5.0.1:
     resolution: {integrity: sha512-Rvi5pH+LvgsqGwZPZ3Cq/tz4ty7mjijhr3qR4m9IBXNbxGGYgTVVO+duXzz9aArmHxFtwZ+LRkrNIMDQzgoY4A==}
     engines: {node: '>=14'}
+    deprecated: Deprecated and no longer maintained. Please use conventional-changelog instead.
 
   conventional-changelog-preset-loader@3.0.0:
     resolution: {integrity: sha512-qy9XbdSLmVnwnvzEisjxdDiLA4OmV3o8db+Zdg4WiFw14fP3B6XNz98X0swPPpkTd/pc1K7+adKgEDM1JCUMiA==}
@@ -9300,7 +9301,7 @@ packages:
   git-raw-commits@3.0.0:
     resolution: {integrity: sha512-b5OHmZ3vAgGrDn/X0kS+9qCfNKWe4K/jFnhwzVWWg0/k5eLa3060tZShrRg8Dja5kPc+YjS0Gc6y7cRr44Lpjw==}
     engines: {node: '>=14'}
-    deprecated: This package is no longer maintained. For the JavaScript API, please use @conventional-changelog/git-client instead.
+    deprecated: Deprecated and no longer maintained. Use @conventional-changelog/git-client instead.
     hasBin: true
 
   git-remote-origin-url@2.0.0:
@@ -9310,7 +9311,7 @@ packages:
   git-semver-tags@5.0.1:
     resolution: {integrity: sha512-hIvOeZwRbQ+7YEUmCkHqo8FOLQZCEn18yevLHADlFPZY02KJGsu5FZt9YW/lybfK2uhWFI7Qg/07LekJiTv7iA==}
     engines: {node: '>=14'}
-    deprecated: This package is no longer maintained. For the JavaScript API, please use @conventional-changelog/git-client instead.
+    deprecated: Deprecated and no longer maintained. Use @conventional-changelog/git-client instead.
     hasBin: true
 
   git-up@7.0.0:
@@ -23493,7 +23494,7 @@ snapshots:
 
   alien-signals@1.0.13: {}
 
-  angular-html-parser@10.6.1: {}
+  angular-html-parser@10.10.0: {}
 
   ansi-colors@3.2.3: {}
 
