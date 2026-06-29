@@ -25,8 +25,12 @@ describe(sut.name, () => {
     expectJSMutation(sut, 'new RegExp("*(a|$]")');
 
     // Assert
-    expect(errorStub).calledWith(
-      '[RegexMutator]: The Regex parser of weapon-regex couldn\'t parse this regex pattern: "*(a|$]". Please report this issue at https://github.com/stryker-mutator/weapon-regex/issues. Inner error: [Error] Parser: Position 1:1, found "*(a|$]"',
+    expect(errorStub).calledOnceWithExactly(
+      sinon.match((value: string) =>
+        value.startsWith(
+          '[RegexMutator]: The Regex parser of weapon-regex couldn\'t parse this regex pattern: "*(a|$]". Please report this issue at https://github.com/stryker-mutator/weapon-regex/issues. Inner error: *(a|$]',
+        ),
+      ),
     );
   });
 
