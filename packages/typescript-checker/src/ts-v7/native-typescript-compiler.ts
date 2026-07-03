@@ -74,7 +74,7 @@ export class NativeTypescriptCompiler {
 
   async #adjustTSConfigFile(fileName = this.options.tsconfigFile) {
     const parsedConfig = ts.parseConfigFileTextToJson(
-      fileName,
+      toPosixFileName(fileName),
       await fs.promises.readFile(fileName, 'utf-8'),
     );
     if (parsedConfig.error) {

@@ -53,22 +53,9 @@ describe('Typescript checker (native preview) errors', () => {
     const sut = createSut(
       resolveTestResource('errors', 'invalid-tsconfig', 'tsconfig.json'),
     );
-    let thrown;
-    try {
-      await sut.init();
-      thrown = false;
-    } catch (error) {
-      thrown = true;
-      console.log((error as Error).stack);
-      expect((error as Error).message).to.include(
-        'Typescript error(s) found in dry run compilation: testResources/errors/invalid-tsconfig/tsconfig.json(1,1): error TS1005:',
-      );
-    }
-    expect(thrown).ok;
-
-    // await expect(sut.init()).rejectedWith(
-    //   'Typescript error(s) found in dry run compilation: testResources/errors/invalid-tsconfig/tsconfig.json(1,1): error TS1005:',
-    // );
+    await expect(sut.init()).rejectedWith(
+      'Typescript error(s) found in dry run compilation: testResources/errors/invalid-tsconfig/tsconfig.json(1,1): error TS1005:',
+    );
   });
 
   it("should reject when tsconfig file doesn't exist", async () => {
