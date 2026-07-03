@@ -20,7 +20,10 @@ describe(TypescriptChecker.name, () => {
     nodes = new Map();
     options =
       testInjector.options as TypescriptCheckerOptionsWithStrykerOptions;
-    options.typescriptChecker = { prioritizePerformanceOverAccuracy: true };
+    options.typescriptChecker = {
+      prioritizePerformanceOverAccuracy: true,
+      experimentalNativePreview: false,
+    };
     compilerMock = sinon.createStubInstance(TypescriptCompiler);
     sinon.stub(compilerMock, 'nodes').get(() => nodes);
     sut = testInjector.injector

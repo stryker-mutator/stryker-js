@@ -15,6 +15,11 @@
           "description": "Configures the performance of the TypescriptChecker. Setting this to false results in a slower, but more accurate result.",
           "type": "boolean",
           "default": true
+        },
+        "experimentalNativePreview": {
+          "description": "Enable experimental support for type checking with the native TypeScript compiler preview (TypeScript 7). Requires TypeScript 7 to be installed under the \"typescript7\" alias: `npm install --save-dev typescript7@npm:typescript@latest`. Note: project references (--build mode) are not supported (yet) in this mode and mutants are always checked one-by-one (the \"prioritizePerformanceOverAccuracy\" option is ignored).",
+          "type": "boolean",
+          "default": false
         }
       }
     }

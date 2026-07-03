@@ -11,13 +11,14 @@ import { expect } from 'chai';
 import { Location, Mutant } from '@stryker-mutator/api/core';
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 
-import { createTypescriptChecker } from '../../src/index.js';
-import { TypescriptChecker } from '../../src/typescript-checker.js';
-import { TypescriptCheckerOptionsWithStrykerOptions } from '../../src/typescript-checker-options-with-stryker-options.js';
+import { createTypescriptChecker } from '../../../src/index.js';
+import { NativeTypescriptChecker } from '../../../src/ts-v7/native-typescript-checker.js';
+import { TypescriptCheckerOptionsWithStrykerOptions } from '../../../src/typescript-checker-options-with-stryker-options.js';
 
 const resolveTestResource = path.resolve.bind(
   path,
   path.dirname(fileURLToPath(import.meta.url)),
+  '..' /* ts-v7 */,
   '..' /* integration */,
   '..' /* test */,
   '..' /* dist */,
@@ -25,21 +26,29 @@ const resolveTestResource = path.resolve.bind(
   'single-project',
 ) as unknown as typeof path.resolve;
 
-describe('Typescript checker on a single project', () => {
-  let sut: TypescriptChecker;
+describe('Typescript checker (native preview) on a single project', () => {
+  let sut: NativeTypescriptChecker;
 
   beforeEach(() => {
     (
       testInjector.options as TypescriptCheckerOptionsWithStrykerOptions
     ).typescriptChecker = {
       prioritizePerformanceOverAccuracy: true,
-      experimentalNativePreview: false,
+      experimentalNativePreview: true,
     };
     testInjector.options.tsconfigFile = resolveTestResource('tsconfig.json');
     sut = testInjector.injector.injectFunction(
       createTypescriptChecker,
-    ) as TypescriptChecker;
+    ) as NativeTypescriptChecker;
     return sut.init();
+  });
+
+  afterEach(() => {
+    sut.dispose();
+  });
+
+  it('should create a checker that uses the native TypeScript compiler', () => {
+    expect(sut).instanceOf(NativeTypescriptChecker);
   });
 
   it('should not write output to disk', () => {
@@ -154,7 +163,8 @@ describe('Typescript checker on a single project', () => {
     const actual = await sut.check([mutant]);
     expect(actual).deep.eq(expectedResult);
   });
-  it('should be able invalidate 2 mutants that do result in a compile errors', async () => {
+
+  it('should be able invalidate 2 mutants that do result in a compile error', async () => {
     const mutant = createMutant(
       'todo.ts',
       'TodoList.allTodos.push(newItem)',
@@ -173,38 +183,36 @@ describe('Typescript checker on a single project', () => {
     expect(actual.mutId.reason).has.string('todo.ts(15,9): error TS2322');
     expect(actual.mutId2.reason).has.string('counter.ts(7,5): error TS2322');
   });
-  it('should be able invalidate 2 mutants that do result in a compile error in file above', async () => {
-    const mutant = createMutant(
-      'errorInFileAbove2Mutants/todo.ts',
-      'TodoList.allTodos.push(newItem)',
-      '"This should not be a string 🙄"',
-      'mutId',
+
+  it('should group mutants outside the project together and check project mutants one-by-one', async () => {
+    const mutantOutsideProject = createMutant(
+      'not-type-checked.js',
+      'bar',
+      'baz',
+      'outside',
     );
-    const mutant2 = createMutant(
-      'errorInFileAbove2Mutants/counter.ts',
-      'return (this.currentNumber += numberToIncrementBy);',
-      'return "This should not return a string 🙄"',
-      'mutId2',
+    const mutantInProject = createMutant(
+      'todo.ts',
+      'return totalCount;',
+      '',
+      'inside1',
     );
-    const actual = await sut.check([mutant, mutant2]);
-    assertions.expectCompileError(actual.mutId);
-    assertions.expectCompileError(actual.mutId2);
-    expect(actual.mutId.reason).has.string('todo.ts(15,9): error TS2322');
-    expect(actual.mutId2.reason).has.string(
-      'errorInFileAbove2Mutants/todo-counter.ts(7,7): error TS2322',
+    const mutantInProject2 = createMutant(
+      'counter.ts',
+      'return this.currentNumber;',
+      'return 42;',
+      'inside2',
     );
+    const groups = await sut.group([
+      mutantOutsideProject,
+      mutantInProject,
+      mutantInProject2,
+    ]);
+    expect(groups).deep.eq([['outside'], ['inside1'], ['inside2']]);
   });
 });
 
 const fileContents = Object.freeze({
-  ['errorInFileAbove2Mutants/todo.ts']: fs.readFileSync(
-    resolveTestResource('src', 'errorInFileAbove2Mutants', 'todo.ts'),
-    'utf8',
-  ),
-  ['errorInFileAbove2Mutants/counter.ts']: fs.readFileSync(
-    resolveTestResource('src', 'errorInFileAbove2Mutants', 'counter.ts'),
-    'utf8',
-  ),
   ['todo.ts']: fs.readFileSync(resolveTestResource('src', 'todo.ts'), 'utf8'),
   ['counter.ts']: fs.readFileSync(
     resolveTestResource('src', 'counter.ts'),
@@ -221,13 +229,7 @@ const fileContents = Object.freeze({
 });
 
 function createMutant(
-  fileName:
-    | 'counter.ts'
-    | 'errorInFileAbove2Mutants/counter.ts'
-    | 'errorInFileAbove2Mutants/todo.ts'
-    | 'not-type-checked.js'
-    | 'todo.spec.ts'
-    | 'todo.ts',
+  fileName: 'counter.ts' | 'not-type-checked.js' | 'todo.spec.ts' | 'todo.ts',
   findText: string,
   replacement: string,
   id = '42',
