@@ -23,7 +23,6 @@ import {
   toNativeDiagnostic,
 } from './native-diagnostic.js';
 import { NativeFileSystem } from './native-file-system.js';
-import { PositionConverter } from './position-converter.js';
 
 /**
  * An in-memory type checker implementation that uses the (unstable) API of
