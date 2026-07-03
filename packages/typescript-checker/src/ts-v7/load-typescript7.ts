@@ -2,7 +2,7 @@ import { createRequire } from 'module';
 import path from 'path';
 import { pathToFileURL } from 'url';
 
-type TypeScript7SyncApi = typeof import('typescript7/unstable/sync');
+export type TypeScript7SyncApi = typeof import('typescript7/unstable/sync');
 
 /**
  * Loads the (unstable) sync API of the native TypeScript compiler preview (TypeScript 7).

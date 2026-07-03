@@ -1,7 +1,9 @@
 import { EOL } from 'os';
+import path from 'path';
 
 import type { Diagnostic, DiagnosticCategory } from 'typescript7/unstable/sync';
-
+import { PositionConverter } from './position-converter.js';
+import { toPosixFileName } from '../tsconfig-helpers.js';
 /**
  * A located version of a diagnostic reported by the native TypeScript compiler (TypeScript 7).
  * Locations are resolved eagerly, because diagnostic positions refer to in-memory (mutated)
@@ -11,6 +13,8 @@ export interface NativeDiagnostic {
   fileName: string | undefined;
   code: number;
   text: string;
+  column: number;
+  line: number;
 }
 
 /**
@@ -22,13 +26,23 @@ export const diagnosticCategoryError = 1 as DiagnosticCategory.Error;
 /**
  * Converts a diagnostic of the native TypeScript compiler to a located {@link NativeDiagnostic}.
  * @param diagnostic The diagnostic to convert
- * @param getContent Function to retrieve the content of a file as the compiler saw it (including in-memory mutations)
+ * @param positionConverter The position converter to use
  */
-export function toNativeDiagnostic(diagnostic: Diagnostic): NativeDiagnostic {
+export function toNativeDiagnostic(
+  diagnostic: Diagnostic,
+  positionConverter?: PositionConverter,
+): NativeDiagnostic {
+  const { line, column } = positionConverter?.positionFromOffset(
+    diagnostic.pos,
+  ) ?? { line: 1, column: 1 };
   return {
-    fileName: diagnostic.fileName,
+    fileName: diagnostic.fileName
+      ? toPosixFileName(path.relative('.', diagnostic.fileName))
+      : undefined,
     code: diagnostic.code,
     text: flattenDiagnosticText(diagnostic),
+    column,
+    line,
   };
 }
 
@@ -51,7 +65,7 @@ export function formatDiagnostics(
 ): string {
   return diagnostics
     .map((diagnostic) => {
-      return `error TS${diagnostic.code}: ${diagnostic.text}${EOL}`;
+      return `${diagnostic.fileName}(${diagnostic.line},${diagnostic.column}): error TS${diagnostic.code}: ${diagnostic.text}${EOL}`;
     })
     .join('');
 }

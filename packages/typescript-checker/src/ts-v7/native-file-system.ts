@@ -8,6 +8,7 @@ import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { toPosixFileName } from '../tsconfig-helpers.js';
 
 import { positionToOffset } from './text-helpers.js';
+import { PositionConverter } from './position-converter.js';
 
 /**
  * A simple overlay file system for the native TypeScript compiler (TypeScript 7).
@@ -15,8 +16,9 @@ import { positionToOffset } from './text-helpers.js';
  * * Writes are ignored, output should never be written to disk during mutation testing
  */
 export class NativeFileSystem {
-  private readonly overrides = new Map<string, string>();
+  readonly #overrides = new Map<string, string>();
   readonly #projectFiles = new Map<string, string>();
+  readonly #positionConverters = new Map<string, PositionConverter>();
 
   get projectFiles(): ReadonlyMap<string, string> {
     return this.#projectFiles;
@@ -24,14 +26,30 @@ export class NativeFileSystem {
   public static inject = tokens(commonTokens.logger);
   constructor(private readonly log: Logger) {}
 
-  public async markProjectFile(fileName: string): Promise<void> {
-    if (this.#projectFiles.has(toPosixFileName(fileName))) {
+  public async markProjectFile(
+    fileName: string,
+    content?: string,
+  ): Promise<void> {
+    const posixFileName = toPosixFileName(fileName);
+    if (this.#projectFiles.has(posixFileName)) {
       return;
     }
-    this.#projectFiles.set(
-      toPosixFileName(fileName),
-      await fs.promises.readFile(fileName, 'utf-8'),
+    const fileContent =
+      content ?? (await fs.promises.readFile(fileName, 'utf-8'));
+    this.#projectFiles.set(posixFileName, fileContent);
+    this.#positionConverters.set(
+      posixFileName,
+      new PositionConverter(fileContent),
     );
+  }
+
+  public getPositionConverter(
+    fileName: string | undefined,
+  ): PositionConverter | undefined {
+    if (!fileName) {
+      return undefined;
+    }
+    return this.#positionConverters.get(toPosixFileName(fileName));
   }
 
   /**
@@ -39,9 +57,13 @@ export class NativeFileSystem {
    * Returning `undefined` from `readFile` makes the compiler fall back to the real file system.
    */
   public readonly tsFileSystem: FileSystem = {
-    readFile: (fileName) =>
-      this.overrides.get(toPosixFileName(fileName)) ??
-      this.#projectFiles.get(toPosixFileName(fileName)),
+    readFile: (fileName) => {
+      const posixFileName = toPosixFileName(fileName);
+      return (
+        this.#overrides.get(posixFileName) ??
+        this.#projectFiles.get(posixFileName)
+      );
+    },
     writeFile: (fileName) => {
       this.log.trace('Ignoring write to file "%s"', fileName);
     },
@@ -62,7 +84,7 @@ export class NativeFileSystem {
     }
     const start = positionToOffset(originalContent, mutant.location.start);
     const end = positionToOffset(originalContent, mutant.location.end);
-    this.overrides.set(
+    this.#overrides.set(
       fileName,
       `${originalContent.substring(0, start)}${mutant.replacement}${originalContent.substring(end)}`,
     );
@@ -72,6 +94,6 @@ export class NativeFileSystem {
    * Removes the in-memory override of a file, so the original (on disk) content is used again
    */
   public restore(fileName: string): void {
-    this.overrides.delete(toPosixFileName(fileName));
+    this.#overrides.delete(toPosixFileName(fileName));
   }
 }

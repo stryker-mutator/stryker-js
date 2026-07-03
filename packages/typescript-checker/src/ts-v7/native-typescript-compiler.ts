@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 import type { API } from 'typescript7/unstable/sync';
+import ts from 'typescript';
 import { propertyPath } from '@stryker-mutator/util';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -9,6 +10,8 @@ import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 
 import {
   determineBuildModeEnabled,
+  overrideOptions,
+  retrieveReferencedProjects,
   toPosixFileName,
 } from '../tsconfig-helpers.js';
 import * as pluginTokens from '../plugin-tokens.js';
@@ -20,6 +23,7 @@ import {
   toNativeDiagnostic,
 } from './native-diagnostic.js';
 import { NativeFileSystem } from './native-file-system.js';
+import { PositionConverter } from './position-converter.js';
 
 /**
  * An in-memory type checker implementation that uses the (unstable) API of
@@ -60,11 +64,32 @@ export class NativeTypescriptCompiler {
       fs: this.fs.tsFileSystem,
       cwd: process.cwd(),
     });
+    await this.#adjustTSConfigFile();
+
     this.log.debug(
       'Started the native TypeScript compiler on project "%s"',
       this.tsconfigFile,
     );
     return this.checkSnapshot();
+  }
+
+  async #adjustTSConfigFile(fileName = this.options.tsconfigFile) {
+    const parsedConfig = ts.parseConfigFileTextToJson(
+      fileName,
+      await fs.promises.readFile(fileName, 'utf-8'),
+    );
+    if (parsedConfig.error) {
+      return; // let the ts compiler deal with this error
+    } else {
+      for (const referencedProject of retrieveReferencedProjects(
+        parsedConfig,
+        path.dirname(fileName),
+      )) {
+        await this.#adjustTSConfigFile(referencedProject);
+      }
+      const options = overrideOptions(parsedConfig, /*buildMode*/ false);
+      await this.fs.markProjectFile(fileName, options);
+    }
   }
 
   /**
@@ -122,7 +147,12 @@ export class NativeTypescriptCompiler {
             .filter(
               (diagnostic) => diagnostic.category === diagnosticCategoryError,
             )
-            .map(toNativeDiagnostic),
+            .map((diagnostic) =>
+              toNativeDiagnostic(
+                diagnostic,
+                this.fs.getPositionConverter(diagnostic.fileName),
+              ),
+            ),
         );
       }
       return diagnostics;
