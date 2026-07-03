@@ -87,7 +87,7 @@ describe('instrumenter performance', () => {
   it('should instrument benchmark-big.ts with expected mutant count and within performance threshold', async () => {
     await benchmarkFile(
       'benchmark-big.ts',
-      933,
+      948,
       platform() === 'win32' ? 500 : 325,
     );
   });

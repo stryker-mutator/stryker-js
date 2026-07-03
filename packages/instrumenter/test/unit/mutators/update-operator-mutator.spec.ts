@@ -9,18 +9,18 @@ describe(sut.name, () => {
   });
 
   it('should mutate a++ to a--', () => {
-    expectJSMutation(sut, 'a++', 'a--');
+    expectJSMutation(sut, 'a++', { isExpressionContext: false }, 'a--');
   });
 
   it('should mutate a-- to a++', () => {
-    expectJSMutation(sut, 'a--', 'a++');
+    expectJSMutation(sut, 'a--', { isExpressionContext: false }, 'a++');
   });
 
   it('should mutate ++a to --a', () => {
-    expectJSMutation(sut, '++a', '--a');
+    expectJSMutation(sut, '++a', { isExpressionContext: false }, '--a');
   });
 
   it('should mutate --a to ++a', () => {
-    expectJSMutation(sut, '--a', '++a');
+    expectJSMutation(sut, '--a', { isExpressionContext: false }, '++a');
   });
 });

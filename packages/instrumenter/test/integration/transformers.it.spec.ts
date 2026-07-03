@@ -7,8 +7,8 @@ import {
   createTransformerOptions,
   createTSAst,
 } from '../helpers/factories.js';
-import { transform } from '../../src/transformers/index.js';
 import { MutantCollector } from '../../src/transformers/mutant-collector.js';
+import { transform } from '../../src/transformers/index.js';
 
 describe('transformers integration', () => {
   it('should transform an html file', () => {
@@ -21,6 +21,7 @@ describe('transformers integration', () => {
       options: createTransformerOptions(),
       mutateDescription: true,
       logger: testInjector.logger,
+      isExpressionContext: false,
     });
     expect(mutantCollector.mutants).lengthOf(1);
     expect(htmlAst).matchSnapshot();
@@ -32,6 +33,7 @@ describe('transformers integration', () => {
       options: createTransformerOptions(),
       mutateDescription: true,
       logger: testInjector.logger,
+      isExpressionContext: false,
     });
     expect(mutantCollector.mutants).lengthOf(1);
     expect(jsAst).matchSnapshot();
@@ -43,6 +45,7 @@ describe('transformers integration', () => {
       options: createTransformerOptions(),
       mutateDescription: true,
       logger: testInjector.logger,
+      isExpressionContext: false,
     });
     expect(mutantCollector.mutants).lengthOf(1);
     expect(tsAst).matchSnapshot();

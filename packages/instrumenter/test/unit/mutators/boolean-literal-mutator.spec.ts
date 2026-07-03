@@ -9,14 +9,14 @@ describe(sut.name, () => {
   });
 
   it('should mutate `true` into `false`', () => {
-    expectJSMutation(sut, 'true', 'false');
+    expectJSMutation(sut, 'true', { isExpressionContext: false }, 'false');
   });
 
   it('should mutate `false` into `true`', () => {
-    expectJSMutation(sut, 'false', 'true');
+    expectJSMutation(sut, 'false', { isExpressionContext: false }, 'true');
   });
 
   it('should mutate !a to a', () => {
-    expectJSMutation(sut, '!a', 'a');
+    expectJSMutation(sut, '!a', { isExpressionContext: false }, 'a');
   });
 });

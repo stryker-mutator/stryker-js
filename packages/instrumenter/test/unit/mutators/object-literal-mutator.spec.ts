@@ -9,22 +9,33 @@ describe(sut.name, () => {
   });
 
   it('should empty an object declaration', () => {
-    expectJSMutation(sut, 'const o = { foo: "bar" }', 'const o = {}');
+    expectJSMutation(
+      sut,
+      'const o = { foo: "bar" }',
+      { isExpressionContext: false },
+      'const o = {}',
+    );
   });
 
   it('should empty an object declaration of all properties', () => {
     expectJSMutation(
       sut,
       'const o = { foo: "bar", baz: "qux" }',
+      { isExpressionContext: false },
       'const o = {}',
     );
   });
 
   it('should empty string object keys', () => {
-    expectJSMutation(sut, 'const o = { ["foo"]: "bar" }', 'const o = {}');
+    expectJSMutation(
+      sut,
+      'const o = { ["foo"]: "bar" }',
+      { isExpressionContext: false },
+      'const o = {}',
+    );
   });
 
   it('shoud not mutate empty object declarations', () => {
-    expectJSMutation(sut, 'const o = {}');
+    expectJSMutation(sut, 'const o = {}', { isExpressionContext: false });
   });
 });

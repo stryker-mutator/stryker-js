@@ -52,6 +52,7 @@ export class Instrumenter {
         options,
         mutateDescription: toBabelLineNumber(mutate),
         logger: this.logger,
+        isExpressionContext: false,
       });
       const mutatedContent = this._print(ast);
       outFiles.push({

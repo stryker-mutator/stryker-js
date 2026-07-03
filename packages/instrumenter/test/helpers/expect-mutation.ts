@@ -4,6 +4,7 @@ import generator from '@babel/generator';
 import { expect } from 'chai';
 
 import { NodeMutator } from '../../src/mutators/node-mutator.js';
+import type { NodeMutatorContext } from '../../src/mutators/node-mutator.js';
 
 const generate = generator.default;
 
@@ -38,6 +39,7 @@ const plugins = [
 export function expectJSMutation(
   sut: NodeMutator,
   originalCode: string,
+  nodeMutatorContext: NodeMutatorContext,
   ...expectedReplacements: string[]
 ): void {
   const sourceFileName = 'source.js';
@@ -51,7 +53,7 @@ export function expectJSMutation(
 
   babel.traverse(ast, {
     enter(path) {
-      for (const replacement of sut.mutate(path)) {
+      for (const replacement of sut.mutate(path, nodeMutatorContext)) {
         const mutatedCode = generate(replacement).code;
         const beforeMutatedCode = originalCode.substring(
           0,

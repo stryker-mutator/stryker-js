@@ -9,67 +9,97 @@ describe(sut.name, () => {
   });
 
   it('should mutate += and -=', () => {
-    expectJSMutation(sut, 'a += b', 'a -= b');
-    expectJSMutation(sut, 'a -= b', 'a += b');
+    expectJSMutation(sut, 'a += b', { isExpressionContext: false }, 'a -= b');
+    expectJSMutation(sut, 'a -= b', { isExpressionContext: false }, 'a += b');
   });
 
   it('should mutate *=, %= and /=', () => {
-    expectJSMutation(sut, 'a *= b', 'a /= b');
-    expectJSMutation(sut, 'a /= b', 'a *= b');
-    expectJSMutation(sut, 'a %= b', 'a *= b');
+    expectJSMutation(sut, 'a *= b', { isExpressionContext: false }, 'a /= b');
+    expectJSMutation(sut, 'a /= b', { isExpressionContext: false }, 'a *= b');
+    expectJSMutation(sut, 'a %= b', { isExpressionContext: false }, 'a *= b');
   });
 
   it('should mutate *=, %= and /=', () => {
-    expectJSMutation(sut, 'a *= b', 'a /= b');
-    expectJSMutation(sut, 'a /= b', 'a *= b');
-    expectJSMutation(sut, 'a %= b', 'a *= b');
+    expectJSMutation(sut, 'a *= b', { isExpressionContext: false }, 'a /= b');
+    expectJSMutation(sut, 'a /= b', { isExpressionContext: false }, 'a *= b');
+    expectJSMutation(sut, 'a %= b', { isExpressionContext: false }, 'a *= b');
   });
 
   it('should mutate <<=, >>=, &= and |=', () => {
-    expectJSMutation(sut, 'a *= b', 'a /= b');
-    expectJSMutation(sut, 'a /= b', 'a *= b');
-    expectJSMutation(sut, 'a %= b', 'a *= b');
+    expectJSMutation(sut, 'a *= b', { isExpressionContext: false }, 'a /= b');
+    expectJSMutation(sut, 'a /= b', { isExpressionContext: false }, 'a *= b');
+    expectJSMutation(sut, 'a %= b', { isExpressionContext: false }, 'a *= b');
   });
 
   it('should mutate &&=, ||= and ??=', () => {
-    expectJSMutation(sut, 'a &&= b', 'a ||= b');
-    expectJSMutation(sut, 'a ||= b', 'a &&= b');
-    expectJSMutation(sut, 'a ??= b', 'a &&= b');
+    expectJSMutation(sut, 'a &&= b', { isExpressionContext: false }, 'a ||= b');
+    expectJSMutation(sut, 'a ||= b', { isExpressionContext: false }, 'a &&= b');
+    expectJSMutation(sut, 'a ??= b', { isExpressionContext: false }, 'a &&= b');
   });
 
   it('should not mutate a string literal unless it is &&=, ||=, ??=', () => {
-    expectJSMutation(sut, 'a += "b"');
-    expectJSMutation(sut, 'a -= "b"');
-    expectJSMutation(sut, 'a *= "b"');
-    expectJSMutation(sut, 'a /= "b"');
-    expectJSMutation(sut, 'a %= "b"');
-    expectJSMutation(sut, 'a <<= "b"');
-    expectJSMutation(sut, 'a >>= "b"');
-    expectJSMutation(sut, 'a &= "b"');
-    expectJSMutation(sut, 'a |= "b"');
+    expectJSMutation(sut, 'a += "b"', { isExpressionContext: false });
+    expectJSMutation(sut, 'a -= "b"', { isExpressionContext: false });
+    expectJSMutation(sut, 'a *= "b"', { isExpressionContext: false });
+    expectJSMutation(sut, 'a /= "b"', { isExpressionContext: false });
+    expectJSMutation(sut, 'a %= "b"', { isExpressionContext: false });
+    expectJSMutation(sut, 'a <<= "b"', { isExpressionContext: false });
+    expectJSMutation(sut, 'a >>= "b"', { isExpressionContext: false });
+    expectJSMutation(sut, 'a &= "b"', { isExpressionContext: false });
+    expectJSMutation(sut, 'a |= "b"', { isExpressionContext: false });
   });
 
   it('should mutate a string literal using &&=, ||=, ??=', () => {
-    expectJSMutation(sut, 'a &&= "b"', 'a ||= "b"');
-    expectJSMutation(sut, 'a ||= "b"', 'a &&= "b"');
-    expectJSMutation(sut, 'a ??= "b"', 'a &&= "b"');
+    expectJSMutation(
+      sut,
+      'a &&= "b"',
+      { isExpressionContext: false },
+      'a ||= "b"',
+    );
+    expectJSMutation(
+      sut,
+      'a ||= "b"',
+      { isExpressionContext: false },
+      'a &&= "b"',
+    );
+    expectJSMutation(
+      sut,
+      'a ??= "b"',
+      { isExpressionContext: false },
+      'a &&= "b"',
+    );
   });
 
   it('should not mutate string template unless it is &&=, ||=, ??=', () => {
-    expectJSMutation(sut, 'a += `b`');
-    expectJSMutation(sut, 'a -= `b`');
-    expectJSMutation(sut, 'a *= `b`');
-    expectJSMutation(sut, 'a /= `b`');
-    expectJSMutation(sut, 'a %= `b`');
-    expectJSMutation(sut, 'a <<= `b`');
-    expectJSMutation(sut, 'a >>= `b`');
-    expectJSMutation(sut, 'a &= `b`');
-    expectJSMutation(sut, 'a |= `b`');
+    expectJSMutation(sut, 'a += `b`', { isExpressionContext: false });
+    expectJSMutation(sut, 'a -= `b`', { isExpressionContext: false });
+    expectJSMutation(sut, 'a *= `b`', { isExpressionContext: false });
+    expectJSMutation(sut, 'a /= `b`', { isExpressionContext: false });
+    expectJSMutation(sut, 'a %= `b`', { isExpressionContext: false });
+    expectJSMutation(sut, 'a <<= `b`', { isExpressionContext: false });
+    expectJSMutation(sut, 'a >>= `b`', { isExpressionContext: false });
+    expectJSMutation(sut, 'a &= `b`', { isExpressionContext: false });
+    expectJSMutation(sut, 'a |= `b`', { isExpressionContext: false });
   });
 
   it('should mutate string template using &&=, ||=, ??=', () => {
-    expectJSMutation(sut, 'a &&= `b`', 'a ||= `b`');
-    expectJSMutation(sut, 'a ||= `b`', 'a &&= `b`');
-    expectJSMutation(sut, 'a ??= `b`', 'a &&= `b`');
+    expectJSMutation(
+      sut,
+      'a &&= `b`',
+      { isExpressionContext: false },
+      'a ||= `b`',
+    );
+    expectJSMutation(
+      sut,
+      'a ||= `b`',
+      { isExpressionContext: false },
+      'a &&= `b`',
+    );
+    expectJSMutation(
+      sut,
+      'a ??= `b`',
+      { isExpressionContext: false },
+      'a &&= `b`',
+    );
   });
 });
