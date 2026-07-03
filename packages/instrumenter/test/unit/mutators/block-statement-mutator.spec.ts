@@ -10,43 +10,63 @@ describe(sut.name, () => {
 
   describe('blocks', () => {
     it('should mutate a single block', () => {
-      expectJSMutation(sut, 'const a = 3; { const b = a; }', 'const a = 3; {}');
+      expectJSMutation(
+        sut,
+        'const a = 3; { const b = a; }',
+        { isExpressionContext: false },
+        'const a = 3; {}',
+      );
     });
 
     it('should not mutate an object declaration, as not a block', () => {
-      expectJSMutation(sut, 'const o = { foo: "bar" }');
+      expectJSMutation(sut, 'const o = { foo: "bar" }', {
+        isExpressionContext: false,
+      });
     });
   });
 
   describe('functions', () => {
     it('should mutate the block of a function into an empty block', () => {
-      expectJSMutation(sut, '(function() { return 4; })', '(function() {})');
+      expectJSMutation(
+        sut,
+        '(function() { return 4; })',
+        { isExpressionContext: false },
+        '(function() {})',
+      );
     });
     it('should not mutate an already empty block', () => {
-      expectJSMutation(sut, '(function() {  })');
+      expectJSMutation(sut, '(function() {  })', {
+        isExpressionContext: false,
+      });
     });
     it('should mutate the body of an anonymous function if defined as a block', () => {
       expectJSMutation(
         sut,
         'const b = () => { return 4; }',
+        { isExpressionContext: false },
         'const b = () => {}',
       );
     });
 
     it('should not mutate the body of an anonymous function if not defined as a block', () => {
-      expectJSMutation(sut, 'const b = () => 4;');
+      expectJSMutation(sut, 'const b = () => 4;', {
+        isExpressionContext: false,
+      });
     });
   });
 
   describe('switch/case', () => {
     it('should not mutate the body of a switch or case statement, as not a block', () => {
-      expectJSMutation(sut, 'switch (v) { case 42: a = "spam"; break; }');
+      expectJSMutation(sut, 'switch (v) { case 42: a = "spam"; break; }', {
+        isExpressionContext: false,
+      });
     });
 
     it('should mutate the body of a case statement if defined as a block', () => {
       expectJSMutation(
         sut,
         'switch (v) { case 42: { a = "spam"; break; } }',
+        { isExpressionContext: false },
         'switch (v) { case 42: {} }',
       );
     });
@@ -57,6 +77,7 @@ describe(sut.name, () => {
       expectJSMutation(
         sut,
         'class Foo { constructor() { bar(); } }',
+        { isExpressionContext: false },
         'class Foo { constructor() {} }',
       );
     });
@@ -65,6 +86,7 @@ describe(sut.name, () => {
       expectJSMutation(
         sut,
         'class Foo { constructor(private baz: string) { bar(); } }',
+        { isExpressionContext: false },
         'class Foo { constructor(private baz: string) {} }',
       );
     });
@@ -73,6 +95,7 @@ describe(sut.name, () => {
       expectJSMutation(
         sut,
         'class Foo extends Bar { constructor(baz) { super(baz); } }',
+        { isExpressionContext: false },
         'class Foo extends Bar { constructor(baz) {} }',
       );
     });
@@ -85,10 +108,12 @@ describe(sut.name, () => {
       expectJSMutation(
         sut,
         'class Foo extends Bar { constructor(private baz: string) { super(); } }',
+        { isExpressionContext: false },
       );
       expectJSMutation(
         sut,
         'class Foo extends Bar { constructor(private baz: string) { const errorBody: Body = { message: `msg: ${baz}` }; super(errorBody);  } }',
+        { isExpressionContext: false },
       );
     });
 
@@ -100,10 +125,12 @@ describe(sut.name, () => {
       expectJSMutation(
         sut,
         'class Foo extends Bar { private baz = "qux"; constructor() { super(); } }',
+        { isExpressionContext: false },
       );
       expectJSMutation(
         sut,
         'class Foo extends Bar { private baz = "qux"; constructor() { const errorBody: Body = { message: `msg: ${baz}` }; super(errorBody);  } }',
+        { isExpressionContext: false },
       );
     });
   });

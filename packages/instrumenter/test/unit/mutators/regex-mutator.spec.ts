@@ -10,11 +10,17 @@ describe(sut.name, () => {
   });
 
   it('should not mutate normal string literals', () => {
-    expectJSMutation(sut, '""');
+    expectJSMutation(sut, '""', { isExpressionContext: false });
   });
 
   it('should mutate a regex literal', () => {
-    expectJSMutation(sut, '/\\d{4}/', '/\\d/', '/\\D{4}/');
+    expectJSMutation(
+      sut,
+      '/\\d{4}/',
+      { isExpressionContext: false },
+      '/\\d/',
+      '/\\D{4}/',
+    );
   });
 
   it("should not crash if a regex couldn't be parsed", () => {
@@ -22,7 +28,9 @@ describe(sut.name, () => {
     const errorStub = sinon.stub(console, 'error');
 
     // Act
-    expectJSMutation(sut, 'new RegExp("*(a|$]")');
+    expectJSMutation(sut, 'new RegExp("*(a|$]")', {
+      isExpressionContext: false,
+    });
 
     // Assert
     expect(errorStub).calledWith(
@@ -34,31 +42,37 @@ describe(sut.name, () => {
     expectJSMutation(
       sut,
       'new RegExp("\\\\d{4}")',
+      { isExpressionContext: false },
       'new RegExp("\\\\d")',
       'new RegExp("\\\\D{4}")',
     );
   });
 
   it('should not mutate the flags of a new RegExp constructor', () => {
-    expectJSMutation(sut, 'new RegExp("", "\\\\d{4}")');
+    expectJSMutation(sut, 'new RegExp("", "\\\\d{4}")', {
+      isExpressionContext: false,
+    });
   });
 
   it('should not pass flags if no flags are defined', () => {
-    expectJSMutation(sut, '/\\u{20}/', '/\\u/');
+    expectJSMutation(sut, '/\\u{20}/', { isExpressionContext: false }, '/\\u/');
   });
 
   it('should pass flags in regex literals', () => {
-    expectJSMutation(sut, '/\\u{20}/u');
+    expectJSMutation(sut, '/\\u{20}/u', { isExpressionContext: false });
   });
 
   it('should pass flags in new RegExp constructors', () => {
-    expectJSMutation(sut, 'new RegExp("\\\\u{20}", "u")');
+    expectJSMutation(sut, 'new RegExp("\\\\u{20}", "u")', {
+      isExpressionContext: false,
+    });
   });
 
   it('should only pass flags in new RegExp constructors if it is a string literal', () => {
     expectJSMutation(
       sut,
       'new RegExp("\\\\u{20}", foo)',
+      { isExpressionContext: false },
       'new RegExp("\\\\u", foo)',
     );
   });

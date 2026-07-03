@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import { types } from '@babel/core';
 
 import { MutantCollector } from '../../../src/transformers/mutant-collector.js';
-import { createTransformSvelte } from '../../../src/transformers/svelte-transformer.js';
+import { transformSvelte } from '../../../src/transformers/svelte-transformer.js';
 import {
   createJSAst,
   createRange,
@@ -11,29 +11,11 @@ import {
   createTemplateScript,
 } from '../../helpers/factories.js';
 import { transformerContextStub } from '../../helpers/stubs.js';
-import {
-  TransformerContext,
-  TransformerOptions,
-} from '../../../src/transformers/index.js';
+import { TransformerOptions } from '../../../src/transformers/index.js';
 import { instrumentationBabelHeader } from '../../../src/util/index.js';
 import { Range } from '../../../src/syntax/index.js';
-import { SvelteTemplateExpressionContext } from '../../../src/frameworks/svelte-template-expression-context.js';
 
 describe('svelte-transformer', () => {
-  let svelteTemplateExpressionContext: sinon.SinonStubbedInstance<SvelteTemplateExpressionContext>;
-  let transformSvelte: ReturnType<typeof createTransformSvelte>;
-  let mutantCollector: MutantCollector;
-  let context: sinon.SinonStubbedInstance<TransformerContext>;
-
-  beforeEach(() => {
-    svelteTemplateExpressionContext = sinon.createStubInstance(
-      SvelteTemplateExpressionContext,
-    );
-    transformSvelte = createTransformSvelte(svelteTemplateExpressionContext);
-    mutantCollector = new MutantCollector();
-    context = transformerContextStub();
-  });
-
   it('should transform the module script', () => {
     // Arrange
     const inputScript = 'let name = "test"';
@@ -52,6 +34,8 @@ describe('svelte-transformer', () => {
       rawContent: svelte,
       root: { moduleScript, additionalScripts: [] },
     });
+    const mutantCollector = new MutantCollector();
+    const context = transformerContextStub();
 
     // Act
     transformSvelte(svelteAst, mutantCollector, context);
@@ -92,6 +76,8 @@ describe('svelte-transformer', () => {
       rawContent: svelte,
       root: { additionalScripts },
     });
+    const mutantCollector = new MutantCollector();
+    const context = transformerContextStub();
 
     // Act
     transformSvelte(svelteAst, mutantCollector, context);
@@ -116,21 +102,21 @@ describe('svelte-transformer', () => {
     );
   });
 
-  it('should mark template expression scripts in the expression context', () => {
+  it('should pass isExpressionContext for template expression scripts', () => {
     // Arrange
-    const script = 'sum(1, 2)';
-    const expression = 'sum(3, 4)';
+    const script = 'let name = "test"';
+    const expression = 'sum(1, 2)';
     const jsScriptAst = createJSAst({ rawContent: script });
     const jsExpressionAst = createJSAst({ rawContent: expression });
     const additionalScripts = [
       createTemplateScript({
         ast: jsScriptAst,
-        range: createRange(8, 18),
+        range: createRange(8, 25),
         isExpression: false,
       }),
       createTemplateScript({
         ast: jsExpressionAst,
-        range: createRange(33, 42),
+        range: createRange(40, 49),
         isExpression: true,
       }),
     ];
@@ -138,54 +124,66 @@ describe('svelte-transformer', () => {
       rawContent: `<script>${script}</script><p>{${expression}}</p>`,
       root: { additionalScripts },
     });
+    const mutantCollector = new MutantCollector();
+    const context = transformerContextStub();
+
+    // Act
+    transformSvelte(svelteAst, mutantCollector, context);
+
+    // Assert
+    sinon.assert.calledWithExactly(
+      context.transform,
+      jsScriptAst,
+      mutantCollector,
+      {
+        ...context,
+        isExpressionContext: false,
+        options: { ...context.options, noHeader: true },
+      },
+    );
+    sinon.assert.calledWithExactly(
+      context.transform,
+      jsExpressionAst,
+      mutantCollector,
+      {
+        ...context,
+        isExpressionContext: true,
+        options: { ...context.options, noHeader: true },
+      },
+    );
+  });
+
+  it('should not pass isExpressionContext true for non template expression scripts', () => {
+    // Arrange
+    const script = 'let name = "test"';
+    const jsScriptAst = createJSAst({ rawContent: script });
+    const additionalScripts = [
+      createTemplateScript({
+        ast: jsScriptAst,
+        range: createRange(8, 25),
+        isExpression: false,
+      }),
+    ];
+    const svelteAst = createSvelteAst({
+      rawContent: `<script>${script}</script>`,
+      root: { additionalScripts },
+    });
+    const mutantCollector = new MutantCollector();
+    const context = transformerContextStub();
 
     // Act
     transformSvelte(svelteAst, mutantCollector, context);
 
     // Assert
     sinon.assert.calledOnceWithExactly(
-      svelteTemplateExpressionContext.markAsTemplateExpression,
-      jsExpressionAst.root,
-    );
-  });
-
-  it('should not mark non-expression scripts in the expression context', () => {
-    // Arrange
-    const moduleScriptContent = 'let isModule = true;';
-    const scriptContent = 'let isInstance = true;';
-    const moduleScriptStart = '<script context="module">';
-    const scriptStart = `${moduleScriptStart}${moduleScriptContent}</script><script>`;
-    const jsModuleAst = createJSAst({ rawContent: moduleScriptContent });
-    const jsScriptAst = createJSAst({ rawContent: scriptContent });
-    const moduleScript = createTemplateScript({
-      ast: jsModuleAst,
-      range: createRange(
-        moduleScriptStart.length,
-        moduleScriptStart.length + moduleScriptContent.length,
-      ),
-      isExpression: false,
-    });
-    const additionalScripts = [
-      createTemplateScript({
-        ast: jsScriptAst,
-        range: createRange(
-          scriptStart.length,
-          scriptStart.length + scriptContent.length,
-        ),
-        isExpression: false,
-      }),
-    ];
-    const svelteAst = createSvelteAst({
-      rawContent: `<script context="module">${moduleScriptContent}</script><script>${scriptContent}</script><p>hello</p>`,
-      root: { moduleScript, additionalScripts },
-    });
-
-    // Act
-    transformSvelte(svelteAst, mutantCollector, context);
-
-    // Assert
-    sinon.assert.notCalled(
-      svelteTemplateExpressionContext.markAsTemplateExpression,
+      context.transform,
+      jsScriptAst,
+      mutantCollector,
+      {
+        ...context,
+        isExpressionContext: false,
+        options: { ...context.options, noHeader: true },
+      },
     );
   });
 
@@ -195,7 +193,11 @@ describe('svelte-transformer', () => {
       const input = createSvelteAst();
 
       // Act
-      transformSvelte(createSvelteAst(), mutantCollector, context);
+      transformSvelte(
+        createSvelteAst(),
+        new MutantCollector(),
+        transformerContextStub(),
+      );
 
       // Assert
       expect(input.root.moduleScript).undefined;
@@ -230,6 +232,8 @@ describe('svelte-transformer', () => {
           additionalScripts: [templateNode],
         },
       });
+      const mutantCollector = new MutantCollector();
+      const context = transformerContextStub();
       context.transform
         .withArgs(jsModule, sinon.match.any, sinon.match.any)
         .callsFake(() => {
@@ -305,6 +309,8 @@ describe('svelte-transformer', () => {
         rawContent: rawContent,
         root: { additionalScripts: [templateNode] },
       });
+      const mutantCollector = new MutantCollector();
+      const context = transformerContextStub();
       context.transform
         .withArgs(jsTemplateScript, sinon.match.any, sinon.match.any)
         .callsFake(() => {

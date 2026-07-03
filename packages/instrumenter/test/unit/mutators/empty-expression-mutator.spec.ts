@@ -2,10 +2,8 @@ import { expect } from 'chai';
 import babel from '@babel/core';
 
 import type { Mutable } from '../../../src/mutant.js';
-import { EmptyExpressionMutator } from '../../../src/mutators/empty-expression-mutator.js';
+import { emptyExpressionMutator } from '../../../src/mutators/empty-expression-mutator.js';
 import { expectJSMutation } from '../../helpers/expect-mutation.js';
-import sinon from 'sinon';
-import { SvelteTemplateExpressionContext } from '../../../src/frameworks/svelte-template-expression-context.js';
 
 const { types } = babel;
 
@@ -16,24 +14,10 @@ function createMutantsInScope(count: number): Mutable[] {
   }));
 }
 
-describe(EmptyExpressionMutator.name, () => {
-  let svelteTemplateExpressionContextStub: sinon.SinonStubbedInstance<SvelteTemplateExpressionContext>;
-  let sut: EmptyExpressionMutator;
-
-  beforeEach(() => {
-    svelteTemplateExpressionContextStub = sinon.createStubInstance(
-      SvelteTemplateExpressionContext,
-    );
-    svelteTemplateExpressionContextStub.isTemplateExpressionContext.returns(
-      false,
-    );
-    svelteTemplateExpressionContextStub.isTemplateExpressionRoot.returns(false);
-    sut = new EmptyExpressionMutator(svelteTemplateExpressionContextStub);
-  });
-
+describe(emptyExpressionMutator.name, () => {
   describe('filter', () => {
     it('should only keep scopes with exactly one mutant', () => {
-      const { filter } = sut;
+      const { filter } = emptyExpressionMutator;
 
       if (!filter) {
         expect.fail('Expected filter to be defined');
@@ -47,69 +31,58 @@ describe(EmptyExpressionMutator.name, () => {
 
   describe('outside svelte template context', () => {
     it('should have name "CallExpression"', () => {
-      expect(sut.name).eq('CallExpression');
+      expect(emptyExpressionMutator.name).eq('CallExpression');
     });
 
     it('should mutate a call expression statement to an empty statement', () => {
-      expectJSMutation(sut, 'foo();', ';');
+      expectJSMutation(
+        emptyExpressionMutator,
+        'foo();',
+        { isExpressionContext: false },
+        ';',
+      );
     });
 
     it('should not mutate a super call expression statement', () => {
       expectJSMutation(
-        sut,
+        emptyExpressionMutator,
         'class Child extends Parent { constructor(){ super(); } }',
+        { isExpressionContext: false },
       );
     });
 
     it('should mutate throw new expressions to an empty statement', () => {
       expectJSMutation(
-        sut,
+        emptyExpressionMutator,
         'function f(){throw new Error();}',
+        { isExpressionContext: false },
         'function f(){;}',
       );
     });
 
     it('should not mutate throw statements with a non-new expression argument', () => {
-      expectJSMutation(sut, 'function f(){throw error;}');
+      expectJSMutation(emptyExpressionMutator, 'function f(){throw error;}', {
+        isExpressionContext: false,
+      });
     });
   });
 
   describe('inside svelte template context', () => {
     it('should mutate a template root call expression into void 0', () => {
-      svelteTemplateExpressionContextStub.isTemplateExpressionRoot.returns(
-        true,
+      expectJSMutation(
+        emptyExpressionMutator,
+        'foo();',
+        { isExpressionContext: true },
+        'void 0;',
       );
-      svelteTemplateExpressionContextStub.isTemplateExpressionContext.returns(
-        true,
-      );
-
-      expectJSMutation(sut, 'foo();', 'void 0;');
     });
 
     it('should not mutate a template root super call expression', () => {
-      svelteTemplateExpressionContextStub.isTemplateExpressionRoot.returns(
-        true,
-      );
-      svelteTemplateExpressionContextStub.isTemplateExpressionContext.returns(
-        true,
-      );
-
       expectJSMutation(
-        sut,
+        emptyExpressionMutator,
         'class Child extends Parent { constructor(){ super(); } }',
+        { isExpressionContext: true },
       );
-    });
-
-    it('should not mutate non-root statements in template context', () => {
-      svelteTemplateExpressionContextStub.isTemplateExpressionRoot.returns(
-        false,
-      );
-      svelteTemplateExpressionContextStub.isTemplateExpressionContext.returns(
-        true,
-      );
-
-      expectJSMutation(sut, 'foo();');
-      expectJSMutation(sut, 'function f(){throw new Error();}');
     });
   });
 });

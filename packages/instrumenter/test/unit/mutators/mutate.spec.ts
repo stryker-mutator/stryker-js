@@ -4,39 +4,10 @@ import { fileURLToPath, pathToFileURL } from 'url';
 
 import { expect } from 'chai';
 
-import { createAllMutators, NodeMutator } from '../../../src/mutators/index.js';
-import { SvelteTemplateExpressionContext } from '../../../src/frameworks/svelte-template-expression-context.js';
+import { allMutators, NodeMutator } from '../../../src/mutators/index.js';
 
-type NodeMutatorClass = new (...args: unknown[]) => NodeMutator;
-
-function isNodeMutatorObject(value: unknown): value is NodeMutator {
-  return (
-    typeof value === 'object' &&
-    value !== null &&
-    'name' in value &&
-    'mutate' in value &&
-    typeof value.name === 'string' &&
-    typeof value.mutate === 'function'
-  );
-}
-
-function isNodeMutatorClass(value: unknown): value is NodeMutatorClass {
-  return (
-    typeof value === 'function' &&
-    'prototype' in value &&
-    typeof value.prototype === 'object' &&
-    value.prototype !== null &&
-    'mutate' in value.prototype &&
-    typeof value.prototype.mutate === 'function'
-  );
-}
-
-describe('createAllMutators', () => {
+describe('allMutators', () => {
   it('should include all mutators', async () => {
-    const allMutators = createAllMutators(
-      new SvelteTemplateExpressionContext(),
-    );
-
     const resolveMutator = path.resolve.bind(
       path,
       path.dirname(fileURLToPath(import.meta.url)),
@@ -52,7 +23,7 @@ describe('createAllMutators', () => {
       'mutator-options.js',
       'mutate.js',
     ];
-    const actualMutators = await Promise.all(
+    const actualMutators = (await Promise.all(
       fs
         .readdirSync(resolveMutator())
         .filter((fileName) => fileName.endsWith('.js'))
@@ -67,27 +38,11 @@ describe('createAllMutators', () => {
               `File ${fileName} is exporting more than the mutator: ${keys.join(',')}`,
             );
           }
-          const exportName = keys[0];
-          return { exportName, mutator: mutatorModule[exportName] };
+          return mutatorModule[keys[0]];
         }),
-    );
-
-    const expectedMutatorNames = actualMutators.map(({ mutator }) => {
-      if (isNodeMutatorObject(mutator)) {
-        return mutator.name;
-      }
-      if (isNodeMutatorClass(mutator)) {
-        const instance = allMutators.find((m) => m.constructor === mutator);
-        if (instance) {
-          return instance.name;
-        }
-      }
-      throw new Error('Unknown mutator export shape');
-    });
-    const actualMutatorNames = allMutators.map((mutator) => mutator.name);
-
-    expectedMutatorNames.forEach((name) => {
-      expect(actualMutatorNames).includes(name, `${name} is missing!`);
+    )) as NodeMutator[];
+    actualMutators.forEach((mutator) => {
+      expect(allMutators.includes(mutator), `${mutator.name} is missing!`).ok;
     });
   });
 });

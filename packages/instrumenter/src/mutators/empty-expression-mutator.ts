@@ -1,8 +1,4 @@
 import babel from '@babel/core';
-import type { NodePath } from '@babel/core';
-
-import { SvelteTemplateExpressionContext } from '../frameworks/svelte-template-expression-context.js';
-import { Mutable } from '../mutant.js';
 import { NodeMutator } from './node-mutator.js';
 
 const { types } = babel;
@@ -15,30 +11,24 @@ function voidZero(): babel.types.UnaryExpression {
   return types.unaryExpression('void', types.numericLiteral(0), true);
 }
 
-export class EmptyExpressionMutator implements NodeMutator {
-  public readonly name = 'CallExpression';
+export const emptyExpressionMutator: NodeMutator = {
+  name: 'CallExpression',
 
-  public constructor(
-    private readonly svelteTemplateExpressionContext: SvelteTemplateExpressionContext,
-  ) {}
-
-  public *mutate(path: NodePath) {
+  *mutate(path, context) {
     if (
       path.isCallExpression() &&
-      this.svelteTemplateExpressionContext.isTemplateExpressionRoot(path) &&
+      context.isExpressionContext &&
       !isSuperCall(path.node)
     ) {
       yield voidZero();
       return;
     }
 
-    if (
-      this.svelteTemplateExpressionContext.isTemplateExpressionContext(path)
-    ) {
+    if (context.isExpressionContext) {
       return;
     }
 
-    if (path.isExpressionStatement()) {
+    if (path.node.type === 'ExpressionStatement') {
       if (
         path.node.expression.type === 'CallExpression' &&
         !isSuperCall(path.node.expression)
@@ -47,15 +37,13 @@ export class EmptyExpressionMutator implements NodeMutator {
       }
     }
 
-    if (
-      path.isThrowStatement() &&
-      path.node.argument?.type === 'NewExpression'
-    ) {
-      yield types.emptyStatement();
-    }
-  }
+    if (path.node.type === 'ThrowStatement')
+      if (path.node.argument.type === 'NewExpression') {
+        yield types.emptyStatement();
+      }
+  },
 
-  public filter(mutantsInScope: Mutable[]) {
+  filter(mutantsInScope) {
     return mutantsInScope.length === 1;
-  }
-}
+  },
+};
