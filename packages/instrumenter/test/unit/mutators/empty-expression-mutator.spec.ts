@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import babel from '@babel/core';
+import * as babel from '@babel/core';
 
 import type { Mutable } from '../../../src/mutant.js';
 import { emptyExpressionMutator } from '../../../src/mutators/empty-expression-mutator.js';

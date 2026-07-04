@@ -1,4 +1,5 @@
-import { Ignorer, NodePath } from '@stryker-mutator/api/ignore';
+import { NodePath } from '@babel/core';
+import { Ignorer } from '@stryker-mutator/api/ignore';
 
 const ANGULAR_SIGNAL_IO_FUNCTIONS = Object.freeze(['input', 'model', 'output']);
 

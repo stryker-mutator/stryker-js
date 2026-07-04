@@ -1,13 +1,9 @@
 import { createRequire } from 'module';
 
-import babel, { type NodePath, type types } from '@babel/core';
+import * as babel from '@babel/core';
+import { File, type NodePath, type types } from '@babel/core';
 import { expect } from 'chai';
 import generator from '@babel/generator';
-
-// @ts-expect-error The babel types don't define "File" yet
-import { File } from '@babel/core';
-
-const generate = generator.default;
 
 export type AstExpectation = (nodePath: NodePath) => boolean;
 
@@ -23,7 +19,7 @@ const { traverse, parseSync } = babel;
 export function expectAst(actual: types.File, assertion: AstExpectation): void {
   let found = false;
   traverse(actual, {
-    enter(nodePath) {
+    enter(nodePath: NodePath) {
       if (assertion(nodePath)) {
         found = true;
         nodePath.stop();
@@ -37,8 +33,12 @@ export function parseJS(code: string): types.File {
   // Wrap the AST in a `new File`, so `nodePath.buildCodeFrameError` works
   // https://github.com/babel/babel/issues/11889
   const { ast } = new File(
-    { filename: 'foo.js' },
-    { code, ast: parseSync(code) },
+    { filename: 'foo.js' } as unknown as ConstructorParameters<typeof File>[0],
+    {
+      code,
+      ast: parseSync(code, undefined)! as babel.types.File,
+      inputMap: undefined,
+    },
   );
   return ast;
 }
@@ -47,9 +47,10 @@ export function parseTS(code: string, fileName = 'example.ts'): types.File {
   // Wrap the AST in a `new File`, so `nodePath.buildCodeFrameError` works
   // https://github.com/babel/babel/issues/11889
   const { ast } = new File(
-    { filename: 'foo.js' },
+    { filename: 'foo.js' } as unknown as ConstructorParameters<typeof File>[0],
     {
       code,
+      inputMap: undefined,
       ast: parseSync(code, {
         presets: [require.resolve('@babel/preset-typescript')],
         filename: fileName,
@@ -59,20 +60,20 @@ export function parseTS(code: string, fileName = 'example.ts'): types.File {
             { legacy: true },
           ],
         ],
-      }),
+      })!,
     },
   );
   return ast;
 }
 
-export function findNodePath<T = types.Node>(
+export function findNodePath<T extends types.Node = types.Node>(
   ast: types.File,
   searchQuery: (nodePath: NodePath) => boolean,
 ): NodePath<T> {
   let theNode: NodePath<T> | undefined;
   traverse(ast, {
     noScope: true,
-    enter(path) {
+    enter(path: NodePath) {
       if (searchQuery(path)) {
         theNode = path as unknown as NodePath<T>;
         path.stop();
@@ -83,7 +84,7 @@ export function findNodePath<T = types.Node>(
     return theNode;
   } else {
     throw new Error(
-      `Cannot find node ${searchQuery.toString()} in ${generate(ast).code}`,
+      `Cannot find node ${searchQuery.toString()} in ${generator(ast).code}`,
     );
   }
 }

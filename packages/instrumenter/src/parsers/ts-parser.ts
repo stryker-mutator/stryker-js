@@ -1,6 +1,6 @@
 import { createRequire } from 'module';
 
-import babel from '@babel/core';
+import * as babel from '@babel/core';
 
 import { AstFormat, TSAst, TsxAst } from '../syntax/index.js';
 
@@ -52,7 +52,7 @@ async function parse(
     ],
     plugins: [
       [require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
-      [require.resolve('@babel/plugin-transform-explicit-resource-management')],
+      require.resolve('@babel/plugin-transform-explicit-resource-management'),
     ],
   });
   if (ast === null) {
