@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`instrumenter integration should be able to instrument switch case statements (using the switchCaseMutantPlacer) 1`] = `
-"function stryNS_9fa48() {
+exports[`instrumenter integration should be able to instrument svelte with template call expressions 1`] = `
+"<script context=\\"module\\">
+
+function stryNS_9fa48() {
   var g = typeof globalThis === 'object' && globalThis && globalThis.Math === Math && globalThis || new Function(\\"return this\\")();
   var ns = g.__stryker__ || (g.__stryker__ = {});
   if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
@@ -47,18 +49,21 @@ function stryMutAct_9fa48(id) {
   stryMutAct_9fa48 = isActive;
   return isActive(id);
 }
-switch (foo) {
-  case stryMutAct_9fa48(\\"1\\") ? \\"\\" : (stryCov_9fa48(\\"1\\"), 'bar'):
-    if (stryMutAct_9fa48(\\"0\\")) {} else {
-      stryCov_9fa48(\\"0\\");
-      console.log(stryMutAct_9fa48(\\"3\\") ? \\"\\" : (stryCov_9fa48(\\"3\\"), 'bar'));
-      break;
-    }
-  case stryMutAct_9fa48(\\"5\\") ? \\"\\" : (stryCov_9fa48(\\"5\\"), 'baz'):
-    if (stryMutAct_9fa48(\\"4\\")) {} else {
-      stryCov_9fa48(\\"4\\");
-      console.log(stryMutAct_9fa48(\\"7\\") ? \\"\\" : (stryCov_9fa48(\\"7\\"), 'baz'));
-      break;
-    }
-}"
+
+</script>
+<script>
+export function sum(a, b) {
+  if (stryMutAct_9fa48(\\"0\\")) {
+    {}
+  } else {
+    stryCov_9fa48(\\"0\\");
+    return stryMutAct_9fa48(\\"1\\") ? a - b : (stryCov_9fa48(\\"1\\"), a + b);
+  }
+}
+</script>
+
+<main>
+  <p>1 + 2 = {stryMutAct_9fa48(\\"2\\") ? void 0 : (stryCov_9fa48(\\"2\\"), sum(1, 2))}</p>
+</main>
+"
 `;

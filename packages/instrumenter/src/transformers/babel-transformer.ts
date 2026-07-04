@@ -36,7 +36,7 @@ type PlacementMap = Map<types.Node, MutantsPlacement<types.Node>>;
 export const transformBabel: AstTransformer<ScriptFormat> = (
   { root, originFileName, rawContent, offset },
   mutantCollector,
-  { options, mutateDescription, logger },
+  { options, mutateDescription, logger, isExpressionContext },
   mutators = allMutators,
   mutantPlacers = allMutantPlacers,
 ) => {
@@ -256,7 +256,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
    */
   function* mutate(node: NodePath): Iterable<Mutable> {
     for (const mutator of mutators) {
-      for (const replacement of mutator.mutate(node)) {
+      for (const replacement of mutator.mutate(node, { isExpressionContext })) {
         yield {
           replacement,
           mutatorName: mutator.name,

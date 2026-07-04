@@ -198,6 +198,11 @@ function remapScriptLocations(
   const scriptRanges = [moduleScriptRange, ...templateRanges]
     .filter(notEmpty)
     .sort((a, b) => a.start - b.start);
+  const expressionFormat = [...scriptMap.values()].some(
+    (s) => s.attributes.lang === 'ts',
+  )
+    ? AstFormat.TS
+    : AstFormat.JS;
   let offset = 0;
   let newModuleScriptRange: TemplateScriptRange | undefined;
   const newScriptRanges: TemplateScriptRange[] = scriptRanges.map((range) => {
@@ -218,12 +223,12 @@ function remapScriptLocations(
       }
       return scriptRange;
     } else {
-      // Template script is always JS
+      // Template expressions use the same format as the file's script lang
       return {
         start,
         end: start + script.length,
         isExpression: range.isExpression,
-        format: AstFormat.JS,
+        format: range.isExpression ? expressionFormat : AstFormat.JS,
       };
     }
   });

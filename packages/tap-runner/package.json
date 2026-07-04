@@ -55,10 +55,10 @@
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "workspace:*",
-    "@types/node": "24.12.4",
-    "ava": "7.0.0",
-    "tap": "21.7.1",
-    "tsx": "4.22.3"
+    "@types/node": "24.13.2",
+    "ava": "8.0.1",
+    "tap": "21.7.4",
+    "tsx": "4.22.4"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "workspace:*"

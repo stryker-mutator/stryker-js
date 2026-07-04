@@ -9,53 +9,122 @@ describe(sut.name, () => {
   });
 
   it('should mutate ternary operator', () => {
-    expectJSMutation(sut, 'a < 3? b : c', 'false? b : c', 'true? b : c');
+    expectJSMutation(
+      sut,
+      'a < 3? b : c',
+      { isExpressionContext: false },
+      'false? b : c',
+      'true? b : c',
+    );
   });
 
   it('should mutate < and >', () => {
-    expectJSMutation(sut, 'a < b', 'true', 'false');
-    expectJSMutation(sut, 'a > b', 'true', 'false');
+    expectJSMutation(
+      sut,
+      'a < b',
+      { isExpressionContext: false },
+      'true',
+      'false',
+    );
+    expectJSMutation(
+      sut,
+      'a > b',
+      { isExpressionContext: false },
+      'true',
+      'false',
+    );
   });
 
   it('should mutate <= and >=', () => {
-    expectJSMutation(sut, 'a <= b', 'true', 'false');
-    expectJSMutation(sut, 'a >= b', 'true', 'false');
+    expectJSMutation(
+      sut,
+      'a <= b',
+      { isExpressionContext: false },
+      'true',
+      'false',
+    );
+    expectJSMutation(
+      sut,
+      'a >= b',
+      { isExpressionContext: false },
+      'true',
+      'false',
+    );
   });
 
   it('should mutate == and ===', () => {
-    expectJSMutation(sut, 'a == b', 'true', 'false');
-    expectJSMutation(sut, 'a === b', 'true', 'false');
+    expectJSMutation(
+      sut,
+      'a == b',
+      { isExpressionContext: false },
+      'true',
+      'false',
+    );
+    expectJSMutation(
+      sut,
+      'a === b',
+      { isExpressionContext: false },
+      'true',
+      'false',
+    );
   });
 
   it('should mutate != and !==', () => {
-    expectJSMutation(sut, 'a != b', 'true', 'false');
-    expectJSMutation(sut, 'a !== b', 'true', 'false');
+    expectJSMutation(
+      sut,
+      'a != b',
+      { isExpressionContext: false },
+      'true',
+      'false',
+    );
+    expectJSMutation(
+      sut,
+      'a !== b',
+      { isExpressionContext: false },
+      'true',
+      'false',
+    );
   });
 
   it('should mutate && and ||', () => {
-    expectJSMutation(sut, 'a && b', 'true', 'false');
-    expectJSMutation(sut, 'a || b', 'true', 'false');
+    expectJSMutation(
+      sut,
+      'a && b',
+      { isExpressionContext: false },
+      'true',
+      'false',
+    );
+    expectJSMutation(
+      sut,
+      'a || b',
+      { isExpressionContext: false },
+      'true',
+      'false',
+    );
   });
 
   it('should not mutate + and -', () => {
-    expectJSMutation(sut, 'a + b');
-    expectJSMutation(sut, 'a - b');
+    expectJSMutation(sut, 'a + b', { isExpressionContext: false });
+    expectJSMutation(sut, 'a - b', { isExpressionContext: false });
   });
 
   it('should not mutate *, % and /', () => {
-    expectJSMutation(sut, 'a * b');
-    expectJSMutation(sut, 'a / b');
-    expectJSMutation(sut, 'a % b');
+    expectJSMutation(sut, 'a * b', { isExpressionContext: false });
+    expectJSMutation(sut, 'a / b', { isExpressionContext: false });
+    expectJSMutation(sut, 'a % b', { isExpressionContext: false });
   });
 
   it('should not mutate assignments', () => {
-    expectJSMutation(sut, 'let displayName; displayName = "Label";');
+    expectJSMutation(sut, 'let displayName; displayName = "Label";', {
+      isExpressionContext: false,
+    });
   });
 
   it('should mutate the expression of a do statement', () => {
     expectJSMutation(
       sut,
       'do { console.log(); } while(a < b);',
+      { isExpressionContext: false },
       'do { console.log(); } while(false);',
     );
   });
@@ -64,6 +133,7 @@ describe(sut.name, () => {
     expectJSMutation(
       sut,
       'for(let i=0;i<10; i++) { console.log(); }',
+      { isExpressionContext: false },
       'for(let i=0;false; i++) { console.log(); }',
     );
   });
@@ -72,6 +142,7 @@ describe(sut.name, () => {
     expectJSMutation(
       sut,
       'for(let i=0;; i++) { console.log(); }',
+      { isExpressionContext: false },
       `for (let i = 0; false; i++) {
   console.log();
 }`,
@@ -82,6 +153,7 @@ describe(sut.name, () => {
     expectJSMutation(
       sut,
       'if (b === 5 || c === 3) { a++ }',
+      { isExpressionContext: false },
       'if (true) { a++ }',
       'if (false) { a++ }',
       'if (false || c === 3) { a++ }',
@@ -93,6 +165,7 @@ describe(sut.name, () => {
     expectJSMutation(
       sut,
       'if (b === 5 && c === 3) { a++ }',
+      { isExpressionContext: false },
       'if (true) { a++ }',
       'if (false) { a++ }',
       'if (true && c === 3) { a++ }',
@@ -104,6 +177,7 @@ describe(sut.name, () => {
     expectJSMutation(
       sut,
       'if ((c1 && c2) || (c3 && c4)) { a++ }',
+      { isExpressionContext: false },
       'if (true) { a++ }',
       'if (false) { a++ }',
       'if ((false) || (c3 && c4)) { a++ }',
@@ -115,6 +189,7 @@ describe(sut.name, () => {
     expectJSMutation(
       sut,
       'if ((c1 || c2) && (c3 || c4)) { a++ }',
+      { isExpressionContext: false },
       'if (true) { a++ }',
       'if (false) { a++ }',
       'if ((true) && (c3 || c4)) { a++ }',
@@ -126,6 +201,7 @@ describe(sut.name, () => {
     expectJSMutation(
       sut,
       'if (something) { a++ }',
+      { isExpressionContext: false },
       'if (true) { a++ }',
       'if (false) { a++ }',
     );
@@ -135,6 +211,7 @@ describe(sut.name, () => {
     expectJSMutation(
       sut,
       'switch (v) {case 0: a = "foo"; case 1: a = "qux"; break; default: a = "spam";}',
+      { isExpressionContext: false },
       'switch (v) {case 0: case 1: a = "qux"; break; default: a = "spam";}',
       'switch (v) {case 0: a = "foo"; case 1: default: a = "spam";}',
       'switch (v) {case 0: a = "foo"; case 1: a = "qux"; break; default:}',
@@ -145,6 +222,7 @@ describe(sut.name, () => {
     expectJSMutation(
       sut,
       'switch (v) {case 0: case 1: break; default: a = "spam";}',
+      { isExpressionContext: false },
       'switch (v) {case 0: case 1: default: a = "spam";}',
       'switch (v) {case 0: case 1: break; default:}',
     );
@@ -154,6 +232,7 @@ describe(sut.name, () => {
     expectJSMutation(
       sut,
       'while(a < b) { console.log(); }',
+      { isExpressionContext: false },
       'while(false) { console.log(); }',
     );
   });

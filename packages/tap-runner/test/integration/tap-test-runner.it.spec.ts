@@ -301,7 +301,7 @@ describe('tap-runner integration', () => {
     beforeEach(async () => {
       sandbox = new TempTestDirectorySandbox('ava');
       await sandbox.init();
-      const avaLocation = require.resolve('ava').replace('main.cjs', 'cli.mjs');
+      const avaLocation = require.resolve('ava').replace('main.js', 'cli.js');
       options.forceBail = false;
       options.tap = tapRunnerOptions({
         nodeArgs: [avaLocation, '--tap'],

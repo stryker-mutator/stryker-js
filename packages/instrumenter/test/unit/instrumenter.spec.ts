@@ -90,6 +90,7 @@ describe(Instrumenter.name, () => {
         { start: { line: 1, column: 0 }, end: { line: 7, column: 42 } },
       ],
       logger: testInjector.logger,
+      isExpressionContext: false,
     });
   });
 
