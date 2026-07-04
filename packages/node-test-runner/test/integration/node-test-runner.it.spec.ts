@@ -273,6 +273,23 @@ describe('node-test-runner integration', () => {
       expect(testInjector.logger.debug).calledWithMatch(/exited unexpectedly/);
     });
 
+    it('should report skip/todo tests as Skipped and never as failures', async () => {
+      options.nodeTest = nodeTestRunnerOptions({
+        testFiles: ['skips.spec.mjs'],
+      });
+      await sut.init();
+
+      const run = await sut.dryRun(factory.dryRunOptions());
+
+      // the suite is green under `node --test`, so the dry run must complete
+      assertions.expectCompleted(run);
+      expect(run.tests.map((test) => test.status).sort()).deep.eq([
+        TestStatus.Success,
+        TestStatus.Skipped,
+        TestStatus.Skipped,
+      ]);
+    });
+
     it('should pass nodeArgs to the test process', async () => {
       options.nodeTest = nodeTestRunnerOptions({
         testFiles: ['slow.spec.mjs'],

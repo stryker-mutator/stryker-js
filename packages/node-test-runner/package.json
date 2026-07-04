@@ -58,5 +58,8 @@
   },
   "peerDependencies": {
     "@stryker-mutator/core": "workspace:*"
+  },
+  "initStrykerConfig": {
+    "coverageAnalysis": "perTest"
   }
 }

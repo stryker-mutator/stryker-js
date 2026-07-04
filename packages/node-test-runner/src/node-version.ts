@@ -1,7 +1,5 @@
-// `run({ isolation: 'none' })` — required so the instrumented SUT and the Stryker
-// globals share one thread — is available since Node 22.8.0. On older runtimes
-// the option is ignored and tests run in child processes, where mutants can't be
-// activated (everything would survive), so the runner fails fast instead.
+// Older runtimes ignore `run({ isolation: 'none' })` and run files in child processes,
+// where coverage/hitCount accrue out of this runner's sight, so fail fast instead.
 export const MIN_NODE_VERSION = '22.8.0';
 
 export function isSupportedNodeVersion(

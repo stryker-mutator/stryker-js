@@ -7,6 +7,8 @@ export interface TestEvent {
   data: {
     name: string;
     file?: string;
+    skip?: boolean | string;
+    todo?: boolean | string;
     details?: {
       type?: string;
       duration_ms?: number;
@@ -19,7 +21,7 @@ export interface ReportedTest {
   id: string;
   name: string;
   file?: string;
-  status: 'pass' | 'fail';
+  status: 'pass' | 'fail' | 'skip';
   timeSpentMs: number;
   failureMessage?: string;
 }
@@ -45,14 +47,16 @@ export function toReportedTest(
   const file = d.file
     ? path.relative(cwd, d.file).split(path.sep).join('/')
     : undefined;
-  const failed = event.type === 'test:fail';
+  // skip/todo is never a failure: `node --test` exits 0 even for a failing todo
+  const skipped = Boolean(d.skip) || Boolean(d.todo);
+  const failed = !skipped && event.type === 'test:fail';
   const failureMessage =
     typeof error === 'string' ? error : (error?.message ?? 'test failed');
   return {
     id: toTestId(file ?? '', d.name),
     name: d.name,
     file,
-    status: failed ? 'fail' : 'pass',
+    status: skipped ? 'skip' : failed ? 'fail' : 'pass',
     timeSpentMs: d.details?.duration_ms ?? 0,
     failureMessage: failed ? failureMessage : undefined,
   };

@@ -147,4 +147,49 @@ describe('toReportedTest', () => {
     expect(result?.file).eq(undefined);
     expect(result?.id).eq(toTestId('', 'a test'));
   });
+
+  it('reports a skipped test as skip, not pass', () => {
+    const result = toReportedTest(
+      event({ type: 'test:pass', skip: true }),
+      cwd,
+      setupFile,
+    );
+
+    expect(result?.status).eq('skip');
+  });
+
+  it('reports a skip with a reason string as skip', () => {
+    const result = toReportedTest(
+      event({ type: 'test:pass', skip: 'not on CI' }),
+      cwd,
+      setupFile,
+    );
+
+    expect(result?.status).eq('skip');
+  });
+
+  it('reports a todo test as skip', () => {
+    const result = toReportedTest(
+      event({ type: 'test:pass', todo: true }),
+      cwd,
+      setupFile,
+    );
+
+    expect(result?.status).eq('skip');
+  });
+
+  it('reports a FAILING todo as skip — node --test treats it as non-fatal', () => {
+    const result = toReportedTest(
+      event({
+        type: 'test:fail',
+        todo: true,
+        details: { error: { message: 'not implemented yet' } },
+      }),
+      cwd,
+      setupFile,
+    );
+
+    expect(result?.status).eq('skip');
+    expect(result?.failureMessage).eq(undefined);
+  });
 });

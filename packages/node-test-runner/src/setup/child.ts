@@ -63,7 +63,8 @@ process.once('message', (config: ChildConfig) => {
     stream.on('end', () =>
       finish({
         type: 'done',
-        coverage: ns.mutantCoverage,
+        // gate on the flag: instrumented code lazily re-creates ns.mutantCoverage
+        coverage: collectCoverage ? ns.mutantCoverage : undefined,
         hitCount: ns.hitCount,
       }),
     );

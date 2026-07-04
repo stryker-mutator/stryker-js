@@ -73,6 +73,7 @@ Run tests concurrently within a single mutant run. The dry run is always seriali
 
 ## Limitations
 
+- All test files in a run share one process and module registry (`isolation: 'none'`), unlike `node --test`'s default process-per-file mode. Tests that leak state across files (e.g. two files each asserting on the same module-level counter) pass under plain `node --test` but fail here in the initial test run. Preflight with `node --test --test-isolation=none`; if your suite genuinely needs per-file process isolation, use [`@stryker-mutator/tap-runner`](./tap-runner.md) instead.
 - A fresh process is forked per run. This keeps the `node:test` registry clean and lets static mutants be activated before the code under test is imported, but it does add per-run process startup overhead.
 - Bailing on the first failing test is implemented by killing the test process group. On non-Unix platforms (e.g. Windows) only the test process itself is terminated; child processes that your tests spawn may not be reaped.
 - A `test()` (or `t.test()`) block that *wraps subtests* is reported as a test in its own right, in addition to each of its subtests, because `node:test` does not expose a way to tell such a parent apart from a leaf test. Grouping with `describe`/`it` avoids this — `describe` blocks are recognized as suites and are not counted as tests.

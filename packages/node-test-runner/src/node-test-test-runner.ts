@@ -27,6 +27,7 @@ import {
   StrykerOptions,
 } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
+import { testFilesProvided } from '@stryker-mutator/util';
 import { glob } from 'glob';
 
 import * as pluginTokens from './plugin-tokens.js';
@@ -43,7 +44,7 @@ interface ReportedTest {
   id: string;
   name: string;
   file?: string;
-  status: 'pass' | 'fail';
+  status: 'pass' | 'fail' | 'skip';
   timeSpentMs: number;
   failureMessage?: string;
 }
@@ -140,8 +141,8 @@ export class NodeTestRunner implements TestRunner {
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
     return this.run(
       {
-        testFiles: options.testFiles?.length
-          ? options.testFiles
+        testFiles: testFilesProvided(options)
+          ? options.testFiles!
           : this.testFiles,
         collectCoverage: options.coverageAnalysis !== 'off',
         concurrency: false,
@@ -239,13 +240,18 @@ export class NodeTestRunner implements TestRunner {
         timeSpentMs: t.timeSpentMs,
         fileName: t.file,
       };
-      return t.status === 'fail'
-        ? {
+      switch (t.status) {
+        case 'fail':
+          return {
             ...base,
             status: TestStatus.Failed,
             failureMessage: t.failureMessage ?? 'test failed',
-          }
-        : { ...base, status: TestStatus.Success };
+          };
+        case 'skip':
+          return { ...base, status: TestStatus.Skipped };
+        default:
+          return { ...base, status: TestStatus.Success };
+      }
     });
   }
 

@@ -65,6 +65,11 @@ Configure the `testRunner` setting and (optionally) the test file globs:
 
 ## Limitations
 
+- All test files in a run share one process and module registry (`isolation: 'none'`), unlike
+  `node --test`'s default process-per-file mode. Tests that leak state across files — e.g. two
+  files each asserting on the same module-level counter — pass under plain `node --test` but fail
+  here in the initial test run. Preflight with `node --test --test-isolation=none`; if your suite
+  genuinely needs per-file process isolation, use `@stryker-mutator/tap-runner` instead.
 - Mutant-level test selection is file-granular: a covering test pulls in its whole file. (Test ids
   encode the file, so cross-file name collisions are handled correctly — only two identically-named
   tests in the *same* file share a coverage entry, which is cosmetic.)

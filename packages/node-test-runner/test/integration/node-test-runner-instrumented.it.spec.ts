@@ -110,6 +110,16 @@ describe('node-test-runner running on an instrumented project', () => {
     });
   });
 
+  it('should not ship coverage when coverageAnalysis is "off" on instrumented code', async () => {
+    // instrumented code lazily re-creates the coverage object; the child must gate on collectCoverage
+    const result = await sut.dryRun(
+      factory.dryRunOptions({ coverageAnalysis: 'off' }),
+    );
+
+    assertions.expectCompleted(result);
+    expect(result.mutantCoverage).eq(undefined);
+  });
+
   it('should kill a mutant when concurrency is enabled for the mutant run', async () => {
     (testInjector.options as NodeTestRunnerOptionsWithStrykerOptions).nodeTest =
       nodeTestRunnerOptions({
