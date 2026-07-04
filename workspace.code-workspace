@@ -49,6 +49,10 @@
       "path": "packages/tap-runner"
     },
     {
+      "name": "node-test-runner",
+      "path": "packages/node-test-runner"
+    },
+    {
       "name": "typescript-checker",
       "path": "packages/typescript-checker"
     },

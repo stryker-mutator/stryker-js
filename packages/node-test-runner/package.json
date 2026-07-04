@@ -1,0 +1,65 @@
+{
+  "name": "@stryker-mutator/node-test-runner",
+  "version": "9.6.1",
+  "description": "A plugin to use the built-in Node.js test runner (node:test) in Stryker, the JavaScript mutation testing framework",
+  "files": [
+    "dist/schema",
+    "dist/src-generated",
+    "dist/src",
+    "src-generated",
+    "src"
+  ],
+  "exports": {
+    ".": "./dist/src/index.js",
+    "./package.json": "./package.json"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "c8 npm run test:all",
+    "test:all": "npm run test:unit && npm run test:integration",
+    "test:unit": "mocha \"dist/test/unit/**/*.js\"",
+    "test:integration": "mocha --no-timeout \"dist/test/integration/**/*.js\"",
+    "stryker": "node ../core/bin/stryker.js run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stryker-mutator/stryker-js.git",
+    "directory": "packages/node-test-runner"
+  },
+  "engines": {
+    "node": ">=22.8.0"
+  },
+  "keywords": [
+    "stryker",
+    "node:test",
+    "node-test",
+    "@stryker-mutator/test-runner-plugin"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "contributors": [
+    "will Farrell"
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/stryker-mutator/stryker-js/issues"
+  },
+  "homepage": "https://stryker-mutator.io/docs/stryker-js/node-test-runner",
+  "dependencies": {
+    "@stryker-mutator/api": "workspace:*",
+    "@stryker-mutator/util": "workspace:*",
+    "glob": "~13.0.0",
+    "tslib": "~2.8.0"
+  },
+  "devDependencies": {
+    "@stryker-mutator/test-helpers": "workspace:*",
+    "@types/node": "24.12.4"
+  },
+  "peerDependencies": {
+    "@stryker-mutator/core": "workspace:*"
+  },
+  "initStrykerConfig": {
+    "coverageAnalysis": "perTest"
+  }
+}

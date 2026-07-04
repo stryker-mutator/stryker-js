@@ -1,0 +1,16 @@
+{
+  "name": "node-test-runner-e2e",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A project using the built-in Node.js test runner (node:test)",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "clean:reports": "rimraf \"reports\"",
+    "test": "npm run clean:reports && stryker run && npm run verify",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test:unit": "node --test"
+  },
+  "author": "",
+  "license": "ISC"
+}
