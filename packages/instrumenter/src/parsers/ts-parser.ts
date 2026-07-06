@@ -45,13 +45,14 @@ async function parse(
     configFile: false,
     babelrc: false,
     presets: [
-      [
-        require.resolve('@babel/preset-typescript'),
-        { isTSX, allExtensions: true },
-      ],
+      [require.resolve('@babel/preset-typescript'), { ignoreExtensions: true }],
+      require.resolve('@babel/preset-react'),
     ],
     plugins: [
-      [require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
+      [
+        require.resolve('@babel/plugin-proposal-decorators'),
+        { version: 'legacy' },
+      ],
       require.resolve('@babel/plugin-transform-explicit-resource-management'),
     ],
   });

@@ -54,12 +54,12 @@ export function parseTS(code: string, fileName = 'example.ts'): types.File {
       ast: parseSync(code, {
         presets: [require.resolve('@babel/preset-typescript')],
         filename: fileName,
-        plugins: [
-          [
-            require.resolve('@babel/plugin-proposal-decorators'),
-            { legacy: true },
-          ],
-        ],
+        // plugins: [
+        //   [
+        //     require.resolve('@babel/plugin-proposal-decorators'),
+        //     { legacy: true },
+        //   ],
+        // ],
       })!,
     },
   );

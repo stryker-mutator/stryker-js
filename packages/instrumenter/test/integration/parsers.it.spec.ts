@@ -15,7 +15,7 @@ import { resolveTestResource } from '../helpers/resolve-test-resource.js';
 
 const resolveParserTestResource = resolveTestResource.bind(null, 'parser');
 
-describe('parsers integration', () => {
+describe.only('parsers integration', () => {
   it('should allow to parse html with script tags', async () => {
     const actual = await actAssertHtml('index.html');
     expect(actual.root.scripts).lengthOf(2);

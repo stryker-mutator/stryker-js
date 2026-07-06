@@ -44,6 +44,7 @@
     "@babel/parser": "~8.0.0",
     "@babel/plugin-proposal-decorators": "~8.0.0",
     "@babel/plugin-transform-explicit-resource-management": "^8.0.0",
+    "@babel/preset-react": "~8.0.0",
     "@babel/preset-typescript": "~8.0.0",
     "@stryker-mutator/api": "workspace:*",
     "@stryker-mutator/util": "workspace:*",
@@ -53,7 +54,6 @@
     "weapon-regex": "~2.0.0"
   },
   "devDependencies": {
-    "@babel/preset-react": "8.0.1",
     "@stryker-mutator/test-helpers": "workspace:*",
     "@types/babel__core": "7.20.5",
     "@types/babel__generator": "7.27.0",
