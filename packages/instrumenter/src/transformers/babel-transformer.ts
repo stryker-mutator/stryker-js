@@ -1,5 +1,4 @@
-import * as babel from '@babel/core';
-import { File, type NodePath, type types } from '@babel/core';
+import { traverse, File, type NodePath, type types } from '@babel/core';
 
 import {
   isImportDeclaration,
@@ -21,8 +20,6 @@ import { DirectiveBookkeeper } from './directive-bookkeeper.js';
 import { IgnorerBookkeeper } from './ignorer-bookkeeper.js';
 
 import { AstTransformer } from './index.js';
-
-const { traverse } = babel;
 
 interface MutantsPlacement<TNode extends types.Node> {
   appliedMutants: Map<Mutant, TNode>;

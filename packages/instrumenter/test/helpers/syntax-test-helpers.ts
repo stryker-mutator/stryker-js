@@ -53,6 +53,12 @@ export function parseTS(code: string, fileName = 'example.ts'): types.File {
       inputMap: undefined,
       ast: parseSync(code, {
         presets: [require.resolve('@babel/preset-typescript')],
+        plugins: [
+          [
+            require.resolve('@babel/plugin-proposal-decorators'),
+            { version: 'legacy' },
+          ],
+        ],
         filename: fileName,
         // plugins: [
         //   [
