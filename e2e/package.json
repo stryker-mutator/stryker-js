@@ -84,7 +84,7 @@
     "typescript": "6.0.3",
     "vite": "8.0.16",
     "webpack": "5.108.4",
-    "webpack-cli": "7.1.0"
+    "webpack-cli": "7.2.1"
   },
   "dependenciesMeta": {
     "@stryker-mutator/api": {
