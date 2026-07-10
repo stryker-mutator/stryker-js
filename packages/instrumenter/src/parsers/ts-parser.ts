@@ -3,6 +3,7 @@ import { createRequire } from 'module';
 import * as babel from '@babel/core';
 
 import { AstFormat, TSAst, TsxAst } from '../syntax/index.js';
+import { notEmpty } from '@stryker-mutator/util';
 
 const { types, parseAsync } = babel;
 const require = createRequire(import.meta.url);
@@ -32,6 +33,14 @@ export async function parseTsx(
   };
 }
 
+const tsPreset: babel.PresetItem[] = [
+  [require.resolve('@babel/preset-typescript'), { ignoreExtensions: true }],
+];
+const tsxPresets: babel.PresetItem[] = [
+  ...tsPreset,
+  require.resolve('@babel/preset-react'),
+];
+
 async function parse(
   text: string,
   fileName: string,
@@ -44,10 +53,7 @@ async function parse(
     },
     configFile: false,
     babelrc: false,
-    presets: [
-      [require.resolve('@babel/preset-typescript'), { ignoreExtensions: true }],
-      require.resolve('@babel/preset-react'),
-    ],
+    presets: isTSX ? tsxPresets : tsPreset,
     plugins: [
       [
         require.resolve('@babel/plugin-proposal-decorators'),

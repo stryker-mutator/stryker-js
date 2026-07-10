@@ -1,9 +1,9 @@
-// @ts-check
+import type { NodePath } from '@babel/core';
 import { PluginKind, declareValuePlugin } from '@stryker-mutator/api/plugin';
 
 export const strykerPlugins = [
   declareValuePlugin(PluginKind.Ignore, 'ConsoleIgnorer', {
-    shouldIgnore(path) {
+    shouldIgnore(path: NodePath) {
       if (
         path.isExpressionStatement() &&
         path.node.expression.type === 'CallExpression' &&
