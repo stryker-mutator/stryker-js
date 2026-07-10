@@ -6,7 +6,7 @@ import type { Ignorer } from '@stryker-mutator/api/ignore';
 //   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 //   interface NodePath extends BabelNodePath<types.Node> {}
 // }
-  
+
 /**
  * Responsible for keeping track of the active ignore message and node using the configured ignore-plugins.
  */
