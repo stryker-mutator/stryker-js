@@ -1,5 +1,5 @@
 import assert from 'assert';
-import Bank from '../src/Bank';
+import Bank from '../src/Bank.js';
 
 describe('Bank', () => {
   it('should set money', () => {
