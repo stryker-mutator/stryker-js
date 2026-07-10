@@ -38,6 +38,8 @@
   "homepage": "https://github.com/stryker-mutator/stryker-js/tree/master/packages/util#readme",
   "devDependencies": {
     "@stryker-mutator/test-helpers": "workspace:*",
-    "@types/node": "24.13.2"
+    "@types/node": "24.13.2",
+    "@typescript/typescript6": "^6.0.1",
+    "esbuild": "^0.28.1"
   }
 }
