@@ -1197,12 +1197,6 @@ importers:
       '@stryker-mutator/test-helpers':
         specifier: workspace:*
         version: link:../test-helpers
-      '@types/babel__core':
-        specifier: 7.20.5
-        version: 7.20.5
-      '@types/babel__generator':
-        specifier: 7.27.0
-        version: 7.27.0
       '@types/estree':
         specifier: 1.0.9
         version: 1.0.9
