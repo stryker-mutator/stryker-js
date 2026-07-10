@@ -3,7 +3,6 @@ import { createRequire } from 'module';
 import * as babel from '@babel/core';
 
 import { AstFormat, TSAst, TsxAst } from '../syntax/index.js';
-import { notEmpty } from '@stryker-mutator/util';
 
 const { types, parseAsync } = babel;
 const require = createRequire(import.meta.url);
