@@ -42,6 +42,7 @@
     "@babel/core": "~8.0.0",
     "@babel/generator": "~8.0.0",
     "@babel/parser": "~8.0.0",
+    "@babel/traverse": "~8.0.4",
     "@babel/plugin-proposal-decorators": "~8.0.0",
     "@babel/plugin-transform-explicit-resource-management": "^8.0.0",
     "@babel/preset-react": "~8.0.0",

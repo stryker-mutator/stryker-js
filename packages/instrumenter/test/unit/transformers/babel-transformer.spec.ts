@@ -257,7 +257,7 @@ describe('babel-transformer', () => {
       expect(code).not.contain('bar');
     });
 
-    it.only('should pass only subtree mutants to the filter', () => {
+    it('should pass only subtree mutants to the filter', () => {
       const filterablePlusMutator: NodeMutator = {
         ...plusMutator,
         name: 'FilterablePlus',

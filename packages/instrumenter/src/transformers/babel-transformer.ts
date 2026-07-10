@@ -1,4 +1,5 @@
-import { traverse, File, type NodePath, type types } from '@babel/core';
+import { File, type NodePath, type types } from '@babel/core';
+import traverse from '@babel/traverse';
 
 import {
   isImportDeclaration,
