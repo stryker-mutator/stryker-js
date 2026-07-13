@@ -137,7 +137,7 @@ describe('Typescript checker (native preview) on a single project', () => {
     expect(result).deep.eq(expectedResult);
   });
 
-  it('should be allow mutations in unrelated files', async () => {
+  it('should allow mutations in unrelated files', async () => {
     // Act
     const result = await sut.check([
       createMutant('not-type-checked.js', 'bar', 'baz', 'id1'),
