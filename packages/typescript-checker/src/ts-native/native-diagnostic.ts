@@ -1,7 +1,10 @@
 import { EOL } from 'os';
 import path from 'path';
 
-import type { Diagnostic, DiagnosticCategory } from 'typescript7/unstable/sync';
+import type {
+  Diagnostic,
+  DiagnosticCategory,
+} from '@typescript/native/unstable/sync';
 import { PositionConverter } from './position-converter.js';
 import { toPosixFileName } from '../tsconfig-helpers.js';
 /**
@@ -19,7 +22,7 @@ export interface NativeDiagnostic {
 
 /**
  * Mirrors `DiagnosticCategory.Error` of the TypeScript 7 API.
- * The value is inlined here because typescript7 is imported type-only (it is an optional dependency).
+ * The value is inlined here because @typescript/native is imported type-only (it is an optional dependency).
  */
 export const diagnosticCategoryError = 1 as DiagnosticCategory.Error;
 

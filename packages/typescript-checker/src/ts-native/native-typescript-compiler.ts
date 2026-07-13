@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import type { API } from 'typescript7/unstable/sync';
+import type { API } from '@typescript/native/unstable/sync';
 import ts from 'typescript';
 import { propertyPath } from '@stryker-mutator/util';
 import { Mutant, StrykerOptions } from '@stryker-mutator/api/core';
@@ -16,7 +16,7 @@ import {
 } from '../tsconfig-helpers.js';
 import * as pluginTokens from '../plugin-tokens.js';
 
-import { loadTypescript7 } from './load-typescript7.js';
+import { loadTypescriptNative } from './load-typescript-native.js';
 import {
   diagnosticCategoryError,
   NativeDiagnostic,
@@ -58,7 +58,7 @@ export class NativeTypescriptCompiler {
   public async init(): Promise<NativeDiagnostic[]> {
     this.guardTSConfigFileExists();
     this.guardNoProjectReferences();
-    const { API } = await loadTypescript7();
+    const { API } = await loadTypescriptNative();
     this.api = new API({
       fs: this.fs.tsFileSystem,
       cwd: process.cwd(),

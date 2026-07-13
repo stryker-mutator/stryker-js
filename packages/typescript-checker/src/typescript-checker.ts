@@ -23,9 +23,9 @@ import { toPosixFileName } from './tsconfig-helpers.js';
 import { TSFileNode } from './grouping/ts-file-node.js';
 import { TypescriptCheckerOptionsWithStrykerOptions } from './typescript-checker-options-with-stryker-options.js';
 import { HybridFileSystem } from './fs/hybrid-file-system.js';
-import { NativeFileSystem } from './ts-v7/native-file-system.js';
-import { NativeTypescriptChecker } from './ts-v7/native-typescript-checker.js';
-import { NativeTypescriptCompiler } from './ts-v7/native-typescript-compiler.js';
+import { NativeFileSystem } from './ts-native/native-file-system.js';
+import { NativeTypescriptChecker } from './ts-native/native-typescript-checker.js';
+import { NativeTypescriptCompiler } from './ts-native/native-typescript-compiler.js';
 
 typescriptCheckerLoggerFactory.inject = tokens(
   commonTokens.getLogger,

@@ -12,7 +12,7 @@ import { Location, Mutant } from '@stryker-mutator/api/core';
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 
 import { createTypescriptChecker } from '../../../src/index.js';
-import { NativeTypescriptChecker } from '../../../src/ts-v7/native-typescript-checker.js';
+import { NativeTypescriptChecker } from '../../../src/ts-native/native-typescript-checker.js';
 import { TypescriptCheckerOptionsWithStrykerOptions } from '../../../src/typescript-checker-options-with-stryker-options.js';
 
 const resolveTestResource = path.resolve.bind(

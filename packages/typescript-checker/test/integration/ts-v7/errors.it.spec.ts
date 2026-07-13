@@ -5,7 +5,7 @@ import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { createTypescriptChecker } from '../../../src/index.js';
-import { NativeTypescriptChecker } from '../../../src/ts-v7/native-typescript-checker.js';
+import { NativeTypescriptChecker } from '../../../src/ts-native/native-typescript-checker.js';
 import { TypescriptCheckerOptionsWithStrykerOptions } from '../../../src/typescript-checker-options-with-stryker-options.js';
 
 const resolveTestResource = path.resolve.bind(

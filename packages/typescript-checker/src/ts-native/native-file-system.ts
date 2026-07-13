@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-import type { FileSystem } from 'typescript7/unstable/fs';
+import type { FileSystem } from '@typescript/native/unstable/fs';
 import { Mutant } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';

@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { positionToOffset } from '../../../src/ts-v7/text-helpers.js';
+import { positionToOffset } from '../../../src/ts-native/text-helpers.js';
 
 describe('ts-v7 text helpers', () => {
   describe(positionToOffset.name, () => {

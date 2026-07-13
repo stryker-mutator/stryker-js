@@ -82,7 +82,7 @@
     "tsx": "4.23.0",
     "vitest": "4.1.10",
     "typescript": "6.0.3",
-    "typescript7": "npm:typescript@7.0.1-rc",
+    "@typescript/native": "npm:typescript@7.0.2",
     "vite": "8.0.16",
     "webpack": "5.108.4",
     "webpack-cli": "7.2.1"
