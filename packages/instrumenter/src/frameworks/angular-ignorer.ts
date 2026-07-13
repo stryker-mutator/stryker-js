@@ -18,11 +18,11 @@ const SIGNAL_QUERY_OPTIONS_MSG =
 
 export class AngularIgnorer implements Ignorer {
   public shouldIgnore(path: NodePath): string | undefined {
-    if (this.isInputModelOrOutputConfigurationObject(path)) {
+    if (this.#isInputModelOrOutputConfigurationObject(path)) {
       return INPUT_MODEL_OUTPUT_CONFIG_MSG;
     }
 
-    if (this.isSignalQueryOptionsObject(path)) {
+    if (this.#isSignalQueryOptionsObject(path)) {
       return SIGNAL_QUERY_OPTIONS_MSG;
     }
 
@@ -41,7 +41,7 @@ export class AngularIgnorer implements Ignorer {
    * Determines if the given path is a configuration object for an Angular input, model or output function.
    * This solves the "Argument needs to be statically analyzable." error
    */
-  private isInputModelOrOutputConfigurationObject(path: NodePath): boolean {
+  #isInputModelOrOutputConfigurationObject(path: NodePath): boolean {
     if (
       !path.isObjectExpression() ||
       !path.parentPath.isCallExpression() ||
@@ -93,7 +93,7 @@ export class AngularIgnorer implements Ignorer {
    * Determines if the given path is a configuration object for an Angular signal query function.
    * This solves the "Argument needs to be statically analyzable." error
    */
-  private isSignalQueryOptionsObject(path: NodePath): boolean {
+  #isSignalQueryOptionsObject(path: NodePath): boolean {
     if (
       !path.isObjectExpression() ||
       !path.parentPath.isCallExpression() ||
