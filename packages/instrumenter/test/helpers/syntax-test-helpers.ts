@@ -60,12 +60,6 @@ export function parseTS(code: string, fileName = 'example.ts'): types.File {
           ],
         ],
         filename: fileName,
-        // plugins: [
-        //   [
-        //     require.resolve('@babel/plugin-proposal-decorators'),
-        //     { legacy: true },
-        //   ],
-        // ],
       })!,
     },
   );
