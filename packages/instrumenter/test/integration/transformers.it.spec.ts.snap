@@ -5326,8 +5326,6 @@ Object {
                   },
                   "type": "BinaryExpression",
                 },
-                "innerComments": Array [],
-                "leadingComments": Array [],
                 "test": Object {
                   "arguments": Array [
                     Object {
@@ -5341,7 +5339,6 @@ Object {
                   },
                   "type": "CallExpression",
                 },
-                "trailingComments": Array [],
                 "type": "ConditionalExpression",
               },
               "loc": SourceLocation {
@@ -10776,8 +10773,6 @@ Object {
                   },
                   "type": "BinaryExpression",
                 },
-                "innerComments": Array [],
-                "leadingComments": Array [],
                 "test": Object {
                   "arguments": Array [
                     Object {
@@ -10791,7 +10786,6 @@ Object {
                   },
                   "type": "CallExpression",
                 },
-                "trailingComments": Array [],
                 "type": "ConditionalExpression",
               },
               "loc": SourceLocation {
@@ -16194,8 +16188,6 @@ Object {
                         },
                         "type": "BinaryExpression",
                       },
-                      "innerComments": Array [],
-                      "leadingComments": Array [],
                       "test": Object {
                         "arguments": Array [
                           Object {
@@ -16209,7 +16201,6 @@ Object {
                         },
                         "type": "CallExpression",
                       },
-                      "trailingComments": Array [],
                       "type": "ConditionalExpression",
                     },
                     "loc": SourceLocation {

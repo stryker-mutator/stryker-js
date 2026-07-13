@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import babel from '@babel/core';
+import * as babel from '@babel/core';
 import generator from '@babel/generator';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 
@@ -8,7 +8,6 @@ import { findNodePath, parseJS } from '../../helpers/syntax-test-helpers.js';
 import { Mutant } from '../../../src/mutant.js';
 import { createMutant } from '../../helpers/factories.js';
 
-const generate = generator.default;
 const { types } = babel;
 
 describe('statementMutantPlacer', () => {
@@ -71,7 +70,7 @@ describe('statementMutantPlacer', () => {
 
       // Act
       statementMutantPlacer.place(statement, appliedMutants);
-      const actualCode = normalizeWhitespaces(generate(ast).code);
+      const actualCode = normalizeWhitespaces(generator(ast).code);
 
       // Assert
       expect(actualCode).contains(
@@ -105,7 +104,7 @@ describe('statementMutantPlacer', () => {
 
       // Act
       statementMutantPlacer.place(statement, appliedMutants);
-      const actualCode = normalizeWhitespaces(generate(ast).code);
+      const actualCode = normalizeWhitespaces(generator(ast).code);
 
       // Assert
       expect(actualCode).matches(/function\s*add\s*\(a,\s*b\)\s*{.*}/);
@@ -114,14 +113,14 @@ describe('statementMutantPlacer', () => {
     it('should place the original code as alternative (inside `else`)', () => {
       const { ast, appliedMutants, statement } = arrangeSingleMutant();
       statementMutantPlacer.place(statement, appliedMutants);
-      const actualCode = normalizeWhitespaces(generate(ast).code);
+      const actualCode = normalizeWhitespaces(generator(ast).code);
       expect(actualCode).matches(/else\s*{.*const foo = a \+ b;\s*\}/);
     });
 
     it('should add mutant coverage syntax', () => {
       const { ast, appliedMutants, statement } = arrangeSingleMutant();
       statementMutantPlacer.place(statement, appliedMutants);
-      const actualCode = normalizeWhitespaces(generate(ast).code);
+      const actualCode = normalizeWhitespaces(generator(ast).code);
       expect(actualCode).matches(/else\s*{\s*stryCov_9fa48\("1"\)/);
     });
 
@@ -159,7 +158,7 @@ describe('statementMutantPlacer', () => {
 
       // Act
       statementMutantPlacer.place(statement, appliedMutants);
-      const actualCode = normalizeWhitespaces(generate(ast).code);
+      const actualCode = normalizeWhitespaces(generator(ast).code);
 
       // Assert
       expect(actualCode).contains(

@@ -39,12 +39,14 @@
   },
   "homepage": "https://stryker-mutator.io",
   "dependencies": {
-    "@babel/core": "~7.29.0",
-    "@babel/generator": "~7.29.0",
-    "@babel/parser": "~7.29.0",
-    "@babel/plugin-proposal-decorators": "~7.29.0",
-    "@babel/plugin-transform-explicit-resource-management": "^7.28.0",
-    "@babel/preset-typescript": "~7.29.0",
+    "@babel/core": "~8.0.0",
+    "@babel/generator": "~8.0.0",
+    "@babel/parser": "~8.0.0",
+    "@babel/traverse": "~8.0.4",
+    "@babel/plugin-proposal-decorators": "~8.0.0",
+    "@babel/plugin-transform-explicit-resource-management": "^8.0.0",
+    "@babel/preset-react": "~8.0.0",
+    "@babel/preset-typescript": "~8.0.0",
     "@stryker-mutator/api": "workspace:*",
     "@stryker-mutator/util": "workspace:*",
     "angular-html-parser": "~10.10.0",
@@ -53,10 +55,7 @@
     "weapon-regex": "~2.0.0"
   },
   "devDependencies": {
-    "@babel/preset-react": "7.29.7",
     "@stryker-mutator/test-helpers": "workspace:*",
-    "@types/babel__core": "7.20.5",
-    "@types/babel__generator": "7.27.0",
     "@types/estree": "1.0.9",
     "@types/semver": "7.7.1",
     "svelte": "5.56.4"

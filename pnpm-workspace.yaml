@@ -14,3 +14,8 @@ minimumReleaseAgeExclude:
   - ajv@8.18.0
   # Renovate security update: minimatch@10.2.4
   - minimatch@10.2.4
+  # See https://github.com/babel/babel/issues/18121
+  - '@babel/traverse@8.0.4'
+  - '@babel/types@8.0.4'
+  - '@babel/parser@8.0.4'
+  - '@babel/helper-validator-identifier@8.0.4'

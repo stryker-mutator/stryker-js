@@ -477,9 +477,6 @@ export default {
                           Node {
                             "computed": false,
                             "end": 152,
-                            "extra": Object {
-                              "shorthand": true,
-                            },
                             "key": Node {
                               "end": 152,
                               "loc": SourceLocation {
@@ -3177,9 +3174,6 @@ export default Badge;
                               Node {
                                 "computed": false,
                                 "end": 207,
-                                "extra": Object {
-                                  "shorthand": true,
-                                },
                                 "key": Node {
                                   "end": 207,
                                   "loc": SourceLocation {
@@ -5003,9 +4997,6 @@ export default Badge;
                               Node {
                                 "computed": false,
                                 "end": 207,
-                                "extra": Object {
-                                  "shorthand": true,
-                                },
                                 "key": Node {
                                   "end": 207,
                                   "loc": SourceLocation {
