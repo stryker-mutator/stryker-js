@@ -22,7 +22,10 @@ describe('Typescript checker errors', () => {
   it('should reject initialization if initial compilation failed', async () => {
     (
       testInjector.options as TypescriptCheckerOptionsWithStrykerOptions
-    ).typescriptChecker = { prioritizePerformanceOverAccuracy: true };
+    ).typescriptChecker = {
+      prioritizePerformanceOverAccuracy: true,
+      experimentalNativePreview: false,
+    };
     testInjector.options.tsconfigFile = resolveTestResource(
       'compile-error',
       'tsconfig.json',
@@ -36,7 +39,10 @@ describe('Typescript checker errors', () => {
   it('should reject initialization if tsconfig was invalid', async () => {
     (
       testInjector.options as TypescriptCheckerOptionsWithStrykerOptions
-    ).typescriptChecker = { prioritizePerformanceOverAccuracy: true };
+    ).typescriptChecker = {
+      prioritizePerformanceOverAccuracy: true,
+      experimentalNativePreview: false,
+    };
     testInjector.options.tsconfigFile = resolveTestResource(
       'invalid-tsconfig',
       'tsconfig.json',
@@ -50,7 +56,10 @@ describe('Typescript checker errors', () => {
   it("should reject when tsconfig file doesn't exist", async () => {
     (
       testInjector.options as TypescriptCheckerOptionsWithStrykerOptions
-    ).typescriptChecker = { prioritizePerformanceOverAccuracy: true };
+    ).typescriptChecker = {
+      prioritizePerformanceOverAccuracy: true,
+      experimentalNativePreview: false,
+    };
     testInjector.options.tsconfigFile = resolveTestResource(
       'empty-dir',
       'tsconfig.json',

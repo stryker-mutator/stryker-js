@@ -78,10 +78,11 @@
     "tap": "21.7.4",
     "ts-jest": "29.4.11",
     "ts-loader": "9.6.2",
-    "tsx": "4.23.0",
     "tslib": "2.8.1",
+    "tsx": "4.23.0",
     "vitest": "4.1.10",
     "typescript": "6.0.3",
+    "@typescript/native": "npm:typescript@7.0.2",
     "vite": "8.0.16",
     "webpack": "5.108.4",
     "webpack-cli": "7.2.1"

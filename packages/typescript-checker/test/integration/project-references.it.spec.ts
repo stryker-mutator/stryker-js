@@ -28,10 +28,15 @@ describe('Typescript checker on a project with project references', () => {
   beforeEach(() => {
     (
       testInjector.options as TypescriptCheckerOptionsWithStrykerOptions
-    ).typescriptChecker = { prioritizePerformanceOverAccuracy: true };
+    ).typescriptChecker = {
+      prioritizePerformanceOverAccuracy: true,
+      experimentalNativePreview: false,
+    };
     testInjector.options.tsconfigFile =
       resolveTestResource('tsconfig.root.json');
-    sut = testInjector.injector.injectFunction(createTypescriptChecker);
+    sut = testInjector.injector.injectFunction(
+      createTypescriptChecker,
+    ) as TypescriptChecker;
     return sut.init();
   });
 

@@ -11,7 +11,9 @@
     "build": "npm run clean:dist && tsc",
     "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
     "test:unit": "npm run build && mocha",
-    "test": "npm run clean:reports && stryker run && npm run verify"
+    "test": "npm run clean:reports && npm run test:stryker && npm run test:stryker-native-preview && npm run verify",
+    "test:stryker": "stryker run",
+    "test:stryker-native-preview": "stryker run stryker.conf.native-preview.json"
   },
   "mocha": {
     "spec": [
