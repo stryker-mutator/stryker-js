@@ -24,7 +24,7 @@ const resolveTestResource = path.resolve.bind(
   '..' /* dist */,
   'testResources',
   'single-project',
-) as unknown as typeof path.resolve;
+);
 
 describe('Typescript checker (native preview) on a single project', () => {
   let sut: NativeTypescriptChecker;
