@@ -182,7 +182,16 @@ The comment always starts with `// Stryker`, followed by either `disable` or `re
 
 ## Using an ignore-plugin
 
-_Available since Stryker 7.3_
+<details>
+
+<summary>History</summary>
+
+| Version | Changes                                                      |
+| ------- | ------------------------------------------------------------ |
+| 7.3     | Added the `'ignorer` plugin option                           |
+| 9.7     | Added the `type babel` to the export `@stryker-mutator/core` |
+
+</details>
 
 You might not be interested in testing specific code patterns in some projects. You can use `// Stryker disable` comments for these. However, this gets tedious quickly.
 
@@ -251,22 +260,28 @@ After rerunning Stryker, your report will look like this.
 
 :::tip
 
-If you want TypeScript type-safety on the `path` being passed into your ignore-plugin:
+If you want TypeScript to type-check the `path` passed to your ignore plugin, use `NodePath` from `@stryker-mutator/core`.
 
-1. Install the correct babel types yourself: `npm i -D @babel/traverse`.
-2. Rename your plugin to `.ts`.
-   - Don't forget to also update the `"plugins"` in your Stryker config file (`"./stryker-console-ignorer.ts"`)
-3. Import type types and use them:
+1. Rename your plugin to `.ts`.
+   - Don't forget to also update the `"plugins"` in your Stryker config file.
+     ```diff
+     {
+       "ignorers": ["console.debug"],
+     - "plugins": ["@stryker-mutator/*", "./stryker-console-ignorer.js"]
+     + "plugins": ["@stryker-mutator/*", "./stryker-console-ignorer.ts"]
+     }
+     ```
+2. Import type types and use them:
 
    ```diff
    // stryker-console-ignorer.ts
    import { PluginKind, declareValuePlugin } from '@stryker-mutator/api/plugin';
-   + import type { NodePath } from '@babel/traverse';
+   + import type { babel } from '@stryker-mutator/core';
 
    export const strykerPlugins = [
      declareValuePlugin(PluginKind.Ignore, 'console.debug', {
    -   shouldIgnore(path) {
-   +   shouldIgnore(path: NodePath) {
+   +   shouldIgnore(path: babel.NodePath) {
          // Define the conditions for which you want to ignore mutants
          if (
            path.isExpressionStatement() &&
