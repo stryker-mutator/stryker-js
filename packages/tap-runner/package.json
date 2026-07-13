@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@stryker-mutator/test-helpers": "workspace:*",
-    "@types/node": "24.13.2",
+    "@types/node": "24.13.3",
     "ava": "8.0.1",
     "tap": "21.7.4",
     "tsx": "4.23.0"
