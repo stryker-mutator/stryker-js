@@ -164,7 +164,7 @@ describe('Typescript checker (native preview) on a single project', () => {
     expect(actual).deep.eq(expectedResult);
   });
 
-  it('should be able invalidate 2 mutants that do result in a compile error', async () => {
+  it('should be able to invalidate 2 mutants that do result in a compile error', async () => {
     const mutant = createMutant(
       'todo.ts',
       'TodoList.allTodos.push(newItem)',
