@@ -1,4 +1,5 @@
-import babel, { type NodePath } from '@babel/core';
+import * as babel from '@babel/core';
+import { type NodePath } from '@babel/core';
 
 import {
   mutantTestExpression,
@@ -187,7 +188,7 @@ export const expressionMutantPlacer = {
   canPlace(path) {
     return path.isExpression() && isValidExpression(path);
   },
-  place(path, appliedMutants) {
+  place(path: NodePath<babel.types.Expression>, appliedMutants) {
     // Make sure anonymous functions and classes keep their 'name' property
     let expression = nameIfAnonymous(path);
 

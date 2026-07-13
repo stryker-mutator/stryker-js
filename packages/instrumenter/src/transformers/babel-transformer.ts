@@ -1,7 +1,5 @@
-import babel, { type NodePath, type types } from '@babel/core';
-
-// @ts-expect-error The babel types don't define "File" yet
-import { File } from '@babel/core';
+import { File, type NodePath, type types } from '@babel/core';
+import traverse from '@babel/traverse';
 
 import {
   isImportDeclaration,
@@ -24,8 +22,6 @@ import { IgnorerBookkeeper } from './ignorer-bookkeeper.js';
 
 import { AstTransformer } from './index.js';
 
-const { traverse } = babel;
-
 interface MutantsPlacement<TNode extends types.Node> {
   appliedMutants: Map<Mutant, TNode>;
   placer: MutantPlacer<TNode>;
@@ -42,9 +38,14 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
 ) => {
   // Wrap the AST in a `new File`, so `nodePath.buildCodeFrameError` works
   // https://github.com/babel/babel/issues/11889
+  // The File constructor only reads `filename` (and `highlightCode`) from the
+  // options at runtime, but since Babel 8 its type requires a fully resolved
+  // options object, hence the cast.
   const file = new File(
-    { filename: originFileName },
-    { code: rawContent, ast: root },
+    { filename: originFileName } as unknown as ConstructorParameters<
+      typeof File
+    >[0],
+    { code: rawContent, ast: root, inputMap: null },
   );
 
   // Create a placementMap for the mutation switching bookkeeping
@@ -81,9 +82,9 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   // On the way up:
   // * If this node has mutants in the placementMap, place them in the AST.
   //
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+
   traverse(file.ast, {
-    enter(path) {
+    enter(path: NodePath) {
       if (hasAnyMutatorFilter) {
         subtreeMutantStartStack.push(mutantCollector.mutants.length);
       }
@@ -101,7 +102,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
         }
       }
     },
-    exit(path) {
+    exit(path: NodePath) {
       if (hasAnyMutatorFilter) {
         applyMutantFilters(path, subtreeMutantStartStack.pop()!);
       }

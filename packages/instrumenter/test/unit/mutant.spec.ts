@@ -1,4 +1,4 @@
-import babel from '@babel/core';
+import * as babel from '@babel/core';
 import generator from '@babel/generator';
 import { Mutant as MutantApi } from '@stryker-mutator/api/core';
 import { expect } from 'chai';
@@ -8,8 +8,6 @@ import { createJSAst, createSourceLocation } from '../helpers/factories.js';
 import { parseJS, findNodePath } from '../helpers/syntax-test-helpers.js';
 
 const { types } = babel;
-
-const generate = generator.default;
 
 describe(Mutant.name, () => {
   describe('constructor', () => {
@@ -193,9 +191,9 @@ describe(Mutant.name, () => {
       const appliedMutant = mutant.applied(parent);
 
       // Assert
-      expect(generate(appliedMutant).code).eq('const c = a - b;');
+      expect(generator(appliedMutant).code).eq('const c = a - b;');
       // original AST should not be mutated
-      expect(generate(ast).code).eq('const c = a + b;');
+      expect(generator(ast).code).eq('const c = a + b;');
     });
   });
 });

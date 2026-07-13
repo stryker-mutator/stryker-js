@@ -1,4 +1,5 @@
-import babel, { NodePath, type types as t } from '@babel/core';
+import * as babel from '@babel/core';
+import { NodePath, type types as t } from '@babel/core';
 import * as weaponRegex from 'weapon-regex';
 
 import { NodeMutator } from './index.js';
