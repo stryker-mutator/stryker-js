@@ -1,0 +1,13 @@
+{
+  "name": "Claude Code Sandbox",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {},
+    "ghcr.io/devcontainers/features/git:1": {}
+  },
+  
+  "mounts": [
+    "source=global-pnpm-store,target=${containerWorkspaceFolder}/.pnpm-store,type=volume"
+  ],
+  "postCreateCommand": "sudo chown -R vscode:vscode /workspaces/stryker-js/.pnpm-store && npm install -g @anthropic-ai/claude-code"
+}
