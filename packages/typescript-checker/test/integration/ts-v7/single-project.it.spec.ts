@@ -184,7 +184,7 @@ describe('Typescript checker (native preview) on a single project', () => {
     expect(actual.mutId2.reason).has.string('counter.ts(7,5): error TS2322');
   });
 
-  it('should group mutants outside the project together and check project mutants one-by-one', async () => {
+  it('should group a mutant outside the project together and check project mutants one-by-one', async () => {
     const mutantOutsideProject = createMutant(
       'not-type-checked.js',
       'bar',
@@ -209,6 +209,40 @@ describe('Typescript checker (native preview) on a single project', () => {
       mutantInProject2,
     ]);
     expect(groups).deep.eq([['outside'], ['inside1'], ['inside2']]);
+  });
+
+  it('should group multiple mutants outside the project together and check project mutants one-by-one', async () => {
+    const mutantOutsideProject = createMutant(
+      'not-type-checked.js',
+      'bar',
+      'baz',
+      'outside',
+    );
+    const mutantOutsideProject2 = createMutant(
+      'not-type-checked.js',
+      'foo',
+      'qux',
+      'outside2',
+    );
+    const mutantInProject = createMutant(
+      'todo.ts',
+      'return totalCount;',
+      '',
+      'inside1',
+    );
+    const mutantInProject2 = createMutant(
+      'counter.ts',
+      'return this.currentNumber;',
+      'return 42;',
+      'inside2',
+    );
+    const groups = await sut.group([
+      mutantOutsideProject,
+      mutantInProject,
+      mutantInProject2,
+      mutantOutsideProject2,
+    ]);
+    expect(groups).deep.eq([['outside', 'outside2'], ['inside1'], ['inside2']]);
   });
 });
 
