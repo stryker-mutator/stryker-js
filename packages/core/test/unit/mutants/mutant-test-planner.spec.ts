@@ -545,6 +545,9 @@ describe(MutantTestPlanner.name, () => {
           'Detected 1 static mutants (14% of total) that are estimated to take 40% of the time running the tests!',
         )
         .and.calledWithMatch(
+          'They will be reported as "ignored" and excluded from your mutation score.',
+        )
+        .and.calledWithMatch(
           '(disable "warnings.slow" to ignore this warning)',
         );
     });
