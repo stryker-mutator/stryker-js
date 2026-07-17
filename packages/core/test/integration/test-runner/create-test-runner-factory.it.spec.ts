@@ -17,6 +17,7 @@ import {
   LoggingSink,
 } from '../../../src/logging/index.js';
 import { createTestRunnerFactory } from '../../../src/test-runner/index.js';
+import { PerformanceMetricsSink } from '../../../src/performance-metrics-sink.js';
 import { sleep } from '../../helpers/test-utils.js';
 import { coreTokens } from '../../../src/di/index.js';
 import { TestRunnerResource } from '../../../src/concurrent/index.js';
@@ -62,6 +63,10 @@ describe(`${createTestRunnerFactory.name} integration`, () => {
       .provideValue(coreTokens.loggingServerAddress, loggingServerAddress)
       .provideValue(coreTokens.pluginModulePaths, pluginModulePaths)
       .provideClass(coreTokens.workerIdGenerator, IdGenerator)
+      .provideValue(
+        coreTokens.performanceMetricsSink,
+        new PerformanceMetricsSink(false),
+      )
       .injectFunction(createTestRunnerFactory);
 
     rmSync(CounterTestRunner.COUNTER_FILE);

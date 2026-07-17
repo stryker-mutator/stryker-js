@@ -29,6 +29,7 @@ import { I, Task } from '@stryker-mutator/util';
 
 import { MutationTestExecutor } from '../../../src/process/index.js';
 import { coreTokens } from '../../../src/di/index.js';
+import { PerformanceMetricsSink } from '../../../src/performance-metrics-sink.js';
 import {
   createTestRunnerPoolMock,
   createCheckerPoolMock,
@@ -149,6 +150,12 @@ describe(MutationTestExecutor.name, () => {
         concurrencyTokenProviderMock,
       )
       .provideValue(coreTokens.dryRunResult, completeDryRunResult)
+      .provideValue(coreTokens.setupTimeMS, 10)
+      .provideValue(coreTokens.initialRunMS, 42)
+      .provideValue(
+        coreTokens.performanceMetricsSink,
+        new PerformanceMetricsSink(true),
+      )
       .injectClass(MutationTestExecutor);
   });
 
@@ -555,5 +562,34 @@ describe(MutationTestExecutor.name, () => {
     expect(testRunner.mutantRun).calledWithExactly(plan1.runOptions);
     expect(testRunner.mutantRun).calledWithExactly(plan2.runOptions);
     expect(actualResults).deep.eq([plan1.mutant, plan2.mutant]);
+  });
+
+  describe('experimental performance report', () => {
+    it('should not be written by default', async () => {
+      arrangeScenario();
+      mutantTestPlans.push(mutantRunPlan({ id: '1', testFilter: ['a'] }));
+
+      await sut.execute();
+
+      sinon.assert.notCalled(mutationTestReportHelperMock.reportPerformance);
+    });
+
+    it('should be written with per-mutant timing and phases when enabled', async () => {
+      testInjector.options.experimentalPerformanceReport = true;
+      timerMock.elapsedMs.returns(1234);
+      arrangeScenario();
+      mutantTestPlans.push(mutantRunPlan({ id: '1', testFilter: ['a'] }));
+
+      await sut.execute();
+
+      sinon.assert.calledOnce(mutationTestReportHelperMock.reportPerformance);
+      const report =
+        mutationTestReportHelperMock.reportPerformance.firstCall.firstArg;
+      expect(report.mutants).lengthOf(1);
+      expect(report.mutants[0].id).equal('1');
+      expect(report.mutants[0].selectedTests).equal(1);
+      expect(report.phases.setup).equal(10);
+      expect(report.phases.initialRun).equal(42);
+    });
   });
 });
