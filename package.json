@@ -60,7 +60,6 @@
     "test": "lerna run test --stream --concurrency 2",
     "download-incremental-reports": "./tasks/download-incremental-reports.sh",
     "test:mutation:incremental": "lerna run stryker --stream --concurrency 1 -- --incremental",
-    "e2e:ci": "pnpm run build:no-check && pnpm install --frozen-lockfile && pnpm run e2e:lint && pnpm run e2e:run",
     "e2e": "pnpm install && pnpm run e2e:lint && pnpm run e2e:run",
     "e2e:lint": "cd e2e && pnpm run lint",
     "e2e:run": "cd e2e && pnpm test",
