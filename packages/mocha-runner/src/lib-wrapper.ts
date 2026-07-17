@@ -15,7 +15,7 @@ const resolveMocha = async () => {
     const mochaModule = await import(pathToFileURL(mochaPath).href);
 
     return {
-      mocha: mochaModule.default ?? Mocha,
+      mocha: mochaModule.default ?? bundledMocha,
       require,
       mochaRoot: path.dirname(require.resolve('mocha/package.json')),
     };
