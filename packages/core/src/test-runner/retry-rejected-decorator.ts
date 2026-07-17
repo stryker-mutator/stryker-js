@@ -10,6 +10,7 @@ import {
 import { errorToString } from '@stryker-mutator/util';
 
 import { OutOfMemoryError } from '../child-proxy/out-of-memory-error.js';
+import { PerformanceMetricsSink } from '../performance-metrics-sink.js';
 
 import { TestRunnerDecorator } from './test-runner-decorator.js';
 import { Logger } from '@stryker-mutator/api/logging';
@@ -25,6 +26,7 @@ export class RetryRejectedDecorator extends TestRunnerDecorator {
   constructor(
     readonly log: Logger,
     producer: () => TestRunner,
+    private readonly performanceMetricsSink: PerformanceMetricsSink,
   ) {
     super(producer);
   }
@@ -63,11 +65,13 @@ export class RetryRejectedDecorator extends TestRunnerDecorator {
         return await actRun();
       } catch (error) {
         if (error instanceof OutOfMemoryError) {
+          this.performanceMetricsSink.recordOomRestart();
           this.log.info(
             "Test runner process [%s] ran out of memory. You probably have a memory leak in your tests. Don't worry, Stryker will restart the process, but you might want to investigate this later, because this decreases performance.",
             error.pid,
           );
         }
+        this.performanceMetricsSink.recordRetry();
         await this.recover();
         return this.run(actRun, attemptsLeft - 1, error);
       }

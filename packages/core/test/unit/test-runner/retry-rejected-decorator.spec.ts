@@ -7,6 +7,7 @@ import {
   MutantRunResult,
 } from '@stryker-mutator/api/test-runner';
 import { expect } from 'chai';
+import sinon from 'sinon';
 import {
   factory,
   assertions,
@@ -16,6 +17,7 @@ import {
 import { ChildProcessCrashedError } from '../../../src/child-proxy/child-process-crashed-error.js';
 import { OutOfMemoryError } from '../../../src/child-proxy/out-of-memory-error.js';
 import { RetryRejectedDecorator } from '../../../src/test-runner/retry-rejected-decorator.js';
+import { PerformanceMetricsSink } from '../../../src/performance-metrics-sink.js';
 import { TestRunnerDecorator } from '../../../src/test-runner/test-runner-decorator.js';
 
 describe(RetryRejectedDecorator.name, () => {
@@ -26,14 +28,17 @@ describe(RetryRejectedDecorator.name, () => {
     sinon.SinonStubbedInstance<Required<TestRunner>>
   >;
   const crashedError = new ChildProcessCrashedError(42, '');
+  let performanceMetricsSink: sinon.SinonStubbedInstance<PerformanceMetricsSink>;
 
   beforeEach(() => {
     testRunner1 = factory.testRunner();
     testRunner2 = factory.testRunner();
     availableTestRunners = [testRunner1, testRunner2];
+    performanceMetricsSink = sinon.createStubInstance(PerformanceMetricsSink);
     sut = new RetryRejectedDecorator(
       testInjector.logger,
       () => availableTestRunners.shift() ?? factory.testRunner(),
+      performanceMetricsSink,
     );
   });
 
@@ -103,6 +108,7 @@ describe(RetryRejectedDecorator.name, () => {
         testRunner2[runMethod].resolves(expectedResult);
         const result = await act(sut, options);
         expect(result).to.eq(expectedResult);
+        expect(performanceMetricsSink.recordRetry).called;
       });
 
       it('should retry if a `ChildProcessCrashedError` occurred reject appears', async () => {
@@ -123,6 +129,7 @@ describe(RetryRejectedDecorator.name, () => {
           "Test runner process [%s] ran out of memory. You probably have a memory leak in your tests. Don't worry, Stryker will restart the process, but you might want to investigate this later, because this decreases performance.",
           123,
         );
+        expect(performanceMetricsSink.recordOomRestart).called;
       });
 
       it('should dispose a test runner when it rejected, before creating a new one', async () => {
