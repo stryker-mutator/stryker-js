@@ -1182,8 +1182,8 @@ importers:
         specifier: workspace:*
         version: link:../util
       angular-html-parser:
-        specifier: ~10.10.0
-        version: 10.10.0
+        specifier: ~10.11.0
+        version: 10.11.0
       semver:
         specifier: ~7.8.0
         version: 7.8.5
@@ -7109,8 +7109,8 @@ packages:
   alien-signals@1.0.13:
     resolution: {integrity: sha512-OGj9yyTnJEttvzhTUWuscOvtqxq5vrhF7vL9oS0xJ2mK0ItPYP1/y+vCFebfxoEyAz0++1AIwJ5CMr+Fk3nDmg==}
 
-  angular-html-parser@10.10.0:
-    resolution: {integrity: sha512-cYHfKIeua6/EG6SG9+Dz4iY0CDCK3R8JcyNP1CwyoO8yU929Wef/HCyt3AeUk7ukkPZ8RwS6k20jn8nPPglI2Q==}
+  angular-html-parser@10.11.0:
+    resolution: {integrity: sha512-3vERzJ65UFDr3C7uozLJwsNcQS3FS784dSh583oDgDTTZMgXe3/pdyXgKndxiP5R2lvYRfW6gSl145Hnyf2OFA==}
     engines: {node: '>= 14'}
 
   ansi-colors@3.2.3:
@@ -25207,7 +25207,7 @@ snapshots:
 
   alien-signals@1.0.13: {}
 
-  angular-html-parser@10.10.0: {}
+  angular-html-parser@10.11.0: {}
 
   ansi-colors@3.2.3: {}
 
