@@ -1,8 +1,14 @@
 import { propertyPath } from '@stryker-mutator/util';
 import { StrykerOptions, schema } from '@stryker-mutator/api/core';
-import emojiRegex from 'emoji-regex';
 
-const emojiRe = emojiRegex();
+/** Extracted from emoji-regex-xs
+ Copyright (c) 2025 Steven Levithan licensed under the MIT license */
+const r = String.raw;
+const base = r`\p{Emoji}(?:\p{EMod}|[\u{E0020}-\u{E007E}]+\u{E007F}|\uFE0F?\u20E3?)`;
+const emojiRe = new RegExp(
+  r`\p{RI}{2}|(?![#*\d](?!\uFE0F?\u20E3))${base}(?:\u200D${base})*`,
+  'gu',
+);
 
 export function padLeft(input: string): string {
   return input
