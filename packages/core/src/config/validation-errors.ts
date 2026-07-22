@@ -1,7 +1,5 @@
 import { ErrorObject } from 'ajv';
 
-import groupby from 'lodash.groupby';
-
 /**
  * Convert AJV errors to human readable messages
  * @param allErrors The AJV errors to describe
@@ -127,7 +125,10 @@ function split<T>(items: T[], splitFn: (item: T) => boolean): [T[], T[]] {
  * @param typeErrors The type errors to merge by path
  */
 function mergeTypeErrorsByPath(typeErrors: ErrorObject[]): ErrorObject[] {
-  const typeErrorsByPath = groupby(typeErrors, (error) => error.instancePath);
+  const typeErrorsByPath = Object.groupBy(
+    typeErrors,
+    (error) => error.instancePath,
+  ) as Record<string, ErrorObject[]>;
   return Object.values(typeErrorsByPath).map(mergeTypeErrors);
 
   function mergeTypeErrors(errors: ErrorObject[]): ErrorObject {
