@@ -16,6 +16,7 @@ import {
   toPosixFileName,
 } from './tsconfig-helpers.js';
 import { TSFileNode } from './grouping/ts-file-node.js';
+import { BuildScheduler } from './build-scheduler.js';
 import * as pluginTokens from './plugin-tokens.js';
 
 export interface ITypescriptCompiler {
@@ -43,6 +44,7 @@ export class TypescriptCompiler
     commonTokens.logger,
     commonTokens.options,
     pluginTokens.fs,
+    pluginTokens.buildScheduler,
   );
 
   private readonly allTSConfigFiles: Set<string>;
@@ -57,6 +59,7 @@ export class TypescriptCompiler
     private readonly log: Logger,
     private readonly options: StrykerOptions,
     private readonly fs: HybridFileSystem,
+    private readonly buildScheduler: BuildScheduler,
   ) {
     this.tsconfigFile = toPosixFileName(this.options.tsconfigFile);
     this.allTSConfigFiles = new Set([path.resolve(this.tsconfigFile)]);
@@ -115,6 +118,8 @@ export class TypescriptCompiler
             close() {},
           };
         },
+        setTimeout: this.buildScheduler.schedule,
+        clearTimeout: this.buildScheduler.cancel,
       },
       (...args) => {
         const program = ts.createEmitAndSemanticDiagnosticsBuilderProgram(
@@ -188,8 +193,9 @@ export class TypescriptCompiler
       const file = this.fs.getFile(mutant.fileName);
       file!.mutate(mutant);
     });
+    this.buildScheduler.drainToIdle();
     await this.currentTask.promise;
-    const errors = this.currentErrors;
+    const errors = deduplicateDiagnostics(this.currentErrors);
     this.currentTask = new Task();
     this.currentErrors = [];
     this.lastMutants = mutants;
@@ -307,4 +313,25 @@ export class TypescriptCompiler
   private fileNameIsBuildInfo(fileName: string): boolean {
     return fileName.endsWith('.tsbuildinfo');
   }
+}
+
+/**
+ * Draining the multi-project build to idle can rebuild a project more than once,
+ * reporting the same diagnostic each time. Collapse those so a mutant's compile
+ * error reason is reported once and mutant-to-error attribution stays clean.
+ */
+function deduplicateDiagnostics(diagnostics: ts.Diagnostic[]): ts.Diagnostic[] {
+  const seen = new Set<string>();
+  return diagnostics.filter((diagnostic) => {
+    const message = ts.flattenDiagnosticMessageText(
+      diagnostic.messageText,
+      '\n',
+    );
+    const key = `${diagnostic.file?.fileName ?? ''}:${diagnostic.start ?? ''}:${diagnostic.code}:${message}`;
+    if (seen.has(key)) {
+      return false;
+    }
+    seen.add(key);
+    return true;
+  });
 }
