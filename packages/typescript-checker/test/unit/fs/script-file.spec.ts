@@ -6,9 +6,6 @@ import { ScriptFile } from '../../../src/fs/script-file.js';
 
 describe('fs', () => {
   describe(ScriptFile.name, () => {
-    beforeEach(() => {
-      sinon.useFakeTimers();
-    });
     describe('constructor', () => {
       it('should reflect content, name and modified date', () => {
         const modifiedTime = new Date(2010, 1, 1, 2, 3, 4, 4);
@@ -18,12 +15,13 @@ describe('fs', () => {
         expect(sut.modifiedTime).eq(modifiedTime);
       });
 
-      it('should default modifiedDate to now', () => {
-        const now = new Date(2010, 1, 2, 3, 4, 5, 6);
-        sinon.clock.setSystemTime(now);
-        const sut = new ScriptFile('', '');
-        expect(sut.modifiedTime.valueOf()).eq(
-          new Date(2010, 1, 2, 3, 4, 5, 6).valueOf(),
+      it('should default modifiedTime to a strictly increasing time no earlier than now', () => {
+        const before = Date.now();
+        const first = new ScriptFile('', '');
+        const second = new ScriptFile('', '');
+        expect(first.modifiedTime.valueOf()).to.be.at.least(before);
+        expect(second.modifiedTime.valueOf()).to.be.greaterThan(
+          first.modifiedTime.valueOf(),
         );
       });
     });
@@ -65,10 +63,9 @@ describe('fs', () => {
         expect(sut.content).eq('add(a, b) { return a - b };');
       });
 
-      it('should update the modified date', () => {
+      it('should advance the modified date', () => {
         // Arrange
-        const now = new Date(2015, 1, 2, 3, 4, 5, 6);
-        sinon.clock.setSystemTime(now);
+        const before = sut.modifiedTime.valueOf();
 
         // Act
         sut.mutate({
@@ -80,7 +77,7 @@ describe('fs', () => {
         });
 
         // Assert
-        expect(sut.modifiedTime).deep.eq(now);
+        expect(sut.modifiedTime.valueOf()).to.be.greaterThan(before);
       });
 
       it('should notify the file system watcher', () => {
@@ -156,16 +153,15 @@ describe('fs', () => {
         );
       });
 
-      it('should update the modified date', () => {
+      it('should advance the modified date', () => {
         // Arrange
-        const now = new Date(2015, 1, 2, 3, 4, 5, 6);
-        sinon.clock.setSystemTime(now);
+        const before = sut.modifiedTime.valueOf();
 
         // Act
         sut.resetMutant();
 
         // Assert
-        expect(sut.modifiedTime).deep.eq(now);
+        expect(sut.modifiedTime.valueOf()).to.be.greaterThan(before);
       });
     });
 
@@ -194,16 +190,15 @@ describe('fs', () => {
         );
       });
 
-      it('should update the modified date', () => {
+      it('should advance the modified date', () => {
         // Arrange
-        const now = new Date(2015, 1, 2, 3, 4, 5, 6);
-        sinon.clock.setSystemTime(now);
+        const before = sut.modifiedTime.valueOf();
 
         // Act
         sut.write('overridden');
 
         // Assert
-        expect(sut.modifiedTime).deep.eq(now);
+        expect(sut.modifiedTime.valueOf()).to.be.greaterThan(before);
       });
     });
   });

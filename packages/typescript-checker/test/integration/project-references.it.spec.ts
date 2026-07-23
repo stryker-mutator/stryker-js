@@ -6,7 +6,11 @@ import { fileURLToPath } from 'url';
 import { expect } from 'chai';
 import { Location, Mutant } from '@stryker-mutator/api/core';
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
-import { testInjector, factory } from '@stryker-mutator/test-helpers';
+import {
+  testInjector,
+  factory,
+  assertions,
+} from '@stryker-mutator/test-helpers';
 
 import { createTypescriptChecker } from '../../src/index.js';
 import { TypescriptChecker } from '../../src/typescript-checker.js';
@@ -49,6 +53,19 @@ describe('Typescript checker on a project with project references', () => {
     };
     const actualResult = await sut.check([mutant]);
     expect(actualResult).deep.eq(expectedResult);
+  });
+
+  it('should invalidate a mutant that only fails to compile against a referenced project', async () => {
+    const mutant = createMutant(
+      'index.ts',
+      'count(todo)',
+      'count(42)',
+      'errId',
+    );
+    const actual = await sut.check([mutant]);
+    assertions.expectCompileError(actual.errId);
+    expect(actual.errId.reason).has.string('index.ts');
+    expect(actual.errId.reason).has.string('TS2345');
   });
 
   it('should allow unused local variables (override options)', async () => {

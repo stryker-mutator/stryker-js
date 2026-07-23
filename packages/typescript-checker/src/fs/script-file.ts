@@ -1,13 +1,26 @@
 import ts from 'typescript';
 import { Mutant, Position } from '@stryker-mutator/api/core';
 
+/**
+ * The solution builder is driven to completion within a single millisecond, so
+ * wall-clock mtimes would collide and let it treat a mutated input as
+ * up-to-date and skip the rebuild that surfaces the compile error. A strictly
+ * increasing clock keeps every mutation newer than the outputs emitted before
+ * it.
+ */
+let lastModifiedTimeMs = 0;
+function nextModifiedTime(): Date {
+  lastModifiedTimeMs = Math.max(Date.now(), lastModifiedTimeMs + 1);
+  return new Date(lastModifiedTimeMs);
+}
+
 export class ScriptFile {
   private readonly originalContent: string;
   private sourceFile: ts.SourceFile | undefined;
   constructor(
     public content: string,
     public fileName: string,
-    public modifiedTime = new Date(),
+    public modifiedTime = nextModifiedTime(),
   ) {
     this.originalContent = content;
   }
@@ -56,7 +69,7 @@ export class ScriptFile {
   }
 
   private touch(): void {
-    this.modifiedTime = new Date();
+    this.modifiedTime = nextModifiedTime();
     this.watcher?.(this.fileName, ts.FileWatcherEventKind.Changed);
   }
 }
