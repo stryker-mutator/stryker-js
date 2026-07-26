@@ -3,15 +3,20 @@ import { expect } from 'chai';
 import fs from 'fs';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import {
+  ErrorMutantRunResult,
   MutantRunStatus,
   TestRunnerCapabilities,
 } from '@stryker-mutator/api/test-runner';
-import { Vitest } from 'vitest/node';
+import { RunnerTestFile, Vitest } from 'vitest/node';
 
 import { VitestTestRunner } from '../../src/vitest-test-runner.js';
 import { VitestRunnerOptionsWithStrykerOptions } from '../../src/vitest-runner-options-with-stryker-options.js';
 import { vitestWrapper } from '../../src/vitest-wrapper.js';
-import { createVitestMock } from '../util/factories.js';
+import {
+  createVitestFile,
+  createVitestMock,
+  createVitestTest,
+} from '../util/factories.js';
 import { VITEST_ERROR_CODES } from '../../src/vitest-helpers.js';
 
 describe(VitestTestRunner.name, () => {
@@ -155,6 +160,55 @@ describe(VitestTestRunner.name, () => {
         'mode',
         'mutant',
       );
+    });
+
+    it('should report an error instead of survived when a filtered run repeatedly executes no tests', async () => {
+      // A run that executed none of the selected tests proves nothing about
+      // the mutant; treating it as "no test failed" produces false survivors.
+      // See https://github.com/stryker-mutator/stryker-js/issues/6073
+      const options = factory.mutantRunOptions({
+        testFilter: ['file.spec.js#suite-test > test1'],
+        activeMutant: factory.mutant({ id: '42' }),
+      });
+
+      const result = await sut.mutantRun(options);
+
+      expect(result.status).eq(MutantRunStatus.Error);
+      expect((result as ErrorMutantRunResult).errorMessage).contains(
+        'without executing any of the 1 tests selected for mutant 42',
+      );
+      // initial run + 3 retries
+      sinon.assert.callCount(vitestStub.start as sinon.SinonStub, 4);
+    });
+
+    it('should return the verdict of a retried filtered run that does execute tests', async () => {
+      const passingFile = createVitestFile({
+        tasks: [createVitestTest({ result: { state: 'pass', duration: 1 } })],
+      });
+      const getFilesStub = sinon.stub<[], RunnerTestFile[]>();
+      getFilesStub.onFirstCall().returns([]);
+      getFilesStub.returns([passingFile]);
+      (
+        vitestStub.state as unknown as { getFiles: () => RunnerTestFile[] }
+      ).getFiles = getFilesStub;
+      const options = factory.mutantRunOptions({
+        testFilter: ['file.spec.js#suite-test > test1'],
+      });
+
+      const result = await sut.mutantRun(options);
+
+      expect(result.status).eq(MutantRunStatus.Survived);
+      // initial run + 1 retry
+      sinon.assert.callCount(vitestStub.start as sinon.SinonStub, 2);
+    });
+
+    it('should not treat an unfiltered run without tests as an error', async () => {
+      const result = await sut.mutantRun(
+        factory.mutantRunOptions({ testFilter: undefined }),
+      );
+
+      expect(result.status).eq(MutantRunStatus.Survived);
+      sinon.assert.callCount(vitestStub.start as sinon.SinonStub, 1);
     });
   });
 

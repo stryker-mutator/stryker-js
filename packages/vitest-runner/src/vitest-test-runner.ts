@@ -50,6 +50,12 @@ type StrykerNamespace = '__stryker__' | '__stryker2__';
 const STRYKER_SETUP = fileURLToPath(
   new URL('./stryker-setup.js', import.meta.url),
 );
+/**
+ * Maximum number of times a mutant run is re-issued when vitest completed it
+ * without executing any of the tests selected by the test filter. See
+ * https://github.com/stryker-mutator/stryker-js/issues/6073.
+ */
+const MAX_EMPTY_FILTERED_RUN_RETRIES = 3;
 
 interface RunFilter {
   /**
@@ -207,13 +213,49 @@ export class VitestTestRunner implements TestRunner {
     this.ctx!.provide('hitLimit', options.hitLimit);
     this.ctx!.provide('mutantActivation', options.mutantActivation);
     this.ctx!.provide('activeMutant', options.activeMutant.id);
-    const dryRunResult = await this.run({
+    const runFilter: RunFilter = {
       testIds: options.testFilter,
       relatedFiles: [options.sandboxFileName],
-    });
+    };
+    let dryRunResult = await this.run(runFilter);
+    for (
+      let retry = 1;
+      this.isEmptyFilteredRun(options.testFilter, dryRunResult) &&
+      retry <= MAX_EMPTY_FILTERED_RUN_RETRIES;
+      retry++
+    ) {
+      this.log.debug(
+        'Mutant run for mutant %s completed without executing any of its %s filtered tests, retrying (%s/%s).',
+        options.activeMutant.id,
+        options.testFilter!.length,
+        retry,
+        MAX_EMPTY_FILTERED_RUN_RETRIES,
+      );
+      dryRunResult = await this.run(runFilter);
+    }
+    if (this.isEmptyFilteredRun(options.testFilter, dryRunResult)) {
+      // A run that executed none of its selected tests proves nothing about
+      // the mutant; reporting it based on "no test failed" would produce a
+      // false survivor (see https://github.com/stryker-mutator/stryker-js/issues/6073).
+      return toMutantRunResult({
+        status: DryRunStatus.Error,
+        errorMessage: `Vitest completed the mutant run without executing any of the ${options.testFilter!.length} tests selected for mutant ${options.activeMutant.id} (after ${MAX_EMPTY_FILTERED_RUN_RETRIES} retries).`,
+      });
+    }
     const hitCount = this.readHitCount();
     const timeOut = determineHitLimitReached(hitCount, options.hitLimit);
     return toMutantRunResult(timeOut ?? dryRunResult);
+  }
+
+  private isEmptyFilteredRun(
+    testFilter: string[] | undefined,
+    result: DryRunResult,
+  ): boolean {
+    return (
+      (testFilter?.length ?? 0) > 0 &&
+      result.status === DryRunStatus.Complete &&
+      result.tests.length === 0
+    );
   }
 
   private async run({
