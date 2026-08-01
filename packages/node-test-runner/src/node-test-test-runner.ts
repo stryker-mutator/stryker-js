@@ -126,7 +126,7 @@ export class NodeTestRunner implements TestRunner {
       ignore: '**/node_modules/**',
       posix: true,
     });
-    this.testFiles = [...new Set(files)].sort();
+    this.testFiles = [...new Set(files)].toSorted();
     this.log.debug(
       `node-test runner discovered ${this.testFiles.length} test file(s)`,
     );
