@@ -290,11 +290,11 @@ importers:
         specifier: 9.6.1
         version: 9.6.1
       grunt:
-        specifier: 1.6.2
-        version: 1.6.2
+        specifier: 1.6.3
+        version: 1.6.3
       grunt-stryker:
         specifier: workspace:*
-        version: file:packages/grunt-stryker(@stryker-mutator/core@file:packages/core(@types/node@24.13.3))(grunt@1.6.2)
+        version: file:packages/grunt-stryker(@stryker-mutator/core@file:packages/core(@types/node@24.13.3))(grunt@1.6.3)
       jasmine:
         specifier: 6.3.0
         version: 6.3.0
@@ -10139,6 +10139,11 @@ packages:
     engines: {node: '>=16'}
     hasBin: true
 
+  grunt@1.6.3:
+    resolution: {integrity: sha512-ng0CbpyNp/ox5e5CBY9TkZgVdAL4wK+nBHO6rNE8cXGa5kM++Lxlp0MpFBVZbpgOR2oCp/91V+T3CZVSWWLqMA==}
+    engines: {node: '>=16'}
+    hasBin: true
+
   gzip-size@6.0.0:
     resolution: {integrity: sha512-ax7ZYomf6jqPTQ4+XCpUGyXKHk5WweS+e05MBO4/y3WJ5RkmPXNKvX+bx1behVILVwr6JSQvZAku021CHPXG3Q==}
     engines: {node: '>=10'}
@@ -11626,6 +11631,10 @@ packages:
 
   js-yaml@3.14.2:
     resolution: {integrity: sha512-PMSmkqxr106Xa156c2M265Z+FTrPl+oxd/rgOQy2tijQeK5TxQ43psO1ZCwhVOSdnn+RzkzlRz/eY4BgJBYVpg==}
+    hasBin: true
+
+  js-yaml@3.15.1:
+    resolution: {integrity: sha512-S99WuO3HlhO3XN41EtYUNl9zzXjoJx7QvmipxsJVxtCBT0YHEFy+iOJhjSvrmV12nYhWpZaM8lPHkJm0yUMbag==}
     hasBin: true
 
   js-yaml@4.1.1:
@@ -29086,10 +29095,10 @@ snapshots:
       underscore.string: 3.3.6
       which: 2.0.2
 
-  grunt-stryker@file:packages/grunt-stryker(@stryker-mutator/core@file:packages/core(@types/node@24.13.3))(grunt@1.6.2):
+  grunt-stryker@file:packages/grunt-stryker(@stryker-mutator/core@file:packages/core(@types/node@24.13.3))(grunt@1.6.3):
     dependencies:
       '@stryker-mutator/core': file:packages/core(@types/node@24.13.3)
-      grunt: 1.6.2
+      grunt: 1.6.3
 
   grunt@1.6.2:
     dependencies:
@@ -29104,6 +29113,22 @@ snapshots:
       grunt-legacy-util: 2.0.2
       iconv-lite: 0.6.3
       js-yaml: 3.14.2
+      minimatch: 3.1.5
+      nopt: 5.0.0
+
+  grunt@1.6.3:
+    dependencies:
+      dateformat: 4.6.3
+      eventemitter2: 0.4.14
+      exit: 0.1.2
+      findup-sync: 5.0.0
+      glob: 7.1.7
+      grunt-cli: 1.5.0
+      grunt-known-options: 2.0.0
+      grunt-legacy-log: 3.0.1
+      grunt-legacy-util: 2.0.2
+      iconv-lite: 0.6.3
+      js-yaml: 3.15.1
       minimatch: 3.1.5
       nopt: 5.0.0
 
@@ -31812,6 +31837,11 @@ snapshots:
       esprima: 4.0.1
 
   js-yaml@3.14.2:
+    dependencies:
+      argparse: 1.0.10
+      esprima: 4.0.1
+
+  js-yaml@3.15.1:
     dependencies:
       argparse: 1.0.10
       esprima: 4.0.1
