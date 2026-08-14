@@ -1,6 +1,5 @@
 import path from 'path';
 
-import type { execaCommand } from 'execa';
 import { npmRunPathEnv } from 'npm-run-path';
 import { expect } from 'chai';
 import sinon from 'sinon';
@@ -21,7 +20,7 @@ describe(Sandbox.name, () => {
   let temporaryDirectoryMock: sinon.SinonStubbedInstance<TemporaryDirectory>;
   let symlinkJunctionStub: sinon.SinonStub;
   let findNodeModulesListStub: sinon.SinonStub;
-  let execaCommandMock: sinon.SinonStubbedInstance<I<typeof execaCommand>>;
+  let execaCommandMock: sinon.SinonStub;
   let unexpectedExitHandlerMock: sinon.SinonStubbedInstance<
     I<UnexpectedExitHandler>
   >;
@@ -64,10 +63,7 @@ describe(Sandbox.name, () => {
     return testInjector.injector
       .provideValue(coreTokens.project, project)
       .provideValue(coreTokens.temporaryDirectory, temporaryDirectoryMock)
-      .provideValue(
-        coreTokens.execa,
-        execaCommandMock as unknown as typeof execaCommand,
-      )
+      .provideValue(coreTokens.execa, execaCommandMock)
       .provideValue(
         coreTokens.unexpectedExitRegistry,
         unexpectedExitHandlerMock,

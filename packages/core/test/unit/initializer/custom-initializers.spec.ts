@@ -56,7 +56,7 @@ describe('CustomInitializers', () => {
       sut = testInjector.injector
         .provideValue(
           coreTokens.execa,
-          execaStub as unknown as typeof execaCommand,
+          execaStub as sinon.SinonStub<any[], any>,
         )
         .provideValue(coreTokens.resolveFromCwd, resolveStub)
         .injectClass(AngularInitializer);
