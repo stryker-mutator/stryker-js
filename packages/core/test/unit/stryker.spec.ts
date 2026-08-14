@@ -75,15 +75,9 @@ describe(Stryker.name, () => {
       .returns(loggingServerMock);
     getLoggerStub.returns(loggerMock);
 
-    prepareExecutorMock.execute.resolves(
-      injectorMock as typedInject.Injector<MutationTestContext>,
-    );
-    mutantInstrumenterExecutorMock.execute.resolves(
-      injectorMock as typedInject.Injector<MutationTestContext>,
-    );
-    dryRunExecutorMock.execute.resolves(
-      injectorMock as typedInject.Injector<MutationTestContext>,
-    );
+    prepareExecutorMock.execute.resolves(injectorMock);
+    mutantInstrumenterExecutorMock.execute.resolves(injectorMock);
+    dryRunExecutorMock.execute.resolves(injectorMock);
     mutationTestExecutorMock.execute.resolves(mutantResults);
 
     cliOptions = {};
@@ -91,10 +85,7 @@ describe(Stryker.name, () => {
 
   describe('runMutationTest()', () => {
     beforeEach(() => {
-      sut = new Stryker(
-        cliOptions,
-        () => injectorMock as typedInject.Injector<MutationTestContext>,
-      );
+      sut = new Stryker(cliOptions, () => injectorMock);
     });
 
     it('should execute the preparations', async () => {

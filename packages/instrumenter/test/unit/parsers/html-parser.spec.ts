@@ -32,27 +32,17 @@ describe('html-parser', () => {
     `;
 
     it('should be able to parse simple HTML', async () => {
-      const parsed = await parse(
-        simpleHtml,
-        'index.html',
-        contextStub as ParserContext,
-      );
+      const parsed = await parse(simpleHtml, 'index.html', contextStub);
       expect(parsed).ok;
     });
 
     it('should work without script tags', async () => {
-      const parsed = await parse(
-        simpleHtml,
-        'index.html',
-        contextStub as ParserContext,
-      );
+      const parsed = await parse(simpleHtml, 'index.html', contextStub);
       expect(parsed.root.scripts).lengthOf(0);
     });
 
     it('should throw an error on invalid HTML', async () => {
-      await expect(
-        parse('<p></div>', 'index.html', contextStub as ParserContext),
-      ).rejectedWith(
+      await expect(parse('<p></div>', 'index.html', contextStub)).rejectedWith(
         ParseError,
         'Parse error in index.html (1:3) Unexpected closing tag "div".',
       );
@@ -71,11 +61,7 @@ describe('html-parser', () => {
     `;
 
     it('should deliver one script', async () => {
-      const parsed = await parse(
-        html,
-        'index.html',
-        contextStub as ParserContext,
-      );
+      const parsed = await parse(html, 'index.html', contextStub);
       expect(parsed.root.scripts).lengthOf(1);
     });
 
@@ -85,11 +71,7 @@ describe('html-parser', () => {
       contextStub.parse.resolves(actualScriptAst);
 
       // Act
-      const parsed = await parse(
-        html,
-        'index.html',
-        contextStub as ParserContext,
-      );
+      const parsed = await parse(html, 'index.html', contextStub);
 
       // Assert
       expect(parsed.root.scripts[0].offset!.column).eq(74);
@@ -120,7 +102,7 @@ describe('html-parser', () => {
         await parse(
           `<script type="${actualType}">${code}</script>`,
           'test.html',
-          contextStub as ParserContext,
+          contextStub,
         );
         expect(contextStub.parse).calledWith(code, 'test.html', expectedType);
       });
@@ -129,7 +111,7 @@ describe('html-parser', () => {
         await parse(
           `<script lang="${actualType}">${code}</script>`,
           'test.html',
-          contextStub as ParserContext,
+          contextStub,
         );
         expect(contextStub.parse).calledWith(code, 'test.html', expectedType);
       });
@@ -137,19 +119,11 @@ describe('html-parser', () => {
 
     it('should parse <script> without a "type" as js', async () => {
       const code = 'foo.bar(40,2)';
-      await parse(
-        `<script>${code}</script>`,
-        'test.html',
-        contextStub as ParserContext,
-      );
+      await parse(`<script>${code}</script>`, 'test.html', contextStub);
       expect(contextStub.parse).calledWith(code, 'test.html', AstFormat.JS);
     });
     it('shouldn\'t parse scripts with a "src" attribute', async () => {
-      await parse(
-        '<script src="foo.js"></script>',
-        'test.html',
-        contextStub as ParserContext,
-      );
+      await parse('<script src="foo.js"></script>', 'test.html', contextStub);
       expect(contextStub.parse).not.called;
     });
 
@@ -157,7 +131,7 @@ describe('html-parser', () => {
       await parse(
         '<html><body><div><div><section><script></script></section></div></div></body></html>',
         'test.html',
-        contextStub as ParserContext,
+        contextStub,
       );
       expect(contextStub.parse).called;
     });
@@ -166,7 +140,7 @@ describe('html-parser', () => {
       await parse(
         '<script defer type="ts"></script>',
         'test.html',
-        contextStub as ParserContext,
+        contextStub,
       );
       expect(contextStub.parse).calledWith('', 'test.html', AstFormat.TS);
     });
@@ -175,7 +149,7 @@ describe('html-parser', () => {
       const parsed = await parse(
         '<script type="text/template"><div></div></script>',
         'test.html',
-        contextStub as ParserContext,
+        contextStub,
       );
       expect(parsed.root.scripts).lengthOf(0);
     });
@@ -209,7 +183,7 @@ describe('html-parser', () => {
       // Act
       const {
         root: { scripts },
-      } = await parse(html, 'test.html', contextStub as ParserContext);
+      } = await parse(html, 'test.html', contextStub);
 
       // Assert
       expect(contextStub.parse).calledThrice;
