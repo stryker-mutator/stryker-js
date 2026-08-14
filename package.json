@@ -21,7 +21,7 @@
     "chai": "6.2.2",
     "chai-as-promised": "8.0.2",
     "chai-jest-snapshot": "2.0.0",
-    "concurrently": "10.0.3",
+    "concurrently": "10.0.4",
     "cross-env": "10.1.0",
     "eslint": "10.7.0",
     "eslint-config-prettier": "10.1.8",
