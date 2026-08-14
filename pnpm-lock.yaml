@@ -45,8 +45,8 @@ importers:
         specifier: 8.67.0
         version: 8.67.0(@typescript/typescript6@6.0.2)(eslint@10.7.0(jiti@1.21.7))
       '@vitejs/plugin-react':
-        specifier: 6.0.3
-        version: 6.0.3(vite@8.0.16(@types/node@24.13.3)(esbuild@0.28.0)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.46.1)(tsx@4.23.0)(yaml@2.8.3))
+        specifier: 6.0.5
+        version: 6.0.5(vite@8.0.16(@types/node@24.13.3)(esbuild@0.28.0)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.46.1)(tsx@4.23.0)(yaml@2.8.3))
       c8:
         specifier: 11.0.0
         version: 11.0.0
@@ -60,8 +60,8 @@ importers:
         specifier: 2.0.0
         version: 2.0.0(chai@6.2.2)
       concurrently:
-        specifier: 10.0.3
-        version: 10.0.3
+        specifier: 10.0.4
+        version: 10.0.4
       cross-env:
         specifier: 10.1.0
         version: 10.1.0
@@ -1182,8 +1182,8 @@ importers:
         specifier: workspace:*
         version: link:../util
       angular-html-parser:
-        specifier: ~10.10.0
-        version: 10.10.0
+        specifier: ~10.11.0
+        version: 10.11.0
       semver:
         specifier: ~7.8.0
         version: 7.8.5
@@ -6660,8 +6660,8 @@ packages:
     peerDependencies:
       vite: ^3.0.0 || ^4.0.0 || ^5.0.0
 
-  '@vitejs/plugin-react@6.0.3':
-    resolution: {integrity: sha512-vmFvco5/QuC2f9Oj+wTk0+9XeDFkHxSamwZKYc7MxYwKICfvUvlMhqKI0VuICPltGqh1neqBKDvO4kes1ya8vg==}
+  '@vitejs/plugin-react@6.0.5':
+    resolution: {integrity: sha512-BOVzne/NL162sMdResB25mUv+vWMF5NoAjNf09TeGlE7ZpszZWSD3winycicLJw72yeVsoCn/2kOhEuCvEShMA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     peerDependencies:
       '@rolldown/plugin-babel': ^0.1.7 || ^0.2.0
@@ -7109,8 +7109,8 @@ packages:
   alien-signals@1.0.13:
     resolution: {integrity: sha512-OGj9yyTnJEttvzhTUWuscOvtqxq5vrhF7vL9oS0xJ2mK0ItPYP1/y+vCFebfxoEyAz0++1AIwJ5CMr+Fk3nDmg==}
 
-  angular-html-parser@10.10.0:
-    resolution: {integrity: sha512-cYHfKIeua6/EG6SG9+Dz4iY0CDCK3R8JcyNP1CwyoO8yU929Wef/HCyt3AeUk7ukkPZ8RwS6k20jn8nPPglI2Q==}
+  angular-html-parser@10.11.0:
+    resolution: {integrity: sha512-3vERzJ65UFDr3C7uozLJwsNcQS3FS784dSh583oDgDTTZMgXe3/pdyXgKndxiP5R2lvYRfW6gSl145Hnyf2OFA==}
     engines: {node: '>= 14'}
 
   ansi-colors@3.2.3:
@@ -8198,8 +8198,8 @@ packages:
     resolution: {integrity: sha512-OAcsnTEYu1ARJqWVGwf4zh4JDfHZEaSNlNccFmt8YjB2l/n19/PF2viLINHc57vO4FKIAFl2FWASIGZZWZ2Kxw==}
     engines: {node: '>=10.18.0 <11 || >=12.14.0 <13 || >=14'}
 
-  concurrently@10.0.3:
-    resolution: {integrity: sha512-hc3LH4UaKWd/bbyDK/IGVa4RB6PtQ3CUYwtrkzqHn+wIG3Hr5fhpRlk0L/gCa8ZE1L/Ufj50Zho69cI5w8SQBA==}
+  concurrently@10.0.4:
+    resolution: {integrity: sha512-trZql+7l/0+WRAsAnEdctr4+iiOS6ZrViI6H8QWcCF9MFS/LT0dKpe8vluB1to6it+OxSI4VospFTIFMW8DJRw==}
     engines: {node: '>=22'}
     hasBin: true
 
@@ -14776,6 +14776,10 @@ packages:
 
   shell-quote@1.8.4:
     resolution: {integrity: sha512-VsC6n6vz1ihYYyZZwX7YZSF5l5x36ca17OC+a69h94YqB7X6XLwf+5MOgynYir2SLFUbl8gIYvBo8K8RoNQ6bQ==}
+    engines: {node: '>= 0.4'}
+
+  shell-quote@1.9.0:
+    resolution: {integrity: sha512-Iov+JwFv/2HcTpcwNMKd8+IWNb8tboQJNQTkAY/LLVK7gGH9jy+LGkVqPxfekHl+yMmiqXszdGWXgkfml7hjqA==}
     engines: {node: '>= 0.4'}
 
   shellwords@0.1.1:
@@ -24625,7 +24629,7 @@ snapshots:
     dependencies:
       vite: 5.4.21(@types/node@24.13.3)(less@4.2.0)(lightningcss@1.32.0)(sass@1.71.1)(terser@5.29.1)
 
-  '@vitejs/plugin-react@6.0.3(vite@8.0.16(@types/node@24.13.3)(esbuild@0.28.0)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.46.1)(tsx@4.23.0)(yaml@2.8.3))':
+  '@vitejs/plugin-react@6.0.5(vite@8.0.16(@types/node@24.13.3)(esbuild@0.28.0)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.46.1)(tsx@4.23.0)(yaml@2.8.3))':
     dependencies:
       '@rolldown/pluginutils': 1.0.1
       vite: 8.0.16(@types/node@24.13.3)(esbuild@0.28.0)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.46.1)(tsx@4.23.0)(yaml@2.8.3)
@@ -25207,7 +25211,7 @@ snapshots:
 
   alien-signals@1.0.13: {}
 
-  angular-html-parser@10.10.0: {}
+  angular-html-parser@10.11.0: {}
 
   ansi-colors@3.2.3: {}
 
@@ -26586,11 +26590,11 @@ snapshots:
       semver: 7.8.5
       well-known-symbols: 2.0.0
 
-  concurrently@10.0.3:
+  concurrently@10.0.4:
     dependencies:
       chalk: 5.6.2
       rxjs: 7.8.2
-      shell-quote: 1.8.4
+      shell-quote: 1.9.0
       supports-color: 10.2.2
       tree-kill: 1.2.2
       yargs: 18.0.0
@@ -35651,6 +35655,8 @@ snapshots:
   shell-quote@1.8.3: {}
 
   shell-quote@1.8.4: {}
+
+  shell-quote@1.9.0: {}
 
   shellwords@0.1.1: {}
 

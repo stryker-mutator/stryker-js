@@ -22,7 +22,7 @@ runs:
     - name: Setup pnpm
       uses: pnpm/action-setup@v6
     - name: Use Node.js ${{ inputs.node-version }}
-      uses: actions/setup-node@v6
+      uses: actions/setup-node@v7
       with:
         node-version: ${{ inputs.node-version }}
         cache: 'pnpm'
