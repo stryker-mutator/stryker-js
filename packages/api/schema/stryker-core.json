@@ -354,7 +354,7 @@
       "default": false
     },
     "incrementalFile": {
-      "description": "Specify the file to use for incremental mode.",
+      "description": "Specify the file to use for incremental mode. A sibling .pending/ directory and .tmp file may appear next to it during a run; gitignore them like this file.",
       "type": "string",
       "default": "reports/stryker-incremental.json"
     },

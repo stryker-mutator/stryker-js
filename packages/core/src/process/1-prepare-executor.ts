@@ -24,7 +24,7 @@ import { MetaSchemaBuilder, OptionsValidator } from '../config/index.js';
 import { BroadcastReporter } from '../reporters/broadcast-reporter.js';
 import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
 
-import { FileSystem, ProjectReader } from '../fs/index.js';
+import { FileSystem, IncrementalJournal, ProjectReader } from '../fs/index.js';
 
 import { MutantInstrumenterContext } from './index.js';
 import { Reporter } from '@stryker-mutator/api/report';
@@ -102,6 +102,7 @@ export class PrepareExecutor {
       .provideValue(commonTokens.options, options)
       .provideClass(coreTokens.temporaryDirectory, TemporaryDirectory)
       .provideClass(coreTokens.fs, FileSystem)
+      .provideClass(coreTokens.incrementalJournal, IncrementalJournal)
       .provideValue(coreTokens.pluginsByKind, loadedPlugins.pluginsByKind);
     const project = await projectFileReaderInjector
       .injectClass(ProjectReader)

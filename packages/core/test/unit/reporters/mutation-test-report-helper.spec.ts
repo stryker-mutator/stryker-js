@@ -13,7 +13,7 @@ import { coreTokens } from '../../../src/di/index.js';
 import { MutationTestReportHelper } from '../../../src/reporters/mutation-test-report-helper.js';
 import { objectUtils } from '../../../src/utils/object-utils.js';
 import { strykerVersion } from '../../../src/stryker-package.js';
-import { Project } from '../../../src/fs/index.js';
+import { IncrementalJournal, Project } from '../../../src/fs/index.js';
 import { FileSystemTestDouble } from '../../helpers/file-system-test-double.js';
 import { TestCoverageTestDouble } from '../../helpers/test-coverage-test-double.js';
 import { UnexpectedExitHandlerTestDouble } from '../../helpers/unexpected-exit-handler-test-double.js';
@@ -25,6 +25,7 @@ describe(MutationTestReportHelper.name, () => {
   let requireFromCwdStub: sinon.SinonStubbedMember<typeof requireResolve>;
   let fileSystemTestDouble: FileSystemTestDouble;
   let unexpectedExitRegistry: UnexpectedExitHandlerTestDouble;
+  let incrementalJournalMock: sinon.SinonStubbedInstance<IncrementalJournal>;
 
   beforeEach(() => {
     requireFromCwdStub = sinon.stub();
@@ -33,6 +34,7 @@ describe(MutationTestReportHelper.name, () => {
     fileSystemTestDouble = new FileSystemTestDouble();
     testCoverage = new TestCoverageTestDouble();
     unexpectedExitRegistry = new UnexpectedExitHandlerTestDouble();
+    incrementalJournalMock = sinon.createStubInstance(IncrementalJournal);
   });
 
   function createSut() {
@@ -45,8 +47,8 @@ describe(MutationTestReportHelper.name, () => {
       .provideValue(coreTokens.project, project)
       .provideValue(coreTokens.testCoverage, testCoverage)
       .provideValue(coreTokens.requireFromCwd, requireFromCwdStub)
-      .provideValue(coreTokens.fs, fileSystemTestDouble)
       .provideValue(coreTokens.unexpectedExitRegistry, unexpectedExitRegistry)
+      .provideValue(coreTokens.incrementalJournal, incrementalJournalMock)
       .injectClass(MutationTestReportHelper);
   }
 
@@ -499,40 +501,23 @@ describe(MutationTestReportHelper.name, () => {
     });
 
     describe('incremental', () => {
-      it('should write the report to the incremental file', async () => {
+      it('should complete the incremental journal with the report', async () => {
         testInjector.options.incremental = true;
         const [actualReport] = await actReportAll();
-        const actualFileContent: string = await fileSystemTestDouble.readFile(
-          'reports/stryker-incremental.json',
+        expect(incrementalJournalMock.complete).calledOnceWithExactly(
+          actualReport,
         );
-        expect(actualFileContent).eq(JSON.stringify(actualReport, null, 2));
       });
-      it('should support the incrementalFile option', async () => {
-        testInjector.options.incremental = true;
-        testInjector.options.incrementalFile = 'some/other/incremental.json';
-        const [actualReport] = await actReportAll();
-        const actualFileContent: string = await fileSystemTestDouble.readFile(
-          'some/other/incremental.json',
-        );
-        expect(actualFileContent).eq(JSON.stringify(actualReport, null, 2));
-      });
-      it('should create the dir for the incremental file', async () => {
-        testInjector.options.incremental = true;
-        const [actualReport] = await actReportAll();
-        const actualFileContent: string = await fileSystemTestDouble.readFile(
-          'reports/stryker-incremental.json',
-        );
-        expect(actualFileContent).eq(JSON.stringify(actualReport, null, 2));
-      });
-      it('should make the directory before writing the results file', async () => {
-        testInjector.options.incremental = true;
+      it('should not complete the incremental journal when incremental is false', async () => {
+        testInjector.options.incremental = false;
         await actReportAll();
-        expect(fileSystemTestDouble.dirs).contains('reports');
+        expect(incrementalJournalMock.complete).not.called;
       });
 
-      it('should write partial results to the incremental file on unexpected exit', async () => {
+      it('should write partial results to the incremental journal on unexpected exit after begin', async () => {
         testInjector.options.incremental = true;
         fileSystemTestDouble.files['partial.js'] = 'const answer = 42;\n';
+        incrementalJournalMock.isStarted = true;
         const sut = createSut();
 
         sut.reportMutantStatus(
@@ -546,13 +531,8 @@ describe(MutationTestReportHelper.name, () => {
 
         await unexpectedExitRegistry.triggerUnexpectedExit();
 
-        const incrementalReportContent: string =
-          await fileSystemTestDouble.readFile(
-            'reports/stryker-incremental.json',
-          );
-        const actualReport = JSON.parse(
-          incrementalReportContent,
-        ) as schema.MutationTestResult;
+        expect(incrementalJournalMock.complete).calledOnce;
+        const [actualReport] = incrementalJournalMock.complete.firstCall.args;
         expect(actualReport.files['partial.js'].mutants).lengthOf(1);
         expect(actualReport.files['partial.js'].mutants[0].status).eq(
           'NoCoverage',
@@ -563,19 +543,37 @@ describe(MutationTestReportHelper.name, () => {
         );
       });
 
+      it('should not compact on unexpected exit before the journal has begun', async () => {
+        testInjector.options.incremental = true;
+        fileSystemTestDouble.files['partial.js'] = 'const answer = 42;\n';
+        incrementalJournalMock.isStarted = false;
+        const sut = createSut();
+
+        sut.reportMutantStatus(
+          factory.mutantTestCoverage({
+            fileName: 'partial.js',
+            id: '1',
+            location: factory.location(),
+          }),
+          'NoCoverage',
+        );
+
+        await unexpectedExitRegistry.triggerUnexpectedExit();
+
+        expect(incrementalJournalMock.complete).not.called;
+        expect(testInjector.logger.info).not.calledWith(
+          'Saved a partial incremental report to "%s" after an unexpected interrupt.',
+          'reports/stryker-incremental.json',
+        );
+      });
+
       it('should not overwrite the incremental file on unexpected exit when no results were reported', async () => {
         testInjector.options.incremental = true;
-        fileSystemTestDouble.files['reports/stryker-incremental.json'] =
-          'existing-report';
         createSut();
 
         await unexpectedExitRegistry.triggerUnexpectedExit();
 
-        expect(
-          await fileSystemTestDouble.readFile(
-            'reports/stryker-incremental.json',
-          ),
-        ).eq('existing-report');
+        expect(incrementalJournalMock.complete).not.called;
         expect(reporterMock.onMutationTestReportReady).not.called;
         expect(testInjector.logger.info).not.calledWith(
           'Saved a partial incremental report to "%s" after an unexpected interrupt.',
@@ -601,16 +599,86 @@ describe(MutationTestReportHelper.name, () => {
         ];
 
         await sut.reportAll(completeResults);
-        fileSystemTestDouble.files['reports/stryker-incremental.json'] =
-          'full-report';
+        incrementalJournalMock.complete.resetHistory();
 
         await unexpectedExitRegistry.triggerUnexpectedExit();
 
-        expect(
-          await fileSystemTestDouble.readFile(
-            'reports/stryker-incremental.json',
-          ),
-        ).eq('full-report');
+        expect(incrementalJournalMock.complete).not.called;
+      });
+
+      it('should forward every result to the journal (the journal no-ops until begin)', async () => {
+        testInjector.options.incremental = true;
+        fileSystemTestDouble.files['foo.js'] = 'const answer = 42;\n';
+        const sut = createSut();
+        sut.reportMutantStatus(
+          factory.mutantTestCoverage({
+            fileName: 'foo.js',
+            id: '1',
+          }),
+          'Ignored',
+        );
+        expect(incrementalJournalMock.append).calledOnce;
+        expect(incrementalJournalMock.begin).not.called;
+      });
+
+      it('should not append to the journal when incremental is false', () => {
+        testInjector.options.incremental = false;
+        fileSystemTestDouble.files['foo.js'] = 'const answer = 42;\n';
+        const sut = createSut();
+        sut.reportMutantStatus(
+          factory.mutantTestCoverage({
+            fileName: 'foo.js',
+            id: '1',
+          }),
+          'Ignored',
+        );
+        expect(incrementalJournalMock.append).not.called;
+      });
+
+      it('should begin the journal with plan-time results in base only', async () => {
+        testInjector.options.incremental = true;
+        fileSystemTestDouble.files['foo.js'] = 'const answer = 42;\n';
+        fileSystemTestDouble.files['bar.js'] = 'const other = 1;\n';
+        const sut = createSut();
+        sut.reportMutantStatus(
+          factory.mutantTestCoverage({
+            fileName: 'foo.js',
+            id: '1',
+            status: 'Ignored',
+          }),
+          'Ignored',
+        );
+
+        await sut.beginIncrementalJournal();
+
+        expect(incrementalJournalMock.begin).calledOnce;
+        const [base] = incrementalJournalMock.begin.firstCall.args;
+        expect(base.files['foo.js'].mutants).lengthOf(1);
+        expect(base.files['foo.js'].mutants[0].status).eq('Ignored');
+        expect(base.files['bar.js'].mutants).lengthOf(0);
+        expect(base.files['bar.js'].source).eq('const other = 1;\n');
+      });
+
+      it('should append checker and test-runner results to the journal after begin', async () => {
+        testInjector.options.incremental = true;
+        fileSystemTestDouble.files['foo.js'] = 'const answer = 42;\n';
+        const sut = createSut();
+        await sut.beginIncrementalJournal();
+        incrementalJournalMock.append.resetHistory();
+
+        sut.reportMutantRunResult(
+          factory.mutantTestCoverage({
+            fileName: 'foo.js',
+            id: '2',
+          }),
+          factory.killedMutantRunResult(),
+        );
+
+        expect(incrementalJournalMock.append).calledOnce;
+        const [appended] = incrementalJournalMock.append.firstCall.args;
+        expect(appended.id).eq('2');
+        expect(appended.status).eq('Killed');
+        expect(appended.fileName).eq('foo.js');
       });
     });
 

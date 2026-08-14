@@ -12,15 +12,19 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { ProjectReader } from '../../../src/fs/project-reader.js';
+import { IncrementalJournal } from '../../../src/fs/incremental-journal.js';
 import { coreTokens } from '../../../src/di/index.js';
 import { FileSystem } from '../../../src/fs/file-system.js';
 import { createDirent, createFileSystemMock } from '../../helpers/producers.js';
 
 describe(ProjectReader.name, () => {
   let fsMock: sinon.SinonStubbedInstance<I<FileSystem>>;
+  let incrementalJournalMock: sinon.SinonStubbedInstance<IncrementalJournal>;
 
   beforeEach(() => {
     fsMock = createFileSystemMock();
+    incrementalJournalMock = sinon.createStubInstance(IncrementalJournal);
+    incrementalJournalMock.load.resolves(undefined);
   });
 
   describe('file resolving', () => {
@@ -29,7 +33,7 @@ describe(ProjectReader.name, () => {
       const sut = createSut();
       await sut.read(undefined);
       expect(testInjector.logger.warn).calledWith(
-        `No files found in directory ${process.cwd()} using ignore rules: ["node_modules",".git","*.tsbuildinfo","/stryker.log",".next",".nuxt",".svelte-kit",".stryker-tmp","reports/stryker-incremental.json","reports/mutation/mutation.html","reports/mutation/mutation.json"]. Make sure you run Stryker from the root directory of your project with the correct "ignorePatterns".`,
+        `No files found in directory ${process.cwd()} using ignore rules: ["node_modules",".git","*.tsbuildinfo","/stryker.log",".next",".nuxt",".svelte-kit",".stryker-tmp","reports/stryker-incremental.json","reports/stryker-incremental.pending","reports/stryker-incremental.pending.next","reports/stryker-incremental.pending.prev","reports/stryker-incremental.json.tmp","reports/mutation/mutation.html","reports/mutation/mutation.json"]. Make sure you run Stryker from the root directory of your project with the correct "ignorePatterns".`,
       );
     });
     it('should discover files recursively using readdir', async () => {
@@ -114,6 +118,13 @@ describe(ProjectReader.name, () => {
         },
         reports: {
           'stryker-incremental.json': '',
+          'stryker-incremental.json.tmp': '',
+          'stryker-incremental.pending': {
+            'base.json': '',
+            'results.jsonl': '',
+          },
+          'stryker-incremental.pending.next': { 'base.json': '' },
+          'stryker-incremental.pending.prev': { 'base.json': '' },
           mutation: { 'mutation.html': '', 'mutation.json': '' },
         },
       });
@@ -904,6 +915,55 @@ describe(ProjectReader.name, () => {
         'utf-8',
       );
     });
+    it('should prefer a valid pending journal over the committed incremental file', async () => {
+      testInjector.options.incremental = true;
+      incrementalJournalMock.load.resolves(
+        factory.mutationTestReportSchemaMutationTestResult({
+          files: {
+            'foo.js': factory.mutationTestReportSchemaFileResult({
+              mutants: [
+                factory.mutationTestReportSchemaMutantResult({
+                  id: 'from-pending',
+                  location: {
+                    start: { line: 1, column: 2 },
+                    end: { line: 3, column: 4 },
+                  },
+                }),
+              ],
+            }),
+          },
+        }),
+      );
+      stubFileSystem({
+        reports: {
+          'stryker-incremental.json': JSON.stringify(
+            factory.mutationTestReportSchemaMutationTestResult({
+              files: {
+                'foo.js': factory.mutationTestReportSchemaFileResult({
+                  mutants: [
+                    factory.mutationTestReportSchemaMutantResult({
+                      id: 'from-committed',
+                    }),
+                  ],
+                }),
+              },
+            }),
+          ),
+        },
+      });
+      const sut = createSut();
+      const actualProject = await sut.read(undefined);
+      expect(
+        actualProject.incrementalReport?.files['foo.js'].mutants[0].id,
+      ).eq('from-pending');
+      expect(
+        actualProject.incrementalReport?.files['foo.js'].mutants[0].location,
+      ).deep.eq({
+        start: { line: 0, column: 1 },
+        end: { line: 2, column: 3 },
+      });
+      sinon.assert.notCalled(fsMock.readFile);
+    });
   });
 
   function mutateRange(
@@ -921,6 +981,7 @@ describe(ProjectReader.name, () => {
   function createSut() {
     return testInjector.injector
       .provideValue(coreTokens.fs, fsMock)
+      .provideValue(coreTokens.incrementalJournal, incrementalJournalMock)
       .injectClass(ProjectReader);
   }
 

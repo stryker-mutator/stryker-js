@@ -25,7 +25,7 @@ import { createPreprocessor } from '../sandbox/index.js';
 import { Timer } from '../utils/timer.js';
 import { TemporaryDirectory } from '../utils/temporary-directory.js';
 import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
-import { FileSystem, Project } from '../fs/index.js';
+import { FileSystem, IncrementalJournal, Project } from '../fs/index.js';
 import { IdGenerator } from '../child-proxy/id-generator.js';
 
 import { DryRunContext } from './3-dry-run-executor.js';
@@ -41,6 +41,7 @@ export interface MutantInstrumenterContext extends PluginContext {
   [coreTokens.unexpectedExitRegistry]: I<UnexpectedExitHandler>;
   [coreTokens.pluginModulePaths]: readonly string[];
   [coreTokens.fs]: I<FileSystem>;
+  [coreTokens.incrementalJournal]: I<IncrementalJournal>;
   [coreTokens.pluginCreator]: PluginCreator;
   [coreTokens.loggingServerAddress]: { port: number };
 }
