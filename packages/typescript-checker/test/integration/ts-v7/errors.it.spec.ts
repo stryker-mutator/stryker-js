@@ -16,7 +16,7 @@ const resolveTestResource = path.resolve.bind(
   '..' /* test */,
   '..' /* dist */,
   'testResources',
-) as unknown as typeof path.resolve;
+);
 
 describe('Typescript checker (native preview) errors', () => {
   let sut: NativeTypescriptChecker | undefined;
