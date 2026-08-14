@@ -9,6 +9,7 @@ import { Location, Mutant } from '@stryker-mutator/api/core';
 import { testInjector, factory } from '@stryker-mutator/test-helpers';
 
 import { createTypescriptChecker } from '../../src/index.js';
+import { TypescriptChecker } from '../../src/typescript-checker.js';
 import { TypescriptCheckerOptionsWithStrykerOptions } from '../../src/typescript-checker-options-with-stryker-options.js';
 
 const resolveTestResource = path.resolve.bind(
@@ -25,9 +26,14 @@ describe('project-with-ts-buildinfo', () => {
   it('should load project on init', async () => {
     (
       testInjector.options as TypescriptCheckerOptionsWithStrykerOptions
-    ).typescriptChecker = { prioritizePerformanceOverAccuracy: true };
+    ).typescriptChecker = {
+      prioritizePerformanceOverAccuracy: true,
+      experimentalNativePreview: false,
+    };
     testInjector.options.tsconfigFile = resolveTestResource('tsconfig.json');
-    const sut = testInjector.injector.injectFunction(createTypescriptChecker);
+    const sut = testInjector.injector.injectFunction(
+      createTypescriptChecker,
+    ) as TypescriptChecker;
     const group = await sut.group([createMutant('src/index.ts', '', '')]);
     expect(group).lengthOf(1);
   });
