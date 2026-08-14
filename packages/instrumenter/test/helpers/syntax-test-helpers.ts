@@ -36,7 +36,7 @@ export function parseJS(code: string): types.File {
     { filename: 'foo.js' } as unknown as ConstructorParameters<typeof File>[0],
     {
       code,
-      ast: parseSync(code, undefined)! as babel.types.File,
+      ast: parseSync(code, undefined)!,
       inputMap: undefined,
     },
   );

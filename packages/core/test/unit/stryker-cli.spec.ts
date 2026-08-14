@@ -197,7 +197,7 @@ describe(StrykerCli.name, () => {
 
     it('should provide a meaningful help', () => {
       const stdoutStub = sinon.stub(process.stdout, 'write');
-      expect(() => actInit(() => factory.injector() as Injector, '-h')).throws(
+      expect(() => actInit(() => factory.injector(), '-h')).throws(
         '(outputHelp)',
       );
       expect(stdoutStub.callCount).eq(1);

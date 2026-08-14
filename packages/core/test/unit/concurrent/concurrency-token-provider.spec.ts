@@ -195,7 +195,7 @@ describe(ConcurrencyTokenProvider.name, () => {
 
     it('should not convert invalid percentage format like "50%abc" as percentage', () => {
       sinon.stub(os, 'availableParallelism').returns(8);
-      testInjector.options.concurrency = '50%abc' as any;
+      testInjector.options.concurrency = '50%abc';
       const sut = createSut();
       // Should use default logic (availableParallelism - 1 since 8 > 4)
       expect(testInjector.logger.info).calledWith(
