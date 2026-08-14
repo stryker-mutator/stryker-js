@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [10.0.0](https://github.com/stryker-mutator/stryker-js/compare/v9.6.1...v10.0.0) (2026-08-14)
+
+### Bug Fixes
+
+- **deps:** update babel monorepo to v7.29.7 ([#6068](https://github.com/stryker-mutator/stryker-js/issues/6068)) ([c10cb94](https://github.com/stryker-mutator/stryker-js/commit/c10cb949e4851a2774d86c6537f05bf43aef0897))
+- **deps:** update dependency angular-html-parser to ~10.10.0 ([#6069](https://github.com/stryker-mutator/stryker-js/issues/6069)) ([82f4e1f](https://github.com/stryker-mutator/stryker-js/commit/82f4e1f42bb1cbe564ad0b827763f49d9d4323ea))
+- **deps:** update dependency angular-html-parser to ~10.11.0 ([#6132](https://github.com/stryker-mutator/stryker-js/issues/6132)) ([81706f0](https://github.com/stryker-mutator/stryker-js/commit/81706f0cac9d8ab870179a2f67e07a701603b2fe))
+- **deps:** update dependency angular-html-parser to ~10.6.0 ([#5962](https://github.com/stryker-mutator/stryker-js/issues/5962)) ([4a47b39](https://github.com/stryker-mutator/stryker-js/commit/4a47b39941bfbeecbb32031f7160dc0cb262ecc4))
+- **deps:** update dependency semver to v7.8.5 ([#6075](https://github.com/stryker-mutator/stryker-js/issues/6075)) ([f66c2fc](https://github.com/stryker-mutator/stryker-js/commit/f66c2fcde4dc7b0546880d261afac7edbc0527f4))
+- **deps:** update dependency weapon-regex to v2 ([#6077](https://github.com/stryker-mutator/stryker-js/issues/6077)) ([b357f40](https://github.com/stryker-mutator/stryker-js/commit/b357f40a064462f0d6b38704d0b9c6f8fa878bd1))
+- **instrumenter:** parse svelte template expressions as TS when file uses lang="ts" ([#6024](https://github.com/stryker-mutator/stryker-js/issues/6024)) ([e81abcc](https://github.com/stryker-mutator/stryker-js/commit/e81abcc92c282f40baec58c6a34d341b2c9e3191))
+
+### Features
+
+- **babel:** update babel to major version 8 ([#6104](https://github.com/stryker-mutator/stryker-js/issues/6104)) ([291b7ea](https://github.com/stryker-mutator/stryker-js/commit/291b7ead950e8c0b46da0db77a7a6ece32547114))
+- empty-expression-mutator ([#6012](https://github.com/stryker-mutator/stryker-js/issues/6012)) ([cc08738](https://github.com/stryker-mutator/stryker-js/commit/cc087380173e411ed4ba1960c2571db77eb0cce3)), closes [#5765](https://github.com/stryker-mutator/stryker-js/issues/5765)
+- mutant filtering ([#6010](https://github.com/stryker-mutator/stryker-js/issues/6010)) ([ea5ac29](https://github.com/stryker-mutator/stryker-js/commit/ea5ac297acaf4a5bbd12aa3d7ff9eaa6b8565f2e))
+- **node:** drop support for Node.js 20, require Node.js 22 or higher ([#6002](https://github.com/stryker-mutator/stryker-js/issues/6002)) ([425cb9f](https://github.com/stryker-mutator/stryker-js/commit/425cb9f7306d4c86b30a90f955c82429a465487b))
+
+### BREAKING CHANGES
+
+- **node:** Node.js 20 is no longer supported, please use Node.js 22 or higher.
+
 ## [9.6.1](https://github.com/stryker-mutator/stryker-js/compare/v9.6.0...v9.6.1) (2026-04-10)
 
 **Note:** Version bump only for package @stryker-mutator/instrumenter

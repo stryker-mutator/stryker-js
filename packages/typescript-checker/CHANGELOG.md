@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [10.0.0](https://github.com/stryker-mutator/stryker-js/compare/v9.6.1...v10.0.0) (2026-08-14)
+
+### Bug Fixes
+
+- **deps:** update dependency semver to v7.8.5 ([#6075](https://github.com/stryker-mutator/stryker-js/issues/6075)) ([f66c2fc](https://github.com/stryker-mutator/stryker-js/commit/f66c2fcde4dc7b0546880d261afac7edbc0527f4))
+
+### Features
+
+- **node:** drop support for Node.js 20, require Node.js 22 or higher ([#6002](https://github.com/stryker-mutator/stryker-js/issues/6002)) ([425cb9f](https://github.com/stryker-mutator/stryker-js/commit/425cb9f7306d4c86b30a90f955c82429a465487b))
+- **typescript-checker:** add experimental support for TypeScript@7 ([#6099](https://github.com/stryker-mutator/stryker-js/issues/6099)) ([3d35679](https://github.com/stryker-mutator/stryker-js/commit/3d356791210930932b7d5c5c69546197025ceb5c))
+
+### BREAKING CHANGES
+
+- **node:** Node.js 20 is no longer supported, please use Node.js 22 or higher.
+
 ## [9.6.1](https://github.com/stryker-mutator/stryker-js/compare/v9.6.0...v9.6.1) (2026-04-10)
 
 **Note:** Version bump only for package @stryker-mutator/typescript-checker
