@@ -399,10 +399,10 @@ importers:
         version: 4.1.10(@types/node@24.13.3)(@vitest/browser-playwright@4.1.10)(jsdom@29.1.1)(vite@8.0.16(@types/node@24.13.3)(esbuild@0.28.0)(jiti@1.21.7)(less@4.2.0)(sass@1.71.1)(terser@5.46.1)(tsx@4.23.0)(yaml@2.8.3))
       webpack:
         specifier: 5.108.4
-        version: 5.108.4(esbuild@0.28.0)(webpack-cli@7.2.1)
+        version: 5.108.4(esbuild@0.28.0)(webpack-cli@7.2.2)
       webpack-cli:
-        specifier: 7.2.1
-        version: 7.2.1(js-yaml@4.1.1)(json5@2.2.3)(webpack@5.108.4)
+        specifier: 7.2.2
+        version: 7.2.2(js-yaml@4.1.1)(json5@2.2.3)(webpack@5.108.4)
 
   e2e/test/angular-project:
     dependencies:
@@ -16590,8 +16590,8 @@ packages:
     resolution: {integrity: sha512-BMhLD/Sw+GbJC21C/UgyaZX41nPt8bUTg+jWyDeg7e7YN4xOM05YPSIXceACnXVtqyEw/LMClUQMtMZ+PGGpqQ==}
     engines: {node: '>=20'}
 
-  webpack-cli@7.2.1:
-    resolution: {integrity: sha512-YwSGbcZdfz12DM8JIseVPr3oBb09IgVCVc4vY3oDvZnI/mALTGPAP1QiqOi4/bBLSJrRHaqDIXeHcNA0+G38aw==}
+  webpack-cli@7.2.2:
+    resolution: {integrity: sha512-lD0pALneslq8FfV+rwvm1BMW0AFAJrHHhNupAGN4asYjMvqrtRsenU4iKpiBo09gS4ntMxKGUxl9jhTEzVt0oA==}
     engines: {node: '>=20.9.0'}
     hasBin: true
     peerDependencies:
@@ -32152,7 +32152,7 @@ snapshots:
     dependencies:
       glob: 7.2.3
       minimatch: 9.0.9
-      webpack: 5.108.4(esbuild@0.28.0)(webpack-cli@7.2.1)
+      webpack: 5.108.4(esbuild@0.28.0)(webpack-cli@7.2.2)
       webpack-merge: 4.2.2
 
   karma@6.3.0:
@@ -32876,7 +32876,7 @@ snapshots:
       jest-worker: 27.5.1
       schema-utils: 4.3.3
       terser: 5.46.1
-      webpack: 5.108.4(esbuild@0.28.0)(webpack-cli@7.2.1)
+      webpack: 5.108.4(esbuild@0.28.0)(webpack-cli@7.2.2)
     optionalDependencies:
       esbuild: 0.28.0
 
@@ -36951,7 +36951,7 @@ snapshots:
       picomatch: 4.0.4
       source-map: 0.7.6
       typescript: 6.0.3
-      webpack: 5.108.4(esbuild@0.28.0)(webpack-cli@7.2.1)
+      webpack: 5.108.4(esbuild@0.28.0)(webpack-cli@7.2.2)
     optionalDependencies:
       loader-utils: 3.3.1
 
@@ -37876,7 +37876,7 @@ snapshots:
 
   webidl-conversions@8.0.1: {}
 
-  webpack-cli@7.2.1(js-yaml@4.1.1)(json5@2.2.3)(webpack@5.108.4):
+  webpack-cli@7.2.2(js-yaml@4.1.1)(json5@2.2.3)(webpack@5.108.4):
     dependencies:
       '@discoveryjs/json-ext': 1.1.0
       commander: 14.0.3
@@ -37885,7 +37885,7 @@ snapshots:
       import-local: 3.2.0
       interpret: 3.1.1
       rechoir: 0.8.0
-      webpack: 5.108.4(esbuild@0.28.0)(webpack-cli@7.2.1)
+      webpack: 5.108.4(esbuild@0.28.0)(webpack-cli@7.2.2)
       webpack-merge: 6.0.1
     optionalDependencies:
       js-yaml: 4.1.1
@@ -38078,7 +38078,7 @@ snapshots:
       - postcss
       - uglify-js
 
-  webpack@5.108.4(esbuild@0.28.0)(webpack-cli@7.2.1):
+  webpack@5.108.4(esbuild@0.28.0)(webpack-cli@7.2.2):
     dependencies:
       '@types/estree': 1.0.9
       '@types/json-schema': 7.0.15
@@ -38103,7 +38103,7 @@ snapshots:
       watchpack: 2.5.2
       webpack-sources: 3.5.0
     optionalDependencies:
-      webpack-cli: 7.2.1(js-yaml@4.1.1)(json5@2.2.3)(webpack@5.108.4)
+      webpack-cli: 7.2.2(js-yaml@4.1.1)(json5@2.2.3)(webpack@5.108.4)
     transitivePeerDependencies:
       - '@minify-html/node'
       - '@swc/core'
