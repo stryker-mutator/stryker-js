@@ -2,7 +2,7 @@ import path from 'path';
 
 import { expect } from 'chai';
 import { factory } from '@stryker-mutator/test-helpers';
-import { Request, NextFunction, Response } from 'express';
+import { Request, Response } from 'express';
 import sinon from 'sinon';
 
 import {
@@ -168,7 +168,7 @@ describe(TestHooksMiddleware.name, () => {
   describe('handler', () => {
     let request: Request;
     let response: Response;
-    let next: NextFunction;
+    let next: sinon.SinonStub<[errorOrRoute?: unknown], void>;
 
     beforeEach(() => {
       request = {
@@ -178,7 +178,7 @@ describe(TestHooksMiddleware.name, () => {
         writeHead: sinon.stub(),
         end: sinon.stub(),
       } as unknown as Response;
-      next = sinon.stub() as unknown as NextFunction;
+      next = sinon.stub();
     });
 
     it('should pass through normal requests', async () => {

@@ -20,7 +20,7 @@ const resolveTestResource = path.resolve.bind(
   '..' /* dist */,
   'testResources',
   'project-with-ts-buildinfo',
-) as unknown as typeof path.resolve;
+);
 
 describe('project-with-ts-buildinfo', () => {
   it('should load project on init', async () => {

@@ -20,7 +20,7 @@ const resolveTestResource = path.resolve.bind(
   '..' /* dist */,
   'testResources',
   'project-references',
-) as unknown as typeof path.resolve;
+);
 
 describe('Typescript checker on a project with project references', () => {
   let sut: TypescriptChecker;
