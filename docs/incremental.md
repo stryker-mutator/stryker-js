@@ -46,11 +46,9 @@ Here you can see that:
 
 ## Interrupted runs
 
-If a mutation testing run is interrupted (for example by pressing CTRL+C),
-StrykerJS saves the partial results collected so far to the incremental
-report file. This means the next incremental run can pick up where
-the interrupted run left off, instead of having to redo the work from
-the interrupted run.
+If a mutation testing run is interrupted or crashes (for example by pressing CTRL+C, or a canceled CI job), StrykerJS saves the mutant results completed so far. The next incremental run can pick up where the interrupted run left off, instead of having to redo that work.
+
+While a run is in progress, StrykerJS writes a pending directory next to [`incrementalFile`](./configuration.md#incrementalfile-string) (for the default path: `reports/stryker-incremental.pending/`). Gitignore it like the incremental report. `stryker init` adds `reports/stryker-incremental.*` to `.gitignore` for the default path.
 
 ## Limitations
 

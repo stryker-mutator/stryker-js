@@ -35,5 +35,6 @@ export const resolveFromCwd = 'resolveFromCwd';
 export const fs = 'fs';
 export const testCoverage = 'testCoverage';
 export const incrementalDiffer = 'incrementalDiffer';
+export const incrementalJournal = 'incrementalJournal';
 export const project = 'project';
 export const workerIdGenerator = 'worker-id-generator';

@@ -100,38 +100,50 @@ export class MutationTestExecutor {
     }
 
     const mutantTestPlans = await this.planner.makePlan(this.mutants);
-    const { earlyResult$, runMutant$ } = this.executeEarlyResult(
-      from(mutantTestPlans),
-    );
-    const { passedMutant$, checkResult$ } = this.executeCheck(runMutant$);
+    const { planTimeResults, runPlans } =
+      this.collectPlanTimeResults(mutantTestPlans);
+    await this.mutationTestReportHelper.beginIncrementalJournal();
+    const { passedMutant$, checkResult$ } = this.executeCheck(from(runPlans));
     const { coveredMutant$, noCoverageResult$ } =
       this.executeNoCoverage(passedMutant$);
     const testRunnerResult$ = this.executeRunInTestRunner(coveredMutant$);
-    const results = await lastValueFrom(
-      merge(
-        testRunnerResult$,
-        checkResult$,
-        noCoverageResult$,
-        earlyResult$,
-      ).pipe(toArray()),
+    const laterResults = await lastValueFrom(
+      merge(testRunnerResult$, checkResult$, noCoverageResult$).pipe(toArray()),
     );
+    const results = [...planTimeResults, ...laterResults];
     await this.mutationTestReportHelper.reportAll(results);
     await this.reporter.wrapUp();
     this.logDone();
     return results;
   }
 
-  private executeEarlyResult(input$: Observable<MutantTestPlan>) {
-    const [earlyResultMutants$, runMutant$] = partition(
-      input$.pipe(shareReplay()),
-      isEarlyResult,
-    );
-    const earlyResult$ = earlyResultMutants$.pipe(
-      map(({ mutant }) =>
-        this.mutationTestReportHelper.reportMutantStatus(mutant, mutant.status),
-      ),
-    );
-    return { earlyResult$, runMutant$ };
+  /**
+   * Collect results known without checker / test-runner workers: incremental
+   * reused mutants and ignored mutants. Persisted in the incremental journal
+   * `base.json` before workers start.
+   *
+   * Uncovered mutants (`testFilter.length === 0`) stay on `runPlans` so checkers
+   * still run; `executeNoCoverage` reports `NoCoverage` after that, as before.
+   */
+  private collectPlanTimeResults(mutantTestPlans: readonly MutantTestPlan[]): {
+    planTimeResults: MutantResult[];
+    runPlans: MutantRunPlan[];
+  } {
+    const planTimeResults: MutantResult[] = [];
+    const runPlans: MutantRunPlan[] = [];
+    for (const plan of mutantTestPlans) {
+      if (isEarlyResult(plan)) {
+        planTimeResults.push(
+          this.mutationTestReportHelper.reportMutantStatus(
+            plan.mutant,
+            plan.mutant.status,
+          ),
+        );
+      } else {
+        runPlans.push(plan);
+      }
+    }
+    return { planTimeResults, runPlans };
   }
 
   private executeNoCoverage(input$: Observable<MutantRunPlan>) {
