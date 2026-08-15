@@ -36,7 +36,7 @@
     "json-schema-to-typescript": "15.0.4",
     "lerna": "9.0.7",
     "minimatch": "10.2.6",
-    "mocha": "11.7.6",
+    "mocha": "11.8.0",
     "playwright": "1.61.1",
     "prettier": "3.8.5",
     "rimraf": "6.1.3",

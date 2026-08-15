@@ -55,7 +55,7 @@
   "devDependencies": {
     "@stryker-mutator/test-helpers": "workspace:*",
     "@types/node": "24.13.3",
-    "mocha": "11.7.6"
+    "mocha": "11.8.0"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "workspace:*",

@@ -65,7 +65,7 @@
     "karma-vite": "1.0.5",
     "karma-webpack": "5.0.1",
     "minimatch": "10.2.6",
-    "mocha": "11.7.6",
+    "mocha": "11.8.0",
     "mutation-testing-metrics": "3.8.4",
     "mutation-testing-report-schema": "3.8.4",
     "react": "19.2.8",
