@@ -4,17 +4,23 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { ReloadEnvironmentDecorator } from '../../../src/test-runner/reload-environment-decorator.js';
+import { PerformanceMetricsSink } from '../../../src/performance-metrics-sink.js';
 
 describe(ReloadEnvironmentDecorator.name, () => {
   let testRunner: sinon.SinonStubbedInstance<Required<TestRunner>>;
   let testRunnerFactory: sinon.SinonStub<[], Required<TestRunner>>;
+  let performanceMetricsSink: sinon.SinonStubbedInstance<PerformanceMetricsSink>;
   let sut: ReloadEnvironmentDecorator;
 
   beforeEach(() => {
     testRunner = factory.testRunner();
     testRunnerFactory = sinon.stub();
     testRunnerFactory.returns(testRunner);
-    sut = new ReloadEnvironmentDecorator(testRunnerFactory);
+    performanceMetricsSink = sinon.createStubInstance(PerformanceMetricsSink);
+    sut = new ReloadEnvironmentDecorator(
+      testRunnerFactory,
+      performanceMetricsSink,
+    );
   });
 
   describe('mutantRun', () => {
@@ -68,6 +74,19 @@ describe(ReloadEnvironmentDecorator.name, () => {
         const options = factory.mutantRunOptions({ reloadEnvironment: false });
         await sut.mutantRun(options);
         expect(options.reloadEnvironment).true;
+      });
+
+      it('should record the reload for the mutant that triggered it', async () => {
+        await sut.mutantRun(
+          factory.mutantRunOptions({ reloadEnvironment: true }),
+        ); // Mark test env state as loaded a static mutant
+        await sut.mutantRun(
+          factory.mutantRunOptions({
+            reloadEnvironment: false,
+            activeMutant: factory.mutant({ id: '42' }),
+          }),
+        );
+        expect(performanceMetricsSink.recordReload).calledWith('42');
       });
     });
 

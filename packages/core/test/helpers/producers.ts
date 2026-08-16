@@ -71,6 +71,8 @@ export function createConcurrencyTokenProviderMock(): ConcurrencyTokenProviderMo
   return {
     checkerToken$: new ReplaySubject(),
     testRunnerToken$: new ReplaySubject(),
+    checkerConcurrency: 0,
+    testRunnerConcurrency: 0,
     dispose: sinon.stub(),
     freeCheckers: sinon.stub(),
   };
@@ -83,6 +85,7 @@ export function createTestRunnerPoolMock(): sinon.SinonStubbedInstance<
     dispose: sinon.stub(),
     init: sinon.stub(),
     schedule: sinon.stub<any>(),
+    workerIdOf: sinon.stub(),
   };
 }
 
@@ -91,6 +94,7 @@ export function createCheckerPoolMock() {
     dispose: sinon.stub(),
     init: sinon.stub(),
     schedule: sinon.stub<any>(),
+    workerIdOf: sinon.stub(),
   };
   pool.dispose.resolves();
   return pool;
