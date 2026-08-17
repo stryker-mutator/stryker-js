@@ -21,6 +21,8 @@ _Setting `"incremental": true` in your stryker.config.json file is also supporte
 
 StrykerJS stores the previous result in a "reports/stryker-incremental.json" file (determined by the [--incrementalFile](./configuration.md#incrementalfile-string) option). The next time StrykerJS runs, it will read this JSON file and try to reuse as much of it as possible.
 
+The incremental file also stores the `projectRoot` of the run that produced it. When that root differs from your current working directory, StrykerJS rebases incremental file entries to the current directory before diffing, so reuse still works when invocation context changes.
+
 Reuse is possible when:
 
 - A mutant was "Killed"; the culprit test still exists, and it didn't change.
