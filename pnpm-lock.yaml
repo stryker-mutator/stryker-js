@@ -1080,8 +1080,8 @@ importers:
         specifier: ^7.6.3
         version: 7.7.4
       source-map:
-        specifier: ~0.7.4
-        version: 0.7.6
+        specifier: ~0.8.0
+        version: 0.8.0
       tree-kill:
         specifier: ~1.2.2
         version: 1.2.2
@@ -15241,10 +15241,9 @@ packages:
     resolution: {integrity: sha512-i5uvt8C3ikiWeNZSVZNWcfZPItFQOsYTUAOkcUPGd8DqDy1uOUikjt5dG+uRlwyvR108Fb9DOd4GvXfT0N2/uQ==}
     engines: {node: '>= 12'}
 
-  source-map@0.8.0-beta.0:
-    resolution: {integrity: sha512-2ymg6oRBpebeZi9UUNsgQ89bhx01TcTkmNTGnNO88imTmbSgy4nfujrgVEFKWpMTEGA11EDkTt7mqObTPdigIA==}
-    engines: {node: '>= 8'}
-    deprecated: The work that was done in this beta branch won't be included in future versions
+  source-map@0.8.0:
+    resolution: {integrity: sha512-d8EqvL+k/SOXCreS/SUzg2ciyHqBBLcN/yuRjFsbvVhHTE2pgei7oAhmPM7kWFbkX6OSMQfUq4KbkF3au9lhYQ==}
+    engines: {node: '>= 12'}
 
   sourcemap-codec@1.4.8:
     resolution: {integrity: sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==}
@@ -23287,7 +23286,7 @@ snapshots:
       progress: 2.0.3
       rxjs: 7.8.2
       semver: 7.8.5
-      source-map: 0.7.6
+      source-map: 0.8.0
       tree-kill: 1.2.2
       tslib: 2.8.1
       typed-inject: 5.0.0
@@ -23318,7 +23317,7 @@ snapshots:
       progress: 2.0.3
       rxjs: 7.8.2
       semver: 7.8.5
-      source-map: 0.7.6
+      source-map: 0.8.0
       tree-kill: 1.2.2
       tslib: 2.8.1
       typed-inject: 5.0.0
@@ -23349,7 +23348,7 @@ snapshots:
       progress: 2.0.3
       rxjs: 7.8.2
       semver: 7.8.5
-      source-map: 0.7.6
+      source-map: 0.8.0
       tree-kill: 1.2.2
       tslib: 2.8.1
       typed-inject: 5.0.0
@@ -36744,9 +36743,7 @@ snapshots:
 
   source-map@0.7.6: {}
 
-  source-map@0.8.0-beta.0:
-    dependencies:
-      whatwg-url: 7.1.0
+  source-map@0.8.0: {}
 
   sourcemap-codec@1.4.8: {}
 
@@ -39100,7 +39097,7 @@ snapshots:
       pretty-bytes: 5.6.0
       rollup: 2.80.0
       rollup-plugin-terser: 7.0.2(rollup@2.80.0)
-      source-map: 0.8.0-beta.0
+      source-map: 0.8.0
       stringify-object: 3.3.0
       strip-comments: 2.0.1
       tempy: 0.6.0
