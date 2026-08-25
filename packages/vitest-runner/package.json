@@ -50,11 +50,11 @@
     "@stryker-mutator/test-helpers": "workspace:*",
     "@types/node": "24.13.3",
     "@types/semver": "7.8.0",
-    "@vitest/browser": "4.1.10",
-    "@vitest/browser-playwright": "4.1.10",
+    "@vitest/browser": "4.1.11",
+    "@vitest/browser-playwright": "4.1.11",
     "react": "19.2.8",
     "vite": "8.0.16",
-    "vitest": "4.1.10",
+    "vitest": "4.1.11",
     "vitest-browser-react": "2.2.0"
   },
   "peerDependencies": {
