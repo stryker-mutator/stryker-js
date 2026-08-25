@@ -119,6 +119,18 @@ describe('vitest-helpers', () => {
       const result = convertTestToTestResult(test);
       expect(result.status).to.be.equal(TestStatus.Success);
     });
+
+    it('should report the start position of the test as a 0-based position', () => {
+      const test = createVitestTest({ location: { line: 12, column: 3 } });
+      const result = convertTestToTestResult(test);
+      expect(result.startPosition).deep.equal({ line: 11, column: 2 });
+    });
+
+    it('should not report a start position when vitest did not report a location', () => {
+      const test = createVitestTest({ location: undefined });
+      const result = convertTestToTestResult(test);
+      expect(result.startPosition).undefined;
+    });
   });
 
   describe(collectTestsFromSuite.name, () => {

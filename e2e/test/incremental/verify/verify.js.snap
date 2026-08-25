@@ -2234,7 +2234,9 @@ Array [
       "coveredBy": Array [
         "spec/concat.spec.js#concat should concat a and b",
       ],
-      "killedBy": undefined,
+      "killedBy": Array [
+        "spec/concat.spec.js#concat should concat a and b",
+      ],
       "location": Object {
         "end": Object {
           "column": 1,
@@ -2248,9 +2250,10 @@ Array [
       "mutatorName": "BlockStatement",
       "replacement": "{}",
       "static": false,
-      "status": undefined,
+      "status": "Killed",
+      "testsCompleted": 1,
     },
-    "plan": "Run",
+    "plan": "EarlyResult",
   },
   Object {
     "fileName": "src/concat.js",
@@ -2258,7 +2261,9 @@ Array [
       "coveredBy": Array [
         "spec/concat.spec.js#concat should concat a and b",
       ],
-      "killedBy": undefined,
+      "killedBy": Array [
+        "spec/concat.spec.js#concat should concat a and b",
+      ],
       "location": Object {
         "end": Object {
           "column": 19,
@@ -2272,9 +2277,10 @@ Array [
       "mutatorName": "StringLiteral",
       "replacement": "\`\`",
       "static": false,
-      "status": undefined,
+      "status": "Killed",
+      "testsCompleted": 1,
     },
-    "plan": "Run",
+    "plan": "EarlyResult",
   },
   Object {
     "fileName": "src/concat.js",
