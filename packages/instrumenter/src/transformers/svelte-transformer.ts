@@ -21,6 +21,7 @@ export const transformSvelte: AstTransformer<AstFormat.Svelte> = (
     .forEach((script) => {
       context.transform(script.ast, mutantCollector, {
         ...context,
+        isExpressionContext: script.isExpression,
         options: {
           ...context.options,
           noHeader: true,

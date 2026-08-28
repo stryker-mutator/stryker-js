@@ -6,3 +6,4 @@ export * from './instrumenter-options.js';
 export * from './disable-type-checks.js';
 export type { ParserOptions } from './parsers/index.js';
 export * from './file.js';
+export type * as babel from './babel-types.js';

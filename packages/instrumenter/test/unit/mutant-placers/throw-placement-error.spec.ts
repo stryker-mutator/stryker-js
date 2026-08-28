@@ -50,8 +50,9 @@ describe(throwPlacementError.name, () => {
    */
   it('should throw a generic error if `buildCodeFrameError` fails (#2695)', () => {
     // Arrange
-    const nodePath = findNodePath(parseSync('const a = b') as types.File, (p) =>
-      p.isProgram(),
+    const nodePath = findNodePath(
+      parseSync('const a = b', undefined) as types.File,
+      (p) => p.isProgram(),
     );
     const expectedError = new Error('expectedError');
     const mutants = [createMutant()];

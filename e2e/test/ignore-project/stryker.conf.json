@@ -15,7 +15,7 @@
   "ignorers": ["ConsoleIgnorer"],
   "plugins": [
     "@stryker-mutator/mocha-runner",
-    "./stryker-plugins/ignorers/console-ignorer.js"
+    "./stryker-plugins/ignorers/console-ignorer.ts"
   ],
   "allowConsoleColors": false
 }

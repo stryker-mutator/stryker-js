@@ -61,7 +61,7 @@ export class UniqueKeyFailedError<T> extends UnprocessableEntityException {
       fields
     });
     super(errorBody);
-    console.log(stryMutAct_9fa48(\\"4\\") ? \`\` : (stryCov_9fa48(\\"4\\"), \`\${this.message} created\`));
+    console.log(stryMutAct_9fa48(\\"5\\") ? \`\` : (stryCov_9fa48(\\"5\\"), \`\${this.message} created\`));
   }
 }"
 `;

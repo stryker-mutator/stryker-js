@@ -1,10 +1,14 @@
+import path from 'path';
+
 import { expect } from 'chai';
 import { FailedTestResult, TestStatus } from '@stryker-mutator/api/test-runner';
+import { MutantCoverage } from '@stryker-mutator/api/core';
 
 import {
   collectTestsFromSuite,
   convertTestToTestResult,
   fromTestId,
+  normalizeCoverage,
 } from '../../src/vitest-helpers.js';
 import { createSuite, createVitestTest } from '../util/factories.js';
 
@@ -98,6 +102,12 @@ describe('vitest-helpers', () => {
       expect(result.status).to.be.equal(TestStatus.Skipped);
     });
 
+    it('should have status skipped when test mode is skip, regardless of task state', () => {
+      const test = createVitestTest({ mode: 'skip' });
+      const result = convertTestToTestResult(test);
+      expect(result.status).to.be.equal(TestStatus.Skipped);
+    });
+
     it('should have status Failed if result is undefined', () => {
       const test = createVitestTest({ result: undefined });
       const result = convertTestToTestResult(test);
@@ -149,6 +159,28 @@ describe('vitest-helpers', () => {
       });
       const result = collectTestsFromSuite(suite);
       expect(result).to.have.lengthOf(2);
+    });
+
+    it('should ignore tasks that are neither test nor suite type', () => {
+      const suite = createSuite({
+        tasks: [{ type: 'custom', id: '1' } as any],
+      });
+      const result = collectTestsFromSuite(suite);
+      expect(result).to.be.empty;
+    });
+  });
+
+  describe(normalizeCoverage.name, () => {
+    it('should normalize test ids in perTest coverage', () => {
+      const absoluteFilePath = path.resolve('src', 'file.js');
+      const rawCoverage: MutantCoverage = {
+        perTest: { [`${absoluteFilePath}#my test`]: { '0': 1 } },
+        static: { '1': 2 },
+      };
+      const result = normalizeCoverage(rawCoverage);
+      const expectedKey = `${path.relative(process.cwd(), absoluteFilePath).replace(/\\/g, '/')}#my test`;
+      expect(result.perTest).to.deep.equal({ [expectedKey]: { '0': 1 } });
+      expect(result.static).to.deep.equal({ '1': 2 });
     });
   });
 });

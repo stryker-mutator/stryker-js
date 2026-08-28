@@ -1,6 +1,6 @@
 import assert from 'assert';
-import Casino from '../src/Casino';
-import User from '../src/User';
+import Casino from '../src/Casino.js';
+import User from '../src/User.js';
 
 describe('Casino', () => {
   describe('user over 18', () => {

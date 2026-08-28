@@ -37,9 +37,9 @@ describe(MochaTestRunner.name, () => {
     mochaAdapterMock = sinon.createStubInstance(MochaAdapter);
     mochaOptionsLoaderMock = sinon.createStubInstance(MochaOptionsLoader);
     mocha = sinon.createStubInstance(Mocha) as any;
-    mocha.suite = sinon.createStubInstance(Mocha.Suite) as any;
+    mocha.suite = sinon.createStubInstance(Mocha.Suite);
     mocha.suite.suites = [];
-    mochaAdapterMock.create.returns(mocha as unknown as Mocha);
+    mochaAdapterMock.create.returns(mocha);
     testFileNames = [];
     mochaAdapterMock.collectFiles.returns(testFileNames);
   });

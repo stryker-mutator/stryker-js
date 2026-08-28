@@ -10,7 +10,9 @@ describe(sut.name, () => {
 
   describe('functions', () => {
     it('should ignore a non-method function', () => {
-      expectJSMutation(sut, 'function endsWith() {} endsWith();');
+      expectJSMutation(sut, 'function endsWith() {} endsWith();', {
+        isExpressionContext: false,
+      });
     });
   });
 
@@ -292,7 +294,7 @@ describe(sut.name, () => {
       ],
     ]) {
       it(`should be ${description}`, () => {
-        expectJSMutation(sut, input, output);
+        expectJSMutation(sut, input, { isExpressionContext: false }, output);
       });
     }
 
@@ -313,12 +315,22 @@ describe(sut.name, () => {
       ['setUTCSeconds', 'setUTCMilliseconds'],
     ]) {
       it(`should replace ${key} with ${value}`, () => {
-        expectJSMutation(sut, `text.${key}();`, `text.${value}();`);
+        expectJSMutation(
+          sut,
+          `text.${key}();`,
+          { isExpressionContext: false },
+          `text.${value}();`,
+        );
       });
 
       if (!noReverse) {
         it(`should replace ${value} with ${key}`, () => {
-          expectJSMutation(sut, `text.${value}();`, `text.${key}();`);
+          expectJSMutation(
+            sut,
+            `text.${value}();`,
+            { isExpressionContext: false },
+            `text.${key}();`,
+          );
         });
       }
     }
@@ -334,16 +346,21 @@ describe(sut.name, () => {
       'trim',
     ]) {
       it(`should remove ${method}`, () => {
-        expectJSMutation(sut, `text.${method}();`, 'text;');
+        expectJSMutation(
+          sut,
+          `text.${method}();`,
+          { isExpressionContext: false },
+          'text;',
+        );
       });
     }
 
     it('should ignore computed properties', () => {
-      expectJSMutation(sut, "text['trim']();");
+      expectJSMutation(sut, "text['trim']();", { isExpressionContext: false });
     });
 
     it('should ignore new expressions', () => {
-      expectJSMutation(sut, 'new text.trim();');
+      expectJSMutation(sut, 'new text.trim();', { isExpressionContext: false });
     });
   });
 });

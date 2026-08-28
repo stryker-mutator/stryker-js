@@ -1,12 +1,10 @@
-// We use a require statement to see if stryker will work if users use require statements
-var Bank = require('./Bank').default;
+import Bank from './Bank.js';
 
 // Use a pipeline operator to test the `mutator.plugins` option
-function capitalize (str) {
+function capitalize(str) {
   return str[0].toUpperCase() + str.substring(1);
 }
-let result = "hello"
-  |> capitalize;
+let result = 'hello' |> capitalize;
 
 export default class Casino extends Bank {
   constructor(chips, money) {

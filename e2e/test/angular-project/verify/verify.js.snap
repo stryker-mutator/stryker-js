@@ -5,9 +5,9 @@ Object {
   "compileErrors": 0,
   "ignored": 27,
   "killed": 5,
-  "mutationScore": 33.33333333333333,
+  "mutationScore": 31.25,
   "mutationScoreBasedOnCoveredCode": 62.5,
-  "noCoverage": 7,
+  "noCoverage": 8,
   "pending": 0,
   "runtimeErrors": 0,
   "survived": 3,
@@ -15,8 +15,8 @@ Object {
   "totalCovered": 8,
   "totalDetected": 5,
   "totalInvalid": 0,
-  "totalMutants": 42,
-  "totalUndetected": 10,
-  "totalValid": 15,
+  "totalMutants": 43,
+  "totalUndetected": 11,
+  "totalValid": 16,
 }
 `;

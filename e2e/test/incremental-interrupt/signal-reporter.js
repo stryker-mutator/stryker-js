@@ -1,4 +1,8 @@
 import { PluginKind, declareClassPlugin } from '@stryker-mutator/api/plugin';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
+
 
 /**
  * Reporter that triggers an interrupt after a configurable number of *new*
@@ -36,9 +40,19 @@ class SignalReporter {
       // Args match what Node.js passes for a real signal: (signalName, signalNumber).
       // SIGINT = signal number 2 → exit code 130 (128 + 2).
       process.emit('SIGINT', 'SIGINT', 2);
+      // Signal additional test runs to halt execution
+      fs.writeFileSync(
+        path.join(os.tmpdir(), 'STRYKER_HAS_BEEN_INTERRUPTED_F32dSD'),
+        '',
+      );
     }
   }
 }
+
+// Cleanup the temporary file that signals additional test runs to halt execution.
+fs.rmSync(path.join(os.tmpdir(), 'STRYKER_HAS_BEEN_INTERRUPTED_F32dSD'), {
+  force: true,
+});
 
 export const strykerPlugins = [
   declareClassPlugin(PluginKind.Reporter, 'signal', SignalReporter),

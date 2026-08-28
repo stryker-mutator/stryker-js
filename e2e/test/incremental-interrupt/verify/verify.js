@@ -13,6 +13,7 @@
  *   `onMutationTestingPlanReady` to skip early-result (reused) mutants.
  * - The `STRYKER_SIGNAL_AFTER` env var controls how many new mutants to allow
  *   before interrupting (default: 1).
+ * - After Stryker is interrupted, the tests halt directly using a lock file in the OS temp directory (making it less flaky, see https://github.com/stryker-mutator/stryker-js/issues/6054).
  */
 import { promises as fsPromises } from 'fs';
 import path from 'path';

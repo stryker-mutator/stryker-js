@@ -74,9 +74,9 @@ describe('After running stryker on jest-react project', () => {
       ({ location }) => location.start.line === 18,
     );
 
-    expect(mutantsAtLine2).lengthOf(2);
-    expect(mutantsAtLine8).lengthOf(1);
-    expect(mutantsAtLine13).lengthOf(1);
+    expect(mutantsAtLine2).lengthOf(3);
+    expect(mutantsAtLine8).lengthOf(2);
+    expect(mutantsAtLine13).lengthOf(2);
     expect(mutantsAtLine18).lengthOf(1);
     [...mutantsAtLine2, ...mutantsAtLine8, ...mutantsAtLine13].forEach(
       (mutant) => {

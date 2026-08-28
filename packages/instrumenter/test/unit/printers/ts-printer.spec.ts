@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import babel from '@babel/core';
+import * as babel from '@babel/core';
 
 import { print } from '../../../src/printers/ts-printer.js';
 import { createTSAst } from '../../helpers/factories.js';
@@ -53,7 +53,6 @@ describe('ts-printer', () => {
               types.jsxOpeningElement(types.jsxIdentifier('html'), []),
               types.jsxClosingElement(types.jsxIdentifier('html')),
               [],
-              false,
             ),
           ),
         ]),

@@ -9,19 +9,19 @@ describe(sut.name, () => {
   });
 
   it('should mutate &&', () => {
-    expectJSMutation(sut, 'a && b', 'a || b');
+    expectJSMutation(sut, 'a && b', { isExpressionContext: false }, 'a || b');
   });
 
   it('should mutate ||', () => {
-    expectJSMutation(sut, 'a || b', 'a && b');
+    expectJSMutation(sut, 'a || b', { isExpressionContext: false }, 'a && b');
   });
 
   it('should not mutate & and |', () => {
-    expectJSMutation(sut, 'a & b');
-    expectJSMutation(sut, 'a | b');
+    expectJSMutation(sut, 'a & b', { isExpressionContext: false });
+    expectJSMutation(sut, 'a | b', { isExpressionContext: false });
   });
 
   it('should mutate ?? to &&', () => {
-    expectJSMutation(sut, 'a ?? b', 'a && b');
+    expectJSMutation(sut, 'a ?? b', { isExpressionContext: false }, 'a && b');
   });
 });

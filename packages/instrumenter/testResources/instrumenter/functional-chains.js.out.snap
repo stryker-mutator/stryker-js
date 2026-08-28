@@ -49,6 +49,6 @@ function stryMutAct_9fa48(id) {
 }
 stryMutAct_9fa48(\\"3\\") ? foo.bar?.trim?.() : stryMutAct_9fa48(\\"2\\") ? foo?.bar.trim?.() : stryMutAct_9fa48(\\"1\\") ? foo?.bar?.trim() : stryMutAct_9fa48(\\"0\\") ? foo?.bar : (stryCov_9fa48(\\"0\\", \\"1\\", \\"2\\", \\"3\\"), foo?.bar?.trim?.());
 stryMutAct_9fa48(\\"5\\") ? baz.trim() : stryMutAct_9fa48(\\"4\\") ? baz : (stryCov_9fa48(\\"4\\", \\"5\\"), baz?.trim());
-stryMutAct_9fa48(\\"7\\") ? qux.substring(3) : stryMutAct_9fa48(\\"6\\") ? qux.trim() : (stryCov_9fa48(\\"6\\", \\"7\\"), qux.trim().substring(3));
-stryMutAct_9fa48(\\"10\\") ? quux.trim().substring(3) : stryMutAct_9fa48(\\"9\\") ? quux.substring(3) : stryMutAct_9fa48(\\"8\\") ? quux.trim?.() : (stryCov_9fa48(\\"8\\", \\"9\\", \\"10\\"), quux.trim?.().substring(3));"
+stryMutAct_9fa48(\\"8\\") ? qux.substring(3) : stryMutAct_9fa48(\\"7\\") ? qux.trim() : (stryCov_9fa48(\\"7\\", \\"8\\"), qux.trim().substring(3));
+stryMutAct_9fa48(\\"11\\") ? quux.trim().substring(3) : stryMutAct_9fa48(\\"10\\") ? quux.substring(3) : stryMutAct_9fa48(\\"9\\") ? quux.trim?.() : (stryCov_9fa48(\\"9\\", \\"10\\", \\"11\\"), quux.trim?.().substring(3));"
 `;

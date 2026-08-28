@@ -1,4 +1,4 @@
-require('foo'); // no mutation
+require('foo');
 import 'foo'; // no mutation
 
 class Foo {

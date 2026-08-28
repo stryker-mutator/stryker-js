@@ -182,7 +182,16 @@ The comment always starts with `// Stryker`, followed by either `disable` or `re
 
 ## Using an ignore-plugin
 
-_Available since Stryker 7.3_
+<details>
+
+<summary>History</summary>
+
+| Version | Changes                                                      |
+| ------- | ------------------------------------------------------------ |
+| 7.3     | Added the `'ignorer` plugin option                           |
+| 9.7     | Added the `type babel` to the export `@stryker-mutator/core` |
+
+</details>
 
 You might not be interested in testing specific code patterns in some projects. You can use `// Stryker disable` comments for these. However, this gets tedious quickly.
 
@@ -213,23 +222,25 @@ Now add a "stryker-console-ignorer.js" to your project:
 // stryker-console-ignorer.js
 import { PluginKind, declareValuePlugin } from '@stryker-mutator/api/plugin';
 
-export const strykerPlugins = [declareValuePlugin(PluginKind.Ignore, 'console.debug', {
-  shouldIgnore(path) {
-    // Define the conditions for which you want to ignore mutants
-    if (
-      path.isExpressionStatement() &&
-      path.node.expression.type === 'CallExpression' &&
-      path.node.expression.callee.type === 'MemberExpression' &&
-      path.node.expression.callee.object.type === 'Identifier' &&
-      path.node.expression.callee.object.name === 'console' &&
-      path.node.expression.callee.property.type === 'Identifier' &&
-      path.node.expression.callee.property.name === 'debug'
-    ) {
-      // Return the ignore reason
-      return "We're not interested in testing `console.debug` statements, see ADR 648.";
-    }
-  }
-})];
+export const strykerPlugins = [
+  declareValuePlugin(PluginKind.Ignore, 'console.debug', {
+    shouldIgnore(path) {
+      // Define the conditions for which you want to ignore mutants
+      if (
+        path.isExpressionStatement() &&
+        path.node.expression.type === 'CallExpression' &&
+        path.node.expression.callee.type === 'MemberExpression' &&
+        path.node.expression.callee.object.type === 'Identifier' &&
+        path.node.expression.callee.object.name === 'console' &&
+        path.node.expression.callee.property.type === 'Identifier' &&
+        path.node.expression.callee.property.name === 'debug'
+      ) {
+        // Return the ignore reason
+        return "We're not interested in testing `console.debug` statements, see ADR 648.";
+      }
+    },
+  }),
+];
 ```
 
 In the above example, you declare an ignore-plugin with the name `'console.debug'` and an `Ignorer`. An `Ignorer` is an object with a `shouldIgnore(path)` method. Stryker will execute this method on each node of the abstract syntax tree (AST). To ignore mutants in the current node and child nodes, return a non-empty ignore reason as a string here. The `path` parameter is a babel `NodePath` object, [see 'visiting' in the babel handbook](https://github.com/jamiebuilds/babel-handbook/blob/master/translations/en/plugin-handbook.md#user-content-visiting) for more information on the `NodePath` API.
@@ -249,17 +260,44 @@ After rerunning Stryker, your report will look like this.
 
 :::tip
 
-If you want TypeScript type-safety on the `path` being passed into your ignore-plugin, you will need to install the babel types yourself: `npm i -D @types/babel__core` and add this TypeScript file somewhere in your project:
+If you want TypeScript to type-check the `path` passed to your ignore plugin, use `NodePath` from `@stryker-mutator/core`.
 
-```ts
-/// <reference types="@stryker-mutator/api/ignore" />
-import type babel from '@babel/core';
+1. Rename your plugin to `.ts`.
+   - Don't forget to also update the `"plugins"` in your Stryker config file.
+     ```diff
+     {
+       "ignorers": ["console.debug"],
+     - "plugins": ["@stryker-mutator/*", "./stryker-console-ignorer.js"]
+     + "plugins": ["@stryker-mutator/*", "./stryker-console-ignorer.ts"]
+     }
+     ```
+2. Import type types and use them:
 
-declare module '@stryker-mutator/api/ignore' {
-  export interface NodePath extends babel.NodePath {}
-}
-```
+   ```diff
+   // stryker-console-ignorer.ts
+   import { PluginKind, declareValuePlugin } from '@stryker-mutator/api/plugin';
+   + import type { babel } from '@stryker-mutator/core';
 
-If you want to write the plugin itself as TypeScript as well, you will need to transpile it to JavaScript yourself. Either by doing it before you run Stryker, or using a just-in-time compiler like `tsx`.
+   export const strykerPlugins = [
+     declareValuePlugin(PluginKind.Ignore, 'console.debug', {
+   -   shouldIgnore(path) {
+   +   shouldIgnore(path: babel.NodePath) {
+         // Define the conditions for which you want to ignore mutants
+         if (
+           path.isExpressionStatement() &&
+           path.node.expression.type === 'CallExpression' &&
+           path.node.expression.callee.type === 'MemberExpression' &&
+           path.node.expression.callee.object.type === 'Identifier' &&
+           path.node.expression.callee.object.name === 'console' &&
+           path.node.expression.callee.property.type === 'Identifier' &&
+           path.node.expression.callee.property.name === 'debug'
+         ) {
+           // Return the ignore reason
+           return "We're not interested in testing `console.debug` statements, see ADR 648.";
+         }
+       },
+     }),
+   ];
+   ```
 
 :::
