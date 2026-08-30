@@ -340,7 +340,7 @@ Default: `false`<br />
 Command line: `--ignoreStatic`<br />
 Config file: `"ignoreStatic": true`<br />
 
-Static mutants are mutants which are only executed during the loading of a file. Testing these mutants come with a big performance penalty. Therefore, it might make sense to ignore static mutants altogether.
+Static mutants are mutants which are only executed during the loading of a file. Testing these mutants come with a big performance penalty. Therefore, it might make sense to ignore static mutants altogether. Ignored static mutants are reported with the `Ignored` status and are excluded from your mutation score.
 
 For example:
 
