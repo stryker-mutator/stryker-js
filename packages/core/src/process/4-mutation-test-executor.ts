@@ -30,16 +30,28 @@ import { CheckStatus } from '@stryker-mutator/api/check';
 import { coreTokens } from '../di/index.js';
 import { StrictReporter } from '../reporters/strict-reporter.js';
 import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper.js';
+import {
+  buildPerformanceReport,
+  collectConfig,
+  collectEnvironment,
+  EnvironmentInfo,
+  MutantPerformance,
+} from '../reporters/performance-report.js';
 import { Timer } from '../utils/timer.js';
 import { ConcurrencyTokenProvider, Pool } from '../concurrent/index.js';
 import { isEarlyResult, MutantTestPlanner } from '../mutants/index.js';
 import { CheckerFacade } from '../checker/index.js';
+import { strykerVersion } from '../stryker-package.js';
+import { PerformanceMetricsSink } from '../performance-metrics-sink.js';
 
 import { DryRunContext } from './3-dry-run-executor.js';
 
 export interface MutationTestContext extends DryRunContext {
   [coreTokens.testRunnerPool]: I<Pool<TestRunner>>;
   [coreTokens.timeOverheadMS]: number;
+  [coreTokens.setupTimeMS]: number;
+  [coreTokens.initialRunMS]: number;
+  [coreTokens.performanceMetricsSink]: PerformanceMetricsSink;
   [coreTokens.mutationTestReportHelper]: MutationTestReportHelper;
   [coreTokens.mutantTestPlanner]: MutantTestPlanner;
   [coreTokens.dryRunResult]: I<CompleteDryRunResult>;
@@ -70,7 +82,15 @@ export class MutationTestExecutor {
     coreTokens.timer,
     coreTokens.concurrencyTokenProvider,
     coreTokens.dryRunResult,
+    coreTokens.setupTimeMS,
+    coreTokens.initialRunMS,
+    coreTokens.performanceMetricsSink,
   );
+
+  private readonly mutantPerformances: MutantPerformance[] = [];
+  private checkWallMS = 0;
+  private mutationEndElapsedMs = 0;
+  private environment: EnvironmentInfo | undefined;
 
   constructor(
     private readonly reporter: StrictReporter,
@@ -84,7 +104,21 @@ export class MutationTestExecutor {
     private readonly timer: I<Timer>,
     private readonly concurrencyTokenProvider: I<ConcurrencyTokenProvider>,
     private readonly dryRunResult: CompleteDryRunResult,
+    private readonly setupTimeMS: number,
+    private readonly initialRunMS: number,
+    private readonly performanceMetricsSink: PerformanceMetricsSink,
   ) {}
+
+  private get collectPerformance(): boolean {
+    return this.options.experimentalPerformanceReport;
+  }
+
+  private timeCheck<T>(work: Promise<T>): Promise<T> {
+    const timer = new Timer();
+    const record = () => (this.checkWallMS += timer.elapsedMs());
+    work.then(record, record);
+    return work;
+  }
 
   public async execute(): Promise<MutantResult[]> {
     if (this.options.dryRunOnly) {
@@ -99,6 +133,10 @@ export class MutationTestExecutor {
       return [];
     }
 
+    if (this.collectPerformance) {
+      this.environment = collectEnvironment();
+      this.performanceMetricsSink.beginMutationPhase();
+    }
     const mutantTestPlans = await this.planner.makePlan(this.mutants);
     const { earlyResult$, runMutant$ } = this.executeEarlyResult(
       from(mutantTestPlans),
@@ -115,10 +153,73 @@ export class MutationTestExecutor {
         earlyResult$,
       ).pipe(toArray()),
     );
+    this.mutationEndElapsedMs = this.timer.elapsedMs();
     await this.mutationTestReportHelper.reportAll(results);
     await this.reporter.wrapUp();
+    if (this.collectPerformance) {
+      await this.reportPerformance(mutantTestPlans, results);
+    }
     this.logDone();
     return results;
+  }
+
+  private async reportPerformance(
+    plans: readonly MutantTestPlan[],
+    results: readonly MutantResult[],
+  ): Promise<void> {
+    const totalWallMs = this.timer.elapsedMs();
+    const initialRunNet = this.dryRunResult.tests.reduce(
+      (total, test) => total + test.timeSpentMs,
+      0,
+    );
+    const testRunWallMs = this.mutantPerformances.reduce(
+      (total, mutant) => total + mutant.wallMs,
+      0,
+    );
+    const testFiles = new Set(
+      this.dryRunResult.tests
+        .map((test) => test.fileName)
+        .filter((fileName): fileName is string => Boolean(fileName)),
+    ).size;
+    const report = buildPerformanceReport({
+      strykerVersion,
+      startedAt: new Date(Date.now() - totalWallMs).toISOString(),
+      finishedAt: new Date().toISOString(),
+      totalWallMs,
+      environment: this.environment!,
+      config: collectConfig(this.options, {
+        checkers: this.concurrencyTokenProvider.checkerConcurrency,
+        testRunners: this.concurrencyTokenProvider.testRunnerConcurrency,
+      }),
+      context: {
+        mutants: this.mutants.length,
+        mutantsRun: this.mutantPerformances.length,
+        tests: this.dryRunResult.tests.length,
+        testFiles,
+      },
+      phases: {
+        setup: this.setupTimeMS,
+        initialRun: this.initialRunMS,
+        initialRunNet,
+        initialRunOverhead: Math.max(0, this.initialRunMS - initialRunNet),
+        mutation: Math.max(
+          0,
+          this.mutationEndElapsedMs - this.setupTimeMS - this.initialRunMS,
+        ),
+        check: this.checkWallMS,
+        testRun: testRunWallMs,
+        reporting: Math.max(0, totalWallMs - this.mutationEndElapsedMs),
+      },
+      plans,
+      results,
+      mutants: this.mutantPerformances,
+      workers: this.performanceMetricsSink.workers(),
+      reloadCount: this.performanceMetricsSink.totalReloads,
+      reloadWallMs: this.performanceMetricsSink.totalReloadWallMs,
+      retries: this.performanceMetricsSink.retries,
+      oomRestarts: this.performanceMetricsSink.oomRestarts,
+    });
+    await this.mutationTestReportHelper.reportPerformance(report);
   }
 
   private executeEarlyResult(input$: Observable<MutantTestPlan>) {
@@ -157,11 +258,28 @@ export class MutationTestExecutor {
     return this.testRunnerPool.schedule(
       sortedPlan$,
       async (testRunner, { mutant, runOptions }) => {
+        const mutantTimer = new Timer();
         const result = await testRunner.mutantRun(runOptions);
-        return this.mutationTestReportHelper.reportMutantRunResult(
-          mutant,
-          result,
-        );
+        const wallMs = mutantTimer.elapsedMs();
+        const mutantResult =
+          this.mutationTestReportHelper.reportMutantRunResult(mutant, result);
+        if (this.collectPerformance) {
+          this.mutantPerformances.push({
+            id: mutant.id,
+            mutatorName: mutant.mutatorName,
+            fileName: mutant.fileName,
+            status: mutantResult.status,
+            static: Boolean(mutant.static),
+            reloaded: this.performanceMetricsSink.didReload(mutant.id),
+            workerId: this.testRunnerPool.workerIdOf(testRunner),
+            selectedTests: runOptions.testFilter?.length ?? 0,
+            coveredBy: mutant.coveredBy?.length ?? 0,
+            testsCompleted: mutantResult.testsCompleted ?? 0,
+            wallMs,
+            reloadWallMs: this.performanceMetricsSink.reloadMsFor(mutant.id),
+          });
+        }
+        return mutantResult;
       },
     );
   }
@@ -230,11 +348,13 @@ export class MutationTestExecutor {
   ): Observable<MutantTestPlan> {
     const group$ = this.checkerPool
       .schedule(input$.pipe(bufferTime(CHECK_BUFFER_MS)), (checker, mutants) =>
-        checker.group(checkerName, mutants),
+        this.timeCheck(checker.group(checkerName, mutants)),
       )
       .pipe(mergeMap((mutantGroups) => mutantGroups));
     const checkTask$ = this.checkerPool
-      .schedule(group$, (checker, group) => checker.check(checkerName, group))
+      .schedule(group$, (checker, group) =>
+        this.timeCheck(checker.check(checkerName, group)),
+      )
       .pipe(
         mergeMap((mutantGroupResults) => mutantGroupResults),
         map(([mutantRunPlan, checkResult]) =>
