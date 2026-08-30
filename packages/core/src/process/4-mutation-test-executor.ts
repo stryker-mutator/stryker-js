@@ -47,16 +47,6 @@ export interface MutationTestContext extends DryRunContext {
 
 const CHECK_BUFFER_MS = 10_000;
 
-/**
- * Sorting the tests just before running them can yield a significant performance boost,
- * because it can reduce the number of times a test runner process needs to be recreated.
- * However, we need to buffer the results in order to be able to sort them.
- *
- * This value is very low, since it would halt the test execution otherwise.
- * @see https://github.com/stryker-mutator/stryker-js/issues/3462
- */
-const BUFFER_FOR_SORTING_MS = 0;
-
 export class MutationTestExecutor {
   public static inject = tokens(
     coreTokens.reporter,
@@ -150,12 +140,18 @@ export class MutationTestExecutor {
   private executeRunInTestRunner(
     input$: Observable<MutantRunPlan>,
   ): Observable<MutantResult> {
-    const sortedPlan$ = input$.pipe(
-      bufferTime(BUFFER_FOR_SORTING_MS),
-      mergeMap((plans) => plans.sort(reloadEnvironmentLast)),
+    // Run all mutants that reuse the test environment first and the ones that need a
+    // reload (static mutants) last, across the whole run rather than per buffered batch.
+    // Interleaving them forces an extra environment reload on whichever mutant follows a
+    // static one, which on large suites adds up to many avoidable reloads.
+    const sharedPlan$ = input$.pipe(shareReplay());
+    const [reloadPlan$, noReloadPlan$] = partition(
+      sharedPlan$,
+      ({ runOptions }) => Boolean(runOptions.reloadEnvironment),
     );
+    const orderedPlan$ = concat(noReloadPlan$, reloadPlan$);
     return this.testRunnerPool.schedule(
-      sortedPlan$,
+      orderedPlan$,
       async (testRunner, { mutant, runOptions }) => {
         const result = await testRunner.mutantRun(runOptions);
         return this.mutationTestReportHelper.reportMutantRunResult(
@@ -251,22 +247,4 @@ export class MutationTestExecutor {
       );
     return checkTask$;
   }
-}
-
-/**
- * Sorting function that sorts mutant run plans that reload environments last.
- * This can yield a significant performance boost, because it reduces the times a test runner process needs to restart.
- * @see https://github.com/stryker-mutator/stryker-js/issues/3462
- */
-function reloadEnvironmentLast(a: MutantRunPlan, b: MutantRunPlan): number {
-  if (a.plan === PlanKind.Run && b.plan === PlanKind.Run) {
-    if (a.runOptions.reloadEnvironment && !b.runOptions.reloadEnvironment) {
-      return 1;
-    }
-    if (!a.runOptions.reloadEnvironment && b.runOptions.reloadEnvironment) {
-      return -1;
-    }
-    return 0;
-  }
-  return 0;
 }
