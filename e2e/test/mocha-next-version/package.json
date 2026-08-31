@@ -1,0 +1,28 @@
+{
+  "name": "mocha-next-version",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A test package for mocha 12",
+  "main": "index.js",
+  "scripts": {
+    "clean:reports": "rimraf \"reports\"",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test:unit": "mocha",
+    "test": "npm run clean:reports && stryker run && npm run verify"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "12.0.0-rc.6",
+    "@stryker-mutator/core": "workspace:*",
+    "@stryker-mutator/mocha-runner": "workspace:*"
+  },
+  "dependenciesMeta": {
+    "@stryker-mutator/core": {
+      "injected": true
+    },
+    "@stryker-mutator/mocha-runner": {
+      "injected": true
+    }
+  }
+}
