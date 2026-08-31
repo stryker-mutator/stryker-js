@@ -38,7 +38,7 @@
     "minimatch": "10.2.6",
     "mocha": "11.8.0",
     "playwright": "1.62.1",
-    "prettier": "3.8.5",
+    "prettier": "3.9.6",
     "rimraf": "6.1.3",
     "sinon": "22.0.0",
     "sinon-chai": "4.0.1",
