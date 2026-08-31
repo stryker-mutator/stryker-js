@@ -355,7 +355,11 @@ export class StrykerCli {
 export function guardMinimalNodeVersion(
   processVersion = process.version,
 ): void {
-  if (!semver.satisfies(processVersion, strykerEngines.node)) {
+  if (
+    !semver.satisfies(processVersion, strykerEngines.node, {
+      includePrerelease: true,
+    })
+  ) {
     throw new Error(
       `Node.js version ${processVersion} detected. StrykerJS requires version to match ${strykerEngines.node}. Please update your Node.js version or visit https://nodejs.org/ for additional instructions`,
     );
