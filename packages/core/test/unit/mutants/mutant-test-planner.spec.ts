@@ -472,7 +472,7 @@ describe(MutantTestPlanner.name, () => {
         // Assert
         assertIsRunPlan(plan);
         expect(plan.runOptions.testFilter).deep.eq(['sandbox/src/foo.spec.ts']);
-        expect(plan.runOptions.mutantActivation).eq('runtime');
+        expect(plan.runOptions.mutantActivation).eq('static');
         expect(plan.runOptions.reloadEnvironment).true;
       });
 
@@ -498,7 +498,7 @@ describe(MutantTestPlanner.name, () => {
         // Assert
         assertIsRunPlan(plan);
         expect(plan.runOptions.testFilter).deep.eq(['sandbox/src/foo.spec.ts']);
-        expect(plan.runOptions.mutantActivation).eq('runtime');
+        expect(plan.runOptions.mutantActivation).eq('static');
         expect(plan.runOptions.reloadEnvironment).true;
       });
     });
