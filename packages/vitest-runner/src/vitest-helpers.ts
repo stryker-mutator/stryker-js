@@ -37,6 +37,11 @@ export function convertTestToTestResult(test: RunnerTestCase): TestResult {
     name: collectTestName(test),
     timeSpentMs: test.result?.duration ?? 0,
     fileName: test.file?.filepath && path.resolve(test.file.filepath),
+    startPosition: test.location && {
+      // Stryker works 0-based internally, vitest reports 1-based: https://vitest.dev/config/#includetasklocation
+      line: test.location.line - 1,
+      column: test.location.column - 1,
+    },
   };
   if (status === TestStatus.Failed) {
     return {
