@@ -93,8 +93,8 @@ importers:
         specifier: 4.1.0
         version: 4.1.0
       jasmine:
-        specifier: 6.3.0
-        version: 6.3.0
+        specifier: 7.0.0
+        version: 7.0.0
       jasmine-core:
         specifier: 6.3.0
         version: 6.3.0
@@ -192,7 +192,7 @@ importers:
         version: file:packages/cucumber-runner(@cucumber/cucumber@12.9.0)(@stryker-mutator/core@file:packages/core(@types/node@24.13.3))
       '@stryker-mutator/jasmine-runner':
         specifier: workspace:*
-        version: file:packages/jasmine-runner(@stryker-mutator/core@file:packages/core(@types/node@24.13.3))(jasmine@6.3.0)
+        version: file:packages/jasmine-runner(@stryker-mutator/core@file:packages/core(@types/node@24.13.3))(jasmine@7.0.0)
       '@stryker-mutator/jest-runner':
         specifier: workspace:*
         version: file:packages/jest-runner(@stryker-mutator/core@file:packages/core(@types/node@24.13.3))
@@ -299,8 +299,8 @@ importers:
         specifier: workspace:*
         version: file:packages/grunt-stryker(@stryker-mutator/core@file:packages/core(@types/node@24.13.3))(grunt@1.6.3)
       jasmine:
-        specifier: 6.3.0
-        version: 6.3.0
+        specifier: 7.0.0
+        version: 7.0.0
       jasmine-core:
         specifier: 6.3.0
         version: 6.3.0
@@ -1240,7 +1240,7 @@ importers:
         specifier: workspace:*
         version: link:../util
       jasmine:
-        specifier: '>=3.10 <7'
+        specifier: '>=3.10 <8'
         version: 6.3.0
     devDependencies:
       '@stryker-mutator/test-helpers':
@@ -5540,7 +5540,7 @@ packages:
     engines: {node: '>=22.0.0'}
     peerDependencies:
       '@stryker-mutator/core': workspace:*
-      jasmine: '>=3.10 <7'
+      jasmine: '>=3.10 <8'
 
   '@stryker-mutator/jest-runner@file:packages/jest-runner':
     resolution: {directory: packages/jest-runner, type: directory}
@@ -11007,8 +11007,15 @@ packages:
   jasmine-core@6.3.0:
     resolution: {integrity: sha512-eMm5qBovNjNoGOcgE/W207+wrcK5zrQv0Rg/rWGboUJUmZp0dFCpHTyjpuDAfCwRCqg7f9U2q2jtv/aUuzdCQg==}
 
+  jasmine-core@7.0.2:
+    resolution: {integrity: sha512-YMVijt84KPQQFm1db1AQAxTXfq0k3wU06OkepLViljURFqiRQ7EYYX2eUAshhUv9fA9t1E2N65GrdqvupA9VPQ==}
+
   jasmine@6.3.0:
     resolution: {integrity: sha512-u6L7yYtrtS1JALlp7f4k7Wz7o7ZKXauSKKkXc0L3qUkKrdaxYvNiMHhHp5gtTuVZZXVihXRxS7bWwDBX1wJ7EQ==}
+    hasBin: true
+
+  jasmine@7.0.0:
+    resolution: {integrity: sha512-rnjiyg1LAhFZMoyU8ei/Wqyvti5oCzFhW7ZtkD6o+CSx3LpU9aYurPrh5BKyX3coGvmdEVYPC2HYh1rrBvZoWg==}
     hasBin: true
 
   jest-changed-files@24.9.0:
@@ -22899,12 +22906,12 @@ snapshots:
       '@stryker-mutator/util': link:packages/util
       semver: 7.8.5
 
-  '@stryker-mutator/jasmine-runner@file:packages/jasmine-runner(@stryker-mutator/core@file:packages/core(@types/node@24.13.3))(jasmine@6.3.0)':
+  '@stryker-mutator/jasmine-runner@file:packages/jasmine-runner(@stryker-mutator/core@file:packages/core(@types/node@24.13.3))(jasmine@7.0.0)':
     dependencies:
       '@stryker-mutator/api': link:packages/api
       '@stryker-mutator/core': file:packages/core(@types/node@24.13.3)
       '@stryker-mutator/util': link:packages/util
-      jasmine: 6.3.0
+      jasmine: 7.0.0
 
   '@stryker-mutator/jest-runner@file:packages/jest-runner(@stryker-mutator/core@file:packages/core(@types/node@17.0.45))':
     dependencies:
@@ -29960,11 +29967,19 @@ snapshots:
 
   jasmine-core@6.3.0: {}
 
+  jasmine-core@7.0.2: {}
+
   jasmine@6.3.0:
     dependencies:
       '@jasminejs/reporters': 1.1.0
       glob: 13.0.6
       jasmine-core: 6.3.0
+
+  jasmine@7.0.0:
+    dependencies:
+      '@jasminejs/reporters': 1.1.0
+      glob: 13.0.6
+      jasmine-core: 7.0.2
 
   jest-changed-files@24.9.0:
     dependencies:
