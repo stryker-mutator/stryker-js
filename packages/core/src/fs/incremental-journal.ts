@@ -90,6 +90,11 @@ export function incrementalIgnorePaths(incrementalFile: string): string[] {
  * `isStarted` is true only after this process's `begin()` committed a pending pair.
  * The unexpected-exit handler uses that so Ctrl+C before `begin()` cannot compact
  * a recovered WAL from a prior crash into a truncated `incremental.json`.
+ *
+ * Not safe for two Stryker processes in the same project directory: `append`
+ * resolves `pending/results.jsonl` by path, so a second run's `begin()` can
+ * redirect the first run's appends into a different test-ID namespace. That is
+ * the same class of race as sharing the sandbox / `incremental.json`.
  */
 export class IncrementalJournal {
   public static inject = tokens(commonTokens.options, commonTokens.logger);
@@ -105,6 +110,12 @@ export class IncrementalJournal {
    * or `close()`. `append()` is a no-op while this is false.
    */
   public isStarted = false;
+
+  /**
+   * Set once `append()` has warned. A broken pending directory would otherwise
+   * produce one warning per remaining mutant.
+   */
+  private appendFailureLogged = false;
 
   constructor(
     options: Pick<StrykerOptions, 'incremental' | 'incrementalFile'>,
@@ -162,6 +173,7 @@ export class IncrementalJournal {
       return;
     }
     this.isStarted = false;
+    this.appendFailureLogged = false;
 
     try {
       await this.commitPendingPair(base);
@@ -192,10 +204,13 @@ export class IncrementalJournal {
         'utf-8',
       );
     } catch (error: unknown) {
-      this.log.warn(
-        'Failed to append a mutant result to the incremental journal: %s',
-        error,
-      );
+      if (!this.appendFailureLogged) {
+        this.appendFailureLogged = true;
+        this.log.warn(
+          'Failed to append a mutant result to the incremental journal, further append failures will not be logged: %s',
+          error,
+        );
+      }
     }
   }
 
@@ -219,7 +234,7 @@ export class IncrementalJournal {
    * Stop accepting appends.
    * Production runs call `complete()` instead; tests use this to release files.
    */
-  public async close(): Promise<void> {
+  public close(): void {
     this.isStarted = false;
   }
 
@@ -238,7 +253,10 @@ export class IncrementalJournal {
     await fs.mkdir(this.pendingNextDir, { recursive: true });
     await fs.writeFile(
       path.join(this.pendingNextDir, INCREMENTAL_PENDING_BASE),
-      JSON.stringify(base, null, 2),
+      // Machine-only WAL file, so skip pretty-printing. It embeds every mutated
+      // file's source and is rewritten on every incremental run; the committed
+      // report stays indented because people read and diff that one.
+      JSON.stringify(base),
       'utf-8',
     );
     await fs.writeFile(

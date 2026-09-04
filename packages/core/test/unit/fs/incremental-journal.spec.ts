@@ -34,15 +34,12 @@ describe(IncrementalJournal.name, () => {
   });
 
   afterEach(async () => {
-    await sut.close();
+    sut.close();
     await fs.rm(tempDir, { recursive: true, force: true });
   });
 
   function createSut() {
-    return new IncrementalJournal(
-      testInjector.options,
-      testInjector.logger,
-    );
+    return new IncrementalJournal(testInjector.options, testInjector.logger);
   }
 
   function createBase(
@@ -156,9 +153,7 @@ describe(IncrementalJournal.name, () => {
       sut.append(journalMutant({ id: `run-${i}` }));
     }
     const recovered = await createSut().load();
-    const ids = recovered!.files['foo.js'].mutants
-      .slice(1)
-      .map(({ id }) => id);
+    const ids = recovered!.files['foo.js'].mutants.slice(1).map(({ id }) => id);
     expect(ids).deep.eq([...Array(count).keys()].map((i) => `run-${i}`));
   });
 
@@ -191,9 +186,7 @@ describe(IncrementalJournal.name, () => {
     expect(recovered).undefined;
     expect(await fileExists(path.join(pendingDir, INCREMENTAL_PENDING_BASE)))
       .true;
-    expect(testInjector.logger.warn).calledWithMatch(
-      'corrupted interior line',
-    );
+    expect(testInjector.logger.warn).calledWithMatch('corrupted interior line');
   });
 
   it('should write the incremental file then remove pending on complete', async () => {
@@ -221,9 +214,9 @@ describe(IncrementalJournal.name, () => {
   });
 
   it('should map incrementalFile to a gitignore glob covering the report and WAL siblings', () => {
-    expect(
-      incrementalGitignorePattern('reports/stryker-incremental.json'),
-    ).eq('reports/stryker-incremental.*');
+    expect(incrementalGitignorePattern('reports/stryker-incremental.json')).eq(
+      'reports/stryker-incremental.*',
+    );
   });
 
   it('should set isStarted only after begin succeeds, and clear it on complete', async () => {
@@ -370,8 +363,9 @@ describe(IncrementalJournal.name, () => {
       }),
     );
     expect(sut.isStarted).true;
-    expect((await readPendingBase()).files['foo.js'].mutants.map(({ id }) => id))
-      .deep.eq(['plan-from-b']);
+    expect(
+      (await readPendingBase()).files['foo.js'].mutants.map(({ id }) => id),
+    ).deep.eq(['plan-from-b']);
   });
 
   it('should replace pending with a new base and empty journal so old JSONL is not mixed in', async () => {
@@ -395,10 +389,8 @@ describe(IncrementalJournal.name, () => {
 
     expect(await readPendingBase()).deep.eq(secondBase);
     expect(await readPendingJsonl()).eq('');
-    expect(await fileExists(incrementalPendingPrevDir(incrementalFile)))
-      .false;
-    expect(await fileExists(incrementalPendingNextDir(incrementalFile)))
-      .false;
+    expect(await fileExists(incrementalPendingPrevDir(incrementalFile))).false;
+    expect(await fileExists(incrementalPendingNextDir(incrementalFile))).false;
 
     const recovered = await createSut().load();
     expect(recovered!.files['foo.js'].mutants.map(({ id }) => id)).deep.eq([
@@ -412,9 +404,9 @@ describe(IncrementalJournal.name, () => {
 
     const nextRun = createSut();
     expect(await nextRun.load()).undefined;
-    expect(
-      JSON.parse(await fs.readFile(incrementalFile, 'utf-8')),
-    ).deep.eq(committed);
+    expect(JSON.parse(await fs.readFile(incrementalFile, 'utf-8'))).deep.eq(
+      committed,
+    );
   });
 
   it('should not destroy an existing pending pair if begin never runs after a previous crash', async () => {
