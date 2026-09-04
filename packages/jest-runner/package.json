@@ -68,19 +68,19 @@
   },
   "homepage": "https://stryker-mutator.io/docs/stryker-js/jest-runner",
   "devDependencies": {
-    "@jest/environment": "30.4.1",
-    "@jest/test-result": "30.4.1",
-    "@jest/types": "30.4.1",
+    "@jest/environment": "30.5.1",
+    "@jest/test-result": "30.5.1",
+    "@jest/types": "30.5.1",
     "@stryker-mutator/test-helpers": "workspace:*",
     "@types/node": "24.13.3",
     "@types/semver": "7.8.0",
-    "jest": "30.4.2",
-    "jest-circus": "30.4.2",
-    "jest-config": "30.4.2",
-    "jest-environment-jsdom": "30.4.1",
+    "jest": "30.5.1",
+    "jest-circus": "30.5.1",
+    "jest-config": "30.5.1",
+    "jest-environment-jsdom": "30.5.1",
     "jest-environment-jsdom-sixteen": "2.0.0",
-    "jest-environment-node": "30.4.1",
-    "jest-jasmine2": "30.4.2"
+    "jest-environment-node": "30.5.1",
+    "jest-jasmine2": "30.5.1"
   },
   "peerDependencies": {
     "@stryker-mutator/core": "workspace:*"
