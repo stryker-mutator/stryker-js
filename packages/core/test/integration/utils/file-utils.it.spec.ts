@@ -74,6 +74,38 @@ describe('fileUtils', () => {
     });
   });
 
+  describe('moveDirectoryRecursiveSync', () => {
+    const from = path.resolve(os.tmpdir(), 'moveDirectoryRecursiveSyncFrom');
+    const to = path.resolve(os.tmpdir(), 'moveDirectoryRecursiveSyncTo');
+
+    afterEach(async () => {
+      await Promise.all([
+        fsPromises.rm(from, { recursive: true, force: true }),
+        fsPromises.rm(to, { recursive: true, force: true }),
+      ]);
+    });
+
+    it('should override target files synchronously', async () => {
+      const expectedFileNameA = path.resolve(to, 'a.js');
+      const expectedFileNameB = path.resolve(to, 'b', 'b.js');
+      await writeAll({
+        [path.resolve(from, 'a.js')]: 'original a',
+        [path.resolve(from, 'b', 'b.js')]: 'original b',
+        [expectedFileNameA]: 'mutated a',
+        [expectedFileNameB]: 'mutated b',
+      });
+
+      fileUtils.moveDirectoryRecursiveSync(from, to);
+
+      const files = await readDirRecursive(to);
+      expect(files).deep.eq({
+        [expectedFileNameA]: 'original a',
+        [expectedFileNameB]: 'original b',
+      });
+      await expect(fsPromises.access(from)).rejected;
+    });
+  });
+
   async function readDirRecursive(
     dir: string,
   ): Promise<Record<string, string>> {

@@ -29,6 +29,11 @@ describe(UnexpectedExitHandler.name, () => {
   }
 
   describe('constructor', () => {
+    it('should register an "exit" handler', () => {
+      createSut();
+      expect(processMock.listenerCount('exit')).eq(1);
+    });
+
     signals.forEach((signal) => {
       it(`should register a "${signal}" signal handler`, () => {
         createSut();
@@ -38,6 +43,11 @@ describe(UnexpectedExitHandler.name, () => {
   });
 
   describe('dispose', () => {
+    it('should remove the "exit" handler', () => {
+      createSut().dispose();
+      expect(processMock.listenerCount('exit')).eq(0);
+    });
+
     signals.forEach((signal) => {
       it(`should remove the "${signal}" signal handler`, () => {
         createSut().dispose();
@@ -67,6 +77,63 @@ describe(UnexpectedExitHandler.name, () => {
       processMock.emit(signal, signal, 4);
       // 128 + 4 (signal number), per POSIX convention for signal-terminated processes
       expect(processMock.exit).calledWith(132);
+    });
+  });
+
+  describe(UnexpectedExitHandler.prototype.registerSyncHandler.name, () => {
+    it('should call sync handlers on the "exit" event', () => {
+      const handler = sinon.stub();
+      const sut = createSut();
+      sut.registerSyncHandler(handler);
+      processMock.emit('exit');
+      expect(handler).calledOnce;
+    });
+
+    it('should call sync handlers on signal before process.exit', () => {
+      const handler = sinon.stub();
+      const sut = createSut();
+      sut.registerSyncHandler(handler);
+      processMock.emit('SIGINT', 'SIGINT', 2);
+      expect(handler).calledOnce;
+      expect(processMock.exit).calledWith(130);
+    });
+
+    it('should not run sync handlers twice when a signal triggers process.exit', () => {
+      const handler = sinon.stub();
+      const sut = createSut();
+      sut.registerSyncHandler(handler);
+      processMock.emit('SIGINT', 'SIGINT', 2);
+      // Mimic Node: process.exit() emits 'exit'
+      processMock.emit('exit');
+      expect(handler).calledOnce;
+    });
+
+    it('should still call process.exit when a sync handler throws', () => {
+      const consoleErrorStub = sinon.stub(console, 'error');
+      const sut = createSut();
+      sut.registerSyncHandler(() => {
+        throw new Error('restore failed');
+      });
+      processMock.emit('SIGINT', 'SIGINT', 2);
+      expect(processMock.exit).calledWith(130);
+      expect(consoleErrorStub).calledWith(
+        'Unexpected exit sync handler failed:',
+        sinon.match.instanceOf(Error),
+      );
+      consoleErrorStub.restore();
+    });
+
+    it('should run remaining sync handlers when one throws', () => {
+      const consoleErrorStub = sinon.stub(console, 'error');
+      const second = sinon.stub();
+      const sut = createSut();
+      sut.registerSyncHandler(() => {
+        throw new Error('first failed');
+      });
+      sut.registerSyncHandler(second);
+      processMock.emit('exit');
+      expect(second).calledOnce;
+      consoleErrorStub.restore();
     });
   });
 
@@ -161,6 +228,35 @@ describe(UnexpectedExitHandler.name, () => {
       );
       consoleErrorStub.restore();
       await clock.runAllAsync();
+    });
+
+    it('should run sync handlers before async handlers on signal', async () => {
+      const order: string[] = [];
+      let releaseAsync!: () => void;
+      const asyncGate = new Promise<void>((resolve) => {
+        releaseAsync = resolve;
+      });
+      const sut = createSut();
+      sut.registerSyncHandler(() => {
+        order.push('sync');
+      });
+      sut.registerHandler(async () => {
+        await asyncGate;
+        order.push('async');
+      });
+      processMock.emit('SIGINT', 'SIGINT', 2);
+      expect(order).deep.eq(['sync']);
+      releaseAsync();
+      await clock.runAllAsync();
+      expect(order).deep.eq(['sync', 'async']);
+    });
+
+    it('should not call async handlers on the "exit" event', () => {
+      const asyncHandler = sinon.stub().resolves();
+      const sut = createSut();
+      sut.registerHandler(asyncHandler);
+      processMock.emit('exit');
+      expect(asyncHandler).not.called;
     });
   });
 });
