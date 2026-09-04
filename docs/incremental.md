@@ -46,11 +46,9 @@ Here you can see that:
 
 ## Interrupted runs
 
-If a mutation testing run is interrupted (for example by pressing CTRL+C),
-StrykerJS saves the partial results collected so far to the incremental
-report file. This means the next incremental run can pick up where
-the interrupted run left off, instead of having to redo the work from
-the interrupted run.
+If a mutation testing run is interrupted or crashes (for example by pressing CTRL+C, a canceled CI job, or a hard kill), StrykerJS saves the mutant results completed so far. On a hard kill, at most the in-flight mutant is lost; on Ctrl+C, results that finish while the process is shutting down may also need to rerun. The next incremental run can pick up where the interrupted run left off, instead of having to redo that work.
+
+While a run is in progress, StrykerJS writes a pending directory next to [`incrementalFile`](./configuration.md#incrementalfile-string) (for the default path: `reports/stryker-incremental.pending/`). Gitignore it like the incremental report. `stryker init` adds `reports/stryker-incremental.*` to `.gitignore` for the default path.
 
 ## Limitations
 
@@ -61,6 +59,7 @@ Running in incremental mode, Stryker will do its best to produce an accurate mut
 - Detecting test changes is only supported if the test runner plugin supports reporting test locations. (see support table below)
 - Any other changes to your environment are not detected, such as updates to other files, updated (dev) dependencies, changes to environment variables, changes to `.snap` files, readme files, etc.
 - [Static mutants](../../mutation-testing-elements/static-mutants/) don't have test coverage; thus, Stryker won't detect test changes for them.
+- Do not run two Stryker processes with `--incremental` in the same project directory at once. They already race on the sandbox and on `incrementalFile`; the pending journal shares that same race.
 
 | Test runner plugin | Test reporting                    |
 | ------------------ | --------------------------------- |

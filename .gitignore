@@ -27,3 +27,4 @@ packages/report.*.json # Ignore heap dumps
 tsconfig.*.tsbuildinfo
 packages/core/schema
 __filterSpecs.js
+local-release

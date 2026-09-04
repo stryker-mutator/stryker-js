@@ -185,7 +185,7 @@ export class StrykerCli {
       )
       .option(
         '--incrementalFile <file>',
-        'Specify the file to use for incremental mode.',
+        'Specify the file to use for incremental mode. A sibling .pending/ directory and .tmp file may appear next to it during a run; gitignore them like this file.',
       )
       .option(
         '--force',

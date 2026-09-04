@@ -34,7 +34,11 @@ import {
 import { strykerVersion } from '../stryker-package.js';
 import { coreTokens } from '../di/index.js';
 import { objectUtils } from '../utils/object-utils.js';
-import { Project, FileSystem } from '../fs/index.js';
+import {
+  IncrementalJournal,
+  IncrementalJournalMutant,
+  Project,
+} from '../fs/index.js';
 import { TestCoverage } from '../mutants/index.js';
 import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
 
@@ -56,6 +60,12 @@ const STRYKER_FRAMEWORK: Readonly<
 export class MutationTestReportHelper {
   private readonly partialResults: MutantResult[] = [];
   private reportCompleted = false;
+  private testIdRemapper:
+    | {
+        remapTestId: (id: string) => string;
+        remapTestIds: (ids: string[] | undefined) => string[] | undefined;
+      }
+    | undefined;
 
   public static inject = tokens(
     coreTokens.reporter,
@@ -63,9 +73,9 @@ export class MutationTestReportHelper {
     coreTokens.project,
     commonTokens.logger,
     coreTokens.testCoverage,
-    coreTokens.fs,
     coreTokens.requireFromCwd,
     coreTokens.unexpectedExitRegistry,
+    coreTokens.incrementalJournal,
   );
 
   constructor(
@@ -74,18 +84,29 @@ export class MutationTestReportHelper {
     private readonly project: Project,
     private readonly log: Logger,
     private readonly testCoverage: I<TestCoverage>,
-    private readonly fs: I<FileSystem>,
     private readonly requireFromCwd: typeof requireResolve,
     unexpectedExitHandler: I<UnexpectedExitHandler>,
+    private readonly incrementalJournal: I<IncrementalJournal>,
   ) {
     unexpectedExitHandler.registerHandler(async () => {
+      // Only compact after this run's pending pair exists. Completing before
+      // `begin()` would write a truncated plan-time report and delete a
+      // recovered WAL from a prior crash.
       if (
         this.options.incremental &&
         !this.reportCompleted &&
+        this.incrementalJournal.isStarted &&
         this.partialResults.length > 0
       ) {
-        const report = await this.mutationTestReport(this.partialResults);
-        await this.writeIncrementalReport(report);
+        // Freeze the WAL first. Workers can keep reporting while we await file
+        // reads; if those results were appended and then `complete()` deleted the
+        // pending dir, they would vanish from both the WAL and the compact.
+        this.incrementalJournal.close();
+        // Snapshot so `mutationTestReport` cannot see a new file appear mid-await
+        // (it builds the file map, then walks the array again after those awaits).
+        const report = await this.mutationTestReport([...this.partialResults]);
+        await this.incrementalJournal.complete(report);
+        this.reportCompleted = true;
         this.log.info(
           'Saved a partial incremental report to "%s" after an unexpected interrupt.',
           this.options.incrementalFile,
@@ -162,8 +183,28 @@ export class MutationTestReportHelper {
 
   private reportOne(result: MutantResult): MutantResult {
     this.partialResults.push(result);
+    // `isStarted` implies incremental is enabled and `begin()` committed the pending
+    // pair. Checking it here (rather than only inside `append`) avoids building a
+    // journal mutant for every plan-time result that `append` would then discard.
+    if (this.incrementalJournal.isStarted) {
+      this.incrementalJournal.append(this.toJournalMutant(result));
+    }
     this.reporter.onMutantTested(result);
     return result;
+  }
+
+  /**
+   * Persist plan-time mutant results (reused, ignored) as the incremental
+   * journal's `base.json` before checker/test-runner workers run.
+   * Later `reportOne` calls are appended to `results.jsonl`.
+   */
+  public async beginIncrementalJournal(): Promise<void> {
+    if (!this.options.incremental) {
+      return;
+    }
+    const base = await this.mutationTestReport(this.partialResults);
+    await this.includeRemainingMutatedFiles(base);
+    await this.incrementalJournal.begin(base);
   }
 
   private checkStatusToResultStatus(
@@ -180,23 +221,10 @@ export class MutationTestReportHelper {
     const metrics = calculateMutationTestMetrics(report);
     this.reporter.onMutationTestReportReady(report, metrics);
     if (this.options.incremental) {
-      await this.writeIncrementalReport(report);
+      await this.incrementalJournal.complete(report);
     }
     this.reportCompleted = true;
     this.determineExitCode(metrics);
-  }
-
-  private async writeIncrementalReport(
-    report: schema.MutationTestResult,
-  ): Promise<void> {
-    await this.fs.mkdir(path.dirname(this.options.incrementalFile), {
-      recursive: true,
-    });
-    await this.fs.writeFile(
-      this.options.incrementalFile,
-      JSON.stringify(report, null, 2),
-      'utf-8',
-    );
   }
 
   private determineExitCode(metrics: MutationTestMetricsResult) {
@@ -227,18 +255,7 @@ export class MutationTestReportHelper {
   private async mutationTestReport(
     results: readonly MutantResult[],
   ): Promise<schema.MutationTestResult> {
-    // Mocha, jest and karma use test titles as test ids.
-    // This can mean a lot of duplicate strings in the json report.
-    // Therefore we remap the test ids here to numbers.
-    const testIdMap = new Map(
-      [...this.testCoverage.testsById.values()].map((test, index) => [
-        test.id,
-        index.toString(),
-      ]),
-    );
-    const remapTestId = (id: string): string => testIdMap.get(id) ?? id;
-    const remapTestIds = (ids: string[] | undefined): string[] | undefined =>
-      ids?.map(remapTestId);
+    const { remapTestId, remapTestIds } = this.getTestIdRemapper();
 
     return {
       files: await this.toFileResults(results, remapTestIds),
@@ -251,6 +268,56 @@ export class MutationTestReportHelper {
         ...STRYKER_FRAMEWORK,
         dependencies: this.discoverDependencies(),
       },
+    };
+  }
+
+  /**
+   * Mocha, jest and karma use test titles as test ids.
+   * This can mean a lot of duplicate strings in the json report.
+   * Therefore we remap the test ids here to numbers.
+   * The same mapping is reused for journal JSONL lines so they share one namespace with `base.json`.
+   */
+  private getTestIdRemapper(): {
+    remapTestId: (id: string) => string;
+    remapTestIds: (ids: string[] | undefined) => string[] | undefined;
+  } {
+    if (!this.testIdRemapper) {
+      const testIdMap = new Map(
+        [...this.testCoverage.testsById.values()].map((test, index) => [
+          test.id,
+          index.toString(),
+        ]),
+      );
+      const remapTestId = (id: string): string => testIdMap.get(id) ?? id;
+      const remapTestIds = (ids: string[] | undefined): string[] | undefined =>
+        ids?.map(remapTestId);
+      this.testIdRemapper = { remapTestId, remapTestIds };
+    }
+    return this.testIdRemapper;
+  }
+
+  /**
+   * `mutationTestReport` only emits files that already have results. The journal
+   * base must also include sources for files whose mutants will be written to JSONL.
+   */
+  private async includeRemainingMutatedFiles(
+    report: schema.MutationTestResult,
+  ): Promise<void> {
+    await Promise.all(
+      [...this.project.filesToMutate].map(async ([fileName]) => {
+        const reportFileName = normalizeReportFileName(fileName);
+        if (!report.files[reportFileName]) {
+          report.files[reportFileName] = await this.toFileResult(fileName);
+        }
+      }),
+    );
+  }
+
+  private toJournalMutant(result: MutantResult): IncrementalJournalMutant {
+    const { remapTestIds } = this.getTestIdRemapper();
+    return {
+      fileName: normalizeReportFileName(result.fileName),
+      ...this.toMutantResult(result, remapTestIds),
     };
   }
 

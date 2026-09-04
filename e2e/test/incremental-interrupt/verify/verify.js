@@ -29,6 +29,17 @@ const rootResolve = path.resolve.bind(
 );
 
 const incrementalFile = rootResolve('reports', 'stryker-incremental.json');
+const pendingDir = rootResolve('reports', 'stryker-incremental.pending');
+const pendingJsonl = path.join(pendingDir, 'results.jsonl');
+const mathFile = rootResolve('src', 'math.js');
+
+/**
+ * Use `--reporters=a,b` (equals form). Windows `cmd` treats a bare comma as an
+ * argument separator, so `--reporters clear-text,crash` becomes one plugin name
+ * `"clear-text crash"`.
+ */
+const crashReporters = ['--reporters=clear-text,crash'];
+const textReporter = ['--reporters=clear-text'];
 
 /**
  * Count the total number of mutants across all files in an incremental report.
@@ -43,6 +54,29 @@ async function countMutantsInReport(filePath) {
     (sum, file) => sum + file.mutants.length,
     0,
   );
+}
+
+/**
+ * Count mutants recovered from the pending WAL (base.json + results.jsonl).
+ * @returns {Promise<number>}
+ */
+async function countMutantsInPending() {
+  const base = JSON.parse(
+    await fsPromises.readFile(path.join(pendingDir, 'base.json'), 'utf-8'),
+  );
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  const baseCount = Object.values(base.files).reduce(
+    (sum, file) => sum + file.mutants.length,
+    0,
+  );
+  let jsonlCount = 0;
+  try {
+    const jsonl = await fsPromises.readFile(pendingJsonl, 'utf-8');
+    jsonlCount = jsonl.split('\n').filter((line) => line.trim()).length;
+  } catch {
+    // results.jsonl may be empty or missing
+  }
+  return baseCount + jsonlCount;
 }
 
 describe('incremental interrupt', () => {
@@ -163,5 +197,79 @@ describe('incremental interrupt', () => {
       `Stryker did not complete after ${MAX_ITERATIONS} iterations. ` +
         `Last report had ${previousMutantCount} mutants.`,
     );
+  });
+
+  it('should reuse journaled mutants after a hard crash without a signal handler', async () => {
+    /** @type {import('execa').ExecaError | undefined} */
+    let crashError;
+    try {
+      await execa('stryker', ['run', ...crashReporters], {
+        env: { STRYKER_CRASH_AFTER: '1' },
+      });
+    } catch (error) {
+      crashError = error;
+    }
+
+    expect(crashError, 'Stryker should have hard-crashed').to.exist;
+    expect(crashError.exitCode).to.equal(1);
+    expect(crashError.stdout ?? '').to.not.contain(
+      'Saved a partial incremental report',
+    );
+
+    const pendingMutants = await countMutantsInPending();
+    expect(pendingMutants).to.be.greaterThan(0);
+
+    const result = await execa('stryker', ['run', ...textReporter]);
+    expect(result.exitCode).to.equal(0);
+    expect(result.stdout).to.contain('mutant result(s) are reused');
+    expect(await countMutantsInReport(incrementalFile)).to.equal(9);
+  });
+
+  it('should diff pending results against edited source on the next incremental run', async () => {
+    try {
+      await execa('stryker', ['run', ...crashReporters], {
+        env: { STRYKER_CRASH_AFTER: '1' },
+      });
+    } catch {
+      // expected hard crash
+    }
+
+    expect(await countMutantsInPending()).to.be.greaterThan(0);
+
+    const original = await fsPromises.readFile(mathFile, 'utf-8');
+    await fsPromises.writeFile(
+      mathFile,
+      original.replace('return num1 + num2;', 'return num1 + num2 + 0;'),
+    );
+
+    try {
+      const result = await execa('stryker', ['run', ...textReporter]);
+      expect(result.exitCode).to.equal(0);
+      expect(result.stdout).to.contain('mutant result(s) are reused');
+      expect(await countMutantsInReport(incrementalFile)).to.be.greaterThan(0);
+    } finally {
+      await fsPromises.writeFile(mathFile, original);
+    }
+  });
+
+  it('should keep the committed incremental report when crashing before begin', async () => {
+    const fullRun = await execa('stryker', ['run', ...textReporter]);
+    expect(fullRun.exitCode).to.equal(0);
+    expect(await countMutantsInReport(incrementalFile)).to.equal(9);
+
+    try {
+      await execa('stryker', ['run', ...crashReporters], {
+        env: { STRYKER_CRASH_BEFORE_BEGIN: '1' },
+      });
+    } catch (error) {
+      expect(error.exitCode).to.equal(1);
+    }
+
+    expect(await countMutantsInReport(incrementalFile)).to.equal(9);
+
+    const result = await execa('stryker', ['run', ...textReporter]);
+    expect(result.exitCode).to.equal(0);
+    expect(result.stdout).to.contain('mutant result(s) are reused');
+    expect(await countMutantsInReport(incrementalFile)).to.equal(9);
   });
 });

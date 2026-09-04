@@ -297,7 +297,7 @@ Config file: `"ignorePatterns": ["dist", "coverage"]`<br />
 
 Specify the patterns to all files or directories that are not used to run your tests and thus should _not be copied_ to the sandbox directory for mutation testing. Each patterns in this array should be a [glob pattern](#usage-of-globbing-expressions-on-options).
 
-These patterns are **always ignored**: `['node_modules', '.git', '*.tsbuildinfo', '/stryker.log']`. The configured files in the `tempDirName`,`incrementalFile`, `htmlReporter.fileName` and `jsonReporter.fileName` options are also ignored.
+These patterns are **always ignored**: `['node_modules', '.git', '*.tsbuildinfo', '/stryker.log']`. The configured files in the `tempDirName`, `incrementalFile`, `htmlReporter.fileName` and `jsonReporter.fileName` options are also ignored, along with the pending directory next to `incrementalFile` (for example `reports/stryker-incremental.pending/`).
 Because Stryker always ignores these, you should rarely have to adjust the `"ignorePatterns"` setting at all. If you want to undo one of these ignore patterns, you can use the `!` prefix, for example: `["!node_modules"]`.
 
 Overriding `--ignorePatterns` is only needed when you experience a slow Stryker startup, because too many (or too large) files are copied to the sandbox that are not needed to run the tests.
@@ -374,6 +374,8 @@ Config file: `"incrementalFile": "reports/stryker-incremental-alternative.json"`
 Specify the file to use for incremental mode.
 See [incremental](./incremental.md) for more details.
 
+While a run is in progress, StrykerJS also writes a sibling `.pending/` directory (for example `reports/stryker-incremental.pending/`). Gitignore it like the incremental report. `stryker init` adds `reports/stryker-incremental.*` to `.gitignore`.
+
 ### `inPlace` [`boolean`]
 
 Default: `false`<br />
@@ -383,7 +385,7 @@ Config file: `"inPlace": true`<br />
 Determines whether Stryker should mutate your files in place.
 Note: mutating your files in place is generally not needed for mutation testing, unless you have a dependency in your project that is really dependent on the file locations (like "app-root-path" for example).
 
-When `true`, Stryker will override your files, but it will keep a copy of the originals in the temp directory (using `tempDirName`) and it will place the originals back after it is done. Also, with `true` the [`ignorePatterns`](#ignorepatterns-string) has no effect anymore.
+When `true`, Stryker will override your files, but it will keep a copy of the originals in the temp directory (using `tempDirName`) and it will place the originals back after it is done (including on unexpected process exit via a synchronous `process.on('exit')` restore). Also, with `true` the [`ignorePatterns`](#ignorepatterns-string) has no effect anymore.
 
 When `false` (default) Stryker will work in the copy of your code inside the temp directory.
 

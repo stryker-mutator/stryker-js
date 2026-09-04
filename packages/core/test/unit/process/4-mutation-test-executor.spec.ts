@@ -157,6 +157,7 @@ describe(MutationTestExecutor.name, () => {
     mutationTestReportHelperMock.reportCheckFailed.returnsArg(0);
     mutationTestReportHelperMock.reportMutantRunResult.returnsArg(0);
     mutationTestReportHelperMock.reportAll.returnsArg(0);
+    mutationTestReportHelperMock.beginIncrementalJournal.resolves();
   }
 
   function arrangeScenario(overrides?: {
@@ -243,6 +244,40 @@ describe(MutationTestExecutor.name, () => {
         'NoCoverage',
       );
     });
+
+    it('should check uncovered mutants', async () => {
+      testInjector.options.checkers.push('foo');
+      const uncovered = mutantRunPlan({ id: '1', testFilter: [] });
+      arrangeScenario({ mutantRunPlan: uncovered });
+      checker.group.resolves([[uncovered]]);
+      mutantTestPlans.push(uncovered);
+
+      await sut.execute();
+
+      expect(checker.check).called;
+      expect(testRunner.mutantRun).not.called;
+    });
+
+    it('should begin the incremental journal after plan-time results and before workers', async () => {
+      arrangeScenario();
+      mutantTestPlans.push(
+        ignoredEarlyResultPlan({ id: '1', statusReason: 'ignored' }),
+      );
+      mutantTestPlans.push(mutantRunPlan({ id: '2' }));
+      const runPlan = mutantTestPlans[1] as MutantRunPlan;
+      checker.group.resolves([[runPlan]]);
+
+      await sut.execute();
+
+      sinon.assert.callOrder(
+        mutationTestReportHelperMock.reportMutantStatus,
+        mutationTestReportHelperMock.beginIncrementalJournal,
+        testRunner.mutantRun,
+      );
+      expect(
+        mutationTestReportHelperMock.beginIncrementalJournal,
+      ).calledOnce;
+    });
   });
 
   describe('execute check', () => {
@@ -305,6 +340,7 @@ describe(MutationTestExecutor.name, () => {
       const onGoingAct = sut.execute();
 
       // Assert
+      await fakeTick();
       await fakeTick();
 
       // Assert that checker is called for the first 2 groups
