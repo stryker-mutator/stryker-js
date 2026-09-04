@@ -35,6 +35,16 @@ describe(MutationTestReportHelper.name, () => {
     testCoverage = new TestCoverageTestDouble();
     unexpectedExitRegistry = new UnexpectedExitHandlerTestDouble();
     incrementalJournalMock = sinon.createStubInstance(IncrementalJournal);
+    // Mirror the real journal: `begin` / `close` / `complete` flip `isStarted`.
+    incrementalJournalMock.begin.callsFake(async () => {
+      incrementalJournalMock.isStarted = true;
+    });
+    incrementalJournalMock.close.callsFake(() => {
+      incrementalJournalMock.isStarted = false;
+    });
+    incrementalJournalMock.complete.callsFake(async () => {
+      incrementalJournalMock.isStarted = false;
+    });
   });
 
   function createSut() {
@@ -531,7 +541,11 @@ describe(MutationTestReportHelper.name, () => {
 
         await unexpectedExitRegistry.triggerUnexpectedExit();
 
+        expect(incrementalJournalMock.close).calledOnce;
         expect(incrementalJournalMock.complete).calledOnce;
+        expect(incrementalJournalMock.close).calledBefore(
+          incrementalJournalMock.complete,
+        );
         const [actualReport] = incrementalJournalMock.complete.firstCall.args;
         expect(actualReport.files['partial.js'].mutants).lengthOf(1);
         expect(actualReport.files['partial.js'].mutants[0].status).eq(
@@ -606,10 +620,11 @@ describe(MutationTestReportHelper.name, () => {
         expect(incrementalJournalMock.complete).not.called;
       });
 
-      it('should forward every result to the journal (the journal no-ops until begin)', async () => {
+      it('should not append plan-time results, they belong in base.json', () => {
         testInjector.options.incremental = true;
         fileSystemTestDouble.files['foo.js'] = 'const answer = 42;\n';
         const sut = createSut();
+        // `isStarted` is false: `begin()` has not committed a pending pair yet.
         sut.reportMutantStatus(
           factory.mutantTestCoverage({
             fileName: 'foo.js',
@@ -617,7 +632,7 @@ describe(MutationTestReportHelper.name, () => {
           }),
           'Ignored',
         );
-        expect(incrementalJournalMock.append).calledOnce;
+        expect(incrementalJournalMock.append).not.called;
         expect(incrementalJournalMock.begin).not.called;
       });
 

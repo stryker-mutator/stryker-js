@@ -98,7 +98,13 @@ export class MutationTestReportHelper {
         this.incrementalJournal.isStarted &&
         this.partialResults.length > 0
       ) {
-        const report = await this.mutationTestReport(this.partialResults);
+        // Freeze the WAL first. Workers can keep reporting while we await file
+        // reads; if those results were appended and then `complete()` deleted the
+        // pending dir, they would vanish from both the WAL and the compact.
+        this.incrementalJournal.close();
+        // Snapshot so `mutationTestReport` cannot see a new file appear mid-await
+        // (it builds the file map, then walks the array again after those awaits).
+        const report = await this.mutationTestReport([...this.partialResults]);
         await this.incrementalJournal.complete(report);
         this.reportCompleted = true;
         this.log.info(
@@ -177,7 +183,10 @@ export class MutationTestReportHelper {
 
   private reportOne(result: MutantResult): MutantResult {
     this.partialResults.push(result);
-    if (this.options.incremental) {
+    // `isStarted` implies incremental is enabled and `begin()` committed the pending
+    // pair. Checking it here (rather than only inside `append`) avoids building a
+    // journal mutant for every plan-time result that `append` would then discard.
+    if (this.incrementalJournal.isStarted) {
       this.incrementalJournal.append(this.toJournalMutant(result));
     }
     this.reporter.onMutantTested(result);
@@ -280,9 +289,8 @@ export class MutationTestReportHelper {
         ]),
       );
       const remapTestId = (id: string): string => testIdMap.get(id) ?? id;
-      const remapTestIds = (
-        ids: string[] | undefined,
-      ): string[] | undefined => ids?.map(remapTestId);
+      const remapTestIds = (ids: string[] | undefined): string[] | undefined =>
+        ids?.map(remapTestId);
       this.testIdRemapper = { remapTestId, remapTestIds };
     }
     return this.testIdRemapper;
