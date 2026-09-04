@@ -39,7 +39,7 @@ export const fileUtils = {
   },
 
   /**
-   * Recursively walks the from directory and copy the content to the target directory
+   * Recursively walks the from directory and moves the content to the target directory.
    * @param from The source directory to move from
    * @param to The target directory to move to
    */
@@ -62,6 +62,34 @@ export const fileUtils = {
       }
     }
     await fs.promises.rmdir(from);
+  },
+
+  /**
+   * Synchronous counterpart of {@link moveDirectoryRecursive}.
+   * Required for `process.on('exit')` handlers (e.g. `--inPlace` backup restore),
+   * which cannot run async I/O.
+   * @param from The source directory to move from
+   * @param to The target directory to move to
+   */
+  moveDirectoryRecursiveSync(from: string, to: string): void {
+    if (!fs.existsSync(from)) {
+      return;
+    }
+    if (!fs.existsSync(to)) {
+      fs.mkdirSync(to, { recursive: true });
+    }
+    const files = fs.readdirSync(from);
+    for (const file of files) {
+      const fromFileName = path.join(from, file);
+      const toFileName = path.join(to, file);
+      const stats = fs.lstatSync(fromFileName);
+      if (stats.isFile()) {
+        fs.renameSync(fromFileName, toFileName);
+      } else {
+        this.moveDirectoryRecursiveSync(fromFileName, toFileName);
+      }
+    }
+    fs.rmdirSync(from);
   },
 
   /**
