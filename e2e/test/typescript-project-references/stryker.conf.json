@@ -3,7 +3,7 @@
   "packageManager": "npm",
   "disableTypeChecks": true,
   "testRunner": "mocha",
-  "concurrency": 1,
+  "concurrency": 4,
   "coverageAnalysis": "perTest",
   "reporters": ["json", "html", "progress", "clear-text"],
   "checkers": ["typescript"],

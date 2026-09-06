@@ -18,6 +18,7 @@ import { split, strykerReportBugUrl } from '@stryker-mutator/util';
 
 import * as pluginTokens from './plugin-tokens.js';
 import { TypescriptCompiler } from './typescript-compiler.js';
+import { BuildScheduler } from './build-scheduler.js';
 import { createGroups } from './grouping/create-groups.js';
 import { toPosixFileName } from './tsconfig-helpers.js';
 import { TSFileNode } from './grouping/ts-file-node.js';
@@ -63,6 +64,7 @@ export function create(injector: Injector<PluginContext>): Checker {
   }
   return checkerInjector
     .provideClass(pluginTokens.fs, HybridFileSystem)
+    .provideClass(pluginTokens.buildScheduler, BuildScheduler)
     .provideClass(pluginTokens.tsCompiler, TypescriptCompiler)
     .injectClass(TypescriptChecker);
 }
