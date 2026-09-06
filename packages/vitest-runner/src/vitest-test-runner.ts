@@ -35,7 +35,7 @@ import {
   testFilesProvided,
 } from '@stryker-mutator/util';
 
-import { vitestWrapper, Vitest } from './vitest-wrapper.js';
+import { vitestWrapper, Vitest, CliOptions } from './vitest-wrapper.js';
 import {
   convertTestToTestResult,
   fromTestId,
@@ -50,6 +50,13 @@ type StrykerNamespace = '__stryker__' | '__stryker2__';
 const STRYKER_SETUP = fileURLToPath(
   new URL('./stryker-setup.js', import.meta.url),
 );
+
+/**
+ * `vitest`'s own `--project <name>` CLI flag has no counterpart in its exported `CliOptions` type, even though its CLI option schema (`packages/vitest/src/node/cli/cac.ts`) declares and consumes it (`project: { argument: '<name>', array: true }`) the same way `dir` and the other options this runner already forwards are declared there. Extended locally, not upstream in `vitest` itself: this is this package's own accommodation for a real gap in `vitest`'s published types.
+ */
+interface CliOptionsWithProject extends CliOptions {
+  project?: string[];
+}
 
 interface RunFilter {
   /**
@@ -140,7 +147,7 @@ export class VitestTestRunner implements TestRunner {
     this.setEnv();
     await this.#writeStrykerSetupFile();
 
-    this.ctx = await vitestWrapper.createVitest('test', {
+    const vitestOptions: CliOptionsWithProject = {
       config: this.options.vitest?.configFile,
       ...this.#getVitestPoolConfig(vitestWrapper.version),
       coverage: { enabled: false },
@@ -149,7 +156,9 @@ export class VitestTestRunner implements TestRunner {
       dir: this.options.vitest.dir,
       bail: this.options.disableBail ? 0 : 1,
       onConsoleLog: () => false,
-    });
+      project: this.options.vitest.project,
+    };
+    this.ctx = await vitestWrapper.createVitest('test', vitestOptions);
     this.ctx.provide('globalNamespace', this.globalNamespace);
     this.ctx.provide(
       'isGreaterThanVitest4Point1',

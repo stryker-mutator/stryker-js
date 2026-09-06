@@ -23,6 +23,13 @@
         "configFile": {
           "description": "Path to the config file. Default resolving to `vitest.config.*`, `vite.config.*`",
           "type": "string"
+        },
+        "project": {
+          "description": "Configure the `--project <name>` command line option to select one or more named projects out of a Vitest workspace (multi-project) config, instead of running every project it defines",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     }

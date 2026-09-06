@@ -368,6 +368,22 @@ describe('VitestRunner integration', () => {
       assertions.expectKilled(runResult);
       expect(runResult.killedBy).deep.eq([barTestId]);
     });
+
+    it('should only run the named project when `project` is configured', async () => {
+      options.vitest.project = ['bar'];
+      await sut.init();
+      const runResult = await sut.dryRun(factory.dryRunOptions());
+      assertions.expectCompleted(runResult);
+      expect(runResult.mutantCoverage).deep.eq({
+        static: {},
+        perTest: {
+          [barTestId]: {
+            '0': 1,
+            '1': 1,
+          },
+        },
+      });
+    });
   });
 
   describe('using a project with tests without properly awaited assertions', () => {
