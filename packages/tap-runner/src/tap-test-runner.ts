@@ -212,7 +212,10 @@ export class TapTestRunner implements TestRunner {
     }
     const now = () => new Date().getTime();
     const before = now();
-    const tapProcess = childProcess.spawn('node', args, { env });
+    const tapProcess = childProcess.spawn('node', args, {
+      env,
+      windowsHide: true,
+    });
     const result = await captureTapResult(
       tapProcess,
       !testOptions.disableBail && this.options.tap.forceBail,

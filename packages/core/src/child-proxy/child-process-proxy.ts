@@ -73,15 +73,18 @@ export class ChildProcessProxy<T> implements Disposable {
     idGenerator: IdGenerator,
   ) {
     const workerId = idGenerator.next().toString();
+    const workerOptions: childProcess.ForkOptions &
+      Pick<childProcess.SpawnOptions, 'windowsHide'> = {
+      silent: true,
+      windowsHide: true,
+      execArgv,
+      env: { STRYKER_MUTATOR_WORKER: workerId, ...process.env },
+    };
     this.worker = childProcess.fork(
       fileURLToPath(
         new URL('./child-process-proxy-worker.js', import.meta.url),
       ),
-      {
-        silent: true,
-        execArgv,
-        env: { STRYKER_MUTATOR_WORKER: workerId, ...process.env },
-      },
+      workerOptions,
     );
     this.initTask = new Task();
     this.log = logger;
