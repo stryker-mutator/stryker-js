@@ -265,10 +265,22 @@ export class VitestTestRunner implements TestRunner {
       return testResult;
     });
 
-    if (!failure && this.ctx!.state.errorsSet.size > 0) {
-      const errorText = [...this.ctx!.state.errorsSet]
-        .map(errorToString)
-        .join('\n');
+    // Collection errors are stored on the file, not in errorsSet, and may
+    // leave no individual tests to report the failure.
+    const fileErrors = this.ctx!.state.getFiles()
+      .filter((file) => file.result?.state === 'fail')
+      .map(
+        (file) =>
+          `${file.filepath}: ${file.result?.errors?.map((error) => error.message).join('\n') || 'StrykerJS: Test file execution failed'}`,
+      );
+    if (
+      !failure &&
+      (fileErrors.length > 0 || this.ctx!.state.errorsSet.size > 0)
+    ) {
+      const errorText = [
+        ...fileErrors,
+        ...[...this.ctx!.state.errorsSet].map(errorToString),
+      ].join('\n');
       return {
         status: DryRunStatus.Error,
         errorMessage: `An error occurred outside of a test run: ${errorText}`,
