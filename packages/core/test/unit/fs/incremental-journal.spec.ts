@@ -1,10 +1,11 @@
 import os from 'os';
 import path from 'path';
-import { promises as fs } from 'fs';
+import fsNode, { promises as fs } from 'fs';
 
 import { schema } from '@stryker-mutator/api/core';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
+import sinon from 'sinon';
 
 import {
   IncrementalJournal,
@@ -35,6 +36,7 @@ describe(IncrementalJournal.name, () => {
 
   afterEach(async () => {
     sut.close();
+    sinon.restore();
     await fs.rm(tempDir, { recursive: true, force: true });
   });
 
@@ -366,6 +368,122 @@ describe(IncrementalJournal.name, () => {
     expect(
       (await readPendingBase()).files['foo.js'].mutants.map(({ id }) => id),
     ).deep.eq(['plan-from-b']);
+  });
+
+  it('should keep unrecovered .next WAL until begin commits when promote fails', async () => {
+    const nextDir = incrementalPendingNextDir(incrementalFile);
+    await fs.mkdir(nextDir, { recursive: true });
+    await fs.writeFile(
+      path.join(nextDir, INCREMENTAL_PENDING_BASE),
+      JSON.stringify(createBase()),
+      'utf-8',
+    );
+    await fs.writeFile(
+      path.join(nextDir, INCREMENTAL_PENDING_RESULTS),
+      `${JSON.stringify(journalMutant({ id: 'from-next' }))}\n`,
+      'utf-8',
+    );
+
+    const originalRename = fsNode.promises.rename.bind(fsNode.promises);
+    sinon
+      .stub(fsNode.promises, 'rename')
+      .callsFake(async (from: fsNode.PathLike, to: fsNode.PathLike) => {
+        if (
+          path.resolve(String(from)) === path.resolve(nextDir) &&
+          path.resolve(String(to)) === path.resolve(pendingDir)
+        ) {
+          throw Object.assign(new Error('EPERM'), { code: 'EPERM' });
+        }
+        return originalRename(from, to);
+      });
+
+    const recovered = await sut.load();
+    expect(recovered!.files['foo.js'].mutants.map(({ id }) => id)).deep.eq([
+      'plan-1',
+      'from-next',
+    ]);
+    expect(await fileExists(nextDir)).true;
+    expect(testInjector.logger.warn).calledWithMatch('Failed to promote');
+
+    // Crash before begin: another process must still find the unrecovered WAL.
+    expect(
+      (await createSut().load())!.files['foo.js'].mutants.map(({ id }) => id),
+    ).deep.eq(['plan-1', 'from-next']);
+
+    await sut.begin(
+      createBase({
+        files: {
+          'foo.js': factory.mutationTestReportSchemaFileResult({
+            mutants: [
+              factory.mutationTestReportSchemaMutantResult({
+                id: 'plan-from-b',
+              }),
+            ],
+          }),
+        },
+      }),
+    );
+    expect(sut.isStarted).true;
+    expect(
+      (await readPendingBase()).files['foo.js'].mutants.map(({ id }) => id),
+    ).deep.eq(['plan-from-b']);
+    expect(await fileExists(nextDir)).false;
+    expect(await fileExists(incrementalPendingPrevDir(incrementalFile))).false;
+  });
+
+  it('should keep unrecovered .prev WAL until begin commits when promote fails', async () => {
+    const prevDir = incrementalPendingPrevDir(incrementalFile);
+    await fs.mkdir(prevDir, { recursive: true });
+    await fs.writeFile(
+      path.join(prevDir, INCREMENTAL_PENDING_BASE),
+      JSON.stringify(createBase()),
+      'utf-8',
+    );
+    await fs.writeFile(
+      path.join(prevDir, INCREMENTAL_PENDING_RESULTS),
+      `${JSON.stringify(journalMutant({ id: 'from-prev' }))}\n`,
+      'utf-8',
+    );
+
+    const originalRename = fsNode.promises.rename.bind(fsNode.promises);
+    sinon
+      .stub(fsNode.promises, 'rename')
+      .callsFake(async (from: fsNode.PathLike, to: fsNode.PathLike) => {
+        if (
+          path.resolve(String(from)) === path.resolve(prevDir) &&
+          path.resolve(String(to)) === path.resolve(pendingDir)
+        ) {
+          throw Object.assign(new Error('EPERM'), { code: 'EPERM' });
+        }
+        return originalRename(from, to);
+      });
+
+    const recovered = await sut.load();
+    expect(recovered!.files['foo.js'].mutants.map(({ id }) => id)).deep.eq([
+      'plan-1',
+      'from-prev',
+    ]);
+    expect(await fileExists(prevDir)).true;
+
+    await sut.begin(
+      createBase({
+        files: {
+          'foo.js': factory.mutationTestReportSchemaFileResult({
+            mutants: [
+              factory.mutationTestReportSchemaMutantResult({
+                id: 'plan-from-b',
+              }),
+            ],
+          }),
+        },
+      }),
+    );
+    expect(sut.isStarted).true;
+    expect(
+      (await readPendingBase()).files['foo.js'].mutants.map(({ id }) => id),
+    ).deep.eq(['plan-from-b']);
+    expect(await fileExists(prevDir)).false;
+    expect(await fileExists(incrementalPendingNextDir(incrementalFile))).false;
   });
 
   it('should replace pending with a new base and empty journal so old JSONL is not mixed in', async () => {

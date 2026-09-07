@@ -117,6 +117,13 @@ export class IncrementalJournal {
    */
   private appendFailureLogged = false;
 
+  /**
+   * When `promoteToPending` cannot move a recovered `.prev` / `.next` into
+   * `pending/`, that directory still holds the only on-disk WAL. `begin()` must
+   * not delete it while staging the new pair.
+   */
+  private walPreserveDir: string | undefined;
+
   constructor(
     options: Pick<StrykerOptions, 'incremental' | 'incrementalFile'>,
     private readonly log: Logger,
@@ -152,6 +159,8 @@ export class IncrementalJournal {
       if (report) {
         if (dir !== this.pendingDir) {
           await this.promoteToPending(dir);
+        } else {
+          this.walPreserveDir = undefined;
         }
         this.log.info(
           'Recovering incremental results from pending journal at "%s".',
@@ -165,8 +174,8 @@ export class IncrementalJournal {
 
   /**
    * Commit `base.json` + an empty `results.jsonl` as the new pending pair, then
-   * accept `append()` calls. `isStarted` becomes true once `.next` has been
-   * renamed to `pending`; leftover `.prev` cleanup cannot disable appends.
+   * accept `append()` calls. `isStarted` becomes true once the staging directory
+   * has been renamed to `pending`; leftover staging cleanup cannot disable appends.
    */
   public async begin(base: schema.MutationTestResult): Promise<void> {
     if (!this.enabled) {
@@ -224,6 +233,7 @@ export class IncrementalJournal {
       return;
     }
     this.isStarted = false;
+    this.walPreserveDir = undefined;
     await this.writeCommittedReport(finalReport);
     await this.removeDirBestEffort(this.pendingDir);
     await this.removeDirBestEffort(this.pendingNextDir);
@@ -239,20 +249,33 @@ export class IncrementalJournal {
   }
 
   /**
-   * Write `pending.next/base.json` + empty `results.jsonl`, then swap that
-   * directory into place as `pending`. Crash before the swap leaves the old
-   * pending pair; crash after leaves the new base with an empty journal.
-   * A crash between the two renames leaves the old pair in `.prev` and the new
-   * pair in `.next`; `load()` recovers those. Deleting `.prev` after the swap
-   * is best-effort so a locked leftover dir cannot leave `isStarted` false.
+   * Write a new `base.json` + empty `results.jsonl` into a staging directory,
+   * then swap that directory into place as `pending`.
+   *
+   * Staging prefers `.next`. If a failed promote left the only WAL in `.next`,
+   * staging uses `.prev` instead so `begin()` never deletes the unrecovered copy
+   * before the new pair is durable. Crash before the swap leaves the old pair;
+   * crash after leaves the new base with an empty journal. A crash between the
+   * two renames leaves recoverable state in `.prev` / `.next`; `load()` finds
+   * those. Cleanup after the swap is best-effort so a locked leftover dir cannot
+   * leave `isStarted` false.
    */
   private async commitPendingPair(
     base: schema.MutationTestResult,
   ): Promise<void> {
-    await fs.rm(this.pendingNextDir, { recursive: true, force: true });
-    await fs.mkdir(this.pendingNextDir, { recursive: true });
+    const stagingDir =
+      this.walPreserveDir === this.pendingNextDir
+        ? this.pendingPrevDir
+        : this.pendingNextDir;
+    const asideDir =
+      stagingDir === this.pendingNextDir
+        ? this.pendingPrevDir
+        : this.pendingNextDir;
+
+    await fs.rm(stagingDir, { recursive: true, force: true });
+    await fs.mkdir(stagingDir, { recursive: true });
     await fs.writeFile(
-      path.join(this.pendingNextDir, INCREMENTAL_PENDING_BASE),
+      path.join(stagingDir, INCREMENTAL_PENDING_BASE),
       // Machine-only WAL file, so skip pretty-printing. It embeds every mutated
       // file's source and is rewritten on every incremental run; the committed
       // report stays indented because people read and diff that one.
@@ -260,39 +283,55 @@ export class IncrementalJournal {
       'utf-8',
     );
     await fs.writeFile(
-      path.join(this.pendingNextDir, INCREMENTAL_PENDING_RESULTS),
+      path.join(stagingDir, INCREMENTAL_PENDING_RESULTS),
       '',
       'utf-8',
     );
 
-    await fs.rm(this.pendingPrevDir, { recursive: true, force: true });
+    // Free aside for renaming pending into it — unless aside holds the preserved WAL.
+    if (this.walPreserveDir !== asideDir) {
+      await fs.rm(asideDir, { recursive: true, force: true });
+    }
+
     try {
-      await fs.rename(this.pendingDir, this.pendingPrevDir);
-    } catch (error) {
-      if (
-        !isErrnoException(error) ||
-        error.code !== ERROR_CODES.NoSuchFileOrDirectory
-      ) {
+      await fs.rename(this.pendingDir, asideDir);
+    } catch (error: unknown) {
+      if (isNoSuchFileOrDirectory(error)) {
+        // No pending directory to move aside.
+      } else if (this.walPreserveDir === asideDir) {
+        // Aside holds the recovered WAL, so it cannot receive pending. Drop an
+        // unusable pending (if any) so staging can take its place. If pending is
+        // still locked, the staging rename below throws and begin() fails — the
+        // preserved WAL remains intact.
+        await this.removeDirBestEffort(this.pendingDir);
+      } else {
         throw error;
       }
     }
-    await fs.rename(this.pendingNextDir, this.pendingDir);
-    // Pair is durable here. Removing `.prev` must not fail `begin()` / `isStarted`.
+
+    await fs.rename(stagingDir, this.pendingDir);
+    // New pending is durable. Safe to drop the old recovered WAL and staging leftovers.
+    this.walPreserveDir = undefined;
     await this.removeDirBestEffort(this.pendingPrevDir);
+    await this.removeDirBestEffort(this.pendingNextDir);
   }
 
   /**
    * Move a recovered `.prev` / `.next` directory to `pending/` so `begin()` can
    * wipe staging without deleting the only remaining WAL. An unusable `pending/`
    * (already rejected by `load()`) is removed first so the rename can proceed.
+   * On failure, records {@link walPreserveDir} so `commitPendingPair` stages
+   * elsewhere until the new pending pair exists.
    */
   private async promoteToPending(dir: string): Promise<void> {
     await this.removeDirBestEffort(this.pendingDir);
     try {
       await fs.rename(dir, this.pendingDir);
+      this.walPreserveDir = undefined;
     } catch (error) {
+      this.walPreserveDir = dir;
       this.log.warn(
-        'Failed to promote incremental journal from "%s" to "%s". Recovered results may be lost if this run dies before begin() finishes.',
+        'Failed to promote incremental journal from "%s" to "%s". Keeping that WAL until begin() commits a new pending pair.',
         dir,
         this.pendingDir,
       );
@@ -336,11 +375,8 @@ export class IncrementalJournal {
     let baseRaw: string;
     try {
       baseRaw = await fs.readFile(basePath, 'utf-8');
-    } catch (error) {
-      if (
-        isErrnoException(error) &&
-        error.code === ERROR_CODES.NoSuchFileOrDirectory
-      ) {
+    } catch (error: unknown) {
+      if (isNoSuchFileOrDirectory(error)) {
         return;
       }
       throw error;
@@ -391,11 +427,8 @@ export class IncrementalJournal {
     let raw: string;
     try {
       raw = await fs.readFile(resultsPath, 'utf-8');
-    } catch (error) {
-      if (
-        isErrnoException(error) &&
-        error.code === ERROR_CODES.NoSuchFileOrDirectory
-      ) {
+    } catch (error: unknown) {
+      if (isNoSuchFileOrDirectory(error)) {
         return [];
       }
       throw error;
@@ -435,19 +468,32 @@ export class IncrementalJournal {
 async function replaceFile(from: string, to: string): Promise<void> {
   try {
     await fs.rename(from, to);
-  } catch (error) {
-    if (
-      isErrnoException(error) &&
-      (error.code === 'EEXIST' ||
-        error.code === 'EPERM' ||
-        error.code === 'EACCES')
-    ) {
+  } catch (error: unknown) {
+    if (isReplaceRaceError(error)) {
       await fs.rm(to, { force: true });
       await fs.rename(from, to);
       return;
     }
     throw error;
   }
+}
+
+function isNoSuchFileOrDirectory(error: unknown): boolean {
+  if (!isErrnoException(error)) {
+    return false;
+  }
+  return error.code === ERROR_CODES.NoSuchFileOrDirectory;
+}
+
+function isReplaceRaceError(error: unknown): boolean {
+  if (!isErrnoException(error)) {
+    return false;
+  }
+  return (
+    error.code === 'EEXIST' ||
+    error.code === 'EPERM' ||
+    error.code === 'EACCES'
+  );
 }
 
 function languageFromFileName(fileName: string): string {
