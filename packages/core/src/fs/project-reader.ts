@@ -15,6 +15,7 @@ import {
   ERROR_CODES,
   I,
   isErrnoException,
+  normalizeFileName,
   notEmpty,
 } from '@stryker-mutator/util';
 import type { MutationTestResult } from 'mutation-testing-report-schema/api';
@@ -86,11 +87,18 @@ export class ProjectReader {
     this.testFilePatterns = testFiles ?? [];
     this.ignoreRules = [
       ...ALWAYS_IGNORE,
-      tempDirName,
-      incrementalFile,
-      ...incrementalIgnorePaths(incrementalFile),
-      htmlReporter.fileName,
-      jsonReporter.fileName,
+      // These options are paths, but they end up here as minimatch patterns, where a
+      // backslash is an escape rather than a separator. Minimatch normalizes the paths it
+      // matches against, not the patterns, so `path.join('reports', 'foo.json')` on Windows
+      // would silently match nothing. `ignorePatterns` is left alone on purpose: those are
+      // user-authored globs, where the escape is meaningful.
+      ...[
+        tempDirName,
+        incrementalFile,
+        ...incrementalIgnorePaths(incrementalFile),
+        htmlReporter.fileName,
+        jsonReporter.fileName,
+      ].map(normalizeFileName),
       ...ignorePatterns,
     ];
     this.incremental = incremental;
@@ -454,9 +462,7 @@ export class ProjectReader {
   /**
    * Report schema locations are 1-based; Stryker works 0-based internally.
    */
-  private remapReportLocations(
-    result: MutationTestResult,
-  ): MutationTestResult {
+  private remapReportLocations(result: MutationTestResult): MutationTestResult {
     return {
       ...result,
       files: Object.fromEntries(

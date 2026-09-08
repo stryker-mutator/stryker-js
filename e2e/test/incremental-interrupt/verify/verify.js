@@ -29,7 +29,7 @@ const rootResolve = path.resolve.bind(
 );
 
 const incrementalFile = rootResolve('reports', 'stryker-incremental.json');
-const pendingDir = rootResolve('reports', 'stryker-incremental.pending');
+const pendingDir = rootResolve('reports', 'stryker-incremental.json.pending');
 const pendingJsonl = path.join(pendingDir, 'results.jsonl');
 const mathFile = rootResolve('src', 'math.js');
 

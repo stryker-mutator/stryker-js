@@ -118,9 +118,9 @@ export class MutationTestExecutor {
   }
 
   /**
-   * Collect results known without checker / test-runner workers: incremental
-   * reused mutants and ignored mutants. Persisted in the incremental journal
-   * `base.json` before workers start.
+   * Collect results known without running any mutant through the checkers or
+   * test runners: incremental reused mutants and ignored mutants. Persisted in
+   * the incremental journal `base.json` before those runs start.
    *
    * Uncovered mutants (`testFilter.length === 0`) stay on `runPlans` so checkers
    * still run; `executeNoCoverage` reports `NoCoverage` after that, as before.

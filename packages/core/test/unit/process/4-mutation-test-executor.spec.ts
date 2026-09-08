@@ -274,9 +274,7 @@ describe(MutationTestExecutor.name, () => {
         mutationTestReportHelperMock.beginIncrementalJournal,
         testRunner.mutantRun,
       );
-      expect(
-        mutationTestReportHelperMock.beginIncrementalJournal,
-      ).calledOnce;
+      expect(mutationTestReportHelperMock.beginIncrementalJournal).calledOnce;
     });
   });
 

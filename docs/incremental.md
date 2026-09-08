@@ -46,9 +46,9 @@ Here you can see that:
 
 ## Interrupted runs
 
-If a mutation testing run is interrupted or crashes (for example by pressing CTRL+C, a canceled CI job, or a hard kill), StrykerJS saves the mutant results completed so far. On a hard kill, at most the in-flight mutant is lost; on Ctrl+C, results that finish while the process is shutting down may also need to rerun. The next incremental run can pick up where the interrupted run left off, instead of having to redo that work.
+If a mutation testing run is interrupted or crashes (for example by pressing CTRL+C, a canceled CI job, or a hard kill), StrykerJS saves the mutant results completed so far. On a hard kill, at most the in-flight mutants are lost; on Ctrl+C, results that finish while the process is shutting down may also need to rerun. The next incremental run can pick up where the interrupted run left off, instead of having to redo that work.
 
-While a run is in progress, StrykerJS writes a pending directory next to [`incrementalFile`](./configuration.md#incrementalfile-string) (for the default path: `reports/stryker-incremental.pending/`). Gitignore it like the incremental report. `stryker init` adds `reports/stryker-incremental.*` to `.gitignore` for the default path.
+While a run is in progress, StrykerJS writes a pending directory next to [`incrementalFile`](./configuration.md#incrementalfile-string) (for the default path: `reports/stryker-incremental.json.pending/`). Gitignore it like the incremental report. `stryker init` adds `reports/stryker-incremental.*` to `.gitignore` for the default path.
 
 ## Limitations
 

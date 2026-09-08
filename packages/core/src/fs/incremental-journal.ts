@@ -6,6 +6,8 @@ import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, tokens } from '@stryker-mutator/api/plugin';
 import { ERROR_CODES, isErrnoException } from '@stryker-mutator/util';
 
+import { fileUtils } from '../utils/file-utils.js';
+
 /**
  * A report-schema mutant plus the file it belongs to.
  * JSONL lines use this shape so `load()` can merge them onto `files[fileName].mutants`
@@ -20,15 +22,18 @@ export const INCREMENTAL_PENDING_RESULTS = 'results.jsonl';
 
 /**
  * Directory next to `incrementalFile` that holds the in-progress write-ahead log.
- * Example: `reports/stryker-incremental.json` → `reports/stryker-incremental.pending`.
- * Preserves the separators used in `incrementalFile` so ignore rules match the configured path.
+ * Example: `reports/stryker-incremental.json` → `reports/stryker-incremental.json.pending`.
+ *
+ * Appends rather than replacing the extension (like {@link incrementalTempFile}) so the
+ * result is always longer than `incrementalFile`. Replacing it would map
+ * `incrementalFile: "x.pending"` onto the report itself, and `begin()` would swap a
+ * directory over the user's report; it would also give `a.json` and `a.html` one shared WAL.
+ *
+ * Separators are preserved for filesystem use; callers that match these as globs normalize
+ * them first, because minimatch reads a backslash as an escape.
  */
 export function incrementalPendingDir(incrementalFile: string): string {
-  const ext = path.extname(incrementalFile);
-  const withoutExt = ext
-    ? incrementalFile.slice(0, -ext.length)
-    : incrementalFile;
-  return `${withoutExt}.pending`;
+  return `${incrementalFile}.pending`;
 }
 
 /**
@@ -36,7 +41,12 @@ export function incrementalPendingDir(incrementalFile: string): string {
  * Example: `reports/stryker-incremental.json` → `reports/stryker-incremental.*`
  */
 export function incrementalGitignorePattern(incrementalFile: string): string {
-  return incrementalPendingDir(incrementalFile).replace(/\.pending$/, '.*');
+  return `${stripExtension(incrementalFile)}.*`;
+}
+
+function stripExtension(fileName: string): string {
+  const ext = path.extname(fileName);
+  return ext ? fileName.slice(0, -ext.length) : fileName;
 }
 
 /**
@@ -79,8 +89,9 @@ export function incrementalIgnorePaths(incrementalFile: string): string[] {
  * Write-ahead log for `--incremental` runs.
  *
  * `stryker-incremental.json` is committed state. A sibling `.pending/` directory
- * holds a `MutationTestResult` taken before checker/test-runner workers (`base.json`)
- * plus a JSONL of results completed after that (`results.jsonl`).
+ * holds a `MutationTestResult` taken before the checkers and test runners run
+ * mutants (`base.json`) plus a JSONL of results completed after that
+ * (`results.jsonl`).
  *
  * The next `--incremental` run recovers pending files through the normal
  * `IncrementalDiffer` path. Append is a no-op until `begin()` commits the new pair.
@@ -118,9 +129,10 @@ export class IncrementalJournal {
   private appendFailureLogged = false;
 
   /**
-   * When `promoteToPending` cannot move a recovered `.prev` / `.next` into
-   * `pending/`, that directory still holds the only on-disk WAL. `begin()` must
-   * not delete it while staging the new pair.
+   * The `.prev` / `.next` directory `load()` recovered from. That directory
+   * holds the only on-disk WAL until `begin()` commits a new pending pair, so
+   * `commitPendingPair` stages into the other staging directory and skips
+   * wiping this one. Cleared once the new pair is durable.
    */
   private walPreserveDir: string | undefined;
 
@@ -141,9 +153,13 @@ export class IncrementalJournal {
    *
    * Tries `pending/`, then `.prev`, then `.next`. A crash during the directory
    * swap can leave the durable pair in `.prev` (old WAL) or `.next` (new base,
-   * no old pending existed) instead of `pending/`. A recovered `.prev` / `.next`
-   * is renamed to `pending/` so `begin()` cannot delete the only copy when it
-   * wipes staging dirs.
+   * no old pending existed) instead of `pending/`. Nothing is moved on disk:
+   * recovering from `.prev` / `.next` only records {@link walPreserveDir}, which
+   * makes `begin()` stage the new pair in the other directory instead of wiping
+   * the only copy.
+   *
+   * Best-effort like the rest of the journal: a directory that cannot be read
+   * (EACCES/EBUSY on a locked file) is skipped rather than failing the run.
    * @returns The merged report, or `undefined` if no pending dir is usable.
    */
   public async load(): Promise<schema.MutationTestResult | undefined> {
@@ -155,13 +171,19 @@ export class IncrementalJournal {
       this.pendingPrevDir,
       this.pendingNextDir,
     ]) {
-      const report = await this.loadFromPendingDir(dir);
+      let report: schema.MutationTestResult | undefined;
+      try {
+        report = await this.loadFromPendingDir(dir);
+      } catch (error) {
+        this.log.warn(
+          'Failed to read the incremental journal at "%s"; trying the next pending location.',
+          dir,
+        );
+        this.log.debug('Pending journal read error: %s', error);
+        continue;
+      }
       if (report) {
-        if (dir !== this.pendingDir) {
-          await this.promoteToPending(dir);
-        } else {
-          this.walPreserveDir = undefined;
-        }
+        this.walPreserveDir = dir === this.pendingDir ? undefined : dir;
         this.log.info(
           'Recovering incremental results from pending journal at "%s".',
           dir,
@@ -252,13 +274,13 @@ export class IncrementalJournal {
    * Write a new `base.json` + empty `results.jsonl` into a staging directory,
    * then swap that directory into place as `pending`.
    *
-   * Staging prefers `.next`. If a failed promote left the only WAL in `.next`,
-   * staging uses `.prev` instead so `begin()` never deletes the unrecovered copy
-   * before the new pair is durable. Crash before the swap leaves the old pair;
-   * crash after leaves the new base with an empty journal. A crash between the
-   * two renames leaves recoverable state in `.prev` / `.next`; `load()` finds
-   * those. Cleanup after the swap is best-effort so a locked leftover dir cannot
-   * leave `isStarted` false.
+   * Staging prefers `.next`. When `load()` recovered from `.next`, that directory
+   * holds the only WAL, so staging uses `.prev` instead and `begin()` never
+   * deletes the recovered copy before the new pair is durable. Crash before the
+   * swap leaves the old pair; crash after leaves the new base with an empty
+   * journal. A crash between the two renames leaves recoverable state in
+   * `.prev` / `.next`; `load()` finds those. Cleanup after the swap is
+   * best-effort so a locked leftover dir cannot leave `isStarted` false.
    */
   private async commitPendingPair(
     base: schema.MutationTestResult,
@@ -288,7 +310,10 @@ export class IncrementalJournal {
       'utf-8',
     );
 
-    // Free aside for renaming pending into it — unless aside holds the preserved WAL.
+    // Free aside for renaming pending into it — unless aside holds the preserved
+    // WAL. Staging already holds a complete pair by now, so this skip is not
+    // what keeps the run recoverable; it keeps the *recovered* results on disk
+    // until the swap lands, instead of trusting `base` to carry them forward.
     if (this.walPreserveDir !== asideDir) {
       await fs.rm(asideDir, { recursive: true, force: true });
     }
@@ -314,29 +339,6 @@ export class IncrementalJournal {
     this.walPreserveDir = undefined;
     await this.removeDirBestEffort(this.pendingPrevDir);
     await this.removeDirBestEffort(this.pendingNextDir);
-  }
-
-  /**
-   * Move a recovered `.prev` / `.next` directory to `pending/` so `begin()` can
-   * wipe staging without deleting the only remaining WAL. An unusable `pending/`
-   * (already rejected by `load()`) is removed first so the rename can proceed.
-   * On failure, records {@link walPreserveDir} so `commitPendingPair` stages
-   * elsewhere until the new pending pair exists.
-   */
-  private async promoteToPending(dir: string): Promise<void> {
-    await this.removeDirBestEffort(this.pendingDir);
-    try {
-      await fs.rename(dir, this.pendingDir);
-      this.walPreserveDir = undefined;
-    } catch (error) {
-      this.walPreserveDir = dir;
-      this.log.warn(
-        'Failed to promote incremental journal from "%s" to "%s". Keeping that WAL until begin() commits a new pending pair.',
-        dir,
-        this.pendingDir,
-      );
-      this.log.debug('Pending promote error: %s', error);
-    }
   }
 
   /**
@@ -405,7 +407,7 @@ export class IncrementalJournal {
         fileResult.mutants.push(mutant);
       } else {
         base.files[fileName] = {
-          language: languageFromFileName(fileName),
+          language: fileUtils.determineLanguage(fileName),
           source: '',
           mutants: [mutant],
         };
@@ -490,22 +492,6 @@ function isReplaceRaceError(error: unknown): boolean {
     return false;
   }
   return (
-    error.code === 'EEXIST' ||
-    error.code === 'EPERM' ||
-    error.code === 'EACCES'
+    error.code === 'EEXIST' || error.code === 'EPERM' || error.code === 'EACCES'
   );
-}
-
-function languageFromFileName(fileName: string): string {
-  const ext = path.extname(fileName).toLowerCase();
-  switch (ext) {
-    case '.ts':
-    case '.tsx':
-      return 'typescript';
-    case '.html':
-    case '.vue':
-      return 'html';
-    default:
-      return 'javascript';
-  }
 }

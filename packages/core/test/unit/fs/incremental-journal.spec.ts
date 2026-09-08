@@ -97,6 +97,73 @@ describe(IncrementalJournal.name, () => {
     return JSON.parse(raw) as schema.MutationTestResult;
   }
 
+  /** Make one exact path fail with `code`; every other read passes through. */
+  function stubReadFileError(file: string, code: string) {
+    const readFile = fsNode.promises.readFile as (
+      ...args: unknown[]
+    ) => Promise<unknown>;
+    sinon
+      .stub(fsNode.promises, 'readFile')
+      .callsFake(((target: fsNode.PathLike, ...args: unknown[]) =>
+        path.resolve(String(target)) === path.resolve(file)
+          ? Promise.reject(Object.assign(new Error(code), { code }))
+          : readFile(target, ...args)) as typeof fsNode.promises.readFile);
+  }
+
+  /** Write a standalone WAL pair (base + one journal line) into `dir`. */
+  async function seedWal(dir: string, mutantId: string): Promise<void> {
+    await fs.mkdir(dir, { recursive: true });
+    await fs.writeFile(
+      path.join(dir, INCREMENTAL_PENDING_BASE),
+      JSON.stringify(createBase()),
+      'utf-8',
+    );
+    await fs.writeFile(
+      path.join(dir, INCREMENTAL_PENDING_RESULTS),
+      `${JSON.stringify(journalMutant({ id: mutantId }))}
+`,
+      'utf-8',
+    );
+  }
+
+  /** A `pending/` dir `load()` rejects, so recovery falls through to `.prev` / `.next`. */
+  async function seedUnusablePending(): Promise<void> {
+    await fs.mkdir(pendingDir, { recursive: true });
+    await fs.writeFile(
+      path.join(pendingDir, INCREMENTAL_PENDING_BASE),
+      '{ not json',
+      'utf-8',
+    );
+  }
+
+  /** Base for the run that recovers a WAL, distinguishable from `createBase()`. */
+  function nextRunBase(): schema.MutationTestResult {
+    return createBase({
+      files: {
+        'foo.js': factory.mutationTestReportSchemaFileResult({
+          mutants: [
+            factory.mutationTestReportSchemaMutantResult({ id: 'plan-from-b' }),
+          ],
+        }),
+      },
+    });
+  }
+
+  /** Make every `base.json` write fail, i.e. begin() dies while staging. */
+  function stubPendingBaseWriteError() {
+    const writeFile = fsNode.promises.writeFile as (
+      ...args: unknown[]
+    ) => Promise<void>;
+    sinon
+      .stub(fsNode.promises, 'writeFile')
+      .callsFake(((target: fsNode.PathLike, ...args: unknown[]) =>
+        String(target).endsWith(INCREMENTAL_PENDING_BASE)
+          ? Promise.reject(
+              Object.assign(new Error('ENOSPC'), { code: 'ENOSPC' }),
+            )
+          : writeFile(target, ...args)) as typeof fsNode.promises.writeFile);
+  }
+
   async function readPendingJsonl(): Promise<string> {
     return fs.readFile(
       path.join(pendingDir, INCREMENTAL_PENDING_RESULTS),
@@ -189,6 +256,48 @@ describe(IncrementalJournal.name, () => {
     expect(await fileExists(path.join(pendingDir, INCREMENTAL_PENDING_BASE)))
       .true;
     expect(testInjector.logger.warn).calledWithMatch('corrupted interior line');
+  });
+
+  it('should skip an unreadable pending dir and recover from the next location', async () => {
+    // begin() wipes the staging dirs, so seed .prev only after it has committed.
+    await sut.begin(createBase());
+    const prevDir = incrementalPendingPrevDir(incrementalFile);
+    await fs.mkdir(prevDir, { recursive: true });
+    await fs.writeFile(
+      path.join(prevDir, INCREMENTAL_PENDING_BASE),
+      JSON.stringify(createBase()),
+      'utf-8',
+    );
+    await fs.writeFile(
+      path.join(prevDir, INCREMENTAL_PENDING_RESULTS),
+      `${JSON.stringify(journalMutant({ id: 'from-prev' }))}
+`,
+      'utf-8',
+    );
+    stubReadFileError(path.join(pendingDir, INCREMENTAL_PENDING_BASE), 'EBUSY');
+
+    const recovered = await createSut().load();
+
+    expect(recovered!.files['foo.js'].mutants.map(({ id }) => id)).deep.eq([
+      'plan-1',
+      'from-prev',
+    ]);
+    expect(testInjector.logger.warn).calledWithMatch(
+      'Failed to read the incremental journal',
+    );
+  });
+
+  it('should resolve undefined instead of failing the run when the pending dir is unreadable', async () => {
+    await sut.begin(createBase());
+    stubReadFileError(
+      path.join(pendingDir, INCREMENTAL_PENDING_BASE),
+      'EACCES',
+    );
+
+    expect(await createSut().load()).undefined;
+    expect(testInjector.logger.warn).calledWithMatch(
+      'Failed to read the incremental journal',
+    );
   });
 
   it('should write the incremental file then remove pending on complete', async () => {
@@ -323,168 +432,61 @@ describe(IncrementalJournal.name, () => {
     ]);
   });
 
-  it('should promote pending.next to pending so begin cannot delete recovered mutants', async () => {
-    const nextDir = incrementalPendingNextDir(incrementalFile);
-    await fs.mkdir(nextDir, { recursive: true });
-    await fs.writeFile(
-      path.join(nextDir, INCREMENTAL_PENDING_BASE),
-      JSON.stringify(createBase()),
-      'utf-8',
-    );
-    await fs.writeFile(
-      path.join(nextDir, INCREMENTAL_PENDING_RESULTS),
-      `${JSON.stringify(journalMutant({ id: 'from-next' }))}\n`,
-      'utf-8',
-    );
-
-    const recovered = await sut.load();
-    expect(recovered!.files['foo.js'].mutants.map(({ id }) => id)).deep.eq([
-      'plan-1',
-      'from-next',
-    ]);
-    expect(await fileExists(pendingDir)).true;
-    expect(await fileExists(nextDir)).false;
-
-    // `begin()` deletes `.next` first. After promote, that wipe must not drop the WAL.
-    await fs.rm(nextDir, { recursive: true, force: true });
-    expect(
-      (await createSut().load())!.files['foo.js'].mutants.map(({ id }) => id),
-    ).deep.eq(['plan-1', 'from-next']);
-
-    await sut.begin(
-      createBase({
-        files: {
-          'foo.js': factory.mutationTestReportSchemaFileResult({
-            mutants: [
-              factory.mutationTestReportSchemaMutantResult({
-                id: 'plan-from-b',
-              }),
-            ],
-          }),
-        },
-      }),
-    );
-    expect(sut.isStarted).true;
-    expect(
-      (await readPendingBase()).files['foo.js'].mutants.map(({ id }) => id),
-    ).deep.eq(['plan-from-b']);
-  });
-
-  it('should keep unrecovered .next WAL until begin commits when promote fails', async () => {
-    const nextDir = incrementalPendingNextDir(incrementalFile);
-    await fs.mkdir(nextDir, { recursive: true });
-    await fs.writeFile(
-      path.join(nextDir, INCREMENTAL_PENDING_BASE),
-      JSON.stringify(createBase()),
-      'utf-8',
-    );
-    await fs.writeFile(
-      path.join(nextDir, INCREMENTAL_PENDING_RESULTS),
-      `${JSON.stringify(journalMutant({ id: 'from-next' }))}\n`,
-      'utf-8',
-    );
-
-    const originalRename = fsNode.promises.rename.bind(fsNode.promises);
-    sinon
-      .stub(fsNode.promises, 'rename')
-      .callsFake(async (from: fsNode.PathLike, to: fsNode.PathLike) => {
-        if (
-          path.resolve(String(from)) === path.resolve(nextDir) &&
-          path.resolve(String(to)) === path.resolve(pendingDir)
-        ) {
-          throw Object.assign(new Error('EPERM'), { code: 'EPERM' });
+  // `load()` never moves a WAL. Recovering from `.prev` / `.next` only marks that
+  // directory, so `begin()` stages the new pair in the other one and cannot wipe
+  // the only copy. Covers both staging dirs, with and without a pending dir that
+  // `load()` already rejected.
+  for (const [label, walDirOf] of [
+    ['.prev', incrementalPendingPrevDir],
+    ['.next', incrementalPendingNextDir],
+  ] as const) {
+    for (const withUnusablePending of [false, true]) {
+      it(`should keep a WAL recovered from ${label} until begin commits${
+        withUnusablePending ? ', dropping the unusable pending dir' : ''
+      }`, async () => {
+        const walDir = walDirOf(incrementalFile);
+        await seedWal(walDir, 'from-wal');
+        if (withUnusablePending) {
+          await seedUnusablePending();
         }
-        return originalRename(from, to);
+
+        expect(
+          (await sut.load())!.files['foo.js'].mutants.map(({ id }) => id),
+        ).deep.eq(['plan-1', 'from-wal']);
+
+        // load() is read-only, so a crash before begin() leaves the WAL findable.
+        expect(await fileExists(walDir)).true;
+        expect(
+          (await createSut().load())!.files['foo.js'].mutants.map(
+            ({ id }) => id,
+          ),
+        ).deep.eq(['plan-1', 'from-wal']);
+
+        // A begin() that dies while staging must not have wiped the WAL first.
+        stubPendingBaseWriteError();
+        await sut.begin(nextRunBase());
+        expect(sut.isStarted).false;
+        sinon.restore();
+        expect(
+          (await createSut().load())!.files['foo.js'].mutants.map(
+            ({ id }) => id,
+          ),
+        ).deep.eq(['plan-1', 'from-wal']);
+
+        await sut.begin(nextRunBase());
+
+        expect(sut.isStarted).true;
+        expect(
+          (await readPendingBase()).files['foo.js'].mutants.map(({ id }) => id),
+        ).deep.eq(['plan-from-b']);
+        expect(await readPendingJsonl()).eq('');
+        expect(await fileExists(incrementalPendingPrevDir(incrementalFile)))
+          .false;
+        expect(await fileExists(incrementalPendingNextDir(incrementalFile)))
+          .false;
       });
-
-    const recovered = await sut.load();
-    expect(recovered!.files['foo.js'].mutants.map(({ id }) => id)).deep.eq([
-      'plan-1',
-      'from-next',
-    ]);
-    expect(await fileExists(nextDir)).true;
-    expect(testInjector.logger.warn).calledWithMatch('Failed to promote');
-
-    // Crash before begin: another process must still find the unrecovered WAL.
-    expect(
-      (await createSut().load())!.files['foo.js'].mutants.map(({ id }) => id),
-    ).deep.eq(['plan-1', 'from-next']);
-
-    await sut.begin(
-      createBase({
-        files: {
-          'foo.js': factory.mutationTestReportSchemaFileResult({
-            mutants: [
-              factory.mutationTestReportSchemaMutantResult({
-                id: 'plan-from-b',
-              }),
-            ],
-          }),
-        },
-      }),
-    );
-    expect(sut.isStarted).true;
-    expect(
-      (await readPendingBase()).files['foo.js'].mutants.map(({ id }) => id),
-    ).deep.eq(['plan-from-b']);
-    expect(await fileExists(nextDir)).false;
-    expect(await fileExists(incrementalPendingPrevDir(incrementalFile))).false;
-  });
-
-  it('should keep unrecovered .prev WAL until begin commits when promote fails', async () => {
-    const prevDir = incrementalPendingPrevDir(incrementalFile);
-    await fs.mkdir(prevDir, { recursive: true });
-    await fs.writeFile(
-      path.join(prevDir, INCREMENTAL_PENDING_BASE),
-      JSON.stringify(createBase()),
-      'utf-8',
-    );
-    await fs.writeFile(
-      path.join(prevDir, INCREMENTAL_PENDING_RESULTS),
-      `${JSON.stringify(journalMutant({ id: 'from-prev' }))}\n`,
-      'utf-8',
-    );
-
-    const originalRename = fsNode.promises.rename.bind(fsNode.promises);
-    sinon
-      .stub(fsNode.promises, 'rename')
-      .callsFake(async (from: fsNode.PathLike, to: fsNode.PathLike) => {
-        if (
-          path.resolve(String(from)) === path.resolve(prevDir) &&
-          path.resolve(String(to)) === path.resolve(pendingDir)
-        ) {
-          throw Object.assign(new Error('EPERM'), { code: 'EPERM' });
-        }
-        return originalRename(from, to);
-      });
-
-    const recovered = await sut.load();
-    expect(recovered!.files['foo.js'].mutants.map(({ id }) => id)).deep.eq([
-      'plan-1',
-      'from-prev',
-    ]);
-    expect(await fileExists(prevDir)).true;
-
-    await sut.begin(
-      createBase({
-        files: {
-          'foo.js': factory.mutationTestReportSchemaFileResult({
-            mutants: [
-              factory.mutationTestReportSchemaMutantResult({
-                id: 'plan-from-b',
-              }),
-            ],
-          }),
-        },
-      }),
-    );
-    expect(sut.isStarted).true;
-    expect(
-      (await readPendingBase()).files['foo.js'].mutants.map(({ id }) => id),
-    ).deep.eq(['plan-from-b']);
-    expect(await fileExists(prevDir)).false;
-    expect(await fileExists(incrementalPendingNextDir(incrementalFile))).false;
-  });
+    }
+  }
 
   it('should replace pending with a new base and empty journal so old JSONL is not mixed in', async () => {
     const firstBase = createBase();
