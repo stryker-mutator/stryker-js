@@ -51,7 +51,6 @@
     "all": "pnpm run clean && pnpm run build && pnpm run lint && pnpm run test",
     "install:chromium": "playwright install chromium",
     "lint": "eslint",
-    "sync-dependencies-meta-injected": "sync-dependencies-meta-injected",
     "lint:fix": "pnpm run lint --fix",
     "clean": "rimraf --glob \"packages/*/{.nyc_output,reports,coverage,src-generated,*.tsbuildinfo,.stryker-tmp,dist,testResources/tmp}\" \"e2e/test/*/{.stryker-tmp,.stryker-tmp-2}\" \"packages/core/schema/stryker-schema.json\"",
     "generate": "node tasks/generate-json-schema-to-ts.js && node tasks/generate-mono-schema.js",
