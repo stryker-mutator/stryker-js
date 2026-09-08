@@ -42,6 +42,8 @@ Here are some common tasks to use. Just remember that they don't include compili
 - Use `pnpm run e2e` will install and execute the end to end tests (located in the e2e folder). These take a while.
 - Use `pnpm run perf` will install and execute the performance tests (located in the perf folder). These take a while.
 
+The e2e tests resolve the workspace packages through [injected dependencies](https://pnpm.io/settings#dependenciesmetainjected), which are hard-linked _copies_ of each package's build output rather than symlinks. Building over the existing output keeps those copies current, but anything that recreates the files breaks the link — `pnpm run clean` in particular, since it removes `dist`. The copies then hold the previous build. Run `pnpm install --frozen-lockfile` after such a build to re-link them; this is the install step that `pnpm run e2e` performs for you. `pnpm run e2e:run` fails with an explanatory message when the copies are out of date, but running a single test folder directly (`cd e2e/test/<name> && npm test`) bypasses that check and will silently test the older build.
+
 To run local changes you made in StrykerJS in an actual project you have two options:
 
 1. You can use [install-local](https://www.npmjs.com/package/install-local) to install StrykerJS with plugins in your project. Don't forget to include `instrumenter`, `core`, `util` and `api` in each install. For example, if you want to install Stryker with the jest-runner:
