@@ -17,6 +17,24 @@ export const fileUtils = {
     }
   },
 
+  /**
+   * Determines the language of a file, based on its extension.
+   * Used to fill in the `language` field of a mutation testing report file.
+   */
+  determineLanguage(fileName: string): string {
+    const ext = path.extname(fileName).toLowerCase();
+    switch (ext) {
+      case '.ts':
+      case '.tsx':
+        return 'typescript';
+      case '.html':
+      case '.vue':
+        return 'html';
+      default:
+        return 'javascript';
+    }
+  },
+
   async exists(fileName: string): Promise<boolean> {
     try {
       await fs.promises.access(fileName);
@@ -75,9 +93,7 @@ export const fileUtils = {
     if (!fs.existsSync(from)) {
       return;
     }
-    if (!fs.existsSync(to)) {
-      fs.mkdirSync(to, { recursive: true });
-    }
+    fs.mkdirSync(to, { recursive: true });
     const files = fs.readdirSync(from);
     for (const file of files) {
       const fromFileName = path.join(from, file);

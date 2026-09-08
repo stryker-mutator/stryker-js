@@ -36,14 +36,16 @@ describe(MutationTestReportHelper.name, () => {
     unexpectedExitRegistry = new UnexpectedExitHandlerTestDouble();
     incrementalJournalMock = sinon.createStubInstance(IncrementalJournal);
     // Mirror the real journal: `begin` / `close` / `complete` flip `isStarted`.
-    incrementalJournalMock.begin.callsFake(async () => {
+    incrementalJournalMock.begin.callsFake(() => {
       incrementalJournalMock.isStarted = true;
+      return Promise.resolve();
     });
     incrementalJournalMock.close.callsFake(() => {
       incrementalJournalMock.isStarted = false;
     });
-    incrementalJournalMock.complete.callsFake(async () => {
+    incrementalJournalMock.complete.callsFake(() => {
       incrementalJournalMock.isStarted = false;
+      return Promise.resolve();
     });
   });
 
@@ -694,6 +696,40 @@ describe(MutationTestReportHelper.name, () => {
         expect(appended.id).eq('2');
         expect(appended.status).eq('Killed');
         expect(appended.fileName).eq('foo.js');
+      });
+
+      it('should warn only once about a missing source file, even though the report is created twice', async () => {
+        testInjector.options.incremental = true;
+        const sut = createSut();
+        const mutantResult = factory.killedMutantResult({
+          fileName: 'not-found.js',
+        });
+        sut.reportMutantStatus(
+          factory.mutantTestCoverage({ fileName: 'not-found.js', id: '1' }),
+          'Ignored',
+        );
+
+        await sut.beginIncrementalJournal();
+        await sut.reportAll([mutantResult]);
+
+        expect(testInjector.logger.warn).calledOnce;
+        expect(testInjector.logger.warn).calledWithMatch(
+          'File "not-found.js" not found',
+        );
+      });
+
+      it('should warn only once about a missing test file, even though the report is created twice', async () => {
+        testInjector.options.incremental = true;
+        testCoverage.addTest(factory.testResult({ fileName: 'foo.spec.js' }));
+        const sut = createSut();
+
+        await sut.beginIncrementalJournal();
+        await sut.reportAll([]);
+
+        expect(testInjector.logger.warn).calledOnce;
+        expect(testInjector.logger.warn).calledWithMatch(
+          'Test file "foo.spec.js" not found in input files',
+        );
       });
     });
 

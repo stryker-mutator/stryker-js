@@ -33,6 +33,7 @@ import {
 
 import { strykerVersion } from '../stryker-package.js';
 import { coreTokens } from '../di/index.js';
+import { fileUtils } from '../utils/file-utils.js';
 import { objectUtils } from '../utils/object-utils.js';
 import {
   IncrementalJournal,
@@ -60,6 +61,13 @@ const STRYKER_FRAMEWORK: Readonly<
 export class MutationTestReportHelper {
   private readonly partialResults: MutantResult[] = [];
   private reportCompleted = false;
+  /**
+   * File names already warned about, so the same warning isn't repeated when the
+   * report is generated more than once (incremental runs report at plan time as
+   * well as at the end).
+   */
+  private readonly warnedMissingSourceFiles = new Set<string>();
+  private readonly warnedMissingTestFiles = new Set<string>();
   private testIdRemapper:
     | {
         remapTestId: (id: string) => string;
@@ -195,7 +203,7 @@ export class MutationTestReportHelper {
 
   /**
    * Persist plan-time mutant results (reused, ignored) as the incremental
-   * journal's `base.json` before checker/test-runner workers run.
+   * journal's `base.json` before the checkers and test runners run mutants.
    * Later `reportOne` calls are appended to `results.jsonl`.
    */
   public async beginIncrementalJournal(): Promise<void> {
@@ -380,14 +388,15 @@ export class MutationTestReportHelper {
 
   private async toFileResult(fileName: string): Promise<schema.FileResult> {
     const fileResult: schema.FileResult = {
-      language: this.determineLanguage(fileName),
+      language: fileUtils.determineLanguage(fileName),
       mutants: [],
       source: '',
     };
     const sourceFile = this.project.files.get(fileName);
     if (sourceFile) {
       fileResult.source = await sourceFile.readOriginal();
-    } else {
+    } else if (!this.warnedMissingSourceFiles.has(fileName)) {
+      this.warnedMissingSourceFiles.add(fileName);
       this.log.warn(
         normalizeWhitespaces(`File "${fileName}" not found
     in input files, but did receive mutant result for it. This shouldn't happen`),
@@ -404,7 +413,8 @@ export class MutationTestReportHelper {
       const file = this.project.files.get(fileName);
       if (file) {
         testFile.source = await file.readOriginal();
-      } else {
+      } else if (!this.warnedMissingTestFiles.has(fileName)) {
+        this.warnedMissingTestFiles.add(fileName);
         this.log.warn(
           normalizeWhitespaces(`Test file "${fileName}" not found
         in input files, but did receive test result for it. This shouldn't happen.`),
@@ -425,20 +435,6 @@ export class MutationTestReportHelper {
         ? { start: objectUtils.toSchemaPosition(test.startPosition) }
         : undefined,
     };
-  }
-
-  private determineLanguage(name: string): string {
-    const ext = path.extname(name).toLowerCase();
-    switch (ext) {
-      case '.ts':
-      case '.tsx':
-        return 'typescript';
-      case '.html':
-      case '.vue':
-        return 'html';
-      default:
-        return 'javascript';
-    }
   }
 
   private toMutantResult(
