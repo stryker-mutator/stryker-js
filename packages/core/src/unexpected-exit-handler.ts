@@ -53,8 +53,8 @@ export class UnexpectedExitHandler implements Disposable {
     }
 
     // Run async handlers before exiting. Signal handlers keep the event loop alive,
-    // so we can await async work here. process.exit() will also fire `exit`, but
-    // sync handlers are idempotent via syncHandlersRan.
+    // so we can await async work here. process.exit() will also fire `exit`; sync
+    // handlers that already succeeded are skipped via syncHandlersRan.
     void Promise.allSettled(
       this.unexpectedExitHandlers.map((handler) => handler()),
     ).then(() => {
@@ -70,15 +70,20 @@ export class UnexpectedExitHandler implements Disposable {
     if (this.syncHandlersRan) {
       return;
     }
-    this.syncHandlersRan = true;
+    let allSucceeded = true;
     for (const handler of this.syncExitHandlers) {
       try {
         handler();
       } catch (error) {
         // Keep going so remaining sync handlers still run, and the signal path
-        // can still call process.exit() after this returns.
+        // can still call process.exit() after this returns. Leave syncHandlersRan
+        // false so a later `exit` event can retry (e.g. --inPlace backup restore).
+        allSucceeded = false;
         console.error('Unexpected exit sync handler failed:', error);
       }
+    }
+    if (allSucceeded) {
+      this.syncHandlersRan = true;
     }
   }
 

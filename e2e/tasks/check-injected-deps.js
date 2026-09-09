@@ -63,11 +63,12 @@ function hash(file) {
  * Only files present in the copy are compared: `dist` also holds `*.tsbuildinfo` and
  * compiled tests, which are never published and so are legitimately absent. Identical
  * inodes mean the hard link still stands, which is the common case and costs one `stat`.
+ * A copied file with no readable counterpart in source `dist` counts as stale (removed
+ * or never rebuilt after a clean).
  *
  * Known gap: a source file added since the last install has no counterpart in the copy and
  * so goes unreported. Comparing the other direction would mean deriving each package's
- * publishable subset from its `files` field. A clean rebuild replaces every inode and is
- * caught regardless, which is the case this check exists for.
+ * publishable subset from its `files` field.
  *
  * @param {string} sourceDist
  * @param {string} injectedDist
@@ -88,7 +89,9 @@ function isStale(sourceDist, injectedDist) {
       }
       return hash(injectedFile) !== hash(sourceFile);
     } catch {
-      return false; // A file only the copy has is pnpm's business, not a rebuild signal.
+      // Missing/unreadable source output means the injected copy cannot be trusted
+      // (e.g. a file removed by a rebuild while the copy still has it).
+      return true;
     }
   });
 }

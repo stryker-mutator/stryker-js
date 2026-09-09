@@ -108,6 +108,19 @@ describe(UnexpectedExitHandler.name, () => {
       expect(handler).calledOnce;
     });
 
+    it('should retry sync handlers on exit when a signal-path handler threw', () => {
+      const consoleErrorStub = sinon.stub(console, 'error');
+      const handler = sinon.stub();
+      handler.onFirstCall().throws(new Error('restore failed'));
+      const sut = createSut();
+      sut.registerSyncHandler(handler);
+      processMock.emit('SIGINT', 'SIGINT', 2);
+      // Mimic Node: process.exit() emits 'exit' — retry because the first run failed.
+      processMock.emit('exit');
+      expect(handler).calledTwice;
+      consoleErrorStub.restore();
+    });
+
     it('should still call process.exit when a sync handler throws', () => {
       const consoleErrorStub = sinon.stub(console, 'error');
       const sut = createSut();
