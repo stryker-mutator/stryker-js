@@ -140,6 +140,29 @@ describe('VitestRunner integration', () => {
     });
 
     describe(VitestTestRunner.prototype.mutantRun.name, () => {
+      it('should kill a mutant using the test id returned by the dry run', async () => {
+        await sut.init();
+        const dryRun = await sut.dryRun(factory.dryRunOptions());
+        assertions.expectCompleted(dryRun);
+        const test = dryRun.tests.find(({ name }) =>
+          name.endsWith('should be able to add two numbers'),
+        );
+        expect(test).not.eq(undefined);
+        const testId = test!.id;
+        expect(dryRun.mutantCoverage?.perTest[testId]?.['2']).eq(1);
+        const result = await sut.mutantRun(
+          factory.mutantRunOptions({
+            activeMutant: factory.mutant({ id: '2' }),
+            sandboxFileName,
+            mutantActivation: 'runtime',
+            testFilter: [testId],
+          }),
+        );
+        assertions.expectKilled(result);
+        expect(result.killedBy).deep.eq([testId]);
+        expect(result.nrOfTests).eq(1);
+      });
+
       it('should be able to kill a mutant', async () => {
         await sut.init();
         const runResult = await sut.mutantRun(

@@ -16,6 +16,7 @@ import {
 const globalNamespace = inject('globalNamespace');
 const mutantActivation = inject('mutantActivation');
 const mode = inject('mode');
+const testNameSeparator = inject('testNameSeparator');
 
 const ns = globalThis[globalNamespace] || (globalThis[globalNamespace] = {});
 ns.hitLimit = inject('hitLimit');
@@ -85,7 +86,7 @@ function collectTestName({
     nameParts.unshift(currentSuite.name);
     currentSuite = currentSuite.suite;
   }
-  return nameParts.join(' ').trim();
+  return nameParts.join(testNameSeparator).trim();
 }
 
 function toRawTestId(test: RunnerTestCase): string {
@@ -100,6 +101,7 @@ declare module 'vitest' {
     mutantActivation: MutantActivation;
     activeMutant: string | undefined;
     mode: 'mutant' | 'dry-run';
+    testNameSeparator: string;
     isGreaterThanVitest4Point1: boolean;
   }
   interface TaskMeta {

@@ -74,6 +74,7 @@ export class VitestTestRunner implements TestRunner {
     'globalNamespace',
   ] as const;
   private ctx?: Vitest;
+  private testNameSeparator = ' ';
   private readonly options: VitestRunnerOptionsWithStrykerOptions;
   private localSetupFile = path.resolve(
     `./stryker-setup-${process.env.STRYKER_MUTATOR_WORKER ?? 0}.js`,
@@ -150,6 +151,9 @@ export class VitestTestRunner implements TestRunner {
       bail: this.options.disableBail ? 0 : 1,
       onConsoleLog: () => false,
     });
+    this.testNameSeparator =
+      semver.major(vitestWrapper.version) >= 5 ? ' > ' : ' ';
+    this.ctx.provide('testNameSeparator', this.testNameSeparator);
     this.ctx.provide('globalNamespace', this.globalNamespace);
     this.ctx.provide(
       'isGreaterThanVitest4Point1',
@@ -260,7 +264,7 @@ export class VitestTestRunner implements TestRunner {
 
     let failure = false;
     const testResults = tests.map((test) => {
-      const testResult = convertTestToTestResult(test);
+      const testResult = convertTestToTestResult(test, this.testNameSeparator);
       failure ||= testResult.status === TestStatus.Failed;
       return testResult;
     });
