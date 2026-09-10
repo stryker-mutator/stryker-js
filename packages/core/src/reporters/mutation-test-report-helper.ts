@@ -38,6 +38,8 @@ import { Project, FileSystem } from '../fs/index.js';
 import { TestCoverage } from '../mutants/index.js';
 import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
 
+import { PerformanceReport } from './performance-report.js';
+
 const STRYKER_FRAMEWORK: Readonly<
   Pick<schema.FrameworkInformation, 'branding' | 'name' | 'version'>
 > = Object.freeze({
@@ -184,6 +186,13 @@ export class MutationTestReportHelper {
     }
     this.reportCompleted = true;
     this.determineExitCode(metrics);
+  }
+
+  public async reportPerformance(report: PerformanceReport): Promise<void> {
+    const fileName = path.resolve('reports', 'mutation', 'performance.json');
+    await this.fs.mkdir(path.dirname(fileName), { recursive: true });
+    await this.fs.writeFile(fileName, JSON.stringify(report, null, 2), 'utf-8');
+    this.log.info('Experimental performance report written to %s.', fileName);
   }
 
   private async writeIncrementalReport(

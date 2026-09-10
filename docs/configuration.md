@@ -215,13 +215,12 @@ _Note: Disable bail needs to be supported by the test runner plugin in order to 
 
 ### `disableTypeChecks` [`boolean` | `string`]
 
-
 <details>
 
 <summary>History</summary>
 
-| Version | Changes                     |
-| ------- | --------------------------- |
+| Version | Changes                                                                         |
+| ------- | ------------------------------------------------------------------------------- |
 | 7.0     | Default changed from `"{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue}"` to `true` |
 
 </details>
@@ -230,11 +229,9 @@ Default: `true`<br />
 Command: _none_<br />
 Config file: `"disableTypeChecks": false`
 
-Set to `true` to disable type checking, or `false` to enable it. For more control, configure a pattern that matches the files of which type checking has to be disabled, for example: `"{test,src,lib}/**/*.{js,ts,jsx,tsx}"`. Setting it to `true` will disable type checking for all TypeScript-ish files (currently *.ts, *.js, *.tsx, *.jsx, *.mjs, *.mts, *.cts, *.cjs, *.html and *.vue files).
+Set to `true` to disable type checking, or `false` to enable it. For more control, configure a pattern that matches the files of which type checking has to be disabled, for example: `"{test,src,lib}/**/*.{js,ts,jsx,tsx}"`. Setting it to `true` will disable type checking for all TypeScript-ish files (currently _.ts, _.js, _.tsx, _.jsx, _.mjs, _.mts, _.cts, _.cjs, _.html and _.vue files).
 
 Disabling type checking is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`).
-
-
 
 ### `dryRunOnly` [`boolean`]
 
@@ -261,6 +258,14 @@ Config file: `"eventReporter": { "baseDir": "coverage/events" }`
 The options for the event recorder reporter:
 
 - `baseDir`: The relative base dir to write the events to.
+
+### `experimentalPerformanceReport` [`boolean`]
+
+Default: `false`<br />
+Command line: `--experimentalPerformanceReport`<br />
+Config file: `"experimentalPerformanceReport": true`
+
+Experimental. Write a detailed performance report to `reports/mutation/performance.json`. It contains per-phase timing (setup, initial run, mutation), per-mutant timing, the static-vs-runtime cost split, environment reloads, and machine and configuration info. Useful for diagnosing and comparing the performance of a mutation test run. Off by default; the format is unstable and may change between releases. See [performance report](./performance-report.md) for the format and how to read the numbers (wall time vs summed work).
 
 ### `fileLogLevel` [`string`]
 
@@ -326,7 +331,7 @@ Default: `[]`<br />
 Command line: _none_<br />
 Config file: `"ignorers": ["console.debug"]`<br />
 
-Specify which ignore-plugins to use. With an ignore-plugin, you can skip mutating specific code patterns that you don't want to test or cannot be mutated. For example, you may use an ignore-plugin to exclude all `console.debug()` statements from mutation testing. 
+Specify which ignore-plugins to use. With an ignore-plugin, you can skip mutating specific code patterns that you don't want to test or cannot be mutated. For example, you may use an ignore-plugin to exclude all `console.debug()` statements from mutation testing.
 
 Here's a list of built-in ignore plugins:
 

@@ -18,15 +18,7 @@
     "logLevel": {
       "title": "LogLevel",
       "type": "string",
-      "enum": [
-        "off",
-        "fatal",
-        "error",
-        "warn",
-        "info",
-        "debug",
-        "trace"
-      ],
+      "enum": ["off", "fatal", "error", "warn", "info", "debug", "trace"],
       "tsEnumNames": [
         "Off",
         "Fatal",
@@ -40,23 +32,13 @@
     "coverageAnalysis": {
       "title": "CoverageAnalysis",
       "type": "string",
-      "enum": [
-        "off",
-        "all",
-        "perTest"
-      ]
+      "enum": ["off", "all", "perTest"]
     },
     "reportType": {
       "title": "ReportType",
       "type": "string",
-      "enum": [
-        "full",
-        "mutationScore"
-      ],
-      "tsEnumNames": [
-        "Full",
-        "MutationScore"
-      ]
+      "enum": ["full", "mutationScore"],
+      "tsEnumNames": ["Full", "MutationScore"]
     },
     "clearTextReporterOptions": {
       "title": "ClearTextReporterOptions",
@@ -211,10 +193,7 @@
             {
               "type": "array",
               "items": {
-                "type": [
-                  "string",
-                  "array"
-                ]
+                "type": ["string", "array"]
               }
             },
             {
@@ -269,11 +248,7 @@
     "buildCommand": {
       "type": "string",
       "description": "Configure a build command to run after mutating the code, but before mutants are tested. This is generally used to transpile your code before testing. Only configure this if your test runner doesn't take care of this already and you're not using just-in-time transpiler like `babel/register` or `tsx`.",
-      "examples": [
-        "tsc -b",
-        "babel src --out-dir lib",
-        "npm run build"
-      ]
+      "examples": ["tsc -b", "babel src --out-dir lib", "npm run build"]
     },
     "checkers": {
       "description": "Enable checker plugins here. A checker plugin will be invoked for each mutant before it is run in a test runner. It can check to see of a given mutant is valid, by for example validate that it won't result in a type error",
@@ -327,7 +302,7 @@
     },
     "dryRunOnly": {
       "description": "Execute the initial test run only without doing actual mutation testing. Dry run only will still mutate your code before doing the dry run without those mutants being active, thus can be used to test that StrykerJS can run your test setup. This can be useful, for example, in CI pipelines.",
-      "type":"boolean",
+      "type": "boolean",
       "default": false
     },
     "eventReporter": {
@@ -365,7 +340,7 @@
     },
     "fileLogLevel": {
       "description": "Set the log level that Stryker uses to write to the \"stryker.log\" file",
-      "$ref": "#/definitions/logLevel", 
+      "$ref": "#/definitions/logLevel",
       "default": "off"
     },
     "inPlace": {
@@ -405,11 +380,7 @@
       "default": {}
     },
     "packageManager": {
-      "enum": [
-        "npm",
-        "yarn",
-        "pnpm"
-      ],
+      "enum": ["npm", "yarn", "pnpm"],
       "description": "The package manager Stryker can use to install missing dependencies."
     },
     "plugins": {
@@ -418,9 +389,7 @@
       "items": {
         "type": "string"
       },
-      "default": [
-        "@stryker-mutator/*"
-      ]
+      "default": ["@stryker-mutator/*"]
     },
     "appendPlugins": {
       "description": "A list of additional plugins you want Stryker to load (`require`) without overwriting the (default) `plugins`.",
@@ -436,11 +405,7 @@
       "items": {
         "type": "string"
       },
-      "default": [
-        "clear-text",
-        "progress",
-        "html"
-      ]
+      "default": ["clear-text", "progress", "html"]
     },
     "htmlReporter": {
       "description": "The options for the html reporter",
@@ -452,6 +417,11 @@
       "$ref": "#/definitions/jsonReporterOptions",
       "default": {}
     },
+    "experimentalPerformanceReport": {
+      "description": "Experimental. Write a detailed performance report (per-phase timing, per-mutant timing, static vs runtime cost, environment reloads, machine and configuration info) to `reports/mutation/performance.json`. Off by default; the format is unstable and may change between releases.",
+      "type": "boolean",
+      "default": false
+    },
     "disableTypeChecks": {
       "description": "Set to 'true' to disable type checking, or 'false' to enable it. For more control, configure a pattern that matches the files of which type checking has to be disabled. This is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`). The default setting allows these directives to be stripped from all JavaScript and friend files in `lib`, `src` and `test` directories.",
       "oneOf": [
@@ -462,9 +432,7 @@
           "type": "string"
         }
       ],
-      "examples": [
-        "{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue,cts,mts}"
-      ],
+      "examples": ["{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue,cts,mts}"],
       "default": true
     },
     "symlinkNodeModules": {
@@ -479,11 +447,7 @@
     },
     "cleanTempDir": {
       "description": "Choose whether or not to clean the temp dir (which is \".stryker-tmp\" inside the current working directory by default).\n - false: Never delete the temp dir;\n - true: Delete the tmp dir after a successful run;\n - \"always\": Always delete the temp dir, regardless of whether the run was successful.",
-      "enum": [
-        "always",
-        false,
-        true
-        ],
+      "enum": ["always", false, true],
       "default": true
     },
     "testRunner": {

@@ -14,6 +14,12 @@ export class ConcurrencyTokenProvider implements Disposable {
   public get testRunnerToken$(): Observable<number> {
     return this.testRunnerTokenSubject;
   }
+  public get checkerConcurrency(): number {
+    return this.concurrencyCheckers;
+  }
+  public get testRunnerConcurrency(): number {
+    return this.concurrencyTestRunners;
+  }
   public readonly checkerToken$: Observable<number>;
   public static readonly inject = tokens(
     commonTokens.options,

@@ -42,6 +42,7 @@ describe(Pool.name, () => {
     return new Pool<Required<Resource>>(
       createWorkerStub,
       concurrencyTokenSubject,
+      { recordWorkerActivity: () => {} },
     );
   }
 
