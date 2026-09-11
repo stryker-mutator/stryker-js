@@ -66,36 +66,42 @@ describe('VitestRunner integration', () => {
             fileName: path.resolve('tests/add.spec.ts'),
             name: 'add should be able to add two numbers',
             status: TestStatus.Success,
+            startPosition: { line: 4, column: 2 },
           },
           {
             id: test2,
             fileName: path.resolve('tests/add.spec.ts'),
             name: 'add should be able to add a negative number',
             status: TestStatus.Success,
+            startPosition: { line: 9, column: 2 },
           },
           {
             id: test3,
             fileName: path.resolve('tests/math.spec.ts'),
             name: 'math should be able negate a number',
             status: TestStatus.Success,
+            startPosition: { line: 13, column: 2 },
           },
           {
             id: test4,
             fileName: path.resolve('tests/math.spec.ts'),
             name: 'math should be able to add one to a number',
             status: TestStatus.Success,
+            startPosition: { line: 4, column: 2 },
           },
           {
             id: test5,
             fileName: path.resolve('tests/math.spec.ts'),
             name: 'math should be able to recognize a negative number',
             status: TestStatus.Success,
+            startPosition: { line: 22, column: 2 },
           },
           {
             id: test6,
             fileName: path.resolve('tests/pi.spec.ts'),
             name: 'pi should be 3.14',
             status: TestStatus.Success,
+            startPosition: { line: 4, column: 2 },
           },
         ]);
       });
