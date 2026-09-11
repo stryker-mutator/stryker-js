@@ -1,3 +1,4 @@
+import { createRequire } from 'module';
 import path from 'path';
 import { fileURLToPath, URL } from 'url';
 
@@ -104,10 +105,66 @@ function overrideEnvironment(
   overrides: Config.InitialOptions,
   jestWrapper: JestWrapper,
 ): void {
-  const originalJestEnvironment =
-    jestConfig.testEnvironment ?? getJestDefaults(jestWrapper).testEnvironment;
-  state.jestEnvironment = nameEnvironment(originalJestEnvironment);
+  state.jestEnvironment = resolveJestEnvironment(jestConfig, jestWrapper);
   overrides.testEnvironment = jestEnvironmentGenericFileName;
+}
+
+/**
+ * Same substitution Jest's normalize uses for path options.
+ * @see https://github.com/jestjs/jest/blob/main/packages/jest-config/src/utils.ts
+ */
+function replaceRootDirInPath(rootDir: string, filePath: string): string {
+  if (!filePath.startsWith('<rootDir>')) {
+    return filePath;
+  }
+  return path.resolve(
+    rootDir,
+    path.normalize(`./${filePath.substring('<rootDir>'.length)}`),
+  );
+}
+
+function readPresetTestEnvironment(
+  preset: string | null | undefined,
+  rootDir: string,
+): string | undefined {
+  if (!preset) {
+    return undefined;
+  }
+  try {
+    const requireFromRoot = createRequire(path.join(rootDir, 'package.json'));
+    const expandedPreset = replaceRootDirInPath(rootDir, preset);
+    const candidates =
+      expandedPreset.startsWith('.') || path.isAbsolute(expandedPreset)
+        ? [path.resolve(rootDir, expandedPreset)]
+        : [`${expandedPreset}/jest-preset`, expandedPreset];
+    for (const candidate of candidates) {
+      try {
+        const presetConfig = requireFromRoot(candidate) as {
+          testEnvironment?: string;
+        };
+        if (typeof presetConfig.testEnvironment === 'string') {
+          return presetConfig.testEnvironment;
+        }
+      } catch {
+        // Try the next candidate; Jest itself reports unreadable presets later
+      }
+    }
+  } catch {
+    return undefined;
+  }
+  return undefined;
+}
+
+function resolveJestEnvironment(
+  jestConfig: Config.InitialOptions,
+  jestWrapper: JestWrapper,
+): string {
+  const rootDir = jestConfig.rootDir ?? process.cwd();
+  const unresolved =
+    jestConfig.testEnvironment ??
+    readPresetTestEnvironment(jestConfig.preset, rootDir) ??
+    getJestDefaults(jestWrapper).testEnvironment;
+  return nameEnvironment(replaceRootDirInPath(rootDir, unresolved));
 }
 
 function nameEnvironment(shortName: string): string {
