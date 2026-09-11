@@ -104,6 +104,29 @@ describe(VitestTestRunner.name, () => {
       });
     });
 
+    it('should provide the legacy test name separator for vitest <5.0.0', async () => {
+      sinon.replace(vitestWrapper, 'version', '4.1.11');
+      await sut.init();
+      sinon.assert.calledWith(
+        vitestStub.provide as sinon.SinonStub,
+        'testNameSeparator',
+        ' ',
+      );
+    });
+
+    it('should provide the chained test name separator for vitest >=5.0.0', async () => {
+      // Vitest 5 matches `testNamePattern` against the suite chain joined
+      // with ' > '; filtering with a space-joined name selects no tests at
+      // all, so every covered mutant runs zero tests and survives.
+      sinon.replace(vitestWrapper, 'version', '5.0.0');
+      await sut.init();
+      sinon.assert.calledWith(
+        vitestStub.provide as sinon.SinonStub,
+        'testNameSeparator',
+        ' > ',
+      );
+    });
+
     it('should initialize the vitest environment for a prerelease version beyond 4.1.0', async () => {
       sinon.replace(vitestWrapper, 'version', '5.0.0-beta.1');
       await sut.init();

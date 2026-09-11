@@ -20,6 +20,8 @@ const mode = inject('mode');
 const ns = globalThis[globalNamespace] || (globalThis[globalNamespace] = {});
 ns.hitLimit = inject('hitLimit');
 const isGreaterThanVitest4Point1 = inject('isGreaterThanVitest4Point1');
+// Must match the separator the runner filters with; see test-helpers.ts
+const testNameSeparator = inject('testNameSeparator');
 
 if (mode === 'mutant') {
   beforeAll(() => {
@@ -50,7 +52,7 @@ if (mode === 'mutant') {
   ns.activeMutant = undefined;
 
   beforeEach(({ task }) => {
-    ns.currentTestId = toRawTestId(task);
+    ns.currentTestId = toRawTestId(task, testNameSeparator);
   });
 
   afterEach(() => {
@@ -72,24 +74,27 @@ if (mode === 'mutant') {
 }
 
 // Stryker disable all: this file is copied to the sandbox dir
-function collectTestName({
-  name,
-  suite,
-}: {
-  name: string;
-  suite?: RunnerTestSuite;
-}): string {
+function collectTestName(
+  {
+    name,
+    suite,
+  }: {
+    name: string;
+    suite?: RunnerTestSuite;
+  },
+  separator: string,
+): string {
   const nameParts = [name];
   let currentSuite = suite;
   while (currentSuite) {
     nameParts.unshift(currentSuite.name);
     currentSuite = currentSuite.suite;
   }
-  return nameParts.join(' ').trim();
+  return nameParts.join(separator).trim();
 }
 
-function toRawTestId(test: RunnerTestCase): string {
-  return `${test.file?.filepath ?? 'unknown.js'}#${collectTestName(test)}`;
+function toRawTestId(test: RunnerTestCase, separator: string): string {
+  return `${test.file?.filepath ?? 'unknown.js'}#${collectTestName(test, separator)}`;
 }
 // Stryker restore all
 
@@ -101,6 +106,7 @@ declare module 'vitest' {
     activeMutant: string | undefined;
     mode: 'mutant' | 'dry-run';
     isGreaterThanVitest4Point1: boolean;
+    testNameSeparator: string;
   }
   interface TaskMeta {
     hitCount: number | undefined;

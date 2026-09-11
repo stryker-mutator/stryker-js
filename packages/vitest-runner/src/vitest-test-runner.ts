@@ -37,6 +37,10 @@ import {
 
 import { vitestWrapper, Vitest } from './vitest-wrapper.js';
 import {
+  LEGACY_TEST_NAME_SEPARATOR,
+  VITEST_5_TEST_NAME_SEPARATOR,
+} from './test-helpers.js';
+import {
   convertTestToTestResult,
   fromTestId,
   collectTestsFromSuite,
@@ -85,6 +89,18 @@ export class VitestTestRunner implements TestRunner {
     private globalNamespace: StrykerNamespace,
   ) {
     this.options = options as VitestRunnerOptionsWithStrykerOptions;
+  }
+
+  /**
+   * Vitest 5 matches `testNamePattern` against the suite chain joined with
+   * `' > '` rather than a space, so a filter built from space-joined names
+   * matches nothing and every covered mutant runs zero tests.
+   * @see https://vitest.dev/guide/migration/
+   */
+  get #testNameSeparator(): string {
+    return semver.satisfies(vitestWrapper.version, '>=5.0.0')
+      ? VITEST_5_TEST_NAME_SEPARATOR
+      : LEGACY_TEST_NAME_SEPARATOR;
   }
 
   public capabilities(): TestRunnerCapabilities {
@@ -155,6 +171,7 @@ export class VitestTestRunner implements TestRunner {
       'isGreaterThanVitest4Point1',
       semver.satisfies(vitestWrapper.version, '>=4.1.0'),
     );
+    this.ctx.provide('testNameSeparator', this.#testNameSeparator);
     this.ctx.config.browser.screenshotFailures = false;
     this.ctx.projects.forEach((project) => {
       project.config.setupFiles = [
@@ -260,7 +277,10 @@ export class VitestTestRunner implements TestRunner {
 
     let failure = false;
     const testResults = tests.map((test) => {
-      const testResult = convertTestToTestResult(test);
+      const testResult = convertTestToTestResult(
+        test,
+        this.#testNameSeparator,
+      );
       failure ||= testResult.status === TestStatus.Failed;
       return testResult;
     });
