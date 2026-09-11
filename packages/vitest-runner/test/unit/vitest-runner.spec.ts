@@ -129,6 +129,22 @@ describe(VitestTestRunner.name, () => {
 
       expect(process.env.VITEST).to.equal('1');
     });
+
+    it('should forward `project` to vitest when configured', async () => {
+      options.vitest.project = ['unit'];
+
+      await sut.init();
+
+      const vitestOptions = assertCommonVitestOptions();
+      expect(vitestOptions).deep.include({ project: ['unit'] });
+    });
+
+    it('should default `project` to undefined, running every project in a workspace config', async () => {
+      await sut.init();
+
+      const vitestOptions = assertCommonVitestOptions();
+      expect(vitestOptions.project).undefined;
+    });
   });
 
   describe(VitestTestRunner.prototype.mutantRun.name, () => {
