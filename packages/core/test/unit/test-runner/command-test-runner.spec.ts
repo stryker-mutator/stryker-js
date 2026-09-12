@@ -50,6 +50,7 @@ describe(CommandTestRunner.name, () => {
       expect(execMock).calledWith('npm test', {
         cwd: 'foobarDir',
         env: process.env,
+        windowsHide: true,
       });
     });
 
@@ -126,6 +127,7 @@ describe(CommandTestRunner.name, () => {
       expect(execMock).calledWith('npm test', {
         cwd: 'foobarDir',
         env: { ...process.env, __STRYKER_ACTIVE_MUTANT__: '0' },
+        windowsHide: true,
       });
     });
 

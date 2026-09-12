@@ -103,6 +103,7 @@ export class CommandTestRunner implements TestRunner {
       const childProcess = exec(this.settings.command, {
         cwd: this.workingDir,
         env,
+        windowsHide: true,
       });
       childProcess.on('error', (error) => {
         objectUtils
