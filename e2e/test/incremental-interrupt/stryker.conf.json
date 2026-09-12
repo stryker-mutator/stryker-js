@@ -4,6 +4,6 @@
   "concurrency": 1,
   "coverageAnalysis": "perTest",
   "reporters": ["clear-text", "signal"],
-  "plugins": ["@stryker-mutator/mocha-runner", "./signal-reporter.js"],
+  "plugins": ["@stryker-mutator/mocha-runner", "./signal-reporter.js", "./crash-reporter.js"],
   "incremental": true
 }

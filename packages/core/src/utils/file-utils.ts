@@ -17,6 +17,24 @@ export const fileUtils = {
     }
   },
 
+  /**
+   * Determines the language of a file, based on its extension.
+   * Used to fill in the `language` field of a mutation testing report file.
+   */
+  determineLanguage(fileName: string): string {
+    const ext = path.extname(fileName).toLowerCase();
+    switch (ext) {
+      case '.ts':
+      case '.tsx':
+        return 'typescript';
+      case '.html':
+      case '.vue':
+        return 'html';
+      default:
+        return 'javascript';
+    }
+  },
+
   async exists(fileName: string): Promise<boolean> {
     try {
       await fs.promises.access(fileName);
@@ -39,7 +57,7 @@ export const fileUtils = {
   },
 
   /**
-   * Recursively walks the from directory and copy the content to the target directory
+   * Recursively walks the from directory and moves the content to the target directory.
    * @param from The source directory to move from
    * @param to The target directory to move to
    */
@@ -62,6 +80,32 @@ export const fileUtils = {
       }
     }
     await fs.promises.rmdir(from);
+  },
+
+  /**
+   * Synchronous counterpart of {@link moveDirectoryRecursive}.
+   * Required for `process.on('exit')` handlers (e.g. `--inPlace` backup restore),
+   * which cannot run async I/O.
+   * @param from The source directory to move from
+   * @param to The target directory to move to
+   */
+  moveDirectoryRecursiveSync(from: string, to: string): void {
+    if (!fs.existsSync(from)) {
+      return;
+    }
+    fs.mkdirSync(to, { recursive: true });
+    const files = fs.readdirSync(from);
+    for (const file of files) {
+      const fromFileName = path.join(from, file);
+      const toFileName = path.join(to, file);
+      const stats = fs.lstatSync(fromFileName);
+      if (stats.isFile()) {
+        fs.renameSync(fromFileName, toFileName);
+      } else {
+        this.moveDirectoryRecursiveSync(fromFileName, toFileName);
+      }
+    }
+    fs.rmdirSync(from);
   },
 
   /**

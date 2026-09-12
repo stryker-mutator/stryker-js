@@ -2,7 +2,11 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
 
 import { coreTokens } from '../../../src/di/index.js';
-import { FileSystem, ProjectReader } from '../../../src/fs/index.js';
+import {
+  FileSystem,
+  IncrementalJournal,
+  ProjectReader,
+} from '../../../src/fs/index.js';
 import { resolveFromRoot } from '../../helpers/test-utils.js';
 
 const resolveTestResource = resolveFromRoot.bind(
@@ -19,6 +23,7 @@ describe(`${ProjectReader.name} integration`, () => {
     originalCwd = process.cwd();
     sut = testInjector.injector
       .provideClass(coreTokens.fs, FileSystem)
+      .provideClass(coreTokens.incrementalJournal, IncrementalJournal)
       .provideValue(coreTokens.reporter, factory.reporter())
       .injectClass(ProjectReader);
   });

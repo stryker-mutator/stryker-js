@@ -11,6 +11,7 @@ import { tap, mergeAll, map } from 'rxjs/operators';
 import { minimatch } from 'minimatch';
 
 import { satisfiesPlatform } from './utils.js';
+import { checkInjectedDeps } from './check-injected-deps.js';
 
 const testRootDir = fileURLToPath(new URL('../test', import.meta.url));
 const progressFile = path.join(os.tmpdir(), 'stryker-mutator-progress.json');
@@ -91,6 +92,13 @@ function runE2eTests() {
     }),
   );
 }
+try {
+  checkInjectedDeps();
+} catch (err) {
+  console.error(err.message);
+  process.exit(1);
+}
+
 runE2eTests().subscribe({
   complete: () => console.log('✅ Done'),
   error: (err) => {

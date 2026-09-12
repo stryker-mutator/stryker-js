@@ -25,6 +25,7 @@ describe(Sandbox.name, () => {
     I<UnexpectedExitHandler>
   >;
   let moveDirectoryRecursiveStub: sinon.SinonStub;
+  let moveDirectoryRecursiveSyncStub: sinon.SinonStub;
   let fsTestDouble: FileSystemTestDouble;
   const SANDBOX_WORKING_DIR = path.join('.stryker-tmp', 'sandbox-123');
 
@@ -36,9 +37,14 @@ describe(Sandbox.name, () => {
     moveDirectoryRecursiveStub = sinon
       .stub(fileUtils, 'moveDirectoryRecursive')
       .resolves();
+    moveDirectoryRecursiveSyncStub = sinon.stub(
+      fileUtils,
+      'moveDirectoryRecursiveSync',
+    );
     execaCommandMock = sinon.stub();
     unexpectedExitHandlerMock = {
       registerHandler: sinon.stub(),
+      registerSyncHandler: sinon.stub(),
       dispose: sinon.stub(),
     };
     fsTestDouble = new FileSystemTestDouble(
@@ -202,13 +208,14 @@ describe(Sandbox.name, () => {
         );
       });
 
-      it('should register an unexpected exit handler', async () => {
+      it('should register a sync unexpected exit handler', async () => {
         // Act
         const sut = createSut();
         await sut.init();
 
         // Assert
-        expect(unexpectedExitHandlerMock.registerHandler).called;
+        expect(unexpectedExitHandlerMock.registerSyncHandler).called;
+        expect(unexpectedExitHandlerMock.registerHandler).not.called;
       });
     });
 
@@ -327,18 +334,48 @@ describe(Sandbox.name, () => {
       );
     });
 
-    it('should recover from the backup dir if stryker exits unexpectedly while inPlace = true', async () => {
+    it('should register a sync unexpected-exit restore when inPlace = true', () => {
+      testInjector.options.inPlace = true;
+      createSut();
+      expect(unexpectedExitHandlerMock.registerSyncHandler).calledOnce;
+      expect(unexpectedExitHandlerMock.registerHandler).not.called;
+    });
+
+    it('should recover synchronously from the backup dir if stryker exits unexpectedly while inPlace = true', () => {
       testInjector.options.inPlace = true;
       const errorStub = sinon.stub(console, 'error');
       createSut();
-      await unexpectedExitHandlerMock.registerHandler.firstCall.args[0]();
-      expect(moveDirectoryRecursiveStub).calledWith(
+      unexpectedExitHandlerMock.registerSyncHandler.firstCall.args[0]();
+      expect(moveDirectoryRecursiveSyncStub).calledWith(
         SANDBOX_WORKING_DIR,
         process.cwd(),
       );
+      expect(moveDirectoryRecursiveStub).not.called;
       expect(errorStub).calledWith(
         `Detecting unexpected exit, recovering original files from ${SANDBOX_WORKING_DIR}`,
       );
+    });
+
+    it('should not restore the backup twice after an unexpected sync restore', async () => {
+      testInjector.options.inPlace = true;
+      sinon.stub(console, 'error');
+      const sut = createSut();
+      unexpectedExitHandlerMock.registerSyncHandler.firstCall.args[0]();
+      await sut.dispose();
+      expect(moveDirectoryRecursiveSyncStub).calledOnce;
+      expect(moveDirectoryRecursiveStub).not.called;
+    });
+
+    it('should allow dispose to restore after a failed unexpected sync restore', async () => {
+      testInjector.options.inPlace = true;
+      sinon.stub(console, 'error');
+      moveDirectoryRecursiveSyncStub.throws(new Error('disk full'));
+      const sut = createSut();
+      expect(() =>
+        unexpectedExitHandlerMock.registerSyncHandler.firstCall.args[0](),
+      ).throws('disk full');
+      await sut.dispose();
+      expect(moveDirectoryRecursiveStub).calledOnce;
     });
   });
 

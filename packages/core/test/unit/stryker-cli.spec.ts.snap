@@ -22,7 +22,7 @@ Options:
   --ignoreStatic                               Ignore static mutants. Static mutants are mutants which are only executed during the loading of a file.
   --incremental                                Enable 'incremental mode'. Stryker will store results in a file and use that file to speed up the next --incremental run
   --allowEmpty                                 Allows stryker to exit without any errors in cases where no tests are found 
-  --incrementalFile <file>                     Specify the file to use for incremental mode.
+  --incrementalFile <file>                     Specify the file to use for incremental mode. A sibling .pending/ directory and .tmp file may appear next to it during a run; gitignore them like this file.
   --force                                      Run all mutants, even if --incremental is provided and an incremental file exists. Can be used to force a rebuild of the incremental file.
   -m, --mutate <filesToMutate>                 With \`mutate\` you configure the subset of files or just one specific file to be mutated. These should be your _production code files_, and definitely not your test files. (Whereas with \`ignorePatterns\` you prevent non-relevant files from being copied to the sandbox directory in the first place)
   The default will try to guess your production code files based on sane defaults. It reads like this:
@@ -83,7 +83,7 @@ Options:
   --ignoreStatic                               Ignore static mutants. Static mutants are mutants which are only executed during the loading of a file.
   --incremental                                Enable 'incremental mode'. Stryker will store results in a file and use that file to speed up the next --incremental run
   --allowEmpty                                 Allows stryker to exit without any errors in cases where no tests are found 
-  --incrementalFile <file>                     Specify the file to use for incremental mode.
+  --incrementalFile <file>                     Specify the file to use for incremental mode. A sibling .pending/ directory and .tmp file may appear next to it during a run; gitignore them like this file.
   --force                                      Run all mutants, even if --incremental is provided and an incremental file exists. Can be used to force a rebuild of the incremental file.
   -m, --mutate <filesToMutate>                 With \`mutate\` you configure the subset of files or just one specific file to be mutated. These should be your _production code files_, and definitely not your test files. (Whereas with \`ignorePatterns\` you prevent non-relevant files from being copied to the sandbox directory in the first place)
   The default will try to guess your production code files based on sane defaults. It reads like this:

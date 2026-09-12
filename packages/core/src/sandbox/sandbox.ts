@@ -21,13 +21,20 @@ import { objectUtils } from '../utils/index.js';
 
 export class Sandbox implements Disposable {
   private readonly fileMap = new Map<string, string>();
+  /**
+   * Guards against restoring the backup twice (signal path runs sync handlers,
+   * then `process.exit()` fires `exit` which runs them again; normal dispose
+   * may also follow a prior unexpected restore). Set only after a successful move
+   * so a failed/partial restore can still be retried.
+   */
+  private backupRestored = false;
 
   /**
    * The working directory for this sandbox
    * Either an actual sandbox directory, or the cwd when running in --inPlace mode
    */
   public readonly workingDirectory: string;
-  /**11
+  /**
    * The backup directory when running in --inPlace mode
    */
   private readonly backupDirectory: string = '';
@@ -59,9 +66,9 @@ export class Sandbox implements Disposable {
         'In place mode is enabled, Stryker will be overriding YOUR files. Find your backup at: %s',
         path.relative(process.cwd(), this.backupDirectory),
       );
-      unexpectedExitHandler.registerHandler(
-        this.dispose.bind(this, /* unexpected */ true),
-      );
+      // Must be synchronous: `process.on('exit')` cannot await async I/O, and
+      // that is the path that covers process.exit() / uncaught exceptions.
+      unexpectedExitHandler.registerSyncHandler(() => this.restoreBackupSync());
     } else {
       this.workingDirectory = temporaryDirectory.path;
       this.log.debug(
@@ -178,21 +185,35 @@ export class Sandbox implements Disposable {
     }
   }
 
-  public async dispose(unexpected = false): Promise<void> {
-    if (this.backupDirectory) {
-      if (unexpected) {
-        console.error(
-          `Detecting unexpected exit, recovering original files from ${path.relative(process.cwd(), this.backupDirectory)}`,
-        );
-      } else {
-        this.log.info(
-          `Resetting your original files from ${path.relative(process.cwd(), this.backupDirectory)}.`,
-        );
-      }
-      await fileUtils.moveDirectoryRecursive(
-        this.backupDirectory,
-        this.workingDirectory,
-      );
+  /**
+   * Synchronous backup restore for unexpected process termination.
+   * Registered on {@link UnexpectedExitHandler.registerSyncHandler}.
+   */
+  private restoreBackupSync(): void {
+    if (!this.backupDirectory || this.backupRestored) {
+      return;
     }
+    console.error(
+      `Detecting unexpected exit, recovering original files from ${path.relative(process.cwd(), this.backupDirectory)}`,
+    );
+    fileUtils.moveDirectoryRecursiveSync(
+      this.backupDirectory,
+      this.workingDirectory,
+    );
+    this.backupRestored = true;
+  }
+
+  public async dispose(): Promise<void> {
+    if (!this.backupDirectory || this.backupRestored) {
+      return;
+    }
+    this.log.info(
+      `Resetting your original files from ${path.relative(process.cwd(), this.backupDirectory)}.`,
+    );
+    await fileUtils.moveDirectoryRecursive(
+      this.backupDirectory,
+      this.workingDirectory,
+    );
+    this.backupRestored = true;
   }
 }

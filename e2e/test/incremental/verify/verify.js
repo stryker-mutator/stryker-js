@@ -22,7 +22,10 @@ describe('incremental', () => {
   let strykerOptions;
 
   beforeEach(async () => {
-    await fsPromises.rm(incrementalFile, { force: true });
+    await fsPromises.rm(new URL('../reports', import.meta.url), {
+      force: true,
+      recursive: true,
+    });
     strykerOptions = {
       incremental: true,
       concurrency: 1,
