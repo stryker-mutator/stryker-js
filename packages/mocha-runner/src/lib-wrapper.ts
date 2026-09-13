@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'fs';
 
 import { createRequire } from 'module';
 import { pathToFileURL } from 'url';
@@ -32,8 +33,38 @@ const resolveMocha = async () => {
 
 const { mocha, require, mochaRoot } = await resolveMocha();
 
+/*
+ * Mocha's cli internals are not part of its public api, so their file extension changes between major versions:
+ * `.js` up to and including Mocha 11, `.cjs` since Mocha 12 turned the package into an ES module.
+ */
+async function loadMochaCliModule(name: string): Promise<any> {
+  for (const extension of ['.js', '.cjs', '.mjs']) {
+    const modulePath = path.join(
+      mochaRoot,
+      'lib',
+      'cli',
+      `${name}${extension}`,
+    );
+
+    if (!fs.existsSync(modulePath)) {
+      continue;
+    }
+
+    if (extension === '.mjs') {
+      const module = await import(pathToFileURL(modulePath).href);
+      return module.default ?? module;
+    }
+
+    return require(modulePath);
+  }
+
+  throw new Error(
+    `Cannot find Mocha's "lib/cli/${name}" module in "${mochaRoot}". Please check if your Mocha version is supported.`,
+  );
+}
+
 // https://github.com/mochajs/mocha/blob/master/lib/cli/run-helpers.js#L132
-const runHelpers = require(`${mochaRoot}/lib/cli/run-helpers`);
+const runHelpers = await loadMochaCliModule('run-helpers');
 
 let collectFiles:
   | ((
@@ -50,20 +81,8 @@ type LoadOptions = (
   argv?: string[] | string,
 ) => Record<string, any> | undefined;
 
-async function resolveLoadOptions(): Promise<LoadOptions> {
-  try {
-    return require(`${mochaRoot}/lib/cli/options`).loadOptions;
-  } catch {
-    // Since Mocha 12 the cli is distributed as ECMAScript modules
-    const options = await import(
-      pathToFileURL(path.join(mochaRoot, 'lib/cli/options.mjs')).href
-    );
-
-    return options.loadOptions;
-  }
-}
-
-const loadOptions = await resolveLoadOptions();
+const loadOptions: LoadOptions = (await loadMochaCliModule('options'))
+  .loadOptions;
 
 const handleRequires: (requires?: string[]) => Promise<RootHookObject> =
   runHelpers.handleRequires;
@@ -76,7 +95,7 @@ collectFiles = runHelpers.handleFiles;
 if (!collectFiles) {
   // Might be moved:
   // https://github.com/mochajs/mocha/commit/15b96afccaf508312445770e3af1c145d90b28c6#diff-39b692a81eb0c9f3614247af744ab4a8
-  collectFiles = require(`${mochaRoot}/lib/cli/collect-files`);
+  collectFiles = await loadMochaCliModule('collect-files');
 }
 
 /**
