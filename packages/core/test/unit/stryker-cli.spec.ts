@@ -343,6 +343,9 @@ describe(StrykerCli.name, () => {
     it('should not fail for >= v22.0.0', () => {
       expect(() => guardMinimalNodeVersion('v22.0.0')).not.throws();
     });
+    it('should not fail for prerelease versions >= v22.0.0', () => {
+      expect(() => guardMinimalNodeVersion('v26.8.0-alpha.0.0.0')).not.throws();
+    });
   });
 
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
