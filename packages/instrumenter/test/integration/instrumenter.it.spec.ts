@@ -58,6 +58,18 @@ describe('instrumenter integration', () => {
   it('should be able to instrument a vue tsx sample', async () => {
     await arrangeAndActAssert('vue-tsx-sample.vue');
   });
+  it('should be able to instrument a vue script setup sample', async () => {
+    await arrangeAndActAssert('vue-script-setup.vue');
+  });
+  it('should be able to instrument a typescript vue script setup sample', async () => {
+    await arrangeAndActAssert('vue-script-setup-ts.vue');
+  });
+  it('should be able to instrument a vue script setup sample with compiler macros', async () => {
+    await arrangeAndActAssert('vue-script-setup-macros.vue');
+  });
+  it('should be able to instrument a vue script setup sample with a module script', async () => {
+    await arrangeAndActAssert('vue-script-setup-and-module-script.vue');
+  });
   it('should be able to instrument super calls', async () => {
     await arrangeAndActAssert('super-call.ts');
   });
