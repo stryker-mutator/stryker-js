@@ -61,13 +61,13 @@ window.greeting = greeting;
       context.transform,
       vue.root.moduleScript!.ast,
       mutantCollector,
-      context,
+      { ...context, isExpressionContext: false },
     );
     sinon.assert.calledWithExactly(
       context.transform,
       vue.root.additionalScripts[0].ast,
       mutantCollector,
-      context,
+      { ...context, isExpressionContext: false },
     );
   });
 

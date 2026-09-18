@@ -40,12 +40,12 @@ const DEFINE_MODEL_NAME_MSG =
  */
 const defineModelNameIgnorer: Ignorer = {
   shouldIgnore(path: NodePath): string | undefined {
-    if (!isStaticStringLiteral(path)) {
+    if (!isStaticModelName(path)) {
       return undefined;
     }
     const call = path.parentPath;
     if (
-      !call.isCallExpression() ||
+      !call?.isCallExpression() ||
       call.node.callee.type !== 'Identifier' ||
       call.node.callee.name !== 'defineModel' ||
       call.node.arguments[0] !== path.node
@@ -57,12 +57,10 @@ const defineModelNameIgnorer: Ignorer = {
 };
 
 /**
- * A string literal of which the value is known at compile time, the only shape the vue
- * compiler accepts as a model name.
+ * Whether the node is a string of which the value is known at compile time, the only shape
+ * the vue compiler accepts as a model name.
  */
-function isStaticStringLiteral(
-  path: NodePath,
-): path is NodePath<types.StringLiteral | types.TemplateLiteral> {
+function isStaticModelName(path: NodePath): boolean {
   return (
     path.isStringLiteral() ||
     (path.isTemplateLiteral() && path.node.expressions.length === 0)
@@ -83,7 +81,10 @@ export const transformVue: AstTransformer<AstFormat.Vue> = (
   if (!setup) {
     /* Without a `<script setup>` block every script instruments itself, header included */
     scripts.forEach((script) => {
-      context.transform(script.ast, mutantCollector, context);
+      context.transform(script.ast, mutantCollector, {
+        ...context,
+        isExpressionContext: script.isExpression,
+      });
     });
     return;
   }
@@ -100,7 +101,8 @@ export const transformVue: AstTransformer<AstFormat.Vue> = (
    * dependency intact, while the header itself is placed after the gate below is known.
    */
   const scriptsThatNeedAHeader: TemplateScript[] = [];
-  let setupMutants: Range = { start: 0, end: 0 };
+  let setupMutantsStart = 0;
+  let setupMutantsEnd = 0;
   for (const script of scripts) {
     const isSetupScript = script === setup.script;
     const mutantsBefore = mutantCollector.mutants.length;
@@ -116,10 +118,8 @@ export const transformVue: AstTransformer<AstFormat.Vue> = (
       },
     });
     if (isSetupScript) {
-      setupMutants = {
-        start: mutantsBefore,
-        end: mutantCollector.mutants.length,
-      };
+      setupMutantsStart = mutantsBefore;
+      setupMutantsEnd = mutantCollector.mutants.length;
     }
     if (mutantCollector.hasPlacedMutants(originFileName)) {
       scriptsThatNeedAHeader.push(script);
@@ -148,7 +148,7 @@ export const transformVue: AstTransformer<AstFormat.Vue> = (
    */
   function hasMutantInsideMacroArguments(): boolean {
     return mutantCollector.mutants
-      .slice(setupMutants.start, setupMutants.end)
+      .slice(setupMutantsStart, setupMutantsEnd)
       .some(
         (mutant) =>
           !mutant.ignoreReason &&
