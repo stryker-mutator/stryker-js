@@ -4,6 +4,7 @@ import {
   HtmlRootNode,
   ScriptFormat,
   AstByFormat,
+  Range,
   ScriptAst,
 } from '../syntax/index.js';
 import type { Ast as NGAst } from 'angular-html-parser';
@@ -19,6 +20,21 @@ const JS_SCRIPT_TYPES = Object.freeze([
   'module',
 ]);
 
+/**
+ * A parsed `<script>` block, together with what was declared on the tag.
+ * `HtmlRootNode` only keeps the `ast`, the other fields are here for formats
+ * that need to tell the blocks apart.
+ */
+export interface ScriptBlock {
+  ast: ScriptAst;
+  /** The tag carries a `setup` attribute */
+  isSetup: boolean;
+  /** The raw value of the `lang` attribute, when present */
+  lang?: string;
+  /** The range of the block's content inside the original text */
+  range: Range;
+}
+
 /*
 The parser implementation in this file is heavily based on prettier's html parser
 https://github.com/prettier/prettier/blob/5a7162d0636a82c5862b9101b845af40918d22d1/src/language-html/parser-html.js
@@ -28,7 +44,10 @@ export async function parse(
   originFileName: string,
   context: ParserContext,
 ): Promise<HtmlAst> {
-  const root = await ngHtmlParser(text, originFileName, context);
+  const scriptBlocks = await collectScriptBlocks(text, originFileName, context);
+  const root: HtmlRootNode = {
+    scripts: scriptBlocks.map(({ ast }) => ast),
+  };
 
   return {
     originFileName,
@@ -38,11 +57,11 @@ export async function parse(
   };
 }
 
-async function ngHtmlParser(
+export async function collectScriptBlocks(
   text: string,
   fileName: string,
   parserContext: ParserContext,
-): Promise<HtmlRootNode> {
+): Promise<ScriptBlock[]> {
   const ngParser = await import('angular-html-parser');
 
   const { rootNodes, errors } = ngParser.parse(text, {
@@ -58,25 +77,35 @@ async function ngHtmlParser(
       toSourceLocation(errors[0].span.start),
     );
   }
-  const scriptsAsPromised: Array<Promise<ScriptAst>> = [];
+  const blocksAsPromised: Array<Promise<ScriptBlock>> = [];
   ngParser.visitAll(
     new (class extends ngParser.RecursiveVisitor {
       public override visitElement(el: NGAst.Element, context: unknown): void {
         const scriptFormat = getScriptType(el);
         if (scriptFormat) {
-          scriptsAsPromised.push(parseScript(el, scriptFormat));
+          blocksAsPromised.push(parseScriptBlock(el, scriptFormat));
         }
         super.visitElement(el, context);
       }
     })(),
     rootNodes,
   );
-  const scripts = await Promise.all(scriptsAsPromised);
-  const root: HtmlRootNode = {
-    scripts,
-  };
+  return await Promise.all(blocksAsPromised);
 
-  return root;
+  async function parseScriptBlock(
+    el: NGAst.Element,
+    scriptFormat: ScriptFormat,
+  ): Promise<ScriptBlock> {
+    return {
+      ast: await parseScript(el, scriptFormat),
+      isSetup: el.attrs.some((attr) => attr.name === 'setup'),
+      lang: el.attrs.find((attr) => attr.name === 'lang')?.value,
+      range: {
+        start: el.startSourceSpan.end.offset,
+        end: el.endSourceSpan!.start.offset,
+      },
+    };
+  }
 
   async function parseScript<T extends ScriptFormat>(
     el: NGAst.Element,
