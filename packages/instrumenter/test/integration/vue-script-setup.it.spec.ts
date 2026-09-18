@@ -2,11 +2,24 @@ import { promises as fsPromises } from 'fs';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
-import { compileScript, parse } from 'vue/compiler-sfc';
+import { compileScript, parse, SFCParseResult } from 'vue/compiler-sfc';
 
 import { createInstrumenter, Instrumenter } from '../../src/index.js';
 import { createInstrumenterOptions } from '../helpers/factories.js';
 import { resolveTestResource } from '../helpers/resolve-test-resource.js';
+
+/**
+ * Every SFC with a `<script setup>` block, so that each of them is put through the vue
+ * compiler. An SFC of which the `lang` doesn't match between its script blocks, or of which
+ * a compiler macro lost its static argument, doesn't make it past `compileScript`.
+ */
+const scriptSetupFixtures = Object.freeze([
+  'vue-script-setup.vue',
+  'vue-script-setup-ts.vue',
+  'vue-script-setup-macros.vue',
+  'vue-script-setup-and-module-script.vue',
+  'vue-script-setup-header-per-block.vue',
+]);
 
 describe('vue script setup integration', () => {
   let sut: Instrumenter;
@@ -15,42 +28,56 @@ describe('vue script setup integration', () => {
     sut = testInjector.injector.injectFunction(createInstrumenter);
   });
 
-  describe('an instrumented SFC with compiler macros', () => {
-    let instrumented: string;
+  for (const fixture of scriptSetupFixtures) {
+    describe(`the instrumented ${fixture}`, () => {
+      let parsed: SFCParseResult;
+
+      beforeEach(async () => {
+        parsed = parse(await instrument(fixture), { filename: fixture });
+      });
+
+      it('should be parsed by the vue compiler without errors', () => {
+        expect(parsed.errors).lengthOf(0);
+        expect(parsed.descriptor.scriptSetup).ok;
+      });
+
+      for (const inlineTemplate of [true, false]) {
+        it(`should be compiled by the vue compiler with inlineTemplate ${inlineTemplate}`, () => {
+          compileScript(parsed.descriptor, { id: fixture, inlineTemplate });
+
+          expect(parsed.errors).lengthOf(0);
+        });
+      }
+    });
+  }
+
+  describe('the instrumented vue-script-setup-macros.vue', () => {
+    let parsed: SFCParseResult;
 
     beforeEach(async () => {
-      instrumented = await instrument('vue-script-setup-macros.vue');
+      parsed = parse(await instrument('vue-script-setup-macros.vue'), {
+        filename: 'vue-script-setup-macros.vue',
+      });
     });
 
-    it('should be compiled by the vue compiler without errors', () => {
-      const { descriptor, errors } = parseSfc();
-
-      expect(errors).lengthOf(0);
-      /* The instrumentation header is placed in a module level script */
-      expect(descriptor.script).ok;
-      expect(descriptor.scriptSetup).ok;
+    it('should hold the instrumentation header in a module level script', () => {
+      expect(parsed.descriptor.script).ok;
     });
 
     for (const inlineTemplate of [true, false]) {
-      describe(`with inlineTemplate: ${inlineTemplate}`, () => {
-        it('should keep the model contract of `defineModel`', () => {
-          const { content } = compileScript(parseSfc().descriptor, {
-            id: 'vue-script-setup-macros',
-            inlineTemplate,
-          });
-
-          expect(declaredPropNames(content)).deep.eq(['open', 'openModifiers']);
-          expect(content).include('emits: ["update:open"]');
-          /* The default of the model is mutation switched, but still defaults to false */
-          expect(content).match(
-            /default: stryMutAct_9fa48\("\d+"\) \? true : \(stryCov_9fa48\("\d+"\), false\)/,
-          );
+      it(`should keep the model contract of \`defineModel\` with inlineTemplate ${inlineTemplate}`, () => {
+        const { content } = compileScript(parsed.descriptor, {
+          id: 'vue-script-setup-macros',
+          inlineTemplate,
         });
-      });
-    }
 
-    function parseSfc() {
-      return parse(instrumented, { filename: 'vue-script-setup-macros.vue' });
+        expect(declaredPropNames(content)).deep.eq(['open', 'openModifiers']);
+        expect(content).include('emits: ["update:open"]');
+        /* The default of the model is mutation switched, but still defaults to false */
+        expect(content).match(
+          /default: stryMutAct_9fa48\("\d+"\) \? true : \(stryCov_9fa48\("\d+"\), false\)/,
+        );
+      });
     }
   });
 

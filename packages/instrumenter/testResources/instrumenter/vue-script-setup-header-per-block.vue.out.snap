@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`instrumenter integration should be able to instrument a vue script setup sample of which only the module script has mutants 1`] = `
+exports[`instrumenter integration should keep a header per script block of a vue SFC when no compiler macro argument is mutated 1`] = `
 "<template>
   <dialog :open=\\"open\\"></dialog>
 </template>
