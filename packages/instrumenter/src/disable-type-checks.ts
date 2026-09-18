@@ -4,7 +4,12 @@ import { notEmpty } from '@stryker-mutator/util';
 import { File } from './file.js';
 
 import { createParser, getFormat, ParserOptions } from './parsers/index.js';
-import { AstFormat, HtmlAst, ScriptAst, SvelteAst } from './syntax/index.js';
+import {
+  AstFormat,
+  HtmlAst,
+  ScriptAst,
+  TemplateScript,
+} from './syntax/index.js';
 
 const commentDirectiveRegEx = /^(\s*)@(ts-[a-z-]+).*$/;
 const tsDirectiveLikeRegEx = /@(ts-[a-z-]+)/;
@@ -44,7 +49,21 @@ export async function disableTypeChecks(
     case AstFormat.Html:
       return { ...file, content: disableTypeCheckingInHtml(ast) };
     case AstFormat.Svelte:
-      return { ...file, content: disableTypeCheckingInSvelte(ast) };
+      return {
+        ...file,
+        content: disableTypeCheckingInTemplateScripts(ast.rawContent, [
+          ast.root.moduleScript,
+          ...ast.root.additionalScripts,
+        ]),
+      };
+    case AstFormat.Vue:
+      return {
+        ...file,
+        content: disableTypeCheckingInTemplateScripts(ast.rawContent, [
+          ast.root.moduleScript,
+          ...ast.root.additionalScripts,
+        ]),
+      };
   }
 }
 
@@ -97,14 +116,17 @@ function disableTypeCheckingInHtml(ast: HtmlAst): string {
   return html;
 }
 
-function disableTypeCheckingInSvelte(ast: SvelteAst): string {
-  const sortedScripts = [ast.root.moduleScript, ...ast.root.additionalScripts]
+function disableTypeCheckingInTemplateScripts(
+  rawContent: string,
+  scripts: Array<TemplateScript | undefined>,
+): string {
+  const sortedScripts = scripts
     .filter(notEmpty)
     .sort((a, b) => a.range.start - b.range.start);
   let currentIndex = 0;
   let html = '';
   for (const script of sortedScripts) {
-    html += ast.rawContent.substring(currentIndex, script.range.start);
+    html += rawContent.substring(currentIndex, script.range.start);
     html += '\n';
     html += prefixWithNoCheck(
       removeTSDirectives(script.ast.rawContent, script.ast.root.comments),
@@ -112,7 +134,7 @@ function disableTypeCheckingInSvelte(ast: SvelteAst): string {
     html += '\n';
     currentIndex = script.range.end;
   }
-  html += ast.rawContent.substring(currentIndex);
+  html += rawContent.substring(currentIndex);
   return html;
 }
 
