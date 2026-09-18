@@ -58,7 +58,7 @@ function stryMutAct_9fa48(id) {
 </template>
 
 <script setup>
-const open = defineModel(stryMutAct_9fa48(\\"0\\") ? \\"\\" : (stryCov_9fa48(\\"0\\"), 'open'), stryMutAct_9fa48(\\"1\\") ? {} : (stryCov_9fa48(\\"1\\"), {
+const open = defineModel('open', stryMutAct_9fa48(\\"1\\") ? {} : (stryCov_9fa48(\\"1\\"), {
   default: stryMutAct_9fa48(\\"2\\") ? true : (stryCov_9fa48(\\"2\\"), false)
 }));
 function toggle() {

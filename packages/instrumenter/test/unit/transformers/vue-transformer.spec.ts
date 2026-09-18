@@ -6,9 +6,14 @@ import { types, type NodePath } from '@babel/core';
 
 import { MutantCollector } from '../../../src/transformers/mutant-collector.js';
 import { transformVue } from '../../../src/transformers/vue-transformer.js';
-import { TransformerContext } from '../../../src/transformers/index.js';
+import {
+  TransformerContext,
+  transform,
+} from '../../../src/transformers/index.js';
 import { parse as parseVue } from '../../../src/parsers/vue-parser.js';
 import { createParser } from '../../../src/parsers/index.js';
+import { print } from '../../../src/printers/index.js';
+import { Mutant } from '../../../src/mutant.js';
 import {
   AstFormat,
   Range,
@@ -74,15 +79,34 @@ const greeting = 'hello';
 
     transformVue(vue, mutantCollector, context);
 
-    sinon.assert.calledOnceWithExactly(
-      context.transform,
-      vue.root.setup!.script.ast,
-      mutantCollector,
-      {
-        ...context,
-        isExpressionContext: false,
-        options: { ...context.options, noHeader: true },
-      },
+    sinon.assert.calledOnce(context.transform);
+    const [ast, collector, usedContext] = context.transform.firstCall.args;
+    expect(ast).eq(vue.root.setup!.script.ast);
+    expect(collector).eq(mutantCollector);
+    expect(usedContext.isExpressionContext).false;
+    expect(usedContext.options.noHeader).true;
+    expect(usedContext.mutateDescription).eq(context.mutateDescription);
+  });
+
+  it('should only hand the model name ignorer to the `<script setup>` block', async () => {
+    const vue = await parseSfc(`<script>
+export const greeting = 'hello';
+</script>
+<script setup>
+const label = greeting;
+</script>
+`);
+
+    transformVue(vue, mutantCollector, context);
+
+    const [moduleCall, setupCall] = context.transform.getCalls();
+    expect(moduleCall.args[0]).eq(vue.root.moduleScript!.ast);
+    expect(moduleCall.args[2].options.ignorers).deep.eq(
+      context.options.ignorers,
+    );
+    expect(setupCall.args[0]).eq(vue.root.setup!.script.ast);
+    expect(setupCall.args[2].options.ignorers).lengthOf(
+      context.options.ignorers.length + 1,
     );
   });
 
@@ -246,6 +270,58 @@ const props = defineProps({ label: 'hello' });
       expect(vue.root.moduleScript).undefined;
       expect(scriptsWithHeader(vue)).deep.eq([setupScript]);
     });
+  });
+
+  describe('the model name of `defineModel`', () => {
+    it('should be ignored, while the other mutants of the call are placed', async () => {
+      const vue = await parseSfc(`<script setup>
+const open = defineModel('open', { default: false });
+</script>
+`);
+
+      /* The real transform, so both the ignorer and the mutators run */
+      transform(vue, mutantCollector, transformerContextStub());
+
+      const nameMutant = onlyMutantOf('StringLiteral');
+      const defaultMutant = onlyMutantOf('BooleanLiteral');
+      expect(nameMutant.ignoreReason).contains('defineModel');
+      expect(defaultMutant.ignoreReason).undefined;
+      const output = print(vue);
+      expect(output).not.include(`stryMutAct_9fa48("${nameMutant.id}")`);
+      expect(output).include(`stryMutAct_9fa48("${defaultMutant.id}")`);
+      expect(output).include("defineModel('open',");
+    });
+
+    it('should also be ignored when it is a template literal', async () => {
+      const vue = await parseSfc(
+        '<script setup>\nconst open = defineModel(`open`, { default: false });\n</script>\n',
+      );
+
+      transform(vue, mutantCollector, transformerContextStub());
+
+      expect(onlyMutantOf('StringLiteral').ignoreReason).contains(
+        'defineModel',
+      );
+    });
+
+    it('should not be ignored outside of a `defineModel` call', async () => {
+      const vue = await parseSfc(`<script setup>
+const open = defineSomethingElse('open');
+</script>
+`);
+
+      transform(vue, mutantCollector, transformerContextStub());
+
+      expect(onlyMutantOf('StringLiteral').ignoreReason).undefined;
+    });
+
+    function onlyMutantOf(mutatorName: string): Mutant {
+      const mutants = mutantCollector.mutants.filter(
+        (mutant) => mutant.mutatorName === mutatorName,
+      );
+      expect(mutants, `expected one ${mutatorName} mutant`).lengthOf(1);
+      return mutants[0];
+    }
   });
 
   async function parseSfc(rawContent: string): Promise<VueAst> {

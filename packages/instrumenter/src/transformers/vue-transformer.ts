@@ -1,7 +1,8 @@
 import { notEmpty } from '@stryker-mutator/util';
 
-import { types } from '@babel/core';
+import { types, type NodePath } from '@babel/core';
 import traverse from '@babel/traverse';
+import type { Ignorer } from '@stryker-mutator/api/ignore';
 
 import {
   AstFormat,
@@ -27,6 +28,46 @@ const COMPILER_MACROS = Object.freeze([
   'defineSlots',
   'withDefaults',
 ]);
+
+const DEFINE_MODEL_NAME_MSG =
+  'The model name of `defineModel` cannot be mutated, the vue compiler reads it to name the model prop and its update event.';
+
+/**
+ * Ignores the model name of a `defineModel` call. The compiler derives the name of the prop,
+ * of its modifiers prop and of the update event from that literal, so mutating it doesn't
+ * change the behavior of the component, it changes the contract of its parent.
+ * Only handed to the transform of a `<script setup>` block, where the macro is available.
+ */
+const defineModelNameIgnorer: Ignorer = {
+  shouldIgnore(path: NodePath): string | undefined {
+    if (!isStaticStringLiteral(path)) {
+      return undefined;
+    }
+    const call = path.parentPath;
+    if (
+      !call.isCallExpression() ||
+      call.node.callee.type !== 'Identifier' ||
+      call.node.callee.name !== 'defineModel' ||
+      call.node.arguments[0] !== path.node
+    ) {
+      return undefined;
+    }
+    return DEFINE_MODEL_NAME_MSG;
+  },
+};
+
+/**
+ * A string literal of which the value is known at compile time, the only shape the vue
+ * compiler accepts as a model name.
+ */
+function isStaticStringLiteral(
+  path: NodePath,
+): path is NodePath<types.StringLiteral | types.TemplateLiteral> {
+  return (
+    path.isStringLiteral() ||
+    (path.isTemplateLiteral() && path.node.expressions.length === 0)
+  );
+}
 
 export const transformVue: AstTransformer<AstFormat.Vue> = (
   vue,
@@ -66,6 +107,10 @@ export const transformVue: AstTransformer<AstFormat.Vue> = (
       options: {
         ...context.options,
         noHeader: true,
+        ignorers:
+          script === setup.script
+            ? [...context.options.ignorers, defineModelNameIgnorer]
+            : context.options.ignorers,
       },
     });
     if (mutantCollector.hasPlacedMutants(originFileName)) {
