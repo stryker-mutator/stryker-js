@@ -33,6 +33,18 @@ const DEFINE_MODEL_NAME_MSG =
   'The model name of `defineModel` cannot be mutated, the vue compiler reads it to name the model prop and its update event.';
 
 /**
+ * The TypeScript expressions the vue compiler looks through before it reads the model name,
+ * the same list as its own `unwrapTSNode`.
+ */
+const TS_WRAPPER_TYPES: ReadonlyArray<types.Node['type']> = Object.freeze([
+  'TSAsExpression',
+  'TSInstantiationExpression',
+  'TSNonNullExpression',
+  'TSSatisfiesExpression',
+  'TSTypeAssertion',
+]);
+
+/**
  * Ignores the model name of a `defineModel` call. The compiler derives the name of the prop,
  * of its modifiers prop and of the update event from that literal, so mutating it doesn't
  * change the behavior of the component, it changes the contract of its parent.
@@ -43,12 +55,20 @@ const defineModelNameIgnorer: Ignorer = {
     if (!isStaticModelName(path)) {
       return undefined;
     }
-    const call = path.parentPath;
+    /* The compiler unwraps the TypeScript expressions around the name, so `'foo' as const` names a model as well */
+    let argument = path;
+    while (
+      argument.parentPath &&
+      TS_WRAPPER_TYPES.includes(argument.parentPath.node.type)
+    ) {
+      argument = argument.parentPath;
+    }
+    const call = argument.parentPath;
     if (
       !call?.isCallExpression() ||
       call.node.callee.type !== 'Identifier' ||
       call.node.callee.name !== 'defineModel' ||
-      call.node.arguments[0] !== path.node
+      call.node.arguments[0] !== argument.node
     ) {
       return undefined;
     }

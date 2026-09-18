@@ -342,6 +342,38 @@ const open = defineModel('open', { default: false });
       );
     });
 
+    for (const modelName of [
+      "'open' satisfies string",
+      "'open'!",
+      "<string>'open'",
+    ]) {
+      it(`should be ignored when it is written as ${modelName}`, async () => {
+        /* The compiler reads the name through `unwrapTSNode`, so these all name the model `open` */
+        const vue = await parseSfc(`<script setup lang="ts">
+const open = defineModel(${modelName});
+</script>
+`);
+
+        transform(vue, mutantCollector, transformerContextStub());
+
+        expect(onlyMutantOf('StringLiteral').ignoreReason).contains(
+          'defineModel',
+        );
+      });
+    }
+
+    it('should not be mutated at all when it is written as `as const`', async () => {
+      const vue = await parseSfc(`<script setup lang="ts">
+const open = defineModel('open' as const);
+</script>
+`);
+
+      transform(vue, mutantCollector, transformerContextStub());
+
+      /* An `as` expression is a type node, the mutators never get to see what is inside of it */
+      expect(mutantsOf('StringLiteral')).lengthOf(0);
+    });
+
     it('should not be ignored outside of a `defineModel` call', async () => {
       const vue = await parseSfc(`<script setup>
 const open = defineSomethingElse('open');
@@ -353,10 +385,14 @@ const open = defineSomethingElse('open');
       expect(onlyMutantOf('StringLiteral').ignoreReason).undefined;
     });
 
-    function onlyMutantOf(mutatorName: string): Mutant {
-      const mutants = mutantCollector.mutants.filter(
+    function mutantsOf(mutatorName: string): Mutant[] {
+      return mutantCollector.mutants.filter(
         (mutant) => mutant.mutatorName === mutatorName,
       );
+    }
+
+    function onlyMutantOf(mutatorName: string): Mutant {
+      const mutants = mutantsOf(mutatorName);
       expect(mutants, `expected one ${mutatorName} mutant`).lengthOf(1);
       return mutants[0];
     }
