@@ -49,13 +49,6 @@ export async function disableTypeChecks(
     case AstFormat.Html:
       return { ...file, content: disableTypeCheckingInHtml(ast) };
     case AstFormat.Svelte:
-      return {
-        ...file,
-        content: disableTypeCheckingInTemplateScripts(ast.rawContent, [
-          ast.root.moduleScript,
-          ...ast.root.additionalScripts,
-        ]),
-      };
     case AstFormat.Vue:
       return {
         ...file,
