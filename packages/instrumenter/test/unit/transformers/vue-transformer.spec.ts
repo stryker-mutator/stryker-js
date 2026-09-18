@@ -235,6 +235,44 @@ const label = greeting;
       expect(scriptsWithHeader(vue)).deep.eq([setupScript]);
     });
 
+    it('should not let a mutant of another script block trip the compiler macro gate', async () => {
+      const rawContent = `<template>
+  <dialog :open="open"></dialog>
+</template>
+
+<script>
+export const messageId = 'hi';
+</script>
+
+<script setup>
+const open = defineModel('open');
+</script>
+`;
+      const vue = await parseSfc(rawContent);
+      const moduleScript = vue.root.moduleScript!;
+      const setupScript = vue.root.setup!.script;
+      /*
+       * Every block has its own coordinate system, the mutant of the module script sits at
+       * [26, 30) of that block while the `defineModel` name sits at [26, 32) of the
+       * `<script setup>` block, so comparing the two directly reports a false overlap.
+       */
+      const mutantNode = findNodePath(moduleScript.ast.root, (path) =>
+        path.isStringLiteral(),
+      ).node;
+      const macroArgument = findNodePath(setupScript.ast.root, (path) =>
+        path.isStringLiteral(),
+      ).node;
+      expect(mutantNode.start).least(macroArgument.start!);
+      expect(mutantNode.end).most(macroArgument.end!);
+      planMutant(moduleScript, (path) => path.isStringLiteral());
+
+      transformVue(vue, mutantCollector, context);
+
+      expect(vue.root.moduleScript).eq(moduleScript);
+      expect(vue.rawContent).eq(rawContent);
+      expect(scriptsWithHeader(vue)).deep.eq([moduleScript, setupScript]);
+    });
+
     it('should not place a header at all when no mutants were collected', async () => {
       const rawContent = `<script setup>
 const props = defineProps({ label: 'hello' });
