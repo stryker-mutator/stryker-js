@@ -100,19 +100,27 @@ export const transformVue: AstTransformer<AstFormat.Vue> = (
    * dependency intact, while the header itself is placed after the gate below is known.
    */
   const scriptsThatNeedAHeader: TemplateScript[] = [];
+  let setupMutants: Range = { start: 0, end: 0 };
   for (const script of scripts) {
+    const isSetupScript = script === setup.script;
+    const mutantsBefore = mutantCollector.mutants.length;
     context.transform(script.ast, mutantCollector, {
       ...context,
       isExpressionContext: script.isExpression,
       options: {
         ...context.options,
         noHeader: true,
-        ignorers:
-          script === setup.script
-            ? [...context.options.ignorers, defineModelNameIgnorer]
-            : context.options.ignorers,
+        ignorers: isSetupScript
+          ? [...context.options.ignorers, defineModelNameIgnorer]
+          : context.options.ignorers,
       },
     });
+    if (isSetupScript) {
+      setupMutants = {
+        start: mutantsBefore,
+        end: mutantCollector.mutants.length,
+      };
+    }
     if (mutantCollector.hasPlacedMutants(originFileName)) {
       scriptsThatNeedAHeader.push(script);
     }
@@ -131,15 +139,23 @@ export const transformVue: AstTransformer<AstFormat.Vue> = (
     });
   }
 
+  /**
+   * Only the mutants of the `<script setup>` block itself can be inside one of its macro
+   * arguments. The positions in a parsed script block are relative to that block, so a mutant of
+   * another block, or of another file, would report a bogus overlap. The collector only appends
+   * while a script is transformed, and a script only ever filters out its own mutants, so the
+   * slice taken around that transform holds exactly the mutants of the `<script setup>` block.
+   */
   function hasMutantInsideMacroArguments(): boolean {
-    return mutantCollector.mutants.some(
-      (mutant) =>
-        mutant.fileName === originFileName &&
-        !mutant.ignoreReason &&
-        macroArgumentRanges.some((range) =>
-          rangeIncludes(range, mutant.original),
-        ),
-    );
+    return mutantCollector.mutants
+      .slice(setupMutants.start, setupMutants.end)
+      .some(
+        (mutant) =>
+          !mutant.ignoreReason &&
+          macroArgumentRanges.some((range) =>
+            rangeIncludes(range, mutant.original),
+          ),
+      );
   }
 };
 

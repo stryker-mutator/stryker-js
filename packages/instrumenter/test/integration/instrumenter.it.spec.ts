@@ -70,6 +70,9 @@ describe('instrumenter integration', () => {
   it('should be able to instrument a vue script setup sample with a module script', async () => {
     await arrangeAndActAssert('vue-script-setup-and-module-script.vue');
   });
+  it('should be able to instrument a vue script setup sample of which only the module script has mutants', async () => {
+    await arrangeAndActAssert('vue-script-setup-module-script-mutant.vue');
+  });
   it('should be able to instrument super calls', async () => {
     await arrangeAndActAssert('super-call.ts');
   });
