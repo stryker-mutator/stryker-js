@@ -31,5 +31,30 @@ describe('errors', () => {
       delete error.stack;
       expect(errorToString(error)).eq('Error: expected error');
     });
+
+    it('should convert an error that lost its prototype to string', () => {
+      // A structured-clone-style serializer rebuilds an error crossing a worker boundary with
+      // `Object.create(null)`, so it is no longer `instanceof Error` and `String()` throws on it.
+      const error = Object.create(null) as Record<string, unknown>;
+      error.name = 'TypeError';
+      error.message = 'expected error';
+      error.stack = 'TypeError: expected error\n    at foo.js:1:1';
+      expect(errorToString(error)).eq(
+        'TypeError: expected error\nTypeError: expected error\n    at foo.js:1:1',
+      );
+    });
+
+    it('should convert a value without a message that cannot be coerced to a primitive', () => {
+      expect(errorToString(Object.create(null))).eq('[object Object]');
+    });
+
+    it('should not throw when `Symbol.toPrimitive` throws', () => {
+      const error = {
+        [Symbol.toPrimitive]() {
+          throw new Error('not convertible');
+        },
+      };
+      expect(errorToString(error)).eq('[object Object]');
+    });
   });
 });
