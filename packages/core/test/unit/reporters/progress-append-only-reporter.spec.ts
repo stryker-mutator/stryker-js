@@ -138,5 +138,31 @@ describe(ProgressAppendOnlyReporter.name, () => {
         `Mutation testing 82% (elapsed: <1m, remaining: <1m) 2/4 tested (1 survived, 1 timed out)${os.EOL}`,
       );
     });
+
+    it('should log a final progress line when mutation testing completes between ticks', () => {
+      // 20/145*100 = 13.7
+      sut.onMutantTested(factory.survivedMutantResult({ id: '3' }));
+      sut.onMutantTested(factory.killedMutantResult({ id: '5' }));
+      expect(process.stdout.write).to.not.have.been.called;
+
+      sut.onMutationTestReportReady();
+
+      expect(process.stdout.write).to.have.been.calledWith(
+        `Mutation testing 13% (elapsed: <1m, remaining: n/a) 2/4 tested (1 survived, 0 timed out)${os.EOL}`,
+      );
+    });
+  });
+
+  describe('onMutationTestReportReady() without mutants to test', () => {
+    it('should not log a progress line', () => {
+      sut.onDryRunCompleted(factory.dryRunCompletedEvent());
+      sut.onMutationTestingPlanReady(
+        factory.mutationTestingPlanReadyEvent({ mutantPlans: [] }),
+      );
+
+      sut.onMutationTestReportReady();
+
+      expect(process.stdout.write).to.not.have.been.called;
+    });
   });
 });
