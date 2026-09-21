@@ -19,6 +19,7 @@ import { lastValueFrom, of } from 'rxjs';
 
 import { coreTokens } from '../di/index.js';
 import { Sandbox } from '../sandbox/sandbox.js';
+import { PerformanceMetricsSink } from '../performance-metrics-sink.js';
 import { Timer } from '../utils/timer.js';
 import { createTestRunnerFactory } from '../test-runner/index.js';
 import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper.js';
@@ -44,6 +45,11 @@ import { MutationTestContext } from './4-mutation-test-executor.js';
 import { MutantInstrumenterContext } from './2-mutant-instrumenter-executor.js';
 
 const INITIAL_TEST_RUN_MARKER = 'Initial test run';
+
+interface DryRunOutcome extends DryRunCompletedEvent {
+  setupTimeMS: number;
+  initialRunMS: number;
+}
 
 export interface DryRunContext extends MutantInstrumenterContext {
   [coreTokens.sandbox]: I<Sandbox>;
@@ -80,6 +86,10 @@ export class DryRunExecutor {
   public async execute(): Promise<Injector<MutationTestContext>> {
     const testRunnerInjector = this.injector
       .provideClass(coreTokens.workerIdGenerator, IdGenerator)
+      .provideValue(
+        coreTokens.performanceMetricsSink,
+        new PerformanceMetricsSink(this.options.experimentalPerformanceReport),
+      )
       .provideFactory(coreTokens.testRunnerFactory, createTestRunnerFactory)
       .provideValue(
         coreTokens.testRunnerConcurrencyTokens,
@@ -89,7 +99,7 @@ export class DryRunExecutor {
     const testRunnerPool = testRunnerInjector.resolve(
       coreTokens.testRunnerPool,
     );
-    const { result, timing } = await lastValueFrom(
+    const { result, timing, setupTimeMS, initialRunMS } = await lastValueFrom(
       testRunnerPool.schedule(of(0), (testRunner) =>
         this.executeDryRun(testRunner),
       ),
@@ -104,6 +114,8 @@ export class DryRunExecutor {
 
     return testRunnerInjector
       .provideValue(coreTokens.timeOverheadMS, timing.overhead)
+      .provideValue(coreTokens.setupTimeMS, setupTimeMS)
+      .provideValue(coreTokens.initialRunMS, initialRunMS)
       .provideValue(coreTokens.dryRunResult, result)
       .provideValue(coreTokens.requireFromCwd, requireResolve)
       .provideFactory(coreTokens.testCoverage, TestCoverage.from)
@@ -140,9 +152,7 @@ export class DryRunExecutor {
     throw new Error('Something went wrong in the initial test run');
   }
 
-  private async executeDryRun(
-    testRunner: TestRunner,
-  ): Promise<DryRunCompletedEvent> {
+  private async executeDryRun(testRunner: TestRunner): Promise<DryRunOutcome> {
     if (this.options.dryRunOnly) {
       this.log.info(
         'Note: running the dry-run only. No mutations will be tested.',
@@ -158,6 +168,7 @@ export class DryRunExecutor {
       project.testFiles.length > 0
         ? project.testFiles.map((file) => this.sandbox.sandboxFileFor(file))
         : undefined;
+    const setupTimeMS = this.timer.elapsedMs();
     this.timer.mark(INITIAL_TEST_RUN_MARKER);
     this.log.info(
       `Starting initial test run (${this.options.testRunner} test runner with "${this.options.coverageAnalysis}" coverage analysis). This may take a while.`,
@@ -178,7 +189,7 @@ export class DryRunExecutor {
     const timing = this.calculateTiming(grossTimeMS, result.tests);
     const dryRunCompleted = { result, timing, capabilities };
     this.reporter.onDryRunCompleted(dryRunCompleted);
-    return dryRunCompleted;
+    return { ...dryRunCompleted, setupTimeMS, initialRunMS: grossTimeMS };
   }
 
   /**

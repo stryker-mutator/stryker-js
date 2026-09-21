@@ -6,6 +6,7 @@ import { LoggerFactoryMethod } from '@stryker-mutator/api/logging';
 import { LoggingServerAddress } from '../logging/index.js';
 import { coreTokens } from '../di/index.js';
 import { Sandbox } from '../sandbox/sandbox.js';
+import { PerformanceMetricsSink } from '../performance-metrics-sink.js';
 
 import { IdGenerator } from '../child-proxy/id-generator.js';
 
@@ -24,6 +25,7 @@ createTestRunnerFactory.inject = tokens(
   commonTokens.getLogger,
   coreTokens.pluginModulePaths,
   coreTokens.workerIdGenerator,
+  coreTokens.performanceMetricsSink,
 );
 export function createTestRunnerFactory(
   options: StrykerOptions,
@@ -33,6 +35,7 @@ export function createTestRunnerFactory(
   getLogger: LoggerFactoryMethod,
   pluginModulePaths: readonly string[],
   idGenerator: IdGenerator,
+  performanceMetricsSink: PerformanceMetricsSink,
 ): () => TestRunner {
   if (CommandTestRunner.is(options.testRunner)) {
     return () =>
@@ -43,6 +46,7 @@ export function createTestRunnerFactory(
             getLogger(TimeoutDecorator.name),
             () => new CommandTestRunner(sandbox.workingDirectory, options),
           ),
+        performanceMetricsSink,
       );
   } else {
     return () =>
@@ -68,7 +72,9 @@ export function createTestRunnerFactory(
                   ),
                 options,
               ),
+            performanceMetricsSink,
           ),
+        performanceMetricsSink,
       );
   }
 }

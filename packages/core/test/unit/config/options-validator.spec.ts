@@ -71,6 +71,7 @@ describe(OptionsValidator.name, () => {
         eventReporter: {
           baseDir: 'reports/mutation/events',
         },
+        experimentalPerformanceReport: false,
         fileLogLevel: LogLevel.Off,
         jsonReporter: {
           fileName: 'reports/mutation/mutation.json',
