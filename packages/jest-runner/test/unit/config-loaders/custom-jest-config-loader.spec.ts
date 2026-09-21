@@ -86,6 +86,55 @@ describe(CustomJestConfigLoader.name, () => {
     });
   });
 
+  describe('preset testEnvironment resolution', () => {
+    it('should resolve testEnvironment via jest normalize when the raw config has none', async () => {
+      jestConfigWrapperMock.readInitialOptions.resolves({
+        config: { preset: 'some-preset' },
+        configPath: path.resolve('jest.config.js'),
+      });
+      jestConfigWrapperMock.normalize.resolves({
+        options: { testEnvironment: 'jsdom' },
+        hasDeprecationWarnings: false,
+      } as Awaited<ReturnType<JestConfigWrapper['normalize']>>);
+
+      const config = await sut.loadConfig();
+
+      expect(config.testEnvironment).eq('jsdom');
+      sinon.assert.calledOnceWithExactly(
+        jestConfigWrapperMock.normalize,
+        { preset: 'some-preset' },
+        { _: [], $0: 'stryker' },
+        path.resolve('jest.config.js'),
+      );
+    });
+
+    it('should not call normalize when testEnvironment is already set', async () => {
+      jestConfigWrapperMock.readInitialOptions.resolves({
+        config: { testEnvironment: 'node' },
+        configPath: path.resolve('jest.config.js'),
+      });
+
+      const config = await sut.loadConfig();
+
+      expect(config.testEnvironment).eq('node');
+      sinon.assert.notCalled(jestConfigWrapperMock.normalize);
+    });
+
+    it('should keep the raw config when normalize fails', async () => {
+      const rawConfig: Config.InitialOptions = { preset: 'broken-preset' };
+      jestConfigWrapperMock.readInitialOptions.resolves({
+        config: rawConfig,
+        configPath: path.resolve('jest.config.js'),
+      });
+      jestConfigWrapperMock.normalize.rejects(new Error('cannot find preset'));
+
+      const config = await sut.loadConfig();
+
+      expect(config).eq(rawConfig);
+      expect(config.testEnvironment).eq(undefined);
+    });
+  });
+
   describe('manual read config', () => {
     const projectRoot = process.cwd();
     let readFileStub: sinon.SinonStubbedMember<typeof fs.promises.readFile>;
