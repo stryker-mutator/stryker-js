@@ -58,6 +58,20 @@ export const config = (stryMutAct_9fa48(\\"0\\") ? {} : (stryCov_9fa48(\\"0\\"),
 })) as const;
 
 /**
+ * @see https://github.com/stryker-mutator/stryker-js/issues/6208
+ */
+export const satisfied = (stryMutAct_9fa48(\\"3\\") ? {} : (stryCov_9fa48(\\"3\\"), {
+  debug: stryMutAct_9fa48(\\"4\\") ? true : (stryCov_9fa48(\\"4\\"), false)
+})) satisfies Record<string, boolean>;
+
+/**
+ * @see https://github.com/stryker-mutator/stryker-js/issues/6208
+ */
+export const legacyConfig = <Record<string, boolean>> (stryMutAct_9fa48(\\"5\\") ? {} : (stryCov_9fa48(\\"5\\"), {
+  debug: stryMutAct_9fa48(\\"6\\") ? true : (stryCov_9fa48(\\"6\\"), false)
+}));
+
+/**
  * @see https://github.com/stryker-mutator/stryker-js/issues/6149
  */
 export const asserted = x satisfies string extends string ? true : false;"

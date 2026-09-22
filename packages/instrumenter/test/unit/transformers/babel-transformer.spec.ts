@@ -406,6 +406,18 @@ describe('babel-transformer', () => {
       expect(mutantCollector.mutants).lengthOf(0);
     });
 
+    it('should skip the type of a `satisfies` expression (#6149)', () => {
+      const ast = createTSAst({ rawContent: 'let bar = "bar" satisfies foo' });
+      act(ast);
+      expect(mutantCollector.mutants).lengthOf(0);
+    });
+
+    it('should skip the type of a `<T>` assertion', () => {
+      const ast = createTSAst({ rawContent: 'let bar = <foo>"bar"' });
+      act(ast);
+      expect(mutantCollector.mutants).lengthOf(0);
+    });
+
     it('should not skip the expression an `as` is asserted on (#6208)', () => {
       const ast = createTSAst({ rawContent: 'bar = foo as unknown;' });
       act(ast);
@@ -420,6 +432,12 @@ describe('babel-transformer', () => {
 
     it('should not skip the expression a `satisfies` is asserted on', () => {
       const ast = createTSAst({ rawContent: 'bar = foo satisfies unknown;' });
+      act(ast);
+      expect(mutantCollector.mutants).lengthOf(1);
+    });
+
+    it('should not skip the expression a `<T>` assertion is asserted on', () => {
+      const ast = createTSAst({ rawContent: 'bar = <unknown>foo;' });
       act(ast);
       expect(mutantCollector.mutants).lengthOf(1);
     });

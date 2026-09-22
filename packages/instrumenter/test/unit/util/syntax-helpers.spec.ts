@@ -37,6 +37,30 @@ describe('syntax-helpers', () => {
       expect(syntaxHelpers.isTypeNode(input)).true;
     });
 
+    it('should not identify a "satisfies" expression itself (#6149)', () => {
+      const input = findNodePath(
+        parseTS('const foo = { bar: "baz" } satisfies Record<string, string>'),
+        (p) => p.isTSSatisfiesExpression(),
+      );
+      expect(syntaxHelpers.isTypeNode(input)).false;
+    });
+
+    it('should identify the type of a type assertion ("<T>")', () => {
+      const input = findNodePath(
+        parseTS('const foo = <Record<string, string>>{ bar: "baz" }'),
+        (p) => p.isTSTypeReference(),
+      );
+      expect(syntaxHelpers.isTypeNode(input)).true;
+    });
+
+    it('should not identify a type assertion itself ("<T>")', () => {
+      const input = findNodePath(
+        parseTS('const foo = <Record<string, string>>{ bar: "baz" }'),
+        (p) => p.isTSTypeAssertion(),
+      );
+      expect(syntaxHelpers.isTypeNode(input)).false;
+    });
+
     it('should identify interface declarations', () => {
       const input = findNodePath(parseTS('interface Foo {}'), (p) =>
         p.isTSInterfaceDeclaration(),
