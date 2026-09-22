@@ -13,10 +13,26 @@ describe('syntax-helpers', () => {
   });
 
   describe('isTypeNode', () => {
-    it('should identify type assertions ("as")', () => {
+    it('should identify the type of a type assertion ("as")', () => {
+      const input = findNodePath(
+        parseTS('const foo = { bar: "baz" } as const'),
+        (p) => p.isTSTypeReference(),
+      );
+      expect(syntaxHelpers.isTypeNode(input)).true;
+    });
+
+    it('should not identify a type assertion itself ("as") (#6208)', () => {
       const input = findNodePath(
         parseTS('const foo = { bar: "baz" } as const'),
         (p) => p.isTSAsExpression(),
+      );
+      expect(syntaxHelpers.isTypeNode(input)).false;
+    });
+
+    it('should identify the type of a "satisfies" expression', () => {
+      const input = findNodePath(
+        parseTS('const foo = { bar: "baz" } satisfies Record<string, string>'),
+        (p) => p.isTSTypeReference(),
       );
       expect(syntaxHelpers.isTypeNode(input)).true;
     });

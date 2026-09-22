@@ -406,6 +406,24 @@ describe('babel-transformer', () => {
       expect(mutantCollector.mutants).lengthOf(0);
     });
 
+    it('should not skip the expression an `as` is asserted on (#6208)', () => {
+      const ast = createTSAst({ rawContent: 'bar = foo as unknown;' });
+      act(ast);
+      expect(mutantCollector.mutants).lengthOf(1);
+    });
+
+    it('should not skip the expression an `as const` is asserted on (#6208)', () => {
+      const ast = createTSAst({ rawContent: 'bar = foo as const;' });
+      act(ast);
+      expect(mutantCollector.mutants).lengthOf(1);
+    });
+
+    it('should not skip the expression a `satisfies` is asserted on', () => {
+      const ast = createTSAst({ rawContent: 'bar = foo satisfies unknown;' });
+      act(ast);
+      expect(mutantCollector.mutants).lengthOf(1);
+    });
+
     it('should skip TSDeclareFunction statements', () => {
       const ast = createTSAst({ rawContent: 'declare function foo(): "foo";' });
       act(ast);
