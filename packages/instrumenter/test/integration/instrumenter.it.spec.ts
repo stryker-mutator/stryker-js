@@ -117,6 +117,9 @@ describe('instrumenter integration', () => {
     it('should not produce mutants for a TS declaration file', async () => {
       await arrangeAndActAssert('ts-declarations.ts');
     });
+    it('should mutate the expression a type is asserted on, not the type (#6208, #6149)', async () => {
+      await arrangeAndActAssert('type-assertions.ts');
+    });
   });
 
   describe('with mutation ranges', () => {
