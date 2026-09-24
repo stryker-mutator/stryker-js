@@ -19,6 +19,9 @@ const scriptSetupFixtures = Object.freeze([
   'vue-script-setup-macros.vue',
   'vue-script-setup-and-module-script.vue',
   'vue-script-setup-header-per-block.vue',
+  'vue-script-setup-bare-define-props.vue',
+  'vue-script-setup-bare-define-emits.vue',
+  'vue-script-setup-bare-with-defaults.vue',
 ]);
 
 describe('vue script setup integration', () => {
@@ -80,6 +83,25 @@ describe('vue script setup integration', () => {
       });
     }
   });
+
+  for (const [fixture, declaration] of [
+    ['vue-script-setup-bare-define-props.vue', 'props:'],
+    ['vue-script-setup-bare-define-emits.vue', 'emits:'],
+    ['vue-script-setup-bare-with-defaults.vue', 'props:'],
+  ]) {
+    for (const inlineTemplate of [true, false]) {
+      it(`should keep the bare macro statement of the instrumented ${fixture} with inlineTemplate ${inlineTemplate}`, async () => {
+        const parsed = parse(await instrument(fixture), { filename: fixture });
+
+        const { content } = compileScript(parsed.descriptor, {
+          id: fixture,
+          inlineTemplate,
+        });
+
+        expect(content).include(declaration);
+      });
+    }
+  }
 
   async function instrument(fileName: string): Promise<string> {
     const name = resolveTestResource('instrumenter', fileName);

@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`instrumenter integration should be able to instrument a vue script setup with a bare defineProps statement 1`] = `
+"<template>
+  <p>{{ label }}</p>
+</template>
+
+<script setup lang=\\"ts\\">
+defineProps<{
+  label: string;
+}>();
+</script>
+"
+`;

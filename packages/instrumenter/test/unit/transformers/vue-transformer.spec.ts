@@ -82,7 +82,12 @@ const greeting = 'hello';
     sinon.assert.calledOnce(context.transform);
     const [ast, collector, usedContext] = context.transform.firstCall.args;
     expect(ast).eq(vue.root.setup!.script.ast);
-    expect(collector).eq(mutantCollector);
+    /* The collector of the `<script setup>` block delegates to the original one */
+    const mutant = collector.collect(originFileName, types.identifier('foo'), {
+      mutatorName: 'foo',
+      replacement: types.identifier('bar'),
+    });
+    expect(mutantCollector.mutants).deep.eq([mutant]);
     expect(usedContext.isExpressionContext).false;
     expect(usedContext.options.noHeader).true;
     expect(usedContext.mutateDescription).eq(context.mutateDescription);
@@ -307,6 +312,67 @@ const props = defineProps({ label: 'hello' });
 
       expect(vue.root.moduleScript).undefined;
       expect(scriptsWithHeader(vue)).deep.eq([setupScript]);
+    });
+  });
+
+  describe('a compiler macro statement', () => {
+    for (const statement of [
+      'defineProps<{ label: string }>();',
+      "defineEmits<{ (e: 'close'): void }>();",
+      'withDefaults(defineProps<{ label?: string }>(), {});',
+    ]) {
+      it(`should not be removed when it is \`${statement}\``, async () => {
+        const vue = await parseSfc(`<script setup lang="ts">
+${statement}
+</script>
+`);
+
+        transform(vue, mutantCollector, transformerContextStub());
+
+        const statementMutant = mutantCollector.mutants.find(
+          (mutant) =>
+            mutant.mutatorName === 'CallExpression' &&
+            mutant.original.type === 'ExpressionStatement',
+        );
+        expect(statementMutant?.ignoreReason).eq(
+          'A compiler macro statement cannot be removed, the vue compiler must see it to declare the props, emits, options, model or slots of the component.',
+        );
+        expect(print(vue)).not.include(
+          `stryMutAct_9fa48("${statementMutant!.id}")`,
+        );
+      });
+    }
+
+    it('should still mutate the arguments of the macro', async () => {
+      const vue = await parseSfc(`<script setup>
+defineProps({ a: { default: 1 } });
+</script>
+`);
+
+      transform(vue, mutantCollector, transformerContextStub());
+
+      const [statementMutant, ...argumentMutants] = mutantCollector.mutants;
+      expect(statementMutant.original.type).eq('ExpressionStatement');
+      expect(statementMutant.ignoreReason).contains('compiler macro');
+      expect(argumentMutants).not.empty;
+      argumentMutants.forEach((mutant) => {
+        expect(mutant.ignoreReason).undefined;
+      });
+    });
+
+    it('should be removed outside of a `<script setup>` block', async () => {
+      const vue = await parseSfc(`<script>
+defineProps({});
+</script>
+`);
+
+      transform(vue, mutantCollector, transformerContextStub());
+
+      expect(
+        mutantCollector.mutants.find(
+          (mutant) => mutant.mutatorName === 'CallExpression',
+        )?.ignoreReason,
+      ).undefined;
     });
   });
 

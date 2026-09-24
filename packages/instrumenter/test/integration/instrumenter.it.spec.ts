@@ -67,6 +67,15 @@ describe('instrumenter integration', () => {
   it('should be able to instrument a vue script setup sample with compiler macros', async () => {
     await arrangeAndActAssert('vue-script-setup-macros.vue');
   });
+  it('should be able to instrument a vue script setup with a bare defineProps statement', async () => {
+    await arrangeAndActAssert('vue-script-setup-bare-define-props.vue');
+  });
+  it('should be able to instrument a vue script setup with a bare defineEmits statement', async () => {
+    await arrangeAndActAssert('vue-script-setup-bare-define-emits.vue');
+  });
+  it('should be able to instrument a vue script setup with a bare withDefaults statement', async () => {
+    await arrangeAndActAssert('vue-script-setup-bare-with-defaults.vue');
+  });
   it('should be able to instrument a vue script setup sample with a module script', async () => {
     await arrangeAndActAssert('vue-script-setup-and-module-script.vue');
   });

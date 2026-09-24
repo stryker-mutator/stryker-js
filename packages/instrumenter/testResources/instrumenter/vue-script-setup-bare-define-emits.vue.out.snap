@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`instrumenter integration should be able to instrument a vue script setup with a bare defineEmits statement 1`] = `
+"<template>
+  <button type=\\"button\\" @click=\\"$emit('close')\\">close</button>
+</template>
+
+<script setup lang=\\"ts\\">
+defineEmits<{
+  (e: 'close'): void;
+}>();
+</script>
+"
+`;
