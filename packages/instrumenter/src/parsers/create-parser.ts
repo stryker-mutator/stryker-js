@@ -6,6 +6,7 @@ import { createParser as createJSParser } from './js-parser.js';
 import { parseTS, parseTsx } from './ts-parser.js';
 import { parse as htmlParse } from './html-parser.js';
 import { parse as svelteParse } from './svelte-parser.js';
+import { parse as vueParse } from './vue-parser.js';
 import { ParserOptions } from './parser-options.js';
 
 export function createParser(
@@ -41,6 +42,8 @@ export function createParser(
         return svelteParse(code, fileName, { parse }) as Promise<
           AstByFormat[T]
         >;
+      case AstFormat.Vue:
+        return vueParse(code, fileName, { parse }) as Promise<AstByFormat[T]>;
     }
   };
 }
@@ -65,12 +68,13 @@ export function getFormat(
         return AstFormat.TS;
       case '.tsx':
         return AstFormat.Tsx;
-      case '.vue':
       case '.html':
       case '.htm':
         return AstFormat.Html;
       case '.svelte':
         return AstFormat.Svelte;
+      case '.vue':
+        return AstFormat.Vue;
       default:
         return;
     }

@@ -119,7 +119,7 @@ Object {
 
 exports[`parsers integration should allow to parse a *.vue file 1`] = `
 Object {
-  "format": "html",
+  "format": "vue",
   "originFileName": "App.vue",
   "rawContent": "<template>
   <div id=\\"app\\">
@@ -160,8 +160,9 @@ export default {
 </style>
 ",
   "root": Object {
-    "scripts": Array [
-      Object {
+    "additionalScripts": Array [],
+    "moduleScript": Object {
+      "ast": Object {
         "format": "js",
         "offset": Object {
           "column": 187,
@@ -1138,7 +1139,13 @@ export default {
           "type": "File",
         },
       },
-    ],
+      "isExpression": false,
+      "range": Object {
+        "end": 490,
+        "start": 187,
+      },
+    },
+    "setup": undefined,
   },
 }
 `;

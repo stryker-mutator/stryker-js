@@ -1227,6 +1227,9 @@ importers:
       svelte:
         specifier: 5.56.10
         version: 5.56.10(@typescript-eslint/types@8.68.0)
+      vue:
+        specifier: 3.5.41
+        version: 3.5.41(typescript@7.0.2)
 
   packages/jasmine-runner:
     dependencies:
@@ -37824,6 +37827,16 @@ snapshots:
       '@vue/shared': 3.5.41
     optionalDependencies:
       typescript: 5.8.3
+
+  vue@3.5.41(typescript@7.0.2):
+    dependencies:
+      '@vue/compiler-dom': 3.5.41
+      '@vue/compiler-sfc': 3.5.41
+      '@vue/runtime-dom': 3.5.41
+      '@vue/server-renderer': 3.5.41
+      '@vue/shared': 3.5.41
+    optionalDependencies:
+      typescript: 7.0.2
 
   w3c-hr-time@1.0.2:
     dependencies:

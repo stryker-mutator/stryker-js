@@ -1,0 +1,25 @@
+import { notEmpty } from '@stryker-mutator/util';
+
+import { VueAst } from '../syntax/index.js';
+
+import { Printer } from './index.js';
+
+export const print: Printer<VueAst> = ({ root, rawContent }, context) => {
+  let currentIndex = 0;
+  let outputText = '';
+
+  const sortedScripts = [root.moduleScript, ...root.additionalScripts]
+    .filter(notEmpty)
+    .sort((a, b) => a.range.start - b.range.start);
+  for (const script of sortedScripts) {
+    outputText += rawContent.substring(currentIndex, script.range.start);
+    outputText += '\n';
+    outputText += context.print(script.ast, context);
+    outputText += '\n';
+    currentIndex = script.range.end;
+  }
+
+  outputText += rawContent.substring(currentIndex);
+
+  return outputText;
+};
