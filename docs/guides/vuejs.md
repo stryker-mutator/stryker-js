@@ -21,6 +21,8 @@ Adding a plain `<script>` block also turns off Vue's static hoisting of literals
 
 The string literal that names a model, e.g. `defineModel('name')`, is never mutated. It shows up as ignored in your report, because the Vue compiler reads that literal statically to derive the prop and event names, and mutating it would rename the model instead of testing anything.
 
+A macro call written as a statement of its own, like `defineProps<Props>();`, is never removed by the `CallExpression` mutator. That mutant shows up as ignored in your report, since the Vue compiler would no longer recognize the macro. The mutants inside its arguments are still tested.
+
 A `<script setup>` block with a `src` attribute, or with a `lang` Stryker doesn't recognize, is skipped and keeps the behavior it had before.
 
 ## Vitest configuration

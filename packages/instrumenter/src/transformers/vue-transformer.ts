@@ -1,4 +1,4 @@
-import { notEmpty } from '@stryker-mutator/util';
+import { I, notEmpty } from '@stryker-mutator/util';
 
 import { types, type NodePath } from '@babel/core';
 import traverse from '@babel/traverse';
@@ -15,6 +15,7 @@ import {
 import { placeHeader } from '../util/syntax-helpers.js';
 
 import { AstTransformer } from './index.js';
+import { MutantCollector } from './mutant-collector.js';
 
 /**
  * The compiler macros of which the arguments need to stay statically analyzable.
@@ -76,6 +77,54 @@ const defineModelNameIgnorer: Ignorer = {
   },
 };
 
+const MACRO_STATEMENT_IGNORE_REASON =
+  'A compiler macro statement cannot be removed, the vue compiler must see it to declare the props, emits, options, model or slots of the component.';
+
+/**
+ * Hands out the collector of the `<script setup>` transform. It ignores the removal of a
+ * compiler macro statement, like a bare `defineProps<Props>();`, since mutation switching wraps
+ * the statement in an `if` where the compiler no longer recognizes the macro.
+ * An `Ignorer` can't be used here, it would ignore the whole statement including the mutants
+ * inside the macro arguments, where this only ignores the mutant of the statement itself.
+ */
+function macroStatementIgnoringCollector(
+  mutantCollector: I<MutantCollector>,
+): I<MutantCollector> {
+  return {
+    get mutants() {
+      return mutantCollector.mutants;
+    },
+    collect(fileName, original, mutable, offset) {
+      return mutantCollector.collect(
+        fileName,
+        original,
+        !mutable.ignoreReason && isMacroStatement(original)
+          ? { ...mutable, ignoreReason: MACRO_STATEMENT_IGNORE_REASON }
+          : mutable,
+        offset,
+      );
+    },
+    remove(mutantsToRemove) {
+      return mutantCollector.remove(mutantsToRemove);
+    },
+    hasPlacedMutants(fileName) {
+      return mutantCollector.hasPlacedMutants(fileName);
+    },
+  };
+}
+
+function isMacroStatement(node: types.Node): boolean {
+  if (node.type !== 'ExpressionStatement') {
+    return false;
+  }
+  const { expression } = node;
+  return (
+    expression.type === 'CallExpression' &&
+    expression.callee.type === 'Identifier' &&
+    COMPILER_MACROS.includes(expression.callee.name)
+  );
+}
+
 /**
  * Whether the node is a string of which the value is known at compile time, the only shape
  * the vue compiler accepts as a model name.
@@ -126,17 +175,23 @@ export const transformVue: AstTransformer<AstFormat.Vue> = (
   for (const script of scripts) {
     const isSetupScript = script === setup.script;
     const mutantsBefore = mutantCollector.mutants.length;
-    context.transform(script.ast, mutantCollector, {
-      ...context,
-      isExpressionContext: script.isExpression,
-      options: {
-        ...context.options,
-        noHeader: true,
-        ignorers: isSetupScript
-          ? [...context.options.ignorers, defineModelNameIgnorer]
-          : context.options.ignorers,
+    context.transform(
+      script.ast,
+      isSetupScript
+        ? macroStatementIgnoringCollector(mutantCollector)
+        : mutantCollector,
+      {
+        ...context,
+        isExpressionContext: script.isExpression,
+        options: {
+          ...context.options,
+          noHeader: true,
+          ignorers: isSetupScript
+            ? [...context.options.ignorers, defineModelNameIgnorer]
+            : context.options.ignorers,
+        },
       },
-    });
+    );
     if (isSetupScript) {
       setupMutantsStart = mutantsBefore;
       setupMutantsEnd = mutantCollector.mutants.length;
