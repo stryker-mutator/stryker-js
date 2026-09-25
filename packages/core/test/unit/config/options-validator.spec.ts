@@ -112,6 +112,7 @@ describe(OptionsValidator.name, () => {
     });
 
     it('should validate the default options', () => {
+      delete (testInjector.options as Record<string, unknown>).coverageAnalysis;
       actAssertValid();
     });
   });
@@ -306,6 +307,7 @@ describe(OptionsValidator.name, () => {
 
     it('should accept mutationRange without a glob pattern', () => {
       testInjector.options.mutate = ['src/index.ts:1:0-2:0'];
+      delete (testInjector.options as Record<string, unknown>).coverageAnalysis;
       actAssertValid();
     });
 
@@ -494,6 +496,14 @@ describe(OptionsValidator.name, () => {
     );
   });
 
+  it('should report a deprecation warning for coverageAnalysis', () => {
+    testInjector.options.coverageAnalysis = 'perTest';
+    sut.validate(testInjector.options);
+    expect(testInjector.logger.warn).calledWith(
+      'DEPRECATED. Use of "coverageAnalysis" is deprecated. This option will be removed in a future major version.',
+    );
+  });
+
   describe('transpilers', () => {
     it('should report a deprecation warning', () => {
       testInjector.options.transpilers = ['stryker-jest'];
@@ -543,6 +553,7 @@ describe(OptionsValidator.name, () => {
 
     it('should not warn about unknown options when mark = false', () => {
       testInjector.options.jest = {};
+      delete (testInjector.options as Record<string, unknown>).coverageAnalysis;
       sut.validate(testInjector.options, false);
       expect(testInjector.logger.warn).not.called;
     });
