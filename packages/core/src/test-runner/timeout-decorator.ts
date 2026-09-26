@@ -4,12 +4,12 @@ import {
   DryRunOptions,
   MutantRunOptions,
   MutantRunResult,
-  MutantRunStatus,
   TestRunner,
 } from '@stryker-mutator/api/test-runner';
 import { ExpirableTask } from '@stryker-mutator/util';
 
 import { TestRunnerDecorator } from './test-runner-decorator.js';
+import { wallClockTimeout } from './wall-clock-timeout.js';
 import { Logger } from '@stryker-mutator/api/logging';
 
 /**
@@ -37,9 +37,7 @@ export class TimeoutDecorator extends TestRunnerDecorator {
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
     const result = await this.run(options, () => super.mutantRun(options));
     if (result === ExpirableTask.TimeoutExpired) {
-      return {
-        status: MutantRunStatus.Timeout,
-      };
+      return wallClockTimeout(options.timeout);
     } else {
       return result;
     }

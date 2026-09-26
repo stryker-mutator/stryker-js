@@ -132,6 +132,7 @@ describe(TimeoutDecorator.name, () => {
       const result = await runPromise;
       const expectedTimeoutResult: TimeoutMutantRunResult = {
         status: MutantRunStatus.Timeout,
+        reason: 'Timeout of 20 ms expired',
       };
       expect(result).deep.eq(expectedTimeoutResult);
       expect(availableTestRunners).to.have.lengthOf(0);

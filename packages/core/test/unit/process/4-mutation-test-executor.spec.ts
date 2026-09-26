@@ -42,6 +42,7 @@ import {
 import { Sandbox } from '../../../src/sandbox/index.js';
 import { MutantTestPlanner } from '../../../src/mutants/index.js';
 import { CheckerFacade } from '../../../src/checker/checker-facade.js';
+import { ConfigError } from '../../../src/errors.js';
 
 function ignoredEarlyResultPlan(
   overrides?: Partial<Mutant>,
@@ -486,6 +487,217 @@ describe(MutationTestExecutor.name, () => {
       expect(
         mutationTestReportHelperMock.reportMutantRunResult,
       ).calledWithExactly(plan.mutant, mutantRunResult);
+    });
+  });
+
+  describe('wall-clock timeout re-check', () => {
+    const timeout = 2000;
+    const wallClockTimeoutResult = factory.timeoutMutantRunResult({
+      reason: `Timeout of ${timeout} ms expired`,
+    });
+
+    function arrangeRuns(
+      runResultsByMutantId: Record<string, MutantRunResult[]>,
+    ) {
+      testRunner.mutantRun.callsFake(({ activeMutant }) =>
+        Promise.resolve(
+          runResultsByMutantId[activeMutant.id]?.shift() ??
+            factory.survivedMutantRunResult(),
+        ),
+      );
+    }
+
+    it('should report the re-check result when the mutant completes in time on a re-check', async () => {
+      // Arrange
+      arrangeScenario();
+      const plan = mutantRunPlan({ id: '1', timeout });
+      mutantTestPlans.push(plan);
+      const killedResult = factory.killedMutantRunResult();
+      arrangeRuns({ '1': [wallClockTimeoutResult, killedResult] });
+
+      // Act
+      await sut.execute();
+
+      // Assert
+      expect(testRunner.mutantRun).calledTwice;
+      expect(
+        mutationTestReportHelperMock.reportMutantRunResult,
+      ).calledOnceWithExactly(plan.mutant, killedResult);
+    });
+
+    it('should not re-check timeouts reported by the test runner', async () => {
+      // Arrange
+      arrangeScenario();
+      const plan = mutantRunPlan({ id: '1', timeout });
+      mutantTestPlans.push(plan);
+      const hitLimitResult = factory.timeoutMutantRunResult({
+        reason: 'Hit limit reached (501/500)',
+      });
+      arrangeRuns({ '1': [hitLimitResult] });
+
+      // Act
+      await sut.execute();
+
+      // Assert
+      expect(testRunner.mutantRun).calledOnce;
+      expect(
+        mutationTestReportHelperMock.reportMutantRunResult,
+      ).calledOnceWithExactly(plan.mutant, hitLimitResult);
+    });
+
+    it('should re-check after all other mutants have run', async () => {
+      // Arrange
+      arrangeScenario();
+      const timedOutPlan = mutantRunPlan({ id: '1', timeout });
+      const otherPlan = mutantRunPlan({ id: '2', timeout });
+      mutantTestPlans.push(timedOutPlan, otherPlan);
+      const otherRun = new Task<MutantRunResult>();
+      const timedOutPlanResults = [
+        wallClockTimeoutResult,
+        factory.killedMutantRunResult(),
+      ];
+      testRunner.mutantRun.callsFake(async ({ activeMutant }) =>
+        activeMutant.id === otherPlan.mutant.id
+          ? otherRun.promise
+          : (timedOutPlanResults.shift() ?? factory.survivedMutantRunResult()),
+      );
+
+      // Act
+      const onGoingExecution = sut.execute();
+      await tick(10);
+      const callsWhileOtherRunIsPending = testRunner.mutantRun.callCount;
+      otherRun.resolve(factory.survivedMutantRunResult());
+      await onGoingExecution;
+
+      // Assert
+      expect(callsWhileOtherRunIsPending).eq(2);
+      expect(testRunner.mutantRun).calledThrice;
+    });
+
+    it('should run the same tests without the mutant when the re-check times out again', async () => {
+      // Arrange
+      arrangeScenario();
+      const plan = mutantRunPlan({
+        id: '1',
+        timeout,
+        testFilter: ['spec1'],
+        hitLimit: 800,
+      });
+      mutantTestPlans.push(plan);
+      arrangeRuns({ '1': [wallClockTimeoutResult, wallClockTimeoutResult] });
+
+      // Act
+      await sut.execute();
+
+      // Assert
+      expect(testRunner.mutantRun).calledThrice;
+      expect(testRunner.mutantRun.thirdCall.args[0]).deep.eq({
+        ...plan.runOptions,
+        activeMutant: {
+          ...plan.runOptions.activeMutant,
+          id: 'stryker-baseline',
+        },
+        hitLimit: undefined,
+      });
+    });
+
+    it('should report a confirmed timeout when the tests complete in time without the mutant', async () => {
+      // Arrange
+      arrangeScenario();
+      const plan = mutantRunPlan({ id: '1', timeout });
+      mutantTestPlans.push(plan);
+      arrangeRuns({ '1': [wallClockTimeoutResult, wallClockTimeoutResult] });
+
+      // Act
+      await sut.execute();
+
+      // Assert
+      expect(
+        mutationTestReportHelperMock.reportMutantRunResult,
+      ).calledOnceWithExactly(plan.mutant, {
+        status: MutantRunStatus.Timeout,
+        reason:
+          'Timeout of 2000 ms expired on a re-check, while the same tests completed in time without the mutant',
+      });
+    });
+
+    it('should confirm the timeout when the run without the mutant only times out once', async () => {
+      // Arrange
+      arrangeScenario();
+      const plan = mutantRunPlan({ id: '1', timeout });
+      mutantTestPlans.push(plan);
+      arrangeRuns({
+        '1': [wallClockTimeoutResult, wallClockTimeoutResult],
+        'stryker-baseline': [wallClockTimeoutResult],
+      });
+
+      // Act
+      await sut.execute();
+
+      // Assert
+      expect(testRunner.mutantRun).callCount(4);
+      expect(mutationTestReportHelperMock.reportMutantRunResult).calledOnceWith(
+        plan.mutant,
+        sinon.match({ status: MutantRunStatus.Timeout }),
+      );
+    });
+
+    it('should abort when the tests time out twice without the mutant', async () => {
+      // Arrange
+      arrangeScenario();
+      const plan = mutantRunPlan({ id: '1', timeout });
+      mutantTestPlans.push(plan);
+      arrangeRuns({
+        '1': [wallClockTimeoutResult, wallClockTimeoutResult],
+        'stryker-baseline': [wallClockTimeoutResult, wallClockTimeoutResult],
+      });
+
+      // Act
+      const error = await sut.execute().catch((error: unknown) => error);
+
+      // Assert
+      expect(error)
+        .instanceOf(ConfigError)
+        .with.property(
+          'message',
+          'Tests exceed the timeout of 2000 ms even without an active mutant, so timeouts cannot be attributed to mutants. Increase `timeoutMS` or `timeoutFactor` to fix this.',
+        );
+      expect(mutationTestReportHelperMock.reportAll).not.called;
+    });
+
+    it('should log how the re-checked timeouts turned out', async () => {
+      // Arrange
+      arrangeScenario();
+      const resolvedPlan = mutantRunPlan({ id: '1', timeout });
+      const confirmedPlan = mutantRunPlan({ id: '2', timeout });
+      mutantTestPlans.push(resolvedPlan, confirmedPlan);
+      arrangeRuns({
+        '1': [wallClockTimeoutResult, factory.killedMutantRunResult()],
+        '2': [wallClockTimeoutResult, wallClockTimeoutResult],
+      });
+
+      // Act
+      await sut.execute();
+
+      // Assert
+      expect(testInjector.logger.info).calledWithExactly(
+        'Re-checked %s wall-clock timeout(s) one at a time: %s completed in time, %s confirmed as timeout.',
+        2,
+        1,
+        1,
+      );
+    });
+
+    it('should not log a re-check summary without wall-clock timeouts', async () => {
+      // Arrange
+      arrangeScenario();
+      mutantTestPlans.push(mutantRunPlan({ id: '1', timeout }));
+
+      // Act
+      await sut.execute();
+
+      // Assert
+      expect(testInjector.logger.info).not.calledWithMatch(/Re-checked/);
     });
   });
 
