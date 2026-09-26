@@ -8,6 +8,8 @@ import {
   concat,
   bufferTime,
   mergeMap,
+  concatMap,
+  of,
 } from 'rxjs';
 import { toArray, map, shareReplay, tap } from 'rxjs/operators';
 import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
@@ -22,6 +24,7 @@ import {
 import {
   TestRunner,
   CompleteDryRunResult,
+  MutantRunStatus,
 } from '@stryker-mutator/api/test-runner';
 import { Logger } from '@stryker-mutator/api/logging';
 import { I } from '@stryker-mutator/util';
@@ -34,6 +37,11 @@ import { Timer } from '../utils/timer.js';
 import { ConcurrencyTokenProvider, Pool } from '../concurrent/index.js';
 import { isEarlyResult, MutantTestPlanner } from '../mutants/index.js';
 import { CheckerFacade } from '../checker/index.js';
+import { ConfigError } from '../errors.js';
+import {
+  isWallClockTimeout,
+  toBaselineRunOptions,
+} from '../test-runner/wall-clock-timeout.js';
 
 import { DryRunContext } from './3-dry-run-executor.js';
 
@@ -71,6 +79,8 @@ export class MutationTestExecutor {
     coreTokens.concurrencyTokenProvider,
     coreTokens.dryRunResult,
   );
+
+  private readonly timeoutRecheck = { completed: 0, confirmed: 0 };
 
   constructor(
     private readonly reporter: StrictReporter,
@@ -115,6 +125,7 @@ export class MutationTestExecutor {
         earlyResult$,
       ).pipe(toArray()),
     );
+    this.logTimeoutRecheck();
     await this.mutationTestReportHelper.reportAll(results);
     await this.reporter.wrapUp();
     this.logDone();
@@ -154,16 +165,76 @@ export class MutationTestExecutor {
       bufferTime(BUFFER_FOR_SORTING_MS),
       mergeMap((plans) => plans.sort(reloadEnvironmentLast)),
     );
-    return this.testRunnerPool.schedule(
-      sortedPlan$,
-      async (testRunner, { mutant, runOptions }) => {
-        const result = await testRunner.mutantRun(runOptions);
-        return this.mutationTestReportHelper.reportMutantRunResult(
-          mutant,
-          result,
-        );
-      },
+    const run$ = this.testRunnerPool
+      .schedule(sortedPlan$, async (testRunner, plan) => ({
+        plan,
+        result: await testRunner.mutantRun(plan.runOptions),
+      }))
+      .pipe(shareReplay());
+    const [wallClockTimeout$, completedRun$] = partition(
+      run$,
+      ({ plan, result }) => isWallClockTimeout(result, plan.runOptions.timeout),
     );
+    const completedResult$ = completedRun$.pipe(
+      map(({ plan, result }) =>
+        this.mutationTestReportHelper.reportMutantRunResult(
+          plan.mutant,
+          result,
+        ),
+      ),
+    );
+    const recheckedResult$ = wallClockTimeout$.pipe(
+      toArray(),
+      mergeMap((runs) => runs),
+      concatMap(({ plan }) =>
+        this.testRunnerPool.schedule(of(plan), (testRunner, timedOutPlan) =>
+          this.recheckWallClockTimeout(testRunner, timedOutPlan),
+        ),
+      ),
+    );
+    return merge(completedResult$, recheckedResult$);
+  }
+
+  private async recheckWallClockTimeout(
+    testRunner: TestRunner,
+    { mutant, runOptions }: MutantRunPlan,
+  ): Promise<MutantResult> {
+    const recheckResult = await testRunner.mutantRun(runOptions);
+    if (!isWallClockTimeout(recheckResult, runOptions.timeout)) {
+      this.timeoutRecheck.completed++;
+      return this.mutationTestReportHelper.reportMutantRunResult(
+        mutant,
+        recheckResult,
+      );
+    }
+    const baselineOptions = toBaselineRunOptions(runOptions);
+    const baselineFitsTimeout = async () =>
+      !isWallClockTimeout(
+        await testRunner.mutantRun(baselineOptions),
+        runOptions.timeout,
+      );
+    if (!(await baselineFitsTimeout()) && !(await baselineFitsTimeout())) {
+      throw new ConfigError(
+        `Tests exceed the timeout of ${runOptions.timeout} ms even without an active mutant, so timeouts cannot be attributed to mutants. Increase \`timeoutMS\` or \`timeoutFactor\` to fix this.`,
+      );
+    }
+    this.timeoutRecheck.confirmed++;
+    return this.mutationTestReportHelper.reportMutantRunResult(mutant, {
+      status: MutantRunStatus.Timeout,
+      reason: `Timeout of ${runOptions.timeout} ms expired on a re-check, while the same tests completed in time without the mutant`,
+    });
+  }
+
+  private logTimeoutRecheck() {
+    const { completed, confirmed } = this.timeoutRecheck;
+    if (completed + confirmed > 0) {
+      this.log.info(
+        'Re-checked %s wall-clock timeout(s) one at a time: %s completed in time, %s confirmed as timeout.',
+        completed + confirmed,
+        completed,
+        confirmed,
+      );
+    }
   }
 
   private logDone() {

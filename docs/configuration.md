@@ -603,6 +603,8 @@ timeoutForTestRunMs = netTimeMs * timeoutFactor + timeoutMS + overheadMs
 
 Both `netTimeMs` and `overheadMs` are calculated during the initial test run. They are logged on `info` level. For example when `overheadMs` is 92 and `netTimeMs` is 5: `Initial test run succeeded. Ran 6 tests in 4 seconds (net 5 ms, overhead 92 ms).`
 
+A timeout can also be caused by a busy machine instead of the mutant. That's why Stryker re-checks mutants that exceed this timeout, one at a time, after all other mutants are tested. If the mutant finishes in time now, its real result is reported. If it times out again, Stryker runs the same tests without the mutant. If they finish in time, the mutant is reported as `Timeout`. If they time out twice, the timeout is too small for your environment and Stryker exits with an error. Mutants caught by the infinite loop detection (the hit limit) are reported as `Timeout` right away.
+
 With `timeoutFactor` you can configure the allowed deviation relative to the time of a normal test run. Tweak this if you notice that mutants are prone to creating slower code, but not infinite loops.
 `timeoutMS` lets you configure an absolute deviation. Use it, if you run Stryker on a busy machine and you need to wait longer to make sure that the code indeed entered an infinite loop.
 
