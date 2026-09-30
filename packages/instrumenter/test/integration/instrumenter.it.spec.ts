@@ -26,6 +26,12 @@ describe('instrumenter integration', () => {
   it('should be able to instrument a simple ts file', async () => {
     await arrangeAndActAssert('ts-sample.ts');
   });
+  it('should be able to instrument a ts file using TC39 stage-3 auto-accessor decorators when configured', async () => {
+    await arrangeAndActAssert(
+      'accessor-decorator.ts',
+      createInstrumenterOptions({ decorators: { version: '2023-11' } }),
+    );
+  });
   it('should be able to instrument an angular component', async () => {
     const angularIgnore = testInjector.injector.injectClass(AngularIgnorer);
     await arrangeAndActAssert(
