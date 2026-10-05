@@ -62,6 +62,7 @@ The following options will be set by Stryker and cannot be overridden:
 {
   threads: true,
   coverage: { enabled: false },
+  includeTaskLocation: true,
   singleThread: true,
   watch: false,
   bail: options.disableBail ? 0 : 1,
@@ -76,6 +77,8 @@ As you can see, the vitest runner:
   This is done to boost performance.
 - Will **disable code coverage reporting**  
   This is done because StrykerJS uses it's own [coverage analysis](./configuration.md#coverageanalysis-string), which _is_ supported.
+- Will **report the location of each test**  
+  This is done so [incremental mode](./incremental.md) can tell which tests changed.
 
 ## In-source testing
 

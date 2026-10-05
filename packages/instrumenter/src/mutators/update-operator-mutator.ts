@@ -1,10 +1,6 @@
-import * as babel from '@babel/core';
-
 import { deepCloneNode } from '../util/index.js';
 
 import { NodeMutator } from './index.js';
-
-const { types } = babel;
 
 enum UpdateOperators {
   '++' = '--',
@@ -16,11 +12,10 @@ export const updateOperatorMutator: NodeMutator = {
 
   *mutate(path) {
     if (path.isUpdateExpression()) {
-      yield types.updateExpression(
-        UpdateOperators[path.node.operator],
-        deepCloneNode(path.node.argument),
-        path.node.prefix,
-      );
+      const mutant = deepCloneNode(path.node);
+      mutant.operator = UpdateOperators[path.node.operator];
+
+      yield mutant;
     }
   },
 };

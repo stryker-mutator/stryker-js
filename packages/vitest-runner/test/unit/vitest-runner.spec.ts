@@ -59,6 +59,7 @@ describe(VitestTestRunner.name, () => {
       expect(vitestOptions).deep.include({
         config: undefined,
         coverage: { enabled: false },
+        includeTaskLocation: true,
         maxConcurrency: 1,
         watch: false,
         dir: undefined,

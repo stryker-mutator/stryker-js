@@ -43,6 +43,9 @@ describe('instrumenter integration', () => {
   it('should be able to instrument a lit-html file', async () => {
     await arrangeAndActAssert('lit-html-sample.ts');
   });
+  it('should be able to instrument non-null expressions', async () => {
+    await arrangeAndActAssert('non-null-expression.ts');
+  });
   it('should be able to instrument optional chains', async () => {
     await arrangeAndActAssert('optional-chains.ts');
   });
