@@ -50,6 +50,8 @@ If a mutation testing run is interrupted or crashes (for example by pressing CTR
 
 While a run is in progress, StrykerJS writes a pending directory next to [`incrementalFile`](./configuration.md#incrementalfile-string) (for the default path: `reports/stryker-incremental.json.pending/`). Gitignore it; it is only meaningful on the machine that wrote it. `stryker init` adds `reports/stryker-incremental.json.*` to `.gitignore` for the default path, which covers the pending directories and the temp file but not the incremental report itself.
 
+A pending directory takes precedence over the incremental report, because it holds the newer results. Deleting only the incremental report therefore does not start over: the next run still reuses the results in the pending directory. To start from scratch, delete the pending directory as well, or run with [`--force`](#forcing-reruns).
+
 ## Limitations
 
 Running in incremental mode, Stryker will do its best to produce an accurate mutation testing report. However, there are some limitations here:
