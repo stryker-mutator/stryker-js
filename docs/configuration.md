@@ -298,7 +298,8 @@ Config file: `"ignoreFailedTestsInDryRun": true`
 By default, Stryker exits with `There were failed tests in the initial test run.` when any test fails during the initial test run (dry run), because a failing test would make every mutant it runs against look killed. With this option enabled, Stryker logs the failed tests as a warning and continues without them:
 
 - The failed tests are never run against a mutant, so they can't kill one. When coverage analysis is `"off"`, or for a static mutant, Stryker runs every remaining test instead of every test.
-- Mutants that are only covered by failed tests are reported as `NoCoverage`.
+- With `"perTest"` coverage analysis, mutants that are only covered by failed tests are reported as `NoCoverage`. With `"all"` or `"off"`, Stryker has no per-test coverage to go on, so those mutants run against the remaining tests and will likely be reported as `Survived`.
+- Tests are excluded by id. A failure in a mocha `after` (`after all`) hook is reported under the id of the last test of its suite, so only that test is excluded; the hook still fails, and still kills mutants, whenever the other tests of that suite run. Fix failing hooks rather than relying on this option.
 - If every test fails, Stryker still exits with an error.
 
 The dry run still runs, so the sandbox is still validated and coverage is still collected. This is meant for local runs, for example resuming an interrupted [incremental](./incremental.md) run while an unrelated test is broken. Don't use it in CI: the mutation score no longer reflects your full test suite.

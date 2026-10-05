@@ -126,13 +126,17 @@ export class DryRunExecutor {
         if (!failedTests.length) {
           return;
         }
+        // Compare unique ids: a runner can report the same test twice, e.g. mocha
+        // reports an `afterEach` hook failure under the id of a test that passed.
+        const failedTestIds = new Set(failedTests.map(({ id }) => id));
+        const testIds = new Set(runResult.tests.map(({ id }) => id));
         if (
           this.options.ignoreFailedTestsInDryRun &&
-          failedTests.length < runResult.tests.length
+          failedTestIds.size < testIds.size
         ) {
           this.logFailedTestsInInitialRun(failedTests, 'warn');
           this.log.warn(
-            `Continuing without these ${failedTests.length} failed test(s), because "ignoreFailedTestsInDryRun" is enabled. Mutants only covered by them will be reported as NoCoverage.`,
+            `Continuing without these ${failedTestIds.size} failed test(s), because "ignoreFailedTestsInDryRun" is enabled. With "perTest" coverage analysis, mutants only covered by them will be reported as NoCoverage; otherwise they will likely survive.`,
           );
           return;
         }
@@ -202,11 +206,14 @@ export class DryRunExecutor {
    * @returns the ids of the removed tests
    */
   private excludeFailedTests(result: CompleteDryRunResult): string[] {
-    const excludedTestIds = result.tests
-      .filter(isFailedTest)
-      .map(({ id }) => id);
+    // Exclude by id, not by status: a test that both passed and failed (e.g. a
+    // failing mocha `afterEach` hook) must not survive through its passed result.
+    const excludedTestIds = [
+      ...new Set(result.tests.filter(isFailedTest).map(({ id }) => id)),
+    ];
     if (excludedTestIds.length) {
-      result.tests = result.tests.filter((test) => !isFailedTest(test));
+      const excluded = new Set(excludedTestIds);
+      result.tests = result.tests.filter(({ id }) => !excluded.has(id));
       if (result.mutantCoverage) {
         for (const testId of excludedTestIds) {
           delete result.mutantCoverage.perTest[testId];

@@ -436,7 +436,7 @@ describe(DryRunExecutor.name, () => {
             `One or more tests failed in the initial test run:${EOL}\tfoo is bar${EOL}\t\tfoo was baz${EOL}\tbar is baz${EOL}\t\tbar was qux`,
           );
           expect(testInjector.logger.warn).calledWith(
-            'Continuing without these 2 failed test(s), because "ignoreFailedTestsInDryRun" is enabled. Mutants only covered by them will be reported as NoCoverage.',
+            'Continuing without these 2 failed test(s), because "ignoreFailedTestsInDryRun" is enabled. With "perTest" coverage analysis, mutants only covered by them will be reported as NoCoverage; otherwise they will likely survive.',
           );
         });
 
@@ -453,6 +453,31 @@ describe(DryRunExecutor.name, () => {
           expect(actualInjector.provideValue).calledWithExactly(
             coreTokens.dryRunResult,
             runResult,
+          );
+        });
+
+        it('should also remove the passed result of a test that failed under the same id', async () => {
+          // e.g. mocha reports a failing `afterEach` hook under the id of the test that passed
+          runResult.tests.push(
+            factory.successTestResult({ id: 'failed1', timeSpentMs: 5 }),
+          );
+          const actualInjector = await sut.execute();
+          expect(runResult.tests.map(({ id }) => id)).deep.eq(['passed']);
+          expect(actualInjector.provideValue).calledWithExactly(
+            coreTokens.excludedTestIds,
+            ['failed1', 'failed2'],
+          );
+        });
+
+        it('should reject when every test id failed, even if some also passed', async () => {
+          runResult.tests.pop();
+          runResult.tests.push(
+            factory.successTestResult({ id: 'failed1' }),
+            factory.successTestResult({ id: 'failed2' }),
+          );
+          await expect(sut.execute()).rejectedWith(
+            ConfigError,
+            'All tests failed in the initial test run, so there are no tests left to run mutants against.',
           );
         });
 
