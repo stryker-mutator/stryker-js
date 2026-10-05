@@ -389,7 +389,7 @@ Config file: `"incrementalFile": "reports/stryker-incremental-alternative.json"`
 Specify the file to use for incremental mode.
 See [incremental](./incremental.md) for more details.
 
-While a run is in progress, StrykerJS also writes a sibling `.pending/` directory (for example `reports/stryker-incremental.json.pending/`). Gitignore it like the incremental report. `stryker init` adds `reports/stryker-incremental.*` to `.gitignore`.
+While a run is in progress, StrykerJS also writes a sibling `.pending/` directory (for example `reports/stryker-incremental.json.pending/`). Gitignore it. `stryker init` adds `reports/stryker-incremental.json.*` to `.gitignore`, which covers the pending directories and the temp file but not the incremental report itself.
 
 ### `inPlace` [`boolean`]
 

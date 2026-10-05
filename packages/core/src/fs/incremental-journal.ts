@@ -37,16 +37,12 @@ export function incrementalPendingDir(incrementalFile: string): string {
 }
 
 /**
- * Gitignore glob for the incremental report and its WAL siblings.
- * Example: `reports/stryker-incremental.json` → `reports/stryker-incremental.*`
+ * Gitignore glob for the WAL siblings of the incremental report (pending dirs,
+ * temp file), not the report itself, which some teams commit.
+ * Example: `reports/stryker-incremental.json` → `reports/stryker-incremental.json.*`
  */
 export function incrementalGitignorePattern(incrementalFile: string): string {
-  return `${stripExtension(incrementalFile)}.*`;
-}
-
-function stripExtension(fileName: string): string {
-  const ext = path.extname(fileName);
-  return ext ? fileName.slice(0, -ext.length) : fileName;
+  return `${incrementalFile}.*`;
 }
 
 /**

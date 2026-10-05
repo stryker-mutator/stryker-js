@@ -10,7 +10,7 @@ import { GitignoreWriter } from '../../../src/initializer/gitignore-writer.js';
 import { initializerTokens } from '../../../src/initializer/index.js';
 
 const GITIGNORE_FILE = '.gitignore';
-const STRYKER_GITIGNORE = `${os.EOL}# stryker${os.EOL}.stryker-tmp${os.EOL}reports/stryker-incremental.*${os.EOL}`;
+const STRYKER_GITIGNORE = `${os.EOL}# stryker${os.EOL}.stryker-tmp${os.EOL}reports/stryker-incremental.json.*${os.EOL}`;
 
 describe(GitignoreWriter.name, () => {
   let sut: GitignoreWriter;
@@ -72,7 +72,7 @@ describe(GitignoreWriter.name, () => {
       it("should not append the stryker gitignore configuration if it's already present", async () => {
         // Arrange
         fsReadFile.returns(
-          `node_modules${os.EOL}.stryker-tmp${os.EOL}reports/stryker-incremental.*${os.EOL}temp`,
+          `node_modules${os.EOL}.stryker-tmp${os.EOL}reports/stryker-incremental.json.*${os.EOL}temp`,
         );
 
         // Act
@@ -92,7 +92,7 @@ describe(GitignoreWriter.name, () => {
         // Assert
         expect(fsAppendFile).calledWithExactly(
           GITIGNORE_FILE,
-          `${os.EOL}reports/stryker-incremental.*${os.EOL}`,
+          `${os.EOL}reports/stryker-incremental.json.*${os.EOL}`,
         );
       });
     });
@@ -108,7 +108,7 @@ describe(GitignoreWriter.name, () => {
 
         // Assert
         expect(out).calledWithExactly(
-          'No .gitignore file could be found. Please add the following to your .gitignore file: .stryker-tmp, reports/stryker-incremental.*',
+          'No .gitignore file could be found. Please add the following to your .gitignore file: .stryker-tmp, reports/stryker-incremental.json.*',
         );
       });
     });

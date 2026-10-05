@@ -352,9 +352,9 @@ describe(IncrementalJournal.name, () => {
     expect(await fileExists(incrementalTempFile(incrementalFile))).false;
   });
 
-  it('should map incrementalFile to a gitignore glob covering the report and WAL siblings', () => {
+  it('should map incrementalFile to a gitignore glob covering only the WAL siblings', () => {
     expect(incrementalGitignorePattern('reports/stryker-incremental.json')).eq(
-      'reports/stryker-incremental.*',
+      'reports/stryker-incremental.json.*',
     );
   });
 
