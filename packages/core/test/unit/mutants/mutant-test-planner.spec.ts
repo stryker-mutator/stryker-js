@@ -29,6 +29,7 @@ describe(MutantTestPlanner.name, () => {
   let sandboxMock: sinon.SinonStubbedInstance<Sandbox>;
   let fileSystemTestDouble: FileSystemTestDouble;
   let testCoverage: TestCoverageTestDouble;
+  let excludedTestIds: string[];
 
   beforeEach(() => {
     reporterMock = factory.reporter();
@@ -36,6 +37,7 @@ describe(MutantTestPlanner.name, () => {
     sandboxMock.sandboxFileFor.returns('sandbox/foo.js');
     fileSystemTestDouble = new FileSystemTestDouble();
     testCoverage = new TestCoverageTestDouble();
+    excludedTestIds = [];
   });
 
   function act(
@@ -52,6 +54,7 @@ describe(MutantTestPlanner.name, () => {
       .provideValue(coreTokens.sandbox, sandboxMock)
       .provideValue(coreTokens.project, project)
       .provideValue(coreTokens.timeOverheadMS, TIME_OVERHEAD_MS)
+      .provideValue(coreTokens.excludedTestIds, excludedTestIds)
       .provideClass(coreTokens.incrementalDiffer, IncrementalDiffer) // inject the real deal
       .injectClass(MutantTestPlanner)
       .makePlan(mutants);
@@ -504,6 +507,78 @@ describe(MutantTestPlanner.name, () => {
         expect(plan.runOptions.testFilter).deep.eq(['spec1']);
         expect(plan.runOptions.mutantActivation).eq('static');
         expect(plan.runOptions.reloadEnvironment).true;
+      });
+    });
+
+    describe('with failed tests excluded after the dry run', () => {
+      beforeEach(() => {
+        excludedTestIds.push('failed1');
+        // The dry run executor already removed 'failed1' from the test coverage
+        testCoverage.addTest(
+          factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }),
+          factory.successTestResult({ id: 'spec2', timeSpentMs: 20 }),
+        );
+      });
+
+      it('should run only the remaining tests, statically activated, when there is no coverage data', async () => {
+        // Act
+        const [plan] = await act([factory.mutant({ id: '1' })]);
+
+        // Assert
+        assertIsRunPlan(plan);
+        expect(plan.runOptions.testFilter).deep.eq(['spec1', 'spec2']);
+        expect(plan.runOptions.mutantActivation).eq('static');
+        expect(plan.runOptions.reloadEnvironment).true;
+        expect(plan.netTime).eq(30);
+      });
+
+      it('should run only the remaining tests, statically activated, for a static mutant when ignoreStatic is disabled', async () => {
+        // Arrange
+        testInjector.options.ignoreStatic = false;
+        testCoverage.staticCoverage['1'] = true;
+        testCoverage.hasCoverage = true;
+
+        // Act
+        const [plan] = await act([factory.mutant({ id: '1' })]);
+
+        // Assert
+        assertIsRunPlan(plan);
+        expect(plan.mutant.static).true;
+        expect(plan.runOptions.testFilter).deep.eq(['spec1', 'spec2']);
+        expect(plan.runOptions.mutantActivation).eq('static');
+        expect(plan.runOptions.reloadEnvironment).true;
+      });
+
+      it('should still filter on covering tests with runtime activation when there is perTest coverage', async () => {
+        // Arrange
+        testCoverage.addCoverage('1', ['spec2']);
+        testCoverage.staticCoverage['1'] = false;
+
+        // Act
+        const [plan] = await act([factory.mutant({ id: '1' })]);
+
+        // Assert
+        assertIsRunPlan(plan);
+        expect(plan.runOptions.testFilter).deep.eq(['spec2']);
+        expect(plan.runOptions.mutantActivation).eq('runtime');
+      });
+
+      it('should also filter on the remaining tests when testFiles is set', async () => {
+        // Arrange
+        const project = new Project(
+          fileSystemTestDouble,
+          fileSystemTestDouble.toFileDescriptions(),
+          undefined,
+          ['src/foo.spec.ts'],
+        );
+
+        // Act
+        const [plan] = await act([factory.mutant({ id: '1' })], project);
+
+        // Assert
+        assertIsRunPlan(plan);
+        expect(plan.runOptions.testFilter).deep.eq(['spec1', 'spec2']);
+        expect(plan.runOptions.mutantActivation).eq('static');
       });
     });
   });

@@ -43,6 +43,7 @@ export interface MutationTestContext extends DryRunContext {
   [coreTokens.mutationTestReportHelper]: MutationTestReportHelper;
   [coreTokens.mutantTestPlanner]: MutantTestPlanner;
   [coreTokens.dryRunResult]: I<CompleteDryRunResult>;
+  [coreTokens.excludedTestIds]: readonly string[];
 }
 
 const CHECK_BUFFER_MS = 10_000;

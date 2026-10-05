@@ -184,6 +184,10 @@ export class StrykerCli {
         'Allows stryker to exit without any errors in cases where no tests are found ',
       )
       .option(
+        '--ignoreFailedTestsInDryRun',
+        'Continue when tests fail in the initial test run. The failed tests are left out of mutation testing. Use with care: the mutation score no longer reflects your full test suite.',
+      )
+      .option(
         '--incrementalFile <file>',
         'Specify the file to use for incremental mode. A sibling .pending/ directory and .tmp file may appear next to it during a run; gitignore them like this file.',
       )

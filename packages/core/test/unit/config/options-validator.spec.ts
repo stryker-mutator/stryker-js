@@ -43,6 +43,7 @@ describe(OptionsValidator.name, () => {
         inPlace: false,
         ignorePatterns: [],
         ignoreStatic: false,
+        ignoreFailedTestsInDryRun: false,
         incremental: false,
         incrementalFile: 'reports/stryker-incremental.json',
         force: false,

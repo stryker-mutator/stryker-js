@@ -89,7 +89,7 @@ export class DryRunExecutor {
     const testRunnerPool = testRunnerInjector.resolve(
       coreTokens.testRunnerPool,
     );
-    const { result, timing } = await lastValueFrom(
+    const { result, timing, excludedTestIds } = await lastValueFrom(
       testRunnerPool.schedule(of(0), (testRunner) =>
         this.executeDryRun(testRunner),
       ),
@@ -105,6 +105,7 @@ export class DryRunExecutor {
     return testRunnerInjector
       .provideValue(coreTokens.timeOverheadMS, timing.overhead)
       .provideValue(coreTokens.dryRunResult, result)
+      .provideValue(coreTokens.excludedTestIds, excludedTestIds)
       .provideValue(coreTokens.requireFromCwd, requireResolve)
       .provideFactory(coreTokens.testCoverage, TestCoverage.from)
       .provideClass(coreTokens.incrementalDiffer, IncrementalDiffer)
@@ -122,13 +123,25 @@ export class DryRunExecutor {
     switch (runResult.status) {
       case DryRunStatus.Complete: {
         const failedTests = runResult.tests.filter(isFailedTest);
-        if (failedTests.length) {
-          this.logFailedTestsInInitialRun(failedTests);
-          throw new ConfigError(
-            'There were failed tests in the initial test run.',
-          );
+        if (!failedTests.length) {
+          return;
         }
-        return;
+        if (
+          this.options.ignoreFailedTestsInDryRun &&
+          failedTests.length < runResult.tests.length
+        ) {
+          this.logFailedTestsInInitialRun(failedTests, 'warn');
+          this.log.warn(
+            `Continuing without these ${failedTests.length} failed test(s), because "ignoreFailedTestsInDryRun" is enabled. Mutants only covered by them will be reported as NoCoverage.`,
+          );
+          return;
+        }
+        this.logFailedTestsInInitialRun(failedTests, 'error');
+        throw new ConfigError(
+          this.options.ignoreFailedTestsInDryRun
+            ? 'All tests failed in the initial test run, so there are no tests left to run mutants against.'
+            : 'There were failed tests in the initial test run.',
+        );
       }
       case DryRunStatus.Error:
         this.logErrorsInInitialRun(runResult);
@@ -142,7 +155,7 @@ export class DryRunExecutor {
 
   private async executeDryRun(
     testRunner: TestRunner,
-  ): Promise<DryRunCompletedEvent> {
+  ): Promise<DryRunCompletedEvent & { excludedTestIds: string[] }> {
     if (this.options.dryRunOnly) {
       this.log.info(
         'Note: running the dry-run only. No mutations will be tested.',
@@ -175,10 +188,32 @@ export class DryRunExecutor {
     this.validateResultCompleted(result);
 
     this.remapSandboxFilesToOriginalFiles(result);
+    // Timing includes the failed tests: their time was spent on testing, not overhead
     const timing = this.calculateTiming(grossTimeMS, result.tests);
+    const excludedTestIds = this.excludeFailedTests(result);
     const dryRunCompleted = { result, timing, capabilities };
     this.reporter.onDryRunCompleted(dryRunCompleted);
-    return dryRunCompleted;
+    return { ...dryRunCompleted, excludedTestIds };
+  }
+
+  /**
+   * Removes failed tests (only present with `ignoreFailedTestsInDryRun`) from the result and its per-test coverage,
+   * so they're never used to cover or kill a mutant.
+   * @returns the ids of the removed tests
+   */
+  private excludeFailedTests(result: CompleteDryRunResult): string[] {
+    const excludedTestIds = result.tests
+      .filter(isFailedTest)
+      .map(({ id }) => id);
+    if (excludedTestIds.length) {
+      result.tests = result.tests.filter((test) => !isFailedTest(test));
+      if (result.mutantCoverage) {
+        for (const testId of excludedTestIds) {
+          delete result.mutantCoverage.perTest[testId];
+        }
+      }
+    }
+    return excludedTestIds;
   }
 
   /**
@@ -243,13 +278,16 @@ export class DryRunExecutor {
     };
   }
 
-  private logFailedTestsInInitialRun(failedTests: FailedTestResult[]): void {
+  private logFailedTestsInInitialRun(
+    failedTests: FailedTestResult[],
+    level: 'error' | 'warn',
+  ): void {
     let message = 'One or more tests failed in the initial test run:';
     failedTests.forEach((test) => {
       message += `${EOL}\t${test.name}`;
       message += `${EOL}\t\t${test.failureMessage}`;
     });
-    this.log.error(message);
+    this.log[level](message);
   }
   private logErrorsInInitialRun(runResult: ErrorDryRunResult) {
     const message = `One or more tests resulted in an error:${EOL}\t${runResult.errorMessage}`;

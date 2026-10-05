@@ -48,6 +48,7 @@ export class MutantTestPlanner {
     coreTokens.sandbox,
     coreTokens.project,
     coreTokens.timeOverheadMS,
+    coreTokens.excludedTestIds,
     commonTokens.options,
     commonTokens.logger,
   );
@@ -61,17 +62,20 @@ export class MutantTestPlanner {
     private readonly sandbox: I<Sandbox>,
     private readonly project: I<Project>,
     private readonly timeOverheadMS: number,
+    excludedTestIds: readonly string[],
     private readonly options: StrykerOptions,
     private readonly logger: Logger,
   ) {
     this.timeSpentAllTests = calculateTotalTime(
       this.testCoverage.testsById.values(),
     );
-    // When `testFiles` limited the dry run to some test files, "all tests" has to be an explicit list of the tests it ran.
+    // When the dry run only ran part of the test suite, "all tests" has to be an explicit list of the tests it ran:
+    // - `testFiles` limited it to some test files
+    // - `ignoreFailedTestsInDryRun` excluded the failed tests afterwards
     // These are test ids, like any other test filter. Test runners match a filter against test ids (mocha, jest and
     // jasmine by test name), so passing the test file names instead would run no tests at all.
     this.allTestIds =
-      this.project.testFiles.length > 0
+      this.project.testFiles.length > 0 || excludedTestIds.length > 0
         ? [...this.testCoverage.testsById.keys()]
         : undefined;
   }

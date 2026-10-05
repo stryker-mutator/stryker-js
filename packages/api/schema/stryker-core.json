@@ -547,6 +547,11 @@
       "type": "boolean",
       "default": false
     },
+    "ignoreFailedTestsInDryRun": {
+      "description": "Continue when tests fail in the initial test run, instead of exiting with an error. The failed tests are left out of mutation testing entirely, so mutants only covered by them are reported as `NoCoverage`. Use with care: the mutation score no longer reflects your full test suite.",
+      "type": "boolean",
+      "default": false
+    },
     "ignorers": {
       "description": "Specify which ignore-plugins to use. With an ignore-plugin you can ignore mutants inside common code patterns that you don't want to test for some reason. For example, you can use this to ignore all `console.debug()` statements from being mutated.",
       "type": "array",

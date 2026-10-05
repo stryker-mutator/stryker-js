@@ -34,6 +34,7 @@ export const requireFromCwd = 'requireFromCwd';
 export const resolveFromCwd = 'resolveFromCwd';
 export const fs = 'fs';
 export const testCoverage = 'testCoverage';
+export const excludedTestIds = 'excludedTestIds';
 export const incrementalDiffer = 'incrementalDiffer';
 export const incrementalJournal = 'incrementalJournal';
 export const project = 'project';

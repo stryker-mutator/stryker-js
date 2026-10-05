@@ -289,6 +289,15 @@ describe(DryRunExecutor.name, () => {
         );
       });
 
+      it('should provide no excluded test ids', async () => {
+        runResult.tests.push(factory.successTestResult());
+        const actualInjector = await sut.execute();
+        expect(actualInjector.provideValue).calledWithExactly(
+          coreTokens.excludedTestIds,
+          [],
+        );
+      });
+
       it('should remap test files that are reported', async () => {
         runResult.tests.push(
           factory.successTestResult({
@@ -406,6 +415,74 @@ describe(DryRunExecutor.name, () => {
           ConfigError,
           'There were failed tests in the initial test run.',
         );
+      });
+
+      describe('and ignoreFailedTestsInDryRun is enabled', () => {
+        beforeEach(() => {
+          testInjector.options.ignoreFailedTestsInDryRun = true;
+          runResult.tests[0].id = 'failed1';
+          runResult.tests[0].timeSpentMs = 30;
+          runResult.tests[1].id = 'failed2';
+          runResult.tests[1].timeSpentMs = 20;
+          runResult.tests.push(
+            factory.successTestResult({ id: 'passed', timeSpentMs: 10 }),
+          );
+        });
+
+        it('should log the failed tests as a warning instead of rejecting', async () => {
+          await sut.execute();
+          expect(testInjector.logger.error).not.called;
+          expect(testInjector.logger.warn).calledWith(
+            `One or more tests failed in the initial test run:${EOL}\tfoo is bar${EOL}\t\tfoo was baz${EOL}\tbar is baz${EOL}\t\tbar was qux`,
+          );
+          expect(testInjector.logger.warn).calledWith(
+            'Continuing without these 2 failed test(s), because "ignoreFailedTestsInDryRun" is enabled. Mutants only covered by them will be reported as NoCoverage.',
+          );
+        });
+
+        it('should remove the failed tests and their coverage from the dry run result', async () => {
+          runResult.mutantCoverage = {
+            static: {},
+            perTest: { failed1: { 1: 1 }, failed2: { 2: 1 }, passed: { 1: 1 } },
+          };
+          const actualInjector = await sut.execute();
+          expect(runResult.tests.map(({ id }) => id)).deep.eq(['passed']);
+          expect(runResult.mutantCoverage.perTest).deep.eq({
+            passed: { 1: 1 },
+          });
+          expect(actualInjector.provideValue).calledWithExactly(
+            coreTokens.dryRunResult,
+            runResult,
+          );
+        });
+
+        it('should provide the ids of the excluded tests', async () => {
+          const actualInjector = await sut.execute();
+          expect(actualInjector.provideValue).calledWithExactly(
+            coreTokens.excludedTestIds,
+            ['failed1', 'failed2'],
+          );
+        });
+
+        it('should count the time spent in failed tests as test time, not overhead', async () => {
+          timerMock.elapsedMs.returns(100);
+          const actualInjector = await sut.execute();
+          expect(actualInjector.provideValue).calledWithExactly(
+            coreTokens.timeOverheadMS,
+            40,
+          );
+        });
+
+        it('should still reject when all tests failed', async () => {
+          runResult.tests.pop();
+          await expect(sut.execute()).rejectedWith(
+            ConfigError,
+            'All tests failed in the initial test run, so there are no tests left to run mutants against.',
+          );
+          expect(testInjector.logger.error).calledWith(
+            `One or more tests failed in the initial test run:${EOL}\tfoo is bar${EOL}\t\tfoo was baz${EOL}\tbar is baz${EOL}\t\tbar was qux`,
+          );
+        });
       });
     });
   });
