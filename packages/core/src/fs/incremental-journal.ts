@@ -129,6 +129,12 @@ export class IncrementalJournal {
   private appendFailureLogged = false;
 
   /**
+   * Set when an append failed. The failed write may have left a partial line, so
+   * the next append starts with a newline to keep its own line parseable.
+   */
+  private lastAppendFailed = false;
+
+  /**
    * The `.prev` / `.next` directory `load()` recovered from. That directory
    * holds the only on-disk WAL until `begin()` commits a new pending pair, so
    * `commitPendingPair` stages into the other staging directory and skips
@@ -205,6 +211,7 @@ export class IncrementalJournal {
     }
     this.isStarted = false;
     this.appendFailureLogged = false;
+    this.lastAppendFailed = false;
 
     try {
       await this.commitPendingPair(base);
@@ -231,10 +238,12 @@ export class IncrementalJournal {
     try {
       appendFileSync(
         path.join(this.pendingDir, INCREMENTAL_PENDING_RESULTS),
-        `${JSON.stringify(result)}\n`,
+        `${this.lastAppendFailed ? '\n' : ''}${JSON.stringify(result)}\n`,
         'utf-8',
       );
+      this.lastAppendFailed = false;
     } catch (error: unknown) {
+      this.lastAppendFailed = true;
       if (!this.appendFailureLogged) {
         this.appendFailureLogged = true;
         this.log.warn(
@@ -396,12 +405,7 @@ export class IncrementalJournal {
       return;
     }
 
-    const journalMutants = await this.readResultsJsonl(dir);
-    if (journalMutants === undefined) {
-      return;
-    }
-
-    for (const { fileName, ...mutant } of journalMutants) {
+    for (const { fileName, ...mutant } of await this.readResultsJsonl(dir)) {
       const fileResult = base.files[fileName];
       if (fileResult) {
         fileResult.mutants.push(mutant);
@@ -424,7 +428,7 @@ export class IncrementalJournal {
    */
   private async readResultsJsonl(
     dir: string,
-  ): Promise<IncrementalJournalMutant[] | undefined> {
+  ): Promise<IncrementalJournalMutant[]> {
     const resultsPath = path.join(dir, INCREMENTAL_PENDING_RESULTS);
     let raw: string;
     try {
@@ -441,27 +445,36 @@ export class IncrementalJournal {
       lines.pop();
     }
 
+    // Every line is a self-contained mutant result, so a corrupted line only
+    // costs that one mutant (it is tested again), not the whole journal.
     const mutants: IncrementalJournalMutant[] = [];
+    let corruptedLines = 0;
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      const isLast = i === lines.length - 1;
+      if (line === '') {
+        // Separator written after a failed append
+        continue;
+      }
       try {
         mutants.push(JSON.parse(line) as IncrementalJournalMutant);
       } catch (error) {
-        if (isLast) {
+        if (i === lines.length - 1) {
           this.log.debug(
             'Dropping a torn last line from incremental journal "%s".',
             resultsPath,
           );
           break;
         }
-        this.log.warn(
-          'Incremental pending journal at "%s" has a corrupted interior line; trying the next pending location.',
-          resultsPath,
-        );
+        corruptedLines++;
         this.log.debug('Pending JSONL parse error: %s', error);
-        return;
       }
+    }
+    if (corruptedLines) {
+      this.log.warn(
+        'Skipped %s corrupted line(s) in incremental journal "%s". Those mutants will be tested again.',
+        corruptedLines,
+        resultsPath,
+      );
     }
     return mutants;
   }

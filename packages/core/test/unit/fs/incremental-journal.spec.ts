@@ -241,21 +241,49 @@ describe(IncrementalJournal.name, () => {
     ]);
   });
 
-  it('should fail load on a corrupted interior JSONL line and leave pending on disk', async () => {
+  it('should skip a corrupted interior JSONL line and keep the other lines', async () => {
     await sut.begin(createBase());
-    sut.append(journalMutant({ id: 'run-1' }));
-    sut.append(journalMutant({ id: 'run-2' }));
+    const resultsPath = path.join(pendingDir, INCREMENTAL_PENDING_RESULTS);
     await fs.writeFile(
-      path.join(pendingDir, INCREMENTAL_PENDING_RESULTS),
-      '{not-json}\n{"fileName":"foo.js","id":"run-2","status":"Killed","mutatorName":"x","location":{"start":{"line":1,"column":1},"end":{"line":1,"column":2}},"replacement":""}\n',
+      resultsPath,
+      `${JSON.stringify(journalMutant({ id: 'run-1' }))}\n{not-json}\n${JSON.stringify(journalMutant({ id: 'run-2' }))}\n`,
       'utf-8',
     );
 
     const recovered = await createSut().load();
-    expect(recovered).undefined;
-    expect(await fileExists(path.join(pendingDir, INCREMENTAL_PENDING_BASE)))
-      .true;
-    expect(testInjector.logger.warn).calledWithMatch('corrupted interior line');
+    expect(recovered!.files['foo.js'].mutants.map(({ id }) => id)).deep.eq([
+      'plan-1',
+      'run-1',
+      'run-2',
+    ]);
+    expect(testInjector.logger.warn).calledWithMatch(
+      'Skipped %s corrupted line(s)',
+      1,
+      resultsPath,
+    );
+  });
+
+  it('should start a new line after a failed append so a partial write cannot corrupt the next result', async () => {
+    await sut.begin(createBase());
+    const resultsPath = path.join(pendingDir, INCREMENTAL_PENDING_RESULTS);
+    sut.append(journalMutant({ id: 'run-1' }));
+    // Simulate a partial write, then make the next append fail
+    await fs.appendFile(resultsPath, '{"id":"partial');
+    const content = await fs.readFile(resultsPath, 'utf-8');
+    await fs.rm(resultsPath);
+    await fs.mkdir(resultsPath);
+    sut.append(journalMutant({ id: 'lost' }));
+    await fs.rm(resultsPath, { recursive: true });
+    await fs.writeFile(resultsPath, content, 'utf-8');
+
+    sut.append(journalMutant({ id: 'run-2' }));
+
+    const recovered = await createSut().load();
+    expect(recovered!.files['foo.js'].mutants.map(({ id }) => id)).deep.eq([
+      'plan-1',
+      'run-1',
+      'run-2',
+    ]);
   });
 
   it('should skip an unreadable pending dir and recover from the next location', async () => {
