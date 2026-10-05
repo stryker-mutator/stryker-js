@@ -47,10 +47,14 @@ describe(JasmineTestRunner.name, () => {
       (rep: jasmine.CustomReporter) => (reporter = rep),
     );
     testInjector.options.jasmineConfigFile = 'jasmineConfFile';
-    sut = testInjector.injector
+    sut = createSut();
+  });
+
+  function createSut() {
+    return testInjector.injector
       .provideValue(pluginTokens.globalNamespace, '__stryker2__' as const)
       .injectClass(JasmineTestRunner);
-  });
+  }
 
   describe('capabilities', () => {
     it('should communicate reloadEnvironment=false', () => {
@@ -93,6 +97,18 @@ describe(JasmineTestRunner.name, () => {
       await actEmptyMutantRun();
       expect(helpers.createJasmine).calledOnce;
       expect(jasmineStub.loadConfigFile).calledOnce;
+    });
+
+    it('should load only the "testFiles" when provided, like the dry run', async () => {
+      testInjector.options.testFiles = ['some-file.spec.js'];
+      sut = createSut();
+      await actEmptyMutantRun();
+      expect(jasmineStub.execute).calledWith(['some-file.spec.js']);
+    });
+
+    it('should load all spec files when "testFiles" is not provided', async () => {
+      await actEmptyMutantRun();
+      expect(jasmineStub.execute).calledWithExactly();
     });
 
     it('should filter tests based on testFilter', async () => {
@@ -202,11 +218,11 @@ describe(JasmineTestRunner.name, () => {
 
   describe('dryRun', () => {
     it('should use "testFiles" when provided', async () => {
+      testInjector.options.testFiles = ['some-file.spec.js'];
+      sut = createSut();
       jasmineStub.execute.resolves(createJasmineDoneInfo());
 
-      await sut.dryRun(
-        factory.dryRunOptions({ testFiles: ['some-file.spec.js'] }),
-      );
+      await sut.dryRun(factory.dryRunOptions());
 
       expect(jasmineStub.execute).calledWith(['some-file.spec.js']);
     });

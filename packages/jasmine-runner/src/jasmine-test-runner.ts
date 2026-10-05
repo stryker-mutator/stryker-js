@@ -56,6 +56,11 @@ export const createJasmineTestRunner = createJasmineTestRunnerFactory();
 
 export class JasmineTestRunner implements TestRunner {
   private readonly jasmineConfigFile: string | undefined;
+  /**
+   * Loaded in the dry run _and_ in every mutant run. Jasmine numbers the specs in load order ("spec0", "spec1", ...),
+   * so a mutant run (possibly in a fresh process) has to load the exact same files for the test filter to match.
+   */
+  private readonly testFiles: string[] | undefined;
   private readonly Date: typeof Date = Date; // take Date prototype now we still can (user might choose to mock it away)
   private readonly instrumenterContext: InstrumenterContext;
 
@@ -70,6 +75,9 @@ export class JasmineTestRunner implements TestRunner {
     this.jasmineConfigFile = (
       options as JasmineRunnerOptions
     ).jasmineConfigFile;
+    this.testFiles = testFilesProvided(options)
+      ? [...options.testFiles]
+      : undefined;
     this.instrumenterContext =
       global[globalNamespace] ?? (global[globalNamespace] = {});
   }
@@ -90,7 +98,7 @@ export class JasmineTestRunner implements TestRunner {
       options.disableBail,
       undefined,
       undefined,
-      options.testFiles,
+      this.testFiles,
     );
   }
 
@@ -109,6 +117,7 @@ export class JasmineTestRunner implements TestRunner {
       disableBail,
       activeMutant.id,
       mutantActivation,
+      this.testFiles,
     );
     return toMutantRunResult(runResult);
   }

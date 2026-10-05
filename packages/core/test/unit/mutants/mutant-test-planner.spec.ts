@@ -432,7 +432,6 @@ describe(MutantTestPlanner.name, () => {
     describe('with testFiles option', () => {
       beforeEach(() => {
         testInjector.options.testFiles = ['src/**/*.spec.ts'];
-        sandboxMock.sandboxFileFor.returns('sandbox/src/foo.spec.ts');
       });
 
       it('should use the testFiles as filter, disable reloadEnvironment and enable runtime activation when known not to be static', async () => {
@@ -455,9 +454,13 @@ describe(MutantTestPlanner.name, () => {
         expect(plan.runOptions.reloadEnvironment).false;
       });
 
-      it('should use the testFiles as filter, enable reloadEnvironment and enable static activation when coverage analysis is off (unknown static status)', async () => {
+      it('should filter on all tests of the dry run, enable reloadEnvironment and enable static activation when coverage analysis is off (unknown static status)', async () => {
         // Arrange
         testCoverage.hasCoverage = false; // Coverage off
+        testCoverage.addTest(
+          factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }),
+          factory.successTestResult({ id: 'spec2', timeSpentMs: 10 }),
+        );
         const mutant = factory.mutant({ id: '1' });
         const project = new Project(
           fileSystemTestDouble,
@@ -471,12 +474,13 @@ describe(MutantTestPlanner.name, () => {
 
         // Assert
         assertIsRunPlan(plan);
-        expect(plan.runOptions.testFilter).deep.eq(['sandbox/src/foo.spec.ts']);
-        expect(plan.runOptions.mutantActivation).eq('runtime');
+        // Test ids, not test file names: test runners match the filter against test ids
+        expect(plan.runOptions.testFilter).deep.eq(['spec1', 'spec2']);
+        expect(plan.runOptions.mutantActivation).eq('static');
         expect(plan.runOptions.reloadEnvironment).true;
       });
 
-      it('should use the testFiles as filter, enable reloadEnvironment and enable static activation when known to be static', async () => {
+      it('should filter on all tests of the dry run, enable reloadEnvironment and enable static activation when known to be static', async () => {
         // Arrange
         testInjector.options.ignoreStatic = false;
         testCoverage.staticCoverage['1'] = true; // Known static
@@ -497,8 +501,8 @@ describe(MutantTestPlanner.name, () => {
 
         // Assert
         assertIsRunPlan(plan);
-        expect(plan.runOptions.testFilter).deep.eq(['sandbox/src/foo.spec.ts']);
-        expect(plan.runOptions.mutantActivation).eq('runtime');
+        expect(plan.runOptions.testFilter).deep.eq(['spec1']);
+        expect(plan.runOptions.mutantActivation).eq('static');
         expect(plan.runOptions.reloadEnvironment).true;
       });
     });

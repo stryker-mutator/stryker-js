@@ -254,4 +254,55 @@ describe('Filtering tests with --testFiles', () => {
       );
     });
   });
+
+  // Without coverage, every mutant runs "all tests", which with testFiles must still be the tests from those files.
+  // This used to run no tests at all for runners that match the test filter against test names.
+  describe('with coverageAnalysis "off"', () => {
+    /** @type {Record<string, Partial<import('@stryker-mutator/api/core').StrykerOptions>>} */
+    const optionsByRunner = {
+      jest: {
+        testFiles: ['test/jest/math.spec.js'],
+        mutate: ['src/math.cjs'],
+        jest: { configFile: 'jest.config.js' },
+        tempDirName: 'not-ignored-temp-dir', // Default temp dir is ignored by jest due to being hidden (Windows-only)
+      },
+      mocha: {
+        testFiles: ['test/mocha/math.spec.cjs'],
+        mutate: ['src/math.cjs'],
+      },
+      jasmine: {
+        testFiles: ['test/jasmine/math.spec.js'],
+        mutate: ['src/math.js'],
+      },
+      vitest: {
+        testFiles: ['test/vitest/math.spec.js'],
+        mutate: ['src/math.js'],
+        vitest: { configFile: 'vitest.config.js' },
+      },
+      tap: { testFiles: ['test/tap/math.spec.js'], mutate: ['src/math.js'] },
+      cucumber: {
+        testFiles: ['test/cucumber/features/math.feature'],
+        mutate: ['src/math.js'],
+        cucumber: { features: ['test/cucumber/features/**/*.feature'] },
+      },
+    };
+
+    Object.entries(optionsByRunner).forEach(([testRunner, options]) => {
+      it(`should kill the mutant with the "${testRunner}" test runner`, async () => {
+        const stryker = new Stryker({
+          testRunner,
+          coverageAnalysis: 'off',
+          concurrency: 1,
+          plugins: [`@stryker-mutator/${testRunner}-runner`],
+          ...options,
+        });
+
+        const result = await stryker.runMutationTest();
+        expect(result.length).to.be.greaterThan(0);
+        const killedMutant = result.find((m) => m.status === 'Killed');
+        expect(killedMutant, 'Expected at least one killed mutant').to.not.be
+          .undefined;
+      });
+    });
+  });
 });
