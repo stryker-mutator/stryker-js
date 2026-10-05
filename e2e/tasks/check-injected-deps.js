@@ -66,6 +66,10 @@ function hash(file) {
  * A copied file with no readable counterpart in source `dist` counts as stale (removed
  * or never rebuilt after a clean).
  *
+ * A copy with no output at all while the source has some counts as stale too: that is a
+ * `pnpm install` that ran before the first build (e.g. on a fresh clone), and there would
+ * otherwise be no files to compare.
+ *
  * Known gap: a source file added since the last install has no counterpart in the copy and
  * so goes unreported. Comparing the other direction would mean deriving each package's
  * publishable subset from its `files` field.
@@ -74,8 +78,12 @@ function hash(file) {
  * @param {string} injectedDist
  * @returns {boolean}
  */
-function isStale(sourceDist, injectedDist) {
-  return filesIn(injectedDist).some((relative) => {
+export function isStale(sourceDist, injectedDist) {
+  const injectedFiles = filesIn(injectedDist);
+  if (injectedFiles.length === 0) {
+    return filesIn(sourceDist).length > 0;
+  }
+  return injectedFiles.some((relative) => {
     const injectedFile = path.join(injectedDist, relative);
     const sourceFile = path.join(sourceDist, relative);
     try {
@@ -138,7 +146,7 @@ function injectedPackages() {
 }
 
 /**
- * Fail fast when a package was rebuilt after the injected copies were last linked.
+ * Fail fast when a package was built or rebuilt after the injected copies were last linked.
  * Set `SKIP_INJECTED_DEPS_CHECK=1` to bypass.
  */
 export function checkInjectedDeps() {
@@ -151,7 +159,7 @@ export function checkInjectedDeps() {
 
   if (stale.length) {
     throw new Error(
-      'These packages were rebuilt after the e2e copies were linked, so the e2e tests would run the older build:\n' +
+      'These packages were built or rebuilt after the e2e copies were linked, so the e2e tests would run the older build:\n' +
         stale.map(({ name }) => `  - ${name}`).join('\n') +
         '\n\nRun `pnpm install --frozen-lockfile` from the repo root to re-link them, then run the tests again.\n' +
         '(`pnpm run e2e` does this for you. Set SKIP_INJECTED_DEPS_CHECK=1 to bypass this check.)',
