@@ -25,8 +25,16 @@ describe(StrykerServer.name, () => {
   let sut: ChildProcess;
   let client: MutationServerClient;
 
-  afterEach(() => {
-    sut.kill();
+  afterEach(async () => {
+    if (sut.exitCode === null && sut.signalCode === null) {
+      const exited = new Promise((res) => sut.once('exit', res));
+      sut.kill();
+      await exited;
+    }
+    // Unread or unended stdio pipes keep the mocha process alive after the run
+    sut.stdin?.destroy();
+    sut.stdout?.destroy();
+    sut.stderr?.destroy();
   });
   describe('using socket channel', () => {
     let socket: net.Socket;
