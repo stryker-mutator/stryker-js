@@ -62,6 +62,11 @@ export class MutationTestReportHelper {
   private readonly partialResults: MutantResult[] = [];
   private reportCompleted = false;
   /**
+   * Set once `beginIncrementalJournal()` has returned, whether or not the journal
+   * actually started. Before that, compacting could race `begin()`'s directory swap.
+   */
+  private journalBeginSettled = false;
+  /**
    * File names already warned about, so the same warning isn't repeated when the
    * report is generated more than once (incremental runs report at plan time as
    * well as at the end).
@@ -97,13 +102,14 @@ export class MutationTestReportHelper {
     private readonly incrementalJournal: I<IncrementalJournal>,
   ) {
     unexpectedExitHandler.registerHandler(async () => {
-      // Only compact after this run's pending pair exists. Completing before
-      // `begin()` would write a truncated plan-time report and delete a
-      // recovered WAL from a prior crash.
+      // Only compact once `begin()` has settled. Completing before it would
+      // write a truncated plan-time report and delete a recovered WAL from a
+      // prior crash. Don't require that `begin()` succeeded: if the journal
+      // failed to start, compacting is the only way to keep this run's results.
       if (
         this.options.incremental &&
         !this.reportCompleted &&
-        this.incrementalJournal.isStarted &&
+        this.journalBeginSettled &&
         this.partialResults.length > 0
       ) {
         // Freeze the WAL first. Workers can keep reporting while we await file
@@ -213,6 +219,7 @@ export class MutationTestReportHelper {
     const base = await this.mutationTestReport(this.partialResults);
     await this.includeRemainingMutatedFiles(base);
     await this.incrementalJournal.begin(base);
+    this.journalBeginSettled = true;
   }
 
   private checkStatusToResultStatus(

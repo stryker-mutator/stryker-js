@@ -529,8 +529,8 @@ describe(MutationTestReportHelper.name, () => {
       it('should write partial results to the incremental journal on unexpected exit after begin', async () => {
         testInjector.options.incremental = true;
         fileSystemTestDouble.files['partial.js'] = 'const answer = 42;\n';
-        incrementalJournalMock.isStarted = true;
         const sut = createSut();
+        await sut.beginIncrementalJournal();
 
         sut.reportMutantStatus(
           factory.mutantTestCoverage({
@@ -557,6 +557,31 @@ describe(MutationTestReportHelper.name, () => {
           'Saved a partial incremental report to "%s" after an unexpected interrupt.',
           'reports/stryker-incremental.json',
         );
+      });
+
+      it('should still compact partial results on unexpected exit when the journal failed to begin', async () => {
+        testInjector.options.incremental = true;
+        fileSystemTestDouble.files['partial.js'] = 'const answer = 42;\n';
+        // The real `begin()` logs and swallows its error, leaving `isStarted` false
+        incrementalJournalMock.begin.resolves();
+        const sut = createSut();
+        await sut.beginIncrementalJournal();
+
+        sut.reportMutantStatus(
+          factory.mutantTestCoverage({
+            fileName: 'partial.js',
+            id: '1',
+            location: factory.location(),
+          }),
+          'NoCoverage',
+        );
+
+        await unexpectedExitRegistry.triggerUnexpectedExit();
+
+        expect(incrementalJournalMock.append).not.called;
+        expect(incrementalJournalMock.complete).calledOnce;
+        const [actualReport] = incrementalJournalMock.complete.firstCall.args;
+        expect(actualReport.files['partial.js'].mutants).lengthOf(1);
       });
 
       it('should not compact on unexpected exit before the journal has begun', async () => {
