@@ -237,16 +237,24 @@ describe('incremental interrupt', () => {
     expect(await countMutantsInPending()).to.be.greaterThan(0);
 
     const original = await fsPromises.readFile(mathFile, 'utf-8');
-    await fsPromises.writeFile(
-      mathFile,
-      original.replace('return num1 + num2;', 'return num1 + num2 + 0;'),
+    const edited = original.replace(
+      'return num1 + num2;',
+      'return num1 + num2 + 0;',
     );
+    expect(edited, 'the edit should change math.js').to.not.equal(original);
+    await fsPromises.writeFile(mathFile, edited);
 
     try {
       const result = await execa('stryker', ['run', ...textReporter]);
       expect(result.exitCode).to.equal(0);
-      expect(result.stdout).to.contain('mutant result(s) are reused');
-      expect(await countMutantsInReport(incrementalFile)).to.be.greaterThan(0);
+      // eslint-disable-next-line no-control-regex
+      const stdout = result.stdout.replace(/\x1b\[[0-9;]*m/g, '');
+      const match = /(\d+) of (\d+) mutant result\(s\) are reused/.exec(stdout);
+      expect(match, 'the run should report reused mutants').to.exist;
+      const [, reused, total] = match.map(Number);
+      // The mutants of the edited `add` function must be tested again
+      expect(reused).to.be.lessThan(total);
+      expect(await countMutantsInReport(incrementalFile)).to.equal(total);
     } finally {
       await fsPromises.writeFile(mathFile, original);
     }
@@ -257,13 +265,17 @@ describe('incremental interrupt', () => {
     expect(fullRun.exitCode).to.equal(0);
     expect(await countMutantsInReport(incrementalFile)).to.equal(9);
 
+    /** @type {import('execa').ExecaError | undefined} */
+    let crashError;
     try {
       await execa('stryker', ['run', ...crashReporters], {
         env: { STRYKER_CRASH_BEFORE_BEGIN: '1' },
       });
     } catch (error) {
-      expect(error.exitCode).to.equal(1);
+      crashError = error;
     }
+    expect(crashError, 'Stryker should have hard-crashed').to.exist;
+    expect(crashError.exitCode).to.equal(1);
 
     expect(await countMutantsInReport(incrementalFile)).to.equal(9);
 
