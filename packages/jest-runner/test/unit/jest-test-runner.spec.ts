@@ -741,7 +741,8 @@ describe(JestTestRunner.name, () => {
       );
       expect(jestTestAdapterMock.run).calledWithMatch(
         sinon.match({
-          testNamePattern: '(foo should be bar/z)|(baz should be ba\\\\\\.z)',
+          testNamePattern:
+            '(^foo should be bar/z$)|(^baz should be ba\\\\\\.z$)',
         }),
       );
     });

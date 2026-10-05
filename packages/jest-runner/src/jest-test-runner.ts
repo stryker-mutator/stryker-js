@@ -180,8 +180,9 @@ export class JestTestRunner implements TestRunner {
     state.coverageAnalysis = 'off';
     let testNamePattern: string | undefined;
     if (testFilter) {
+      // Anchor each id, otherwise "Calc add" would also select "Calc add negative"
       testNamePattern = testFilter
-        .map((testId) => `(${escapeRegExp(testId)})`)
+        .map((testId) => `(^${escapeRegExp(testId)}$)`)
         .join('|');
     }
     state.instrumenterContext.hitLimit = hitLimit;
