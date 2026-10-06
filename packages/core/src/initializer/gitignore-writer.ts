@@ -11,6 +11,13 @@ import { initializerTokens } from './index.js';
 const GITIGNORE_FILE = '.gitignore';
 
 /**
+ * Treat `/foo`, `foo` and `foo/` as the same rule, so an existing entry in any of those forms counts.
+ */
+function normalizePattern(pattern: string): string {
+  return pattern.replace(/^\//, '').replace(/\/$/, '');
+}
+
+/**
  * Appends recommended Stryker ignore patterns to `.gitignore` during `stryker init`.
  * Always includes the temp dir and the default incremental report glob (json, pending WAL, tmp),
  * even when incremental is not enabled yet.
@@ -23,8 +30,15 @@ export class GitignoreWriter {
     const patterns = this.gitignorePatterns();
     if (existsSync(GITIGNORE_FILE)) {
       const gitignoreContent = (await fs.readFile(GITIGNORE_FILE)).toString();
+      const present = new Set(
+        gitignoreContent
+          .split(/\r?\n/)
+          .map((line) => line.trim())
+          .filter((line) => line && !line.startsWith('#'))
+          .map(normalizePattern),
+      );
       const missing = patterns.filter(
-        (pattern) => !gitignoreContent.includes(pattern),
+        (pattern) => !present.has(normalizePattern(pattern)),
       );
       if (missing.length === 0) {
         return;

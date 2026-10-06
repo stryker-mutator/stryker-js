@@ -97,6 +97,50 @@ describe(GitignoreWriter.name, () => {
       });
     });
 
+    describe('with existing entries that only resemble the patterns', () => {
+      beforeEach(() => {
+        fsExistsSync.returns(true);
+      });
+
+      it('should not count a commented-out pattern as present', async () => {
+        fsReadFile.returns(
+          `# .stryker-tmp${os.EOL}# reports/stryker-incremental.json.*${os.EOL}`,
+        );
+        await sut.addStrykerTempFolder();
+        expect(fsAppendFile).calledWithExactly(
+          GITIGNORE_FILE,
+          STRYKER_GITIGNORE,
+        );
+      });
+
+      it('should not count a longer pattern as present', async () => {
+        fsReadFile.returns(
+          `.stryker-tmp-2${os.EOL}reports/stryker-incremental.json.pending/${os.EOL}`,
+        );
+        await sut.addStrykerTempFolder();
+        expect(fsAppendFile).calledWithExactly(
+          GITIGNORE_FILE,
+          STRYKER_GITIGNORE,
+        );
+      });
+
+      it('should count a slash-anchored or directory form as present', async () => {
+        fsReadFile.returns(
+          `/.stryker-tmp/${os.EOL}reports/stryker-incremental.json.*${os.EOL}`,
+        );
+        await sut.addStrykerTempFolder();
+        expect(fsAppendFile).not.called;
+      });
+
+      it('should handle CRLF line endings', async () => {
+        fsReadFile.returns(
+          '.stryker-tmp\r\nreports/stryker-incremental.json.*\r\n',
+        );
+        await sut.addStrykerTempFolder();
+        expect(fsAppendFile).not.called;
+      });
+    });
+
     describe('without a .gitignore file', () => {
       beforeEach(() => {
         fsExistsSync.returns(false);
