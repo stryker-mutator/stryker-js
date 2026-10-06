@@ -203,6 +203,40 @@ describe(ProjectReader.name, () => {
       expect(files).lengthOf(1);
       expect(files.keys().next().value).eq(path.resolve('index.js'));
     });
+    it('should ignore configuration properties that start with ./ or are absolute', async () => {
+      // Arrange
+      stubFileSystem({
+        'index.js': '',
+        reports: {
+          'stryker-incremental.json': '',
+          'stryker-incremental.json.tmp': '',
+          'stryker-incremental.json.pending': {
+            'base.json': '',
+            'results.jsonl': '',
+          },
+          'stryker-incremental.json.pending.next': { 'base.json': '' },
+          'stryker-incremental.json.pending.prev': { 'base.json': '' },
+          mutation: { 'mutation.html': '', 'mutation.json': '' },
+        },
+      });
+      testInjector.options.incrementalFile =
+        './reports/stryker-incremental.json';
+      testInjector.options.htmlReporter.fileName = path.resolve(
+        'reports',
+        'mutation',
+        'mutation.html',
+      );
+      testInjector.options.jsonReporter.fileName =
+        '.\\reports\\mutation\\mutation.json';
+      const sut = createSut();
+
+      // Act
+      const { files } = await sut.read(undefined);
+
+      // Assert
+      expect(files).lengthOf(1);
+      expect(files.keys().next().value).eq(path.resolve('index.js'));
+    });
     it('should not ignore deep report directories by default', async () => {
       // Arrange
       stubFileSystem({

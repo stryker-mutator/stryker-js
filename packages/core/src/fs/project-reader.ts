@@ -90,15 +90,17 @@ export class ProjectReader {
       // These options are paths, but they end up here as minimatch patterns, where a
       // backslash is an escape rather than a separator. Minimatch normalizes the paths it
       // matches against, not the patterns, so `path.join('reports', 'foo.json')` on Windows
-      // would silently match nothing. `ignorePatterns` is left alone on purpose: those are
-      // user-authored globs, where the escape is meaningful.
+      // would silently match nothing. The same goes for a leading `./` or an absolute path:
+      // minimatch matches against cwd-relative names, so those are made cwd-relative too.
+      // `ignorePatterns` is left alone on purpose: those are user-authored globs, where the
+      // escape is meaningful.
       ...[
         tempDirName,
         incrementalFile,
         ...incrementalIgnorePaths(incrementalFile),
         htmlReporter.fileName,
         jsonReporter.fileName,
-      ].map(normalizeFileName),
+      ].map(toIgnorePattern),
       ...ignorePatterns,
     ];
     this.incremental = incremental;
@@ -520,4 +522,16 @@ function reportPositionToStrykerPosition({ line, column }: Position): Position {
     line: line - 1,
     column: column - 1,
   };
+}
+
+/**
+ * Turns a configured path into an ignore pattern that matches the cwd-relative file names
+ * the reader sees. `./reports/foo.json` and `/abs/cwd/reports/foo.json` both become `reports/foo.json`.
+ */
+function toIgnorePattern(configuredPath: string): string {
+  const normalized = normalizeFileName(configuredPath);
+  const relative = normalizeFileName(
+    path.relative(process.cwd(), path.resolve(normalized)),
+  );
+  return relative || normalized;
 }
