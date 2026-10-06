@@ -144,7 +144,7 @@ export class DryRunExecutor {
         this.logFailedTestsInInitialRun(failedTests, 'error');
         throw new ConfigError(
           this.options.ignoreFailedTestsInDryRun
-            ? 'All tests failed in the initial test run, so there are no tests left to run mutants against.'
+            ? 'No passing tests remain after the failed tests in the initial test run, so there are no tests left to run mutants against.'
             : 'There were failed tests in the initial test run.',
         );
       }

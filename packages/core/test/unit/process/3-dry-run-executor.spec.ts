@@ -502,7 +502,7 @@ describe(DryRunExecutor.name, () => {
           );
           await expect(sut.execute()).rejectedWith(
             ConfigError,
-            'All tests failed in the initial test run, so there are no tests left to run mutants against.',
+            'No passing tests remain after the failed tests in the initial test run, so there are no tests left to run mutants against.',
           );
         });
 
@@ -511,7 +511,7 @@ describe(DryRunExecutor.name, () => {
           runResult.tests.push(factory.skippedTestResult({ id: 'skipped' }));
           await expect(sut.execute()).rejectedWith(
             ConfigError,
-            'All tests failed in the initial test run, so there are no tests left to run mutants against.',
+            'No passing tests remain after the failed tests in the initial test run, so there are no tests left to run mutants against.',
           );
         });
 
@@ -536,7 +536,7 @@ describe(DryRunExecutor.name, () => {
           runResult.tests.pop();
           await expect(sut.execute()).rejectedWith(
             ConfigError,
-            'All tests failed in the initial test run, so there are no tests left to run mutants against.',
+            'No passing tests remain after the failed tests in the initial test run, so there are no tests left to run mutants against.',
           );
           expect(testInjector.logger.error).calledWith(
             `One or more tests failed in the initial test run:${EOL}\tfoo is bar${EOL}\t\tfoo was baz${EOL}\tbar is baz${EOL}\t\tbar was qux`,
