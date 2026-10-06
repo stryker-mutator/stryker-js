@@ -187,7 +187,7 @@ export class IncrementalJournal {
       if (report) {
         this.walPreserveDir = dir === this.pendingDir ? undefined : dir;
         this.log.info(
-          'Recovering incremental results from pending journal at "%s".',
+          'Reading the incremental results saved by an interrupted run from "%s".',
           dir,
         );
         return report;
