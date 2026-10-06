@@ -289,11 +289,25 @@ export class DryRunExecutor {
     failedTests: FailedTestResult[],
     level: 'error' | 'warn',
   ): void {
+    // A test can fail more than once, e.g. in itself and in its `afterEach` hook.
+    // List it once, with every failure message.
+    const failuresByTest = new Map<
+      string,
+      { name: string; messages: string[] }
+    >();
+    for (const { id, name, failureMessage } of failedTests) {
+      const key = `${id}\0${name}`;
+      const failures = failuresByTest.get(key) ?? { name, messages: [] };
+      failures.messages.push(failureMessage);
+      failuresByTest.set(key, failures);
+    }
     let message = 'One or more tests failed in the initial test run:';
-    failedTests.forEach((test) => {
-      message += `${EOL}\t${test.name}`;
-      message += `${EOL}\t\t${test.failureMessage}`;
-    });
+    for (const { name, messages } of failuresByTest.values()) {
+      message += `${EOL}\t${name}`;
+      messages.forEach((failureMessage) => {
+        message += `${EOL}\t\t${failureMessage}`;
+      });
+    }
     this.log[level](message);
   }
   private logErrorsInInitialRun(runResult: ErrorDryRunResult) {

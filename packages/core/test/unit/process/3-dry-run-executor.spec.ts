@@ -469,6 +469,23 @@ describe(DryRunExecutor.name, () => {
           );
         });
 
+        it('should list a test that failed more than once only once, with every failure message', async () => {
+          runResult.tests.push(
+            factory.failedTestResult({
+              id: 'failed1',
+              name: 'foo is bar',
+              failureMessage: 'afterEach hook failed',
+            }),
+          );
+          await sut.execute();
+          expect(testInjector.logger.warn).calledWith(
+            `One or more tests failed in the initial test run:${EOL}\tfoo is bar${EOL}\t\tfoo was baz${EOL}\t\tafterEach hook failed${EOL}\tbar is baz${EOL}\t\tbar was qux`,
+          );
+          expect(testInjector.logger.warn).calledWithMatch(
+            'Continuing without these 2 failed test(s)',
+          );
+        });
+
         it('should reject when every test id failed, even if some also passed', async () => {
           runResult.tests.pop();
           runResult.tests.push(
