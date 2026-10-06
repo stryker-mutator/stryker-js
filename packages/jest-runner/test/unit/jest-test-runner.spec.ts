@@ -747,6 +747,20 @@ describe(JestTestRunner.name, () => {
       );
     });
 
+    it('should anchor test ids that are a prefix of another test id', async () => {
+      const sut = await arrangeInitializedSut();
+      await sut.mutantRun(
+        factory.mutantRunOptions({
+          testFilter: ['Calc add', 'Calc add negative'],
+        }),
+      );
+      const { testNamePattern } = jestTestAdapterMock.run.lastCall.args[0];
+      const pattern = new RegExp(testNamePattern!);
+      expect(pattern.test('Calc add')).true;
+      expect(pattern.test('Calc add negative')).true;
+      expect(pattern.test('Calc add positive')).false;
+    });
+
     it('should set bail if disableBail is passed', async () => {
       const sut = await arrangeInitializedSut();
       await sut.mutantRun(factory.mutantRunOptions({ disableBail: true }));
