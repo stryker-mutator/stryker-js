@@ -352,6 +352,34 @@ describe(IncrementalJournal.name, () => {
     expect(await fileExists(incrementalTempFile(incrementalFile))).false;
   });
 
+  it('should not let a pending journal shadow the committed report when removing the pending dir fails', async () => {
+    await sut.begin(createBase());
+    sut.append(journalMutant({ id: 'run-1' }));
+    const rm = fsNode.promises.rm as (...args: unknown[]) => Promise<void>;
+    // Removing the directory is cut short after it dropped `results.jsonl` but not `base.json`
+    sinon
+      .stub(fsNode.promises, 'rm')
+      .callsFake((target: fsNode.PathLike, ...args: unknown[]) => {
+        if (path.resolve(String(target)) === path.resolve(pendingDir)) {
+          return fs
+            .rm(path.join(pendingDir, INCREMENTAL_PENDING_RESULTS))
+            .then(() =>
+              Promise.reject(
+                Object.assign(new Error('EBUSY'), { code: 'EBUSY' }),
+              ),
+            );
+        }
+        return rm(target, ...args);
+      });
+
+    await sut.complete(createBase());
+
+    expect(await createSut().load()).undefined;
+    expect(testInjector.logger.warn).calledWithMatch(
+      'Failed to remove incremental journal path',
+    );
+  });
+
   it('should map incrementalFile to a gitignore glob covering only the WAL siblings', () => {
     expect(incrementalGitignorePattern('reports/stryker-incremental.json')).eq(
       'reports/stryker-incremental.json.*',

@@ -262,9 +262,17 @@ export class IncrementalJournal {
     this.isStarted = false;
     this.walPreserveDir = undefined;
     await this.writeCommittedReport(finalReport);
-    await this.removeDirBestEffort(this.pendingDir);
-    await this.removeDirBestEffort(this.pendingNextDir);
-    await this.removeDirBestEffort(this.pendingPrevDir);
+    // Unlink every `base.json` before removing the directories. `load()` only needs
+    // `base.json` to recover a pending dir, so a recursive remove that is cut short
+    // after deleting `results.jsonl` would otherwise leave a base-only journal that
+    // shadows the report that was just committed.
+    const dirs = [this.pendingDir, this.pendingNextDir, this.pendingPrevDir];
+    for (const dir of dirs) {
+      await this.removeBestEffort(path.join(dir, INCREMENTAL_PENDING_BASE));
+    }
+    for (const dir of dirs) {
+      await this.removeDirBestEffort(dir);
+    }
   }
 
   /**
@@ -351,12 +359,20 @@ export class IncrementalJournal {
    * Windows) still throw; those must not undo a rename/write that already landed.
    */
   private async removeDirBestEffort(dir: string): Promise<void> {
+    await this.removeBestEffort(dir, { recursive: true });
+  }
+
+  private async removeBestEffort(
+    target: string,
+    options: { recursive?: boolean } = {},
+  ): Promise<void> {
     try {
-      await fs.rm(dir, { recursive: true, force: true });
+      await fs.rm(target, { ...options, force: true });
     } catch (error) {
-      this.log.debug(
+      // A leftover pending journal is recovered on the next run, so say so.
+      this.log.warn(
         'Failed to remove incremental journal path "%s": %s',
-        dir,
+        target,
         error,
       );
     }
@@ -417,10 +433,9 @@ export class IncrementalJournal {
   }
 
   /**
-   * Parse JSONL. A malformed last line (torn write) is dropped. A malformed
-   * interior line fails the whole load so callers can fall back to another pending
-   * dir or the committed file.
-   * @returns Parsed mutants, or `undefined` when this journal must not be used.
+   * Parse JSONL. A malformed last line (torn write) is dropped quietly. A malformed
+   * interior line is skipped with a warning, so only that mutant is tested again.
+   * @returns The parsed mutants. A missing file yields an empty list.
    */
   private async readResultsJsonl(
     dir: string,
