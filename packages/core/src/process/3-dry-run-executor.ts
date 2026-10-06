@@ -128,12 +128,13 @@ export class DryRunExecutor {
         }
         // Compare unique ids: a runner can report the same test twice, e.g. mocha
         // reports an `afterEach` hook failure under the id of a test that passed.
+        // Only a passed test leaves something to run mutants against; skipped tests don't.
         const failedTestIds = new Set(failedTests.map(({ id }) => id));
-        const testIds = new Set(runResult.tests.map(({ id }) => id));
-        if (
-          this.options.ignoreFailedTestsInDryRun &&
-          failedTestIds.size < testIds.size
-        ) {
+        const hasPassedTest = runResult.tests.some(
+          ({ id, status }) =>
+            status === TestStatus.Success && !failedTestIds.has(id),
+        );
+        if (this.options.ignoreFailedTestsInDryRun && hasPassedTest) {
           this.logFailedTestsInInitialRun(failedTests, 'warn');
           this.log.warn(
             `Continuing without these ${failedTestIds.size} failed test(s), because "ignoreFailedTestsInDryRun" is enabled. With "perTest" coverage analysis, mutants only covered by them will be reported as NoCoverage; otherwise they will likely survive.`,

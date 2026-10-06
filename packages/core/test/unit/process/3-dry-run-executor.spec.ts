@@ -506,6 +506,15 @@ describe(DryRunExecutor.name, () => {
           );
         });
 
+        it('should reject when the only other tests were skipped', async () => {
+          runResult.tests.pop();
+          runResult.tests.push(factory.skippedTestResult({ id: 'skipped' }));
+          await expect(sut.execute()).rejectedWith(
+            ConfigError,
+            'All tests failed in the initial test run, so there are no tests left to run mutants against.',
+          );
+        });
+
         it('should provide the ids of the excluded tests', async () => {
           const actualInjector = await sut.execute();
           expect(actualInjector.provideValue).calledWithExactly(
