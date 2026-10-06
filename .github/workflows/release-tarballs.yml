@@ -1,0 +1,48 @@
+name: Release tarballs
+
+# Builds `@stryker-mutator/api` and `@stryker-mutator/core` from the same commit and attaches
+# them to a GitHub release, so consumers can install them without building the monorepo.
+# Packages this branch doesn't change (util, instrumenter, runners, ...) come from npm.
+
+on:
+  push:
+    tags:
+      - 'crash-recovery-v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/setup
+        with:
+          install-chromium: 'false'
+      - name: Build
+        run: pnpm run build:no-check
+      - name: Pack
+        run: |
+          mkdir -p dist-tarballs
+          pnpm --filter @stryker-mutator/api pack --pack-destination "$PWD/dist-tarballs"
+          pnpm --filter @stryker-mutator/core pack --pack-destination "$PWD/dist-tarballs"
+          ls -l dist-tarballs
+      - name: Check packed core depends on a real version of api
+        run: |
+          tar -xzOf dist-tarballs/stryker-mutator-core-*.tgz package/package.json | grep -q '"@stryker-mutator/api": "[0-9]'
+      - name: Check packed api schema has the new option
+        run: |
+          tar -xzOf dist-tarballs/stryker-mutator-api-*.tgz package/dist/schema/stryker-core.json | grep -q ignoreFailedTestsInDryRun
+      - name: Attach to release
+        if: startsWith(github.ref, 'refs/tags/')
+        run: gh release create "$GITHUB_REF_NAME" dist-tarballs/*.tgz --title "$GITHUB_REF_NAME" --prerelease --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Upload as workflow artifact
+        if: ${{ !startsWith(github.ref, 'refs/tags/') }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: tarballs
+          path: dist-tarballs/*.tgz
