@@ -559,6 +559,70 @@ describe(MutationTestReportHelper.name, () => {
         );
       });
 
+      describe('when reportAll and the unexpected exit handler overlap', () => {
+        let releaseComplete: () => void;
+
+        beforeEach(() => {
+          testInjector.options.incremental = true;
+          fileSystemTestDouble.files['partial.js'] = 'const answer = 42;\n';
+          const completion = new Promise<void>((resolve) => {
+            releaseComplete = resolve;
+          });
+          incrementalJournalMock.complete.callsFake(() => completion);
+        });
+
+        async function reportOneMutant(sut: MutationTestReportHelper) {
+          await sut.beginIncrementalJournal();
+          sut.reportMutantStatus(
+            factory.mutantTestCoverage({
+              fileName: 'partial.js',
+              id: '1',
+              location: factory.location(),
+            }),
+            'NoCoverage',
+          );
+        }
+
+        it('should complete the journal once when reportAll gets there first', async () => {
+          const sut = createSut();
+          await reportOneMutant(sut);
+
+          const reporting = sut.reportAll([
+            factory.mutantResult({ fileName: 'partial.js', id: '1' }),
+          ]);
+          let exitHandled = false;
+          const exiting = unexpectedExitRegistry
+            .triggerUnexpectedExit()
+            .then(() => {
+              exitHandled = true;
+            });
+          // Let both paths run up to the pending `complete()`
+          await new Promise((resolve) => setTimeout(resolve, 10));
+          expect(exitHandled, 'exit handler must wait for the write').false;
+          releaseComplete();
+          await Promise.all([reporting, exiting]);
+
+          expect(incrementalJournalMock.complete).calledOnce;
+          expect(testInjector.logger.info).not.calledWith(
+            'Saved a partial incremental report to "%s" after an unexpected interrupt.',
+          );
+        });
+
+        it('should complete the journal once when the exit handler gets there first', async () => {
+          const sut = createSut();
+          await reportOneMutant(sut);
+
+          const exiting = unexpectedExitRegistry.triggerUnexpectedExit();
+          const reporting = sut.reportAll([
+            factory.mutantResult({ fileName: 'partial.js', id: '1' }),
+          ]);
+          releaseComplete();
+          await Promise.all([reporting, exiting]);
+
+          expect(incrementalJournalMock.complete).calledOnce;
+        });
+      });
+
       it('should still compact partial results on unexpected exit when the journal failed to begin', async () => {
         testInjector.options.incremental = true;
         fileSystemTestDouble.files['partial.js'] = 'const answer = 42;\n';

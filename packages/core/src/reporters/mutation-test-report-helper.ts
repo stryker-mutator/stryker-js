@@ -62,6 +62,12 @@ export class MutationTestReportHelper {
   private readonly partialResults: MutantResult[] = [];
   private reportCompleted = false;
   /**
+   * The in-flight (or settled) `incrementalJournal.complete()`. The exit handler and
+   * `reportAll` can both get here, and two completions would write the same temp file
+   * concurrently. The first one wins; the other waits for it.
+   */
+  private incrementalCompletion: Promise<void> | undefined;
+  /**
    * Set once `beginIncrementalJournal()` has returned, whether or not the journal
    * actually started. Before that, compacting could race `begin()`'s directory swap.
    */
@@ -119,7 +125,13 @@ export class MutationTestReportHelper {
         // Snapshot so `mutationTestReport` cannot see a new file appear mid-await
         // (it builds the file map, then walks the array again after those awaits).
         const report = await this.mutationTestReport([...this.partialResults]);
-        await this.incrementalJournal.complete(report);
+        if (this.incrementalCompletion) {
+          // `reportAll` got there while we were reading files and its report is complete.
+          // Wait for it, so the process isn't torn down in the middle of its write.
+          await this.incrementalCompletion;
+          return;
+        }
+        await this.completeIncrementalJournal(report);
         this.reportCompleted = true;
         this.log.info(
           'Saved a partial incremental report to "%s" after an unexpected interrupt.',
@@ -236,10 +248,17 @@ export class MutationTestReportHelper {
     const metrics = calculateMutationTestMetrics(report);
     this.reporter.onMutationTestReportReady(report, metrics);
     if (this.options.incremental) {
-      await this.incrementalJournal.complete(report);
+      await this.completeIncrementalJournal(report);
     }
     this.reportCompleted = true;
     this.determineExitCode(metrics);
+  }
+
+  private completeIncrementalJournal(
+    report: schema.MutationTestResult,
+  ): Promise<void> {
+    this.incrementalCompletion ??= this.incrementalJournal.complete(report);
+    return this.incrementalCompletion;
   }
 
   private determineExitCode(metrics: MutationTestMetricsResult) {
