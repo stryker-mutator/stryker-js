@@ -148,6 +148,14 @@ describe(DryRunExecutor.name, () => {
         disableBail: true,
       });
     });
+
+    it('should not bail when ignoreFailedTestsInDryRun is enabled, so the whole suite runs', async () => {
+      testInjector.options.ignoreFailedTestsInDryRun = true;
+      await sut.execute();
+      expect(testRunnerMock.dryRun).calledWithMatch({
+        disableBail: true,
+      });
+    });
   });
 
   describe('files', () => {

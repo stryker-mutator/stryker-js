@@ -183,7 +183,10 @@ export class DryRunExecutor {
     const result = await testRunner.dryRun({
       timeout: dryRunTimeout,
       coverageAnalysis: this.options.coverageAnalysis,
-      disableBail: this.options.disableBail,
+      // A runner that bails at the first failure would cut the suite short, and the tests
+      // that never ran would be dropped along with the failed ones.
+      disableBail:
+        this.options.disableBail || this.options.ignoreFailedTestsInDryRun,
       files: dryRunFiles,
       testFiles,
     });
