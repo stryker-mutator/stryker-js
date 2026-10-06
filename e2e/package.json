@@ -129,7 +129,7 @@
   },
   "scripts": {
     "lint": "tsc -p tsconfig.json && eslint",
-    "test": "node tasks/run-e2e-tests.js",
+    "test": "pnpm run test:tasks && node tasks/run-e2e-tests.js",
     "test:tasks": "mocha \"tasks/*.spec.js\"",
     "test:update": "cross-env CHAI_JEST_SNAPSHOT_UPDATE_ALL=true pnpm run test"
   }
