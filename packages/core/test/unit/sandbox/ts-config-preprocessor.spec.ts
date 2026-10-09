@@ -3,7 +3,11 @@ import path from 'path';
 import { expect } from 'chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
 
-import { TSConfigPreprocessor } from '../../../src/sandbox/ts-config-preprocessor.js';
+import {
+  parseTSConfig,
+  resolveProjectReferencePath,
+  TSConfigPreprocessor,
+} from '../../../src/sandbox/ts-config-preprocessor.js';
 import { FileSystemTestDouble } from '../../helpers/file-system-test-double.js';
 import { Project } from '../../../src/fs/project.js';
 import { serializeTSConfig } from '../../helpers/producers.js';
@@ -299,5 +303,70 @@ describe(TSConfigPreprocessor.name, () => {
         references: [{ path: '../src' }],
       }),
     );
+  });
+});
+
+describe('tsconfig preprocessing without the TypeScript api', () => {
+  // TypeScript 7 no longer ships the compiler api, so Stryker parses the tsconfig files itself
+  // See https://github.com/stryker-mutator/stryker-js/issues/6111
+  describe(parseTSConfig.name, () => {
+    it('should parse comments and trailing commas', () => {
+      const actual = parseTSConfig(`{
+         "extends": "../tsconfig.settings.json",
+         "compilerOptions": {
+           // Here are the options
+           "target": "es5", // and a trailing comma
+         },
+        }`);
+
+      expect(actual).deep.eq({
+        extends: '../tsconfig.settings.json',
+        compilerOptions: { target: 'es5' },
+      });
+    });
+
+    it('should not confuse strings for comments or trailing commas', () => {
+      const actual = parseTSConfig(
+        '{ "include": ["src/**/*"], "outDir": "dist/*", "files": ["a//b,}"] }',
+      );
+
+      expect(actual).deep.eq({
+        include: ['src/**/*'],
+        outDir: 'dist/*',
+        files: ['a//b,}'],
+      });
+    });
+
+    it('should ignore a byte order mark', () => {
+      const actual = parseTSConfig(
+        '\uFEFF{ "extends": "./tsconfig.settings.json" }',
+      );
+
+      expect(actual).deep.eq({ extends: './tsconfig.settings.json' });
+    });
+
+    it('should return undefined for content that is not valid jsonc', () => {
+      expect(parseTSConfig('{ "extends": }')).undefined;
+    });
+  });
+
+  describe(resolveProjectReferencePath.name, () => {
+    it('should resolve a directory to its tsconfig file', () => {
+      expect(resolveProjectReferencePath({ path: '../model' })).eq(
+        '../model/tsconfig.json',
+      );
+    });
+
+    it('should not append tsconfig.json to a reference that already points to a file', () => {
+      expect(
+        resolveProjectReferencePath({ path: '../model/tsconfig.build.json' }),
+      ).eq('../model/tsconfig.build.json');
+    });
+
+    it('should normalize path separators', () => {
+      expect(resolveProjectReferencePath({ path: '..\\model\\' })).eq(
+        '../model/tsconfig.json',
+      );
+    });
   });
 });
