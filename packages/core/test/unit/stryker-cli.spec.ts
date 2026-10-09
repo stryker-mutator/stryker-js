@@ -150,6 +150,13 @@ describe(StrykerCli.name, () => {
         );
         expect(dottedKeys, JSON.stringify(dottedKeys)).lengthOf(0);
       });
+
+      it('should reject a non-existent dotted option as an unknown option', () => {
+        expect(() =>
+          actRun('--nonExistent.option', 'foo', '--dashboard.version', '1.0.0'),
+        ).throws(`unknown option '--nonExistent.option'`);
+        expect(runMutationTestingStub).not.called;
+      });
     });
 
     it('should provide a meaningful help', () => {
@@ -204,7 +211,7 @@ describe(StrykerCli.name, () => {
 
     it('should provide a meaningful help', () => {
       const stdoutStub = sinon.stub(process.stdout, 'write');
-      expect(() => actInit(() => factory.injector() as Injector, '-h')).throws(
+      expect(() => actInit(() => factory.injector(), '-h')).throws(
         '(outputHelp)',
       );
       expect(stdoutStub.callCount).eq(1);
