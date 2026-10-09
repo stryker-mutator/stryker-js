@@ -4,11 +4,6 @@
   "concurrency": 2,
   "timeoutMS": 20000,
   "testRunnerNodeArgs": ["--import", "tsx"],
-  "reporters": [
-    "json",
-    "html"
-  ],
-  "plugins": [
-    "@stryker-mutator/cucumber-runner"
-  ]
+  "reporters": ["json", "html"],
+  "plugins": ["@stryker-mutator/cucumber-runner"]
 }

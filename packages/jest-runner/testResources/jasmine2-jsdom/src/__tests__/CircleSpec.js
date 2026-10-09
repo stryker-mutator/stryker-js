@@ -1,6 +1,6 @@
 require('../Circle');
 
-describe('Circle', function() {
+describe('Circle', function () {
   let parent;
 
   beforeEach(() => {
@@ -12,7 +12,7 @@ describe('Circle', function() {
     parent.remove();
   });
 
-  it('should have a circumference of 2PI when the radius is 1', function() {
+  it('should have a circumference of 2PI when the radius is 1', function () {
     parent.innerHTML = `<my-circle radius="1" ></<my-calculator>`;
     const calculator = parent.querySelector('my-circle');
     const actual = calculator.circumference;

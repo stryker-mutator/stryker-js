@@ -1,10 +1,10 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {CatalogusComponent} from './catalogus.component';
-import {ArtikelenService} from '../services/artikelen.service';
-import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {Artikel} from '../models/artikel';
-import {CatalogusArtikelComponent} from './catalogus-artikel/catalogus-artikel.component';
-import {of, throwError} from 'rxjs';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { CatalogusComponent } from './catalogus.component';
+import { ArtikelenService } from '../services/artikelen.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { Artikel } from '../models/artikel';
+import { CatalogusArtikelComponent } from './catalogus-artikel/catalogus-artikel.component';
+import { of, throwError } from 'rxjs';
 
 describe('CatalogusComponent', () => {
   let component: CatalogusComponent;
@@ -23,9 +23,8 @@ describe('CatalogusComponent', () => {
     TestBed.configureTestingModule({
       declarations: [CatalogusComponent, CatalogusArtikelComponent],
       imports: [HttpClientTestingModule, HttpClientTestingModule],
-      providers: [ArtikelenService]
-    })
-      .compileComponents();
+      providers: [ArtikelenService],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -42,10 +41,54 @@ describe('CatalogusComponent', () => {
     it('should return artikel list of 4 elements', () => {
       // Arrange
       const testData = of([
-        new Artikel(1, 'fiets bel', '', 15.00, '', new Date(1, 9, 2019), new Date(1, 9, 2020), 'AB', ['fietsen'], 10),
-        new Artikel(2, 'fiets band', '', 8.00, '', new Date(1, 9, 2019), new Date(1, 9, 2020), 'BC', ['fietsen'], 10),
-        new Artikel(3, 'fiets helm', '', 12.00, '', new Date(1, 9, 2019), new Date(1, 9, 2020), 'BC', ['fietsen'], 10),
-        new Artikel(4, 'fiets', '', 200.00, '', new Date(1, 9, 2019), new Date(1, 9, 2020), 'AB', ['fietsen'], 10)
+        new Artikel(
+          1,
+          'fiets bel',
+          '',
+          15.0,
+          '',
+          new Date(1, 9, 2019),
+          new Date(1, 9, 2020),
+          'AB',
+          ['fietsen'],
+          10,
+        ),
+        new Artikel(
+          2,
+          'fiets band',
+          '',
+          8.0,
+          '',
+          new Date(1, 9, 2019),
+          new Date(1, 9, 2020),
+          'BC',
+          ['fietsen'],
+          10,
+        ),
+        new Artikel(
+          3,
+          'fiets helm',
+          '',
+          12.0,
+          '',
+          new Date(1, 9, 2019),
+          new Date(1, 9, 2020),
+          'BC',
+          ['fietsen'],
+          10,
+        ),
+        new Artikel(
+          4,
+          'fiets',
+          '',
+          200.0,
+          '',
+          new Date(1, 9, 2019),
+          new Date(1, 9, 2020),
+          'AB',
+          ['fietsen'],
+          10,
+        ),
       ]);
       spyOn(service, 'getArtikelenList').and.returnValue(testData);
       // Act
@@ -59,12 +102,16 @@ describe('CatalogusComponent', () => {
       expect(result[3].naam).toBe('fiets');
     });
     it('should return error message', async () => {
-      spyOn(service, 'getArtikelenList').and.returnValue(throwError({error: 'test Error'}));
+      spyOn(service, 'getArtikelenList').and.returnValue(
+        throwError({ error: 'test Error' }),
+      );
       spyOn(console, 'error');
       component.fetchArtikelen();
       const result = component.artikelen;
       expect(result.length).toBe(0);
-      expect(console.error).toHaveBeenCalledWith('Server error occurred: test Error');
+      expect(console.error).toHaveBeenCalledWith(
+        'Server error occurred: test Error',
+      );
     });
   });
 

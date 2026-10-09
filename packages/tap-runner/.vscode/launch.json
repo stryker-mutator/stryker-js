@@ -14,16 +14,14 @@
         "--timeout",
         "0",
         "--colors",
-        "${workspaceFolder}/dist/test/unit/**/*.js",
+        "${workspaceFolder}/dist/test/unit/**/*.js"
       ],
       "internalConsoleOptions": "openOnSessionStart",
       "outFiles": [
         "${workspaceRoot}/dist/**/*.js",
         "${workspaceFolder}/../test-helpers/dist/**/*.js"
       ],
-      "skipFiles": [
-        "<node_internals>/**"
-      ]
+      "skipFiles": ["<node_internals>/**"]
     },
     {
       "type": "node",
@@ -35,16 +33,14 @@
         "--timeout",
         "0",
         "--colors",
-        "${workspaceFolder}/dist/test/integration/**/*.js",
+        "${workspaceFolder}/dist/test/integration/**/*.js"
       ],
       "internalConsoleOptions": "openOnSessionStart",
       "outFiles": [
         "${workspaceRoot}/dist/**/*.js",
         "${workspaceFolder}/../test-helpers/dist/**/*.js"
       ],
-      "skipFiles": [
-        "<node_internals>/**"
-      ]
+      "skipFiles": ["<node_internals>/**"]
     }
   ]
 }

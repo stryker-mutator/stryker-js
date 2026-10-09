@@ -1,8 +1,18 @@
 // This file is generated with tasks/instrument-test-resources.js
- function stryNS_9fa48() {
-  var g = typeof globalThis === 'object' && globalThis && globalThis.Math === Math && globalThis || new Function("return this")();
+function stryNS_9fa48() {
+  var g =
+    (typeof globalThis === 'object' &&
+      globalThis &&
+      globalThis.Math === Math &&
+      globalThis) ||
+    new Function('return this')();
   var ns = g.__stryker2__ || (g.__stryker2__ = {});
-  if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
+  if (
+    ns.activeMutant === undefined &&
+    g.process &&
+    g.process.env &&
+    g.process.env.__STRYKER_ACTIVE_MUTANT__
+  ) {
     ns.activeMutant = g.process.env.__STRYKER_ACTIVE_MUTANT__;
   }
   function retrieveNS() {
@@ -14,10 +24,12 @@
 stryNS_9fa48();
 function stryCov_9fa48() {
   var ns = stryNS_9fa48();
-  var cov = ns.mutantCoverage || (ns.mutantCoverage = {
-    static: {},
-    perTest: {}
-  });
+  var cov =
+    ns.mutantCoverage ||
+    (ns.mutantCoverage = {
+      static: {},
+      perTest: {},
+    });
   function cover() {
     var c = cov.static;
     if (ns.currentTestId) {
@@ -36,7 +48,9 @@ function stryMutAct_9fa48(id) {
   function isActive(id) {
     if (ns.activeMutant === id) {
       if (ns.hitCount !== void 0 && ++ns.hitCount > ns.hitLimit) {
-        throw new Error('Stryker: Hit count limit reached (' + ns.hitCount + ')');
+        throw new Error(
+          'Stryker: Hit count limit reached (' + ns.hitCount + ')',
+        );
       }
       return true;
     }
@@ -49,20 +63,30 @@ import { Discount } from './Discount';
 export function Product({
   name,
   price,
-  discount
+  discount,
 }: {
   name: string;
   price: number;
   discount: number;
 }) {
-  if (stryMutAct_9fa48("3")) {
-    {}
+  if (stryMutAct_9fa48('3')) {
+    {
+    }
   } else {
-    stryCov_9fa48("3");
-    return <div>
-      <h2>{name}</h2>
-      <p>{price}</p>
-      {stryMutAct_9fa48("6") ? discount || <Discount discount={discount} /> : stryMutAct_9fa48("5") ? false : stryMutAct_9fa48("4") ? true : (stryCov_9fa48("4", "5", "6"), discount && <Discount discount={discount} />)}
-    </div>;
+    stryCov_9fa48('3');
+    return (
+      <div>
+        <h2>{name}</h2>
+        <p>{price}</p>
+        {stryMutAct_9fa48('6')
+          ? discount || <Discount discount={discount} />
+          : stryMutAct_9fa48('5')
+            ? false
+            : stryMutAct_9fa48('4')
+              ? true
+              : (stryCov_9fa48('4', '5', '6'),
+                discount && <Discount discount={discount} />)}
+      </div>
+    );
   }
 }

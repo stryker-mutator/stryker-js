@@ -18,9 +18,8 @@ npm i --save-dev @stryker-mutator/jasmine-runner
 The `@stryker-mutator/jasmine-runner` is a plugin for `stryker` to enable `jasmine` as a test runner.
 As such, you should make sure you have the correct versions of its dependencies installed:
 
-* `jasmine`
-* `@stryker-mutator/core`
-
+- `jasmine`
+- `@stryker-mutator/core`
 
 ## Example
 

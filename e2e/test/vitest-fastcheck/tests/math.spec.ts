@@ -26,9 +26,12 @@ describe('math', () => {
       expect(add(a, 0)).toBe(a);
     });
 
-    test.prop([fc.integer(), fc.integer()])('should return correct sum', (a, b) => {
-      expect(add(a, b)).toBe(a + b);
-    });
+    test.prop([fc.integer(), fc.integer()])(
+      'should return correct sum',
+      (a, b) => {
+        expect(add(a, b)).toBe(a + b);
+      },
+    );
   });
 
   describe('isPositive', () => {
@@ -38,12 +41,18 @@ describe('math', () => {
       expect(isPositive(-1)).toBe(false);
     });
 
-    test.prop([fc.integer({ min: 1 })])('should return true for positive numbers', (n) => {
-      expect(isPositive(n)).toBe(true);
-    });
+    test.prop([fc.integer({ min: 1 })])(
+      'should return true for positive numbers',
+      (n) => {
+        expect(isPositive(n)).toBe(true);
+      },
+    );
 
-    test.prop([fc.integer({ max: 0 })])('should return false for zero and negative numbers', (n) => {
-      expect(isPositive(n)).toBe(false);
-    });
+    test.prop([fc.integer({ max: 0 })])(
+      'should return false for zero and negative numbers',
+      (n) => {
+        expect(isPositive(n)).toBe(false);
+      },
+    );
   });
 });

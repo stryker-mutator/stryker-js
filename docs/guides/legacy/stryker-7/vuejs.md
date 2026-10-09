@@ -74,7 +74,10 @@ Follow these steps to be able "manually" run webpack and mocha.
    // Override the entry files
    conf.entry = {
      // Choose your test files here:
-     tests: ['./test/setup-unit.js', ...glob.sync('src/**/*+(spec).js').map((fileName) => `./${fileName}`)],
+     tests: [
+       './test/setup-unit.js',
+       ...glob.sync('src/**/*+(spec).js').map((fileName) => `./${fileName}`),
+     ],
    };
 
    module.exports = conf;

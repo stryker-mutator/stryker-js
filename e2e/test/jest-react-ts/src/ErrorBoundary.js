@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import styled from '@emotion/styled'
+import React, { Component } from 'react';
+import styled from '@emotion/styled';
 
 /**
  * This file showing "TypeScirpt can use with JavaScript" for beginners
@@ -8,22 +8,22 @@ class ErrorBoundary extends Component {
   state = {
     error: null,
     info: null,
-  }
+  };
 
   componentDidCatch(error, info) {
-    this.setState({ error, info })
+    this.setState({ error, info });
   }
 
   render() {
-    const { error } = this.state
+    const { error } = this.state;
     if (error) {
-      return <ErrorBoundaryFallbackComponent />
+      return <ErrorBoundaryFallbackComponent />;
     }
-    return this.props.children
+    return this.props.children;
   }
 }
 
-export default ErrorBoundary
+export default ErrorBoundary;
 
 const Container = styled.div`
   width: 100%;
@@ -31,7 +31,7 @@ const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-`
+`;
 
 const Message = styled.div`
   padding: 40px;
@@ -39,7 +39,7 @@ const Message = styled.div`
   border-radius: 5px;
   font-size: 24px;
   color: #78909c;
-`
+`;
 
 const ErrorBoundaryFallbackComponent = () => (
   <Container>
@@ -50,4 +50,4 @@ const ErrorBoundaryFallbackComponent = () => (
       </span>
     </Message>
   </Container>
-)
+);

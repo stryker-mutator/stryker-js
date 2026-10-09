@@ -1,7 +1,6 @@
 import { describe, test, expect } from 'vitest';
 
 describe('math', () => {
-
   test('should be able to add one to a number', function () {
     const number = 2;
     const expected = 3;

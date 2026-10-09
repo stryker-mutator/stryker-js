@@ -13,13 +13,21 @@ export class FooModel {
   public rowId!: string;
   public bar!: number;
 
-  public static createPartitionKey(entity: Pick<FooModel, 'partitionId'>): string {
+  public static createPartitionKey(
+    entity: Pick<FooModel, 'partitionId'>,
+  ): string {
     return entity.partitionId;
   }
-  public static createRowKey(entity: Pick<FooModel, 'rowId'>): string | undefined {
+  public static createRowKey(
+    entity: Pick<FooModel, 'rowId'>,
+  ): string | undefined {
     return entity.rowId;
   }
-  public static identify(entity: FooModel, partitionKeyValue: string, rowKeyValue: string): void {
+  public static identify(
+    entity: FooModel,
+    partitionKeyValue: string,
+    rowKeyValue: string,
+  ): void {
     entity.partitionId = partitionKeyValue;
     entity.rowId = rowKeyValue;
   }
@@ -28,7 +36,8 @@ export class FooModel {
 }
 
 describe(TableStorageMapper.name, () => {
-  const TableServiceAsPromisedModuleMocked = TableServiceAsPromisedModule as typeof import('../services/__mocks__/TableServiceAsPromised');
+  const TableServiceAsPromisedModuleMocked =
+    TableServiceAsPromisedModule as typeof import('../services/__mocks__/TableServiceAsPromised');
   const TableService = TableServiceAsPromisedModuleMocked.default;
 
   class TestHelper {
@@ -43,9 +52,13 @@ describe(TableStorageMapper.name, () => {
 
   describe('createTableIfNotExists', () => {
     it('should create table "FooTable"', async () => {
-      TableServiceAsPromisedModuleMocked.createTableIfNotExistsMock.mockResolvedValueOnce({});
+      TableServiceAsPromisedModuleMocked.createTableIfNotExistsMock.mockResolvedValueOnce(
+        {},
+      );
       await helper.sut.createStorageIfNotExists();
-      expect(TableServiceAsPromisedModuleMocked.createTableIfNotExistsMock).toHaveBeenCalledWith('FooTable');
+      expect(
+        TableServiceAsPromisedModuleMocked.createTableIfNotExistsMock,
+      ).toHaveBeenCalledWith('FooTable');
     });
   });
 
@@ -54,15 +67,19 @@ describe(TableStorageMapper.name, () => {
       const expected: FooModel = {
         partitionId: 'github/owner',
         rowId: 'name',
-        bar: 42
+        bar: 42,
       };
-      TableServiceAsPromisedModuleMocked.insertOrMergeEntityMock.mockResolvedValue({});
+      TableServiceAsPromisedModuleMocked.insertOrMergeEntityMock.mockResolvedValue(
+        {},
+      );
       await helper.sut.insertOrMerge(expected);
-      expect(TableServiceAsPromisedModuleMocked.insertOrMergeEntityMock).toHaveBeenCalledWith('FooTable', {
+      expect(
+        TableServiceAsPromisedModuleMocked.insertOrMergeEntityMock,
+      ).toHaveBeenCalledWith('FooTable', {
         PartitionKey: 'github;owner',
         RowKey: 'name',
         bar: 42,
-        ['.metadata']: {}
+        ['.metadata']: {},
       });
       expect(expected.bar).toEqual(42);
     });
@@ -71,79 +88,152 @@ describe(TableStorageMapper.name, () => {
   describe('findOne', () => {
     it('should retrieve the entity from storage', async () => {
       const result = createEntity();
-      TableServiceAsPromisedModuleMocked.retrieveEntityMock.mockResolvedValue(result);
-      await helper.sut.findOne({ partitionId: 'github/partKey', rowId: 'row/key' });
-      expect(TableServiceAsPromisedModuleMocked.retrieveEntityMock).toHaveBeenCalledWith('FooTable', 'github;partKey', 'row;key');
+      TableServiceAsPromisedModuleMocked.retrieveEntityMock.mockResolvedValue(
+        result,
+      );
+      await helper.sut.findOne({
+        partitionId: 'github/partKey',
+        rowId: 'row/key',
+      });
+      expect(
+        TableServiceAsPromisedModuleMocked.retrieveEntityMock,
+      ).toHaveBeenCalledWith('FooTable', 'github;partKey', 'row;key');
     });
 
     it('should return null if it resulted in a 404', async () => {
-      const error = new StorageError(Constants.StorageErrorCodeStrings.RESOURCE_NOT_FOUND);
-      TableServiceAsPromisedModuleMocked.retrieveEntityMock.mockRejectedValue(error);
-      const actualProject = await helper.sut.findOne({ partitionId: 'github/partKey', rowId: 'rowKey' });
+      const error = new StorageError(
+        Constants.StorageErrorCodeStrings.RESOURCE_NOT_FOUND,
+      );
+      TableServiceAsPromisedModuleMocked.retrieveEntityMock.mockRejectedValue(
+        error,
+      );
+      const actualProject = await helper.sut.findOne({
+        partitionId: 'github/partKey',
+        rowId: 'rowKey',
+      });
       expect(actualProject).toEqual(null);
     });
 
     it('should return the entity', async () => {
-      const expected: FooModel = { rowId: 'rowKey', partitionId: 'partKey', bar: 42 };
-      TableServiceAsPromisedModuleMocked.retrieveEntityMock.mockResolvedValue(createEntity(expected, 'etagValue'));
-      const actualProjects = await helper.sut.findOne({ partitionId: 'github/partKey', rowId: 'rowKey' });
+      const expected: FooModel = {
+        rowId: 'rowKey',
+        partitionId: 'partKey',
+        bar: 42,
+      };
+      TableServiceAsPromisedModuleMocked.retrieveEntityMock.mockResolvedValue(
+        createEntity(expected, 'etagValue'),
+      );
+      const actualProjects = await helper.sut.findOne({
+        partitionId: 'github/partKey',
+        rowId: 'rowKey',
+      });
       expect(actualProjects).toEqual({ model: expected, etag: 'etagValue' });
     });
   });
 
   describe('findAll', () => {
     it('should query the underlying storage', async () => {
-      const expectedQuery = new TableQuery().where('PartitionKey eq ?', 'github;partKey');
-      TableServiceAsPromisedModuleMocked.queryEntitiesMock.mockResolvedValue({ entries: [] });
-      await helper.sut.findAll(DashboardQuery.create(FooModel)
-        .wherePartitionKeyEquals({ partitionId: 'github/partKey' })
+      const expectedQuery = new TableQuery().where(
+        'PartitionKey eq ?',
+        'github;partKey',
       );
-      expect(TableServiceAsPromisedModuleMocked.queryEntitiesMock).toHaveBeenCalledWith('FooTable', expectedQuery, undefined);
+      TableServiceAsPromisedModuleMocked.queryEntitiesMock.mockResolvedValue({
+        entries: [],
+      });
+      await helper.sut.findAll(
+        DashboardQuery.create(FooModel).wherePartitionKeyEquals({
+          partitionId: 'github/partKey',
+        }),
+      );
+      expect(
+        TableServiceAsPromisedModuleMocked.queryEntitiesMock,
+      ).toHaveBeenCalledWith('FooTable', expectedQuery, undefined);
     });
 
     it('should return the all entities', async () => {
       const expectedEntities: FooModel[] = [
         { rowId: 'rowKey', partitionId: 'partKey', bar: 142 },
-        { rowId: 'rowKey2', partitionId: 'partKey2', bar: 25 }
+        { rowId: 'rowKey2', partitionId: 'partKey2', bar: 25 },
       ];
-      TableServiceAsPromisedModuleMocked.queryEntitiesMock.mockResolvedValue({ entries: expectedEntities.map(entity => createEntity(entity)) });
-      const actualProjects = await helper.sut.findAll(DashboardQuery.create(FooModel)
-        .wherePartitionKeyEquals({ partitionId: 'github/partKey' })
+      TableServiceAsPromisedModuleMocked.queryEntitiesMock.mockResolvedValue({
+        entries: expectedEntities.map((entity) => createEntity(entity)),
+      });
+      const actualProjects = await helper.sut.findAll(
+        DashboardQuery.create(FooModel).wherePartitionKeyEquals({
+          partitionId: 'github/partKey',
+        }),
       );
-      expect(actualProjects).toEqual(expectedEntities.map(model => ({ model, etag: 'foo-etag' })));
+      expect(actualProjects).toEqual(
+        expectedEntities.map((model) => ({ model, etag: 'foo-etag' })),
+      );
     });
   });
 
   describe('replace', () => {
     it('should replace entity with given etag', async () => {
-      TableServiceAsPromisedModuleMocked.replaceEntityMock.mockResolvedValue({ ['.metadata']: { etag: 'next-etag' } });
-      const expected: FooModel = { bar: 42, partitionId: 'partId', rowId: 'rowId' };
-      const expectedResult: Result<FooModel> = { model: expected, etag: 'next-etag' };
+      TableServiceAsPromisedModuleMocked.replaceEntityMock.mockResolvedValue({
+        ['.metadata']: { etag: 'next-etag' },
+      });
+      const expected: FooModel = {
+        bar: 42,
+        partitionId: 'partId',
+        rowId: 'rowId',
+      };
+      const expectedResult: Result<FooModel> = {
+        model: expected,
+        etag: 'next-etag',
+      };
       const result = await helper.sut.replace(expected, 'prev-etag');
       expect(result).toEqual(expectedResult);
       const expectedEntity = createRawEntity(expected, 'prev-etag');
-      expect(TableServiceAsPromisedModuleMocked.replaceEntityMock).toHaveBeenCalledWith(FooModel.tableName, expectedEntity, {});
+      expect(
+        TableServiceAsPromisedModuleMocked.replaceEntityMock,
+      ).toHaveBeenCalledWith(FooModel.tableName, expectedEntity, {});
     });
 
     it('should throw a OptimisticConcurrencyError if the UPDATE_CONDITION_NOT_SATISFIED is thrown', async () => {
-      TableServiceAsPromisedModuleMocked.replaceEntityMock.mockRejectedValue(new StorageError(Constants.StorageErrorCodeStrings.UPDATE_CONDITION_NOT_SATISFIED));
-      await expect(helper.sut.replace({ bar: 24, partitionId: 'part', rowId: 'row' }, 'prev-etag')).rejects.toBeInstanceOf(OptimisticConcurrencyError);
+      TableServiceAsPromisedModuleMocked.replaceEntityMock.mockRejectedValue(
+        new StorageError(
+          Constants.StorageErrorCodeStrings.UPDATE_CONDITION_NOT_SATISFIED,
+        ),
+      );
+      await expect(
+        helper.sut.replace(
+          { bar: 24, partitionId: 'part', rowId: 'row' },
+          'prev-etag',
+        ),
+      ).rejects.toBeInstanceOf(OptimisticConcurrencyError);
     });
   });
 
   describe('insert', () => {
     it('should insert entity', async () => {
-      TableServiceAsPromisedModuleMocked.insertEntityMock.mockResolvedValue({ ['.metadata']: { etag: 'next-etag' } });
-      const expected: FooModel = { bar: 42, partitionId: 'partId', rowId: 'rowId' };
-      const expectedResult: Result<FooModel> = { model: expected, etag: 'next-etag' };
+      TableServiceAsPromisedModuleMocked.insertEntityMock.mockResolvedValue({
+        ['.metadata']: { etag: 'next-etag' },
+      });
+      const expected: FooModel = {
+        bar: 42,
+        partitionId: 'partId',
+        rowId: 'rowId',
+      };
+      const expectedResult: Result<FooModel> = {
+        model: expected,
+        etag: 'next-etag',
+      };
       const result: Result<FooModel> = await helper.sut.insert(expected);
       expect(result).toEqual(expectedResult);
-      expect(TableServiceAsPromisedModuleMocked.insertEntityMock).toHaveBeenCalledWith(FooModel.tableName, createRawEntity(expected), {});
+      expect(
+        TableServiceAsPromisedModuleMocked.insertEntityMock,
+      ).toHaveBeenCalledWith(FooModel.tableName, createRawEntity(expected), {});
     });
 
     it('should throw an OptimisticConcurrencyError if the entity already exists', async () => {
-      TableServiceAsPromisedModuleMocked.insertEntityMock.mockRejectedValue(new StorageError(Constants.TableErrorCodeStrings.ENTITY_ALREADY_EXISTS));
-      await expect(helper.sut.insert({ bar: 24, partitionId: 'part', rowId: 'row' })).rejects.toBeInstanceOf(OptimisticConcurrencyError);
+      TableServiceAsPromisedModuleMocked.insertEntityMock.mockRejectedValue(
+        new StorageError(Constants.TableErrorCodeStrings.ENTITY_ALREADY_EXISTS),
+      );
+      await expect(
+        helper.sut.insert({ bar: 24, partitionId: 'part', rowId: 'row' }),
+      ).rejects.toBeInstanceOf(OptimisticConcurrencyError);
     });
   });
 
@@ -152,12 +242,12 @@ describe(TableStorageMapper.name, () => {
       bar: 42,
       partitionId: 'partKey',
       rowId: 'rowKey',
-      ...overrides
+      ...overrides,
     };
     function metadata() {
       if (etag) {
         return {
-          etag
+          etag,
         };
       } else {
         return {};
@@ -167,25 +257,27 @@ describe(TableStorageMapper.name, () => {
       PartitionKey: foo.partitionId,
       RowKey: foo.rowId,
       bar: foo.bar,
-      ['.metadata']: metadata()
+      ['.metadata']: metadata(),
     };
   }
 
-  function createEntity(overrides?: Partial<FooModel>, etag = 'foo-etag'): TableServiceAsPromisedModule.Entity<FooModel, 'partitionId' | 'rowId'> {
+  function createEntity(
+    overrides?: Partial<FooModel>,
+    etag = 'foo-etag',
+  ): TableServiceAsPromisedModule.Entity<FooModel, 'partitionId' | 'rowId'> {
     const foo: FooModel = {
       bar: 42,
       partitionId: 'partKey',
       rowId: 'rowKey',
-      ...overrides
+      ...overrides,
     };
     return {
       PartitionKey: { _: foo.partitionId, $: 'Edm.String' },
       RowKey: { _: foo.rowId, $: 'Edm.String' },
       bar: { _: foo.bar, $: 'Edm.Int32' },
       ['.metadata']: {
-        etag
-      }
+        etag,
+      },
     };
   }
-
 });

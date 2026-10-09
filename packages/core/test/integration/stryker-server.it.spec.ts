@@ -161,10 +161,10 @@ describe(StrykerServer.name, () => {
             path: 'src/app.js',
             range: {
               start: {
-                line: 7,
+                line: 5,
                 column: 24,
               },
-              end: { line: 7, column: 40 },
+              end: { line: 5, column: 40 },
             },
           },
         ],

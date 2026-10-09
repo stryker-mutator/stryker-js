@@ -1,6 +1,6 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import {FactuurComponent} from './factuur.component';
+import { FactuurComponent } from './factuur.component';
 
 describe('FactuurComponent', () => {
   let component: FactuurComponent;
@@ -13,12 +13,10 @@ describe('FactuurComponent', () => {
     return fixture.debugElement.nativeElement.querySelector(querySelector);
   };
 
-
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [FactuurComponent]
-    })
-      .compileComponents();
+      declarations: [FactuurComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

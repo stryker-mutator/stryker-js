@@ -1,4 +1,4 @@
-import { log } from '../src/log.js'
+import { log } from '../src/log.js';
 
 describe('log', () => {
   it('should not throw', () => {

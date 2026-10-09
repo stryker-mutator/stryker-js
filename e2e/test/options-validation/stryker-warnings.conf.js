@@ -1,9 +1,8 @@
 module.exports = {
   myCustomReporter: {
-    filter() {
-    }
+    filter() {},
   },
   commandRunner: {
-    command: 'echo "no-test"'
-  }
-}
+    command: 'echo "no-test"',
+  },
+};

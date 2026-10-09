@@ -16,9 +16,13 @@ runPerfTests()
 
 async function runPerfTests() {
   const globPattern = process.env.PERF_TEST_GLOB_PATTERN || '*';
-  const testDirs = (await fs.promises.readdir(testRootDirUrl)).filter((testDir) => minimatch(testDir, globPattern));
+  const testDirs = (await fs.promises.readdir(testRootDirUrl)).filter(
+    (testDir) => minimatch(testDir, globPattern),
+  );
   if (testDirs.length) {
-    console.log(`Running performance tests on ${testDirs.join(', ')} (matched with glob pattern "${globPattern}")`);
+    console.log(
+      `Running performance tests on ${testDirs.join(', ')} (matched with glob pattern "${globPattern}")`,
+    );
   } else {
     console.warn(`No test files match glob expression ${globPattern}`);
   }
@@ -38,8 +42,10 @@ async function runTest(testDir) {
   await lastValueFrom(
     runStryker(testDir).pipe(
       throttleTime(60000),
-      tap((logMessage) => console.timeLog(testDir, 'last log message: ', logMessage))
-    )
+      tap((logMessage) =>
+        console.timeLog(testDir, 'last log message: ', logMessage),
+      ),
+    ),
   );
   console.timeEnd(testDir);
 }
@@ -49,16 +55,26 @@ async function runTest(testDir) {
  * @returns {Observable<string>}
  */
 function runStryker(testDir) {
-  const strykerBin = fileURLToPath(new URL('../../packages/core/bin/stryker.js', import.meta.url));
+  const strykerBin = fileURLToPath(
+    new URL('../../packages/core/bin/stryker.js', import.meta.url),
+  );
   const args = ['run'];
   const currentTestDirUrl = new URL(testDir, `${testRootDirUrl}/`);
   console.log(`(${testDir}) exec "${strykerBin} ${args.join(' ')}"`);
 
   return new Observable((observer) => {
-    const testProcess = execa(strykerBin, args, { timeout: 0, cwd: fileURLToPath(currentTestDirUrl), stdio: 'pipe' });
+    const testProcess = execa(strykerBin, args, {
+      timeout: 0,
+      cwd: fileURLToPath(currentTestDirUrl),
+      stdio: 'pipe',
+    });
     let stderr = '';
     testProcess.stderr?.on('data', (chunk) => (stderr += chunk.toString()));
-    testProcess.stdout?.on('data', (chunk) => observer.next(chunk.toString().trim()));
-    testProcess.then(() => observer.complete()).catch((error) => observer.error(error));
+    testProcess.stdout?.on('data', (chunk) =>
+      observer.next(chunk.toString().trim()),
+    );
+    testProcess
+      .then(() => observer.complete())
+      .catch((error) => observer.error(error));
   });
 }

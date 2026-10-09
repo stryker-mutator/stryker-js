@@ -4,7 +4,7 @@ import { expect } from 'chai';
 describe('🐱‍👓', () => {
   describe('ninjaCatSays', () => {
     it('should speak', () => {
-      expect(ninjaCatSays('ATTACK!')).eq('🐱‍👓 ATTACK!')
+      expect(ninjaCatSays('ATTACK!')).eq('🐱‍👓 ATTACK!');
     });
   });
 });

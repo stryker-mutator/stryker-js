@@ -1,6 +1,6 @@
 /**
- * @param {number} n 
- * @returns 
+ * @param {number} n
+ * @returns
  */
 export function isNegativeNumber(n) {
   var isNegative = false;

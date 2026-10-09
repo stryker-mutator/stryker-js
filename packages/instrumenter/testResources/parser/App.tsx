@@ -1,1 +1,1 @@
-const app = <Html foo={bar}></Html>
+const app = <Html foo={bar}></Html>;

@@ -15,7 +15,9 @@ describe('Alert', () => {
 
   it('should pass className down', () => {
     render(<Alert className="test-class-name">Yo!</Alert>);
-    expect(screen.getByText('Yo!').classList.contains('test-class-name')).toBe(true);
+    expect(screen.getByText('Yo!').classList.contains('test-class-name')).toBe(
+      true,
+    );
   });
 
   it('should pass close className down', () => {
@@ -23,14 +25,21 @@ describe('Alert', () => {
     render(
       <Alert toggle={noop} closeClassName="test-class-name">
         Yo!
-      </Alert>
+      </Alert>,
     );
-    expect(screen.getByText('Yo!').querySelector('.close').classList.contains('test-class-name')).toBe(true);
+    expect(
+      screen
+        .getByText('Yo!')
+        .querySelector('.close')
+        .classList.contains('test-class-name'),
+    ).toBe(true);
   });
 
   it('should pass other props down', () => {
     render(<Alert data-testprop="testvalue">Yo!</Alert>);
-    expect(screen.getByText('Yo!').getAttribute('data-testprop')).toContain('testvalue');
+    expect(screen.getByText('Yo!').getAttribute('data-testprop')).toContain(
+      'testvalue',
+    );
   });
 
   // it('should have default transitionTimeouts', () => {
@@ -59,12 +68,16 @@ describe('Alert', () => {
 
   it('should have "success" as default color', () => {
     const { container: alert } = render(<Alert>Yo!</Alert>);
-    expect(alert.querySelector('div').classList.contains('alert-success')).toBe(true);
+    expect(alert.querySelector('div').classList.contains('alert-success')).toBe(
+      true,
+    );
   });
 
   it('should accept color prop', () => {
     const { container: alert } = render(<Alert color="warning">Yo!</Alert>);
-    expect(alert.querySelector('div').classList.contains('alert-warning')).toBe(true);
+    expect(alert.querySelector('div').classList.contains('alert-warning')).toBe(
+      true,
+    );
   });
 
   it('should use a div tag by default', () => {
@@ -82,10 +95,12 @@ describe('Alert', () => {
     const { container: alert } = render(
       <Alert color="danger" toggle={() => {}}>
         Yo!
-      </Alert>
+      </Alert>,
     );
     expect(alert.querySelector('button')).toBeTruthy();
-    expect(alert.querySelector('div').classList.contains('alert-dismissible')).toBe(true);
+    expect(
+      alert.querySelector('div').classList.contains('alert-dismissible'),
+    ).toBe(true);
   });
 
   it('should support custom tag', () => {
@@ -103,7 +118,7 @@ describe('Alert', () => {
     const { container: alert } = render(
       <Alert color="danger" toggle={onClick}>
         Yo!
-      </Alert>
+      </Alert>,
     );
     fireEvent.click(alert.querySelector('button'));
     expect(onClick).toHaveBeenCalled();
@@ -113,7 +128,7 @@ describe('Alert', () => {
     const { container: alert } = render(
       <Alert toggle={() => {}} closeAriaLabel="oseclay">
         Yo!
-      </Alert>
+      </Alert>,
     );
     const closeButton = alert.querySelector('button');
     expect(closeButton.getAttribute('aria-label')).toBe('oseclay');

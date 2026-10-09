@@ -4,9 +4,7 @@ import { DryRunStatus } from './dry-run-status.js';
 import { TestResult } from './test-result.js';
 
 export type DryRunResult =
-  | CompleteDryRunResult
-  | ErrorDryRunResult
-  | TimeoutDryRunResult;
+  CompleteDryRunResult | ErrorDryRunResult | TimeoutDryRunResult;
 
 export interface CompleteDryRunResult {
   /**

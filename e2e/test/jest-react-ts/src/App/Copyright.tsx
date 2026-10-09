@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 
 const Copyright: React.FC = () => (
   <footer className="info">
@@ -9,6 +9,6 @@ const Copyright: React.FC = () => (
       Part of <a href="http://todomvc.com">TodoMVC</a>
     </p>
   </footer>
-)
+);
 
-export default Copyright
+export default Copyright;

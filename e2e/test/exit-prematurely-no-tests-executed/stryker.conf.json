@@ -5,8 +5,6 @@
   "coverageAnalysis": "perTest",
   "reporters_comment": "Don't remove the html reporter here, we want to test that reports is not written",
   "reporters": ["html", "json"],
-  "plugins": [
-    "@stryker-mutator/mocha-runner"
-  ],
+  "plugins": ["@stryker-mutator/mocha-runner"],
   "fileLogLevel": "info"
 }

@@ -39,7 +39,8 @@ declare namespace jasmine {
   // More info: https://stackoverflow.com/a/38642922/2009373
   type Constructor = Function & { prototype: any };
 
-  type ImplementationCallback = (() => PromiseLike<any>) | (() => void) | ((done: DoneFn) => void);
+  type ImplementationCallback =
+    (() => PromiseLike<any>) | (() => void) | ((done: DoneFn) => void);
 
   type ExpectedRecursive<T> =
     | T
@@ -59,7 +60,8 @@ declare namespace jasmine {
       };
   type SpyObjMethodNames<T = undefined> = T extends undefined
     ? readonly string[] | Record<string, any>
-    : ReadonlyArray<keyof T> | { [P in keyof T]?: T[P] extends Func ? ReturnType<T[P]> : any };
+    : | ReadonlyArray<keyof T>
+      | { [P in keyof T]?: T[P] extends Func ? ReturnType<T[P]> : any };
 
   type SpyObjPropertyNames<T = undefined> = T extends undefined
     ? readonly string[] | Record<string, any>
@@ -188,17 +190,38 @@ declare namespace jasmine {
 
   function arrayContaining<T>(sample: ArrayLike<T>): ArrayContaining<T>;
   function arrayWithExactContents<T>(sample: ArrayLike<T>): ArrayContaining<T>;
-  function objectContaining<T>(sample: { [K in keyof T]?: ExpectedRecursive<T[K]> }): ObjectContaining<T>;
+  function objectContaining<T>(sample: {
+    [K in keyof T]?: ExpectedRecursive<T[K]>;
+  }): ObjectContaining<T>;
   function mapContaining<K, V>(sample: Map<K, V>): AsymmetricMatcher<Map<K, V>>;
   function setContaining<T>(sample: Set<T>): AsymmetricMatcher<Set<T>>;
 
-  function setDefaultSpyStrategy<Fn extends Func = Func>(fn?: (and: SpyAnd<Fn>) => void): void;
-  function addSpyStrategy<Fn extends Func = Func>(name: string, factory: Fn): void;
+  function setDefaultSpyStrategy<Fn extends Func = Func>(
+    fn?: (and: SpyAnd<Fn>) => void,
+  ): void;
+  function addSpyStrategy<Fn extends Func = Func>(
+    name: string,
+    factory: Fn,
+  ): void;
   function createSpy<Fn extends Func>(name?: string, originalFn?: Fn): Spy<Fn>;
-  function createSpyObj(baseName: string, methodNames: SpyObjMethodNames, propertyNames?: SpyObjPropertyNames): any;
-  function createSpyObj<T>(baseName: string, methodNames: SpyObjMethodNames<T>, propertyNames?: SpyObjPropertyNames<T>): SpyObj<T>;
-  function createSpyObj(methodNames: SpyObjMethodNames, propertyNames?: SpyObjPropertyNames): any;
-  function createSpyObj<T>(methodNames: SpyObjMethodNames<T>, propertyNames?: SpyObjPropertyNames<T>): SpyObj<T>;
+  function createSpyObj(
+    baseName: string,
+    methodNames: SpyObjMethodNames,
+    propertyNames?: SpyObjPropertyNames,
+  ): any;
+  function createSpyObj<T>(
+    baseName: string,
+    methodNames: SpyObjMethodNames<T>,
+    propertyNames?: SpyObjPropertyNames<T>,
+  ): SpyObj<T>;
+  function createSpyObj(
+    methodNames: SpyObjMethodNames,
+    propertyNames?: SpyObjPropertyNames,
+  ): any;
+  function createSpyObj<T>(
+    methodNames: SpyObjMethodNames<T>,
+    propertyNames?: SpyObjPropertyNames<T>,
+  ): SpyObj<T>;
 
   function pp(value: any): string;
 
@@ -223,7 +246,10 @@ declare namespace jasmine {
   /**
    * @deprecated Private method that may be changed or removed in the future
    */
-  function formatErrorMsg(domain: string, usage: string): (msg: string) => string;
+  function formatErrorMsg(
+    domain: string,
+    usage: string,
+  ): (msg: string) => string;
 
   interface Any extends AsymmetricMatcher<any> {
     new (expectedClass: any): any;
@@ -234,7 +260,10 @@ declare namespace jasmine {
     /**
      * customTesters are deprecated and will be replaced with matcherUtils in the future.
      */
-    asymmetricMatch(other: TValue, matchersUtil?: MatchersUtil | readonly CustomEqualityTester[]): boolean;
+    asymmetricMatch(
+      other: TValue,
+      matchersUtil?: MatchersUtil | readonly CustomEqualityTester[],
+    ): boolean;
     jasmineToString?(prettyPrint: typeof pp): string;
   }
 
@@ -271,20 +300,41 @@ declare namespace jasmine {
   interface CustomMatcher {
     compare<T>(actual: T, expected: T, ...args: any[]): CustomMatcherResult;
     compare(actual: any, ...expected: any[]): CustomMatcherResult;
-    negativeCompare?<T>(actual: T, expected: T, ...args: any[]): CustomMatcherResult;
+    negativeCompare?<T>(
+      actual: T,
+      expected: T,
+      ...args: any[]
+    ): CustomMatcherResult;
     negativeCompare?(actual: any, ...expected: any[]): CustomMatcherResult;
   }
 
   interface CustomAsyncMatcher {
-    compare<T>(actual: T, expected: T, ...args: any[]): PromiseLike<CustomMatcherResult>;
+    compare<T>(
+      actual: T,
+      expected: T,
+      ...args: any[]
+    ): PromiseLike<CustomMatcherResult>;
     compare(actual: any, ...expected: any[]): PromiseLike<CustomMatcherResult>;
-    negativeCompare?<T>(actual: T, expected: T, ...args: any[]): PromiseLike<CustomMatcherResult>;
-    negativeCompare?(actual: any, ...expected: any[]): PromiseLike<CustomMatcherResult>;
+    negativeCompare?<T>(
+      actual: T,
+      expected: T,
+      ...args: any[]
+    ): PromiseLike<CustomMatcherResult>;
+    negativeCompare?(
+      actual: any,
+      ...expected: any[]
+    ): PromiseLike<CustomMatcherResult>;
   }
 
-  type CustomMatcherFactory = (util: MatchersUtil, customEqualityTesters: readonly CustomEqualityTester[]) => CustomMatcher;
+  type CustomMatcherFactory = (
+    util: MatchersUtil,
+    customEqualityTesters: readonly CustomEqualityTester[],
+  ) => CustomMatcher;
 
-  type CustomAsyncMatcherFactory = (util: MatchersUtil, customEqualityTesters: readonly CustomEqualityTester[]) => CustomAsyncMatcher;
+  type CustomAsyncMatcherFactory = (
+    util: MatchersUtil,
+    customEqualityTesters: readonly CustomEqualityTester[],
+  ) => CustomAsyncMatcher;
 
   type CustomMatcherFactories = Record<string, CustomMatcherFactory>;
 
@@ -297,15 +347,36 @@ declare namespace jasmine {
 
   interface DiffBuilder {
     setRoots(actual: any, expected: any): void;
-    recordMismatch(formatter?: (actual: any, expected: any, path?: any, prettyPrinter?: any) => string): void;
+    recordMismatch(
+      formatter?: (
+        actual: any,
+        expected: any,
+        path?: any,
+        prettyPrinter?: any,
+      ) => string,
+    ): void;
     withPath(pathComponent: string, block: () => void): void;
     getMessage(): string;
   }
 
   interface MatchersUtil {
-    equals(a: any, b: any, customTesters?: readonly CustomEqualityTester[], diffBuilder?: DiffBuilder): boolean;
-    contains<T>(haystack: ArrayLike<T> | string, needle: any, customTesters?: readonly CustomEqualityTester[]): boolean;
-    buildFailureMessage(matcherName: string, isNot: boolean, actual: any, ...expected: any[]): string;
+    equals(
+      a: any,
+      b: any,
+      customTesters?: readonly CustomEqualityTester[],
+      diffBuilder?: DiffBuilder,
+    ): boolean;
+    contains<T>(
+      haystack: ArrayLike<T> | string,
+      needle: any,
+      customTesters?: readonly CustomEqualityTester[],
+    ): boolean;
+    buildFailureMessage(
+      matcherName: string,
+      isNot: boolean,
+      actual: any,
+      ...expected: any[]
+    ): string;
 
     /**
      * Formats a value for use in matcher failure messages and similar
@@ -521,10 +592,17 @@ declare namespace jasmine {
     /**
      * @deprecated expectationFailOutput is deprecated. Use withContext instead.
      */
-    toBeCloseTo(expected: number, precision: any, expectationFailOutput: any): void;
+    toBeCloseTo(
+      expected: number,
+      precision: any,
+      expectationFailOutput: any,
+    ): void;
     toThrow(expected?: any): void;
     toThrowError(message?: string | RegExp): void;
-    toThrowError(expected?: new (...args: any[]) => Error, message?: string | RegExp): void;
+    toThrowError(
+      expected?: new (...args: any[]) => Error,
+      message?: string | RegExp,
+    ): void;
     toThrowMatching(predicate: (thrown: any) => boolean): void;
     toBeNegativeInfinity(): void;
     /**
@@ -589,7 +667,10 @@ declare namespace jasmine {
     /**
      * @deprecated expectationFailOutput is deprecated. Use withContext instead.
      */
-    toBe(expected: Expected<ArrayLike<T>> | ArrayContaining<T>, expectationFailOutput: any): void;
+    toBe(
+      expected: Expected<ArrayLike<T>> | ArrayContaining<T>,
+      expectationFailOutput: any,
+    ): void;
 
     /**
      * Expect the actual value to be equal to the expected, using deep equality comparison.
@@ -601,7 +682,10 @@ declare namespace jasmine {
     /**
      * @deprecated expectationFailOutput is deprecated. Use withContext instead.
      */
-    toEqual(expected: Expected<ArrayLike<T>> | ArrayContaining<T>, expectationFailOutput: any): void;
+    toEqual(
+      expected: Expected<ArrayLike<T>> | ArrayContaining<T>,
+      expectationFailOutput: any,
+    ): void;
 
     toContain(expected: Expected<T>): void;
     /**
@@ -622,7 +706,9 @@ declare namespace jasmine {
     not: ArrayLikeMatchers<T>;
   }
 
-  type MatchableArgs<Fn> = Fn extends (...args: infer P) => any ? { [K in keyof P]: Expected<P[K]> } : never;
+  type MatchableArgs<Fn> = Fn extends (...args: infer P) => any
+    ? { [K in keyof P]: Expected<P[K]> }
+    : never;
 
   interface FunctionMatchers<Fn extends Func> extends Matchers<any> {
     /**
@@ -699,7 +785,10 @@ declare namespace jasmine {
      * @param expected Error constructor the object that was thrown needs to be an instance of. If not provided, Error will be used.
      * @param message The message that should be set on the thrown Error.
      */
-    toBeRejectedWithError(expected?: new (...args: any[]) => Error, message?: string | RegExp): PromiseLike<void>;
+    toBeRejectedWithError(
+      expected?: new (...args: any[]) => Error,
+      message?: string | RegExp,
+    ): PromiseLike<void>;
 
     /**
      * Expect a promise to be rejected with a value matched to the expected.
@@ -821,12 +910,18 @@ declare namespace jasmine {
   type RunDetails = JasmineDoneInfo;
 
   interface CustomReporter {
-    jasmineStarted?(suiteInfo: JasmineStartedInfo, done?: () => void): void | Promise<void>;
+    jasmineStarted?(
+      suiteInfo: JasmineStartedInfo,
+      done?: () => void,
+    ): void | Promise<void>;
     suiteStarted?(result: SuiteResult, done?: () => void): void | Promise<void>;
     specStarted?(result: SpecResult, done?: () => void): void | Promise<void>;
     specDone?(result: SpecResult, done?: () => void): void | Promise<void>;
     suiteDone?(result: SuiteResult, done?: () => void): void | Promise<void>;
-    jasmineDone?(runDetails: JasmineDoneInfo, done?: () => void): void | Promise<void>;
+    jasmineDone?(
+      runDetails: JasmineDoneInfo,
+      done?: () => void,
+    ): void | Promise<void>;
   }
 
   /**
@@ -875,18 +970,28 @@ declare namespace jasmine {
    * It's like SpyObj, but doesn't verify argument/return types for functions.
    * Useful if TS cannot correctly infer type for complex objects.
    */
-  type NonTypedSpyObj<T> = SpyObj<{ [K in keyof T]: T[K] extends Func ? Func : T[K] }>;
+  type NonTypedSpyObj<T> = SpyObj<{
+    [K in keyof T]: T[K] extends Func ? Func : T[K];
+  }>;
 
   /**
    * Obtains the promised type that a promise-returning function resolves to.
    */
-  type PromisedReturnType<Fn extends Func> = Fn extends (...args: any[]) => PromiseLike<infer TResult> ? TResult : never;
+  type PromisedReturnType<Fn extends Func> = Fn extends (
+    ...args: any[]
+  ) => PromiseLike<infer TResult>
+    ? TResult
+    : never;
 
   /**
    * Obtains the type that a promise-returning function can be rejected with.
    * This is so we can use .and.rejectWith() only for functions that return a promise.
    */
-  type PromisedRejectType<Fn extends Function> = Fn extends (...args: any[]) => PromiseLike<unknown> ? any : never;
+  type PromisedRejectType<Fn extends Function> = Fn extends (
+    ...args: any[]
+  ) => PromiseLike<unknown>
+    ? any
+    : never;
 
   interface SpyAnd<Fn extends Func> {
     identity: string;
@@ -1139,7 +1244,10 @@ declare module 'jasmine' {
      * Configure the default reporter.
      */
     configureDefaultReporter(options: jasmine.DefaultReporterOptions): void;
-    execute(files?: string[], filterString?: string): Promise<jasmine.JasmineDoneInfo>;
+    execute(
+      files?: string[],
+      filterString?: string,
+    ): Promise<jasmine.JasmineDoneInfo>;
     /**
      * @deprecated Private property that may be changed or removed in the future
      */

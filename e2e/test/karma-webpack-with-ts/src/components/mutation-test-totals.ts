@@ -84,7 +84,11 @@ export class MutationTestReportTotalsComponent extends LitElement {
             childResult = childResult.childResults[0];
             fullName = pathJoin(fullName, childResult.name);
           }
-          return this.renderRow(fullName, childResult, pathJoin(...this.currentPath, fullName));
+          return this.renderRow(
+            fullName,
+            childResult,
+            pathJoin(...this.currentPath, fullName),
+          );
         });
       }
     };
@@ -95,36 +99,45 @@ export class MutationTestReportTotalsComponent extends LitElement {
     `;
   }
 
-  private renderRow(name: string, row: MetricsResult, path: string | undefined) {
+  private renderRow(
+    name: string,
+    row: MetricsResult,
+    path: string | undefined,
+  ) {
     const { mutationScore } = row.metrics;
     const scoreIsPresent = !isNaN(mutationScore);
     const coloringClass = this.determineColoringClass(mutationScore);
     const mutationScoreRounded = mutationScore.toFixed(2);
     const progressBarStyle = `width: ${mutationScore}%`;
     return html` <tr title="${row.name}">
-      <td style="width: 32px;" class="icon no-border-right"
-        >${row.file ? this.fileIcon : this.directoryIcon}</td
-      >
-      <td width="" class="no-border-left"
-        >${typeof path === 'string' ? html`<a href="${toAbsoluteUrl(path)}">${name}</a>` : html`<span>${row.name}</span>`}</td
-      >
-      <td class="no-border-right vertical-middle">
-        ${scoreIsPresent
-        ? html` <div class="progress">
-              <div
-                class="progress-bar bg-${coloringClass}"
-                role="progressbar"
-                aria-valuenow="${mutationScoreRounded}"
-                aria-valuemin="0"
-                aria-valuemax="100"
-                style="${progressBarStyle}"
-              >
-                ${mutationScoreRounded}%
-              </div>
-            </div>`
-        : html` <span class="font-weight-bold text-muted">N/A</span> `}
+      <td style="width: 32px;" class="icon no-border-right">
+        ${row.file ? this.fileIcon : this.directoryIcon}
       </td>
-      <td style="width: 50px;" class="no-border-left font-weight-bold text-center text-${coloringClass}">
+      <td width="" class="no-border-left">
+        ${typeof path === 'string' ? html`<a href="${toAbsoluteUrl(path)}">${name}</a>` : html`<span>${row.name}</span>`}
+      </td>
+      <td class="no-border-right vertical-middle">
+        ${
+          scoreIsPresent
+            ? html` <div class="progress">
+                <div
+                  class="progress-bar bg-${coloringClass}"
+                  role="progressbar"
+                  aria-valuenow="${mutationScoreRounded}"
+                  aria-valuemin="0"
+                  aria-valuemax="100"
+                  style="${progressBarStyle}"
+                >
+                  ${mutationScoreRounded}%
+                </div>
+              </div>`
+            : html` <span class="font-weight-bold text-muted">N/A</span> `
+        }
+      </td>
+      <td
+        style="width: 50px;"
+        class="no-border-left font-weight-bold text-center text-${coloringClass}"
+      >
         ${scoreIsPresent ? mutationScoreRounded : undefined}
       </td>
       <td class="text-center">${row.metrics.killed}</td>

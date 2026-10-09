@@ -1,9 +1,8 @@
-switch(foo){
+switch (foo) {
   case 'bar':
     console.log('bar');
     break;
-  case 'baz': 
+  case 'baz':
     console.log('baz');
     break;
-  
 }
