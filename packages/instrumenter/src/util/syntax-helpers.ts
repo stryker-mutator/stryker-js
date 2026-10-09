@@ -162,8 +162,25 @@ export function isTypeNode(path: babel.NodePath): boolean {
     path.isTypeAnnotation() ||
     flowTypeAnnotationNodeTypes.includes(path.node.type) ||
     tsTypeAnnotationNodeTypes.includes(path.node.type) ||
+    isTypeAssertionAnnotation(path) ||
     isDeclareVariableStatement(path) ||
     isDeclareModule(path)
+  );
+}
+
+/**
+ * Determines whether or not a node is the type of a type assertion.
+ * @example
+ * const foo = { bar: 'baz' } as const;
+ */
+function isTypeAssertionAnnotation(path: babel.NodePath): boolean {
+  const { parentPath } = path;
+  return (
+    !!parentPath &&
+    (parentPath.isTSAsExpression() ||
+      parentPath.isTSSatisfiesExpression() ||
+      parentPath.isTSTypeAssertion()) &&
+    path.key === 'typeAnnotation'
   );
 }
 
@@ -187,7 +204,6 @@ function isDeclareModule(path: babel.NodePath): boolean {
 
 const tsTypeAnnotationNodeTypes: ReadonlyArray<babel.types.Node['type']> =
   Object.freeze([
-    'TSAsExpression',
     'TSInterfaceDeclaration',
     'TSTypeAnnotation',
     'TSTypeAliasDeclaration',
