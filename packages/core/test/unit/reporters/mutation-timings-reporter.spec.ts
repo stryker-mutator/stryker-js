@@ -1,6 +1,5 @@
 import path from 'path';
 
-import { MutantResult } from '@stryker-mutator/api/core';
 import { TestStatus } from '@stryker-mutator/api/test-runner';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
@@ -49,7 +48,7 @@ describe(MutationTimingsReporter.name, () => {
           fileName: 'test/foo.spec.ts',
         },
       ],
-    } as MutantResult);
+    });
 
     sut.onMutationTestReportReady();
     await sut.wrapUp();
@@ -84,7 +83,7 @@ describe(MutationTimingsReporter.name, () => {
           fileName: 'test/foo.spec.ts',
         },
       ],
-    } as MutantResult);
+    });
 
     sut.onMutationTestReportReady();
     await sut.wrapUp();
