@@ -10,6 +10,7 @@ import sinon from 'sinon';
 import {
   KilledMutantRunResult,
   MutantRunStatus,
+  TestStatus,
   TestRunnerCapabilities,
 } from '@stryker-mutator/api/test-runner';
 import { Task } from '@stryker-mutator/util';
@@ -297,12 +298,23 @@ describe(MochaTestRunner.name, () => {
 
   describe(MochaTestRunner.prototype.mutantRun.name, () => {
     let sut: MochaTestRunner;
+    let originalMutationTestTimings: string | undefined;
 
     beforeEach(async () => {
+      originalMutationTestTimings = process.env.STRYKER_MUTATION_TEST_TIMINGS;
+      delete process.env.STRYKER_MUTATION_TEST_TIMINGS;
       mochaOptionsLoaderMock.load.returns({});
       sut = createSut();
       await sut.init();
       StrykerMochaReporter.currentInstance = reporterMock;
+    });
+
+    afterEach(() => {
+      if (originalMutationTestTimings !== undefined) {
+        process.env.STRYKER_MUTATION_TEST_TIMINGS = originalMutationTestTimings;
+      } else {
+        delete process.env.STRYKER_MUTATION_TEST_TIMINGS;
+      }
     });
 
     it("should activate the given mutant statically when mutantActivation = 'static'", async () => {
@@ -439,6 +451,68 @@ describe(MochaTestRunner.name, () => {
       );
       assertions.expectTimeout(firstResult);
       assertions.expectKilled(secondResult);
+    });
+
+    it('should include executedTests when mutation timing export is enabled', async () => {
+      process.env.STRYKER_MUTATION_TEST_TIMINGS = '1';
+      reporterMock.tests = [
+        factory.successTestResult({
+          id: 'pass-1',
+          name: 'pass 1',
+          fileName: 'test/pass.spec.ts',
+          timeSpentMs: 6,
+        }),
+        factory.failedTestResult({
+          id: 'fail-1',
+          name: 'fail 1',
+          fileName: 'test/fail.spec.ts',
+          timeSpentMs: 9,
+          failureMessage: 'boom',
+        }),
+      ];
+
+      const result = await actMutantRun();
+
+      assertions.expectKilled(result);
+      expect(result.executedTests).deep.eq([
+        {
+          id: 'pass-1',
+          name: 'pass 1',
+          status: TestStatus.Success,
+          fileName: 'test/pass.spec.ts',
+          timeSpentMs: 6,
+        },
+        {
+          id: 'fail-1',
+          name: 'fail 1',
+          status: TestStatus.Failed,
+          fileName: 'test/fail.spec.ts',
+          timeSpentMs: 9,
+        },
+      ]);
+    });
+
+    it('should not include executedTests when mutation timing export is disabled', async () => {
+      reporterMock.tests = [
+        factory.successTestResult({
+          id: 'pass-1',
+          name: 'pass 1',
+          fileName: 'test/pass.spec.ts',
+          timeSpentMs: 6,
+        }),
+        factory.failedTestResult({
+          id: 'fail-1',
+          name: 'fail 1',
+          fileName: 'test/fail.spec.ts',
+          timeSpentMs: 9,
+          failureMessage: 'boom',
+        }),
+      ];
+
+      const result = await actMutantRun();
+
+      assertions.expectKilled(result);
+      expect(result).not.to.have.property('executedTests');
     });
 
     async function actMutantRun(

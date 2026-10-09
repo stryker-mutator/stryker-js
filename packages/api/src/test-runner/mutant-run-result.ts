@@ -1,3 +1,5 @@
+import { TestStatus } from './test-status.js';
+
 export enum MutantRunStatus {
   Killed = 'killed',
   Survived = 'survived',
@@ -33,6 +35,11 @@ export interface KilledMutantRunResult {
    * The number of total tests ran in this test run.
    */
   nrOfTests: number;
+
+  /**
+   * Optional per-test timing details for tests executed in this mutant run.
+   */
+  executedTests?: MutantRunExecutedTest[];
 }
 
 export interface SurvivedMutantRunResult {
@@ -41,9 +48,22 @@ export interface SurvivedMutantRunResult {
    * The number of total tests ran in this test run.
    */
   nrOfTests: number;
+
+  /**
+   * Optional per-test timing details for tests executed in this mutant run.
+   */
+  executedTests?: MutantRunExecutedTest[];
 }
 
 export interface ErrorMutantRunResult {
   status: MutantRunStatus.Error;
   errorMessage: string;
+}
+
+export interface MutantRunExecutedTest {
+  id: string;
+  name: string;
+  status: TestStatus;
+  timeSpentMs: number;
+  fileName?: string;
 }
