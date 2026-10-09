@@ -70,13 +70,9 @@ describe(MutationTestReportTotalsComponent.name, () => {
     expect(table).ok;
     const rows = table.querySelectorAll('tbody tr');
     expect(rows).lengthOf(2);
-    expect(
-      (
-        (rows.item(1) as HTMLTableRowElement).cells.item(
-          1,
-        ) as HTMLTableCellElement
-      ).textContent,
-    ).eq('baz/foo.js');
+    const row = rows.item(1) as HTMLTableRowElement;
+    const cell = row.cells.item(1) as HTMLTableCellElement;
+    expect(cell.textContent?.trim()).eq('baz/foo.js');
   });
 
   it('should show N/A when no mutation score is available', async () => {

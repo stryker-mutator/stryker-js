@@ -9,3 +9,4 @@ export function multiply(a, b) {
 export function addOne(a) {
   return ++a;
 }
+

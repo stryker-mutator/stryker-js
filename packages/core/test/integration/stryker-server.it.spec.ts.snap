@@ -10,11 +10,11 @@ Object {
           "location": Object {
             "end": Object {
               "column": 2,
-              "line": 4,
+              "line": 3,
             },
             "start": Object {
               "column": 29,
-              "line": 2,
+              "line": 1,
             },
           },
           "mutatorName": "BlockStatement",
@@ -25,11 +25,11 @@ Object {
           "location": Object {
             "end": Object {
               "column": 27,
-              "line": 3,
+              "line": 2,
             },
             "start": Object {
               "column": 10,
-              "line": 3,
+              "line": 2,
             },
           },
           "mutatorName": "StringLiteral",
@@ -40,11 +40,11 @@ Object {
           "location": Object {
             "end": Object {
               "column": 37,
-              "line": 7,
+              "line": 5,
             },
             "start": Object {
               "column": 30,
-              "line": 7,
+              "line": 5,
             },
           },
           "mutatorName": "StringLiteral",
@@ -126,11 +126,11 @@ Array [
             "location": Object {
               "end": Object {
                 "column": 2,
-                "line": 4,
+                "line": 3,
               },
               "start": Object {
                 "column": 29,
-                "line": 2,
+                "line": 1,
               },
             },
             "mutatorName": "BlockStatement",
@@ -151,11 +151,11 @@ Array [
             "location": Object {
               "end": Object {
                 "column": 27,
-                "line": 3,
+                "line": 2,
               },
               "start": Object {
                 "column": 10,
-                "line": 3,
+                "line": 2,
               },
             },
             "mutatorName": "StringLiteral",
@@ -176,11 +176,11 @@ Array [
             "location": Object {
               "end": Object {
                 "column": 37,
-                "line": 7,
+                "line": 5,
               },
               "start": Object {
                 "column": 30,
-                "line": 7,
+                "line": 5,
               },
             },
             "mutatorName": "StringLiteral",
@@ -287,11 +287,11 @@ Array [
             "location": Object {
               "end": Object {
                 "column": 2,
-                "line": 4,
+                "line": 3,
               },
               "start": Object {
                 "column": 29,
-                "line": 2,
+                "line": 1,
               },
             },
             "mutatorName": "BlockStatement",
@@ -312,11 +312,11 @@ Array [
             "location": Object {
               "end": Object {
                 "column": 27,
-                "line": 3,
+                "line": 2,
               },
               "start": Object {
                 "column": 10,
-                "line": 3,
+                "line": 2,
               },
             },
             "mutatorName": "StringLiteral",
@@ -337,11 +337,11 @@ Array [
             "location": Object {
               "end": Object {
                 "column": 37,
-                "line": 7,
+                "line": 5,
               },
               "start": Object {
                 "column": 30,
-                "line": 7,
+                "line": 5,
               },
             },
             "mutatorName": "StringLiteral",
@@ -412,36 +412,6 @@ Array [
 ]
 `;
 
-exports[`StrykerServer using socket channel should be able to run mutation tests with range 1`] = `
-Array [
-  Object {
-    "files": Object {
-      "src/app.js": Object {
-        "mutants": Array [
-          Object {
-            "id": "0",
-            "location": Object {
-              "end": Object {
-                "column": 37,
-                "line": 7,
-              },
-              "start": Object {
-                "column": 30,
-                "line": 7,
-              },
-            },
-            "mutatorName": "StringLiteral",
-            "replacement": "\\"\\"",
-            "status": "Survived",
-            "testsCompleted": 1,
-          },
-        ],
-      },
-    },
-  },
-]
-`;
-
 exports[`StrykerServer using stdio channel should be able to discover mutants 1`] = `
 Object {
   "files": Object {
@@ -452,11 +422,11 @@ Object {
           "location": Object {
             "end": Object {
               "column": 2,
-              "line": 4,
+              "line": 3,
             },
             "start": Object {
               "column": 29,
-              "line": 2,
+              "line": 1,
             },
           },
           "mutatorName": "BlockStatement",
@@ -467,11 +437,11 @@ Object {
           "location": Object {
             "end": Object {
               "column": 27,
-              "line": 3,
+              "line": 2,
             },
             "start": Object {
               "column": 10,
-              "line": 3,
+              "line": 2,
             },
           },
           "mutatorName": "StringLiteral",
@@ -482,11 +452,11 @@ Object {
           "location": Object {
             "end": Object {
               "column": 37,
-              "line": 7,
+              "line": 5,
             },
             "start": Object {
               "column": 30,
-              "line": 7,
+              "line": 5,
             },
           },
           "mutatorName": "StringLiteral",
@@ -568,11 +538,11 @@ Array [
             "location": Object {
               "end": Object {
                 "column": 2,
-                "line": 4,
+                "line": 3,
               },
               "start": Object {
                 "column": 29,
-                "line": 2,
+                "line": 1,
               },
             },
             "mutatorName": "BlockStatement",
@@ -593,11 +563,11 @@ Array [
             "location": Object {
               "end": Object {
                 "column": 27,
-                "line": 3,
+                "line": 2,
               },
               "start": Object {
                 "column": 10,
-                "line": 3,
+                "line": 2,
               },
             },
             "mutatorName": "StringLiteral",
@@ -618,11 +588,11 @@ Array [
             "location": Object {
               "end": Object {
                 "column": 37,
-                "line": 7,
+                "line": 5,
               },
               "start": Object {
                 "column": 30,
-                "line": 7,
+                "line": 5,
               },
             },
             "mutatorName": "StringLiteral",
@@ -729,11 +699,11 @@ Array [
             "location": Object {
               "end": Object {
                 "column": 2,
-                "line": 4,
+                "line": 3,
               },
               "start": Object {
                 "column": 29,
-                "line": 2,
+                "line": 1,
               },
             },
             "mutatorName": "BlockStatement",
@@ -754,11 +724,11 @@ Array [
             "location": Object {
               "end": Object {
                 "column": 27,
-                "line": 3,
+                "line": 2,
               },
               "start": Object {
                 "column": 10,
-                "line": 3,
+                "line": 2,
               },
             },
             "mutatorName": "StringLiteral",
@@ -779,11 +749,11 @@ Array [
             "location": Object {
               "end": Object {
                 "column": 37,
-                "line": 7,
+                "line": 5,
               },
               "start": Object {
                 "column": 30,
-                "line": 7,
+                "line": 5,
               },
             },
             "mutatorName": "StringLiteral",
@@ -845,36 +815,6 @@ Array [
             "mutatorName": "ArithmeticOperator",
             "replacement": "a - b",
             "status": "Killed",
-            "testsCompleted": 1,
-          },
-        ],
-      },
-    },
-  },
-]
-`;
-
-exports[`StrykerServer using stdio channel should be able to run mutation tests with range 1`] = `
-Array [
-  Object {
-    "files": Object {
-      "src/app.js": Object {
-        "mutants": Array [
-          Object {
-            "id": "0",
-            "location": Object {
-              "end": Object {
-                "column": 37,
-                "line": 7,
-              },
-              "start": Object {
-                "column": 30,
-                "line": 7,
-              },
-            },
-            "mutatorName": "StringLiteral",
-            "replacement": "\\"\\"",
-            "status": "Survived",
             "testsCompleted": 1,
           },
         ],

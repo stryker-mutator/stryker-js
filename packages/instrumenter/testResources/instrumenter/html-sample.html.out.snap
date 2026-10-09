@@ -1,16 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`instrumenter integration should be able to instrument html 1`] = `
-"<!DOCTYPE html>
+"<!doctype html>
 <html lang=\\"en\\">
-
-<head>
-    <meta charset=\\"UTF-8\\">
-    <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1.0\\">
+  <head>
+    <meta charset=\\"UTF-8\\" />
+    <meta name=\\"viewport\\" content=\\"width=device-width, initial-scale=1.0\\" />
     <title>Document</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <script>
 function stryNS_9fa48() {
   var g = typeof globalThis === 'object' && globalThis && globalThis.Math === Math && globalThis || new Function(\\"return this\\")();
@@ -73,7 +72,7 @@ if (stryMutAct_9fa48(\\"2\\")) {
   add(40, 2);
 }
 </script>
-</body>
-
-</html>"
+  </body>
+</html>
+"
 `;

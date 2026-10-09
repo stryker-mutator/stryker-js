@@ -17,7 +17,9 @@ import {
  */
 
 class MyReporter {
-  static inject = [commonTokens.logger]; /** @type {const} */
+  static inject = [commonTokens.logger];
+
+  /** @type {const} */
 
   /** @param {import('@stryker-mutator/api/logging').Logger} logger */
   constructor(logger) {
