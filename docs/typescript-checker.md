@@ -70,7 +70,6 @@ The `@stryker-mutator/typescript-checker` package for `stryker` to enable `types
 
 For the current versions, see the `peerDependencies` section in the [package.json](https://github.com/stryker-mutator/stryker-js/blob/master/packages/typescript-checker/package.json).
 
-
 ## Load the plugin
 
 In this plugin the `@stryker-mutator/typescript-checker`' must be loaded into Stryker.

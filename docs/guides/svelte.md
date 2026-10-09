@@ -15,7 +15,6 @@ Stryker supports Svelte projects out-of-the-box as of Svelte version `>=3.30`. I
 
 </details>
 
-
 ## Vitest
 
 This guide assumes you're using the [vitest examples](https://vitest.dev/guide/#examples) as a starting point for unit testing svelte projects with vitest.
@@ -39,7 +38,6 @@ You may have to change some paths like the [mutate](../configuration.md#mutate-s
 ## Jest
 
 Using jest to test your svelte projects can be done using something like the [svelte-jester](https://github.com/svelteness/svelte-jester#svelte-jester) plugin.
-
 
 ### Install
 

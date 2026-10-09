@@ -399,4 +399,3 @@ There are 2 possible solutions.
    ```ts
    import '../src/file-under-test.ts';
    ```
-

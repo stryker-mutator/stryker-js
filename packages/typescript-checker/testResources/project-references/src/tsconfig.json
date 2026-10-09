@@ -4,7 +4,5 @@
     "tsBuildInfoFile": "src.tsbuildinfo",
     "outDir": "../dist/src"
   },
-  "references": [
-    { "path": "../utils" }
-  ]
+  "references": [{ "path": "../utils" }]
 }

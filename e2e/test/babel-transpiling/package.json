@@ -6,8 +6,8 @@
   "main": "index.js",
   "scripts": {
     "tmp": "echo %cd%",
-     "clean:dist": "rimraf dist",
-     "build": "npm run clean:dist && babel -d dist --only \"src/**/*.js\" --only \"test/**/*.js\" .",
+    "clean:dist": "rimraf dist",
+    "build": "npm run clean:dist && babel -d dist --only \"src/**/*.js\" --only \"test/**/*.js\" .",
     "clean:reports": "rimraf \"reports\"",
     "test:unit": "mocha",
     "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",

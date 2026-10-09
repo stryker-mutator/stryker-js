@@ -1,3 +1,3 @@
-function ignoredFile (name) {
+function ignoredFile(name) {
   return 'ignored' + name;
 }

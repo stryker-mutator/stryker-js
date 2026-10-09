@@ -1,4 +1,3 @@
-
 module.exports = {
   packageManager: 'npm',
   testRunner: 'jest',
@@ -8,6 +7,9 @@ module.exports = {
   concurrency: 2,
   coverageAnalysis: 'perTest',
   reporters: ['json', 'progress', 'clear-text', 'html'],
-  jest: { projectType: 'create-react-app', config: { testEnvironment: require.resolve('jest-environment-jsdom') } },
+  jest: {
+    projectType: 'create-react-app',
+    config: { testEnvironment: require.resolve('jest-environment-jsdom') },
+  },
   plugins: ['@stryker-mutator/jest-runner'],
 };

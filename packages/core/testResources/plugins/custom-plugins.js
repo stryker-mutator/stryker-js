@@ -1,14 +1,23 @@
 // @ts-check
-import { PluginKind, commonTokens, declareClassPlugin, declareFactoryPlugin, declareValuePlugin } from '@stryker-mutator/api/plugin';
-import { DryRunStatus, MutantRunStatus } from '@stryker-mutator/api/test-runner';
+import {
+  PluginKind,
+  commonTokens,
+  declareClassPlugin,
+  declareFactoryPlugin,
+  declareValuePlugin,
+} from '@stryker-mutator/api/plugin';
+import {
+  DryRunStatus,
+  MutantRunStatus,
+} from '@stryker-mutator/api/test-runner';
 
 /**
- * @typedef {import('@stryker-mutator/api/test-runner').TestRunner} TestRunner 
+ * @typedef {import('@stryker-mutator/api/test-runner').TestRunner} TestRunner
  * @typedef {import('@stryker-mutator/api/plugin').Injector} Injector
  */
 
 class MyReporter {
-  static inject = [commonTokens.logger] /** @type {const} */;
+  static inject = [commonTokens.logger]; /** @type {const} */
 
   /** @param {import('@stryker-mutator/api/logging').Logger} logger */
   constructor(logger) {
@@ -21,9 +30,9 @@ class MyReporter {
   }
 }
 
-/** 
+/**
  * @param {Injector} _injector
- * @returns {TestRunner} 
+ * @returns {TestRunner}
  */
 function createLazyTestRunner(_injector) {
   return {
@@ -35,14 +44,14 @@ function createLazyTestRunner(_injector) {
       return {
         status: DryRunStatus.Complete,
         tests: [],
-      }
+      };
     },
     async mutantRun() {
       return {
         status: MutantRunStatus.Error,
         errorMessage: 'Not implemented',
-      }
-    }
+      };
+    },
   };
 }
 createLazyTestRunner.inject = [commonTokens.injector];

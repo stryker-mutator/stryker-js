@@ -6,8 +6,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-  "clean:dist": "rimraf dist .stryker-tmp reports",
-  "build": "npm run clean:dist && tsc -b tsconfig.json",
+    "clean:dist": "rimraf dist .stryker-tmp reports",
+    "build": "npm run clean:dist && tsc -b tsconfig.json",
     "test:unit": "npm run build && mocha",
     "clean:reports": "rimraf \"reports\" \"dist\" \"stryker.log\"",
     "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",

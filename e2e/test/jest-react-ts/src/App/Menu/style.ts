@@ -2,7 +2,7 @@
 /* Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com) */
 /* This source code was getting from https://github.com/tastejs/todomvc-app-css/blob/03e753aa21bd555cbdc2aa09185ecb9905d1bf16/index.css */
 
-import styled from '@emotion/styled'
+import styled from '@emotion/styled';
 
 export const Container = styled.div`
   .footer {
@@ -21,8 +21,11 @@ export const Container = styled.div`
     left: 0;
     height: 50px;
     overflow: hidden;
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2), 0 8px 0 -3px #f6f6f6,
-      0 9px 1px -3px rgba(0, 0, 0, 0.2), 0 16px 0 -6px #f6f6f6,
+    box-shadow:
+      0 1px 1px rgba(0, 0, 0, 0.2),
+      0 8px 0 -3px #f6f6f6,
+      0 9px 1px -3px rgba(0, 0, 0, 0.2),
+      0 16px 0 -6px #f6f6f6,
       0 17px 2px -6px rgba(0, 0, 0, 0.2);
   }
 
@@ -87,4 +90,4 @@ export const Container = styled.div`
       bottom: 10px;
     }
   }
-`
+`;

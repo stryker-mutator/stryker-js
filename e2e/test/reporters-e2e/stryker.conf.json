@@ -4,8 +4,6 @@
   "concurrency": 2,
   "coverageAnalysis": "perTest",
   "reporters": ["clear-text", "html", "event-recorder", "json"],
-  "plugins": [
-    "@stryker-mutator/mocha-runner"
-  ],
+  "plugins": ["@stryker-mutator/mocha-runner"],
   "allowConsoleColors": false
 }

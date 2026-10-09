@@ -1,5 +1,4 @@
 describe('suite', () => {
-
   beforeEach(() => {
     throw new Error();
   });

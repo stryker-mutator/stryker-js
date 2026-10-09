@@ -20,7 +20,7 @@ describe('Bank', () => {
       assert.equal(bank.money, money);
     });
 
-    it('should not add money if it\'s a negative amount', () => {
+    it("should not add money if it's a negative amount", () => {
       const bank = new Bank(0);
       const money = -100;
 
@@ -41,7 +41,7 @@ describe('Bank', () => {
       assert.equal(bank.money, 500 - money);
     });
 
-    it('should not subtract money if it\'s a negative amount', () => {
+    it("should not subtract money if it's a negative amount", () => {
       const bank = new Bank(500);
       const money = -100;
 

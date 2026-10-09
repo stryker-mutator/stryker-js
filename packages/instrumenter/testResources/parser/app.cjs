@@ -1,1 +1,1 @@
-module.exports = class App {}
+module.exports = class App {};

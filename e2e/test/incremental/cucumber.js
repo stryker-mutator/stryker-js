@@ -1,4 +1,4 @@
-export default { 
+export default {
   publishQuiet: true,
-  import: ['features/**/*.js']
-}
+  import: ['features/**/*.js'],
+};

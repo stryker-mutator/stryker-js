@@ -5,5 +5,5 @@ defineParameterType({
   regexp: /true|false/,
   transformer(val) {
     return val === 'true';
-  }
-})
+  },
+});

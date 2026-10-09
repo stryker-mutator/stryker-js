@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const propTypes = {
-  color: PropTypes.string
+  color: PropTypes.string,
 };
 
 const defaultProps = {
@@ -10,10 +10,7 @@ const defaultProps = {
 };
 
 const Badge = (props) => {
-  let {
-    color,
-    ...attributes
-  } = props;
+  let { color, ...attributes } = props;
 
   const classes = ['badge', 'badge-' + color];
 
@@ -21,9 +18,7 @@ const Badge = (props) => {
     Tag = 'a';
   }
 
-  return (
-    <Tag {...attributes} className={classes} />
-  );
+  return <Tag {...attributes} className={classes} />;
 };
 
 Badge.propTypes = propTypes;

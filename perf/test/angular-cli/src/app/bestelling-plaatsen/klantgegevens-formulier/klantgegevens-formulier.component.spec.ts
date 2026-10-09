@@ -1,22 +1,43 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {KlantgegevensFormulierComponent} from './klantgegevens-formulier.component';
-import {ReactiveFormsModule} from '@angular/forms';
-import {WinkelwagenService} from '../../services/winkelwagen.service';
-import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {BestellingenService} from '../../services/bestellingen.service';
-import {Klant} from '../../models/bestelling/klant';
-import {Land} from '../../models/bestelling/land';
-import {of} from 'rxjs';
-import {Artikel} from '../../models/artikel';
-import {RouterTestingModule} from '@angular/router/testing';
-import {Bestelling} from '../../models/bestelling/bestelling';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { KlantgegevensFormulierComponent } from './klantgegevens-formulier.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { WinkelwagenService } from '../../services/winkelwagen.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { BestellingenService } from '../../services/bestellingen.service';
+import { Klant } from '../../models/bestelling/klant';
+import { Land } from '../../models/bestelling/land';
+import { of } from 'rxjs';
+import { Artikel } from '../../models/artikel';
+import { RouterTestingModule } from '@angular/router/testing';
+import { Bestelling } from '../../models/bestelling/bestelling';
 
 describe('KlantgegevensFormulierComponent', () => {
   let component: KlantgegevensFormulierComponent;
   let fixture: ComponentFixture<KlantgegevensFormulierComponent>;
   let bestellingenServive: BestellingenService;
-  const testArtikel = new Artikel(1, 'fiets bel', '', 15.00, '', new Date(1, 9, 2019), new Date(1, 9, 2020), 'AB', ['fietsen'], 10);
-  const testKlant = new Klant('foo', 'bar', 'straat', '1', 'A', 'plaats', Land.NL, 'email@email.nl', '0644877514');
+  const testArtikel = new Artikel(
+    1,
+    'fiets bel',
+    '',
+    15.0,
+    '',
+    new Date(1, 9, 2019),
+    new Date(1, 9, 2020),
+    'AB',
+    ['fietsen'],
+    10,
+  );
+  const testKlant = new Klant(
+    'foo',
+    'bar',
+    'straat',
+    '1',
+    'A',
+    'plaats',
+    Land.NL,
+    'email@email.nl',
+    '0644877514',
+  );
   /**
    * Gets a element in the native element
    * @param querySelector The query selector of the element
@@ -28,10 +49,13 @@ describe('KlantgegevensFormulierComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [KlantgegevensFormulierComponent],
-      imports: [ReactiveFormsModule, HttpClientTestingModule, RouterTestingModule],
-      providers: [WinkelwagenService, BestellingenService]
-    })
-      .compileComponents();
+      imports: [
+        ReactiveFormsModule,
+        HttpClientTestingModule,
+        RouterTestingModule,
+      ],
+      providers: [WinkelwagenService, BestellingenService],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
@@ -70,20 +94,34 @@ describe('KlantgegevensFormulierComponent', () => {
 
   describe('bestellingPlaatsen()', () => {
     it('bestellingenService.plaatsBestelling should be called', () => {
-      const bestelling = new Bestelling(testKlant, component.getBestelRegels(), 15);
-      spyOn(bestellingenServive, 'plaatsBestelling').and.returnValue(of(bestelling));
+      const bestelling = new Bestelling(
+        testKlant,
+        component.getBestelRegels(),
+        15,
+      );
+      spyOn(bestellingenServive, 'plaatsBestelling').and.returnValue(
+        of(bestelling),
+      );
       spyOn(component, 'getBestelRegels');
       component.bestellingPlaatsen(testKlant);
       expect(bestellingenServive.plaatsBestelling).toHaveBeenCalled();
       expect(component.getBestelRegels).toHaveBeenCalled();
     });
     it('alert("Bestelling is geplaatst") should be called', () => {
-      const bestelling = new Bestelling(testKlant, component.getBestelRegels(), 15);
+      const bestelling = new Bestelling(
+        testKlant,
+        component.getBestelRegels(),
+        15,
+      );
       component.winkelwagen.addArtikel(testArtikel);
-      spyOn(bestellingenServive, 'plaatsBestelling').and.returnValue(of(bestelling));
+      spyOn(bestellingenServive, 'plaatsBestelling').and.returnValue(
+        of(bestelling),
+      );
       spyOn(component.router, 'navigate');
       component.bestellingPlaatsen(testKlant);
-      expect(component.router.navigate).toHaveBeenCalledWith(['/bestelling-factuur']);
+      expect(component.router.navigate).toHaveBeenCalledWith([
+        '/bestelling-factuur',
+      ]);
     });
   });
 
@@ -116,7 +154,9 @@ describe('KlantgegevensFormulierComponent', () => {
       component.klantGegevensForm.get('plaats').setValue('A');
       component.klantGegevensForm.get('land').setValue('');
       component.klantGegevensForm.get('emailadres').setValue('foobaremail.nl');
-      component.klantGegevensForm.get('telefoonnummer').setValue('0633877452622');
+      component.klantGegevensForm
+        .get('telefoonnummer')
+        .setValue('0633877452622');
       expect(component.klantGegevensForm.valid).toBeFalsy();
     });
 
@@ -147,12 +187,15 @@ describe('KlantgegevensFormulierComponent', () => {
       const achternaam = component.klantGegevensForm.get('achternaam').value;
       const straat = component.klantGegevensForm.get('straat').value;
       const huisnummer = component.klantGegevensForm.get('huisnummer').value;
-      const huisnummertoevoeging = component.klantGegevensForm.get('huisnummertoevoeging').value;
+      const huisnummertoevoeging = component.klantGegevensForm.get(
+        'huisnummertoevoeging',
+      ).value;
       const postcode = component.klantGegevensForm.get('postcode').value;
       const plaats = component.klantGegevensForm.get('plaats').value;
       const land = component.klantGegevensForm.get('land').value;
       const emailadres = component.klantGegevensForm.get('emailadres').value;
-      const telefoonnummer = component.klantGegevensForm.get('telefoonnummer').value;
+      const telefoonnummer =
+        component.klantGegevensForm.get('telefoonnummer').value;
 
       expect(voornaam).toBe('');
       expect(achternaam).toBe('');

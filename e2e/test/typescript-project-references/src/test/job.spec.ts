@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import {start} from '../core/job.js';
+import { start } from '../core/job.js';
 
 describe(start.name, () => {
   it('should format a correct message', () => {
@@ -7,6 +7,6 @@ describe(start.name, () => {
     const result = start();
 
     // Assert
-    expect(result).eq("Starting job");
+    expect(result).eq('Starting job');
   });
 });

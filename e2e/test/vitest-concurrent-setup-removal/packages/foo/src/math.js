@@ -5,4 +5,3 @@ export function min(a, b) {
 export function div(a, b) {
   return a / b;
 }
-

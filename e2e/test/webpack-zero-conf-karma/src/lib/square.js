@@ -1,3 +1,3 @@
-window.square = function(number) {
-    return number * number;
-}
+window.square = function (number) {
+  return number * number;
+};

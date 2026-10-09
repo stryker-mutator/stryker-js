@@ -18,8 +18,8 @@ npm i --save-dev @stryker-mutator/mocha-runner
 The `@stryker-mutator/mocha-runner` is a plugin for `stryker` to enable `mocha` as a test runner.
 As such, you should make sure you have the correct versions of its dependencies installed:
 
-* `mocha`
-* `@stryker-mutator/core`
+- `mocha`
+- `@stryker-mutator/core`
 
 ## Configuring
 
@@ -30,12 +30,12 @@ You can configure the mocha test runner in the `stryker.config.json` (or `stryke
   "testRunner": "mocha",
   "coverageAnalysis": "perTest",
   "mochaOptions": {
-    "spec": [ "test/**/*.js" ],
+    "spec": ["test/**/*.js"],
     "config": "path/to/mocha/config/.mocharc.json",
     "package": "path/to/custom/package/package.json",
     "opts": "path/to/custom/mocha.opts",
     "ui": "bdd",
-    "require": [ "babel-register" ],
+    "require": ["babel-register"],
     "async-only": false,
     "grep": ".*"
   }
@@ -61,7 +61,7 @@ Default: `undefined`
 
 Explicit path to the [mocha config file](https://mochajs.org/#-config-path)
 
-*New since Mocha 6*
+_New since Mocha 6_
 
 ### `mochaOptions.package` [`string` | `undefined`]
 
@@ -70,7 +70,7 @@ Default: `undefined`
 Specify an explicit path to a package.json file (ostensibly containing configuration in a mocha property).
 See https://mochajs.org/#-package-path.
 
-*New since Mocha 6*
+_New since Mocha 6_
 
 ### `mochaOptions.opts` [`string` | false]
 

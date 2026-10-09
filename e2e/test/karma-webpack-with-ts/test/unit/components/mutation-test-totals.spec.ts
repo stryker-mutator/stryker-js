@@ -70,7 +70,13 @@ describe(MutationTestReportTotalsComponent.name, () => {
     expect(table).ok;
     const rows = table.querySelectorAll('tbody tr');
     expect(rows).lengthOf(2);
-    expect(((rows.item(1) as HTMLTableRowElement).cells.item(1) as HTMLTableCellElement).textContent).eq('baz/foo.js');
+    expect(
+      (
+        (rows.item(1) as HTMLTableRowElement).cells.item(
+          1,
+        ) as HTMLTableCellElement
+      ).textContent,
+    ).eq('baz/foo.js');
   });
 
   it('should show N/A when no mutation score is available', async () => {
@@ -83,7 +89,9 @@ describe(MutationTestReportTotalsComponent.name, () => {
     await sut.whenStable();
     const table = sut.$('table') as HTMLTableElement;
     expect(table).ok;
-    expect(table.querySelectorAll('td span.font-weight-bold')[0].textContent).contains('N/A');
+    expect(
+      table.querySelectorAll('td span.font-weight-bold')[0].textContent,
+    ).contains('N/A');
   });
 
   it('should show a progress bar when there is a score', async () => {
@@ -97,7 +105,9 @@ describe(MutationTestReportTotalsComponent.name, () => {
     await sut.whenStable();
     const table = sut.$('table') as HTMLTableElement;
     expect(table).ok;
-    expect(table.querySelectorAll('.progress')[0].textContent).contains(mutationScore);
+    expect(table.querySelectorAll('.progress')[0].textContent).contains(
+      mutationScore,
+    );
   });
 
   it('should show no progress bar when score is NaN', async () => {
@@ -116,5 +126,5 @@ describe(MutationTestReportTotalsComponent.name, () => {
   it('should provide a TemplateResult on renderHead()', () => {
     const result: TemplateResult | undefined = sut.element.renderHead();
     expect(result).ok;
-  })
+  });
 });

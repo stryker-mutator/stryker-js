@@ -25,8 +25,8 @@ Or as `stryker.config.js`:
 ```js
 // @ts-check
 /**
-* @type {import('@stryker-mutator/api/core').PartialStrykerOptions}
-*/
+ * @type {import('@stryker-mutator/api/core').PartialStrykerOptions}
+ */
 module.exports = {
   // Your config here
 };
@@ -60,12 +60,14 @@ You can use your editor's autocompletion to help you author your configuration f
 </details>
 
 By default, Stryker will look for a config file in the current working directory. The default config file names are:
+
 - `stryker.conf.{json,js,mjs,cjs}`
 - `.stryker.conf.{json,js,mjs,cjs}`
 - `stryker.config.{json,js,mjs,cjs}`
 - `.stryker.config.{json,js,mjs,cjs}`
 
 You can also use a different configuration file with a second argument to the `run` command.
+
 ```shell
 # Use default config file names in the current working directory
 npx stryker run

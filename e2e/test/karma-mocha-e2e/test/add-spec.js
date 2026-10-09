@@ -1,4 +1,10 @@
-import { add, addOne, isNegativeNumber, negate, notCovered } from '../src/add.js';
+import {
+  add,
+  addOne,
+  isNegativeNumber,
+  negate,
+  notCovered,
+} from '../src/add.js';
 import { expect } from 'chai';
 
 describe('add', function () {

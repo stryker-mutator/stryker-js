@@ -1,10 +1,10 @@
-import {Injectable} from '@angular/core';
-import {Observable, Subject} from 'rxjs';
-import {Artikel} from '../models/artikel';
-import {Winkelwagen} from '../models/winkelwagen';
+import { Injectable } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
+import { Artikel } from '../models/artikel';
+import { Winkelwagen } from '../models/winkelwagen';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class WinkelwagenService {
   private listeners = new Subject<any>();
