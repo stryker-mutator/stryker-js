@@ -12,7 +12,6 @@ import {
   commonTokens,
   ValuePlugin,
 } from '@stryker-mutator/api/plugin';
-import { InjectableFunction, InjectableClass } from 'typed-inject';
 
 import { coreTokens } from './index.js';
 
@@ -32,21 +31,9 @@ export class PluginCreator {
   ): PluginInterfaces[TPlugin] {
     const plugin = this.findPlugin(kind, name);
     if (isFactoryPlugin(plugin)) {
-      return this.injector.injectFunction(
-        plugin.factory as InjectableFunction<
-          PluginContext,
-          PluginInterfaces[TPlugin],
-          Array<InjectionToken<PluginContext>>
-        >,
-      );
+      return this.injector.injectFunction(plugin.factory);
     } else if (isClassPlugin(plugin)) {
-      return this.injector.injectClass(
-        plugin.injectableClass as InjectableClass<
-          PluginContext,
-          PluginInterfaces[TPlugin],
-          Array<InjectionToken<PluginContext>>
-        >,
-      );
+      return this.injector.injectClass(plugin.injectableClass);
     } else if (isValuePlugin(plugin)) {
       return plugin.value;
     }

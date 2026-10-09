@@ -2,7 +2,10 @@ import sinon from 'sinon';
 import { expect } from 'chai';
 import fs from 'fs';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
-import { TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
+import {
+  MutantRunStatus,
+  TestRunnerCapabilities,
+} from '@stryker-mutator/api/test-runner';
 import { Vitest } from 'vitest/node';
 
 import { VitestTestRunner } from '../../src/vitest-test-runner.js';
@@ -49,28 +52,65 @@ describe(VitestTestRunner.name, () => {
   });
 
   describe(VitestTestRunner.prototype.init.name, () => {
-    it('should initialize the vitest environment', async () => {
-      await sut.init();
-
-      sinon.assert.calledOnceWithExactly(createVitestStub, 'test', {
+    const assertCommonVitestOptions = () => {
+      sinon.assert.calledOnce(createVitestStub);
+      expect(createVitestStub.firstCall.args[0]).to.equal('test');
+      const vitestOptions = createVitestStub.firstCall.args[1];
+      expect(vitestOptions).deep.include({
         config: undefined,
-        // @ts-expect-error threads got renamed to "pool: threads" in vitest 1.0.0
-        threads: true,
-        pool: 'threads',
         coverage: { enabled: false },
+        maxConcurrency: 1,
+        watch: false,
+        dir: undefined,
+        bail: 1,
+      });
+      expect(vitestOptions.onConsoleLog).to.be.a('function');
+      return vitestOptions;
+    };
+
+    it('should initialize the vitest environment for vitest <1.0.0', async () => {
+      sinon.replace(vitestWrapper, 'version', '0.9.0');
+      await sut.init();
+      const vitestOptions = assertCommonVitestOptions();
+      expect(vitestOptions).deep.include({
+        threads: true,
+        maxThreads: 1,
+        minThreads: 1,
+      });
+    });
+
+    it('should initialize the vitest environment for vitest >=1.0.0 <4.1.0', async () => {
+      sinon.replace(vitestWrapper, 'version', '2.0.0');
+      await sut.init();
+      const vitestOptions = assertCommonVitestOptions();
+      expect(vitestOptions).deep.include({
+        pool: 'threads',
         poolOptions: {
           threads: {
             maxThreads: 1,
             minThreads: 1,
           },
         },
+      });
+    });
+
+    it('should initialize the vitest environment for vitest >=4.1.0', async () => {
+      sinon.replace(vitestWrapper, 'version', '4.1.0');
+      await sut.init();
+      const vitestOptions = assertCommonVitestOptions();
+      expect(vitestOptions).deep.include({
+        pool: 'threads',
         maxWorkers: 1,
-        singleThread: false,
-        maxConcurrency: 1,
-        watch: false,
-        dir: undefined,
-        bail: 1,
-        onConsoleLog: sinon.match.func,
+      });
+    });
+
+    it('should initialize the vitest environment for a prerelease version beyond 4.1.0', async () => {
+      sinon.replace(vitestWrapper, 'version', '5.0.0-beta.1');
+      await sut.init();
+      const vitestOptions = assertCommonVitestOptions();
+      expect(vitestOptions).deep.include({
+        pool: 'threads',
+        maxWorkers: 1,
       });
     });
 
@@ -87,6 +127,34 @@ describe(VitestTestRunner.name, () => {
       await sut.init();
 
       expect(process.env.VITEST).to.equal('1');
+    });
+  });
+
+  describe(VitestTestRunner.prototype.mutantRun.name, () => {
+    beforeEach(async () => {
+      await sut.init();
+    });
+
+    it('should return survived when no tests fail', async () => {
+      const result = await sut.mutantRun(factory.mutantRunOptions());
+      expect(result.status).to.equal(MutantRunStatus.Survived);
+    });
+
+    it('should provide the active mutant to vitest context', async () => {
+      const options = factory.mutantRunOptions({
+        activeMutant: factory.mutant({ id: '42' }),
+      });
+      await sut.mutantRun(options);
+      sinon.assert.calledWith(
+        vitestStub.provide as sinon.SinonStub,
+        'activeMutant',
+        '42',
+      );
+      sinon.assert.calledWith(
+        vitestStub.provide as sinon.SinonStub,
+        'mode',
+        'mutant',
+      );
     });
   });
 

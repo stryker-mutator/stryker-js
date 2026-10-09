@@ -3,7 +3,7 @@
   "testRunner": "cucumber",
   "concurrency": 2,
   "timeoutMS": 20000,
-  "testRunnerNodeArgs": ["--loader", "ts-node/esm"],
+  "testRunnerNodeArgs": ["--import", "tsx"],
   "reporters": [
     "json",
     "html"

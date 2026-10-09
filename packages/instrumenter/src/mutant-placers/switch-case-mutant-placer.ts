@@ -1,4 +1,5 @@
-import babel, { type types } from '@babel/core';
+import * as babel from '@babel/core';
+import { type types } from '@babel/core';
 
 import {
   mutantTestExpression,

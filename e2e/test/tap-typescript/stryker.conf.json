@@ -5,7 +5,7 @@
   "reporters": ["json", "clear-text", "html", "event-recorder"],
   "testRunnerNodeArgs_comment": ["--inspect-brk"],
   "tap": {
-    "nodeArgs": ["--loader", "ts-node/esm"]
+    "nodeArgs": ["--import", "tsx"]
   },
   "plugins": [
     "@stryker-mutator/tap-runner"

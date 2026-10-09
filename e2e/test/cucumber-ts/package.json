@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "test": "stryker run && npm run verify",
-    "test:unit": "cross-env NODE_OPTIONS=\"--loader ts-node/esm\" cucumber-js",
+    "test:unit": "cross-env NODE_OPTIONS=\"--import tsx\" cucumber-js",
     "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js"
   },
   "author": "Nico Jansen",

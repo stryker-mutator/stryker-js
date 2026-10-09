@@ -156,15 +156,9 @@ describe(StrykerServer.name, () => {
       .returns(instrumenterMock);
     getLoggerStub.returns(loggerMock);
 
-    prepareExecutorMock.execute.resolves(
-      injectorMock as typedInject.Injector<MutationTestContext>,
-    );
-    mutantInstrumenterExecutorMock.execute.resolves(
-      injectorMock as typedInject.Injector<MutationTestContext>,
-    );
-    dryRunExecutorMock.execute.resolves(
-      injectorMock as typedInject.Injector<MutationTestContext>,
-    );
+    prepareExecutorMock.execute.resolves(injectorMock);
+    mutantInstrumenterExecutorMock.execute.resolves(injectorMock);
+    dryRunExecutorMock.execute.resolves(injectorMock);
     mutationTestExecutorMock.execute.resolves(mutantResults);
     cliOptions = {};
     serverMock = sinon.createStubInstance(net.Server);

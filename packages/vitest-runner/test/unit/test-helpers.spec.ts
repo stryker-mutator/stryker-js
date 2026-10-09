@@ -15,5 +15,12 @@ describe('test-helpers', () => {
       const result = toRawTestId(test);
       expect(result).to.be.equal(`${filePath}#suite test1`);
     });
+
+    it('should use "unknown.js" as fallback when test has no file', () => {
+      const test = createVitestTest();
+      (test as any).file = undefined;
+      const result = toRawTestId(test);
+      expect(result).to.be.equal('unknown.js#suite test1');
+    });
   });
 });

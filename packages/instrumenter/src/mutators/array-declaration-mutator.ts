@@ -1,4 +1,5 @@
-import babel, { type NodePath } from '@babel/core';
+import * as babel from '@babel/core';
+import { type NodePath } from '@babel/core';
 
 import { deepCloneNode } from '../util/index.js';
 
@@ -12,7 +13,7 @@ export const arrayDeclarationMutator: NodeMutator = {
   *mutate(path: NodePath): Iterable<babel.types.Node> {
     if (path.isArrayExpression()) {
       const replacement = path.node.elements.length
-        ? types.arrayExpression()
+        ? types.arrayExpression([])
         : types.arrayExpression([types.stringLiteral('Stryker was here')]);
       yield replacement;
     }
@@ -23,7 +24,7 @@ export const arrayDeclarationMutator: NodeMutator = {
     ) {
       const mutatedCallArgs = path.node.arguments.length
         ? []
-        : [types.arrayExpression()];
+        : [types.arrayExpression([])];
       const replacement = types.isNewExpression(path.node)
         ? types.newExpression(deepCloneNode(path.node.callee), mutatedCallArgs)
         : types.callExpression(

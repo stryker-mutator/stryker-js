@@ -39,8 +39,7 @@ export interface PropertyPathOverloads<T> {
  * @param prop The property name
  */
 export function propertyPath<T>(): PropertyPathOverloads<T> {
-  const fn: PropertyPathOverloads<T> = ((...args: string[]) =>
-    args.join('.')) as unknown as PropertyPathOverloads<T>;
+  const fn: PropertyPathOverloads<T> = (...args: string[]) => args.join('.');
   return fn;
 }
 

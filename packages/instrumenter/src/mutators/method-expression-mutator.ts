@@ -1,4 +1,4 @@
-import babel from '@babel/core';
+import * as babel from '@babel/core';
 
 import { deepCloneNode } from '../util/syntax-helpers.js';
 
@@ -79,7 +79,6 @@ export const methodExpressionMutator: NodeMutator = {
           deepCloneNode(callee.object),
           types.identifier(newName),
           false,
-          callee.optional,
         )
       : types.optionalMemberExpression(
           deepCloneNode(callee.object),

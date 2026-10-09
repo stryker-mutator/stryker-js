@@ -97,6 +97,9 @@ describe('instrumenter integration', () => {
   it('should be able to instrument svelte with template expressions', async () => {
     await arrangeAndActAssert('svelte-template-expressions.svelte');
   });
+  it('should be able to instrument svelte with template call expressions', async () => {
+    await arrangeAndActAssert('svelte-template-call-expression.svelte');
+  });
 
   describe('type declarations', () => {
     it('should not produce mutants for TS type definitions', async () => {

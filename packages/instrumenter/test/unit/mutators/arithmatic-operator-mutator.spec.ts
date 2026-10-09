@@ -9,25 +9,31 @@ describe(sut.name, () => {
   });
 
   it('should mutate + and -', () => {
-    expectJSMutation(sut, 'a + b', 'a - b');
-    expectJSMutation(sut, 'a - b', 'a + b');
+    expectJSMutation(sut, 'a + b', { isExpressionContext: false }, 'a - b');
+    expectJSMutation(sut, 'a - b', { isExpressionContext: false }, 'a + b');
   });
 
   it('should mutate *, % and /', () => {
-    expectJSMutation(sut, 'a * b', 'a / b');
-    expectJSMutation(sut, 'a / b', 'a * b');
-    expectJSMutation(sut, 'a % b', 'a * b');
+    expectJSMutation(sut, 'a * b', { isExpressionContext: false }, 'a / b');
+    expectJSMutation(sut, 'a / b', { isExpressionContext: false }, 'a * b');
+    expectJSMutation(sut, 'a % b', { isExpressionContext: false }, 'a * b');
   });
 
   it('should not mutate string literal concatenation', () => {
-    expectJSMutation(sut, '"a" + "b"');
-    expectJSMutation(sut, 'const a = 1; "a" + a');
-    expectJSMutation(sut, '3 + "a"');
+    expectJSMutation(sut, '"a" + "b"', { isExpressionContext: false });
+    expectJSMutation(sut, 'const a = 1; "a" + a', {
+      isExpressionContext: false,
+    });
+    expectJSMutation(sut, '3 + "a"', { isExpressionContext: false });
 
-    expectJSMutation(sut, '`a` + `b`');
-    expectJSMutation(sut, 'const a = 1; `a` + a');
-    expectJSMutation(sut, '3 + `a`');
+    expectJSMutation(sut, '`a` + `b`', { isExpressionContext: false });
+    expectJSMutation(sut, 'const a = 1; `a` + a', {
+      isExpressionContext: false,
+    });
+    expectJSMutation(sut, '3 + `a`', { isExpressionContext: false });
 
-    expectJSMutation(sut, '"a" + b + "c" + d + "e"');
+    expectJSMutation(sut, '"a" + b + "c" + d + "e"', {
+      isExpressionContext: false,
+    });
   });
 });

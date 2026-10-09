@@ -1,4 +1,5 @@
-import babel, { type NodePath } from '@babel/core';
+import * as babel from '@babel/core';
+import { type NodePath } from '@babel/core';
 import generator from '@babel/generator';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { expect } from 'chai';
@@ -7,7 +8,6 @@ import { switchCaseMutantPlacer as sut } from '../../../src/mutant-placers/switc
 import { createMutant } from '../../helpers/factories.js';
 import { findNodePath, parseJS } from '../../helpers/syntax-test-helpers.js';
 
-const generate = generator.default;
 const { types } = babel;
 
 describe('switchCaseMutantPlacer', () => {
@@ -56,7 +56,7 @@ describe('switchCaseMutantPlacer', () => {
 
       // Act
       sut.place(switchCase, appliedMutants);
-      const actualCode = normalizeWhitespaces(generate(ast).code);
+      const actualCode = normalizeWhitespaces(generator(ast).code);
 
       // Assert
       expect(actualCode).contains(
@@ -79,7 +79,7 @@ describe('switchCaseMutantPlacer', () => {
 
       // Act
       sut.place(switchCase, appliedMutants);
-      const actualCode = normalizeWhitespaces(generate(ast).code);
+      const actualCode = normalizeWhitespaces(generator(ast).code);
 
       // Assert
       expect(actualCode).matches(/else {.* console\.log\("bar"\); break; }/);
@@ -98,7 +98,7 @@ describe('switchCaseMutantPlacer', () => {
 
       // Act
       sut.place(switchCase, appliedMutants);
-      const actualCode = normalizeWhitespaces(generate(ast).code);
+      const actualCode = normalizeWhitespaces(generator(ast).code);
 
       // Assert
       expect(actualCode).matches(/else\s*{\s*stryCov_9fa48\("42"\)/);
@@ -129,7 +129,7 @@ describe('switchCaseMutantPlacer', () => {
 
       // Act
       sut.place(switchCase, appliedMutants);
-      const actualCode = normalizeWhitespaces(generate(ast).code);
+      const actualCode = normalizeWhitespaces(generator(ast).code);
 
       // Assert
       expect(actualCode).contains(

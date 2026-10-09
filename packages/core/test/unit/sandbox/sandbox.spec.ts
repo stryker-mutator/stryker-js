@@ -1,6 +1,5 @@
 import path from 'path';
 
-import type { execaCommand } from 'execa';
 import { npmRunPathEnv } from 'npm-run-path';
 import { expect } from 'chai';
 import sinon from 'sinon';
@@ -21,11 +20,11 @@ describe(Sandbox.name, () => {
   let temporaryDirectoryMock: sinon.SinonStubbedInstance<TemporaryDirectory>;
   let symlinkJunctionStub: sinon.SinonStub;
   let findNodeModulesListStub: sinon.SinonStub;
-  let execaCommandMock: sinon.SinonStubbedInstance<I<typeof execaCommand>>;
+  let execaCommandMock: sinon.SinonStub;
   let unexpectedExitHandlerMock: sinon.SinonStubbedInstance<
     I<UnexpectedExitHandler>
   >;
-  let moveDirectoryRecursiveSyncStub: sinon.SinonStub;
+  let moveDirectoryRecursiveStub: sinon.SinonStub;
   let fsTestDouble: FileSystemTestDouble;
   const SANDBOX_WORKING_DIR = path.join('.stryker-tmp', 'sandbox-123');
 
@@ -34,10 +33,9 @@ describe(Sandbox.name, () => {
     sinon.stub(temporaryDirectoryMock, 'path').value(SANDBOX_WORKING_DIR);
     symlinkJunctionStub = sinon.stub(fileUtils, 'symlinkJunction');
     findNodeModulesListStub = sinon.stub(fileUtils, 'findNodeModulesList');
-    moveDirectoryRecursiveSyncStub = sinon.stub(
-      fileUtils,
-      'moveDirectoryRecursiveSync',
-    );
+    moveDirectoryRecursiveStub = sinon
+      .stub(fileUtils, 'moveDirectoryRecursive')
+      .resolves();
     execaCommandMock = sinon.stub();
     unexpectedExitHandlerMock = {
       registerHandler: sinon.stub(),
@@ -65,10 +63,7 @@ describe(Sandbox.name, () => {
     return testInjector.injector
       .provideValue(coreTokens.project, project)
       .provideValue(coreTokens.temporaryDirectory, temporaryDirectoryMock)
-      .provideValue(
-        coreTokens.execa,
-        execaCommandMock as unknown as typeof execaCommand,
-      )
+      .provideValue(coreTokens.execa, execaCommandMock)
       .provideValue(
         coreTokens.unexpectedExitRegistry,
         unexpectedExitHandlerMock,
@@ -315,29 +310,29 @@ describe(Sandbox.name, () => {
   });
 
   describe('dispose', () => {
-    it("shouldn't do anything when inPlace = false", () => {
+    it("shouldn't do anything when inPlace = false", async () => {
       const sut = createSut();
-      sut.dispose();
-      expect(moveDirectoryRecursiveSyncStub).not.called;
+      await sut.dispose();
+      expect(moveDirectoryRecursiveStub).not.called;
     });
 
-    it('should recover from the backup dir synchronously if inPlace = true', () => {
+    it('should recover from the backup dir if inPlace = true', async () => {
       testInjector.options.inPlace = true;
       const sut = createSut();
-      sut.dispose();
+      await sut.dispose();
       sinon.assert.calledWithExactly(
-        moveDirectoryRecursiveSyncStub,
+        moveDirectoryRecursiveStub,
         SANDBOX_WORKING_DIR,
         process.cwd(),
       );
     });
 
-    it('should recover from the backup dir if stryker exits unexpectedly while inPlace = true', () => {
+    it('should recover from the backup dir if stryker exits unexpectedly while inPlace = true', async () => {
       testInjector.options.inPlace = true;
       const errorStub = sinon.stub(console, 'error');
       createSut();
-      unexpectedExitHandlerMock.registerHandler.callArg(0);
-      expect(moveDirectoryRecursiveSyncStub).calledWith(
+      await unexpectedExitHandlerMock.registerHandler.firstCall.args[0]();
+      expect(moveDirectoryRecursiveStub).calledWith(
         SANDBOX_WORKING_DIR,
         process.cwd(),
       );

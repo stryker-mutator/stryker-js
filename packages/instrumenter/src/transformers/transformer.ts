@@ -51,4 +51,6 @@ export interface TransformerContext {
   options: TransformerOptions;
   mutateDescription: MutateDescription;
   logger: Logger;
+  /** Script source was an expression */
+  isExpressionContext: boolean;
 }

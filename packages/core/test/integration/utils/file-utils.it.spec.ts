@@ -8,9 +8,9 @@ import { glob } from 'glob';
 import { fileUtils } from '../../../src/utils/file-utils.js';
 
 describe('fileUtils', () => {
-  describe('moveDirectoryRecursiveSync', () => {
-    const from = path.resolve(os.tmpdir(), 'moveDirectoryRecursiveSyncFrom');
-    const to = path.resolve(os.tmpdir(), 'moveDirectoryRecursiveSyncTo');
+  describe('moveDirectoryRecursive', () => {
+    const from = path.resolve(os.tmpdir(), 'moveDirectoryRecursiveFrom');
+    const to = path.resolve(os.tmpdir(), 'moveDirectoryRecursiveTo');
 
     afterEach(async () => {
       await Promise.all([
@@ -31,7 +31,7 @@ describe('fileUtils', () => {
       });
 
       // Act
-      fileUtils.moveDirectoryRecursiveSync(from, to);
+      await fileUtils.moveDirectoryRecursive(from, to);
 
       // Assert
       const files = await readDirRecursive(to);
@@ -49,7 +49,7 @@ describe('fileUtils', () => {
       });
 
       // Act
-      fileUtils.moveDirectoryRecursiveSync(from, to);
+      await fileUtils.moveDirectoryRecursive(from, to);
 
       // Assert
       const files = await readDirRecursive(to);
@@ -67,7 +67,7 @@ describe('fileUtils', () => {
       });
 
       // Act
-      fileUtils.moveDirectoryRecursiveSync(from, to);
+      await fileUtils.moveDirectoryRecursive(from, to);
 
       // Assert
       await expect(fsPromises.access(from)).rejected;

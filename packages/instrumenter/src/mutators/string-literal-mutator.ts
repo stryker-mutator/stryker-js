@@ -1,4 +1,5 @@
-import babel, { type NodePath } from '@babel/core';
+import * as babel from '@babel/core';
+import { type NodePath } from '@babel/core';
 
 import { NodeMutator } from './node-mutator.js';
 
@@ -38,6 +39,7 @@ function isValidParent(child: NodePath<babel.types.StringLiteral>): boolean {
     types.isExpressionStatement(parent) ||
     types.isTSLiteralType(parent) ||
     types.isObjectMethod(parent) ||
+    types.isImportExpression(parent) ||
     (types.isObjectProperty(parent) && parent.key === child.node) ||
     (types.isClassProperty(parent) && parent.key === child.node) ||
     (types.isCallExpression(parent) &&

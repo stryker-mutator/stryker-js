@@ -1,7 +1,5 @@
-import babel, { type NodePath, type types } from '@babel/core';
-
-// @ts-expect-error The babel types don't define "File" yet
-import { File } from '@babel/core';
+import { File, type NodePath, type types } from '@babel/core';
+import traverse from '@babel/traverse';
 
 import {
   isImportDeclaration,
@@ -17,14 +15,12 @@ import {
   throwPlacementError,
 } from '../mutant-placers/index.js';
 import { Mutable, Mutant } from '../mutant.js';
-import { allMutators } from '../mutators/index.js';
+import { allMutators, type NodeMutator } from '../mutators/index.js';
 
 import { DirectiveBookkeeper } from './directive-bookkeeper.js';
 import { IgnorerBookkeeper } from './ignorer-bookkeeper.js';
 
 import { AstTransformer } from './index.js';
-
-const { traverse } = babel;
 
 interface MutantsPlacement<TNode extends types.Node> {
   appliedMutants: Map<Mutant, TNode>;
@@ -36,15 +32,20 @@ type PlacementMap = Map<types.Node, MutantsPlacement<types.Node>>;
 export const transformBabel: AstTransformer<ScriptFormat> = (
   { root, originFileName, rawContent, offset },
   mutantCollector,
-  { options, mutateDescription, logger },
+  { options, mutateDescription, logger, isExpressionContext },
   mutators = allMutators,
   mutantPlacers = allMutantPlacers,
 ) => {
   // Wrap the AST in a `new File`, so `nodePath.buildCodeFrameError` works
   // https://github.com/babel/babel/issues/11889
+  // The File constructor only reads `filename` (and `highlightCode`) from the
+  // options at runtime, but since Babel 8 its type requires a fully resolved
+  // options object, hence the cast.
   const file = new File(
-    { filename: originFileName },
-    { code: rawContent, ast: root },
+    { filename: originFileName } as unknown as ConstructorParameters<
+      typeof File
+    >[0],
+    { code: rawContent, ast: root, inputMap: null },
   );
 
   // Create a placementMap for the mutation switching bookkeeping
@@ -60,6 +61,15 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   // The ignorer bookkeeper is responsible for keeping track of the ignored node and the reason why it is ignored
   const ignorerBookkeeper = new IgnorerBookkeeper(options.ignorers);
 
+  // Mutant-filter bookkeeping. When no mutator declares a `filter` we bypass
+  // all of this and traversal cost matches the unfiltered case.
+  const mutatorsByName = new Map(mutators.map((m) => [m.name, m] as const));
+  const hasAnyMutatorFilter = mutators.some((mutator) => mutator.filter);
+  // Stack of `mutantCollector.mutants.length` captured on enter. The slice
+  // [subtreeStart, mutants.length) on exit yields every mutant collected in
+  // the subtree in O(1) — no need to re-traverse descendants.
+  const subtreeMutantStartStack: number[] = [];
+
   // Now start the actual traversing of the AST
   //
   // On the way down:
@@ -72,9 +82,12 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
   // On the way up:
   // * If this node has mutants in the placementMap, place them in the AST.
   //
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+
   traverse(file.ast, {
-    enter(path) {
+    enter(path: NodePath) {
+      if (hasAnyMutatorFilter) {
+        subtreeMutantStartStack.push(mutantCollector.mutants.length);
+      }
       directiveBookkeeper.processStrykerDirectives(path.node);
       if (shouldSkip(path)) {
         path.skip();
@@ -89,13 +102,55 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
         }
       }
     },
-    exit(path) {
+    exit(path: NodePath) {
+      if (hasAnyMutatorFilter) {
+        applyMutantFilters(path, subtreeMutantStartStack.pop()!);
+      }
       placeMutantsIfNeeded(path);
       ignorerBookkeeper.leaveNode(path);
     },
   });
 
   placeHeaderIfNeeded(mutantCollector, originFileName, options, root);
+
+  /**
+   * Apply mutator filters on exit. Only mutators that (a) declare a `filter`
+   * and (b) produced a mutant on this exact node are considered. The
+   * `mutantsInScope` passed to the filter is every mutant collected for this
+   * node and its descendants (the slice since this node was entered).
+   */
+  function applyMutantFilters(path: NodePath, subtreeStart: number) {
+    // Identify mutators-with-filter that produced a mutant on this exact node
+    // by scanning only the subtree slice (not the full collector).
+    let filteringMutators: Set<NodeMutator> | undefined;
+    for (let i = subtreeStart; i < mutantCollector.mutants.length; i++) {
+      const mutant = mutantCollector.mutants[i];
+      if (mutant.original === path.node) {
+        const mutator = mutatorsByName.get(mutant.mutatorName);
+        if (mutator?.filter) {
+          (filteringMutators ??= new Set()).add(mutator);
+        }
+      }
+    }
+    if (!filteringMutators) {
+      return;
+    }
+    const mutantsInScope = mutantCollector.mutants
+      .slice(subtreeStart)
+      .filter((m) => !m.ignoreReason);
+    for (const mutator of filteringMutators) {
+      if (!mutator.filter!(mutantsInScope)) {
+        const mutantsToFilterOut = mutantsInScope.filter(
+          (mutant) =>
+            mutant.ignoreReason === undefined &&
+            mutant.mutatorName === mutator.name &&
+            mutant.original === path.node,
+        );
+        removeFromPlacementMap(mutantsToFilterOut);
+        mutantCollector.remove(mutantsToFilterOut);
+      }
+    }
+  }
 
   /**
    *  If mutants were collected, be sure to register them in the placement map.
@@ -123,6 +178,14 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
     const placer = mutantPlacers.find((p) => p.canPlace(path));
     if (placer) {
       placementMap.set(path.node, { appliedMutants: new Map(), placer });
+    }
+  }
+
+  function removeFromPlacementMap(mutantsToRemove: Mutant[]) {
+    for (const mutantToRemove of mutantsToRemove) {
+      for (const [, placementMapEntry] of placementMap) {
+        placementMapEntry.appliedMutants.delete(mutantToRemove);
+      }
     }
   }
 
@@ -157,11 +220,13 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
    */
   function placeMutantsIfNeeded(path: NodePath) {
     const mutantsPlacement = placementMap.get(path.node);
-    if (mutantsPlacement?.appliedMutants.size) {
-      try {
+    try {
+      if (mutantsPlacement?.appliedMutants.size) {
         mutantsPlacement.placer.place(path, mutantsPlacement.appliedMutants);
         path.skip();
-      } catch (error) {
+      }
+    } catch (error) {
+      if (mutantsPlacement) {
         throwPlacementError(
           error as Error,
           path,
@@ -170,6 +235,9 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
           originFileName,
         );
       }
+    } finally {
+      // Done with this node, apply cleanup
+      placementMap.delete(path.node);
     }
   }
 
@@ -189,7 +257,7 @@ export const transformBabel: AstTransformer<ScriptFormat> = (
    */
   function* mutate(node: NodePath): Iterable<Mutable> {
     for (const mutator of mutators) {
-      for (const replacement of mutator.mutate(node)) {
+      for (const replacement of mutator.mutate(node, { isExpressionContext })) {
         yield {
           replacement,
           mutatorName: mutator.name,

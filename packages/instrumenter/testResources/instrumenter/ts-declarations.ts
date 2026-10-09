@@ -1,6 +1,4 @@
-export declare const globalNamespace = "globalNamespace";
+export declare const globalNamespace = 'globalNamespace';
 declare function foo(): 'foo';
-declare module 'express' {
-}
-
+declare module 'express' {}
 React.useState<false>();
