@@ -21,7 +21,6 @@ import { I } from '@stryker-mutator/util';
 
 import { Timer } from '../../../src/utils/timer.js';
 import {
-  DryRunContext,
   DryRunExecutor,
   MutationTestContext,
 } from '../../../src/process/index.js';
@@ -75,7 +74,7 @@ describe(DryRunExecutor.name, () => {
     >;
     injectorMock.resolve
       .withArgs(coreTokens.testRunnerPool)
-      .returns(testRunnerPoolMock as I<Pool<TestRunner>>);
+      .returns(testRunnerPoolMock);
     sandbox = sinon.createStubInstance(Sandbox);
     const fsTestDouble = new FileSystemTestDouble({
       'bar.js': 'console.log("bar")',
@@ -83,7 +82,7 @@ describe(DryRunExecutor.name, () => {
     project = new Project(fsTestDouble, fsTestDouble.toFileDescriptions());
     injectorMock.resolve.withArgs(coreTokens.project).returns(project);
     sut = new DryRunExecutor(
-      injectorMock as Injector<DryRunContext>,
+      injectorMock,
       testInjector.logger,
       testInjector.options,
       timerMock,

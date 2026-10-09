@@ -6,6 +6,7 @@ import { stringLiteralMutator } from './string-literal-mutator.js';
 import { arrayDeclarationMutator } from './array-declaration-mutator.js';
 import { arrowFunctionMutator } from './arrow-function-mutator.js';
 import { booleanLiteralMutator } from './boolean-literal-mutator.js';
+import { emptyExpressionMutator } from './empty-expression-mutator.js';
 import { equalityOperatorMutator } from './equality-operator-mutator.js';
 import { methodExpressionMutator } from './method-expression-mutator.js';
 import { logicalOperatorMutator } from './logical-operator-mutator.js';
@@ -23,6 +24,7 @@ export const allMutators: NodeMutator[] = [
   blockStatementMutator,
   booleanLiteralMutator,
   conditionalExpressionMutator,
+  emptyExpressionMutator,
   equalityOperatorMutator,
   logicalOperatorMutator,
   methodExpressionMutator,

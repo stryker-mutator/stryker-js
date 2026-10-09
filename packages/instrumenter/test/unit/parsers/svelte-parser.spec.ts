@@ -508,5 +508,25 @@ describe('svelte-parser', () => {
       expect(ast.root.additionalScripts).lengthOf(1);
       expect(ast.root.additionalScripts[0].ast.root).eq(eventHandlerAst.root);
     });
+
+    it('should parse a typescript expression as TS when the svelte file has a lang="ts" script', async () => {
+      // Arrange
+      const tsExpression = '"test" as string';
+      const tsAst = createTSAst({ rawContent: tsExpression });
+      const svelte = `<script lang="ts"></script><div>{${tsExpression}}</div>`;
+      contextStub.parse.resolves(tsAst);
+
+      // Act
+      const ast = await parse(svelte, 'index.svelte', contextStub);
+
+      // Assert
+      sinon.assert.calledWithExactly(
+        contextStub.parse,
+        tsExpression,
+        'index.svelte',
+        AstFormat.TS,
+      );
+      expect(ast.root.additionalScripts[0].ast.root).eq(tsAst.root);
+    });
   });
 });

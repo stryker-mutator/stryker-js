@@ -1,4 +1,4 @@
 {
     "presets": ["@babel/env"],
-    "plugins": [["@babel/plugin-proposal-pipeline-operator", { "proposal": "minimal" }]]
+    "plugins": [["@babel/plugin-proposal-pipeline-operator", { "proposal": "fsharp" }]]
 }

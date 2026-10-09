@@ -1,6 +1,6 @@
 {
-  "name": "mocha-ts-node",
-  "description": "A test for mocha using ts-node (no transpiler) using mocha package config",
+  "name": "mocha-typescript",
+  "description": "A test for mocha using tsx to run TypeScript tests",
   "type": "module",
   "scripts": {
     "test:unit": "mocha",

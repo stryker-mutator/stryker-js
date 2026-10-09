@@ -1,5 +1,6 @@
 import { fileURLToPath } from 'url';
 import path from 'path';
+import semver from 'semver';
 import fs from 'fs';
 import {
   CoverageData,
@@ -90,34 +91,72 @@ export class VitestTestRunner implements TestRunner {
     return { reloadEnvironment: true };
   }
 
+  #getVitestPoolConfig(version: string) {
+    if (semver.satisfies(version, '<1.0.0')) {
+      return {
+        threads: true,
+        maxThreads: 1,
+        minThreads: 1,
+      };
+    }
+
+    if (semver.satisfies(version, '<4.1.0')) {
+      return {
+        pool: 'threads',
+        poolOptions: {
+          threads: {
+            maxThreads: 1,
+            minThreads: 1,
+          },
+        },
+      };
+    }
+
+    return {
+      pool: 'threads',
+      maxWorkers: 1,
+    };
+  }
+
+  /**
+   * Write the Stryker Setup file without sourceMappingURL
+   * since we don't need a sourcemap for it, but we do want Vite
+   * to handle sourcemaps for other files.
+   * Removing the sourceMappingURL will prevent Vite from warning
+   * that the setup file has no sourceMappingURL and prevents
+   * it from performing unnecessary work.
+   */
+  async #writeStrykerSetupFile() {
+    const setupFileContents = await fs.promises.readFile(STRYKER_SETUP, 'utf8');
+    const lines = setupFileContents.split('\n');
+    // The last non-empty line is always a sourceMappingURL comment, remove it
+    const lastLineIndex =
+      lines.at(-1) === '' ? lines.length - 2 : lines.length - 1;
+    lines.splice(lastLineIndex, 1);
+    await fs.promises.writeFile(this.localSetupFile, lines.join('\n'));
+  }
+
   public async init(): Promise<void> {
     this.setEnv();
-    await fs.promises.copyFile(STRYKER_SETUP, this.localSetupFile);
+    await this.#writeStrykerSetupFile();
 
     this.ctx = await vitestWrapper.createVitest('test', {
       config: this.options.vitest?.configFile,
-      // @ts-expect-error threads got renamed to "pool: threads" in vitest 1.0.0
-      threads: true,
-      pool: 'threads',
+      ...this.#getVitestPoolConfig(vitestWrapper.version),
       coverage: { enabled: false },
-      poolOptions: {
-        // Since vitest 1.0.0
-        threads: {
-          maxThreads: 1,
-          minThreads: 1,
-        },
-      },
-      maxWorkers: 1,
-      singleThread: false,
       maxConcurrency: 1,
       watch: false,
       dir: this.options.vitest.dir,
       bail: this.options.disableBail ? 0 : 1,
       onConsoleLog: () => false,
     });
-    this.ctx!.provide('globalNamespace', this.globalNamespace);
-    this.ctx!.config.browser.screenshotFailures = false;
-    this.ctx!.projects.forEach((project) => {
+    this.ctx.provide('globalNamespace', this.globalNamespace);
+    this.ctx.provide(
+      'isGreaterThanVitest4Point1',
+      semver.satisfies(vitestWrapper.version, '>=4.1.0'),
+    );
+    this.ctx.config.browser.screenshotFailures = false;
+    this.ctx.projects.forEach((project) => {
       project.config.setupFiles = [
         this.localSetupFile,
         ...project.config.setupFiles,
@@ -126,7 +165,7 @@ export class VitestTestRunner implements TestRunner {
     });
     if (this.log.isDebugEnabled()) {
       this.log.debug(
-        `vitest final config: ${JSON.stringify(this.ctx!.config, null, 2)}`,
+        `vitest final config: ${JSON.stringify(this.ctx.config, null, 2)}`,
       );
     }
   }
@@ -307,8 +346,8 @@ export class VitestTestRunner implements TestRunner {
   }
 
   public async dispose(): Promise<void> {
-    this.ctx?.onClose(async () => {
-      await fs.promises.rm(this.localSetupFile, { force: true });
+    this.ctx?.onClose(() => {
+      return fs.promises.rm(this.localSetupFile, { force: true });
     });
     await this.ctx?.close();
   }

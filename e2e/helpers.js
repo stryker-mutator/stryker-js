@@ -125,8 +125,10 @@ export function readLogFile(fileName = path.resolve('stryker.log')) {
   return fsPromises.readFile(fileName, 'utf8');
 }
 
-export async function expectMetricsJsonToMatchSnapshot() {
+export async function expectMetricsJsonToMatchSnapshot(
+  jsonReportFile = path.resolve('reports', 'mutation', 'mutation.json'),
+) {
   const actualMetricsResult =
-    await readMutationTestingJsonResultAsMetricsResult();
+    await readMutationTestingJsonResultAsMetricsResult(jsonReportFile);
   expect(actualMetricsResult.systemUnderTestMetrics.metrics).to.matchSnapshot();
 }

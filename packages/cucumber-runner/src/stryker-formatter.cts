@@ -32,19 +32,23 @@ interface DescribedScenario extends Scenario {
 /**
  * Temp solution. We are not able to require the "real" TestStatus enum, because we cannot "require" from an ESM.
  */
-const TestStatusCopy = {
+const TestStatusCopy: {
+  Success: TestStatus.Success;
+  Failed: TestStatus.Failed;
+  Skipped: TestStatus.Skipped;
+} = {
   /**
    * The test succeeded
    */
-  Success: 0 as unknown as TestStatus.Success,
+  Success: 0,
   /**
    * The test failed
    */
-  Failed: 1 as unknown as TestStatus.Failed,
+  Failed: 1,
   /**
    * The test was skipped (not executed)
    */
-  Skipped: 2 as unknown as TestStatus.Skipped,
+  Skipped: 2,
 };
 
 export default class StrykerFormatter extends Formatter {

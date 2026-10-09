@@ -1,4 +1,4 @@
-import Bank from './Bank';
+import Bank from './Bank.js';
 
 export default class User extends Bank {
   constructor(name, age, money) {

@@ -48,5 +48,7 @@ function stryMutAct_9fa48(id) {
   return isActive(id);
 }
 console.log(a + b);
-consolee.log(stryMutAct_9fa48(\\"1\\") ? a - b : (stryCov_9fa48(\\"1\\"), a + b));"
+
+// Typo on purpose
+consolee.log(stryMutAct_9fa48(\\"3\\") ? a - b : (stryCov_9fa48(\\"3\\"), a + b));"
 `;

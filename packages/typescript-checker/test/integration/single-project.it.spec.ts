@@ -23,7 +23,7 @@ const resolveTestResource = path.resolve.bind(
   '..' /* dist */,
   'testResources',
   'single-project',
-) as unknown as typeof path.resolve;
+);
 
 describe('Typescript checker on a single project', () => {
   let sut: TypescriptChecker;
@@ -31,9 +31,14 @@ describe('Typescript checker on a single project', () => {
   beforeEach(() => {
     (
       testInjector.options as TypescriptCheckerOptionsWithStrykerOptions
-    ).typescriptChecker = { prioritizePerformanceOverAccuracy: true };
+    ).typescriptChecker = {
+      prioritizePerformanceOverAccuracy: true,
+      experimentalNativePreview: false,
+    };
     testInjector.options.tsconfigFile = resolveTestResource('tsconfig.json');
-    sut = testInjector.injector.injectFunction(createTypescriptChecker);
+    sut = testInjector.injector.injectFunction(
+      createTypescriptChecker,
+    ) as TypescriptChecker;
     return sut.init();
   });
 

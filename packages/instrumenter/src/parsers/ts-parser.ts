@@ -1,6 +1,6 @@
 import { createRequire } from 'module';
 
-import babel from '@babel/core';
+import * as babel from '@babel/core';
 
 import { AstFormat, TSAst, TsxAst } from '../syntax/index.js';
 
@@ -32,6 +32,14 @@ export async function parseTsx(
   };
 }
 
+const tsPreset: babel.PresetItem[] = [
+  [require.resolve('@babel/preset-typescript'), { ignoreExtensions: true }],
+];
+const tsxPresets: babel.PresetItem[] = [
+  ...tsPreset,
+  require.resolve('@babel/preset-react'),
+];
+
 async function parse(
   text: string,
   fileName: string,
@@ -44,15 +52,13 @@ async function parse(
     },
     configFile: false,
     babelrc: false,
-    presets: [
-      [
-        require.resolve('@babel/preset-typescript'),
-        { isTSX, allExtensions: true },
-      ],
-    ],
+    presets: isTSX ? tsxPresets : tsPreset,
     plugins: [
-      [require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
-      [require.resolve('@babel/plugin-transform-explicit-resource-management')],
+      [
+        require.resolve('@babel/plugin-proposal-decorators'),
+        { version: 'legacy' },
+      ],
+      require.resolve('@babel/plugin-transform-explicit-resource-management'),
     ],
   });
   if (ast === null) {

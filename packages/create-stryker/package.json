@@ -1,6 +1,6 @@
 {
   "name": "create-stryker",
-  "version": "9.6.0",
+  "version": "10.0.0",
   "description": "Initializer for StrykerJS",
   "type": "module",
   "files": [
@@ -17,7 +17,7 @@
     "directory": "packages/create-stryker"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "keywords": [
     "mutation testing",

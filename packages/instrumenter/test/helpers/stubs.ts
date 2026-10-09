@@ -29,5 +29,6 @@ export function transformerContextStub(
     mutateDescription: true,
     options: createTransformerOptions(),
     logger: testInjector.logger,
+    isExpressionContext: overrides?.isExpressionContext ?? false,
   };
 }

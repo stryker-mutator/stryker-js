@@ -9,22 +9,46 @@ describe(sut.name, () => {
   });
 
   it('should mutate < and >', () => {
-    expectJSMutation(sut, 'a < b', 'a >= b', 'a <= b');
-    expectJSMutation(sut, 'a > b', 'a <= b', 'a >= b');
+    expectJSMutation(
+      sut,
+      'a < b',
+      { isExpressionContext: false },
+      'a >= b',
+      'a <= b',
+    );
+    expectJSMutation(
+      sut,
+      'a > b',
+      { isExpressionContext: false },
+      'a <= b',
+      'a >= b',
+    );
   });
 
   it('should mutate <= and >=', () => {
-    expectJSMutation(sut, 'a <= b', 'a < b', 'a > b');
-    expectJSMutation(sut, 'a >= b', 'a < b', 'a > b');
+    expectJSMutation(
+      sut,
+      'a <= b',
+      { isExpressionContext: false },
+      'a < b',
+      'a > b',
+    );
+    expectJSMutation(
+      sut,
+      'a >= b',
+      { isExpressionContext: false },
+      'a < b',
+      'a > b',
+    );
   });
 
   it('should mutate == and ===', () => {
-    expectJSMutation(sut, 'a == b', 'a != b');
-    expectJSMutation(sut, 'a === b', 'a !== b');
+    expectJSMutation(sut, 'a == b', { isExpressionContext: false }, 'a != b');
+    expectJSMutation(sut, 'a === b', { isExpressionContext: false }, 'a !== b');
   });
 
   it('should mutate != and !==', () => {
-    expectJSMutation(sut, 'a != b', 'a == b');
-    expectJSMutation(sut, 'a !== b', 'a === b');
+    expectJSMutation(sut, 'a != b', { isExpressionContext: false }, 'a == b');
+    expectJSMutation(sut, 'a !== b', { isExpressionContext: false }, 'a === b');
   });
 });
