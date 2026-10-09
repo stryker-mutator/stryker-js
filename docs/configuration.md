@@ -229,7 +229,7 @@ Default: `true`<br />
 Command: _none_<br />
 Config file: `"disableTypeChecks": false`
 
-Set to `true` to disable type checking, or `false` to enable it. For more control, configure a pattern that matches the files of which type checking has to be disabled, for example: `"{test,src,lib}/**/*.{js,ts,jsx,tsx}"`. Setting it to `true` will disable type checking for all TypeScript-ish files (currently _.ts, _.js, _.tsx, _.jsx, _.mjs, _.mts, _.cts, _.cjs, _.html and _.vue files).
+Set to `true` to disable type checking, or `false` to enable it. For more control, configure a pattern that matches the files of which type checking has to be disabled, for example: `"{test,src,lib}/**/*.{js,ts,jsx,tsx}"`. Setting it to `true` will disable type checking for all TypeScript-ish files (currently \*.ts, \*.js, \*.tsx, \*.jsx, \*.mjs, \*.mts, \*.cts, \*.cjs, \*.html and \*.vue files).
 
 Disabling type checking is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`).
 
