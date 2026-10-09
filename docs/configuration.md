@@ -139,7 +139,7 @@ You can also specify a percentage string (e.g., `"50%"`) to compute the worker c
 ### `commandRunner` [`object`]
 
 Default: `{ command: 'npm test' }`<br />
-Command line: _none_<br />
+Command line: `--commandRunner.command "npm run mocha"`<br />
 Config file: `"commandRunner": { "command": "npm run mocha" }`
 
 With `commandRunner`, you can specify the command to execute for running tests.
