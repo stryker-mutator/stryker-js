@@ -64,6 +64,36 @@ export class FileSystemTestDouble implements I<FileSystem> {
     this.dirs.add(path.toString());
   }
 
+  /** Paths that are symbolic links, mapped to their link target. */
+  public readonly symlinks = new Map<string, string>();
+
+  public async lstat(path: Param<'lstat', 0>): Promise<any> {
+    const name = String(path);
+    return {
+      isSymbolicLink: () => this.symlinks.has(name),
+      isFile: () => this.files[name] !== undefined,
+      isDirectory: () => this.dirs.has(name),
+    };
+  }
+
+  public async readlink(path: Param<'readlink', 0>): Promise<any> {
+    const target = this.symlinks.get(String(path));
+    if (target === undefined) {
+      throw factory.fileNotFoundError();
+    }
+    return target;
+  }
+
+  public async symlink(
+    target: Param<'symlink', 0>,
+    path: Param<'symlink', 1>,
+  ): Promise<any> {
+    if (typeof target !== 'string' || typeof path !== 'string') {
+      this.throwNotSupported();
+    }
+    this.symlinks.set(path, target);
+  }
+
   public async readdir(path: Param<'readdir', 0>, options?: any): Promise<any> {
     if (!options?.withFileTypes) {
       this.throwNotSupported();
