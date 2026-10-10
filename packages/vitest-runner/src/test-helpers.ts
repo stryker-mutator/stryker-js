@@ -4,22 +4,25 @@ import type { RunnerTestCase, RunnerTestSuite } from 'vitest';
 // This file is used from the testing environment (via stryker-setup.js) and thus could be loaded into the browser (when using vitest with browser mode).
 // Thus we should avoid unnecessary dependencies in this file.
 
-export function collectTestName({
-  name,
-  suite,
-}: {
-  name: string;
-  suite?: RunnerTestSuite;
-}): string {
+export function collectTestName(
+  {
+    name,
+    suite,
+  }: {
+    name: string;
+    suite?: RunnerTestSuite;
+  },
+  separator = ' ',
+): string {
   const nameParts = [name];
   let currentSuite = suite;
   while (currentSuite) {
     nameParts.unshift(currentSuite.name);
     currentSuite = currentSuite.suite;
   }
-  return nameParts.join(' ').trim();
+  return nameParts.join(separator).trim();
 }
 
-export function toRawTestId(test: RunnerTestCase): string {
-  return `${test.file?.filepath ?? 'unknown.js'}#${collectTestName(test)}`;
+export function toRawTestId(test: RunnerTestCase, separator = ' '): string {
+  return `${test.file?.filepath ?? 'unknown.js'}#${collectTestName(test, separator)}`;
 }

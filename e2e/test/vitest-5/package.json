@@ -1,0 +1,25 @@
+{
+  "name": "vitest-5",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Vitest 5 per-test mutation filtering with nested suite names",
+  "scripts": {
+    "test": "stryker run && npm run verify",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test:unit": "vitest run"
+  },
+  "devDependencies": {
+    "vitest": "5.0.0",
+    "@stryker-mutator/core": "workspace:*",
+    "@stryker-mutator/vitest-runner": "workspace:*"
+  },
+  "dependenciesMeta": {
+    "@stryker-mutator/core": {
+      "injected": true
+    },
+    "@stryker-mutator/vitest-runner": {
+      "injected": true
+    }
+  }
+}
