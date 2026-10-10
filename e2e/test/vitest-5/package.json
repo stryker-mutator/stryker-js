@@ -1,0 +1,28 @@
+{
+  "name": "vitest-5",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The e2e test for vitest 5, which separates nested test names with an arrow instead of a space",
+  "main": "index.js",
+  "scripts": {
+    "clean:reports": "rimraf \"reports\"",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test:unit": "vitest run",
+    "test": "npm run clean:reports && stryker run && npm run verify"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "vitest": "5.0.3",
+    "@stryker-mutator/core": "workspace:*",
+    "@stryker-mutator/vitest-runner": "workspace:*"
+  },
+  "dependenciesMeta": {
+    "@stryker-mutator/core": {
+      "injected": true
+    },
+    "@stryker-mutator/vitest-runner": {
+      "injected": true
+    }
+  }
+}
