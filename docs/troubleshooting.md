@@ -399,3 +399,32 @@ There are 2 possible solutions.
    ```ts
    import '../src/file-under-test.ts';
    ```
+
+### Vitest fails with `Tsconfig not found` during dependency optimization in a SvelteKit project
+
+**Symptom**
+
+When using the `@stryker-mutator/vitest-runner` in a SvelteKit project with Vite 8, the initial test run fails during Vite's dependency optimization:
+
+```
+ERROR Stryker Unexpected error occurred while running Stryker StrykerError: Error: Error during dependency optimization:
+Build failed with 1 error:
+[RESOLVE_ERROR] Could not resolve 'node:module' in \0rolldown/runtime.js
+   │                                     ╰──────── Tsconfig not found
+```
+
+**Problem**
+
+This is an issue in [oxc-resolver](https://github.com/oxc-project/oxc-resolver), which Vite 8 uses to resolve modules. See [this comment on oxc-project/oxc-resolver#1390](https://github.com/oxc-project/oxc-resolver/pull/1390#issuecomment-6096210071) for details.
+
+**Solution**
+
+Run `svelte-kit sync` before running Stryker. For example, in your `package.json`:
+
+```json
+{
+  "scripts": {
+    "test:mutation": "svelte-kit sync && stryker run"
+  }
+}
+```
