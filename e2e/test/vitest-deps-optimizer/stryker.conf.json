@@ -1,0 +1,9 @@
+{
+  "$schema": "../../node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "testRunner": "vitest",
+  "concurrency": 2,
+  "coverageAnalysis": "perTest",
+  "mutate": ["src/**/*.js"],
+  "reporters": ["json", "clear-text", "html", "event-recorder"],
+  "plugins": ["@stryker-mutator/vitest-runner"]
+}

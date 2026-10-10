@@ -889,6 +889,8 @@ importers:
         specifier: 4.0.12
         version: 4.0.12(@types/node@24.13.3)(jiti@1.21.7)(jsdom@29.1.1)(less@4.2.0)(lightningcss@1.33.0)(sass@1.71.1)(terser@5.51.2)(tsx@4.23.12)(yaml@2.9.0)
 
+  e2e/test/vitest-deps-optimizer: {}
+
   e2e/test/vitest-fastcheck:
     devDependencies:
       '@fast-check/vitest':
