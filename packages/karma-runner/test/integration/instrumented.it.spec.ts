@@ -172,7 +172,9 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
           failureMessage: 'Expected undefined to be 3.',
           nrOfTests: 1,
         });
-        expect(result).deep.eq(expected);
+        const { duration, ...actual } = result;
+        expect(duration).a('number');
+        expect(actual).deep.eq(expected);
       });
 
       it('should be able to clear the test filter', async () => {
@@ -342,7 +344,9 @@ describe(`${KarmaTestRunner.name} running on instrumented code`, () => {
           failureMessage: 'Error: Expected 3 but got undefined',
           nrOfTests: 1,
         };
-        expect(result).deep.eq(expected);
+        const { duration, ...actual } = result;
+        expect(duration).a('number');
+        expect(actual).deep.eq(expected);
       });
 
       it('should be able to clear the test filter', async () => {

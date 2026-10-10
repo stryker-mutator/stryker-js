@@ -784,8 +784,6 @@ importers:
 
   e2e/test/mutation-range: {}
 
-  e2e/test/mutation-timings-e2e: {}
-
   e2e/test/node-tap-javascript: {}
 
   e2e/test/options-validation: {}

@@ -1,5 +1,4 @@
 import * as schema from 'mutation-testing-report-schema/api';
-import type { MutantRunExecutedTest } from '../test-runner/index.js';
 
 export type { MutantStatus } from 'mutation-testing-report-schema/api';
 
@@ -43,12 +42,4 @@ export type MutantTestCoverage = Mutant &
 /**
  * Represents a mutant in its final state, ready to be reported.
  */
-export type MutantResult = Mutant &
-  schema.MutantResult & {
-    /**
-     * Optional per-test timing details captured during mutation runs.
-     * This field is for runtime/reporter diagnostics and is not part of the
-     * mutation-testing-report-schema payload.
-     */
-    executedTests?: MutantRunExecutedTest[];
-  };
+export type MutantResult = Mutant & schema.MutantResult;

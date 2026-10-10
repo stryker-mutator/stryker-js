@@ -27,31 +27,6 @@ describe('runResultHelpers', () => {
   });
 
   describe(toMutantRunResult.name, () => {
-    let originalMutationTestTimings: string | undefined;
-    let originalMaxExecutedTests: string | undefined;
-
-    beforeEach(() => {
-      originalMutationTestTimings = process.env.STRYKER_MUTATION_TEST_TIMINGS;
-      originalMaxExecutedTests =
-        process.env.STRYKER_MUTATION_TEST_TIMINGS_MAX_TESTS;
-      delete process.env.STRYKER_MUTATION_TEST_TIMINGS;
-      delete process.env.STRYKER_MUTATION_TEST_TIMINGS_MAX_TESTS;
-    });
-
-    afterEach(() => {
-      if (originalMutationTestTimings !== undefined) {
-        process.env.STRYKER_MUTATION_TEST_TIMINGS = originalMutationTestTimings;
-      } else {
-        delete process.env.STRYKER_MUTATION_TEST_TIMINGS;
-      }
-      if (originalMaxExecutedTests !== undefined) {
-        process.env.STRYKER_MUTATION_TEST_TIMINGS_MAX_TESTS =
-          originalMaxExecutedTests;
-      } else {
-        delete process.env.STRYKER_MUTATION_TEST_TIMINGS_MAX_TESTS;
-      }
-    });
-
     it('should convert "timeout" to "timeout"', () => {
       const expected: MutantRunResult = {
         status: MutantRunStatus.Timeout,
@@ -82,6 +57,7 @@ describe('runResultHelpers', () => {
         failureMessage: 'expected foo to be bar',
         killedBy: ['42', '43'],
         nrOfTests: 4,
+        duration: 168,
       };
       const actual = toMutantRunResult({
         status: DryRunStatus.Complete,
@@ -123,6 +99,7 @@ describe('runResultHelpers', () => {
         failureMessage: 'expected foo to be bar',
         killedBy: ['42'],
         nrOfTests: 4,
+        duration: 168,
       };
       const actual = toMutantRunResult(
         {
@@ -165,6 +142,7 @@ describe('runResultHelpers', () => {
       const expected: MutantRunResult = {
         status: MutantRunStatus.Survived,
         nrOfTests: 3,
+        duration: 126,
       };
       const actual = toMutantRunResult({
         status: DryRunStatus.Complete,
@@ -192,137 +170,11 @@ describe('runResultHelpers', () => {
       expect(actual).deep.eq(expected);
     });
 
-    it('should not include executed test timings when disabled', () => {
-      const actual = toMutantRunResult({
-        status: DryRunStatus.Complete,
-        tests: [
-          {
-            status: TestStatus.Success,
-            id: 'success1',
-            name: 'success1',
-            fileName: 'test/success1.spec.ts',
-            timeSpentMs: 42,
-          },
-          {
-            status: TestStatus.Failed,
-            id: '42',
-            name: 'error',
-            fileName: 'test/error.spec.ts',
-            timeSpentMs: 13,
-            failureMessage: 'expected foo to be bar',
-          },
-        ],
-      });
-
-      expect(actual).deep.eq({
-        status: MutantRunStatus.Killed,
-        failureMessage: 'expected foo to be bar',
-        killedBy: ['42'],
-        nrOfTests: 2,
-      });
-    });
-
-    it('should include executed test timings when enabled', () => {
-      process.env.STRYKER_MUTATION_TEST_TIMINGS = '1';
-
-      const actual = toMutantRunResult({
-        status: DryRunStatus.Complete,
-        tests: [
-          {
-            status: TestStatus.Success,
-            id: 'success1',
-            name: 'success1',
-            fileName: 'test/success1.spec.ts',
-            timeSpentMs: 42,
-          },
-          {
-            status: TestStatus.Skipped,
-            id: 'skip',
-            name: 'skip',
-            fileName: 'test/skip.spec.ts',
-            timeSpentMs: 1,
-          },
-          {
-            status: TestStatus.Failed,
-            id: '42',
-            name: 'error',
-            fileName: 'test/error.spec.ts',
-            timeSpentMs: 13,
-            failureMessage: 'expected foo to be bar',
-          },
-        ],
-      });
-
-      expect(actual).deep.eq({
-        status: MutantRunStatus.Killed,
-        failureMessage: 'expected foo to be bar',
-        killedBy: ['42'],
-        nrOfTests: 2,
-        executedTests: [
-          {
-            id: 'success1',
-            name: 'success1',
-            status: TestStatus.Success,
-            timeSpentMs: 42,
-            fileName: 'test/success1.spec.ts',
-          },
-          {
-            id: '42',
-            name: 'error',
-            status: TestStatus.Failed,
-            timeSpentMs: 13,
-            fileName: 'test/error.spec.ts',
-          },
-        ],
-      });
-    });
-
-    it('should cap executed tests when max env var is set', () => {
-      process.env.STRYKER_MUTATION_TEST_TIMINGS = '1';
-      process.env.STRYKER_MUTATION_TEST_TIMINGS_MAX_TESTS = '1';
-
-      const actual = toMutantRunResult({
-        status: DryRunStatus.Complete,
-        tests: [
-          {
-            status: TestStatus.Success,
-            id: 'success1',
-            name: 'success1',
-            fileName: 'test/success1.spec.ts',
-            timeSpentMs: 42,
-          },
-          {
-            status: TestStatus.Failed,
-            id: '42',
-            name: 'error',
-            fileName: 'test/error.spec.ts',
-            timeSpentMs: 13,
-            failureMessage: 'expected foo to be bar',
-          },
-        ],
-      });
-
-      expect(actual).deep.eq({
-        status: MutantRunStatus.Killed,
-        failureMessage: 'expected foo to be bar',
-        killedBy: ['42'],
-        nrOfTests: 2,
-        executedTests: [
-          {
-            id: 'success1',
-            name: 'success1',
-            status: TestStatus.Success,
-            timeSpentMs: 42,
-            fileName: 'test/success1.spec.ts',
-          },
-        ],
-      });
-    });
-
     it('should report an empty suite as "survived"', () => {
       const expected: MutantRunResult = {
         status: MutantRunStatus.Survived,
         nrOfTests: 0,
+        duration: 0,
       };
       const actual = toMutantRunResult({
         status: DryRunStatus.Complete,
@@ -334,6 +186,7 @@ describe('runResultHelpers', () => {
     it("should set nrOfTests with the amount of tests that weren't `skipped`", () => {
       const expected: MutantRunResult = {
         nrOfTests: 2,
+        duration: 84,
         failureMessage: '',
         killedBy: ['1'],
         status: MutantRunStatus.Killed,
@@ -353,6 +206,27 @@ describe('runResultHelpers', () => {
         ],
       });
       expect(actual).deep.eq(expected);
+    });
+
+    it("should set duration to the sum of `timeSpentMs` of tests that weren't `skipped`", () => {
+      const actual = toMutantRunResult({
+        status: DryRunStatus.Complete,
+        tests: [
+          { id: '1', name: '', status: TestStatus.Success, timeSpentMs: 12 },
+          { id: '2', name: '', status: TestStatus.Skipped, timeSpentMs: 100 },
+          {
+            id: '3',
+            name: '',
+            status: TestStatus.Failed,
+            timeSpentMs: 30,
+            failureMessage: '',
+          },
+        ],
+      });
+      expect(actual).deep.include({
+        status: MutantRunStatus.Killed,
+        duration: 42,
+      });
     });
   });
 });

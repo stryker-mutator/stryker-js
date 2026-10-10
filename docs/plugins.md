@@ -41,7 +41,6 @@ Stryker already comes with the most useful reporters included:
 - dashboard: Upload your mutation testing report to the [Stryker dashboard](https://dashboard.stryker-mutator.io). See the [dashboard docs](../General/dashboard.md) for more information.
 - event-recorder: Write all events to disk. Useful for debug purposes.
 - json: Outputs a JSON file with all mutation test run info of the last run according to the [mutation testing report schema](https://github.com/stryker-mutator/mutation-testing-elements/tree/master/packages/report-schema).
-- mutation-timings: Writes a sidecar JSON diagnostics file with per-mutant executed test timings. Use together with `STRYKER_MUTATION_TEST_TIMINGS=1`.
 
 ## Checkers
 

@@ -140,7 +140,7 @@ export class MutationTestReportHelper {
           status: 'Killed',
           testsCompleted: result.nrOfTests,
           killedBy: result.killedBy,
-          executedTests: result.executedTests,
+          duration: result.duration,
           statusReason: result.failureMessage,
           location,
         });
@@ -149,6 +149,7 @@ export class MutationTestReportHelper {
           ...mutant,
           status: 'Timeout',
           statusReason: result.reason,
+          duration: result.duration,
           location,
         });
       case MutantRunStatus.Survived:
@@ -156,7 +157,7 @@ export class MutationTestReportHelper {
           ...mutant,
           status: 'Survived',
           testsCompleted: result.nrOfTests,
-          executedTests: result.executedTests,
+          duration: result.duration,
           location,
         });
     }
@@ -380,14 +381,8 @@ export class MutationTestReportHelper {
     mutantResult: MutantResult,
     remapTestIds: (ids: string[] | undefined) => string[] | undefined,
   ): schema.MutantResult {
-    const {
-      fileName,
-      location,
-      killedBy,
-      coveredBy,
-      executedTests: _executedTests,
-      ...apiMutant
-    } = mutantResult;
+    const { fileName, location, killedBy, coveredBy, ...apiMutant } =
+      mutantResult;
     return {
       ...apiMutant,
       killedBy: remapTestIds(killedBy),
