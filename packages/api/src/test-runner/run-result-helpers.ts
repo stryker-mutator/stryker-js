@@ -26,55 +26,31 @@ export function toMutantRunResult(
       const failedTests = dryRunResult.tests.filter<FailedTestResult>(
         (test): test is FailedTestResult => test.status === TestStatus.Failed,
       );
-      const nrOfTests = dryRunResult.tests.filter(
+      const executedTests = dryRunResult.tests.filter(
         (test) => test.status !== TestStatus.Skipped,
-      ).length;
-      const shouldIncludeExecutedTests =
-        process.env.STRYKER_MUTATION_TEST_TIMINGS === '1';
-      const executedTests = shouldIncludeExecutedTests
-        ? dryRunResult.tests
-            .filter((test) => test.status !== TestStatus.Skipped)
-            .map((test) => ({
-              id: test.id,
-              name: test.name,
-              status: test.status,
-              timeSpentMs: test.timeSpentMs,
-              fileName: test.fileName,
-            }))
-        : undefined;
-      const maxExecutedTests = Number.parseInt(
-        process.env.STRYKER_MUTATION_TEST_TIMINGS_MAX_TESTS ?? '',
-        10,
       );
-      const boundedExecutedTests =
-        executedTests &&
-        Number.isFinite(maxExecutedTests) &&
-        maxExecutedTests > 0
-          ? executedTests.slice(0, maxExecutedTests)
-          : executedTests;
+      const nrOfTests = executedTests.length;
+      const duration = executedTests.reduce(
+        (total, test) => total + test.timeSpentMs,
+        0,
+      );
 
       if (failedTests.length > 0) {
-        const killedResult = {
-          status: MutantRunStatus.Killed as const,
+        return {
+          status: MutantRunStatus.Killed,
           failureMessage: failedTests[0].failureMessage,
           killedBy: reportAllKillers
             ? failedTests.map<string>((test) => test.id)
             : [failedTests[0].id],
           nrOfTests,
+          duration,
         };
-
-        return boundedExecutedTests
-          ? { ...killedResult, executedTests: boundedExecutedTests }
-          : killedResult;
       } else {
-        const survivedResult = {
-          status: MutantRunStatus.Survived as const,
+        return {
+          status: MutantRunStatus.Survived,
           nrOfTests,
+          duration,
         };
-
-        return boundedExecutedTests
-          ? { ...survivedResult, executedTests: boundedExecutedTests }
-          : survivedResult;
       }
     }
     case DryRunStatus.Error:

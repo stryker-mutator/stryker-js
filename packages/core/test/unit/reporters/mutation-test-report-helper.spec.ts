@@ -7,7 +7,6 @@ import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import type { requireResolve } from '@stryker-mutator/util';
 import { expect } from 'chai';
 import { CheckStatus } from '@stryker-mutator/api/check';
-import { TestStatus } from '@stryker-mutator/api/test-runner';
 import { calculateMutationTestMetrics } from 'mutation-testing-metrics';
 
 import { coreTokens } from '../../../src/di/index.js';
@@ -284,33 +283,6 @@ describe(MutationTestReportHelper.name, () => {
         expect(actualReport.files['6.js'].mutants[0]).include({
           status: 'CompileError',
         });
-      });
-
-      it('should not include executedTests in schema mutation report output', async () => {
-        // Arrange
-        const inputMutants: MutantResult[] = [
-          {
-            ...factory.killedMutantResult({ fileName: 'foo.js' }),
-            executedTests: [
-              {
-                id: 'spec-1',
-                name: 'spec one',
-                status: TestStatus.Success,
-                timeSpentMs: 7,
-                fileName: 'test/foo.spec.js',
-              },
-            ],
-          },
-        ];
-        fileSystemTestDouble.files['foo.js'] = '';
-
-        // Act
-        const [actualReport] = await actReportAll(inputMutants);
-
-        // Assert
-        const reportedMutant = actualReport.files['foo.js']
-          .mutants[0] as unknown as Record<string, unknown>;
-        expect(reportedMutant).not.to.have.property('executedTests');
       });
 
       it('should not offset the location when reporting all mutants', async () => {
@@ -815,35 +787,6 @@ describe(MutationTestReportHelper.name, () => {
           end: { column: 1, line: 1 },
         });
       });
-
-      it('should preserve executedTests for reused incremental results', () => {
-        const input = factory.killedMutantResult({
-          fileName: 'add.js',
-          id: '3',
-        });
-        input.executedTests = [
-          {
-            id: '1',
-            name: 'foo should be bar',
-            status: TestStatus.Failed,
-            timeSpentMs: 21,
-            fileName: 'test/add.spec.js',
-          },
-        ];
-        const sut = createSut();
-
-        const actual = sut.reportMutantStatus(input, 'Killed');
-
-        expect(actual.executedTests).deep.eq([
-          {
-            id: '1',
-            name: 'foo should be bar',
-            status: TestStatus.Failed,
-            timeSpentMs: 21,
-            fileName: 'test/add.spec.js',
-          },
-        ]);
-      });
     });
 
     describe(
@@ -862,16 +805,8 @@ describe(MutationTestReportHelper.name, () => {
             factory.killedMutantRunResult({
               killedBy: ['1'],
               nrOfTests: 42,
+              duration: 1337,
               failureMessage: 'foo should have been bar at line 1',
-              executedTests: [
-                {
-                  id: '1',
-                  name: 'foo should be bar',
-                  status: TestStatus.Failed,
-                  timeSpentMs: 18,
-                  fileName: 'test/add.spec.js',
-                },
-              ],
             }),
           );
 
@@ -880,16 +815,8 @@ describe(MutationTestReportHelper.name, () => {
             status: 'Killed',
             killedBy: ['1'],
             testsCompleted: 42,
+            duration: 1337,
             statusReason: 'foo should have been bar at line 1',
-            executedTests: [
-              {
-                id: '1',
-                name: 'foo should be bar',
-                status: TestStatus.Failed,
-                timeSpentMs: 18,
-                fileName: 'test/add.spec.js',
-              },
-            ],
           };
           expect(actual).deep.include(expected);
         });
@@ -948,12 +875,13 @@ describe(MutationTestReportHelper.name, () => {
           // Act
           const actual = sut.reportMutantRunResult(
             factory.mutantTestCoverage({ fileName: 'add.js' }),
-            factory.timeoutMutantRunResult(),
+            factory.timeoutMutantRunResult({ duration: 5000 }),
           );
 
           // Assert
           const expected: Partial<MutantResult> = {
             status: 'Timeout',
+            duration: 5000,
           };
           expect(actual).deep.include(expected);
         });
@@ -971,7 +899,7 @@ describe(MutationTestReportHelper.name, () => {
               fileName: 'add.js',
               coveredBy: ['1'],
             }),
-            factory.survivedMutantRunResult({ nrOfTests: 4 }),
+            factory.survivedMutantRunResult({ nrOfTests: 4, duration: 21 }),
           );
 
           // Assert
@@ -979,6 +907,7 @@ describe(MutationTestReportHelper.name, () => {
             status: 'Survived',
             coveredBy: ['1'],
             testsCompleted: 4,
+            duration: 21,
           };
           expect(actual).deep.include(expected);
         });

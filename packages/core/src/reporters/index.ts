@@ -12,7 +12,6 @@ import { ProgressAppendOnlyReporter } from './progress-append-only-reporter.js';
 import { ProgressBarReporter } from './progress-reporter.js';
 import { HtmlReporter } from './html-reporter.js';
 import { JsonReporter } from './json-reporter.js';
-import { MutationTimingsReporter } from './mutation-timings-reporter.js';
 
 export { BroadcastReporter } from './broadcast-reporter.js';
 export type { StrictReporter } from './strict-reporter.js';
@@ -33,11 +32,6 @@ export const strykerPlugins = [
   ),
   declareClassPlugin(PluginKind.Reporter, 'html', HtmlReporter),
   declareClassPlugin(PluginKind.Reporter, 'json', JsonReporter),
-  declareClassPlugin(
-    PluginKind.Reporter,
-    'mutation-timings',
-    MutationTimingsReporter,
-  ),
   declareFactoryPlugin(
     PluginKind.Reporter,
     'dashboard',

@@ -233,7 +233,8 @@ class MutationServerClient {
 }
 
 /**
- * Removes the statusReason from the results for snapshot testing purposes, as it may contain arbitrary stdout messages like "Debugger attached".
+ * Removes the statusReason and duration from the results for snapshot testing purposes.
+ * The statusReason may contain arbitrary stdout messages like "Debugger attached" and the duration differs per run.
  */
 function cleanResults(results: MutationTestResult[]): MutationTestResult[] {
   return results.map((result) => ({
@@ -242,7 +243,7 @@ function cleanResults(results: MutationTestResult[]): MutationTestResult[] {
         key,
         {
           mutants: value.mutants.map((mutant) => {
-            const { statusReason, ...fields } = mutant;
+            const { statusReason, duration, ...fields } = mutant;
             return fields;
           }),
         },

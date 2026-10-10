@@ -105,7 +105,10 @@ describe('JasmineRunner integration with code instrumentation', () => {
         failureMessage: 'Expected true to be falsy.',
         nrOfTests: 2, // spec0 and spec1
       });
-      expect(result).deep.eq(expected);
+      assertions.expectKilled(result);
+      const { duration, ...actual } = result;
+      expect(duration).a('number');
+      expect(actual).deep.eq(expected);
     });
 
     it('should report all killed mutants when disableBail is true', async () => {
@@ -121,7 +124,10 @@ describe('JasmineRunner integration with code instrumentation', () => {
         failureMessage: 'Expected true to be falsy.',
         nrOfTests: 5, // all
       });
-      expect(result).deep.eq(expected);
+      assertions.expectKilled(result);
+      const { duration, ...actual } = result;
+      expect(duration).a('number');
+      expect(actual).deep.eq(expected);
     });
   });
 });

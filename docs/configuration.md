@@ -484,7 +484,7 @@ Default: `['clear-text', 'progress', 'html']`<br />
 Command line: `--reporters clear-text,progress,dots,dashboard,html,json`<br />
 Config file: `"reporters": ["clear-text", "progress", "dots", "dashboard", "html", "json"]`
 
-Set the reporters for Stryker to use. These reporters can be used out of the box: `html`, `json`, `progress`, `clear-text`, `dots`, `dashboard`, `event-recorder` and `mutation-timings`.
+Set the reporters for Stryker to use. These reporters can be used out of the box: `html`, `json`, `progress`, `clear-text`, `dots`, `dashboard` and `event-recorder`.
 By default, `clear-text`, `progress`, `html` are active if no reporters are configured. See [reporter plugins](./plugins.md#reporters)
 for a full description of each reporter.
 
@@ -496,30 +496,6 @@ To configure specific reporters, see their configuration:
 - [dashboard](#dashboard-dashboardoptions)
 - [htmlReporter](#htmlreporter-object)
 - [jsonReporter](#jsonreporter-object)
-- [mutation-timings reporter](#mutation-timings-reporter)
-
-### `mutation-timings` reporter
-
-Default: `{ fileName: "reports/mutation/mutant-test-timings.json" }`<br />
-Command line: _none_<br />
-
-The mutation-timings reporter writes a sidecar diagnostics artifact with per-mutant executed test timings.
-
-Example:
-
-```json
-{
-  "reporters": ["progress", "clear-text", "mutation-timings"]
-}
-```
-
-Use the following environment variables to control behavior:
-
-- `STRYKER_MUTATION_TEST_TIMINGS=1` to include `executedTests` timing payloads in mutant run results.
-- `STRYKER_MUTATION_TEST_TIMINGS_MAX_TESTS=<N>` to cap the number of `executedTests` per mutant.
-- `STRYKER_MUTATION_TEST_TIMINGS_FILE=<path>` to override the sidecar output path.
-
-The `executedTests` payload is runtime diagnostics data and is not added to the final mutation testing report schema output (`mutation.json`).
 
 ### `symlinkNodeModules` [`boolean`]
 
