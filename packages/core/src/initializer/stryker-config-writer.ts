@@ -126,6 +126,7 @@ export class StrykerConfigWriter {
     try {
       await childProcessAsPromised.exec(
         `npx prettier --write ${configFileName}`,
+        { windowsHide: true },
       );
     } catch (error) {
       this.log.debug('Prettier exited with error', error);

@@ -74,6 +74,7 @@ describe(ChildProcessProxy.name, () => {
         ),
         {
           silent: true,
+          windowsHide: true,
           execArgv: [],
           env: { STRYKER_MUTATOR_WORKER: workerId.toString(), ...process.env },
         },

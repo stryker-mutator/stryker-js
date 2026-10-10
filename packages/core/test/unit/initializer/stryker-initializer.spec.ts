@@ -175,7 +175,9 @@ describe(StrykerInitializer.name, () => {
       });
       await sut.initialize();
       expectStrykerConfWritten(expectedOutput);
-      expect(childExec).calledWith('npx prettier --write stryker.config.mjs');
+      expect(childExec).calledWith('npx prettier --write stryker.config.mjs', {
+        windowsHide: true,
+      });
     });
 
     it('should handle errors when formatting fails', async () => {
@@ -215,7 +217,7 @@ describe(StrykerInitializer.name, () => {
       expect(fsWriteFile).calledOnce;
       expect(childExecSync).calledWith(
         'npm i --save-dev @stryker-mutator/core my-awesome-dependency another-awesome-dependency',
-        { stdio: [0, 1, 2] },
+        { stdio: [0, 1, 2], windowsHide: true },
       );
     });
 
@@ -262,6 +264,7 @@ describe(StrykerInitializer.name, () => {
         'npm i --save-dev @stryker-mutator/core @stryker-mutator/awesome-runner stryker-dimension-reporter @stryker-mutator/mars-reporter',
         {
           stdio: [0, 1, 2],
+          windowsHide: true,
         },
       );
     });
@@ -277,6 +280,7 @@ describe(StrykerInitializer.name, () => {
         'pnpm add -D @stryker-mutator/core @stryker-mutator/awesome-runner',
         {
           stdio: [0, 1, 2],
+          windowsHide: true,
         },
       );
     });
@@ -291,7 +295,7 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
       expect(childExecSync).calledWith(
         'npm i --save-dev @stryker-mutator/core',
-        { stdio: [0, 1, 2] },
+        { stdio: [0, 1, 2], windowsHide: true },
       );
     });
 
@@ -305,7 +309,7 @@ describe(StrykerInitializer.name, () => {
       await sut.initialize();
       expect(childExecSync).calledWith(
         'npm i --save-dev @stryker-mutator/core stryker-dimension-reporter @stryker-mutator/mars-reporter',
-        { stdio: [0, 1, 2] },
+        { stdio: [0, 1, 2], windowsHide: true },
       );
     });
 
