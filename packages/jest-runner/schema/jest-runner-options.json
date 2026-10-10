@@ -34,10 +34,7 @@
   "definitions": {
     "jestProjectType": {
       "description": "The type of project you are working on. \n* `custom` uses the `config` option. \n*`create-react-app` when you are using [create-react-app](https://github.com/facebook/create-react-app)\n* `react`: DEPRECATED, please use `create-react-app`.",
-      "enum": [
-        "create-react-app",
-        "custom"
-      ]
+      "enum": ["create-react-app", "custom"]
     }
   }
 }

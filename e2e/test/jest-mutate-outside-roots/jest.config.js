@@ -1,4 +1,4 @@
 module.exports = {
-  testEnvironment: "node",
-  roots: ['test']
-}
+  testEnvironment: 'node',
+  roots: ['test'],
+};

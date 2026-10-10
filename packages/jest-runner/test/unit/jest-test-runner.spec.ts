@@ -626,6 +626,21 @@ describe(JestTestRunner.name, () => {
   });
 
   describe('mutantRun', () => {
+    let originalMutationTestTimings: string | undefined;
+
+    beforeEach(() => {
+      originalMutationTestTimings = process.env.STRYKER_MUTATION_TEST_TIMINGS;
+      delete process.env.STRYKER_MUTATION_TEST_TIMINGS;
+    });
+
+    afterEach(() => {
+      if (originalMutationTestTimings !== undefined) {
+        process.env.STRYKER_MUTATION_TEST_TIMINGS = originalMutationTestTimings;
+      } else {
+        delete process.env.STRYKER_MUTATION_TEST_TIMINGS;
+      }
+    });
+
     it('should use correct fileNamesUnderTest if findRelatedTests = true', async () => {
       options.jest.enableFindRelatedTests = true;
       const sut = await arrangeInitializedSut();
@@ -778,6 +793,51 @@ describe(JestTestRunner.name, () => {
       );
       assertions.expectTimeout(firstResult);
       assertions.expectSurvived(secondResult);
+    });
+
+    it('should include executedTests when mutation timing export is enabled', async () => {
+      process.env.STRYKER_MUTATION_TEST_TIMINGS = '1';
+      jestRunResult = producers.createJestRunResult({
+        results: producers.createFailResult(),
+      });
+
+      const result = await actMutantRun();
+
+      assertions.expectKilled(result);
+      expect(result.executedTests).deep.eq([
+        {
+          id: 'App render renders without crashing',
+          name: 'App render renders without crashing',
+          status: TestStatus.Failed,
+          timeSpentMs: 2,
+          fileName: 'qux.js',
+        },
+        {
+          id: 'App render renders without crashing',
+          name: 'App render renders without crashing',
+          status: TestStatus.Failed,
+          timeSpentMs: 0,
+          fileName: 'qux.js',
+        },
+        {
+          id: 'App renders without crashing',
+          name: 'App renders without crashing',
+          status: TestStatus.Success,
+          timeSpentMs: 23,
+          fileName: 'quux.js',
+        },
+      ]);
+    });
+
+    it('should not include executedTests when mutation timing export is disabled', async () => {
+      jestRunResult = producers.createJestRunResult({
+        results: producers.createFailResult(),
+      });
+
+      const result = await actMutantRun();
+
+      assertions.expectKilled(result);
+      expect(result).not.to.have.property('executedTests');
     });
   });
 

@@ -129,7 +129,6 @@ const { mixinJestEnvironment } = require('@stryker-mutator/jest-runner');
 const { TestEnvironment } = require('jest-environment-node');
 // const TestEnvironment = require('jest-environment-node'); // 👈 Jest@27 or lower
 
-
 class MyCustomTestEnvironment extends TestEnvironment {
   // custom magic here ✨
 }

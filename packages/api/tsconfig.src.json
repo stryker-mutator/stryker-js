@@ -4,10 +4,6 @@
     "outDir": "dist",
     "rootDir": "."
   },
-  "include": [
-    "src",
-    "src-generated",
-    "schema/*.json",
-  ],
+  "include": ["src", "src-generated", "schema/*.json"],
   "references": []
 }

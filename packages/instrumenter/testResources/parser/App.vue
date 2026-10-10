@@ -1,28 +1,32 @@
 <template>
   <div id="app">
     <h1>Hello Pokemon</h1>
-    <PokemonComponent v-for="pok in pokemon" v-bind:key="pok.name" :pokemon="pok"></PokemonComponent>
+    <PokemonComponent
+      v-for="pok in pokemon"
+      v-bind:key="pok.name"
+      :pokemon="pok"
+    ></PokemonComponent>
   </div>
 </template>
 
 <script>
-import PokemonComponent from './Pokemon.vue'
+import PokemonComponent from './Pokemon.vue';
 import { pokemonService } from './pokemon.service';
 
 export default {
   components: {
-    PokemonComponent
+    PokemonComponent,
   },
   data() {
     return {
-      pokemon: []
-    }
+      pokemon: [],
+    };
   },
 
   created() {
-    pokemonService.getAll().then(pokemon => (this.pokemon = pokemon));
-  }
-}
+    pokemonService.getAll().then((pokemon) => (this.pokemon = pokemon));
+  },
+};
 </script>
 
 <style>

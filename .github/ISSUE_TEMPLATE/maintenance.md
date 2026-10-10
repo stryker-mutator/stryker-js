@@ -2,9 +2,8 @@
 name: Maintenance
 about: Suggest an idea for this project
 title: ''
-labels: "🔧 Maintenance"
+labels: '🔧 Maintenance'
 assignees: ''
-
 ---
 
 **Is your maintenance request related to a problem? Please describe.**

@@ -4,7 +4,6 @@ import { concat, greet } from '../../src/concat.js';
 import { log } from '../../src/log.js';
 import { add, multiply } from '../../src/math.js';
 
-
 Given('input {string}', function (input) {
   this.input = input;
 });
@@ -41,6 +40,4 @@ When('I log', function () {
   this.result = log(this.input);
 });
 
-Then('there should be no Error', function () {
-});
-
+Then('there should be no Error', function () {});

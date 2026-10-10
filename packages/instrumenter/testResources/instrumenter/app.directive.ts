@@ -1,4 +1,14 @@
-import { input, model, output, Directive, contentChild, contentChildren, viewChild, viewChildren, TemplateRef } from '@angular/core';
+import {
+  input,
+  model,
+  output,
+  Directive,
+  contentChild,
+  contentChildren,
+  viewChild,
+  viewChildren,
+  TemplateRef,
+} from '@angular/core';
 
 @Directive({ selector: '[stepDetail]' })
 class StepDetailDirective {}
@@ -16,13 +26,23 @@ export class AppDirective {
   inputFalseAlias = input({ alias: 'this-is-actually-the-default-value' });
   modelFalseAlias = model({ alias: 'this-is-actually-the-default-value' });
 
-  readonly contentChildField = contentChild(StepDetailDirective, { read: TemplateRef });
-  readonly contentChildrenField = contentChildren(StepDetailDirective, { read: TemplateRef, descendants: true });
+  readonly contentChildField = contentChild(StepDetailDirective, {
+    read: TemplateRef,
+  });
+  readonly contentChildrenField = contentChildren(StepDetailDirective, {
+    read: TemplateRef,
+    descendants: true,
+  });
   readonly viewChildField = viewChild('tpl', { read: TemplateRef });
   readonly viewChildrenField = viewChildren('tpl', { read: TemplateRef });
 
-  readonly contentChildRequiredField = contentChild.required(StepDetailDirective, { read: TemplateRef });
-  readonly viewChildRequiredField = viewChild.required('tpl', { read: TemplateRef });
+  readonly contentChildRequiredField = contentChild.required(
+    StepDetailDirective,
+    { read: TemplateRef },
+  );
+  readonly viewChildRequiredField = viewChild.required('tpl', {
+    read: TemplateRef,
+  });
 
   readonly contentChildNoOptionsField = contentChild(StepDetailDirective);
 }

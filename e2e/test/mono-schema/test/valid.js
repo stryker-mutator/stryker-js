@@ -20,7 +20,9 @@ const config = {
     configFile: 'vitest.config.js',
   },
   tap: {
-    testFiles: ['{**/@(test|tests|__test__|__tests__)/**,**/*.@(test|tests|spec)}.@(cjs|mjs|js|jsx|ts|tsx)'],
+    testFiles: [
+      '{**/@(test|tests|__test__|__tests__)/**,**/*.@(test|tests|spec)}.@(cjs|mjs|js|jsx|ts|tsx)',
+    ],
     nodeArgs: ['--import', 'tsx'],
   },
 };

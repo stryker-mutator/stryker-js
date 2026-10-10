@@ -1,3 +1,3 @@
 import { loop } from './src/loop.js';
 
-globalThis.loop = loop
+globalThis.loop = loop;

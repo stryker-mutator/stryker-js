@@ -83,8 +83,7 @@ export class CustomJestConfigLoader implements JestConfigLoader {
     const configFilePath = this.resolveJestConfigFilePath();
     if (configFilePath) {
       let config = this.requireFromCwd(configFilePath) as
-        | Config.InitialOptions
-        | (() => Promise<Config.InitialOptions>);
+        Config.InitialOptions | (() => Promise<Config.InitialOptions>);
       if (typeof config === 'function') {
         config = await config();
       }

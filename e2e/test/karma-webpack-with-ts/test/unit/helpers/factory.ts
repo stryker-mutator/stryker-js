@@ -1,7 +1,13 @@
-import { MutantResult, MutantStatus, FileResult } from 'mutation-testing-report-schema';
+import {
+  MutantResult,
+  MutantStatus,
+  FileResult,
+} from 'mutation-testing-report-schema';
 import { Metrics, MetricsResult } from 'mutation-testing-metrics';
 
-export function createMutantResult(overrides?: Partial<MutantResult>): MutantResult {
+export function createMutantResult(
+  overrides?: Partial<MutantResult>,
+): MutantResult {
   const defaults: MutantResult = {
     id: '1',
     location: {
@@ -30,7 +36,9 @@ export function createFileResult(overrides?: Partial<FileResult>): FileResult {
   return { ...defaults, ...overrides };
 }
 
-export function createMetricsResult(overrides?: Partial<MetricsResult>): MetricsResult {
+export function createMetricsResult(
+  overrides?: Partial<MetricsResult>,
+): MetricsResult {
   const defaults: MetricsResult = {
     childResults: [],
     metrics: createMetrics(),

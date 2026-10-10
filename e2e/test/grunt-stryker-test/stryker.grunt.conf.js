@@ -5,7 +5,10 @@ module.exports = {
   karma: {
     config: {
       files: ['sampleProject/**'],
-      plugins: [require.resolve('karma-jasmine'), require.resolve('karma-chrome-launcher')],
+      plugins: [
+        require.resolve('karma-jasmine'),
+        require.resolve('karma-chrome-launcher'),
+      ],
     },
   },
   plugins: ['@stryker-mutator/karma-runner'],

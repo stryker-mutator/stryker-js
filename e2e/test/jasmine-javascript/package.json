@@ -5,9 +5,9 @@
   "description": "A module to perform an integration test",
   "main": "index.js",
   "scripts": {
-  "clean:reports": "rimraf \"reports\" \"stryker.log\"",
-  "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
-  "test": "npm run clean:reports && stryker run && npm run verify"
+    "clean:reports": "rimraf \"reports\" \"stryker.log\"",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test": "npm run clean:reports && stryker run && npm run verify"
   },
   "author": "",
   "license": "Apache-2.0"

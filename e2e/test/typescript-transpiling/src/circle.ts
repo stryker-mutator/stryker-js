@@ -3,5 +3,5 @@ export function getCircumference(radius: number) {
 }
 
 export function untestedFunction() {
-  const i = 5 / 2 * 3;
+  const i = (5 / 2) * 3;
 }

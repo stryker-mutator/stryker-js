@@ -6,7 +6,7 @@ When('I add {int} and {int}', function (n, n2) {
   this.result = add(n, n2);
 });
 
-When('I greet {string}', function(subject) {
+When('I greet {string}', function (subject) {
   this.result = greet(subject);
 });
 

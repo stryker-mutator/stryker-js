@@ -71,6 +71,7 @@ The following options will be set by Stryker and cannot be overridden:
 ```
 
 As you can see, the vitest runner:
+
 - Will run your tests in a **single thread**  
   This is done because StrykerJS uses it's own [parallel workers](./parallel-workers.md).
 - Will **bail** on the first test failure (unless you set `disableBail` to `true`).  
@@ -90,8 +91,8 @@ For example, you can add the Stryker disable comment (`// Stryker disable all`) 
  export function add(...args: number[]) {
    return args.reduce((a, b) => a + b, 0)
  }
- 
- 
+
+
  // in-source test suites
 +// Stryker disable all: Unit tests start here
  if (import.meta.vitest) {
@@ -101,7 +102,6 @@ For example, you can add the Stryker disable comment (`// Stryker disable all`) 
    })
  }
 ```
-
 
 ## Limitations
 

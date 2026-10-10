@@ -1,5 +1,5 @@
 /**
- * @param {number} n 
+ * @param {number} n
  */
 export function negate(n) {
   return -n;

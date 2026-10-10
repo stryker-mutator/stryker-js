@@ -21,6 +21,6 @@ module.exports = function (config) {
       require.resolve('karma-jasmine'),
       require.resolve('karma-chrome-launcher'),
       require.resolve('karma-vite'),
-    ]
+    ],
   });
 };

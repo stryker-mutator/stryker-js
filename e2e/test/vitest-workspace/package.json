@@ -15,7 +15,7 @@
   "license": "ISC",
   "devDependencies": {
     "vitest": "3.1.4",
-     "@stryker-mutator/core": "workspace:*",
+    "@stryker-mutator/core": "workspace:*",
     "@stryker-mutator/vitest-runner": "workspace:*"
   },
   "dependenciesMeta": {

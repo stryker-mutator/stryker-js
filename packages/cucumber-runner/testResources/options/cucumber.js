@@ -1,4 +1,4 @@
 module.exports = {
   default: '',
-  bar: '--tags @bar'
+  bar: '--tags @bar',
 };

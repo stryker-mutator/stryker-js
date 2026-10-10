@@ -17,9 +17,7 @@
         "${workspaceFolder}/dist/test/integration/**/*.js"
       ],
       "internalConsoleOptions": "openOnSessionStart",
-      "outFiles": [
-        "${workspaceFolder}/dist/**/*.js"
-      ]
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"]
     }
   ]
 }

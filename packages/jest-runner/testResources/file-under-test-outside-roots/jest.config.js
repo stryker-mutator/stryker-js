@@ -1,3 +1,3 @@
 module.exports = {
-  roots: ['test']
-}
+  roots: ['test'],
+};

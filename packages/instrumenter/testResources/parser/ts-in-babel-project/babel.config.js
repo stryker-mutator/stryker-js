@@ -1,5 +1,3 @@
 module.exports = {
-  plugins: [
-    'random-plugin-that-should-be-ignored'
-  ]
-}
+  plugins: ['random-plugin-that-should-be-ignored'],
+};

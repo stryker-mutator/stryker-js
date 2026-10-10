@@ -1,13 +1,12 @@
-import {async, TestBed} from '@angular/core/testing';
-import {WinkelwagenService} from './winkelwagen.service';
-import {Artikel} from '../models/artikel';
+import { async, TestBed } from '@angular/core/testing';
+import { WinkelwagenService } from './winkelwagen.service';
+import { Artikel } from '../models/artikel';
 
 describe('WinkelwagenService', () => {
   let service: WinkelwagenService;
 
   beforeEach(async(() => {
-    TestBed.configureTestingModule({})
-      .compileComponents();
+    TestBed.configureTestingModule({}).compileComponents();
   }));
 
   beforeEach(() => {
@@ -19,7 +18,18 @@ describe('WinkelwagenService', () => {
   });
 
   describe('addArtikelToWinkelwagen()', () => {
-    const testArtikel = new Artikel(1, 'Test artikel', 'test', 10, 'images/foo.png', new Date(), new Date(), 'PRD1', [], 1);
+    const testArtikel = new Artikel(
+      1,
+      'Test artikel',
+      'test',
+      10,
+      'images/foo.png',
+      new Date(),
+      new Date(),
+      'PRD1',
+      [],
+      1,
+    );
 
     it('should call winkelwagen.addArtikel()', () => {
       const winkelwagen = service.getWinkelwagen();
@@ -31,7 +41,7 @@ describe('WinkelwagenService', () => {
 
     it('should notify listeners', () => {
       let notified = false;
-      service.listen().subscribe(winkelwagen => {
+      service.listen().subscribe((winkelwagen) => {
         notified = true;
       });
 
@@ -51,7 +61,7 @@ describe('WinkelwagenService', () => {
     it('Should notify listeners', () => {
       spyOn(window, 'confirm').and.callFake(() => true);
       let notified = false;
-      service.listen().subscribe(winkelwagen => {
+      service.listen().subscribe((winkelwagen) => {
         notified = true;
       });
       service.clearWinkelwagen();

@@ -5,11 +5,11 @@ export class HeadingComponent extends HTMLElement {
   }
 
   connectedCallback() {
-    this.render();  
+    this.render();
   }
 
   public render() {
-    this.shadowRoot!.innerHTML = `<h1><slot></slot></h1>`
+    this.shadowRoot!.innerHTML = `<h1><slot></slot></h1>`;
   }
 }
 customElements.define('my-heading', HeadingComponent);

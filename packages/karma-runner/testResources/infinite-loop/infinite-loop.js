@@ -1,6 +1,6 @@
 function loop(n, action) {
   let goOn = true;
-  while(goOn) {
+  while (goOn) {
     action(n);
     n--;
     goOn = n > 0;
