@@ -54,6 +54,23 @@ Default: `true`
 
 If set to `true`, Vitest will only run tests that are related to the mutated files. It uses the [`related`](https://vitest.dev/guide/cli.html#vitest-related) under the hood. Disable this if your test files don't import your source files directly, for example when using API calls to call your server code in integration tests.
 
+### `vitest.project` [`string[]` | `undefined`]
+
+_Since v10.1_
+
+Default: `undefined`
+
+Configure the `--project <name>` command line option to select one or more named [projects](https://vitest.dev/guide/projects) out of a Vitest workspace config, instead of running every project it defines. Use this when your `vitest.config.*` splits tests into multiple projects (for example, a fast unit-test project alongside a project that needs a built artifact or a different runtime) and only one of them is meaningful to run under a mutant.
+
+```json
+{
+  "testRunner": "vitest",
+  "vitest": {
+    "project": ["unit"]
+  }
+}
+```
+
 ## Non overridable options
 
 The following options will be set by Stryker and cannot be overridden:
