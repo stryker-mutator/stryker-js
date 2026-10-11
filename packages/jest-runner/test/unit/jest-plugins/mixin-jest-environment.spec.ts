@@ -1,5 +1,7 @@
-import { JestEnvironmentConfig, EnvironmentContext } from '@jest/environment';
+import vm from 'vm';
 
+import { JestEnvironmentConfig, EnvironmentContext } from '@jest/environment';
+import { MutantCoverage } from '@stryker-mutator/api/core';
 import sinon from 'sinon';
 import { Circus } from '@jest/types';
 import { expect } from 'chai';
@@ -188,6 +190,141 @@ describe(`jest plugins ${mixinJestEnvironment.name}`, () => {
         // Assert
         expect(spy).calledWith(event, producersState);
       });
+    });
+  });
+
+  describe('teardown', () => {
+    function createSut() {
+      return new Sut(
+        producers.createEnvironmentConfig(),
+        producers.createEnvironmentContext(),
+      );
+    }
+
+    beforeEach(() => {
+      state.clear();
+      state.coverageAnalysis = 'perTest';
+    });
+
+    it('should replace coverage objects created by the test file with copies, so the test file can be garbage collected', async () => {
+      // Arrange
+      const sut = createSut();
+      vm.runInContext(
+        "__stryker2__.mutantCoverage = { static: { 1: 1 }, perTest: { 'foo should bar': { 2: 3 } } };",
+        sut.getVmContext()!,
+      );
+      expect(state.instrumenterContext.mutantCoverage).not.instanceOf(Object);
+
+      // Act
+      await sut.teardown();
+
+      // Assert
+      const coverage = state.instrumenterContext.mutantCoverage!;
+      expect(coverage).deep.eq({
+        static: { 1: 1 },
+        perTest: { 'foo should bar': { 2: 3 } },
+      });
+      for (const object of [
+        coverage,
+        coverage.static,
+        coverage.perTest,
+        coverage.perTest['foo should bar'],
+      ]) {
+        expect(object).instanceOf(Object);
+      }
+    });
+
+    it('should keep the static and per-test coverage objects the test runner already owns', async () => {
+      // Arrange
+      const earlierCoverage: MutantCoverage = {
+        static: { 1: 1 },
+        perTest: { 'foo should bar': { 2: 3 } },
+      };
+      state.instrumenterContext.mutantCoverage = earlierCoverage;
+      const sut = createSut();
+      vm.runInContext(
+        "__stryker2__.mutantCoverage.perTest['baz should qux'] = { 4: 1 };",
+        sut.getVmContext()!,
+      );
+
+      // Act
+      await sut.teardown();
+
+      // Assert
+      const coverage = state.instrumenterContext.mutantCoverage;
+      expect(coverage.static).eq(earlierCoverage.static);
+      expect(coverage.perTest).eq(earlierCoverage.perTest);
+      expect(coverage.perTest['foo should bar']).eq(
+        earlierCoverage.perTest['foo should bar'],
+      );
+      expect(coverage.perTest['baz should qux']).deep.eq({ 4: 1 });
+      expect(coverage.perTest['baz should qux']).instanceOf(Object);
+    });
+
+    it('should copy coverage added by a teardown that is a class property', async () => {
+      // Arrange
+      class EnvironmentWithTeardownProperty extends TestJestEnvironment {
+        public teardown = () => {
+          vm.runInContext(
+            '__stryker2__.mutantCoverage = { static: { 1: 1 }, perTest: {} };',
+            this.getVmContext()!,
+          );
+          return Promise.resolve();
+        };
+      }
+      const sut = new (mixinJestEnvironment(EnvironmentWithTeardownProperty))(
+        producers.createEnvironmentConfig(),
+        producers.createEnvironmentContext(),
+      );
+
+      // Act
+      await sut.teardown();
+
+      // Assert
+      expect(state.instrumenterContext.mutantCoverage).instanceOf(Object);
+      expect(state.instrumenterContext.mutantCoverage).deep.eq({
+        static: { 1: 1 },
+        perTest: {},
+      });
+    });
+
+    it('should copy coverage added after super.teardown() in a subclass of a Stryker environment', async () => {
+      // Arrange
+      class SubclassOfStrykerEnvironment extends Sut {
+        public async teardown() {
+          const coverageFromTestFile = vm.runInContext(
+            '({ static: { 1: 1 }, perTest: {} })',
+            this.getVmContext()!,
+          ) as MutantCoverage;
+          await super.teardown();
+          state.instrumenterContext.mutantCoverage = coverageFromTestFile;
+        }
+      }
+      const sut = new (mixinJestEnvironment(SubclassOfStrykerEnvironment))(
+        producers.createEnvironmentConfig(),
+        producers.createEnvironmentContext(),
+      );
+
+      // Act
+      await sut.teardown();
+
+      // Assert
+      expect(state.instrumenterContext.mutantCoverage).instanceOf(Object);
+      expect(state.instrumenterContext.mutantCoverage).deep.eq({
+        static: { 1: 1 },
+        perTest: {},
+      });
+    });
+
+    it('should leave the mutant coverage undefined when no test reached a mutant', async () => {
+      // Arrange
+      const sut = createSut();
+
+      // Act
+      await sut.teardown();
+
+      // Assert
+      expect(state.instrumenterContext.mutantCoverage).undefined;
     });
   });
 });
