@@ -144,7 +144,9 @@ Config file: `"commandRunner": { "command": "npm run mocha" }`
 
 With `commandRunner`, you can specify the command to execute for running tests.
 
-### `coverageAnalysis` [`string`]
+### `coverageAnalysis` [`string`] (DEPRECATED)
+
+**DEPRECATED**. This option will be removed in a future major version.
 
 Default: `perTest`<br />
 Command line: `--coverageAnalysis perTest`<br />
