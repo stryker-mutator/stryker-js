@@ -8,10 +8,15 @@ import {
 } from '@stryker-mutator/api/test-runner';
 import { Vitest } from 'vitest/node';
 
+import path from 'path';
+
 import { VitestTestRunner } from '../../src/vitest-test-runner.js';
 import { VitestRunnerOptionsWithStrykerOptions } from '../../src/vitest-runner-options-with-stryker-options.js';
 import { vitestWrapper } from '../../src/vitest-wrapper.js';
-import { createVitestMock } from '../util/factories.js';
+import {
+  createVitestMock,
+  createVitestProjectMock,
+} from '../util/factories.js';
 import { VITEST_ERROR_CODES } from '../../src/vitest-helpers.js';
 
 describe(VitestTestRunner.name, () => {
@@ -128,6 +133,86 @@ describe(VitestTestRunner.name, () => {
       await sut.init();
 
       expect(process.env.VITEST).to.equal('1');
+    });
+
+    describe('fs.allow for workspace symlinks', () => {
+      const sandboxNodeModules = path.resolve('node_modules');
+      const realRepoRoot = path.resolve('/real/repo/root');
+      const realNodeModules = path.join(realRepoRoot, 'node_modules');
+
+      it("should allow the real repo root on each project's vite dev server when `symlinkNodeModules` is enabled", async () => {
+        sinon
+          .stub(fs, 'realpathSync')
+          .withArgs(sandboxNodeModules)
+          .returns(realNodeModules);
+        options.symlinkNodeModules = true;
+        const project1 = createVitestProjectMock();
+        const project2 = createVitestProjectMock();
+        vitestStub.projects = [project1, project2];
+
+        await sut.init();
+
+        expect(project1.vite.config.server.fs.allow).include(realRepoRoot);
+        expect(project2.vite.config.server.fs.allow).include(realRepoRoot);
+      });
+
+      it("should not clobber a project's existing fs.allow entries", async () => {
+        sinon
+          .stub(fs, 'realpathSync')
+          .withArgs(sandboxNodeModules)
+          .returns(realNodeModules);
+        options.symlinkNodeModules = true;
+        const project = createVitestProjectMock({
+          fsAllow: ['/already/allowed'],
+        });
+        vitestStub.projects = [project];
+
+        await sut.init();
+
+        expect(project.vite.config.server.fs.allow).deep.equal([
+          '/already/allowed',
+          realRepoRoot,
+        ]);
+      });
+
+      it('should not touch fs.allow when `symlinkNodeModules` is disabled', async () => {
+        const realpathStub = sinon.stub(fs, 'realpathSync');
+        options.symlinkNodeModules = false;
+        const project = createVitestProjectMock();
+        vitestStub.projects = [project];
+
+        await sut.init();
+
+        expect(project.vite.config.server.fs.allow).lengthOf(0);
+        sinon.assert.notCalled(realpathStub);
+      });
+
+      it('should not throw when there is no `node_modules` to resolve in the sandbox', async () => {
+        sinon.stub(fs, 'realpathSync').throws(
+          Object.assign(new Error('no such file or directory'), {
+            code: 'ENOENT',
+          }),
+        );
+        options.symlinkNodeModules = true;
+        const project = createVitestProjectMock();
+        vitestStub.projects = [project];
+
+        await expect(sut.init()).not.rejected;
+
+        expect(project.vite.config.server.fs.allow).lengthOf(0);
+      });
+
+      it('should propagate unexpected (non-ENOENT) errors while resolving `node_modules`', async () => {
+        sinon.stub(fs, 'realpathSync').throws(
+          Object.assign(new Error('permission denied'), {
+            code: 'EACCES',
+          }),
+        );
+        options.symlinkNodeModules = true;
+        vitestStub.projects = [createVitestProjectMock()];
+
+        await expect(sut.init()).rejectedWith('permission denied');
+      });
     });
   });
 

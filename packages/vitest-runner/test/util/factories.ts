@@ -9,6 +9,7 @@ import { VitestRunnerOptions } from '../../src-generated/vitest-runner-options.j
 
 type ResolvedConfig = Vitest['config'];
 type ResolvedBrowserOptions = ResolvedConfig['browser'];
+type TestProject = Vitest['projects'][number];
 
 export function createVitestMock(): sinon.SinonStubbedInstance<Vitest> {
   return {
@@ -27,6 +28,26 @@ export function createVitestMock(): sinon.SinonStubbedInstance<Vitest> {
     start: sinon.stub(),
     provide: sinon.stub(),
   } as sinon.SinonStubbedInstance<Vitest>;
+}
+
+export function createVitestProjectMock(
+  overrides?: Partial<{ fsAllow: string[] }>,
+): TestProject {
+  return {
+    config: {
+      setupFiles: [],
+      browser: { screenshotFailures: true } as ResolvedBrowserOptions,
+    },
+    vite: {
+      config: {
+        server: {
+          fs: {
+            allow: overrides?.fsAllow ?? [],
+          },
+        },
+      },
+    },
+  } as unknown as TestProject;
 }
 
 export function createSuite(

@@ -28,8 +28,10 @@ import {
   DryRunOptions,
 } from '@stryker-mutator/api/test-runner';
 import {
+  ERROR_CODES,
   errorToString,
   escapeRegExp,
+  isErrnoException,
   normalizeFileName,
   notEmpty,
   testFilesProvided,
@@ -136,6 +138,34 @@ export class VitestTestRunner implements TestRunner {
     await fs.promises.writeFile(this.localSetupFile, lines.join('\n'));
   }
 
+  /**
+   * When `symlinkNodeModules` is on (the default), the sandbox's `node_modules` is a symlink
+   * back to the real, non-sandboxed `node_modules`. Workspace packages (pnpm/yarn workspaces)
+   * resolve to their real path through that symlink, but each Vitest project's dev server
+   * defaults `server.fs.allow` to its own sandboxed root and refuses to serve files outside it,
+   * surfacing as a generic "Cannot find module" for a file that does exist on disk.
+   *
+   * Resolving `node_modules`'s own realpath (the same symlink `symlinkNodeModules` created)
+   * finds the real repo root generically, with no hardcoded paths.
+   */
+  #resolveRealRepoRoot(): string | undefined {
+    if (!this.options.symlinkNodeModules) {
+      return undefined;
+    }
+    try {
+      return path.dirname(fs.realpathSync(path.resolve('node_modules')));
+    } catch (error) {
+      if (
+        isErrnoException(error) &&
+        error.code === ERROR_CODES.NoSuchFileOrDirectory
+      ) {
+        // No `node_modules` to resolve in the sandbox (e.g. nothing needed symlinking); nothing to widen.
+        return undefined;
+      }
+      throw error;
+    }
+  }
+
   public async init(): Promise<void> {
     this.setEnv();
     await this.#writeStrykerSetupFile();
@@ -158,12 +188,16 @@ export class VitestTestRunner implements TestRunner {
       semver.satisfies(vitestWrapper.version, '>=4.1.0'),
     );
     this.ctx.config.browser.screenshotFailures = false;
+    const realRepoRoot = this.#resolveRealRepoRoot();
     this.ctx.projects.forEach((project) => {
       project.config.setupFiles = [
         this.localSetupFile,
         ...project.config.setupFiles,
       ];
       project.config.browser.screenshotFailures = false;
+      if (realRepoRoot) {
+        project.vite.config.server.fs.allow.push(realRepoRoot);
+      }
     });
     if (this.log.isDebugEnabled()) {
       this.log.debug(
