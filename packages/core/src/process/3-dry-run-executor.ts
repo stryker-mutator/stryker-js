@@ -116,6 +116,7 @@ export class DryRunExecutor {
       .provideValue(coreTokens.timeOverheadMS, timing.overhead)
       .provideValue(coreTokens.setupTimeMS, setupTimeMS)
       .provideValue(coreTokens.initialRunMS, initialRunMS)
+      .provideValue(coreTokens.initialRunTiming, timing)
       .provideValue(coreTokens.dryRunResult, result)
       .provideValue(coreTokens.requireFromCwd, requireResolve)
       .provideFactory(coreTokens.testCoverage, TestCoverage.from)

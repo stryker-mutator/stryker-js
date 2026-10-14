@@ -24,6 +24,7 @@ import {
   CompleteDryRunResult,
 } from '@stryker-mutator/api/test-runner';
 import { Logger } from '@stryker-mutator/api/logging';
+import { RunTiming } from '@stryker-mutator/api/report';
 import { I } from '@stryker-mutator/util';
 import { CheckStatus } from '@stryker-mutator/api/check';
 
@@ -51,6 +52,7 @@ export interface MutationTestContext extends DryRunContext {
   [coreTokens.timeOverheadMS]: number;
   [coreTokens.setupTimeMS]: number;
   [coreTokens.initialRunMS]: number;
+  [coreTokens.initialRunTiming]: RunTiming;
   [coreTokens.performanceMetricsSink]: PerformanceMetricsSink;
   [coreTokens.mutationTestReportHelper]: MutationTestReportHelper;
   [coreTokens.mutantTestPlanner]: MutantTestPlanner;
@@ -84,6 +86,7 @@ export class MutationTestExecutor {
     coreTokens.dryRunResult,
     coreTokens.setupTimeMS,
     coreTokens.initialRunMS,
+    coreTokens.initialRunTiming,
     coreTokens.performanceMetricsSink,
   );
 
@@ -106,6 +109,7 @@ export class MutationTestExecutor {
     private readonly dryRunResult: CompleteDryRunResult,
     private readonly setupTimeMS: number,
     private readonly initialRunMS: number,
+    private readonly initialRunTiming: RunTiming,
     private readonly performanceMetricsSink: PerformanceMetricsSink,
   ) {}
 
@@ -168,10 +172,6 @@ export class MutationTestExecutor {
     results: readonly MutantResult[],
   ): Promise<void> {
     const totalWallMs = this.timer.elapsedMs();
-    const initialRunNet = this.dryRunResult.tests.reduce(
-      (total, test) => total + test.timeSpentMs,
-      0,
-    );
     const testRunWallMs = this.mutantPerformances.reduce(
       (total, mutant) => total + mutant.wallMs,
       0,
@@ -200,8 +200,8 @@ export class MutationTestExecutor {
       phases: {
         setup: this.setupTimeMS,
         initialRun: this.initialRunMS,
-        initialRunNet,
-        initialRunOverhead: Math.max(0, this.initialRunMS - initialRunNet),
+        initialRunNet: this.initialRunTiming.net,
+        initialRunOverhead: this.initialRunTiming.overhead,
         mutation: Math.max(
           0,
           this.mutationEndElapsedMs - this.setupTimeMS - this.initialRunMS,

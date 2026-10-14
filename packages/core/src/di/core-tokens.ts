@@ -15,6 +15,7 @@ export const timer = 'timer';
 export const timeOverheadMS = 'timeOverheadMS';
 export const setupTimeMS = 'setupTimeMS';
 export const initialRunMS = 'initialRunMS';
+export const initialRunTiming = 'initialRunTiming';
 export const performanceMetricsSink = 'performanceMetricsSink';
 export const loggingServerAddress = 'loggingServerAddress';
 export const loggerActiveLevel = 'loggerActiveLevel';

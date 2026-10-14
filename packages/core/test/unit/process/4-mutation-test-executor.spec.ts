@@ -152,6 +152,7 @@ describe(MutationTestExecutor.name, () => {
       .provideValue(coreTokens.dryRunResult, completeDryRunResult)
       .provideValue(coreTokens.setupTimeMS, 10)
       .provideValue(coreTokens.initialRunMS, 42)
+      .provideValue(coreTokens.initialRunTiming, { net: 40, overhead: 2 })
       .provideValue(
         coreTokens.performanceMetricsSink,
         new PerformanceMetricsSink(true),
@@ -595,6 +596,8 @@ describe(MutationTestExecutor.name, () => {
       expect(report.mutants[0].netMs).equal(1105);
       expect(report.phases.setup).equal(10);
       expect(report.phases.initialRun).equal(42);
+      expect(report.phases.initialRunNet).equal(40);
+      expect(report.phases.initialRunOverhead).equal(2);
     });
   });
 });
