@@ -10,7 +10,7 @@ import { Mutant, Position } from '@stryker-mutator/api/core';
  */
 let lastModifiedTimeMs = 0;
 function nextModifiedTime(): Date {
-  lastModifiedTimeMs = Math.max(Date.now(), lastModifiedTimeMs + 1);
+  lastModifiedTimeMs = Math.max(Date.now() + 1, lastModifiedTimeMs + 1);
   return new Date(lastModifiedTimeMs);
 }
 

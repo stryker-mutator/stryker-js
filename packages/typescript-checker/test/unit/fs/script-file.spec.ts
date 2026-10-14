@@ -24,6 +24,12 @@ describe('fs', () => {
           first.modifiedTime.valueOf(),
         );
       });
+
+      it('should default modifiedTime to after the current millisecond', () => {
+        sinon.useFakeTimers({ now: Date.now() + 1000 });
+        const sut = new ScriptFile('', '');
+        expect(sut.modifiedTime.valueOf()).to.be.greaterThan(Date.now());
+      });
     });
 
     describe(ScriptFile.prototype.mutate.name, () => {
