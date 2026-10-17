@@ -71,6 +71,28 @@ window.greeting = greeting;
     );
   });
 
+  it('should transform the scripts of an SFC without a `<script setup>` block in source order', async () => {
+    const vue = await parseSfc(`<script lang="ts">
+export const greeting: string = 'hello';
+</script>
+<script>
+window.greeting = greeting;
+</script>
+`);
+    /* The parser never does this, it guards the order against the way the scripts are stored */
+    [vue.root.moduleScript, vue.root.additionalScripts[0]] = [
+      vue.root.additionalScripts[0],
+      vue.root.moduleScript!,
+    ];
+
+    transformVue(vue, mutantCollector, context);
+
+    expect(context.transform.getCalls().map(({ args }) => args[0])).deep.eq([
+      vue.root.additionalScripts[0].ast,
+      vue.root.moduleScript.ast,
+    ]);
+  });
+
   it('should transform the scripts of an SFC with a `<script setup>` block without a header', async () => {
     const vue = await parseSfc(`<script setup>
 const greeting = 'hello';
@@ -238,6 +260,40 @@ const label = greeting;
 
       expect(vue.root.moduleScript).ok;
       expect(scriptsWithHeader(vue)).deep.eq([setupScript]);
+    });
+
+    it('should transform the scripts in source order and start placing the header in the first block with a mutant', async () => {
+      const rawContent = `<script setup>
+const label = greeting;
+</script>
+<script>
+export const greeting = 'hello';
+</script>
+`;
+      const vue = await parseSfc(rawContent);
+      const moduleScript = vue.root.moduleScript!;
+      const setupScript = vue.root.setup!.script;
+      planMutant(
+        setupScript,
+        (path) => path.isIdentifier() && path.node.name === 'greeting',
+      );
+      planMutant(moduleScript, (path) => path.isStringLiteral());
+
+      transformVue(vue, mutantCollector, context);
+
+      expect(context.transform.getCalls().map(({ args }) => args[0])).deep.eq([
+        setupScript.ast,
+        moduleScript.ast,
+      ]);
+      expect(mutantCollector.mutants.map(({ id }) => id)).deep.eq(['0', '1']);
+      expect(mutantCollector.mutants[0].original).eq(
+        findNodePath(
+          setupScript.ast.root,
+          (path) => path.isIdentifier() && path.node.name === 'greeting',
+        ).node,
+      );
+      expect(vue.rawContent).eq(rawContent);
+      expect(scriptsWithHeader(vue)).deep.eq([moduleScript, setupScript]);
     });
 
     it('should not let a mutant of another script block trip the compiler macro gate', async () => {

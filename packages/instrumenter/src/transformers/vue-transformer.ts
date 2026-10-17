@@ -142,9 +142,10 @@ export const transformVue: AstTransformer<AstFormat.Vue> = (
   context,
 ) => {
   const { root, originFileName } = vue;
-  const scripts = [root.moduleScript, ...root.additionalScripts].filter(
-    notEmpty,
-  );
+  /* Source order, as the html transformer did, keeps the mutant ids and the header block stable */
+  const scripts = [root.moduleScript, ...root.additionalScripts]
+    .filter(notEmpty)
+    .sort((a, b) => a.range.start - b.range.start);
   const { setup } = root;
 
   if (!setup) {

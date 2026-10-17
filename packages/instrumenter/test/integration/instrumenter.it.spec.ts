@@ -76,6 +76,9 @@ describe('instrumenter integration', () => {
   it('should be able to instrument a vue script setup with a bare withDefaults statement', async () => {
     await arrangeAndActAssert('vue-script-setup-bare-with-defaults.vue');
   });
+  it('should be able to instrument a vue script setup block that precedes the module script', async () => {
+    await arrangeAndActAssert('vue-script-setup-first.vue');
+  });
   it('should be able to instrument a vue script setup sample with a module script', async () => {
     await arrangeAndActAssert('vue-script-setup-and-module-script.vue');
   });

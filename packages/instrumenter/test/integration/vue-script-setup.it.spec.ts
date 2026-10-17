@@ -22,6 +22,7 @@ const scriptSetupFixtures = Object.freeze([
   'vue-script-setup-bare-define-props.vue',
   'vue-script-setup-bare-define-emits.vue',
   'vue-script-setup-bare-with-defaults.vue',
+  'vue-script-setup-first.vue',
 ]);
 
 describe('vue script setup integration', () => {
@@ -102,6 +103,29 @@ describe('vue script setup integration', () => {
       });
     }
   }
+
+  it('should instrument vue-script-setup-first.vue byte for byte like the html parser would', async () => {
+    const fixture = resolveTestResource(
+      'instrumenter',
+      'vue-script-setup-first.vue',
+    );
+    const content = await fsPromises.readFile(fixture, 'utf-8');
+    const asHtml = fixture.replace(/\.vue$/, '.html');
+
+    const vueResult = await sut.instrument(
+      [{ name: fixture, mutate: true, content }],
+      createInstrumenterOptions(),
+    );
+    const htmlResult = await sut.instrument(
+      [{ name: asHtml, mutate: true, content }],
+      createInstrumenterOptions(),
+    );
+
+    expect(vueResult.files[0].content).eq(htmlResult.files[0].content);
+    expect(
+      vueResult.mutants.map(({ id, location }) => ({ id, location })),
+    ).deep.eq(htmlResult.mutants.map(({ id, location }) => ({ id, location })));
+  });
 
   async function instrument(fileName: string): Promise<string> {
     const name = resolveTestResource('instrumenter', fileName);
