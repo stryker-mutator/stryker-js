@@ -140,8 +140,8 @@ export function createMutable(overrides?: Partial<Mutable>): Mutable {
 }
 
 export function createSourceLocation(
-  overrides?: Partial<babel.types.SourceLocation>,
-): babel.types.SourceLocation {
+  overrides?: Partial<types.SourceLocation>,
+): types.SourceLocation {
   return {
     start: createSourcePosition({ line: 1, column: 0 }),
     end: createSourcePosition({ line: 1, column: 1 }),
@@ -151,7 +151,7 @@ export function createSourceLocation(
   };
 }
 
-export type SourcePosition = babel.types.SourceLocation['start'];
+export type SourcePosition = types.SourceLocation['start'];
 export function createSourcePosition(
   overrides?: Partial<SourcePosition>,
 ): SourcePosition {

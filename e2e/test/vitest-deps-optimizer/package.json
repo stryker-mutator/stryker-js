@@ -1,0 +1,16 @@
+{
+  "name": "vitest-deps-optimizer",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A module to perform an integration test with Vite's dependency optimizer on a cold cache",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rimraf \"reports\" \"node_modules/.vite\"",
+    "test": "npm run clean && stryker run && npm run verify",
+    "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
+    "test:unit": "vitest run"
+  },
+  "author": "",
+  "license": "ISC"
+}

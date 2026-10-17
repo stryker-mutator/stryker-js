@@ -1,5 +1,5 @@
 import { INSTRUMENTER_CONSTANTS as ID } from '@stryker-mutator/api/core';
-import babel from '@babel/core';
+import * as babel from '@babel/core';
 import { deepFreeze, I } from '@stryker-mutator/util';
 
 import { Mutant } from '../mutant.js';
@@ -20,7 +20,7 @@ const { types, traverse } = babel;
  */
 export const instrumentationBabelHeader = deepFreeze(
   // `globalThis` implementation is based on core-js's implementation. See https://github.com/stryker-mutator/stryker-js/issues/4035
-  babel.parse(
+  babel.parseSync(
     `function ${STRYKER_NAMESPACE_HELPER}(){
   var g = typeof globalThis === 'object' && globalThis && globalThis.Math === Math && globalThis || new Function("return this")();
   var ns = g.${ID.NAMESPACE} || (g.${ID.NAMESPACE} = {});
@@ -125,7 +125,7 @@ export function offsetLocations(
     }
   };
   traverse(file, {
-    enter(path) {
+    enter(path: babel.NodePath) {
       offsetNode(path.node);
     },
   });

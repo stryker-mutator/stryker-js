@@ -44,6 +44,4 @@ export interface SuccessTestResult extends BaseTestResult {
 }
 
 export type TestResult =
-  | FailedTestResult
-  | SkippedTestResult
-  | SuccessTestResult;
+  FailedTestResult | SkippedTestResult | SuccessTestResult;

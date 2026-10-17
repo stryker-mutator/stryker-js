@@ -39,7 +39,7 @@ describe(JasmineTestRunner.name, () => {
   beforeEach(() => {
     jasmineStub = sinon.createStubInstance(jasmine);
     jasmineEnvStub = createEnvStub();
-    jasmineStub.env = jasmineEnvStub as unknown as jasmine.Env;
+    jasmineStub.env = jasmineEnvStub;
     sinon.stub(helpers, 'createJasmine').returns(jasmineStub);
     clock = sinon.useFakeTimers();
     fakeTick = createFakeTick(clock);

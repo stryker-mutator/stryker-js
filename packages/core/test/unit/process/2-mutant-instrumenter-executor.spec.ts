@@ -14,7 +14,6 @@ import { PluginKind } from '@stryker-mutator/api/plugin';
 
 import {
   DryRunContext,
-  MutantInstrumenterContext,
   MutantInstrumenterExecutor,
 } from '../../../src/process/index.js';
 import { Project } from '../../../src/fs/index.js';
@@ -82,7 +81,7 @@ describe(MutantInstrumenterExecutor.name, () => {
     >;
     pluginCreatorMock = sinon.createStubInstance(PluginCreator);
     sut = new MutantInstrumenterExecutor(
-      injectorMock as Injector<MutantInstrumenterContext>,
+      injectorMock,
       project,
       testInjector.options,
       pluginCreatorMock,

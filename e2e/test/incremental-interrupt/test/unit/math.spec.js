@@ -7,7 +7,9 @@ import path from 'path';
 describe('Math', function () {
   beforeEach(async () => {
     while (
-      fs.existsSync(path.join(os.tmpdir(), 'STRYKER_HAS_BEEN_INTERRUPTED_F32dSD'))
+      fs.existsSync(
+        path.join(os.tmpdir(), 'STRYKER_HAS_BEEN_INTERRUPTED_F32dSD'),
+      )
     ) {
       // Sleep so Stryker has a chance to handle the signal
       await setTimeout(100);

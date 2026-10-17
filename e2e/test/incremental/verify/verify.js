@@ -61,9 +61,9 @@ describe('incremental', () => {
         tempDirName: 'stryker-tmp',
       },
     ],
+    ['vitest', reuseCountExpectation.withFullTestResults],
 
     ['mocha', reuseCountExpectation.withoutTestLocations],
-    ['vitest', reuseCountExpectation.withoutTestLocations],
 
     [
       'tap',

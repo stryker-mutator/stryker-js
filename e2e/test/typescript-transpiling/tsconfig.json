@@ -3,12 +3,7 @@
     "target": "es2017",
     "module": "NodeNext",
     "outDir": "dist",
-    "types": [
-      "mocha"
-    ]
+    "types": ["mocha"]
   },
-  "include": [
-    "src",
-    "test",
-  ]
+  "include": ["src", "test"]
 }

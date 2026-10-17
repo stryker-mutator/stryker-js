@@ -17,12 +17,8 @@
         "${workspaceFolder}/dist/test/unit/**/*.js"
       ],
       "internalConsoleOptions": "openOnSessionStart",
-      "outFiles": [
-        "${workspaceRoot}/dist/**/*.js"
-      ],
-      "skipFiles": [
-        "<node_internals>/**"
-      ]
+      "outFiles": ["${workspaceRoot}/dist/**/*.js"],
+      "skipFiles": ["<node_internals>/**"]
     },
     {
       "type": "node",
@@ -37,12 +33,8 @@
         "${workspaceFolder}/dist/test/integration/**/*.js"
       ],
       "internalConsoleOptions": "openOnSessionStart",
-      "outFiles": [
-        "${workspaceRoot}/dist/**/*.js"
-      ],
-      "skipFiles": [
-        "<node_internals>/**"
-      ]
+      "outFiles": ["${workspaceRoot}/dist/**/*.js"],
+      "skipFiles": ["<node_internals>/**"]
     }
   ]
 }

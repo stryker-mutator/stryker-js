@@ -62,6 +62,7 @@ The following options will be set by Stryker and cannot be overridden:
 {
   threads: true,
   coverage: { enabled: false },
+  includeTaskLocation: true,
   singleThread: true,
   watch: false,
   bail: options.disableBail ? 0 : 1,
@@ -70,12 +71,15 @@ The following options will be set by Stryker and cannot be overridden:
 ```
 
 As you can see, the vitest runner:
+
 - Will run your tests in a **single thread**  
   This is done because StrykerJS uses it's own [parallel workers](./parallel-workers.md).
 - Will **bail** on the first test failure (unless you set `disableBail` to `true`).  
   This is done to boost performance.
 - Will **disable code coverage reporting**  
   This is done because StrykerJS uses it's own [coverage analysis](./configuration.md#coverageanalysis-string), which _is_ supported.
+- Will **report the location of each test**  
+  This is done so [incremental mode](./incremental.md) can tell which tests changed.
 
 ## In-source testing
 
@@ -87,8 +91,8 @@ For example, you can add the Stryker disable comment (`// Stryker disable all`) 
  export function add(...args: number[]) {
    return args.reduce((a, b) => a + b, 0)
  }
- 
- 
+
+
  // in-source test suites
 +// Stryker disable all: Unit tests start here
  if (import.meta.vitest) {
@@ -98,7 +102,6 @@ For example, you can add the Stryker disable comment (`// Stryker disable all`) 
    })
  }
 ```
-
 
 ## Limitations
 

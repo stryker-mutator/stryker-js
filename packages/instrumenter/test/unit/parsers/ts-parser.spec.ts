@@ -24,6 +24,13 @@ describe(parseTS.name, () => {
     expectAst(root, (p) => p.isTSTypeAnnotation());
   });
 
+  it('should parse a .ts file as typescript instead of tsx', async () => {
+    // This is invalid in TSX, but valid in TS
+    const { format, root } = await parseTS('const a = <T>() => {};', 'file.ts');
+    expect(format).eq(AstFormat.TS);
+    expectAst(root, (p) => p.isArrowFunctionExpression());
+  });
+
   it('should allow for experimentalDecorators', async () => {
     await arrangeAndAssert(
       "@Component({ selector: 'auto-complete'}) class A {}",

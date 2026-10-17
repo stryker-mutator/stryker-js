@@ -1,4 +1,4 @@
-import babel from '@babel/core';
+import * as babel from '@babel/core';
 
 import { deepCloneNode } from '../util/index.js';
 

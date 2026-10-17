@@ -15,7 +15,7 @@ section#catalogus {
     box-sizing: border-box;
 
     &:first-child,
-    &:nth-child(4n+1) {
+    &:nth-child(4n + 1) {
       padding-left: 0;
     }
     &:nth-child(4n) {
@@ -23,15 +23,15 @@ section#catalogus {
     }
   }
 }
-@media only screen and (max-width : $break-tablet) {
+@media only screen and (max-width: $break-tablet) {
   section#catalogus {
     .artikel {
       flex-basis: 33.33333%;
 
-      &:nth-child(4n+1) {
+      &:nth-child(4n + 1) {
         padding-left: $article-padding;
       }
-      &:nth-child(3n+1) {
+      &:nth-child(3n + 1) {
         padding-left: 0;
       }
       &:nth-child(4n) {
@@ -43,7 +43,7 @@ section#catalogus {
     }
   }
 }
-@media only screen and (max-width : $break-mobile) {
+@media only screen and (max-width: $break-mobile) {
   section#catalogus {
     .artikel {
       flex-basis: 100%;

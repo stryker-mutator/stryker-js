@@ -140,6 +140,7 @@ export class MutationTestReportHelper {
           status: 'Killed',
           testsCompleted: result.nrOfTests,
           killedBy: result.killedBy,
+          duration: result.duration,
           statusReason: result.failureMessage,
           location,
         });
@@ -148,6 +149,7 @@ export class MutationTestReportHelper {
           ...mutant,
           status: 'Timeout',
           statusReason: result.reason,
+          duration: result.duration,
           location,
         });
       case MutantRunStatus.Survived:
@@ -155,6 +157,7 @@ export class MutationTestReportHelper {
           ...mutant,
           status: 'Survived',
           testsCompleted: result.nrOfTests,
+          duration: result.duration,
           location,
         });
     }

@@ -15,7 +15,7 @@ module.exports = {
       'SwitchCase',
       'WhileStatement',
       'ObjectLiteral',
-      'ArrowFunctionMutator'
-    ]
-  }
-}
+      'ArrowFunctionMutator',
+    ],
+  },
+};

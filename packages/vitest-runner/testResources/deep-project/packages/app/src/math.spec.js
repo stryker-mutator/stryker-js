@@ -1,4 +1,4 @@
-import {  add } from './math.js';
+import { add } from './math.js';
 import { expect, test, describe } from 'vitest';
 
 describe('math', () => {

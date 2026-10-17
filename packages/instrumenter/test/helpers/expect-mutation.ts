@@ -1,4 +1,4 @@
-import babel from '@babel/core';
+import * as babel from '@babel/core';
 import { parse, ParserPlugin } from '@babel/parser';
 import generator from '@babel/generator';
 import { expect } from 'chai';
@@ -6,32 +6,17 @@ import { expect } from 'chai';
 import { NodeMutator } from '../../src/mutators/node-mutator.js';
 import type { NodeMutatorContext } from '../../src/mutators/node-mutator.js';
 
-const generate = generator.default;
-
 const plugins = [
   'doExpressions',
-  'objectRestSpread',
-  'classProperties',
   'exportDefaultFrom',
-  'exportNamespaceFrom',
-  'asyncGenerators',
   'functionBind',
   'functionSent',
-  'dynamicImport',
-  'numericSeparator',
   'importMeta',
-  'optionalCatchBinding',
-  'optionalChaining',
-  'classPrivateProperties',
-  ['pipelineOperator', { proposal: 'minimal' }],
-  'nullishCoalescingOperator',
-  'bigInt',
+  ['pipelineOperator', { proposal: 'fsharp' }],
   'throwExpressions',
-  'logicalAssignment',
-  'classPrivateMethods',
   'v8intrinsic',
   'partialApplication',
-  ['decorators', { decoratorsBeforeExport: false }],
+  'decorators',
   'jsx',
   'typescript',
 ] as ParserPlugin[];
@@ -52,9 +37,9 @@ export function expectJSMutation(
   const originalNodeSet = nodeSet(ast);
 
   babel.traverse(ast, {
-    enter(path) {
+    enter(path: babel.NodePath) {
       for (const replacement of sut.mutate(path, nodeMutatorContext)) {
-        const mutatedCode = generate(replacement).code;
+        const mutatedCode = generator(replacement).code;
         const beforeMutatedCode = originalCode.substring(
           0,
           path.node.start ?? 0,
@@ -67,7 +52,7 @@ export function expectJSMutation(
           if (originalNodeSet.has(replacementNode)) {
             expect.fail(
               `Mutated ${replacementNode.type} node \`${
-                generate(replacementNode).code
+                generator(replacementNode).code
               }\` was found in the original AST. Please be sure to deep clone it (using \`cloneNode(ast, true)\`)`,
             );
           }
@@ -83,12 +68,12 @@ export function expectJSMutation(
   expect(mutants).to.deep.equal(expectedReplacements);
 }
 
-function nodeSet(ast: babel.Node, parentPath?: babel.NodePath) {
-  const set = new Set<babel.Node>();
+function nodeSet(ast: babel.types.Node, parentPath?: babel.NodePath) {
+  const set = new Set<babel.types.Node>();
   babel.traverse(
     ast,
     {
-      enter(path) {
+      enter(path: babel.NodePath) {
         set.add(path.node);
       },
     },

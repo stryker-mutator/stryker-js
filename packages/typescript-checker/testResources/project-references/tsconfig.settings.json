@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
     "strict": true,
-    "target": "es5",
-    "moduleResolution": "node",
+    "target": "es2020",
     "module": "commonjs",
     "composite": true,
     "declaration": true,

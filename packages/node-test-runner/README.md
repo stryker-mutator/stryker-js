@@ -36,11 +36,11 @@ Configure the `testRunner` setting and (optionally) the test file globs:
 }
 ```
 
-| Option        | Description                                                                                                                                            | Default                                                  |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| `testFiles`   | Glob expressions to the test files to run.                                                                                                            | `["**/*.@(test\|spec).@(js\|mjs\|cjs)", "**/test/**/*.@(js\|mjs\|cjs)"]` |
-| `concurrency` | Run tests concurrently within a mutant run (the dry run is always serialized so perTest coverage can't race). Leave `false` if your tests share global state (e.g. global mocks), or concurrent runs may race and give incorrect results. | `false`                                                  |
-| `nodeArgs`    | Extra Node.js arguments for the test process, e.g. `["--experimental-strip-types"]` for TypeScript or `["--import", "tsx"]` for a loader.             | `[]`                                                     |
+| Option        | Description                                                                                                                                                                                                                               | Default                                                                  |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `testFiles`   | Glob expressions to the test files to run.                                                                                                                                                                                                | `["**/*.@(test\|spec).@(js\|mjs\|cjs)", "**/test/**/*.@(js\|mjs\|cjs)"]` |
+| `concurrency` | Run tests concurrently within a mutant run (the dry run is always serialized so perTest coverage can't race). Leave `false` if your tests share global state (e.g. global mocks), or concurrent runs may race and give incorrect results. | `false`                                                                  |
+| `nodeArgs`    | Extra Node.js arguments for the test process, e.g. `["--experimental-strip-types"]` for TypeScript or `["--import", "tsx"]` for a loader.                                                                                                 | `[]`                                                                     |
 
 ## How it works
 
@@ -72,8 +72,8 @@ Configure the `testRunner` setting and (optionally) the test file globs:
   genuinely needs per-file process isolation, use `@stryker-mutator/tap-runner` instead.
 - Mutant-level test selection is file-granular: a covering test pulls in its whole file. (Test ids
   encode the file, so cross-file name collisions are handled correctly — only two identically-named
-  tests in the *same* file share a coverage entry, which is cosmetic.)
-- A `test()` block that *wraps subtests* is reported as a test in its own right, in addition to each
+  tests in the _same_ file share a coverage entry, which is cosmetic.)
+- A `test()` block that _wraps subtests_ is reported as a test in its own right, in addition to each
   subtest, because `node:test` exposes no way to tell such a parent apart from a leaf. Grouping with
   `describe`/`it` avoids this — the suite block itself is recognized and not counted as a test.
 - Requires Node.js >= 22.8.0 (when `run({ isolation: 'none' })` became available). The runner throws
@@ -87,7 +87,7 @@ Configure the `testRunner` setting and (optionally) the test file globs:
   report. On a **mutant run** a non-zero exit code is treated as a **kill** — the clean baseline never
   exits abnormally, so the mutant must have caused it (the same way the command runner reads a
   non-zero exit as a failing test). A zero exit code stays an **errored** run, because an early
-  *success* exit is ambiguous and must not be scored as a (false) kill. On a **dry run** any such exit
+  _success_ exit is ambiguous and must not be scored as a (false) kill. On a **dry run** any such exit
   is always an error (the baseline is expected to complete cleanly).
 - Coverage produced inside a **file-top-level** `afterEach` (one registered outside any `describe`)
   is attributed to `static` rather than the test that just ran, because the runner's own cleanup

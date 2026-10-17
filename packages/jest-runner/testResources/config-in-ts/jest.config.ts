@@ -1,7 +1,7 @@
-import type {Config} from 'jest';
+import type { Config } from 'jest';
 
 const config: Config = {
-  displayName: 'jest.config.ts example'
+  displayName: 'jest.config.ts example',
 };
 
 export default config;

@@ -2,7 +2,6 @@ import { getRegistry } from '../../../src/initializer/npm-registry.js';
 import { expect } from 'chai';
 import { testInjector } from '@stryker-mutator/test-helpers';
 import sinon from 'sinon';
-import { execaCommandSync } from 'execa';
 
 const DEFAULT_REGISTRY = 'https://registry.npmjs.com';
 
@@ -48,14 +47,11 @@ describe('npm registry', () => {
       const expectedRegistry = 'http://my.custom.npm.registry.stryker';
       const execaCommandSyncMock = sinon.spy((_command, _options) => ({
         stdout: expectedRegistry,
-      }));
+      })) as sinon.SinonSpy;
       process.env.npm_config_registry = '';
       process.env.npm_command = '';
 
-      const registry = getRegistry(
-        testInjector.logger,
-        execaCommandSyncMock as unknown as typeof execaCommandSync,
-      );
+      const registry = getRegistry(testInjector.logger, execaCommandSyncMock);
 
       sinon.assert.calledOnceWithExactly(
         execaCommandSyncMock,
@@ -72,15 +68,12 @@ describe('npm registry', () => {
     it('should return default repository and warn the user if run with node command and execa command failed', () => {
       const execaCommandSyncMock = sinon.spy((_command, _options) => {
         throw new Error();
-      });
+      }) as sinon.SinonSpy;
 
       process.env.npm_config_registry = '';
       process.env.npm_command = '';
 
-      const registry = getRegistry(
-        testInjector.logger,
-        execaCommandSyncMock as unknown as typeof execaCommandSync,
-      );
+      const registry = getRegistry(testInjector.logger, execaCommandSyncMock);
 
       sinon.assert.calledOnceWithExactly(
         execaCommandSyncMock,

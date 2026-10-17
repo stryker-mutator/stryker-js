@@ -37,9 +37,9 @@ describe(MochaTestRunner.name, () => {
     mochaAdapterMock = sinon.createStubInstance(MochaAdapter);
     mochaOptionsLoaderMock = sinon.createStubInstance(MochaOptionsLoader);
     mocha = sinon.createStubInstance(Mocha) as any;
-    mocha.suite = sinon.createStubInstance(Mocha.Suite) as any;
+    mocha.suite = sinon.createStubInstance(Mocha.Suite);
     mocha.suite.suites = [];
-    mochaAdapterMock.create.returns(mocha as unknown as Mocha);
+    mochaAdapterMock.create.returns(mocha);
     testFileNames = [];
     mochaAdapterMock.collectFiles.returns(testFileNames);
   });
@@ -391,10 +391,11 @@ describe(MochaTestRunner.name, () => {
 
     it('should be able to report a killed mutant when a test fails', async () => {
       reporterMock.tests = [
-        factory.successTestResult(),
+        factory.successTestResult({ timeSpentMs: 10 }),
         factory.failedTestResult({
           id: 'foo should be bar',
           failureMessage: 'foo was baz',
+          timeSpentMs: 32,
         }),
       ];
       const result = await actMutantRun();
@@ -403,6 +404,7 @@ describe(MochaTestRunner.name, () => {
         killedBy: ['foo should be bar'],
         status: MutantRunStatus.Killed,
         nrOfTests: 2,
+        duration: 42,
       };
       expect(result).deep.eq(expectedResult);
     });

@@ -16,9 +16,17 @@ import { FactuurComponent } from './factuur/factuur.component';
 
 @NgModule({
   declarations: [
-    AppComponent, CatalogusComponent, CatalogusArtikelComponent, FooterComponent,
-    NavbarComponent, ShoppingCartComponent, ShoppingCartPageComponent, BestellingPlaatsenComponent,
-    KlantgegevensFormulierComponent, FactuurComponent],
+    AppComponent,
+    CatalogusComponent,
+    CatalogusArtikelComponent,
+    FooterComponent,
+    NavbarComponent,
+    ShoppingCartComponent,
+    ShoppingCartPageComponent,
+    BestellingPlaatsenComponent,
+    KlantgegevensFormulierComponent,
+    FactuurComponent,
+  ],
   imports: [
     BrowserModule,
     HttpClientModule,
@@ -27,7 +35,6 @@ import { FactuurComponent } from './factuur/factuur.component';
     ReactiveFormsModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule {
-}
+export class AppModule {}

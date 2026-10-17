@@ -1,4 +1,5 @@
-import babel, { type types } from '@babel/core';
+import * as babel from '@babel/core';
+import { type types } from '@babel/core';
 import generate from '@babel/generator';
 import {
   Mutant as ApiMutant,
@@ -10,7 +11,7 @@ import { deepCloneNode, eqNode } from './util/index.js';
 
 const { traverse } = babel;
 
-const generator = generate.default;
+const generator = generate;
 
 export interface Mutable {
   mutatorName: string;
@@ -64,7 +65,7 @@ export class Mutant implements Mutable {
       const { original, replacement } = this;
       traverse(mutatedAst, {
         noScope: true,
-        enter(path) {
+        enter(path: babel.NodePath) {
           if (eqNode(path.node, original)) {
             path.replaceWith(replacement);
             path.stop();

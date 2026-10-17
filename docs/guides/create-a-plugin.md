@@ -22,7 +22,7 @@ Each plugin has its own job to do. For inspiration, check out the [stryker monor
 
 Creating plugins is best done with typescript, which will help you immensely with type safety and intellisense.
 
-We provide the `@stryker-mutator/api` dependency on the types and basic helper functionality. You can install this as a dependency on your plugin. 
+We provide the `@stryker-mutator/api` dependency on the types and basic helper functionality. You can install this as a dependency on your plugin.
 
 ```shell
 npm install @stryker-mutator/api
@@ -31,23 +31,29 @@ npm install @stryker-mutator/api
 Next, you must create a class that _is the actual plugin_. For example:
 
 ```ts
-import { TestRunner, DryRunResult, DryRunOptions, MutantRunOptions, MutantRunResult } from '@stryker-mutator/api/test-runner';
+import {
+  TestRunner,
+  DryRunResult,
+  DryRunOptions,
+  MutantRunOptions,
+  MutantRunResult,
+} from '@stryker-mutator/api/test-runner';
 
 class FooTestRunner implements TestRunner {
   public init(): Promise<void> {
     // TODO: Implement or remove
   }
-  
+
   public dryRun(options: DryRunOptions): Promise<DryRunResult> {
-   // TODO: Implement
+    // TODO: Implement
   }
-  
+
   public mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
     // TODO: Implement
   }
-  
+
   public dispose(): Promise<void> {
-   // TODO: Implement or remove
+    // TODO: Implement or remove
   }
 }
 ```
@@ -58,8 +64,8 @@ After you've created your skeleton plugin, you're ready to declare it.
 
 ## Declaring your plugin
 
-To make your plugin known to Stryker, you should export the declaration of it. You can either declare it as a factory method or a class. 
-Stryker will implement your plugin at the right moment in the lifecycle. 
+To make your plugin known to Stryker, you should export the declaration of it. You can either declare it as a factory method or a class.
+Stryker will implement your plugin at the right moment in the lifecycle.
 
 A class example:
 
@@ -68,7 +74,9 @@ A class example:
 import FooTestRunner from './foo-test-runner';
 import { PluginKind, declareClassPlugin } from '@stryker-mutator/api/plugin';
 
-export const strykerPlugins = [declareClassPlugin(PluginKind.TestRunner, 'foo', FooTestRunner)];
+export const strykerPlugins = [
+  declareClassPlugin(PluginKind.TestRunner, 'foo', FooTestRunner),
+];
 ```
 
 A factory method example (useful when you want to inject additional values/classes into the DI system):
@@ -84,7 +92,9 @@ const createFooTestRunner = createFooTestRunnerFactory();
 
 export function createFooTestRunnerFactory() {
   fooTestRunnerFactory.inject = tokens(commonTokens.injector);
-  function fooTestRunnerFactory(injector: Injector<PluginContext>): FooTestRunner {
+  function fooTestRunnerFactory(
+    injector: Injector<PluginContext>,
+  ): FooTestRunner {
     return injector
       .provideValue(processEnvToken, process.env)
       .provideClass(configLoaderToken, FooTestRunnerConfigFileLoader)
@@ -93,7 +103,9 @@ export function createFooTestRunnerFactory() {
   return fooTestRunnerFactory;
 }
 
-export const strykerPlugins = [declareFactoryPlugin(PluginKind.TestRunner, 'foo', createFooTestRunner)];
+export const strykerPlugins = [
+  declareFactoryPlugin(PluginKind.TestRunner, 'foo', createFooTestRunner),
+];
 ```
 
 A value example (practical for simple plugins, like an [ignore-plugin](../disable-mutants.md#using-an-ignore-plugin))
@@ -102,19 +114,21 @@ A value example (practical for simple plugins, like an [ignore-plugin](../disabl
 // index.ts
 import { declareValuePlugin, PluginKind } from '@stryker-mutator/api/plugin';
 
-export const strykerPlugins = [declareValuePlugin(PluginKind.Ignore, 'console', {
-  shouldIgnore(path) {
-    if (
-      path.isExpressionStatement() &&
-      path.node.expression.type === 'CallExpression' &&
-      path.node.expression.callee.type === 'MemberExpression' &&
-      path.node.expression.callee.object.type === 'Identifier' &&
-      path.node.expression.callee.object.name === 'console'
-    ) {
-      return "We're not interested in testing `console.x` statements, see ADR 648.";
-    }
-  }
-})];
+export const strykerPlugins = [
+  declareValuePlugin(PluginKind.Ignore, 'console', {
+    shouldIgnore(path) {
+      if (
+        path.isExpressionStatement() &&
+        path.node.expression.type === 'CallExpression' &&
+        path.node.expression.callee.type === 'MemberExpression' &&
+        path.node.expression.callee.object.type === 'Identifier' &&
+        path.node.expression.callee.object.name === 'console'
+      ) {
+        return "We're not interested in testing `console.x` statements, see ADR 648.";
+      }
+    },
+  }),
+];
 ```
 
 Now you're ready to test out your plugin!
@@ -128,17 +142,17 @@ For example, when your test project resides next to your plugin implementation:
 ```js
 {
   // name of your test runner
-  "testRunner": "foo", 
+  "testRunner": "foo",
   // name of your checker
-  "checkers": ["bar"], 
+  "checkers": ["bar"],
   // name your reporter
-  "reporters": ["progress", "my-reporter"], 
+  "reporters": ["progress", "my-reporter"],
   // load your test runner, reporter or checker plugin here
-  "plugins": ["@stryker-mutator/*", "../my-plugin"], 
-  // useful for debugging your 
-  "concurrency": 1, 
+  "plugins": ["@stryker-mutator/*", "../my-plugin"],
+  // useful for debugging your
+  "concurrency": 1,
   // useful for debugging your test runner plugin
-  "testRunnerNodeArgs": ["--inspect"], 
+  "testRunnerNodeArgs": ["--inspect"],
   // useful for debugging your checker plugin
   "checkerNodeArgs": ["--inspect"]
 };
@@ -162,13 +176,20 @@ Stryker uses [typed-inject](https://github.com/nicojs/typed-inject#readme) as a 
 
 It would help to use this as your DI framework inside the plugin.
 
-Please take a look at this example below. 
+Please take a look at this example below.
 
 ```ts
 import { StrykerOptions } from '@stryker-mutator/api/core';
 import { Logger } from '@stryker-mutator/api/logging';
 import { commonTokens, PluginContext } from '@stryker-mutator/api/plugin';
-import { TestRunner, DryRunResult, DryRunOptions, MutantRunOptions, MutantRunResult, TestRunnerCapabilities } from '@stryker-mutator/api/test-runner';
+import {
+  TestRunner,
+  DryRunResult,
+  DryRunOptions,
+  MutantRunOptions,
+  MutantRunResult,
+  TestRunnerCapabilities,
+} from '@stryker-mutator/api/test-runner';
 import * as pluginTokens from './plugin-tokens';
 import FooTestRunnerConfigFileLoader from './foo-test-runner-config-file-loader';
 
@@ -177,15 +198,15 @@ export class FooTestRunner implements TestRunner {
     commonTokens.logger,
     commonTokens.options,
     pluginTokens.configLoader,
-    pluginTokens.processEnv
+    pluginTokens.processEnv,
   ] as const;
-  
+
   constructor(
     private readonly log: Logger,
     private readonly options: StrykerOptions,
     private readonly configLoader: FooTestRunnerConfigFileLoader,
     private readonly processEnvRef: NodeJS.ProcessEnv,
-  ) { }
+  ) {}
 
   public capabilities(): TestRunnerCapabilities {
     return { reloadEnvironment: false };
@@ -194,20 +215,19 @@ export class FooTestRunner implements TestRunner {
   public init(): Promise<void> {
     // TODO: Implement or remove
   }
-  
+
   public dryRun(options: DryRunOptions): Promise<DryRunResult> {
-   // TODO: Implement
+    // TODO: Implement
   }
-  
+
   public mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
     // TODO: Implement
   }
-  
+
   public dispose(): Promise<void> {
-   // TODO: Implement or remove
+    // TODO: Implement or remove
   }
 }
-
 
 export function fooTestRunnerFactory(injector: Injector<PluginContext>) {
   return injector
@@ -220,8 +240,8 @@ fooTestRunnerFactory.inject = [commonTokens.injector] as const;
 
 In this example, you can see that some tokens are loaded from `commonTokens` and some from `pluginTokens`.
 
-* `commonTokens`: These contain the tokens belonging to values Stryker itself provides.
-* `pluginTokens`: These are examples of tokens you can provide yourself in your plugin. The `fooTestRunnerFactory` factory method is an example of where the tokens are provided.
+- `commonTokens`: These contain the tokens belonging to values Stryker itself provides.
+- `pluginTokens`: These are examples of tokens you can provide yourself in your plugin. The `fooTestRunnerFactory` factory method is an example of where the tokens are provided.
 
 DI in this way is type-safe. When you declare your plugin, TypedInject will validate that you don't inject something that does not exist at runtime.
 
@@ -234,6 +254,7 @@ This chapter explains how StrykerJS works internally. It might be helpful for pl
 When you run Stryker on your project, Stryker will first load the files to be mutated. Then, it will mutate those files, placing _all mutations_ into the code simultaneously. But Stryker is smart about it.
 
 This:
+
 ```js
 function add(a, b) {
   return a + b;
@@ -241,6 +262,7 @@ function add(a, b) {
 ```
 
 Becomes (simplified):
+
 ```js
 function cover(id) {
   if (global.__stryker__.activeTest) {
@@ -297,17 +319,17 @@ mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
 A test runner should:
 
 1. Load the test environment
-1. Activate the mutant 
+1. Activate the mutant
 1. Run the filtered tests
-1. Report back the mutant result: either `Killed`, `Survived`, or `Timeout`. 
+1. Report back the mutant result: either `Killed`, `Survived`, or `Timeout`.
 
-This step is performed in parallel worker processes for speed benefits (depending on the configured `--concurrency`). 
+This step is performed in parallel worker processes for speed benefits (depending on the configured `--concurrency`).
 
 After that, Stryker is done, and an excellent mutation test report gets generated.
 
 #### A note on `capabilities` and `mutantActivation`
 
-Stryker relies on test runners to run mutants in quick succession, each time calling the `mutantRun` method. However, it might occur that Stryker needs to test a [static mutant](../../../mutation-testing-elements/static-mutants/) (when `--ignoreStatic` isn't enabled). In order to solve this: 
+Stryker relies on test runners to run mutants in quick succession, each time calling the `mutantRun` method. However, it might occur that Stryker needs to test a [static mutant](../../../mutation-testing-elements/static-mutants/) (when `--ignoreStatic` isn't enabled). In order to solve this:
 
 This pseudo code should help illustrate what needs to happen
 
@@ -346,6 +368,6 @@ capabilities(): {
 
 ## What's next?
 
-If you have a plugin that you think other users might be able to benefit from, or you need some help, please let us know on [Slack](https://join.slack.com/t/stryker-mutator/shared_invite/enQtOTUyMTYyNTg1NDQ0LTU4ODNmZDlmN2I3MmEyMTVhYjZlYmJkOThlNTY3NTM1M2QxYmM5YTM3ODQxYmJjY2YyYzllM2RkMmM1NjNjZjM). 
+If you have a plugin that you think other users might be able to benefit from, or you need some help, please let us know on [Slack](https://join.slack.com/t/stryker-mutator/shared_invite/enQtOTUyMTYyNTg1NDQ0LTU4ODNmZDlmN2I3MmEyMTVhYjZlYmJkOThlNTY3NTM1M2QxYmM5YTM3ODQxYmJjY2YyYzllM2RkMmM1NjNjZjM).
 
 We're always looking to promote user-created plugins 💗

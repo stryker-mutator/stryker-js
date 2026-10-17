@@ -1,2 +1,1 @@
-
 someGlobalVariableThatIsNotDeclared.someMethod('');

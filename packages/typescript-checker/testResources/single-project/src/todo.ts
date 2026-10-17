@@ -5,7 +5,11 @@ export interface ITodo {
 }
 
 class Todo implements ITodo {
-  constructor(public name: string, public description: string, public completed: boolean) { }
+  constructor(
+    public name: string,
+    public description: string,
+    public completed: boolean,
+  ) {}
 }
 
 export class TodoList {
@@ -20,4 +24,3 @@ export class TodoList {
     return TodoList.allTodos;
   }
 }
-

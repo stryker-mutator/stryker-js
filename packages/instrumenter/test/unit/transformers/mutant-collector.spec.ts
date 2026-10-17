@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import babel from '@babel/core';
+import * as babel from '@babel/core';
 
 import { Position } from '@stryker-mutator/api/core';
 

@@ -8,7 +8,7 @@ describe(InjectionError.name, () => {
       // idle
     }
     expect(new InjectionError([class Foo {}, bar, 'baz'], cause).message).eq(
-      'Could not inject [class Foo] -> [function bar] -> [token "baz"]. Cause: expected cause'
+      'Could not inject [class Foo] -> [function bar] -> [token "baz"]. Cause: expected cause',
     );
   });
 

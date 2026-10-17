@@ -14,12 +14,12 @@ describe('my-math', () => {
   it('should support simple addition', () => {
     sut.left = 42;
     sut.right = 0;
-    expect(sut.innerText).eq('42 + 0 = 42')
+    expect(sut.innerText).eq('42 + 0 = 42');
   });
   it('should support simple subtraction', () => {
     sut.left = 42;
     sut.right = 2;
     sut.operator = '-';
-    expect(sut.innerText).eq('42 - 2 = 40')
+    expect(sut.innerText).eq('42 - 2 = 40');
   });
 });

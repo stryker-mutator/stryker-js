@@ -1,5 +1,6 @@
 import { expect } from 'chai';
-import babel, { type NodePath } from '@babel/core';
+import * as babel from '@babel/core';
+import { type NodePath } from '@babel/core';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import generator from '@babel/generator';
 
@@ -12,7 +13,6 @@ import {
 import { Mutant } from '../../../src/mutant.js';
 import { createMutant } from '../../helpers/factories.js';
 
-const generate = generator.default;
 const { types } = babel;
 
 describe('expressionMutantPlacer', () => {
@@ -127,7 +127,6 @@ describe('expressionMutantPlacer', () => {
         const path = findNodePath(parseJS(js), query);
 
         (only ? it.only : it)(
-          // eslint-disable-next-line @typescript-eslint/no-base-to-string
           `should allow placing in \`${path.toString()}\` of \`${js}\``,
           () => {
             expect(expressionMutantPlacer.canPlace(path)).true;
@@ -178,7 +177,6 @@ describe('expressionMutantPlacer', () => {
         const path = findNodePath(parseTS(js), query);
 
         (only ? it.only : it)(
-          // eslint-disable-next-line @typescript-eslint/no-base-to-string
           `should not allow placing in \`${path.toString()}\` of \`${js}\``,
           () => {
             expect(expressionMutantPlacer.canPlace(path)).false;
@@ -195,7 +193,7 @@ describe('expressionMutantPlacer', () => {
 
       // Act
       expressionMutantPlacer.place(binaryExpression, appliedMutants);
-      const actualCode = normalizeWhitespaces(generate(ast).code);
+      const actualCode = normalizeWhitespaces(generator(ast).code);
 
       // Assert
       expect(actualCode).contains(
@@ -210,7 +208,7 @@ describe('expressionMutantPlacer', () => {
         ast,
         (p) => p.isConditionalExpression(),
       ).node.alternate;
-      const actualAlternativeCode = generate(actualAlternative).code;
+      const actualAlternativeCode = generator(actualAlternative).code;
       expect(
         actualAlternativeCode.endsWith('a + b'),
         `${actualAlternativeCode} did not end with "a + b"`,
@@ -224,7 +222,7 @@ describe('expressionMutantPlacer', () => {
         ast,
         (p) => p.isConditionalExpression(),
       ).node.alternate;
-      const actualAlternativeCode = generate(actualAlternative).code;
+      const actualAlternativeCode = generator(actualAlternative).code;
       const expected = 'stryCov_9fa48("1"), a + b';
       expect(
         actualAlternativeCode.startsWith(expected),
@@ -262,7 +260,7 @@ describe('expressionMutantPlacer', () => {
 
       // Act
       expressionMutantPlacer.place(binaryExpression, appliedMutants);
-      const actualCode = normalizeWhitespaces(generate(ast).code);
+      const actualCode = normalizeWhitespaces(generator(ast).code);
 
       // Assert
       expect(actualCode).contains(
@@ -311,7 +309,7 @@ describe('expressionMutantPlacer', () => {
 
         // Act
         expressionMutantPlacer.place(expression, appliedMutants);
-        const actualCode = normalizeWhitespaces(generate(ast).code);
+        const actualCode = normalizeWhitespaces(generator(ast).code);
 
         // Assert
         expect(actualCode).matches(expectedMatch);

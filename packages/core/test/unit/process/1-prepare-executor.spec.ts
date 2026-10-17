@@ -92,10 +92,7 @@ describe(PrepareExecutor.name, () => {
       .withArgs(ProjectReader)
       .returns(projectReaderMock);
     projectReaderMock.read.resolves(project);
-    sut = new PrepareExecutor(
-      injectorMock as Injector<PrepareExecutorContext>,
-      loggingBackendMock,
-    );
+    sut = new PrepareExecutor(injectorMock, loggingBackendMock);
   });
 
   it('should provide the cliOptions to the config reader', async () => {

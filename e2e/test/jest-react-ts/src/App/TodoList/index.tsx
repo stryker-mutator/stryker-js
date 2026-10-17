@@ -1,19 +1,24 @@
-import React, { ReactElement } from 'react'
-import { Routes, Todo, AppState } from '../../index'
-import Item from './Item'
-import { useAppState } from '@laststance/use-app-state'
-import { Container } from './style'
+import React, { ReactElement } from 'react';
+import { Routes, Todo, AppState } from '../../index';
+import Item from './Item';
+import { useAppState } from '@laststance/use-app-state';
+import { Container } from './style';
 
 interface Props {
-  path: Routes
+  path: Routes;
 }
 
 const TodoList: React.FC<Props> = ({ path }) => {
-  const [appState, setAppState] = useAppState<AppState>()
+  const [appState, setAppState] = useAppState<AppState>();
 
-  function toggleAllCheckbox(e: React.ChangeEvent<HTMLInputElement>): void { 
+  function toggleAllCheckbox(e: React.ChangeEvent<HTMLInputElement>): void {
     // reverse all todo.completed: boolean flag
-    setAppState({ todoList: appState.todoList.map((t: Todo): Todo => ({ ...t, completed: e.target.checked })) })
+    setAppState({
+      todoList: appState.todoList.map((t: Todo): Todo => ({
+        ...t,
+        completed: e.target.checked,
+      })),
+    });
   }
 
   return (
@@ -33,24 +38,22 @@ const TodoList: React.FC<Props> = ({ path }) => {
             .filter((t: Todo): boolean => {
               switch (path) {
                 case '/':
-                  return true
+                  return true;
                 case '/active':
-                  return t.completed === false
+                  return t.completed === false;
                 case '/completed':
-                  return t.completed === true
+                  return t.completed === true;
                 default:
-                  return true
+                  return true;
               }
             })
-            .map(
-              (t: Todo): ReactElement => {
-                return <Item key={t.id} todo={t} />
-              }
-            )}
+            .map((t: Todo): ReactElement => {
+              return <Item key={t.id} todo={t} />;
+            })}
         </ul>
       </section>
     </Container>
-  )
-}
+  );
+};
 
-export default TodoList
+export default TodoList;

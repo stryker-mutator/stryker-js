@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [10.0.0](https://github.com/stryker-mutator/stryker-js/compare/v9.6.1...v10.0.0) (2026-08-14)
+
+### Bug Fixes
+
+- **deps:** update dependency ajv to v8.20.0 ([#5992](https://github.com/stryker-mutator/stryker-js/issues/5992)) ([0ead8ce](https://github.com/stryker-mutator/stryker-js/commit/0ead8cef6cdb1b89ab617096c3af4c02fa995054))
+- **deps:** update mutation-testing-elements monorepo to v3.8.0 ([#6095](https://github.com/stryker-mutator/stryker-js/issues/6095)) ([d62fd75](https://github.com/stryker-mutator/stryker-js/commit/d62fd7518c7d5697801afc093578dd30d8dad835))
+- **deps:** update mutation-testing-elements monorepo to v3.8.4 ([#6118](https://github.com/stryker-mutator/stryker-js/issues/6118)) ([29ede69](https://github.com/stryker-mutator/stryker-js/commit/29ede696a930a99869c2d3366f94ba7cd323fe60))
+
 ## [9.6.1](https://github.com/stryker-mutator/stryker-js/compare/v9.6.0...v9.6.1) (2026-04-10)
 
 ### Bug Fixes

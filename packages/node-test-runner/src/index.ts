@@ -17,6 +17,7 @@ export {
   createNodeTestRunnerFactory,
 } from './node-test-test-runner.js';
 
+// import attributes (`with { type: 'json' }`) need tsconfig.settings.json "module" node18+ (currently Node16)
 export const strykerValidationSchema: typeof import('../schema/node-test-runner-options.json') =
   JSON.parse(
     fs.readFileSync(

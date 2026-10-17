@@ -1,4 +1,5 @@
 node_modules
+.pnpm-store
 lerna-debug.log
 npm-debug.log
 stryker.log

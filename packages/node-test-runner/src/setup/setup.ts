@@ -6,7 +6,7 @@ import { FILE_MARKER, toTestId } from '../test-id.js';
 const nsOf = (): { currentTestId?: string } => {
   const g = globalThis as Record<string, unknown>;
   const nsName = (g.__STRYKER_NS__ as string | undefined) ?? '__stryker__';
-  return (g[nsName] ??= {}) as { currentTestId?: string };
+  return (g[nsName] ??= {});
 };
 
 beforeEach((t) => {

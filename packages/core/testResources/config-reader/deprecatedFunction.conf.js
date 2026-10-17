@@ -1,8 +1,8 @@
-module.exports = function(config){
+module.exports = function (config) {
   config.set({
-    'valid': 'config',
-    'should': 'be',
-    'read': true,
-    'type': 'js'
+    valid: 'config',
+    should: 'be',
+    read: true,
+    type: 'js',
   });
 };

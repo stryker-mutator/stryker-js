@@ -4,12 +4,7 @@
     "outDir": "dist",
     "rootDir": "."
   },
-  "include": [
-    "schema/*.json",
-    "src",
-    "src-generated",
-    "typings"
-  ],
+  "include": ["schema/*.json", "src", "src-generated", "typings"],
   "references": [
     {
       "path": "../api/tsconfig.src.json"

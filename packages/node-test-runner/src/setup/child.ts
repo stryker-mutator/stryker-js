@@ -60,10 +60,9 @@ process.once('message', (config: ChildConfig) => {
   try {
     const stream = run({
       files: [setupFile, ...testFiles],
-      // `isolation`/`concurrency` are valid run() options; cast for older defs.
       isolation: 'none',
       concurrency,
-    } as Parameters<typeof run>[0]);
+    });
 
     // a test's file marker is the event right after it, so hold each test for one event
     let pending: { test: ReportedTest; hitCount?: number } | undefined;

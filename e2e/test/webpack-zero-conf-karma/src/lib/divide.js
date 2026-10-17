@@ -1,3 +1,3 @@
-window.divide = function(number) {
-    return number / number;
-}
+window.divide = function (number) {
+  return number / number;
+};

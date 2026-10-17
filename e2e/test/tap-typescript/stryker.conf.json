@@ -7,7 +7,5 @@
   "tap": {
     "nodeArgs": ["--import", "tsx"]
   },
-  "plugins": [
-    "@stryker-mutator/tap-runner"
-  ]
+  "plugins": ["@stryker-mutator/tap-runner"]
 }

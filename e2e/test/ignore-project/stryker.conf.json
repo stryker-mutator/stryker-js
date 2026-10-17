@@ -6,16 +6,11 @@
   "mutator": {
     "excludedMutations": ["ArithmeticOperator", "BlockStatement"]
   },
-  "reporters": [
-    "clear-text",
-    "html",
-    "json",
-    "event-recorder"
-  ],
+  "reporters": ["clear-text", "html", "json", "event-recorder"],
   "ignorers": ["ConsoleIgnorer"],
   "plugins": [
     "@stryker-mutator/mocha-runner",
-    "./stryker-plugins/ignorers/console-ignorer.js"
+    "./stryker-plugins/ignorers/console-ignorer.ts"
   ],
   "allowConsoleColors": false
 }

@@ -106,8 +106,7 @@ export class NodeTestRunner implements TestRunner {
     options: StrykerOptions,
     private readonly log: Logger,
     private readonly globalNamespace:
-      | typeof INSTRUMENTER_CONSTANTS.NAMESPACE
-      | '__stryker2__',
+      typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__',
   ) {
     this.options = options as NodeTestRunnerOptionsWithStrykerOptions;
   }
@@ -126,6 +125,7 @@ export class NodeTestRunner implements TestRunner {
       ignore: '**/node_modules/**',
       posix: true,
     });
+    // toSorted() is ES2023; switch to it once tsconfig.settings.json "lib" includes es2023 (currently es2022)
     this.testFiles = [...new Set(files)].sort();
     this.log.debug(
       `node-test runner discovered ${this.testFiles.length} test file(s)`,

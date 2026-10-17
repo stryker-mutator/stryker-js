@@ -7,7 +7,5 @@
   "checkCoverage": true,
   "reporter": "html",
   "reportDir": "reports/coverage",
-  "include": [
-    "dist/src/**/*.js"
-  ]
+  "include": ["dist/src/**/*.js"]
 }

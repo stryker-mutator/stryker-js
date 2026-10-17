@@ -141,7 +141,7 @@ export class ConfigReader {
         );
       }
 
-      return { ...maybeOptions } as PartialStrykerOptions;
+      return { ...maybeOptions };
     } else {
       this.log.fatal(
         `Invalid config file. It is missing a default export. ${describeNamedExports()}\n${CONFIG_SYNTAX_HELP}`,

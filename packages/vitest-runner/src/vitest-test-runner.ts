@@ -144,6 +144,8 @@ export class VitestTestRunner implements TestRunner {
       config: this.options.vitest?.configFile,
       ...this.#getVitestPoolConfig(vitestWrapper.version),
       coverage: { enabled: false },
+      // Incremental mode diffs tests by location.
+      includeTaskLocation: true,
       maxConcurrency: 1,
       watch: false,
       dir: this.options.vitest.dir,

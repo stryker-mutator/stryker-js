@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 import { expect } from 'chai';
-import babel from '@babel/core';
+import * as babel from '@babel/core';
 import generator from '@babel/generator';
 import { normalizeWhitespaces } from '@stryker-mutator/util';
 import { MutateDescription } from '@stryker-mutator/api/core';
@@ -19,7 +19,6 @@ import { NodeMutator } from '../../../src/mutators/index.js';
 import { Mutable, Mutant } from '../../../src/mutant.js';
 import { createJSAst, createTSAst } from '../../helpers/factories.js';
 
-const generate = generator.default;
 const { types } = babel;
 
 /**
@@ -92,7 +91,7 @@ describe('babel-transformer', () => {
       expect(mutantCollector.mutants[0].mutatorName).eq('Foo');
       expect(mutantCollector.mutants[1].replacementCode).eq('bar - baz');
       expect(mutantCollector.mutants[1].mutatorName).eq('Plus');
-      expect(normalizeWhitespaces(generate(ast.root).code)).contains(
+      expect(normalizeWhitespaces(generator(ast.root).code)).contains(
         '{ bar = bar + baz; foo = bar - baz; foo = bar + baz; }',
       );
     });
@@ -102,7 +101,7 @@ describe('babel-transformer', () => {
         rawContent: 'foo((console.log(bar + baz), bar + baz));',
       });
       act(ast);
-      const { code } = generate(ast.root);
+      const { code } = generator(ast.root);
       expect(normalizeWhitespaces(code)).contains(
         normalizeWhitespaces(`{
         bar((console.log(bar + baz), bar + baz));
@@ -135,14 +134,14 @@ describe('babel-transformer', () => {
       const ast = createJSAst({ rawContent: 'foo = bar + baz;' });
       context.options.excludedMutations = ['Foo'];
       act(ast);
-      const result = normalizeWhitespaces(generate(ast.root).code);
+      const result = normalizeWhitespaces(generator(ast.root).code);
       expect(result).not.include('bar = bar + baz;');
     });
     it('should still place other mutants', () => {
       const ast = createJSAst({ rawContent: 'foo = bar + baz;' });
       context.options.excludedMutations = ['Foo'];
       act(ast);
-      const result = normalizeWhitespaces(generate(ast.root).code);
+      const result = normalizeWhitespaces(generator(ast.root).code);
       expect(result).include('foo = bar - baz');
     });
     it('should collect ignored mutants with correct ignore message', () => {
@@ -189,7 +188,7 @@ describe('babel-transformer', () => {
       act(ast);
       expect(mutantCollector.mutants).lengthOf(1);
       expect(mutantCollector.mutants[0].mutatorName).eq('FilterableFoo');
-      expect(normalizeWhitespaces(generate(ast.root).code)).contains(
+      expect(normalizeWhitespaces(generator(ast.root).code)).contains(
         'bar; foo;',
       );
     });
@@ -198,7 +197,9 @@ describe('babel-transformer', () => {
       filterResult = false;
       const ast = createJSAst({ rawContent: 'foo;' });
       act(ast);
-      expect(normalizeWhitespaces(generate(ast.root).code)).not.contain('bar;');
+      expect(normalizeWhitespaces(generator(ast.root).code)).not.contain(
+        'bar;',
+      );
     });
 
     it('should pass mutants from descendant nodes to the filter', () => {
@@ -251,7 +252,7 @@ describe('babel-transformer', () => {
       filterResult = false;
       const ast = createJSAst({ rawContent: 'foo + foo;' });
       act(ast);
-      const code = normalizeWhitespaces(generate(ast.root).code);
+      const code = normalizeWhitespaces(generator(ast.root).code);
       expect(code).contains('foo - foo');
       expect(code).not.contain('bar');
     });
@@ -304,7 +305,7 @@ describe('babel-transformer', () => {
 
       act(ast);
 
-      const code = normalizeWhitespaces(generate(ast.root).code);
+      const code = normalizeWhitespaces(generator(ast.root).code);
       expect(code).contains('bar');
       expect(code).not.contain('foo - foo');
       expect(removingSpyMutantCollector.removeCalls).lengthOf(1);
@@ -331,7 +332,7 @@ describe('babel-transformer', () => {
 
       act(ast);
 
-      const code = normalizeWhitespaces(generate(ast.root).code);
+      const code = normalizeWhitespaces(generator(ast.root).code);
       expect(code).contains('1 + (2 - 3)');
       expect(code).not.contain('1 - (2 + 3)');
     });

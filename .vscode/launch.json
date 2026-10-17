@@ -8,9 +8,7 @@
       "name": "🚀 Run current file",
       "program": "${file}",
       "request": "launch",
-      "skipFiles": [
-        "<node_internals>/**"
-      ],
+      "skipFiles": ["<node_internals>/**"],
       "runtimeArgs": ["--enable-source-maps"],
       "cwd": "${fileDirname}",
       "type": "node"
@@ -21,9 +19,7 @@
       "name": "🧲 Attach to Port",
       "address": "localhost",
       "port": 9229,
-      "skipFiles": [
-        "<node_internals>/**"
-      ]
+      "skipFiles": ["<node_internals>/**"]
     }
   ]
 }

@@ -3,29 +3,16 @@
     "target": "es2022",
     "esModuleInterop": true,
     "module": "commonjs",
-    "lib": [
-      "es2022",
-      "DOM"
-    ],
-    "types": [
-      "jest",
-      "node"
-    ],
+    "lib": ["es2022", "DOM"],
+    "types": ["jest", "node"],
     "strict": true,
     "skipLibCheck": true,
     "outDir": "dist"
   },
-  "include": [
-    "src",
-    "test"
-  ],
+  "include": ["src", "test"],
   // Example pulled from: https://kulshekhar.github.io/ts-jest/user/config/#example
   "paths": {
-    "@App/*": [
-      "src/*"
-    ],
-    "lib/*": [
-      "common/*"
-    ]
+    "@App/*": ["src/*"],
+    "lib/*": ["common/*"]
   }
 }

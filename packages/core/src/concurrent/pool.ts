@@ -29,6 +29,15 @@ export interface Resource extends Partial<Disposable> {
   init?(): Promise<void>;
 }
 
+export interface PoolOptions {
+  /**
+   * Let the first resource populate caches on disk that are shared between resources (e.g. Vite's dependency optimization cache),
+   * before the other resources are created. Initializing them concurrently on a cold cache makes them race each other while populating it.
+   * The first resource is already available for work while the others are initializing.
+   */
+  warmUpSharedCachesWithFirstResource?: boolean;
+}
+
 createTestRunnerPool.inject = tokens(
   coreTokens.testRunnerFactory,
   coreTokens.testRunnerConcurrencyTokens,
@@ -37,7 +46,9 @@ export function createTestRunnerPool(
   factory: () => TestRunnerResource,
   concurrencyToken$: Observable<number>,
 ): Pool<TestRunner> {
-  return new Pool(factory, concurrencyToken$);
+  return new Pool(factory, concurrencyToken$, {
+    warmUpSharedCachesWithFirstResource: true,
+  });
 }
 
 createCheckerPool.inject = tokens(
@@ -113,7 +124,11 @@ export class Pool<TResource extends Resource> implements Disposable {
     WorkItem<TResource, any, any>
   >();
 
-  constructor(factory: () => TResource, concurrencyToken$: Observable<number>) {
+  constructor(
+    factory: () => TResource,
+    concurrencyToken$: Observable<number>,
+    { warmUpSharedCachesWithFirstResource = false }: PoolOptions = {},
+  ) {
     // Stream resources that are ready to pick up work
     const resourcesSubject = new Subject<TResource>();
 
@@ -133,19 +148,33 @@ export class Pool<TResource extends Resource> implements Disposable {
         },
       });
 
+    const createResource = async () => {
+      if (this.disposedSubject.value) {
+        // Don't create new resources when disposed
+        return;
+      }
+      const resource = factory();
+      this.createdResources.push(resource);
+      await resource.init?.();
+      return resource;
+    };
+    let firstResource: Promise<TResource | undefined> | undefined;
+
     // Create resources
     concurrencyToken$
       .pipe(
         takeUntil(this.dispose$),
         mergeMap(async () => {
-          if (this.disposedSubject.value) {
-            // Don't create new resources when disposed
-            return;
+          if (!warmUpSharedCachesWithFirstResource) {
+            return createResource();
           }
-          const resource = factory();
-          this.createdResources.push(resource);
-          await resource.init?.();
-          return resource;
+          if (!firstResource) {
+            firstResource = createResource();
+            return firstResource;
+          }
+          // Wait for the first resource, so it can populate caches shared between resources (e.g. Vite's dependency optimization cache) without other resources racing it
+          await firstResource;
+          return createResource();
         }, MAX_CONCURRENT_INIT),
         filter(notEmpty),
         tap({

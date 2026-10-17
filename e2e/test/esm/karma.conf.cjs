@@ -1,7 +1,14 @@
 module.exports = function (config) {
   config.set({
     frameworks: ['jasmine', 'vite'],
-    files: [{ pattern: 'test/math.spec.js', type: 'module', watched: false, served: false }],
+    files: [
+      {
+        pattern: 'test/math.spec.js',
+        type: 'module',
+        watched: false,
+        served: false,
+      },
+    ],
     reporters: ['progress'],
     colors: true,
     autoWatch: false,

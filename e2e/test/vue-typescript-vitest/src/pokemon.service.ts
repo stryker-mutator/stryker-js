@@ -5,7 +5,7 @@ export interface Pokemon {
 
 export const pokemonService = {
   async getAll(): Promise<Pokemon[]> {
-    const resp = await fetch('/api/pokemon')
+    const resp = await fetch('/api/pokemon');
     return resp.json();
-  }
-}
+  },
+};

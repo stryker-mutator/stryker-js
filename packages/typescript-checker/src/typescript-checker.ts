@@ -23,6 +23,9 @@ import { toPosixFileName } from './tsconfig-helpers.js';
 import { TSFileNode } from './grouping/ts-file-node.js';
 import { TypescriptCheckerOptionsWithStrykerOptions } from './typescript-checker-options-with-stryker-options.js';
 import { HybridFileSystem } from './fs/hybrid-file-system.js';
+import { NativeFileSystem } from './ts-native/native-file-system.js';
+import { NativeTypescriptChecker } from './ts-native/native-typescript-checker.js';
+import { NativeTypescriptCompiler } from './ts-native/native-typescript-compiler.js';
 
 typescriptCheckerLoggerFactory.inject = tokens(
   commonTokens.getLogger,
@@ -43,13 +46,22 @@ function typescriptCheckerLoggerFactory(
 }
 
 create.inject = tokens(commonTokens.injector);
-export function create(injector: Injector<PluginContext>): TypescriptChecker {
-  return injector
-    .provideFactory(
-      commonTokens.logger,
-      typescriptCheckerLoggerFactory,
-      Scope.Transient,
-    )
+export function create(injector: Injector<PluginContext>): Checker {
+  const options = injector.resolve(
+    commonTokens.options,
+  ) as TypescriptCheckerOptionsWithStrykerOptions;
+  const checkerInjector = injector.provideFactory(
+    commonTokens.logger,
+    typescriptCheckerLoggerFactory,
+    Scope.Transient,
+  );
+  if (options.typescriptChecker?.experimentalNativePreview) {
+    return checkerInjector
+      .provideClass(pluginTokens.fs, NativeFileSystem)
+      .provideClass(pluginTokens.tsCompiler, NativeTypescriptCompiler)
+      .injectClass(NativeTypescriptChecker);
+  }
+  return checkerInjector
     .provideClass(pluginTokens.fs, HybridFileSystem)
     .provideClass(pluginTokens.tsCompiler, TypescriptCompiler)
     .injectClass(TypescriptChecker);

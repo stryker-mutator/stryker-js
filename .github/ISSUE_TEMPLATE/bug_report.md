@@ -4,7 +4,6 @@ about: Create a report to help us improve
 title: ''
 labels: "\U0001F41B Bug"
 assignees: ''
-
 ---
 
 **Summary**
@@ -16,8 +15,7 @@ assignees: ''
 <!--- Please place your stryker config below. Feel free to change paths in the files and mutate arrays if you cannot share them. -->
 
 ```json
-{
-}
+{}
 ```
 
 **Test runner config**
@@ -54,13 +52,13 @@ assignees: ''
 <!-- Please add any config files that are used by your test runner. For example jest.config.js, karma.conf.js, angular.json, mocha.opts, ...  -->
 
 ```json
-```
 
+```
 
 **Your Environment**
 
-| software         | version(s)
-| ---------------- | -------
+| software         | version(s) |
+| ---------------- | ---------- |
 | node             |
 | npm              |
 | Operating System |

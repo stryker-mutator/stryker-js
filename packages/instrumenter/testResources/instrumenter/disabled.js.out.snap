@@ -52,8 +52,8 @@ function factorial(num) {
     {}
   } else {
     stryCov_9fa48(\\"0\\");
-    if (stryMutAct_9fa48(\\"3\\") ? typeof num === 'number' : stryMutAct_9fa48(\\"2\\") ? false : stryMutAct_9fa48(\\"1\\") ? true : (stryCov_9fa48(\\"1\\", \\"2\\", \\"3\\"), typeof num !== (stryMutAct_9fa48(\\"4\\") ? \\"\\" : (stryCov_9fa48(\\"4\\"), 'number')))) throw new Error(stryMutAct_9fa48(\\"6\\") ? \\"\\" : (stryCov_9fa48(\\"6\\"), \\"Input must be a number.\\"));
-    if (stryMutAct_9fa48(\\"10\\") ? num >= 0 : stryMutAct_9fa48(\\"9\\") ? num <= 0 : stryMutAct_9fa48(\\"8\\") ? false : stryMutAct_9fa48(\\"7\\") ? true : (stryCov_9fa48(\\"7\\", \\"8\\", \\"9\\", \\"10\\"), num < 0)) throw new Error(stryMutAct_9fa48(\\"12\\") ? \\"\\" : (stryCov_9fa48(\\"12\\"), \\"Input must not be negative.\\"));
+    if (stryMutAct_9fa48(\\"3\\") ? typeof num === 'number' : stryMutAct_9fa48(\\"2\\") ? false : stryMutAct_9fa48(\\"1\\") ? true : (stryCov_9fa48(\\"1\\", \\"2\\", \\"3\\"), typeof num !== (stryMutAct_9fa48(\\"4\\") ? \\"\\" : (stryCov_9fa48(\\"4\\"), 'number')))) throw new Error(stryMutAct_9fa48(\\"6\\") ? \\"\\" : (stryCov_9fa48(\\"6\\"), 'Input must be a number.'));
+    if (stryMutAct_9fa48(\\"10\\") ? num >= 0 : stryMutAct_9fa48(\\"9\\") ? num <= 0 : stryMutAct_9fa48(\\"8\\") ? false : stryMutAct_9fa48(\\"7\\") ? true : (stryCov_9fa48(\\"7\\", \\"8\\", \\"9\\", \\"10\\"), num < 0)) throw new Error(stryMutAct_9fa48(\\"12\\") ? \\"\\" : (stryCov_9fa48(\\"12\\"), 'Input must not be negative.'));
     var i = 2,
       o = 1;
 
@@ -64,6 +64,5 @@ function factorial(num) {
     }
     return o;
   }
-}
-;"
+}"
 `;

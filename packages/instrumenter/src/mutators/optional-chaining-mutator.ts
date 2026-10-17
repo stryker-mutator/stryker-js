@@ -1,8 +1,6 @@
-import babel from '@babel/core';
+import { types as t } from '@babel/core';
 
 import { NodeMutator } from './index.js';
-
-const { types: t } = babel;
 
 /**
  * Mutates optional chaining operators
@@ -21,19 +19,34 @@ export const optionalChainingMutator: NodeMutator = {
 
   *mutate(path) {
     if (path.isOptionalMemberExpression() && path.node.optional) {
-      yield t.optionalMemberExpression(
-        t.cloneNode(path.node.object, true),
-        t.cloneNode(path.node.property, true),
-        path.node.computed,
-        /*optional*/ false,
-      );
+      const obj = t.cloneNode(path.node.object, true);
+      const prop = t.cloneNode(path.node.property, true);
+      if (isPartOfOptionalChain(path.node.object)) {
+        yield t.optionalMemberExpression(
+          obj,
+          prop,
+          path.node.computed,
+          /*optional*/ false,
+        );
+      } else {
+        yield t.memberExpression(obj, prop, path.node.computed);
+      }
     }
     if (path.isOptionalCallExpression() && path.node.optional) {
-      yield t.optionalCallExpression(
-        t.cloneNode(path.node.callee, true),
-        path.node.arguments.map((arg) => t.cloneNode(arg, true)),
-        /*optional*/ false,
-      );
+      const args = path.node.arguments.map((arg) => t.cloneNode(arg, true));
+      if (isPartOfOptionalChain(path.node.callee)) {
+        yield t.optionalCallExpression(
+          t.cloneNode(path.node.callee, true),
+          args,
+          /*optional*/ false,
+        );
+      } else {
+        yield t.callExpression(t.cloneNode(path.node.callee, true), args);
+      }
     }
   },
 };
+
+function isPartOfOptionalChain(exp: t.Expression) {
+  return t.isOptionalCallExpression(exp) || t.isOptionalMemberExpression(exp);
+}

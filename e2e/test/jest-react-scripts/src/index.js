@@ -5,11 +5,4 @@ import Alert from './Alert';
 import Fade from './Fade';
 import * as Util from 'util';
 
-export {
-  Alert,
-  Fade,
-  Breadcrumb,
-  BreadcrumbItem,
-  Badge,
-  Util
-};
+export { Alert, Fade, Breadcrumb, BreadcrumbItem, Badge, Util };

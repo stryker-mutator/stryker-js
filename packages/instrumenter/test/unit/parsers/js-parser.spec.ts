@@ -37,7 +37,7 @@ describe('js-parser', () => {
       itShouldSupportAst(
         'dynamic-import',
         'import("fs").then(console.log)',
-        (t) => t.isImport(),
+        (t) => t.isImportExpression(),
       );
       itShouldSupportAst('import-meta', 'console.log(import.meta);', (t) =>
         t.isMetaProperty(),

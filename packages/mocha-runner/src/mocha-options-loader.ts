@@ -37,7 +37,7 @@ export class MochaOptionsLoader {
   constructor(private readonly log: Logger) {}
 
   public load(strykerOptions: MochaRunnerWithStrykerOptions): MochaOptions {
-    const mochaOptions = { ...strykerOptions.mochaOptions } as MochaOptions;
+    const mochaOptions = { ...strykerOptions.mochaOptions };
     const options = {
       ...DEFAULT_MOCHA_OPTIONS,
       ...this.loadMochaOptions(mochaOptions),
@@ -145,10 +145,8 @@ export class MochaOptionsLoader {
           case '-u':
             mochaRunnerOptions.ui =
               (this.parseNextString(args) as
-                | 'bdd'
-                | 'exports'
-                | 'qunit'
-                | 'tdd') ?? DEFAULT_MOCHA_OPTIONS.ui!;
+                'bdd' | 'exports' | 'qunit' | 'tdd') ??
+              DEFAULT_MOCHA_OPTIONS.ui!;
             break;
           case '--grep':
           case '-g': {

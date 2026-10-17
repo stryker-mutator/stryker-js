@@ -1,10 +1,10 @@
-import test from "node:test";
-import assert from "node:assert/strict";
+import test from 'node:test';
+import assert from 'node:assert/strict';
 
-test("a fails fast", () => {
+test('a fails fast', () => {
   assert.equal(1, 2);
 });
 
-test("b is slow", async () => {
+test('b is slow', async () => {
   await new Promise((resolve) => setTimeout(resolve, 3000));
 });

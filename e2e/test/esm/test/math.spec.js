@@ -11,5 +11,5 @@ describe('lib', () => {
   it('should result in 1 when inc 0', () => {
     inc(0);
     // Forget the expect 🙄 should survive
-  })
+  });
 });
