@@ -11,6 +11,8 @@ const nsOf = (): { currentTestId?: string } => {
 
 // ids of the tests still running around the current one (a parent awaiting its subtest)
 const enclosing: Array<string | undefined> = [];
+// how often each id came up, to tell apart tests with the same full name in one file
+const seen = new Map<string, number>();
 
 // Called right after run(), so the hooks land on its root. Listing a hook-only file in
 // run({ files }) instead adds a placeholder test, which runs the user's root hooks too.
@@ -26,7 +28,13 @@ export function registerHooks(): void {
       ? path.relative(process.cwd(), filePath).split(path.sep).join('/')
       : '';
     // fullName ("suite > test") keeps equally-named tests in different suites apart
-    const id = toTestId(file, (t as { fullName?: string }).fullName ?? t.name);
+    const base = toTestId(
+      file,
+      (t as { fullName?: string }).fullName ?? t.name,
+    );
+    const n = (seen.get(base) ?? 0) + 1;
+    seen.set(base, n);
+    const id = n === 1 ? base : `${base} (${n})`;
     enclosing.push(ns.currentTestId);
     ns.currentTestId = id;
     // events report where test() was called, which differs when a helper declares it

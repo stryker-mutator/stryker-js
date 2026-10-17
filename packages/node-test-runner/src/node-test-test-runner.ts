@@ -39,6 +39,7 @@ import { isSupportedNodeVersion, MIN_NODE_VERSION } from './node-version.js';
 const moduleDir = path.dirname(fileURLToPath(import.meta.url));
 const CHILD_FILE = path.resolve(moduleDir, 'setup', 'child.js');
 const OUTPUT_TAIL_LIMIT = 8192;
+const EXIT_GRACE_MS = 1000;
 
 interface ReportedTest {
   id: string;
@@ -376,19 +377,25 @@ export class NodeTestRunner implements TestRunner {
             coverage: message.coverage,
             hitCount: message.hitCount,
           });
-        } else {
+        } else if (message.type === 'error') {
           finish({ tests, error: message.error });
-        }
+        } // anything else is a test's own process.send() traffic
       });
       child.on('error', (error) =>
         finish({ tests, error: String(error?.stack ?? error) }),
       );
-      child.on('close', (code, signal) =>
-        finish({
-          tests,
-          exitCode: code,
-          error: `Test process exited unexpectedly (code ${code}, signal ${signal}) before completing.`,
-        }),
+      const exited = (
+        code: number | null,
+        signal: string | null,
+      ): RunOutcome => ({
+        tests,
+        exitCode: code,
+        error: `Test process exited unexpectedly (code ${code}, signal ${signal}) before completing.`,
+      });
+      child.on('close', (code, signal) => finish(exited(code, signal)));
+      // 'close' also waits for descendants that inherited the pipes, so cap that wait
+      child.on('exit', (code, signal) =>
+        setTimeout(() => finish(exited(code, signal)), EXIT_GRACE_MS).unref(),
       );
 
       try {

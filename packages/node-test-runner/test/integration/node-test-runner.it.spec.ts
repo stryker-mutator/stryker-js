@@ -209,6 +209,36 @@ describe('node-test-runner integration', () => {
       });
     });
 
+    it("should not end the run on a test's own process.send() message", async () => {
+      options.nodeTest = nodeTestRunnerOptions({
+        testFiles: ['sends-message.spec.mjs'],
+      });
+      await sut.init();
+
+      const run = await sut.dryRun(factory.dryRunOptions());
+
+      assertions.expectCompleted(run);
+      const failed = run.tests.filter(
+        (test) => test.status === TestStatus.Failed,
+      );
+      expect(failed).lengthOf(1);
+      expect(failed[0].failureMessage).contains('failed after the message');
+    });
+
+    it('should notice an exit while a descendant still holds the output pipes', async () => {
+      options.nodeTest = nodeTestRunnerOptions({
+        testFiles: ['spawns-then-exits.spec.mjs'],
+      });
+      await sut.init();
+
+      // The descendant lives 5s; waiting for 'close' alone would outlast this
+      // timeout and misreport the exit as a timeout.
+      const run = await sut.dryRun(factory.dryRunOptions({ timeout: 2500 }));
+
+      assertions.expectErrored(run);
+      expect(run.errorMessage).contains('exited unexpectedly (code 1');
+    });
+
     it('should time out a run that exceeds the timeout', async () => {
       options.nodeTest = nodeTestRunnerOptions({
         testFiles: ['slow.spec.mjs'],
@@ -415,6 +445,8 @@ describe('node-test-runner integration', () => {
       assertions.expectCompleted(run);
       expect(run.tests.map((test) => test.id).sort()).deep.eq([
         toTestId('tests/duplicate-names.spec.mjs', 'first suite > works'),
+        toTestId('tests/duplicate-names.spec.mjs', 'repeated'),
+        toTestId('tests/duplicate-names.spec.mjs', 'repeated (2)'),
         toTestId('tests/duplicate-names.spec.mjs', 'second suite > works'),
       ]);
     });
