@@ -13,6 +13,7 @@ import {
   DryRunOptions,
   DryRunResult,
   DryRunStatus,
+  MutantActivation,
   MutantRunOptions,
   MutantRunResult,
   TestResult,
@@ -70,7 +71,34 @@ interface RunSpec {
   collectCoverage: boolean;
   concurrency: boolean;
   activeMutant?: string;
+  mutantActivation?: MutantActivation;
   hitLimit?: number;
+}
+
+// Mutant runs execute whole files, so every test in a file covers what the file covers;
+// otherwise Stryker's timeout budget would only count the covering tests' time.
+// Each test keeps its own hit counts; borrowed mutants count 1 so hitLimit stays close.
+export function perFileCoverage(
+  coverage: MutantCoverage,
+  tests: TestResult[],
+): MutantCoverage {
+  const mutantsByFile = new Map<string, Set<string>>();
+  for (const [id, hits] of Object.entries(coverage.perTest)) {
+    const file = fileOfTestId(id);
+    const mutants = mutantsByFile.get(file) ?? new Set<string>();
+    Object.keys(hits).forEach((mutant) => mutants.add(mutant));
+    mutantsByFile.set(file, mutants);
+  }
+  const perTest = { ...coverage.perTest };
+  for (const { id } of tests) {
+    const mutants = mutantsByFile.get(fileOfTestId(id));
+    if (!mutants) continue;
+    perTest[id] = {
+      ...Object.fromEntries([...mutants].map((mutant) => [mutant, 1])),
+      ...coverage.perTest[id],
+    };
+  }
+  return { static: coverage.static, perTest };
 }
 
 export function createNodeTestRunnerFactory(
@@ -139,7 +167,7 @@ export class NodeTestRunner implements TestRunner {
   }
 
   public async dryRun(options: DryRunOptions): Promise<DryRunResult> {
-    return this.run(
+    const result = await this.run(
       {
         testFiles: testFilesProvided(options)
           ? options.testFiles!
@@ -150,6 +178,13 @@ export class NodeTestRunner implements TestRunner {
       options.timeout,
       false, // never bail on a dry run — we need every test and its coverage
     );
+    if (result.status !== DryRunStatus.Complete || !result.mutantCoverage) {
+      return result;
+    }
+    return {
+      ...result,
+      mutantCoverage: perFileCoverage(result.mutantCoverage, result.tests),
+    };
   }
 
   public async mutantRun(options: MutantRunOptions): Promise<MutantRunResult> {
@@ -161,6 +196,7 @@ export class NodeTestRunner implements TestRunner {
           collectCoverage: false,
           concurrency: this.options.nodeTest?.concurrency ?? false,
           activeMutant: options.activeMutant.id,
+          mutantActivation: options.mutantActivation,
           hitLimit: options.hitLimit,
         },
         options.timeout,

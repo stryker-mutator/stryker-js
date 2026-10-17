@@ -17,6 +17,7 @@ interface ChildConfig {
   namespace: string;
   activeMutantEnvVar: string;
   activeMutant?: string;
+  mutantActivation?: 'static' | 'runtime';
   hitLimit?: number;
   collectCoverage: boolean;
   concurrency: boolean;
@@ -29,6 +30,7 @@ process.once('message', (config: ChildConfig) => {
     namespace,
     activeMutantEnvVar,
     activeMutant,
+    mutantActivation,
     hitLimit,
     collectCoverage,
     concurrency,
@@ -36,15 +38,24 @@ process.once('message', (config: ChildConfig) => {
 
   const g = globalThis as Record<string, unknown>;
   g.__STRYKER_NS__ = namespace;
-  if (activeMutant !== undefined)
-    process.env[activeMutantEnvVar] = activeMutant;
   g[namespace] = {
-    activeMutant,
     hitLimit,
     hitCount: 0,
     mutantCoverage: collectCoverage ? { static: {}, perTest: {} } : undefined,
   };
-  const ns = g[namespace] as { mutantCoverage?: unknown; hitCount?: number };
+  const ns = g[namespace] as {
+    activeMutant?: string;
+    mutantCoverage?: unknown;
+    hitCount?: number;
+  };
+  const activate = () => {
+    if (activeMutant === undefined) return;
+    ns.activeMutant = activeMutant;
+    process.env[activeMutantEnvVar] = activeMutant;
+  };
+  // runtime: the setup file's beforeEach activates once every file is imported
+  if (mutantActivation === 'runtime') g.__STRYKER_ACTIVATE__ = activate;
+  else activate();
 
   const cwd = process.cwd();
   const send = (message: unknown) => process.send?.(message);

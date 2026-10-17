@@ -14,6 +14,36 @@ import { NodeTestRunnerOptionsWithStrykerOptions } from '../../src/node-test-run
 import { toTestId } from '../../src/test-id.js';
 import { nodeTestRunnerOptions } from '../helpers/factory.js';
 
+// mutant runs execute whole files, so tests in a file share each other's mutants (count 1)
+const expectedCoverage = {
+  static: {},
+  perTest: {
+    [toTestId('tests/math.spec.mjs', 'add')]: {
+      '0': 1,
+      '1': 1,
+      '2': 1,
+      '3': 1,
+      '4': 1,
+      '5': 1,
+      '6': 1,
+      '7': 1,
+      '8': 1,
+    },
+    [toTestId('tests/math.spec.mjs', 'slowAdd')]: {
+      '0': 1,
+      '1': 1,
+      '2': 1,
+      '3': 6,
+      '4': 6,
+      '5': 6,
+      '6': 5,
+      '7': 5,
+      '8': 5,
+    },
+    [toTestId('tests/formatter.spec.mjs', 'concat')]: { '9': 1, '10': 1 },
+  },
+};
+
 describe('node-test-runner running on an instrumented project', () => {
   let sut: NodeTestRunner;
   let sandbox: TempTestDirectorySandbox;
@@ -32,28 +62,13 @@ describe('node-test-runner running on an instrumented project', () => {
     await sandbox.dispose();
   });
 
-  it('should report perTest coverage on dry run, keyed by file-scoped test id', async () => {
+  it('should report perTest coverage on dry run, keyed by file-scoped test id and shared per file', async () => {
     const result = await sut.dryRun(
       factory.dryRunOptions({ coverageAnalysis: 'perTest' }),
     );
 
     assertions.expectCompleted(result);
-    expect(result.mutantCoverage).deep.eq({
-      static: {},
-      perTest: {
-        [toTestId('tests/math.spec.mjs', 'add')]: { '0': 1, '1': 1 },
-        [toTestId('tests/math.spec.mjs', 'slowAdd')]: {
-          '2': 1,
-          '3': 6,
-          '4': 6,
-          '5': 6,
-          '6': 5,
-          '7': 5,
-          '8': 5,
-        },
-        [toTestId('tests/formatter.spec.mjs', 'concat')]: { '9': 1, '10': 1 },
-      },
-    });
+    expect(result.mutantCoverage).deep.eq(expectedCoverage);
   });
 
   it('should key tests declared in a shared helper on the file being run', async () => {
@@ -134,22 +149,7 @@ describe('node-test-runner running on an instrumented project', () => {
     );
 
     assertions.expectCompleted(result);
-    expect(result.mutantCoverage).deep.eq({
-      static: {},
-      perTest: {
-        [toTestId('tests/math.spec.mjs', 'add')]: { '0': 1, '1': 1 },
-        [toTestId('tests/math.spec.mjs', 'slowAdd')]: {
-          '2': 1,
-          '3': 6,
-          '4': 6,
-          '5': 6,
-          '6': 5,
-          '7': 5,
-          '8': 5,
-        },
-        [toTestId('tests/formatter.spec.mjs', 'concat')]: { '9': 1, '10': 1 },
-      },
-    });
+    expect(result.mutantCoverage).deep.eq(expectedCoverage);
   });
 
   it('should not ship coverage when coverageAnalysis is "off" on instrumented code', async () => {
@@ -229,5 +229,27 @@ describe('node-test-runner running on a project with a static mutant', () => {
     expect(run.killedBy).deep.eq([
       toTestId('tests/constants.spec.mjs', 'the answer is 42'),
     ]);
+  });
+
+  it('should not activate a runtime mutant until the SUT is imported', async () => {
+    const run = await sut.mutantRun(
+      factory.mutantRunOptions({
+        activeMutant: factory.mutant({ id: '0' }),
+        mutantActivation: 'runtime',
+      }),
+    );
+
+    assertions.expectSurvived(run);
+  });
+
+  it('should activate a runtime mutant while the tests run', async () => {
+    const run = await sut.mutantRun(
+      factory.mutantRunOptions({
+        activeMutant: factory.mutant({ id: '1' }),
+        mutantActivation: 'runtime',
+      }),
+    );
+
+    assertions.expectKilled(run);
   });
 });

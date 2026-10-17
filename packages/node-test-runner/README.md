@@ -53,7 +53,9 @@ Configure the `testRunner` setting and (optionally) the test file globs:
 - For each mutant, only the test files containing a covering test are run. Because `node:test`
   ignores `testNamePatterns` under `isolation: 'none'`, filtering is at file granularity — always
   a safe superset of the covering tests. The file is encoded into each test id, so this works
-  without sharing state between the dry-run and mutant-run processes.
+  without sharing state between the dry-run and mutant-run processes. To keep Stryker's timeout
+  budget in line with what actually runs, every test in a file is reported as covering the mutants
+  any test in that file covers, so "covered by" in reports is file-granular ("killed by" is not).
 - **Bail and timeout** are enforced by killing the run's whole process group. `run()` ignores an
   `AbortSignal` under `isolation: 'none'`, so the only reliable way to stop the remaining tests on
   the first failure (when bail is enabled) — or on a timeout — is to kill the group. This also reaps

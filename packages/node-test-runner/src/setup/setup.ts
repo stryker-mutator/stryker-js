@@ -10,6 +10,10 @@ const nsOf = (): { currentTestId?: string } => {
 };
 
 beforeEach((t) => {
+  // root before() fires before files import; beforeEach waits until all are loaded
+  (
+    globalThis as { __STRYKER_ACTIVATE__?: () => void }
+  ).__STRYKER_ACTIVATE__?.();
   const ns = nsOf();
   const filePath = (t as { filePath?: string }).filePath;
   const file = filePath

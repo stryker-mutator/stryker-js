@@ -408,6 +408,22 @@ describe('node-test-runner integration', () => {
         toTestId('tests/failing-group.spec.mjs', 'this nested test fails'),
       ]);
     });
+
+    it('should report a suite whose own after() hook fails', async () => {
+      options.nodeTest = nodeTestRunnerOptions({
+        testFiles: ['tests/failing-hook.spec.mjs'],
+      });
+      await sut.init();
+
+      const run = await sut.mutantRun(
+        factory.mutantRunOptions({ disableBail: true }),
+      );
+
+      assertions.expectKilled(run);
+      expect(run.killedBy).deep.eq([
+        toTestId('tests/failing-hook.spec.mjs', 'suite with failing hook'),
+      ]);
+    });
   });
 });
 

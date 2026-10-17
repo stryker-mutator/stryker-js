@@ -114,14 +114,34 @@ describe('toReportedTest', () => {
     expect(result).eq(undefined);
   });
 
-  it('drops a suite container even when it fails', () => {
+  it('drops a suite container that only failed because of a subtest', () => {
     const result = toReportedTest(
-      event({ type: 'test:fail', details: { type: 'suite' } }),
+      event({
+        type: 'test:fail',
+        details: { type: 'suite', error: { failureType: 'subtestsFailed' } },
+      }),
       cwd,
       setupFile,
     );
 
     expect(result).eq(undefined);
+  });
+
+  it('reports a suite that failed itself, e.g. in an after() hook', () => {
+    const result = toReportedTest(
+      event({
+        type: 'test:fail',
+        details: {
+          type: 'suite',
+          error: { message: 'after boom', failureType: 'hookFailed' },
+        },
+      }),
+      cwd,
+      setupFile,
+    );
+
+    expect(result?.status).eq('fail');
+    expect(result?.failureMessage).eq('after boom');
   });
 
   it('drops an ancestor whose only failure is a subtest (subtestsFailed)', () => {

@@ -43,7 +43,12 @@ export function toReportedTest(
   const error = d.details?.error;
   const failureType =
     typeof error === 'object' ? error?.failureType : undefined;
-  if (d.details?.type === 'suite' || failureType === 'subtestsFailed') {
+  // drop containers, but keep a suite that failed itself (e.g. a failing after() hook)
+  const isSuite = d.details?.type === 'suite';
+  if (
+    failureType === 'subtestsFailed' ||
+    (isSuite && event.type === 'test:pass')
+  ) {
     return undefined;
   }
   const file = d.file
