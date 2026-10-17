@@ -253,3 +253,51 @@ describe('node-test-runner running on a project with a static mutant', () => {
     assertions.expectKilled(run);
   });
 });
+
+describe('node-test-runner running TypeScript through type stripping', () => {
+  let sut: NodeTestRunner;
+  let sandbox: TempTestDirectorySandbox;
+  const addId = toTestId('tests/math.spec.ts', 'add');
+
+  beforeEach(async () => {
+    sandbox = new TempTestDirectorySandbox('typescript-instrumented');
+    await sandbox.init();
+    (testInjector.options as NodeTestRunnerOptionsWithStrykerOptions).nodeTest =
+      nodeTestRunnerOptions({
+        testFiles: ['tests/**/*.spec.ts'],
+        nodeArgs: ['--experimental-strip-types'],
+      });
+    sut = testInjector.injector.injectFunction(
+      createNodeTestRunnerFactory('__stryker2__'),
+    );
+    await sut.init();
+  });
+  afterEach(async () => {
+    await sandbox.dispose();
+  });
+
+  it('should report perTest coverage for a .ts test file', async () => {
+    const result = await sut.dryRun(
+      factory.dryRunOptions({ coverageAnalysis: 'perTest' }),
+    );
+
+    assertions.expectCompleted(result);
+    expect(result.mutantCoverage).deep.eq({
+      static: {},
+      perTest: { [addId]: { '0': 1, '1': 1 } },
+    });
+  });
+
+  it('should kill a mutant in a .ts source file', async () => {
+    // Mutant '1' turns `a + b` into `a - b`, breaking the `add` test.
+    const run = await sut.mutantRun(
+      factory.mutantRunOptions({
+        activeMutant: factory.mutant({ id: '1' }),
+        testFilter: [addId],
+      }),
+    );
+
+    assertions.expectKilled(run);
+    expect(run.killedBy).deep.eq([addId]);
+  });
+});

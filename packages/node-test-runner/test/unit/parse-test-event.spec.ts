@@ -1,7 +1,13 @@
 import { expect } from 'chai';
 
-import { toReportedTest, type TestEvent } from '../../src/parse-test-event.js';
-import { toTestId } from '../../src/test-id.js';
+import {
+  toLateFailure,
+  toReportedTest,
+  withMarkedFile,
+  type ReportedTest,
+  type TestEvent,
+} from '../../src/parse-test-event.js';
+import { TEST_ID_MARKER, toTestId } from '../../src/test-id.js';
 
 describe('toReportedTest', () => {
   const cwd = '/project';
@@ -221,5 +227,56 @@ describe('toReportedTest', () => {
 
     expect(result?.status).eq('skip');
     expect(result?.failureMessage).eq(undefined);
+  });
+});
+
+describe('withMarkedFile', () => {
+  const test: ReportedTest = {
+    id: toTestId('test/helper.mjs', 'works'),
+    name: 'works',
+    file: 'test/helper.mjs',
+    status: 'pass',
+    timeSpentMs: 1,
+  };
+
+  it("takes the id, full name and file from the setup hook's marker", () => {
+    const id = toTestId('test/a.spec.mjs', 'suite > works');
+    const result = withMarkedFile(
+      {
+        type: 'test:diagnostic',
+        data: { name: '', message: `${TEST_ID_MARKER}${id}` },
+      },
+      test,
+    );
+    expect(result).deep.eq({
+      ...test,
+      id,
+      name: 'suite > works',
+      file: 'test/a.spec.mjs',
+    });
+  });
+
+  it('ignores a diagnostic that is not a marker', () => {
+    const result = withMarkedFile(
+      { type: 'test:diagnostic', data: { name: '', message: 'tests 1' } },
+      test,
+    );
+    expect(result).undefined;
+  });
+});
+
+describe('toLateFailure', () => {
+  it('reports the late errors as one failing test', () => {
+    const result = toLateFailure(['Error: first', 'Error: second']);
+    expect(result).deep.include({
+      status: 'fail',
+      failureMessage: 'Error: first\nError: second',
+    });
+  });
+
+  it('falls back to a generic message without late errors', () => {
+    expect(toLateFailure([]).failureMessage).eq(
+      'node:test reported a failure outside of any test',
+    );
   });
 });

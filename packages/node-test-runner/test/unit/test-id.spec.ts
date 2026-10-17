@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 
-import { fileOfTestId, toTestId } from '../../src/test-id.js';
+import { fileOfTestId, nameOfTestId, toTestId } from '../../src/test-id.js';
 
 describe('test-id', () => {
   it('round-trips the file out of an encoded id', () => {
@@ -19,5 +19,14 @@ describe('test-id', () => {
   it('handles names that contain spaces and symbols', () => {
     const id = toTestId('t/x.spec.mjs', 'does > 0 when given a + b');
     expect(fileOfTestId(id)).eq('t/x.spec.mjs');
+  });
+
+  it('round-trips the name out of an encoded id', () => {
+    const id = toTestId('t/x.spec.mjs', 'suite > works');
+    expect(nameOfTestId(id)).eq('suite > works');
+  });
+
+  it("uses the bare file as the id of a file's load-failure placeholder", () => {
+    expect(toTestId('t/x.spec.mjs', 't/x.spec.mjs')).eq('t/x.spec.mjs');
   });
 });

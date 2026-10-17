@@ -384,11 +384,42 @@ describe('node-test-runner integration', () => {
       // The `describe('outer suite')` container is dropped; its `it`s, the
       // `test()` parent, and its subtest are all reported.
       expect(run.tests.map((test) => test.name).sort()).deep.eq([
-        'nested child',
+        'outer suite > passes a',
+        'outer suite > passes b',
         'parent test',
-        'passes a',
-        'passes b',
+        'parent test > nested child',
       ]);
+    });
+
+    it('should keep equally-named tests in different suites apart', async () => {
+      options.nodeTest = nodeTestRunnerOptions({
+        testFiles: ['tests/duplicate-names.spec.mjs'],
+      });
+      await sut.init();
+
+      const run = await sut.dryRun(factory.dryRunOptions());
+
+      assertions.expectCompleted(run);
+      expect(run.tests.map((test) => test.id).sort()).deep.eq([
+        toTestId('tests/duplicate-names.spec.mjs', 'first suite > works'),
+        toTestId('tests/duplicate-names.spec.mjs', 'second suite > works'),
+      ]);
+    });
+
+    it('should fail a run whose test errors after it ended', async () => {
+      options.nodeTest = nodeTestRunnerOptions({
+        testFiles: ['tests/late-failure.spec.mjs'],
+      });
+      await sut.init();
+
+      const run = await sut.dryRun(factory.dryRunOptions());
+
+      assertions.expectCompleted(run);
+      const failed = run.tests.filter(
+        (test) => test.status === TestStatus.Failed,
+      );
+      expect(failed).lengthOf(1);
+      expect(failed[0].failureMessage).contains('late failure');
     });
 
     it('should attribute a killing failure to the leaf test, not its suite', async () => {
@@ -405,7 +436,10 @@ describe('node-test-runner integration', () => {
 
       assertions.expectKilled(run);
       expect(run.killedBy).deep.eq([
-        toTestId('tests/failing-group.spec.mjs', 'this nested test fails'),
+        toTestId(
+          'tests/failing-group.spec.mjs',
+          'failing suite > this nested test fails',
+        ),
       ]);
     });
 

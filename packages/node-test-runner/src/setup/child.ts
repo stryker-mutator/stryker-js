@@ -4,6 +4,7 @@ import { pathToFileURL } from 'node:url';
 
 import { isSupportedNodeVersion } from '../node-version.js';
 import {
+  toLateFailure,
   toLoadFailure,
   toReportedTest,
   withMarkedFile,
@@ -78,12 +79,21 @@ process.once('message', (config: ChildConfig) => {
     // a test's file marker is the event right after it, so hold each test for one event
     let pending: { test: ReportedTest; hitCount?: number } | undefined;
     const failedNames = new Set<string>();
+    const lateErrors: string[] = [];
     const flush = () => {
       if (pending?.test.status === 'fail') failedNames.add(pending.test.name);
       if (pending) send({ type: 'test', ...pending });
       pending = undefined;
     };
     stream.on('data', (event: TestEvent) => {
+      if (
+        event.type === 'test:diagnostic' &&
+        event.data.message?.includes(
+          'asynchronous activity after the test ended',
+        )
+      ) {
+        lateErrors.push(event.data.message);
+      }
       if (pending) {
         pending.test = withMarkedFile(event, pending.test) ?? pending.test;
         flush();
@@ -108,6 +118,10 @@ process.once('message', (config: ChildConfig) => {
     stream.on('end', () => {
       flush();
       void loadFailures().then((failures) => {
+        // node sets a failing exit code for an error it couldn't pin on a test
+        if (process.exitCode && !failedNames.size && !failures.length) {
+          failures.push(toLateFailure(lateErrors));
+        }
         for (const test of failures) {
           send({ type: 'test', hitCount: ns.hitCount, test });
         }

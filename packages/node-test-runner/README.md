@@ -48,8 +48,8 @@ Configure the `testRunner` setting and (optionally) the test file globs:
   `node:test`'s `run()` is not re-entrant (ESM modules can't be unloaded), so a fresh process gives
   a clean test registry every time, and a mutant can be activated before the SUT is imported (which
   is what static mutants need).
-- A setup module registers a root `beforeEach` that records the current test id, so the
-  instrumented coverage counters attribute hits per test.
+- A setup module registers a root `beforeEach` that records the current test id (file plus the
+  test's full name), so the instrumented coverage counters attribute hits per test.
 - For each mutant, only the test files containing a covering test are run. Because `node:test`
   ignores `testNamePatterns` under `isolation: 'none'`, filtering is at file granularity — always
   a safe superset of the covering tests. The file is encoded into each test id, so this works
@@ -73,8 +73,12 @@ Configure the `testRunner` setting and (optionally) the test file globs:
   here in the initial test run. Preflight with `node --test --test-isolation=none`; if your suite
   genuinely needs per-file process isolation, use `@stryker-mutator/tap-runner` instead.
 - Mutant-level test selection is file-granular: a covering test pulls in its whole file. (Test ids
-  encode the file, so cross-file name collisions are handled correctly — only two identically-named
-  tests in the _same_ file share a coverage entry, which is cosmetic.)
+  encode the file and the full suite path, e.g. `outer > works`, so equally-named tests in different
+  files or suites stay apart — only two tests with the same full name in the _same_ file share a
+  coverage entry, which is cosmetic.)
+- An error thrown after a test ended (e.g. from a timer it left behind) fails `node --test`, but
+  `node:test` can't attribute it to a test. The runner reports it as one failing test named
+  "asynchronous activity after the tests ended".
 - A `test()` block that _wraps subtests_ is reported as a test in its own right, in addition to each
   subtest, because `node:test` exposes no way to tell such a parent apart from a leaf. Grouping with
   `describe`/`it` avoids this — the suite block itself is recognized and not counted as a test.

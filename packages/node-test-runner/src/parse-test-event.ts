@@ -1,6 +1,11 @@
 import path from 'node:path';
 
-import { FILE_MARKER, toTestId } from './test-id.js';
+import {
+  fileOfTestId,
+  nameOfTestId,
+  TEST_ID_MARKER,
+  toTestId,
+} from './test-id.js';
 
 export interface TestEvent {
   type: string;
@@ -75,11 +80,14 @@ export function withMarkedFile(
   test: ReportedTest,
 ): ReportedTest | undefined {
   const message = event.data.message;
-  if (event.type !== 'test:diagnostic' || !message?.startsWith(FILE_MARKER)) {
+  if (
+    event.type !== 'test:diagnostic' ||
+    !message?.startsWith(TEST_ID_MARKER)
+  ) {
     return undefined;
   }
-  const file = message.slice(FILE_MARKER.length);
-  return { ...test, file, id: toTestId(file, test.name) };
+  const id = message.slice(TEST_ID_MARKER.length);
+  return { ...test, id, name: nameOfTestId(id), file: fileOfTestId(id) };
 }
 
 // Mirrors the placeholder node:test reports for a test file that fails to load.
@@ -91,5 +99,21 @@ export function toLoadFailure(file: string, reason: unknown): ReportedTest {
     status: 'fail',
     timeSpentMs: 0,
     failureMessage: reason instanceof Error ? reason.message : String(reason),
+  };
+}
+
+const LATE_FAILURE_ID = '__stryker__late-failure';
+
+// node:test only logs errors thrown after a test ended (e.g. from a stray timer) as
+// diagnostics, but still fails the run, so surface them as a failing test.
+export function toLateFailure(messages: string[]): ReportedTest {
+  return {
+    id: LATE_FAILURE_ID,
+    name: 'asynchronous activity after the tests ended',
+    status: 'fail',
+    timeSpentMs: 0,
+    failureMessage: messages.length
+      ? messages.join('\n')
+      : 'node:test reported a failure outside of any test',
   };
 }
