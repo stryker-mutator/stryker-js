@@ -14,8 +14,8 @@ describe('outer suite', () => {
 
 // A `test()` with a subtest: the parent is reported (it is indistinguishable
 // from a leaf and may carry assertions), the child is reported too.
-test('parent test', (t) => {
-  t.test('nested child', () => {
+test('parent test', async (t) => {
+  await t.test('nested child', () => {
     assert.ok(true);
   });
 });

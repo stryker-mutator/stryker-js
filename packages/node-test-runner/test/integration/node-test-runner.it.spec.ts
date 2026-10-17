@@ -168,9 +168,32 @@ describe('node-test-runner integration', () => {
       // node:test imports a markdown file and surfaces it as a failing test
       // rather than crashing the run.
       assertions.expectCompleted(run);
-      expect(run.tests.some((test) => test.status === TestStatus.Failed)).eq(
-        true,
+      expect(
+        run.tests.filter((test) => test.status === TestStatus.Failed),
+      ).lengthOf(1);
+    });
+
+    it('should fail a test file that throws after declaring a test', async () => {
+      options.nodeTest = nodeTestRunnerOptions({
+        testFiles: ['throws-after-test.spec.mjs'],
+      });
+      await sut.init();
+
+      const run = await sut.dryRun(factory.dryRunOptions());
+
+      // Node.js < 26.12.0 drops this load error (nodejs/node#66549).
+      assertions.expectCompleted(run);
+      const failed = run.tests.filter(
+        (test) => test.status === TestStatus.Failed,
       );
+      expect(failed).lengthOf(1);
+      expect(failed[0]).deep.include({
+        id: toTestId(
+          'throws-after-test.spec.mjs',
+          'throws-after-test.spec.mjs',
+        ),
+        failureMessage: 'thrown after the first test',
+      });
     });
 
     it('should time out a run that exceeds the timeout', async () => {

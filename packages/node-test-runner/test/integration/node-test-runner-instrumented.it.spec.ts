@@ -56,6 +56,48 @@ describe('node-test-runner running on an instrumented project', () => {
     });
   });
 
+  it('should key tests declared in a shared helper on the file being run', async () => {
+    (testInjector.options as NodeTestRunnerOptionsWithStrykerOptions).nodeTest =
+      nodeTestRunnerOptions({ testFiles: ['tests/grid-*.test.mjs'] });
+    await sut.init();
+
+    const result = await sut.dryRun(
+      factory.dryRunOptions({ coverageAnalysis: 'perTest' }),
+    );
+
+    assertions.expectCompleted(result);
+    const a = toTestId('tests/grid-a.test.mjs', 'grid: x');
+    const b = toTestId('tests/grid-b.test.mjs', 'grid: x');
+    expect(result.tests.map((test) => test.id)).deep.eq([a, b]);
+    expect(result.mutantCoverage?.perTest).deep.eq({
+      [a]: { '9': 1, '10': 1 },
+      [b]: { '9': 1, '10': 1 },
+    });
+  });
+
+  it('should attribute helper-declared failures to the file being run when running concurrently', async () => {
+    (testInjector.options as NodeTestRunnerOptionsWithStrykerOptions).nodeTest =
+      nodeTestRunnerOptions({
+        testFiles: ['tests/grid-*.test.mjs'],
+        concurrency: true,
+      });
+    await sut.init();
+
+    // Mutant '10' turns `text1 + text2` into `text1 - text2`, breaking both grid tests.
+    const run = await sut.mutantRun(
+      factory.mutantRunOptions({
+        activeMutant: factory.mutant({ id: '10' }),
+        disableBail: true,
+      }),
+    );
+
+    assertions.expectKilled(run);
+    expect([...run.killedBy].sort()).deep.eq([
+      toTestId('tests/grid-a.test.mjs', 'grid: x'),
+      toTestId('tests/grid-b.test.mjs', 'grid: x'),
+    ]);
+  });
+
   it('should kill a mutant when an activated mutant breaks a test', async () => {
     await sut.dryRun(factory.dryRunOptions({ coverageAnalysis: 'perTest' }));
 

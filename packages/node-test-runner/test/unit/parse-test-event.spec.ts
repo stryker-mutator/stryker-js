@@ -94,6 +94,16 @@ describe('toReportedTest', () => {
     expect(result).eq(undefined);
   });
 
+  it("ignores the setup file's placeholder test when the event has no file (Node.js 22)", () => {
+    const result = toReportedTest(
+      event({ name: setupFile, file: undefined }),
+      cwd,
+      setupFile,
+    );
+
+    expect(result).eq(undefined);
+  });
+
   it('drops describe/it suite containers', () => {
     const result = toReportedTest(
       event({ type: 'test:pass', details: { type: 'suite' } }),

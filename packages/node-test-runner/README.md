@@ -78,6 +78,9 @@ Configure the `testRunner` setting and (optionally) the test file globs:
   `describe`/`it` avoids this — the suite block itself is recognized and not counted as a test.
 - Requires Node.js >= 22.8.0 (when `run({ isolation: 'none' })` became available). The runner throws
   on older versions rather than silently mis-reporting.
+- On Node.js 22, a subtest started with `t.test()` but not awaited is cancelled ("test did not
+  finish before its parent"), because the runner registers root-level hooks. Await subtests, as the
+  Node.js docs recommend.
 - On Windows, killing the process group is best-effort (only the direct child is signalled), so a
   test that spawns grandchild processes and then times out may leave them running.
 - A test that calls `process.exit()` (or a SUT that does) terminates the test process before it can

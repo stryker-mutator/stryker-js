@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { afterEach, beforeEach } from 'node:test';
 
-import { toTestId } from '../test-id.js';
+import { FILE_MARKER, toTestId } from '../test-id.js';
 
 const nsOf = (): { currentTestId?: string } => {
   const g = globalThis as Record<string, unknown>;
@@ -16,6 +16,8 @@ beforeEach((t) => {
     ? path.relative(process.cwd(), filePath).split(path.sep).join('/')
     : '';
   ns.currentTestId = toTestId(file, t.name);
+  // events report where test() was called, which differs when a helper declares it
+  if ('diagnostic' in t) t.diagnostic(`${FILE_MARKER}${file}`);
 });
 
 afterEach(() => {

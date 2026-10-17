@@ -1,11 +1,12 @@
 import path from 'node:path';
 
-import { toTestId } from './test-id.js';
+import { FILE_MARKER, toTestId } from './test-id.js';
 
 export interface TestEvent {
   type: string;
   data: {
     name: string;
+    message?: string;
     file?: string;
     skip?: boolean | string;
     todo?: boolean | string;
@@ -35,7 +36,8 @@ export function toReportedTest(
     return undefined;
   }
   const d = event.data;
-  if (d.file && path.resolve(d.file) === path.resolve(setupFile)) {
+  // node 22 omits `file` on a file's placeholder test, which is named after the file
+  if (path.resolve(d.file ?? d.name) === path.resolve(setupFile)) {
     return undefined;
   }
   const error = d.details?.error;
@@ -59,5 +61,30 @@ export function toReportedTest(
     status: skipped ? 'skip' : failed ? 'fail' : 'pass',
     timeSpentMs: d.details?.duration_ms ?? 0,
     failureMessage: failed ? failureMessage : undefined,
+  };
+}
+
+// node:test emits a test's diagnostics right after its pass/fail event; ours is the first.
+export function withMarkedFile(
+  event: TestEvent,
+  test: ReportedTest,
+): ReportedTest | undefined {
+  const message = event.data.message;
+  if (event.type !== 'test:diagnostic' || !message?.startsWith(FILE_MARKER)) {
+    return undefined;
+  }
+  const file = message.slice(FILE_MARKER.length);
+  return { ...test, file, id: toTestId(file, test.name) };
+}
+
+// Mirrors the placeholder node:test reports for a test file that fails to load.
+export function toLoadFailure(file: string, reason: unknown): ReportedTest {
+  return {
+    id: toTestId(file, file),
+    name: file,
+    file,
+    status: 'fail',
+    timeSpentMs: 0,
+    failureMessage: reason instanceof Error ? reason.message : String(reason),
   };
 }
