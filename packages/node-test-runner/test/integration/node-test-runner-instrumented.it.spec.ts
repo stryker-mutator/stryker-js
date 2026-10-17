@@ -183,6 +183,53 @@ describe('node-test-runner running on an instrumented project', () => {
     assertions.expectKilled(run);
     expect(run.killedBy).deep.eq([toTestId('tests/math.spec.mjs', 'add')]);
   });
+
+  it('should hand coverage back to the parent test after an awaited subtest', async () => {
+    (testInjector.options as NodeTestRunnerOptionsWithStrykerOptions).nodeTest =
+      nodeTestRunnerOptions({ testFiles: ['tests/subtest.test.mjs'] });
+    await sut.init();
+
+    const result = await sut.dryRun(
+      factory.dryRunOptions({ coverageAnalysis: 'perTest' }),
+    );
+
+    assertions.expectCompleted(result);
+    // `add` is called once in the subtest and once after it, in the parent
+    expect(result.mutantCoverage).deep.eq({
+      static: {},
+      perTest: {
+        [toTestId('tests/subtest.test.mjs', 'parent > child')]: {
+          '0': 1,
+          '1': 1,
+        },
+        [toTestId('tests/subtest.test.mjs', 'parent')]: { '0': 1, '1': 1 },
+      },
+    });
+  });
+
+  it('should keep coverage of instrumented code that a preload already imported', async () => {
+    (testInjector.options as NodeTestRunnerOptionsWithStrykerOptions).nodeTest =
+      nodeTestRunnerOptions({
+        testFiles: ['tests/math.spec.mjs'],
+        nodeArgs: ['--import', './preload.mjs'],
+      });
+    await sut.init();
+
+    const result = await sut.dryRun(
+      factory.dryRunOptions({ coverageAnalysis: 'perTest' }),
+    );
+
+    assertions.expectCompleted(result);
+    const add = toTestId('tests/math.spec.mjs', 'add');
+    const slowAdd = toTestId('tests/math.spec.mjs', 'slowAdd');
+    expect(result.mutantCoverage).deep.eq({
+      static: {},
+      perTest: {
+        [add]: expectedCoverage.perTest[add],
+        [slowAdd]: expectedCoverage.perTest[slowAdd],
+      },
+    });
+  });
 });
 
 describe('node-test-runner running on a project with a static mutant', () => {
@@ -247,6 +294,26 @@ describe('node-test-runner running on a project with a static mutant', () => {
       factory.mutantRunOptions({
         activeMutant: factory.mutant({ id: '1' }),
         mutantActivation: 'runtime',
+      }),
+    );
+
+    assertions.expectKilled(run);
+  });
+
+  it('should kill a static mutant in code that a preload already imported', async () => {
+    (testInjector.options as NodeTestRunnerOptionsWithStrykerOptions).nodeTest =
+      nodeTestRunnerOptions({
+        testFiles: ['tests/**/*.spec.mjs'],
+        nodeArgs: ['--import', './preload.mjs'],
+      });
+    await sut.init();
+
+    // The preload evaluates `6 * 7` before the runner starts, so the mutant
+    // has to be active from process start, not just before the tests import.
+    const run = await sut.mutantRun(
+      factory.mutantRunOptions({
+        activeMutant: factory.mutant({ id: '0' }),
+        mutantActivation: 'static',
       }),
     );
 

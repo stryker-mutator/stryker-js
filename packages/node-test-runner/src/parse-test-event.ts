@@ -35,16 +35,11 @@ export interface ReportedTest {
 export function toReportedTest(
   event: TestEvent,
   cwd: string,
-  setupFile: string,
 ): ReportedTest | undefined {
   if (event.type !== 'test:pass' && event.type !== 'test:fail') {
     return undefined;
   }
   const d = event.data;
-  // node 22 omits `file` on a file's placeholder test, which is named after the file
-  if (path.resolve(d.file ?? d.name) === path.resolve(setupFile)) {
-    return undefined;
-  }
   const error = d.details?.error;
   const failureType =
     typeof error === 'object' ? error?.failureType : undefined;

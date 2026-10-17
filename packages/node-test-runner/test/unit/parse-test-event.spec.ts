@@ -11,7 +11,6 @@ import { TEST_ID_MARKER, toTestId } from '../../src/test-id.js';
 
 describe('toReportedTest', () => {
   const cwd = '/project';
-  const setupFile = '/project/dist/src/setup/setup.js';
 
   function event(overrides: Partial<TestEvent['data']> & { type?: string }) {
     const { type = 'test:pass', ...data } = overrides;
@@ -22,7 +21,7 @@ describe('toReportedTest', () => {
   }
 
   it('reports a passing test, file made cwd-relative with forward slashes', () => {
-    const result = toReportedTest(event({ type: 'test:pass' }), cwd, setupFile);
+    const result = toReportedTest(event({ type: 'test:pass' }), cwd);
 
     expect(result).deep.eq({
       id: toTestId('test/a.spec.mjs', 'a test'),
@@ -35,11 +34,7 @@ describe('toReportedTest', () => {
   });
 
   it('uses the duration from the event when present', () => {
-    const result = toReportedTest(
-      event({ details: { duration_ms: 42 } }),
-      cwd,
-      setupFile,
-    );
+    const result = toReportedTest(event({ details: { duration_ms: 42 } }), cwd);
 
     expect(result?.timeSpentMs).eq(42);
   });
@@ -48,7 +43,6 @@ describe('toReportedTest', () => {
     const result = toReportedTest(
       event({ type: 'test:fail', details: { error: { message: 'boom' } } }),
       cwd,
-      setupFile,
     );
 
     expect(result?.status).eq('fail');
@@ -59,7 +53,6 @@ describe('toReportedTest', () => {
     const result = toReportedTest(
       event({ type: 'test:fail', details: { error: 'plain string error' } }),
       cwd,
-      setupFile,
     );
 
     expect(result?.failureMessage).eq('plain string error');
@@ -69,7 +62,6 @@ describe('toReportedTest', () => {
     const result = toReportedTest(
       event({ type: 'test:fail', details: {} }),
       cwd,
-      setupFile,
     );
 
     expect(result?.failureMessage).eq('test failed');
@@ -79,42 +71,20 @@ describe('toReportedTest', () => {
     const result = toReportedTest(
       event({ type: 'test:pass', details: { error: { message: 'ignored' } } }),
       cwd,
-      setupFile,
     );
 
     expect(result?.failureMessage).eq(undefined);
   });
 
   it('ignores non pass/fail events', () => {
-    expect(toReportedTest(event({ type: 'test:start' }), cwd, setupFile)).eq(
-      undefined,
-    );
-    expect(toReportedTest(event({ type: 'test:plan' }), cwd, setupFile)).eq(
-      undefined,
-    );
-  });
-
-  it("ignores the setup file's own events", () => {
-    const result = toReportedTest(event({ file: setupFile }), cwd, setupFile);
-
-    expect(result).eq(undefined);
-  });
-
-  it("ignores the setup file's placeholder test when the event has no file (Node.js 22)", () => {
-    const result = toReportedTest(
-      event({ name: setupFile, file: undefined }),
-      cwd,
-      setupFile,
-    );
-
-    expect(result).eq(undefined);
+    expect(toReportedTest(event({ type: 'test:start' }), cwd)).eq(undefined);
+    expect(toReportedTest(event({ type: 'test:plan' }), cwd)).eq(undefined);
   });
 
   it('drops describe/it suite containers', () => {
     const result = toReportedTest(
       event({ type: 'test:pass', details: { type: 'suite' } }),
       cwd,
-      setupFile,
     );
 
     expect(result).eq(undefined);
@@ -127,7 +97,6 @@ describe('toReportedTest', () => {
         details: { type: 'suite', error: { failureType: 'subtestsFailed' } },
       }),
       cwd,
-      setupFile,
     );
 
     expect(result).eq(undefined);
@@ -143,7 +112,6 @@ describe('toReportedTest', () => {
         },
       }),
       cwd,
-      setupFile,
     );
 
     expect(result?.status).eq('fail');
@@ -157,7 +125,6 @@ describe('toReportedTest', () => {
         details: { error: { failureType: 'subtestsFailed' } },
       }),
       cwd,
-      setupFile,
     );
 
     expect(result).eq(undefined);
@@ -170,7 +137,6 @@ describe('toReportedTest', () => {
         details: { error: { message: 'x', failureType: 'testCodeFailure' } },
       }),
       cwd,
-      setupFile,
     );
 
     expect(result?.status).eq('fail');
@@ -178,7 +144,7 @@ describe('toReportedTest', () => {
   });
 
   it('reports a test with no file, using an empty file segment in the id', () => {
-    const result = toReportedTest(event({ file: undefined }), cwd, setupFile);
+    const result = toReportedTest(event({ file: undefined }), cwd);
 
     expect(result?.file).eq(undefined);
     expect(result?.id).eq(toTestId('', 'a test'));
@@ -188,7 +154,6 @@ describe('toReportedTest', () => {
     const result = toReportedTest(
       event({ type: 'test:pass', skip: true }),
       cwd,
-      setupFile,
     );
 
     expect(result?.status).eq('skip');
@@ -198,7 +163,6 @@ describe('toReportedTest', () => {
     const result = toReportedTest(
       event({ type: 'test:pass', skip: 'not on CI' }),
       cwd,
-      setupFile,
     );
 
     expect(result?.status).eq('skip');
@@ -208,7 +172,6 @@ describe('toReportedTest', () => {
     const result = toReportedTest(
       event({ type: 'test:pass', todo: true }),
       cwd,
-      setupFile,
     );
 
     expect(result?.status).eq('skip');
@@ -222,7 +185,6 @@ describe('toReportedTest', () => {
         details: { error: { message: 'not implemented yet' } },
       }),
       cwd,
-      setupFile,
     );
 
     expect(result?.status).eq('skip');

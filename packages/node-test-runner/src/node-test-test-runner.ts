@@ -38,7 +38,6 @@ import { isSupportedNodeVersion, MIN_NODE_VERSION } from './node-version.js';
 
 const moduleDir = path.dirname(fileURLToPath(import.meta.url));
 const CHILD_FILE = path.resolve(moduleDir, 'setup', 'child.js');
-const SETUP_FILE = path.resolve(moduleDir, 'setup', 'setup.js');
 const OUTPUT_TAIL_LIMIT = 8192;
 
 interface ReportedTest {
@@ -134,7 +133,8 @@ export class NodeTestRunner implements TestRunner {
     options: StrykerOptions,
     private readonly log: Logger,
     private readonly globalNamespace:
-      typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__',
+      | typeof INSTRUMENTER_CONSTANTS.NAMESPACE
+      | '__stryker2__',
   ) {
     this.options = options as NodeTestRunnerOptionsWithStrykerOptions;
   }
@@ -220,6 +220,16 @@ export class NodeTestRunner implements TestRunner {
     timeout: number,
     bail: boolean,
   ): Promise<DryRunResult> {
+    // run() never ends its stream for an empty file list, so don't fork for one
+    if (spec.testFiles.length === 0) {
+      return {
+        status: DryRunStatus.Complete,
+        tests: [],
+        mutantCoverage: spec.collectCoverage
+          ? { static: {}, perTest: {} }
+          : undefined,
+      };
+    }
     const outcome = await this.runInChild(spec, timeout, bail);
 
     if (outcome.timedOut) {
@@ -325,6 +335,16 @@ export class NodeTestRunner implements TestRunner {
           detached: true,
           execArgv: this.options.nodeTest?.nodeArgs ?? [],
           stdio: ['ignore', 'pipe', 'pipe', 'ipc'],
+          // a static mutant must already be active while preloads (nodeArgs --import) run
+          env:
+            spec.mutantActivation === 'static' &&
+            spec.activeMutant !== undefined
+              ? {
+                  ...process.env,
+                  [INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE]:
+                    spec.activeMutant,
+                }
+              : process.env,
         });
       } catch (error) {
         finish({ tests, error: String((error as Error)?.stack ?? error) });
@@ -373,7 +393,6 @@ export class NodeTestRunner implements TestRunner {
 
       try {
         child.send({
-          setupFile: SETUP_FILE,
           namespace: this.globalNamespace,
           activeMutantEnvVar: INSTRUMENTER_CONSTANTS.ACTIVE_MUTANT_ENV_VARIABLE,
           ...spec,

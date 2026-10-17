@@ -107,6 +107,19 @@ describe('node-test-runner integration', () => {
       expect(testInjector.logger.warn).calledWithMatch(/No test files found/);
     });
 
+    it('should complete an empty dry run when no test files are discovered', async () => {
+      options.nodeTest = nodeTestRunnerOptions({
+        testFiles: ['no-such-dir/**/*.spec.mjs'],
+      });
+      await sut.init();
+
+      // node:test's run() never ends for an empty file list; the runner must not wait on it
+      const run = await sut.dryRun(factory.dryRunOptions({ timeout: 5000 }));
+
+      assertions.expectCompleted(run);
+      expect(run.tests).lengthOf(0);
+    });
+
     it('should report a valid timeSpentMs', async () => {
       const run = await sut.dryRun(factory.dryRunOptions());
 
@@ -420,6 +433,22 @@ describe('node-test-runner integration', () => {
       );
       expect(failed).lengthOf(1);
       expect(failed[0].failureMessage).contains('late failure');
+    });
+
+    it("should not run a test file's root hooks for its own setup", async () => {
+      options.nodeTest = nodeTestRunnerOptions({
+        testFiles: ['tests/root-hooks.spec.mjs'],
+      });
+      await sut.init();
+
+      const run = await sut.dryRun(factory.dryRunOptions());
+
+      assertions.expectCompleted(run);
+      // the fixture's tests assert on their own hook counts
+      expect(run.tests.map((test) => test.status)).deep.eq([
+        TestStatus.Success,
+        TestStatus.Success,
+      ]);
     });
 
     it('should attribute a killing failure to the leaf test, not its suite', async () => {

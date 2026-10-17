@@ -48,7 +48,7 @@ Configure the `testRunner` setting and (optionally) the test file globs:
   `node:test`'s `run()` is not re-entrant (ESM modules can't be unloaded), so a fresh process gives
   a clean test registry every time, and a mutant can be activated before the SUT is imported (which
   is what static mutants need).
-- A setup module registers a root `beforeEach` that records the current test id (file plus the
+- The runner registers a root `beforeEach` that records the current test id (file plus the
   test's full name), so the instrumented coverage counters attribute hits per test.
 - For each mutant, only the test files containing a covering test are run. Because `node:test`
   ignores `testNamePatterns` under `isolation: 'none'`, filtering is at file granularity — always

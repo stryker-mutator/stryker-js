@@ -11,9 +11,9 @@ import {
   type ReportedTest,
   type TestEvent,
 } from '../parse-test-event.js';
+import { registerHooks } from './setup.js';
 
 interface ChildConfig {
-  setupFile: string;
   testFiles: string[];
   namespace: string;
   activeMutantEnvVar: string;
@@ -26,7 +26,6 @@ interface ChildConfig {
 
 process.once('message', (config: ChildConfig) => {
   const {
-    setupFile,
     testFiles,
     namespace,
     activeMutantEnvVar,
@@ -39,16 +38,17 @@ process.once('message', (config: ChildConfig) => {
 
   const g = globalThis as Record<string, unknown>;
   g.__STRYKER_NS__ = namespace;
-  g[namespace] = {
-    hitLimit,
-    hitCount: 0,
-    mutantCoverage: collectCoverage ? { static: {}, perTest: {} } : undefined,
-  };
-  const ns = g[namespace] as {
+  // a preload (nodeArgs --import) may have loaded instrumented code that already holds
+  // this object and its coverage, so add to it rather than replace it
+  const ns = (g[namespace] ??= {}) as {
     activeMutant?: string;
     mutantCoverage?: unknown;
     hitCount?: number;
+    hitLimit?: number;
   };
+  ns.hitLimit = hitLimit;
+  ns.hitCount = 0;
+  if (collectCoverage) ns.mutantCoverage ??= { static: {}, perTest: {} };
   const activate = () => {
     if (activeMutant === undefined) return;
     ns.activeMutant = activeMutant;
@@ -70,11 +70,8 @@ process.once('message', (config: ChildConfig) => {
   };
 
   try {
-    const stream = run({
-      files: [setupFile, ...testFiles],
-      isolation: 'none',
-      concurrency,
-    });
+    const stream = run({ files: testFiles, isolation: 'none', concurrency });
+    registerHooks();
 
     // a test's file marker is the event right after it, so hold each test for one event
     let pending: { test: ReportedTest; hitCount?: number } | undefined;
@@ -98,7 +95,7 @@ process.once('message', (config: ChildConfig) => {
         pending.test = withMarkedFile(event, pending.test) ?? pending.test;
         flush();
       }
-      const test = toReportedTest(event, cwd, setupFile);
+      const test = toReportedTest(event, cwd);
       if (test) pending = { test, hitCount: ns.hitCount };
     });
     // node < 26.12 drops a file's load error once it has declared a test (nodejs/node#66549);
