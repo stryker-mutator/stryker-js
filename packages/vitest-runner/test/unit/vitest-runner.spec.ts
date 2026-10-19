@@ -1,6 +1,7 @@
 import sinon from 'sinon';
 import { expect } from 'chai';
 import fs from 'fs';
+import { format } from 'util';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import {
   MutantRunStatus,
@@ -113,6 +114,29 @@ describe(VitestTestRunner.name, () => {
         pool: 'threads',
         maxWorkers: 1,
       });
+    });
+
+    it('should log circular vitest configuration in debug mode', async () => {
+      testInjector.logger.isDebugEnabled.returns(true);
+      const messages: string[] = [];
+      testInjector.logger.debug.callsFake((message, ...args) => {
+        messages.push(format(message, ...args));
+      });
+      Object.assign(vitestStub.config, {
+        resolvedProjects: [{ viteConfig: { test: vitestStub.config } }],
+      });
+
+      await sut.init();
+
+      sinon.assert.calledOnceWithExactly(
+        testInjector.logger.debug,
+        'vitest final config: %O',
+        vitestStub.config,
+      );
+      expect(messages).to.have.lengthOf(1);
+      expect(messages[0])
+        .to.include('vitest final config:')
+        .and.include('resolvedProjects');
     });
 
     it('should set the NODE_ENV environment variable', async () => {
