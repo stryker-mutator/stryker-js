@@ -166,9 +166,7 @@ export class VitestTestRunner implements TestRunner {
       project.config.browser.screenshotFailures = false;
     });
     if (this.log.isDebugEnabled()) {
-      this.log.debug(
-        `vitest final config: ${JSON.stringify(this.ctx.config, null, 2)}`,
-      );
+      this.log.debug('vitest final config: %O', this.ctx.config);
     }
   }
 
