@@ -119,7 +119,7 @@ describe(VitestTestRunner.name, () => {
     it('should log circular vitest configuration in debug mode', async () => {
       testInjector.logger.isDebugEnabled.returns(true);
       const messages: string[] = [];
-      testInjector.logger.debug.callsFake((message, ...args) => {
+      testInjector.logger.debug.callsFake((message, ...args: unknown[]) => {
         messages.push(format(message, ...args));
       });
       Object.assign(vitestStub.config, {
