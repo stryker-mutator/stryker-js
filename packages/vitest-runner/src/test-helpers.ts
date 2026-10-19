@@ -5,10 +5,11 @@ import type { RunnerTestCase } from 'vitest';
 // Thus we should avoid unnecessary dependencies in this file.
 
 export function collectTestName(
-  { name, suite, fullTestName }: Pick<
-    RunnerTestCase,
-    'name' | 'suite' | 'fullTestName'
-  >,
+  {
+    name,
+    suite,
+    fullTestName,
+  }: Pick<RunnerTestCase, 'name' | 'suite' | 'fullTestName'>,
   useFullTestName = false,
 ): string {
   if (useFullTestName) {

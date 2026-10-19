@@ -73,10 +73,11 @@ if (mode === 'mutant') {
 
 // Stryker disable all: this file is copied to the sandbox dir
 function collectTestName(
-  { name, suite, fullTestName }: Pick<
-    RunnerTestCase,
-    'name' | 'suite' | 'fullTestName'
-  >,
+  {
+    name,
+    suite,
+    fullTestName,
+  }: Pick<RunnerTestCase, 'name' | 'suite' | 'fullTestName'>,
   useFullTestName = false,
 ): string {
   if (useFullTestName) {
@@ -91,10 +92,7 @@ function collectTestName(
   return nameParts.join(' ').trim();
 }
 
-function toRawTestId(
-  test: RunnerTestCase,
-  useFullTestName = false,
-): string {
+function toRawTestId(test: RunnerTestCase, useFullTestName = false): string {
   return `${test.file?.filepath ?? 'unknown.js'}#${collectTestName(test, useFullTestName)}`;
 }
 // Stryker restore all

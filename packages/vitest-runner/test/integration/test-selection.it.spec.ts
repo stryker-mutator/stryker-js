@@ -53,13 +53,15 @@ for (const related of [false, true]) {
         ({ name }) =>
           name.includes('nested (group)') && name.endsWith('adds .* numbers?'),
       )!;
-      const negativeTest = dryRun.tests.find(
-        ({ name }) => name.endsWith('recognizes a negative number'),
+      const negativeTest = dryRun.tests.find(({ name }) =>
+        name.endsWith('recognizes a negative number'),
       )!;
       expect(addTest, 'the nested addition test').not.undefined;
       expect(negativeTest, 'the negative-number test').not.undefined;
       expect(dryRun.mutantCoverage!.perTest[addTest.id]['2']).greaterThan(0);
-      expect(dryRun.mutantCoverage!.perTest[negativeTest.id]['11']).greaterThan(0);
+      expect(dryRun.mutantCoverage!.perTest[negativeTest.id]['11']).greaterThan(
+        0,
+      );
       expect(Object.keys(dryRun.mutantCoverage!.perTest).sort()).deep.eq(
         dryRun.tests.map(({ id }) => id).sort(),
       );
