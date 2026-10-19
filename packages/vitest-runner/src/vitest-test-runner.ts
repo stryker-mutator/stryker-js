@@ -75,6 +75,7 @@ export class VitestTestRunner implements TestRunner {
   ] as const;
   private ctx?: Vitest;
   private readonly options: VitestRunnerOptionsWithStrykerOptions;
+  private useFullTestName = false;
   private localSetupFile = path.resolve(
     `./stryker-setup-${process.env.STRYKER_MUTATOR_WORKER ?? 0}.js`,
   );
@@ -138,6 +139,9 @@ export class VitestTestRunner implements TestRunner {
 
   public async init(): Promise<void> {
     this.setEnv();
+    // Vitest 5 matches testNamePattern against fullTestName; older versions
+    // match space-joined suite names even when fullTestName is available.
+    this.useFullTestName = semver.major(vitestWrapper.version) >= 5;
     await this.#writeStrykerSetupFile();
 
     this.ctx = await vitestWrapper.createVitest('test', {
@@ -153,6 +157,7 @@ export class VitestTestRunner implements TestRunner {
       onConsoleLog: () => false,
     });
     this.ctx.provide('globalNamespace', this.globalNamespace);
+    this.ctx.provide('useFullTestName', this.useFullTestName);
     this.ctx.provide(
       'isGreaterThanVitest4Point1',
       semver.satisfies(vitestWrapper.version, '>=4.1.0'),
@@ -262,7 +267,7 @@ export class VitestTestRunner implements TestRunner {
 
     let failure = false;
     const testResults = tests.map((test) => {
-      const testResult = convertTestToTestResult(test);
+      const testResult = convertTestToTestResult(test, this.useFullTestName);
       failure ||= testResult.status === TestStatus.Failed;
       return testResult;
     });

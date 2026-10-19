@@ -22,6 +22,14 @@ describe('vitest-helpers', () => {
   });
 
   describe(convertTestToTestResult.name, () => {
+    it('should use the same native name for the Vitest 5 result and ID', () => {
+      const fullTestName = ' suite > nested # > test .*? ';
+      const test = createVitestTest({ fullTestName });
+      const result = convertTestToTestResult(test, true);
+      expect(result.name).eq(fullTestName);
+      expect(result.id).eq(`file.spec.js#${fullTestName}`);
+    });
+
     describe('taskState of test is skipped', () => {
       it('should have status skipped', () => {
         const test = createVitestTest({ result: { state: 'skip' } });

@@ -19,6 +19,8 @@ npm i --save-dev @stryker-mutator/vitest-runner
 
 This plugin does not come packaged with it's own version of `vitest`, instead install your own version of `vitest` in your project. See [`@stryker-mutator/vitest-runner`'s package.json file](https://github.com/stryker-mutator/stryker-js/blob/master/packages/vitest-runner/package.json#L52) to discover the minimal required version of `vitest`.
 
+Stryker uses Vitest's test-name matching contract when selecting tests for each mutant. Vitest 2–4 use space-separated suite names; Vitest 5 uses the native full test name. Coverage and reported test IDs use the same naming contract, so nested suites remain selectable without additional configuration.
+
 ## Configuring
 
 You can configure the `@stryker-mutator/vitest-runner` using the `stryker.config.json` (or `stryker.config.js`) config file.

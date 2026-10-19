@@ -6,7 +6,6 @@ import {
   beforeAll,
   afterEach,
   inject,
-  RunnerTestSuite,
   RunnerTestCase,
 } from 'vitest';
 
@@ -16,6 +15,7 @@ import {
 const globalNamespace = inject('globalNamespace');
 const mutantActivation = inject('mutantActivation');
 const mode = inject('mode');
+const useFullTestName = inject('useFullTestName');
 
 const ns = globalThis[globalNamespace] || (globalThis[globalNamespace] = {});
 ns.hitLimit = inject('hitLimit');
@@ -50,7 +50,7 @@ if (mode === 'mutant') {
   ns.activeMutant = undefined;
 
   beforeEach(({ task }) => {
-    ns.currentTestId = toRawTestId(task);
+    ns.currentTestId = toRawTestId(task, useFullTestName);
   });
 
   afterEach(() => {
@@ -72,13 +72,16 @@ if (mode === 'mutant') {
 }
 
 // Stryker disable all: this file is copied to the sandbox dir
-function collectTestName({
-  name,
-  suite,
-}: {
-  name: string;
-  suite?: RunnerTestSuite;
-}): string {
+function collectTestName(
+  { name, suite, fullTestName }: Pick<
+    RunnerTestCase,
+    'name' | 'suite' | 'fullTestName'
+  >,
+  useFullTestName = false,
+): string {
+  if (useFullTestName) {
+    return fullTestName;
+  }
   const nameParts = [name];
   let currentSuite = suite;
   while (currentSuite) {
@@ -88,8 +91,11 @@ function collectTestName({
   return nameParts.join(' ').trim();
 }
 
-function toRawTestId(test: RunnerTestCase): string {
-  return `${test.file?.filepath ?? 'unknown.js'}#${collectTestName(test)}`;
+function toRawTestId(
+  test: RunnerTestCase,
+  useFullTestName = false,
+): string {
+  return `${test.file?.filepath ?? 'unknown.js'}#${collectTestName(test, useFullTestName)}`;
 }
 // Stryker restore all
 
@@ -100,6 +106,7 @@ declare module 'vitest' {
     mutantActivation: MutantActivation;
     activeMutant: string | undefined;
     mode: 'mutant' | 'dry-run';
+    useFullTestName: boolean;
     isGreaterThanVitest4Point1: boolean;
   }
   interface TaskMeta {

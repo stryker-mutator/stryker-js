@@ -52,6 +52,24 @@ describe(VitestTestRunner.name, () => {
   });
 
   describe(VitestTestRunner.prototype.init.name, () => {
+    for (const version of [
+      '2.0.0',
+      '3.0.0',
+      '4.1.11',
+      '5.0.0-beta.1',
+      '5.0.5',
+    ]) {
+      it(`should share the naming contract with setup for Vitest ${version}`, async () => {
+        sinon.replace(vitestWrapper, 'version', version);
+        await sut.init();
+        sinon.assert.calledWith(
+          vitestStub.provide as sinon.SinonStub,
+          'useFullTestName',
+          version.startsWith('5.'),
+        );
+      });
+    }
+
     const assertCommonVitestOptions = () => {
       sinon.assert.calledOnce(createVitestStub);
       expect(createVitestStub.firstCall.args[0]).to.equal('test');
