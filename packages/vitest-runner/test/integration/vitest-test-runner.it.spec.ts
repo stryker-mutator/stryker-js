@@ -34,6 +34,43 @@ describe('VitestRunner integration', () => {
     await sandbox.dispose();
   });
 
+  describe('using the prefix-names project', () => {
+    const calcAdd = 'tests/calc.spec.ts#calc add';
+
+    beforeEach(async () => {
+      sandbox = new TempTestDirectorySandbox('prefix-names');
+      await sandbox.init();
+    });
+
+    it('should only run the tests of the test filter, not tests whose name starts with a filtered name', async () => {
+      await sut.init();
+      const runResult = await sut.mutantRun(
+        factory.mutantRunOptions({
+          activeMutant: factory.mutant({ id: '1' }),
+          sandboxFileName: path.resolve(sandbox.tmpDir, 'math.ts'),
+          mutantActivation: 'runtime',
+          testFilter: [calcAdd], // "calc add negative" fails, but isn't selected
+        }),
+      );
+      assertions.expectSurvived(runResult);
+      expect(runResult.nrOfTests).eq(1);
+    });
+
+    it('should select a test whose name has trailing whitespace', async () => {
+      await sut.init();
+      const runResult = await sut.mutantRun(
+        factory.mutantRunOptions({
+          activeMutant: factory.mutant({ id: '1' }),
+          sandboxFileName: path.resolve(sandbox.tmpDir, 'math.ts'),
+          mutantActivation: 'runtime',
+          testFilter: ['tests/calc.spec.ts#calc padded'],
+        }),
+      );
+      assertions.expectSurvived(runResult);
+      expect(runResult.nrOfTests).eq(1);
+    });
+  });
+
   describe('using the simple-project project', () => {
     const test1 = 'tests/add.spec.ts#add should be able to add two numbers';
     const test2 =

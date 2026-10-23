@@ -128,6 +128,13 @@ async function main() {
   );
   await instrument(
     {
+      './packages/vitest-runner/testResources/prefix-names/math.orig.ts':
+        './packages/vitest-runner/testResources/prefix-names/math.ts',
+    },
+    '__stryker2__',
+  );
+  await instrument(
+    {
       './packages/vitest-runner/testResources/vitest-fixtures/math.orig.ts':
         './packages/vitest-runner/testResources/vitest-fixtures/math.ts',
     },
