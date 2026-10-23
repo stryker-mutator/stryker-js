@@ -131,7 +131,7 @@ export class VitestTestRunner implements TestRunner {
       }
     }
 
-    if (semver.lt(version, '4.1.0')) {
+    if (semver.lt(version, '4.0.0')) {
       switch (this.options.vitest.pool) {
         case 'forks':
           return {
