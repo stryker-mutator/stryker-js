@@ -8,8 +8,8 @@
 
 # StrykerJS
 
-*Professor X: For someone who hates mutants... you certainly keep some strange company.*
-*William Stryker: Oh, they serve their purpose... as long as they can be controlled.*
+_Professor X: For someone who hates mutants... you certainly keep some strange company._
+_William Stryker: Oh, they serve their purpose... as long as they can be controlled._
 
 Welcome to StrykerJS's monorepo. This is where all official stryker packages are maintained.
 If you're new to monorepos: don't be scared. You'll find the packages in the `packages` folder.
@@ -34,8 +34,8 @@ npx stryker run
 
 It will run stryker with default values:
 
-* Uses `npm test` as your test command
-* Searches for files to mutate in the `lib` and `src` directories
+- Uses `npm test` as your test command
+- Searches for files to mutate in the `lib` and `src` directories
 
 ## Usage
 

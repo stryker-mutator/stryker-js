@@ -1,20 +1,67 @@
-import {TestBed} from '@angular/core/testing';
-import {ArtikelenService} from './artikelen.service';
-import {HttpClientTestingModule, HttpTestingController} from '@angular/common/http/testing';
-import {Artikel} from '../models/artikel';
+import { TestBed } from '@angular/core/testing';
+import { ArtikelenService } from './artikelen.service';
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from '@angular/common/http/testing';
+import { Artikel } from '../models/artikel';
 
 describe('ArtikelenService', () => {
   let service: ArtikelenService;
   let httpMock: HttpTestingController;
   const testData: Artikel[] = [
-    new Artikel(1, 'fiets bel', '', 15.00, '', new Date(1, 9, 2019), new Date(1, 9, 2020), 'AB', ['fietsen'], 10),
-    new Artikel(2, 'fiets band', '', 8.00, '', new Date(1, 9, 2019), new Date(1, 9, 2020), 'BC', ['fietsen'], 10),
-    new Artikel(3, 'fiets helm', '', 12.00, '', new Date(1, 9, 2019), new Date(1, 9, 2020), 'BC', ['fietsen'], 10),
-    new Artikel(4, 'fiets', '', 200.00, '', new Date(1, 9, 2019), new Date(1, 9, 2020), 'AB', ['fietsen'], 10)
+    new Artikel(
+      1,
+      'fiets bel',
+      '',
+      15.0,
+      '',
+      new Date(1, 9, 2019),
+      new Date(1, 9, 2020),
+      'AB',
+      ['fietsen'],
+      10,
+    ),
+    new Artikel(
+      2,
+      'fiets band',
+      '',
+      8.0,
+      '',
+      new Date(1, 9, 2019),
+      new Date(1, 9, 2020),
+      'BC',
+      ['fietsen'],
+      10,
+    ),
+    new Artikel(
+      3,
+      'fiets helm',
+      '',
+      12.0,
+      '',
+      new Date(1, 9, 2019),
+      new Date(1, 9, 2020),
+      'BC',
+      ['fietsen'],
+      10,
+    ),
+    new Artikel(
+      4,
+      'fiets',
+      '',
+      200.0,
+      '',
+      new Date(1, 9, 2019),
+      new Date(1, 9, 2020),
+      'AB',
+      ['fietsen'],
+      10,
+    ),
   ];
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule]
+      imports: [HttpClientTestingModule],
     });
     service = TestBed.get(ArtikelenService);
     httpMock = TestBed.get(HttpTestingController);
@@ -25,7 +72,7 @@ describe('ArtikelenService', () => {
   });
   describe('getArtikelenList()', () => {
     it('should return artikel list of 4 elements', () => {
-      service.getArtikelenList().subscribe(response => {
+      service.getArtikelenList().subscribe((response) => {
         expect(response.length).toBe(4);
         expect(response[0].naam).toBe('fiets bel');
         expect(response[1].naam).toBe('fiets band');

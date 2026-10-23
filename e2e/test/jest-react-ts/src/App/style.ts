@@ -2,15 +2,17 @@
 /* Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (sindresorhus.com) */
 /* This source code was getting from https://github.com/tastejs/todomvc-app-css/blob/03e753aa21bd555cbdc2aa09185ecb9905d1bf16/index.css */
 
-import { css } from '@emotion/react'
-import styled from '@emotion/styled'
+import { css } from '@emotion/react';
+import styled from '@emotion/styled';
 
 export const Container = styled.div`
   .todoapp {
     background: #fff;
     margin: 130px 0 40px 0;
     position: relative;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.1);
+    box-shadow:
+      0 2px 4px 0 rgba(0, 0, 0, 0.2),
+      0 25px 50px 0 rgba(0, 0, 0, 0.1);
   }
 
   .todoapp input::-webkit-input-placeholder {
@@ -65,7 +67,7 @@ export const Container = styled.div`
   .info a:hover {
     text-decoration: underline;
   }
-`
+`;
 
 export const base = {
   textInput: css`
@@ -84,4 +86,4 @@ export const base = {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   `,
-}
+};

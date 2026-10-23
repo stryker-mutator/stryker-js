@@ -1,4 +1,4 @@
-import {Artikel} from './artikel';
+import { Artikel } from './artikel';
 
 export class WinkelwagenRegel {
   public artikel: Artikel;

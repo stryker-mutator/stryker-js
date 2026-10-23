@@ -30,14 +30,18 @@ export class CustomElementFixture<TCustomElement extends LitElement> {
 
   public $(selector: string, inShadow = true): HTMLElement {
     if (inShadow) {
-      return (this.element.shadowRoot as ShadowRoot).querySelector(selector) as HTMLElement;
+      return (this.element.shadowRoot as ShadowRoot).querySelector(
+        selector,
+      ) as HTMLElement;
     } else {
       return this.element.querySelector(selector) as HTMLElement;
     }
   }
 
   public $$(selector: string): Element[] {
-    return [...(this.element.shadowRoot as ShadowRoot).querySelectorAll(selector)];
+    return [
+      ...(this.element.shadowRoot as ShadowRoot).querySelectorAll(selector),
+    ];
   }
 
   public get style(): CSSStyleDeclaration {
@@ -48,7 +52,10 @@ export class CustomElementFixture<TCustomElement extends LitElement> {
     return this.element.remove();
   }
 
-  public async catchEvent<T extends Event = Event>(eventType: string, act: () => Promise<void> | void) {
+  public async catchEvent<T extends Event = Event>(
+    eventType: string,
+    act: () => Promise<void> | void,
+  ) {
     let actual: Event | undefined;
     const eventListener = (evt: Event) => (actual = evt);
     this.element.addEventListener(eventType, eventListener);

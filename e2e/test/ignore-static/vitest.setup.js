@@ -1,3 +1,3 @@
 import { MyMath } from './src/math.js';
 
-globalThis.MyMath = MyMath
+globalThis.MyMath = MyMath;

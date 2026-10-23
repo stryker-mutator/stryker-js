@@ -30,13 +30,21 @@ function convertTaskStateToTestStatus(
   return TestStatus.Failed;
 }
 
-export function convertTestToTestResult(test: RunnerTestCase): TestResult {
+export function convertTestToTestResult(
+  test: RunnerTestCase,
+  separator?: string,
+): TestResult {
   const status = convertTaskStateToTestStatus(test.result?.state, test.mode);
   const baseTestResult: BaseTestResult = {
-    id: normalizeTestId(toRawTestId(test)),
-    name: collectTestName(test),
+    id: normalizeTestId(toRawTestId(test, separator)),
+    name: collectTestName(test, separator),
     timeSpentMs: test.result?.duration ?? 0,
     fileName: test.file?.filepath && path.resolve(test.file.filepath),
+    startPosition: test.location && {
+      // Stryker works 0-based internally, vitest reports 1-based: https://vitest.dev/config/#includetasklocation
+      line: test.location.line - 1,
+      column: test.location.column - 1,
+    },
   };
   if (status === TestStatus.Failed) {
     return {

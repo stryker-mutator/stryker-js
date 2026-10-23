@@ -19,7 +19,7 @@ module.exports = {
         options: {
           projectReferences: true,
         },
-      }
+      },
     ],
   },
   output: {

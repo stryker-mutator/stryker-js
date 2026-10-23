@@ -100,15 +100,13 @@ export class TapTestRunner implements TestRunner {
     options: StrykerOptions,
     private readonly log: Logger,
     private readonly globalNamespace:
-      | typeof INSTRUMENTER_CONSTANTS.NAMESPACE
-      | '__stryker2__',
+      typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__',
   ) {
     this.options = options as TapRunnerOptionsWithStrykerOptions;
   }
 
   public capabilities():
-    | Promise<TestRunnerCapabilities>
-    | TestRunnerCapabilities {
+    Promise<TestRunnerCapabilities> | TestRunnerCapabilities {
     return { reloadEnvironment: true };
   }
 

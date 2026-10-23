@@ -1,7 +1,6 @@
-
 module.exports = {
-  'valid': 'config',
-  'should': 'be',
-  'read': true,
-  'type': 'js'
-}
+  valid: 'config',
+  should: 'be',
+  read: true,
+  type: 'js',
+};

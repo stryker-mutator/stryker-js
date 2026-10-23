@@ -1,22 +1,26 @@
-import React from 'react'
-import FilterLink from './FilterLink'
-import { Routes, Todo, AppState } from '../../index'
-import { useAppState } from '@laststance/use-app-state'
-import { Container } from './style'
+import React from 'react';
+import FilterLink from './FilterLink';
+import { Routes, Todo, AppState } from '../../index';
+import { useAppState } from '@laststance/use-app-state';
+import { Container } from './style';
 
 interface Props {
-  path: Routes
+  path: Routes;
 }
 
 const Menu: React.FC<Props> = ({ path }) => {
-  const [appState, setAppState] = useAppState<AppState>()
-  const doneCount: number = appState.todoList.filter(t => t.completed === true).length
-  const yetCount: number = appState.todoList.filter(t => t.completed === false).length
+  const [appState, setAppState] = useAppState<AppState>();
+  const doneCount: number = appState.todoList.filter(
+    (t) => t.completed === true,
+  ).length;
+  const yetCount: number = appState.todoList.filter(
+    (t) => t.completed === false,
+  ).length;
 
   function clearCompleted(): void {
     setAppState({
       todoList: appState.todoList.filter((t: Todo) => !t.completed),
-    })
+    });
   }
 
   return (
@@ -39,7 +43,7 @@ const Menu: React.FC<Props> = ({ path }) => {
         )}
       </footer>
     </Container>
-  )
-}
+  );
+};
 
-export default Menu
+export default Menu;

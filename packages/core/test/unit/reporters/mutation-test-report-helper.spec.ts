@@ -805,6 +805,7 @@ describe(MutationTestReportHelper.name, () => {
             factory.killedMutantRunResult({
               killedBy: ['1'],
               nrOfTests: 42,
+              duration: 1337,
               failureMessage: 'foo should have been bar at line 1',
             }),
           );
@@ -814,6 +815,7 @@ describe(MutationTestReportHelper.name, () => {
             status: 'Killed',
             killedBy: ['1'],
             testsCompleted: 42,
+            duration: 1337,
             statusReason: 'foo should have been bar at line 1',
           };
           expect(actual).deep.include(expected);
@@ -873,12 +875,13 @@ describe(MutationTestReportHelper.name, () => {
           // Act
           const actual = sut.reportMutantRunResult(
             factory.mutantTestCoverage({ fileName: 'add.js' }),
-            factory.timeoutMutantRunResult(),
+            factory.timeoutMutantRunResult({ duration: 5000 }),
           );
 
           // Assert
           const expected: Partial<MutantResult> = {
             status: 'Timeout',
+            duration: 5000,
           };
           expect(actual).deep.include(expected);
         });
@@ -896,7 +899,7 @@ describe(MutationTestReportHelper.name, () => {
               fileName: 'add.js',
               coveredBy: ['1'],
             }),
-            factory.survivedMutantRunResult({ nrOfTests: 4 }),
+            factory.survivedMutantRunResult({ nrOfTests: 4, duration: 21 }),
           );
 
           // Assert
@@ -904,6 +907,7 @@ describe(MutationTestReportHelper.name, () => {
             status: 'Survived',
             coveredBy: ['1'],
             testsCompleted: 4,
+            duration: 21,
           };
           expect(actual).deep.include(expected);
         });

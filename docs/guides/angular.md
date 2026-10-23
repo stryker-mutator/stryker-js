@@ -9,7 +9,7 @@ Angular 16 introduced [experimental support for Jest](https://blog.angular.io/an
 
 ## Angular with Karma
 
-:::note 
+:::note
 
 This setup only works with @angular/cli 9.0.0 or higher. If you're using an older version, we highly recommend upgrading to at least version 9.0.0 of the CLI. Refer to the [Angular Update Guide](https://update.angular.io/) for assistance. If upgrading isn't feasible, see [the legacy guide for Stryker 3 and Angular CLI 6.1-8.2](./legacy/stryker-3/angular.md).
 
@@ -25,7 +25,12 @@ The `npm init stryker@latest` command also creates a `stryker.config.json` or `s
 {
   "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
   "_comment": "This config was generated using a preset. Please see website for more information: https://stryker-mutator.io/docs/stryker-js/guides/angular",
-  "mutate": ["src/**/*.ts", "!src/**/*.spec.ts", "!src/test.ts", "!src/environments/*.ts"],
+  "mutate": [
+    "src/**/*.ts",
+    "!src/**/*.spec.ts",
+    "!src/test.ts",
+    "!src/environments/*.ts"
+  ],
   "testRunner": "karma",
   "karma": {
     "configFile": "karma.conf.js",
@@ -51,7 +56,7 @@ Jest support in Angular is experimental, so the integration StrykerJS needs is n
 
 ### Install
 
-Install the needed packages with the following command: 
+Install the needed packages with the following command:
 
 ```shell
 npm i -D @stryker-mutator/core @stryker-mutator/jest-runner
@@ -94,11 +99,7 @@ Create a `stryker.config.json` file with the following content:
   },
   "testRunnerNodeArgs": ["--experimental-vm-modules"],
   "ignorers": ["angular"],
-  "reporters": [
-    "progress",
-    "clear-text",
-    "html"
-  ]
+  "reporters": ["progress", "clear-text", "html"]
 }
 ```
 

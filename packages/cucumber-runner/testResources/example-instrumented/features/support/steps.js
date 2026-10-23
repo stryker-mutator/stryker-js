@@ -15,7 +15,7 @@ When(
   'I increment the variable by {int} using the static calculator',
   function (val) {
     incrementBy(this.calc, val);
-  }
+  },
 );
 
 Then('the variable should contain {int}', function (number) {

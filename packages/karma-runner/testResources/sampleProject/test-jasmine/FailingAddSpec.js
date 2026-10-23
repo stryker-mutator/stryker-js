@@ -1,5 +1,5 @@
-describe('Add', function() {
-  it('this test should fail', function() {
+describe('Add', function () {
+  it('this test should fail', function () {
     var num1 = 2;
     var num2 = 5;
     var expected = 0;

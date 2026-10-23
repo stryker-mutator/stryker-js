@@ -70,7 +70,7 @@ Running in incremental mode, Stryker will do its best to produce an accurate mut
 | 🔵 Karma           | ⚠ Test names only                 |
 | 🥒 CucumberJS      | ✅ Full                           |
 | 📼 Tap             | ⚠ Tests per file without location |
-| ⚡ Vitest          | ⚠ Tests per file without location |
+| ⚡ Vitest          | ✅ Full                           |
 | ▶ Command          | ❌ Nothing                        |
 
 You can use this table to understand why StrykerJS decides not to rerun a specific mutant even though you've changed tests covering that mutant.

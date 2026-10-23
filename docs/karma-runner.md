@@ -18,8 +18,8 @@ npm i --save-dev @stryker-mutator/karma-runner
 ## Bring your own test runner
 
 The `@stryker-mutator/karma-runner` is a plugin for `stryker` to enable `karma` as a test runner.
-However, it does *not* come packaged with it's own version of `karma`, instead it
-uses *your very own karma* version. It can also work with `@angular/cli`, see [Configuring](#configuring)
+However, it does _not_ come packaged with it's own version of `karma`, instead it
+uses _your very own karma_ version. It can also work with `@angular/cli`, see [Configuring](#configuring)
 
 **Note:** karma v2.0.3 has a [known issue](https://github.com/karma-runner/karma/issues/3057) which makes it impossible to use it with Stryker. please upgrade to 2.0.4 or higher.
 
@@ -46,8 +46,8 @@ Default: `"custom"`
 
 Specify which kind of project you're using. This determines which command is used to start karma
 
-* **`"custom"`**: configure @stryker-mutator/karma-runner to use `karma start`.
-* **`"angular-cli"`**: configure @stryker-mutator/karma-runner to use `ng test` (see [configuring for angular-cli](#configure-angular-cli)).
+- **`"custom"`**: configure @stryker-mutator/karma-runner to use `karma start`.
+- **`"angular-cli"`**: configure @stryker-mutator/karma-runner to use `ng test` (see [configuring for angular-cli](#configure-angular-cli)).
 
 ### `karma.configFile` [`string`]
 
@@ -73,10 +73,10 @@ Add [ng test arguments](https://github.com/angular/angular-cli/wiki/test#options
 {
   "karma": {
     "projectType": "angular-cli",
-      "ngConfig": {
-        "testArguments": {
-          "project": "my-lib"
-        }
+    "ngConfig": {
+      "testArguments": {
+        "project": "my-lib"
+      }
     }
   }
 }

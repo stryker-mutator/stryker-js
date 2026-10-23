@@ -1,9 +1,14 @@
 // This file is generated with tasks/instrument-test-resources.js
- function stryNS_9fa48() {
-  var g = new Function("return this")();
+function stryNS_9fa48() {
+  var g = new Function('return this')();
   var ns = g.__stryker2__ || (g.__stryker2__ = {});
 
-  if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
+  if (
+    ns.activeMutant === undefined &&
+    g.process &&
+    g.process.env &&
+    g.process.env.__STRYKER_ACTIVE_MUTANT__
+  ) {
     ns.activeMutant = g.process.env.__STRYKER_ACTIVE_MUTANT__;
   }
 
@@ -19,10 +24,12 @@ stryNS_9fa48();
 
 function stryCov_9fa48() {
   var ns = stryNS_9fa48();
-  var cov = ns.mutantCoverage || (ns.mutantCoverage = {
-    static: {},
-    perTest: {}
-  });
+  var cov =
+    ns.mutantCoverage ||
+    (ns.mutantCoverage = {
+      static: {},
+      perTest: {},
+    });
 
   function cover() {
     var c = cov.static;
@@ -55,23 +62,45 @@ function stryMutAct_9fa48(id) {
 
 class CircleElement extends HTMLElement {
   get circumference() {
-    if (stryMutAct_9fa48("23")) {
-      {}
+    if (stryMutAct_9fa48('23')) {
+      {
+      }
     } else {
-      stryCov_9fa48("23");
-      return stryMutAct_9fa48("24") ? 2 * Math.PI / Number(this.getAttribute(stryMutAct_9fa48("26") ? "" : (stryCov_9fa48("26"), 'radius'))) : (stryCov_9fa48("24"), (stryMutAct_9fa48("25") ? 2 / Math.PI : (stryCov_9fa48("25"), 2 * Math.PI)) * Number(this.getAttribute(stryMutAct_9fa48("26") ? "" : (stryCov_9fa48("26"), 'radius'))));
+      stryCov_9fa48('23');
+      return stryMutAct_9fa48('24')
+        ? (2 * Math.PI) /
+            Number(
+              this.getAttribute(
+                stryMutAct_9fa48('26') ? '' : (stryCov_9fa48('26'), 'radius'),
+              ),
+            )
+        : (stryCov_9fa48('24'),
+          (stryMutAct_9fa48('25')
+            ? 2 / Math.PI
+            : (stryCov_9fa48('25'), 2 * Math.PI)) *
+            Number(
+              this.getAttribute(
+                stryMutAct_9fa48('26') ? '' : (stryCov_9fa48('26'), 'radius'),
+              ),
+            ));
     }
   }
 
   untestedFunction() {
-    if (stryMutAct_9fa48("27")) {
-      {}
+    if (stryMutAct_9fa48('27')) {
+      {
+      }
     } else {
-      stryCov_9fa48("27");
-      return stryMutAct_9fa48("28") ? 5 / 2 / 3 : (stryCov_9fa48("28"), (stryMutAct_9fa48("29") ? 5 * 2 : (stryCov_9fa48("29"), 5 / 2)) * 3);
+      stryCov_9fa48('27');
+      return stryMutAct_9fa48('28')
+        ? 5 / 2 / 3
+        : (stryCov_9fa48('28'),
+          (stryMutAct_9fa48('29') ? 5 * 2 : (stryCov_9fa48('29'), 5 / 2)) * 3);
     }
   }
-
 }
 
-customElements.define(stryMutAct_9fa48("30") ? "" : (stryCov_9fa48("30"), 'my-circle'), CircleElement);
+customElements.define(
+  stryMutAct_9fa48('30') ? '' : (stryCov_9fa48('30'), 'my-circle'),
+  CircleElement,
+);

@@ -3,7 +3,5 @@
   "compilerOptions": {
     "outDir": "../../dist/core"
   },
-  "references": [
-    { "path": "../utils" }
-  ]
+  "references": [{ "path": "../utils" }]
 }

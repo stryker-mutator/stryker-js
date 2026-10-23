@@ -95,12 +95,21 @@ runE2eTests().subscribe({
   complete: () => console.log('✅ Done'),
   error: (err) => {
     console.error(err.message);
-    console.error(
-      `(continue from here with \`${path.basename(process.argv[1])} --continue\`)`,
-    );
+    console.error(`(continue from here with \`${continueCommand()}\`)`);
     process.exitCode = 1;
   },
 });
+
+/**
+ * Builds the command that resumes this run, based on the directory it was started from.
+ * @returns {string}
+ */
+function continueCommand() {
+  const e2eDir = path.resolve(testRootDir, '..');
+  return path.resolve(process.cwd()) === e2eDir
+    ? 'pnpm test --continue'
+    : 'pnpm run e2e:run --continue';
+}
 
 /**
  *

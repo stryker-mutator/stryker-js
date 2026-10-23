@@ -33,7 +33,7 @@ export function conditionallyUpdateScrollbar() {
   const scrollbarWidth = getScrollbarWidth();
   // https://github.com/twbs/bootstrap/blob/v4.0.0-alpha.6/js/src/modal.js#L433
   const fixedContent = document.querySelectorAll(
-    '.fixed-top, .fixed-bottom, .is-fixed, .sticky-top'
+    '.fixed-top, .fixed-bottom, .is-fixed, .sticky-top',
   )[0];
   const bodyPadding = fixedContent
     ? parseInt(fixedContent.style.paddingRight || 0, 10)
@@ -54,7 +54,7 @@ export function mapToCssModules(className = '', cssModule = globalCssModule) {
   if (!cssModule) return className;
   return className
     .split(' ')
-    .map(c => cssModule[c] || c)
+    .map((c) => cssModule[c] || c)
     .join(' ');
 }
 
@@ -104,7 +104,7 @@ export function deprecated(propType, explanation) {
   return function validate(props, propName, componentName, ...rest) {
     if (props[propName] !== null && typeof props[propName] !== 'undefined') {
       warnOnce(
-        `"${propName}" property of "${componentName}" has been deprecated.\n${explanation}`
+        `"${propName}" property of "${componentName}" has been deprecated.\n${explanation}`,
       );
     }
 
@@ -119,7 +119,7 @@ export function DOMElement(props, propName, componentName) {
         propName +
         '` supplied to `' +
         componentName +
-        '`. Expected prop to be an instance of Element. Validation failed.'
+        '`. Expected prop to be an instance of Element. Validation failed.',
     );
   }
 }
@@ -128,18 +128,17 @@ export const targetPropType = PropTypes.oneOfType([
   PropTypes.string,
   PropTypes.func,
   DOMElement,
-  PropTypes.shape({ current: PropTypes.any })
+  PropTypes.shape({ current: PropTypes.any }),
 ]);
-
 
 /* eslint key-spacing: ["error", { afterColon: true, align: "value" }] */
 // These are all setup to match what is in the bootstrap _variables.scss
 // https://github.com/twbs/bootstrap/blob/v4-dev/scss/_variables.scss
 export const TransitionTimeouts = {
-  Fade:     150, // $transition-fade
+  Fade: 150, // $transition-fade
   Collapse: 350, // $transition-collapse
-  Modal:    300, // $modal-transition
-  Carousel: 600 // $carousel-transition
+  Modal: 300, // $modal-transition
+  Carousel: 600, // $carousel-transition
 };
 
 // Duplicated Transition.propType keys to ensure that Reactstrap builds
@@ -158,23 +157,23 @@ export const TransitionPropTypeKeys = [
   'onEntered',
   'onExit',
   'onExiting',
-  'onExited'
+  'onExited',
 ];
 
 export const TransitionStatuses = {
   ENTERING: 'entering',
-  ENTERED:  'entered',
-  EXITING:  'exiting',
-  EXITED:   'exited'
+  ENTERED: 'entered',
+  EXITING: 'exiting',
+  EXITED: 'exited',
 };
 
 export const keyCodes = {
-  esc:   27,
+  esc: 27,
   space: 32,
   enter: 13,
-  tab:   9,
-  up:    38,
-  down:  40
+  tab: 9,
+  up: 38,
+  down: 40,
 };
 
 export const PopperPlacements = [
@@ -192,7 +191,7 @@ export const PopperPlacements = [
   'bottom-start',
   'left-end',
   'left',
-  'left-start'
+  'left-start',
 ];
 
 export const canUseDOM = !!(
@@ -222,7 +221,7 @@ export function findDOMElements(target) {
     }
     if (!selection.length) {
       throw new Error(
-        `The target '${target}' could not be identified in the dom, tip: check spelling`
+        `The target '${target}' could not be identified in the dom, tip: check spelling`,
       );
     }
     return selection;
@@ -236,7 +235,6 @@ export function isArrayOrNodeList(els) {
   }
   return Array.isArray(els) || (canUseDOM && typeof els.length === 'number');
 }
-
 
 export function getTarget(target) {
   const els = findDOMElements(target);

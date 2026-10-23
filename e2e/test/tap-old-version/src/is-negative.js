@@ -1,6 +1,6 @@
 /**
- * @param {number} n 
- * @returns 
+ * @param {number} n
+ * @returns
  */
 module.exports.isNegativeNumber = function isNegativeNumber(n) {
   var isNegative = false;
@@ -8,4 +8,4 @@ module.exports.isNegativeNumber = function isNegativeNumber(n) {
     isNegative = true;
   }
   return isNegative;
-}
+};

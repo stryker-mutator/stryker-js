@@ -6,7 +6,9 @@ describe('Circle', function () {
     var circumference = getCircumference(radius);
 
     if (circumference !== expectedCircumference) {
-      throw new Error(`Expected ${expectedCircumference} but got ${circumference}`);
+      throw new Error(
+        `Expected ${expectedCircumference} but got ${circumference}`,
+      );
     }
   });
 });

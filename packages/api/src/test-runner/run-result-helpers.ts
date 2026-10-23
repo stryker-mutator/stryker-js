@@ -26,9 +26,14 @@ export function toMutantRunResult(
       const failedTests = dryRunResult.tests.filter<FailedTestResult>(
         (test): test is FailedTestResult => test.status === TestStatus.Failed,
       );
-      const nrOfTests = dryRunResult.tests.filter(
+      const executedTests = dryRunResult.tests.filter(
         (test) => test.status !== TestStatus.Skipped,
-      ).length;
+      );
+      const nrOfTests = executedTests.length;
+      const duration = executedTests.reduce(
+        (total, test) => total + test.timeSpentMs,
+        0,
+      );
 
       if (failedTests.length > 0) {
         return {
@@ -38,11 +43,13 @@ export function toMutantRunResult(
             ? failedTests.map<string>((test) => test.id)
             : [failedTests[0].id],
           nrOfTests,
+          duration,
         };
       } else {
         return {
           status: MutantRunStatus.Survived,
           nrOfTests,
+          duration,
         };
       }
     }

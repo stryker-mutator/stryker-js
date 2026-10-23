@@ -1,7 +1,5 @@
 {
-  "include": [
-    "dist/src/**/*.js"
-  ],
+  "include": ["dist/src/**/*.js"],
   "excludeAfterRemap": false,
   "checkCoverage": true,
   "lines": 80,

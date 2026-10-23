@@ -17,6 +17,10 @@ export interface TimeoutMutantRunResult {
    * An optional reason for the timeout
    */
   reason?: string;
+  /**
+   * The time it took before the timeout occurred in milliseconds.
+   */
+  duration?: number;
 }
 
 export interface KilledMutantRunResult {
@@ -33,6 +37,10 @@ export interface KilledMutantRunResult {
    * The number of total tests ran in this test run.
    */
   nrOfTests: number;
+  /**
+   * The net time it took to run the tests for this mutant in milliseconds (without the overhead of the test runner).
+   */
+  duration?: number;
 }
 
 export interface SurvivedMutantRunResult {
@@ -41,6 +49,10 @@ export interface SurvivedMutantRunResult {
    * The number of total tests ran in this test run.
    */
   nrOfTests: number;
+  /**
+   * The net time it took to run the tests for this mutant in milliseconds (without the overhead of the test runner).
+   */
+  duration?: number;
 }
 
 export interface ErrorMutantRunResult {

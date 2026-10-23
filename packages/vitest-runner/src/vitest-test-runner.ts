@@ -37,6 +37,10 @@ import {
 
 import { vitestWrapper, Vitest } from './vitest-wrapper.js';
 import {
+  VITEST_MODERN_TEST_NAME_SEPARATOR,
+  VITEST_LEGACY_TEST_NAME_SEPARATOR,
+} from './test-helpers.js';
+import {
   convertTestToTestResult,
   fromTestId,
   collectTestsFromSuite,
@@ -87,12 +91,18 @@ export class VitestTestRunner implements TestRunner {
     this.options = options as VitestRunnerOptionsWithStrykerOptions;
   }
 
+  get #testNameSeparator(): string {
+    return semver.gte(vitestWrapper.version, '5.0.0-0')
+      ? VITEST_MODERN_TEST_NAME_SEPARATOR
+      : VITEST_LEGACY_TEST_NAME_SEPARATOR;
+  }
+
   public capabilities(): TestRunnerCapabilities {
     return { reloadEnvironment: true };
   }
 
   #getVitestPoolConfig(version: string) {
-    if (semver.satisfies(version, '<1.0.0')) {
+    if (semver.lt(version, '1.0.0')) {
       return {
         threads: true,
         maxThreads: 1,
@@ -100,7 +110,7 @@ export class VitestTestRunner implements TestRunner {
       };
     }
 
-    if (semver.satisfies(version, '<4.1.0')) {
+    if (semver.lt(version, '4.1.0')) {
       return {
         pool: 'threads',
         poolOptions: {
@@ -144,6 +154,8 @@ export class VitestTestRunner implements TestRunner {
       config: this.options.vitest?.configFile,
       ...this.#getVitestPoolConfig(vitestWrapper.version),
       coverage: { enabled: false },
+      // Incremental mode diffs tests by location.
+      includeTaskLocation: true,
       maxConcurrency: 1,
       watch: false,
       dir: this.options.vitest.dir,
@@ -153,8 +165,9 @@ export class VitestTestRunner implements TestRunner {
     this.ctx.provide('globalNamespace', this.globalNamespace);
     this.ctx.provide(
       'isGreaterThanVitest4Point1',
-      semver.satisfies(vitestWrapper.version, '>=4.1.0'),
+      semver.gte(vitestWrapper.version, '4.1.0'),
     );
+    this.ctx.provide('testNameSeparator', this.#testNameSeparator);
     this.ctx.config.browser.screenshotFailures = false;
     this.ctx.projects.forEach((project) => {
       project.config.setupFiles = [
@@ -229,10 +242,13 @@ export class VitestTestRunner implements TestRunner {
     let testFilesToRun: string[] | undefined = explicitTestFiles;
     if (testIds.length > 0) {
       const parsedTests = testIds.map(fromTestId);
+      // Anchor the end of the pattern: it is matched against the full test name, so without it
+      // a filter for "calc add" would also select "calc add negative". The start can't be anchored,
+      // as vitest prefixes the name. Allow trailing whitespace: test ids have it trimmed, the full name doesn't.
       const regexTestNameFilter = parsedTests
         .map(({ test: name }) => escapeRegExp(name))
         .join('|');
-      const regex = new RegExp(regexTestNameFilter);
+      const regex = new RegExp(`(?:${regexTestNameFilter})\\s*$`);
       testFilesToRun = parsedTests.map(({ file }) => file);
       this.ctx!.projects.forEach((project) => {
         project.config.testNamePattern = regex;
@@ -260,7 +276,7 @@ export class VitestTestRunner implements TestRunner {
 
     let failure = false;
     const testResults = tests.map((test) => {
-      const testResult = convertTestToTestResult(test);
+      const testResult = convertTestToTestResult(test, this.#testNameSeparator);
       failure ||= testResult.status === TestStatus.Failed;
       return testResult;
     });

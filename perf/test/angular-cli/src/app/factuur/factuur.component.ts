@@ -1,15 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'ksw-factuur',
-  templateUrl: './factuur.component.html'
+  templateUrl: './factuur.component.html',
 })
 export class FactuurComponent implements OnInit {
+  constructor() {}
 
-  constructor() {
-  }
-
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 }

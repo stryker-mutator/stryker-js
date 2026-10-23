@@ -4,14 +4,9 @@
     "outDir": "dist/test",
     "rootDir": "test",
     "strictBindCallApply": true,
-    "types": [
-      "mocha",
-      "node"
-    ],
+    "types": ["mocha", "node"]
   },
-  "include": [
-    "test"
-  ],
+  "include": ["test"],
   "references": [
     {
       "path": "./tsconfig.src.json"

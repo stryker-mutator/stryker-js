@@ -9,7 +9,9 @@ describe('math with fixtures', () => {
     expect(result).toBe(5);
   });
 
-  test('should be able to add negative numbers using fixture', ({ calculator }) => {
+  test('should be able to add negative numbers using fixture', ({
+    calculator,
+  }) => {
     const result = calculator.add(-1, 1);
     expect(result).toBe(0);
   });

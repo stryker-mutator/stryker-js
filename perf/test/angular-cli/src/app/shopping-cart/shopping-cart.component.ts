@@ -1,19 +1,18 @@
-import {Component} from '@angular/core';
-import {WinkelwagenService} from '../services/winkelwagen.service';
-import {Winkelwagen} from '../models/winkelwagen';
+import { Component } from '@angular/core';
+import { WinkelwagenService } from '../services/winkelwagen.service';
+import { Winkelwagen } from '../models/winkelwagen';
 
 @Component({
   selector: 'ksw-shopping-cart',
   templateUrl: './shopping-cart.component.html',
-  styleUrls: ['./shopping-cart.component.scss']
+  styleUrls: ['./shopping-cart.component.scss'],
 })
 export class ShoppingCartComponent {
-
   public animationName = 'none';
   public itemCount = 0;
 
   constructor(private winkelwagenService: WinkelwagenService) {
-    this.winkelwagenService.listen().subscribe(winkelwagen => {
+    this.winkelwagenService.listen().subscribe((winkelwagen) => {
       this.animate(winkelwagen);
     });
     this.itemCount = this.winkelwagenService.getWinkelwagen().getArtikelCount();
@@ -29,5 +28,4 @@ export class ShoppingCartComponent {
   public changeAnimationName(name: string): void {
     this.animationName = name;
   }
-
 }

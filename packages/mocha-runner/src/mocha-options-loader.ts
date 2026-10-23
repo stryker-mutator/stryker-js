@@ -145,10 +145,8 @@ export class MochaOptionsLoader {
           case '-u':
             mochaRunnerOptions.ui =
               (this.parseNextString(args) as
-                | 'bdd'
-                | 'exports'
-                | 'qunit'
-                | 'tdd') ?? DEFAULT_MOCHA_OPTIONS.ui!;
+                'bdd' | 'exports' | 'qunit' | 'tdd') ??
+              DEFAULT_MOCHA_OPTIONS.ui!;
             break;
           case '--grep':
           case '-g': {

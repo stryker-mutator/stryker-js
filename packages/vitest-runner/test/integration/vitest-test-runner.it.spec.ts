@@ -35,6 +35,43 @@ describe('VitestRunner integration', () => {
     await sandbox.dispose();
   });
 
+  describe('using the prefix-names project', () => {
+    const calcAdd = 'tests/calc.spec.ts#calc add';
+
+    beforeEach(async () => {
+      sandbox = new TempTestDirectorySandbox('prefix-names');
+      await sandbox.init();
+    });
+
+    it('should only run the tests of the test filter, not tests whose name starts with a filtered name', async () => {
+      await sut.init();
+      const runResult = await sut.mutantRun(
+        factory.mutantRunOptions({
+          activeMutant: factory.mutant({ id: '1' }),
+          sandboxFileName: path.resolve(sandbox.tmpDir, 'math.ts'),
+          mutantActivation: 'runtime',
+          testFilter: [calcAdd], // "calc add negative" fails, but isn't selected
+        }),
+      );
+      assertions.expectSurvived(runResult);
+      expect(runResult.nrOfTests).eq(1);
+    });
+
+    it('should select a test whose name has trailing whitespace', async () => {
+      await sut.init();
+      const runResult = await sut.mutantRun(
+        factory.mutantRunOptions({
+          activeMutant: factory.mutant({ id: '1' }),
+          sandboxFileName: path.resolve(sandbox.tmpDir, 'math.ts'),
+          mutantActivation: 'runtime',
+          testFilter: ['tests/calc.spec.ts#calc padded'],
+        }),
+      );
+      assertions.expectSurvived(runResult);
+      expect(runResult.nrOfTests).eq(1);
+    });
+  });
+
   describe('using the simple-project project', () => {
     const test1 = 'tests/add.spec.ts#add should be able to add two numbers';
     const test2 =
@@ -67,36 +104,42 @@ describe('VitestRunner integration', () => {
             fileName: path.resolve('tests/add.spec.ts'),
             name: 'add should be able to add two numbers',
             status: TestStatus.Success,
+            startPosition: { line: 4, column: 2 },
           },
           {
             id: test2,
             fileName: path.resolve('tests/add.spec.ts'),
             name: 'add should be able to add a negative number',
             status: TestStatus.Success,
+            startPosition: { line: 9, column: 2 },
           },
           {
             id: test3,
             fileName: path.resolve('tests/math.spec.ts'),
             name: 'math should be able negate a number',
             status: TestStatus.Success,
+            startPosition: { line: 12, column: 2 },
           },
           {
             id: test4,
             fileName: path.resolve('tests/math.spec.ts'),
             name: 'math should be able to add one to a number',
             status: TestStatus.Success,
+            startPosition: { line: 3, column: 2 },
           },
           {
             id: test5,
             fileName: path.resolve('tests/math.spec.ts'),
             name: 'math should be able to recognize a negative number',
             status: TestStatus.Success,
+            startPosition: { line: 21, column: 2 },
           },
           {
             id: test6,
             fileName: path.resolve('tests/pi.spec.ts'),
             name: 'pi should be 3.14',
             status: TestStatus.Success,
+            startPosition: { line: 4, column: 2 },
           },
         ]);
       });

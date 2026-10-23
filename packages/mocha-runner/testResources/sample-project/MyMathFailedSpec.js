@@ -14,5 +14,4 @@ describe('MyMath should fail', function () {
   it('should do 3+1=5', function () {
     expect(myMath.addOne(3)).to.equal(5);
   });
-
 });

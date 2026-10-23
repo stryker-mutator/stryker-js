@@ -3,7 +3,10 @@ import { expect } from 'chai';
 import { deserialize, serialize } from '../../src/index.js';
 
 class Person {
-  constructor(public name: string, public age: number){}
+  constructor(
+    public name: string,
+    public age: number,
+  ) {}
 }
 
 Given('an input {int}', function (n) {
@@ -22,7 +25,7 @@ Given('a js value {string}', function (json) {
   this.input = eval(`(${json})`);
 });
 When('I serialize', function () {
-  this.result = serialize(this.input, );
+  this.result = serialize(this.input);
 });
 When('I serialize with Person as known class', function () {
   this.result = serialize(this.input, [Person]);

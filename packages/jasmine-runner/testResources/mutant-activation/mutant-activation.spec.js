@@ -10,6 +10,8 @@ describe('mutant-activation', () => {
   it('should report active mutants', () => {
     const runtimeActiveMutant = getActiveMutant();
 
-    throw new Error(JSON.stringify({ staticActiveMutant, runtimeActiveMutant }));
+    throw new Error(
+      JSON.stringify({ staticActiveMutant, runtimeActiveMutant }),
+    );
   });
 });
