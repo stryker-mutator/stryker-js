@@ -19,4 +19,4 @@ jobs:
       - name: Build
         run: pnpm run build
       - name: Release
-        run: pnpm exec lerna publish from-git --yes --pre-dist-tag next
+        run: pnpm exec lerna publish from-git --yes --pre-dist-tag next --concurrency 1
