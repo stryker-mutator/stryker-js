@@ -4,28 +4,40 @@ import * as babel from '@babel/core';
 
 import { AstFormat, TSAst, TsxAst } from '../syntax/index.js';
 
+import { ParserOptions } from './parser-options.js';
+
 const { types, parseAsync } = babel;
 const require = createRequire(import.meta.url);
+
+// The TS/TSX parser only consumes `decorators`; it doesn't use `plugins` (that's
+// JS-parser-only), so narrow the shared `ParserOptions` down to what's relevant here.
+type TSParserOptions = Pick<ParserOptions, 'decorators'>;
+
 /**
  * See https://babeljs.io/docs/en/babel-preset-typescript
  * @param text The text to parse
  * @param fileName The name of the file
  */
-export async function parseTS(text: string, fileName: string): Promise<TSAst> {
+export async function parseTS(
+  text: string,
+  fileName: string,
+  options?: TSParserOptions,
+): Promise<TSAst> {
   return {
     originFileName: fileName,
     rawContent: text,
     format: AstFormat.TS,
-    root: await parse(text, fileName, false),
+    root: await parse(text, fileName, false, options),
   };
 }
 
 export async function parseTsx(
   text: string,
   fileName: string,
+  options?: TSParserOptions,
 ): Promise<TsxAst> {
   return {
-    root: await parse(text, fileName, true),
+    root: await parse(text, fileName, true, options),
     format: AstFormat.Tsx,
     originFileName: fileName,
     rawContent: text,
@@ -44,7 +56,9 @@ async function parse(
   text: string,
   fileName: string,
   isTSX: boolean,
+  options?: TSParserOptions,
 ): Promise<babel.types.File> {
+  const decoratorsVersion = options?.decorators?.version ?? 'legacy';
   const ast = await parseAsync(text, {
     filename: fileName,
     parserOpts: {
@@ -56,7 +70,7 @@ async function parse(
     plugins: [
       [
         require.resolve('@babel/plugin-proposal-decorators'),
-        { version: 'legacy' },
+        { version: decoratorsVersion },
       ],
       require.resolve('@babel/plugin-transform-explicit-resource-management'),
     ],
