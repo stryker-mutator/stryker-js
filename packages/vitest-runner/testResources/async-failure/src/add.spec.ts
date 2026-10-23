@@ -6,7 +6,7 @@ describe(addAsPromised.name, () => {
     const actual = addAsPromised(40, 2);
     actual.then((val) => {
       expect(val).toEqual(42);
-    })
+    });
   });
 });
 

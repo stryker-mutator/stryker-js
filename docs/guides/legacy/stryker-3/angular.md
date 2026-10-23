@@ -32,7 +32,12 @@ Coverage analysis with [@stryker-mutator/jasmine-framework](https://npmjs.com/pa
 ```js
 module.exports = function (config) {
   config.set({
-    mutate: ['src/**/*.ts', '!src/**/*.spec.ts', '!src/test.ts', '!src/environments/*.ts'],
+    mutate: [
+      'src/**/*.ts',
+      '!src/**/*.spec.ts',
+      '!src/test.ts',
+      '!src/environments/*.ts',
+    ],
     mutator: 'typescript',
     testRunner: 'karma',
     karma: {

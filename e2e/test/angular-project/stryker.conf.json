@@ -12,23 +12,13 @@
     "configFile": "karma.conf.js",
     "projectType": "angular-cli",
     "config": {
-      "browsers": [
-        "ChromeHeadless"
-      ]
+      "browsers": ["ChromeHeadless"]
     }
   },
-  "reporters": [
-    "progress",
-    "clear-text",
-    "json",
-    "html",
-    "event-recorder"
-    ],
+  "reporters": ["progress", "clear-text", "json", "html", "event-recorder"],
   "concurrency": 1,
   "coverageAnalysis": "perTest",
   "timeoutMS": 60000,
   "ignorers": ["angular"],
-  "plugins": [
-    "@stryker-mutator/karma-runner"
-  ]
+  "plugins": ["@stryker-mutator/karma-runner"]
 }

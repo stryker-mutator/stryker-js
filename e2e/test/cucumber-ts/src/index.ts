@@ -6,14 +6,18 @@ export * from './surrializable.js';
 const UID = Math.floor(Math.random() * 0x10000000000).toString(16);
 const PLACE_HOLDER_REGEXP = new RegExp('"@__' + UID + '-(\\d+)__@"', 'g');
 const IS_NATIVE_CODE_REGEXP = /\{\s*\[native code\]\s*\}/g;
-const BUILD_IN_SUPPORTED_CLASSES: ReadonlyArray<ClassConstructor> = Object.freeze([Map, Array, Buffer, Set, Date, RegExp]);
+const BUILD_IN_SUPPORTED_CLASSES: ReadonlyArray<ClassConstructor> =
+  Object.freeze([Map, Array, Buffer, Set, Date, RegExp]);
 
 /**
  * A surrial template tag, useful for building templates strings while enforcing the values to be serialized using surrial.
  * @param templateLiterals The template literals
  * @param values The values to be serialized using surrial
  */
-export function surrial(templateLiterals: TemplateStringsArray, ...values: unknown[]) {
+export function surrial(
+  templateLiterals: TemplateStringsArray,
+  ...values: unknown[]
+) {
   const stringBuilder: string[] = [];
   for (let i = 0; i < values.length; i++) {
     stringBuilder.push(templateLiterals[i]);
@@ -29,8 +33,14 @@ export function surrial(templateLiterals: TemplateStringsArray, ...values: unkno
  * @param serializedThing The string to deserialize
  * @param knownClasses A list of known classes used to provide as constructor functions
  */
-export function deserialize<T = any>(serializedThing: string, knownClasses: ClassConstructor[] = []): T {
-  const evalFn = new Function(...knownClasses.map(t => t.name), `"use strict";${EOL}return (${serializedThing});`);
+export function deserialize<T = any>(
+  serializedThing: string,
+  knownClasses: ClassConstructor[] = [],
+): T {
+  const evalFn = new Function(
+    ...knownClasses.map((t) => t.name),
+    `"use strict";${EOL}return (${serializedThing});`,
+  );
   return evalFn.call(null, ...knownClasses);
 }
 
@@ -39,7 +49,10 @@ export function deserialize<T = any>(serializedThing: string, knownClasses: Clas
  * @param thing The thing to be serialized
  * @param knownClasses the classes of which instances are serialized as constructor calls (for example "new Person('Henry')").
  */
-export function serialize(thing: any, knownClasses: ReadonlyArray<ClassConstructor> = []): string {
+export function serialize(
+  thing: any,
+  knownClasses: ReadonlyArray<ClassConstructor> = [],
+): string {
   if (thing instanceof Date) {
     return serializeDate(thing);
   } else if (thing instanceof RegExp) {
@@ -63,11 +76,17 @@ export function serialize(thing: any, knownClasses: ReadonlyArray<ClassConstruct
   }
 }
 
-function serializeArray(thing: any[], knownClasses: ReadonlyArray<ClassConstructor>) {
+function serializeArray(
+  thing: any[],
+  knownClasses: ReadonlyArray<ClassConstructor>,
+) {
   return stringifyObject(thing, knownClasses);
 }
 
-function stringifyObject(thing: any, knownClasses: ReadonlyArray<ClassConstructor>): string {
+function stringifyObject(
+  thing: any,
+  knownClasses: ReadonlyArray<ClassConstructor>,
+): string {
   const escapedValues: any[] = [];
 
   // Returns placeholders anything JSON doesn't support (identified by index)
@@ -78,7 +97,9 @@ function stringifyObject(thing: any, knownClasses: ReadonlyArray<ClassConstructo
     const origValue = this[key];
     if (
       origValue !== thing &&
-      (isInstanceOf(origValue, BUILD_IN_SUPPORTED_CLASSES) || isInstanceOf(origValue, knownClasses) || isSurrializable(origValue))
+      (isInstanceOf(origValue, BUILD_IN_SUPPORTED_CLASSES) ||
+        isInstanceOf(origValue, knownClasses) ||
+        isSurrializable(origValue))
     ) {
       return `@__${UID}-${escapedValues.push(origValue) - 1}__@`;
     } else {
@@ -101,19 +122,31 @@ function stringifyObject(thing: any, knownClasses: ReadonlyArray<ClassConstructo
     // JSON string with their string representations. If the original value can
     // not be found, then `undefined` is used.
     PLACE_HOLDER_REGEXP.lastIndex = 0;
-    return str.replace(PLACE_HOLDER_REGEXP, (_, valueIndex) => serialize(escapedValues[valueIndex], knownClasses));
+    return str.replace(PLACE_HOLDER_REGEXP, (_, valueIndex) =>
+      serialize(escapedValues[valueIndex], knownClasses),
+    );
   }
 }
 
-function serializeSet(value: Set<any>, knownClasses: ReadonlyArray<ClassConstructor>) {
+function serializeSet(
+  value: Set<any>,
+  knownClasses: ReadonlyArray<ClassConstructor>,
+) {
   const valuesArray: string[] = [];
-  value.forEach(v => valuesArray.push(serialize(v, knownClasses)));
+  value.forEach((v) => valuesArray.push(serialize(v, knownClasses)));
   return `new Set([${valuesArray.join(', ')}])`;
 }
 
-function serializeMap(map: Map<any, any>, knownClasses: ReadonlyArray<ClassConstructor>): string {
+function serializeMap(
+  map: Map<any, any>,
+  knownClasses: ReadonlyArray<ClassConstructor>,
+): string {
   const valuesArray: string[] = [];
-  map.forEach((value, key) => valuesArray.push(`[${serialize(key, knownClasses)}, ${serialize(value, knownClasses)}]`));
+  map.forEach((value, key) =>
+    valuesArray.push(
+      `[${serialize(key, knownClasses)}, ${serialize(value, knownClasses)}]`,
+    ),
+  );
   return `new Map([${valuesArray.join(', ')}])`;
 }
 
@@ -125,15 +158,22 @@ function serializeBuffer(value: Buffer) {
   return `Buffer.from(${serialize(value.toString('binary'))}, "binary")`;
 }
 
-function serializeClassInstance(instance: any, knownClasses: ReadonlyArray<ClassConstructor>): string {
+function serializeClassInstance(
+  instance: any,
+  knownClasses: ReadonlyArray<ClassConstructor>,
+): string {
   const constructor: ClassConstructor = instance.constructor;
   if (constructor.name.length) {
     const params = getParamList(constructor);
-    const paramValues = params.map(param => serialize(instance[param], knownClasses));
+    const paramValues = params.map((param) =>
+      serialize(instance[param], knownClasses),
+    );
     const newExpression = `new ${constructor.name}(${paramValues.join(', ')})`;
     return newExpression;
   } else {
-    throw new Error(`Cannot serialize instances of nameless classes (class was defined as: ${constructor.toString()})`);
+    throw new Error(
+      `Cannot serialize instances of nameless classes (class was defined as: ${constructor.toString()})`,
+    );
   }
 }
 

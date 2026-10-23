@@ -1,2 +1,1 @@
-export class OptimisticConcurrencyError extends Error {
-}
+export class OptimisticConcurrencyError extends Error {}

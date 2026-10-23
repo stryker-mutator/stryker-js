@@ -1,18 +1,17 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import App, { sum, isOldEnough, loop} from './App.svelte';
+import App, { sum, isOldEnough, loop } from './App.svelte';
 import { render, screen, fireEvent, cleanup } from '@testing-library/svelte';
 
-describe("App.svelte", () => {
-
+describe('App.svelte', () => {
   afterEach(() => {
     cleanup();
   });
 
   it("says 'hello world!'", () => {
     render(App);
-    const node = screen.queryByText("Hello world!");
+    const node = screen.queryByText('Hello world!');
     expect(node).not.toBeNull();
-  })
+  });
 
   it('add one when hitting the button', async () => {
     render(App);
@@ -22,7 +21,7 @@ describe("App.svelte", () => {
   });
 
   it('adds 1 + 2 to equal 3', () => {
-      expect(sum(1, 2)).toBe(3);
+    expect(sum(1, 2)).toBe(3);
   });
 
   it('check if age goes over ', () => {
@@ -34,9 +33,4 @@ describe("App.svelte", () => {
     loop(5, (n: any) => (result += n));
     expect(result).toEqual(15);
   });
-  
-})
-
-
-
-
+});

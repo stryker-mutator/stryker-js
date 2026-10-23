@@ -2,15 +2,13 @@
 name: Question
 about: A question about Stryker
 title: ''
-labels: "⁉ Question"
+labels: '⁉ Question'
 assignees: ''
-
 ---
 
 **Question**
 
 <!-- Please ask your question -->
-
 
 **Stryker environment**
 

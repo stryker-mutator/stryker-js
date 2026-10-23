@@ -7,7 +7,5 @@
   ],
   "coverageAnalysis": "perTest",
   "reporters": ["json", "clear-text", "html", "event-recorder"],
-  "plugins": [
-    "@stryker-mutator/mocha-runner"
-  ]
+  "plugins": ["@stryker-mutator/mocha-runner"]
 }

@@ -6,13 +6,8 @@ import { NoopDirective } from './noop.directive';
 
 @NgModule({
   bootstrap: [AppComponent],
-  declarations: [
-    AppComponent,
-    NoopDirective
-  ],
-  imports: [
-    BrowserModule
-  ],
-  providers: []
+  declarations: [AppComponent, NoopDirective],
+  imports: [BrowserModule],
+  providers: [],
 })
-export class AppModule { }
+export class AppModule {}

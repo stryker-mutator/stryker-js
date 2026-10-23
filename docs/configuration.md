@@ -139,7 +139,7 @@ You can also specify a percentage string (e.g., `"50%"`) to compute the worker c
 ### `commandRunner` [`object`]
 
 Default: `{ command: 'npm test' }`<br />
-Command line: _none_<br />
+Command line: `--commandRunner.command "npm run mocha"`<br />
 Config file: `"commandRunner": { "command": "npm run mocha" }`
 
 With `commandRunner`, you can specify the command to execute for running tests.
@@ -215,13 +215,12 @@ _Note: Disable bail needs to be supported by the test runner plugin in order to 
 
 ### `disableTypeChecks` [`boolean` | `string`]
 
-
 <details>
 
 <summary>History</summary>
 
-| Version | Changes                     |
-| ------- | --------------------------- |
+| Version | Changes                                                                         |
+| ------- | ------------------------------------------------------------------------------- |
 | 7.0     | Default changed from `"{test,src,lib}/**/*.{js,ts,jsx,tsx,html,vue}"` to `true` |
 
 </details>
@@ -230,11 +229,9 @@ Default: `true`<br />
 Command: _none_<br />
 Config file: `"disableTypeChecks": false`
 
-Set to `true` to disable type checking, or `false` to enable it. For more control, configure a pattern that matches the files of which type checking has to be disabled, for example: `"{test,src,lib}/**/*.{js,ts,jsx,tsx}"`. Setting it to `true` will disable type checking for all TypeScript-ish files (currently *.ts, *.js, *.tsx, *.jsx, *.mjs, *.mts, *.cts, *.cjs, *.html and *.vue files).
+Set to `true` to disable type checking, or `false` to enable it. For more control, configure a pattern that matches the files of which type checking has to be disabled, for example: `"{test,src,lib}/**/*.{js,ts,jsx,tsx}"`. Setting it to `true` will disable type checking for all TypeScript-ish files (currently \*.ts, \*.js, \*.tsx, \*.jsx, \*.mjs, \*.mts, \*.cts, \*.cjs, \*.html and \*.vue files).
 
 Disabling type checking is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`).
-
-
 
 ### `dryRunOnly` [`boolean`]
 
@@ -326,7 +323,7 @@ Default: `[]`<br />
 Command line: _none_<br />
 Config file: `"ignorers": ["console.debug"]`<br />
 
-Specify which ignore-plugins to use. With an ignore-plugin, you can skip mutating specific code patterns that you don't want to test or cannot be mutated. For example, you may use an ignore-plugin to exclude all `console.debug()` statements from mutation testing. 
+Specify which ignore-plugins to use. With an ignore-plugin, you can skip mutating specific code patterns that you don't want to test or cannot be mutated. For example, you may use an ignore-plugin to exclude all `console.debug()` statements from mutation testing.
 
 Here's a list of built-in ignore plugins:
 

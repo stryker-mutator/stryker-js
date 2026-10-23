@@ -26,7 +26,7 @@ Removed:
 
 - ~~Web Component Tester~~ ([@stryker-mutator/wct-runner](https://github.com/stryker-mutator/stryker-js/tree/v3.3.1/packages/wct-runner)) (Removed in v4 of Stryker).
 
-After choosing your test runner plugin, install 
+After choosing your test runner plugin, install
 
 ## Reporters
 

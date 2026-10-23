@@ -1,1 +1,1 @@
-module.exports = { default: 'other-features/*.feature' }
+module.exports = { default: 'other-features/*.feature' };

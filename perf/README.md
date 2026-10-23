@@ -11,10 +11,10 @@ from github.
 1. Clone the Stryker mono repo
 2. Build the code. (`npm run build`). Makes sure there are no build errors.
 3. Checkout git submodules. For example:
-    ```
-    git submodule init 
-    git submodule update
-    ```
+   ```
+   git submodule init
+   git submodule update
+   ```
 4. Run `npm run perf` from the root, or run `npm install && npm run test` in the `perf` dir.
 
 ## Add new

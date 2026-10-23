@@ -9,9 +9,7 @@ import {
 
 const strykerGlobalNamespace =
   (process.env[strykerNamespace] as
-    | '__stryker__'
-    | '__stryker2__'
-    | undefined) ?? '__stryker__';
+    '__stryker__' | '__stryker2__' | undefined) ?? '__stryker__';
 const dryRun = process.env[strykerDryRun] === 'true';
 const hitLimit = process.env[strykerHitLimit]
   ? +process.env[strykerHitLimit]

@@ -1,17 +1,16 @@
-import {Component, OnInit} from '@angular/core';
-import {ArtikelenService} from '../services/artikelen.service';
-import {Artikel} from '../models/artikel';
+import { Component, OnInit } from '@angular/core';
+import { ArtikelenService } from '../services/artikelen.service';
+import { Artikel } from '../models/artikel';
 
 @Component({
   selector: 'ksw-catalogus',
   templateUrl: './catalogus.component.html',
-  styleUrls: ['./catalogus.component.scss']
+  styleUrls: ['./catalogus.component.scss'],
 })
 export class CatalogusComponent implements OnInit {
   public artikelen: Artikel[];
 
-  constructor(private artikelenService: ArtikelenService) {
-  }
+  constructor(private artikelenService: ArtikelenService) {}
 
   ngOnInit() {
     this.artikelen = [];
@@ -19,11 +18,13 @@ export class CatalogusComponent implements OnInit {
   }
 
   public fetchArtikelen() {
-    this.artikelenService.getArtikelenList().subscribe(response => {
+    this.artikelenService.getArtikelenList().subscribe(
+      (response) => {
         this.artikelen = response;
       },
-      error => {
+      (error) => {
         console.error(`Server error occurred: ${error.error}`);
-      });
+      },
+    );
   }
 }

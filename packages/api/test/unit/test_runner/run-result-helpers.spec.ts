@@ -57,6 +57,7 @@ describe('runResultHelpers', () => {
         failureMessage: 'expected foo to be bar',
         killedBy: ['42', '43'],
         nrOfTests: 4,
+        duration: 168,
       };
       const actual = toMutantRunResult({
         status: DryRunStatus.Complete,
@@ -98,6 +99,7 @@ describe('runResultHelpers', () => {
         failureMessage: 'expected foo to be bar',
         killedBy: ['42'],
         nrOfTests: 4,
+        duration: 168,
       };
       const actual = toMutantRunResult(
         {
@@ -140,6 +142,7 @@ describe('runResultHelpers', () => {
       const expected: MutantRunResult = {
         status: MutantRunStatus.Survived,
         nrOfTests: 3,
+        duration: 126,
       };
       const actual = toMutantRunResult({
         status: DryRunStatus.Complete,
@@ -171,6 +174,7 @@ describe('runResultHelpers', () => {
       const expected: MutantRunResult = {
         status: MutantRunStatus.Survived,
         nrOfTests: 0,
+        duration: 0,
       };
       const actual = toMutantRunResult({
         status: DryRunStatus.Complete,
@@ -182,6 +186,7 @@ describe('runResultHelpers', () => {
     it("should set nrOfTests with the amount of tests that weren't `skipped`", () => {
       const expected: MutantRunResult = {
         nrOfTests: 2,
+        duration: 84,
         failureMessage: '',
         killedBy: ['1'],
         status: MutantRunStatus.Killed,
@@ -201,6 +206,27 @@ describe('runResultHelpers', () => {
         ],
       });
       expect(actual).deep.eq(expected);
+    });
+
+    it("should set duration to the sum of `timeSpentMs` of tests that weren't `skipped`", () => {
+      const actual = toMutantRunResult({
+        status: DryRunStatus.Complete,
+        tests: [
+          { id: '1', name: '', status: TestStatus.Success, timeSpentMs: 12 },
+          { id: '2', name: '', status: TestStatus.Skipped, timeSpentMs: 100 },
+          {
+            id: '3',
+            name: '',
+            status: TestStatus.Failed,
+            timeSpentMs: 30,
+            failureMessage: '',
+          },
+        ],
+      });
+      expect(actual).deep.include({
+        status: MutantRunStatus.Killed,
+        duration: 42,
+      });
     });
   });
 });

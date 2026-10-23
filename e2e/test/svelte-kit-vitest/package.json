@@ -7,7 +7,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test:unit": "vitest run",
-    "test": "stryker run && npm run verify",
+    "test": "svelte-kit sync && stryker run && npm run verify",
     "verify": "mocha --no-config --no-package --timeout 0 verify/verify.js",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"

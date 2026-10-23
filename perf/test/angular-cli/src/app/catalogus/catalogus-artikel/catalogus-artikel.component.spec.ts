@@ -1,7 +1,7 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {CatalogusArtikelComponent} from './catalogus-artikel.component';
-import {Artikel} from '../../models/artikel';
-import {WinkelwagenService} from '../../services/winkelwagen.service';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { CatalogusArtikelComponent } from './catalogus-artikel.component';
+import { Artikel } from '../../models/artikel';
+import { WinkelwagenService } from '../../services/winkelwagen.service';
 
 describe('CatalogusArtikelComponent', () => {
   let component: CatalogusArtikelComponent;
@@ -18,15 +18,25 @@ describe('CatalogusArtikelComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [CatalogusArtikelComponent],
-      providers: [WinkelwagenService]
-    })
-      .compileComponents();
+      providers: [WinkelwagenService],
+    }).compileComponents();
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(CatalogusArtikelComponent);
     component = fixture.componentInstance;
-    component.artikel = new Artikel(1, 'fiets bel', '', 15.00, '', new Date(1, 9, 2019), new Date(1, 9, 2020), 'AB', ['fietsen'], 10);
+    component.artikel = new Artikel(
+      1,
+      'fiets bel',
+      '',
+      15.0,
+      '',
+      new Date(1, 9, 2019),
+      new Date(1, 9, 2020),
+      'AB',
+      ['fietsen'],
+      10,
+    );
     fixture.detectChanges();
     service = TestBed.get(WinkelwagenService);
   });
@@ -38,7 +48,9 @@ describe('CatalogusArtikelComponent', () => {
     it('winkelwagenService.addArtikelToWinkelwagen should be called', () => {
       spyOn(service, 'addArtikelToWinkelwagen');
       component.addToWinkelwagen(component.artikel);
-      expect(service.addArtikelToWinkelwagen).toHaveBeenCalledWith(component.artikel);
+      expect(service.addArtikelToWinkelwagen).toHaveBeenCalledWith(
+        component.artikel,
+      );
     });
   });
   describe('css testing', () => {

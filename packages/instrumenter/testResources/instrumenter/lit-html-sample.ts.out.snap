@@ -199,27 +199,30 @@ export class MutationTestReportTotalsComponent extends LitElement {
       const mutationScoreRounded = mutationScore.toFixed(2);
       const progressBarStyle = stryMutAct_9fa48(\\"27\\") ? \`\` : (stryCov_9fa48(\\"27\\"), \`width: \${mutationScore}%\`);
       return stryMutAct_9fa48(\\"28\\") ? html\`\` : (stryCov_9fa48(\\"28\\"), html\` <tr title=\\"\${row.name}\\">
-      <td style=\\"width: 32px;\\" class=\\"icon no-border-right\\"
-        >\${row.file ? this.fileIcon : this.directoryIcon}</td
-      >
-      <td width=\\"\\" class=\\"no-border-left\\"
-        >\${(stryMutAct_9fa48(\\"31\\") ? typeof path !== 'string' : stryMutAct_9fa48(\\"30\\") ? false : stryMutAct_9fa48(\\"29\\") ? true : (stryCov_9fa48(\\"29\\", \\"30\\", \\"31\\"), typeof path === (stryMutAct_9fa48(\\"32\\") ? \\"\\" : (stryCov_9fa48(\\"32\\"), 'string')))) ? stryMutAct_9fa48(\\"33\\") ? html\`\` : (stryCov_9fa48(\\"33\\"), html\`<a href=\\"\${toAbsoluteUrl(path)}\\">\${name}</a>\`) : stryMutAct_9fa48(\\"34\\") ? html\`\` : (stryCov_9fa48(\\"34\\"), html\`<span>\${row.name}</span>\`)}</td
-      >
+      <td style=\\"width: 32px;\\" class=\\"icon no-border-right\\">
+        \${row.file ? this.fileIcon : this.directoryIcon}
+      </td>
+      <td width=\\"\\" class=\\"no-border-left\\">
+        \${(stryMutAct_9fa48(\\"31\\") ? typeof path !== 'string' : stryMutAct_9fa48(\\"30\\") ? false : stryMutAct_9fa48(\\"29\\") ? true : (stryCov_9fa48(\\"29\\", \\"30\\", \\"31\\"), typeof path === (stryMutAct_9fa48(\\"32\\") ? \\"\\" : (stryCov_9fa48(\\"32\\"), 'string')))) ? stryMutAct_9fa48(\\"33\\") ? html\`\` : (stryCov_9fa48(\\"33\\"), html\`<a href=\\"\${toAbsoluteUrl(path)}\\">\${name}</a>\`) : stryMutAct_9fa48(\\"34\\") ? html\`\` : (stryCov_9fa48(\\"34\\"), html\`<span>\${row.name}</span>\`)}
+      </td>
       <td class=\\"no-border-right vertical-middle\\">
         \${scoreIsPresent ? stryMutAct_9fa48(\\"35\\") ? html\`\` : (stryCov_9fa48(\\"35\\"), html\` <div class=\\"progress\\">
-              <div
-                class=\\"progress-bar bg-\${coloringClass}\\"
-                role=\\"progressbar\\"
-                aria-valuenow=\\"\${mutationScoreRounded}\\"
-                aria-valuemin=\\"0\\"
-                aria-valuemax=\\"100\\"
-                style=\\"\${progressBarStyle}\\"
-              >
-                \${mutationScoreRounded}%
-              </div>
-            </div>\`) : stryMutAct_9fa48(\\"36\\") ? html\`\` : (stryCov_9fa48(\\"36\\"), html\` <span class=\\"font-weight-bold text-muted\\">N/A</span> \`)}
+                <div
+                  class=\\"progress-bar bg-\${coloringClass}\\"
+                  role=\\"progressbar\\"
+                  aria-valuenow=\\"\${mutationScoreRounded}\\"
+                  aria-valuemin=\\"0\\"
+                  aria-valuemax=\\"100\\"
+                  style=\\"\${progressBarStyle}\\"
+                >
+                  \${mutationScoreRounded}%
+                </div>
+              </div>\`) : stryMutAct_9fa48(\\"36\\") ? html\`\` : (stryCov_9fa48(\\"36\\"), html\` <span class=\\"font-weight-bold text-muted\\">N/A</span> \`)}
       </td>
-      <td style=\\"width: 50px;\\" class=\\"no-border-left font-weight-bold text-center text-\${coloringClass}\\">
+      <td
+        style=\\"width: 50px;\\"
+        class=\\"no-border-left font-weight-bold text-center text-\${coloringClass}\\"
+      >
         \${scoreIsPresent ? mutationScoreRounded : undefined}
       </td>
       <td class=\\"text-center\\">\${row.metrics.killed}</td>

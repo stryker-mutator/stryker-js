@@ -72,7 +72,7 @@ describe('Typescript checker on a single project', () => {
     );
     const actual = await sut.check([mutant]);
     assertions.expectCompileError(actual.mutId);
-    expect(actual.mutId.reason).has.string('todo.ts(15,9): error TS2322');
+    expect(actual.mutId.reason).has.string('todo.ts(19,9): error TS2322');
   });
 
   it('should be able validate a mutant that does not result in a compile error after a compile error', async () => {
@@ -170,7 +170,7 @@ describe('Typescript checker on a single project', () => {
     const actual = await sut.check([mutant, mutant2]);
     assertions.expectCompileError(actual.mutId);
     assertions.expectCompileError(actual.mutId2);
-    expect(actual.mutId.reason).has.string('todo.ts(15,9): error TS2322');
+    expect(actual.mutId.reason).has.string('todo.ts(19,9): error TS2322');
     expect(actual.mutId2.reason).has.string('counter.ts(7,5): error TS2322');
   });
   it('should be able invalidate 2 mutants that do result in a compile error in file above', async () => {
@@ -189,7 +189,7 @@ describe('Typescript checker on a single project', () => {
     const actual = await sut.check([mutant, mutant2]);
     assertions.expectCompileError(actual.mutId);
     assertions.expectCompileError(actual.mutId2);
-    expect(actual.mutId.reason).has.string('todo.ts(15,9): error TS2322');
+    expect(actual.mutId.reason).has.string('todo.ts(19,9): error TS2322');
     expect(actual.mutId2.reason).has.string(
       'errorInFileAbove2Mutants/todo-counter.ts(7,7): error TS2322',
     );

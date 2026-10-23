@@ -1,7 +1,9 @@
 {
   "mocha": {
     "async-only": true,
-    "extension": ["json"],
+    "extension": [
+      "json"
+    ],
     "slow": 75,
     "timeout": 20,
     "foo": "bar",

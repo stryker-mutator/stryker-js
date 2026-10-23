@@ -1,18 +1,17 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {AppComponent} from './app.component';
-import {CatalogusComponent} from './catalogus/catalogus.component';
-import {FooterComponent} from './footer/footer.component';
-import {CatalogusArtikelComponent} from './catalogus/catalogus-artikel/catalogus-artikel.component';
-import {HttpClientTestingModule} from '@angular/common/http/testing';
-import {NavbarComponent} from './navbar/navbar.component';
-import {ShoppingCartComponent} from './shopping-cart/shopping-cart.component';
-import {AppRoutingModule} from './app-routing.module';
-import {ShoppingCartPageComponent} from './shopping-cart/shopping-cart-page/shopping-cart-page.component';
-import {BestellingPlaatsenComponent} from './bestelling-plaatsen/bestelling-plaatsen.component';
-import {KlantgegevensFormulierComponent} from './bestelling-plaatsen/klantgegevens-formulier/klantgegevens-formulier.component';
-import {ReactiveFormsModule} from '@angular/forms';
-import {FactuurComponent} from './factuur/factuur.component';
-
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { AppComponent } from './app.component';
+import { CatalogusComponent } from './catalogus/catalogus.component';
+import { FooterComponent } from './footer/footer.component';
+import { CatalogusArtikelComponent } from './catalogus/catalogus-artikel/catalogus-artikel.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { NavbarComponent } from './navbar/navbar.component';
+import { ShoppingCartComponent } from './shopping-cart/shopping-cart.component';
+import { AppRoutingModule } from './app-routing.module';
+import { ShoppingCartPageComponent } from './shopping-cart/shopping-cart-page/shopping-cart-page.component';
+import { BestellingPlaatsenComponent } from './bestelling-plaatsen/bestelling-plaatsen.component';
+import { KlantgegevensFormulierComponent } from './bestelling-plaatsen/klantgegevens-formulier/klantgegevens-formulier.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { FactuurComponent } from './factuur/factuur.component';
 
 describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;
@@ -38,13 +37,9 @@ describe('AppComponent', () => {
         ShoppingCartPageComponent,
         BestellingPlaatsenComponent,
         KlantgegevensFormulierComponent,
-        FactuurComponent
+        FactuurComponent,
       ],
-      imports: [
-        HttpClientTestingModule,
-        AppRoutingModule,
-        ReactiveFormsModule
-      ]
+      imports: [HttpClientTestingModule, AppRoutingModule, ReactiveFormsModule],
     }).compileComponents();
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
@@ -53,9 +48,9 @@ describe('AppComponent', () => {
     const app = fixture.debugElement.componentInstance;
     expect(app).toBeTruthy();
   }));
-  it('title should be `Kantischop`', (() => {
+  it('title should be `Kantischop`', () => {
     expect(component.title).toBe('Kantishop');
-  }));
+  });
   describe('css testing', () => {
     it('.container should have display: flex', () => {
       const element = getElement('.container');

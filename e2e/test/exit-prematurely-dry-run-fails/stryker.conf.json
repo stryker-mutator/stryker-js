@@ -5,7 +5,5 @@
   "coverageAnalysis": "off",
   "fileLogLevel": "info",
   "reporters": ["clear-text", "html", "event-recorder", "json"],
-  "plugins": [
-    "@stryker-mutator/mocha-runner"
-  ]
+  "plugins": ["@stryker-mutator/mocha-runner"]
 }

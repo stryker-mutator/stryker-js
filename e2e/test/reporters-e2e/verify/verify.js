@@ -33,7 +33,21 @@ describe('Verify stryker has ran correctly', () => {
           fileName,
           {
             ...fileResult,
-            mutants: fileResult.mutants.sort((a, b) => (a.id < b.id ? -1 : 1)),
+            mutants: fileResult.mutants
+              .sort((a, b) => (a.id < b.id ? -1 : 1))
+              // The duration differs per run, so it can't be part of the snapshot
+              .map(({ duration, ...mutant }) => {
+                if (
+                  mutant.status === 'Killed' ||
+                  mutant.status === 'Survived' ||
+                  mutant.status === 'Timeout'
+                ) {
+                  expect(duration, `Duration of mutant ${mutant.id}`).a(
+                    'number',
+                  );
+                }
+                return mutant;
+              }),
           },
         ])
         .sort(([a], [b]) => (a < b ? -1 : 1)),

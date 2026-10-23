@@ -1,8 +1,18 @@
 // This file is generated with tasks/instrument-test-resources.js
- function stryNS_9fa48() {
-  var g = typeof globalThis === 'object' && globalThis && globalThis.Math === Math && globalThis || new Function("return this")();
+function stryNS_9fa48() {
+  var g =
+    (typeof globalThis === 'object' &&
+      globalThis &&
+      globalThis.Math === Math &&
+      globalThis) ||
+    new Function('return this')();
   var ns = g.__stryker2__ || (g.__stryker2__ = {});
-  if (ns.activeMutant === undefined && g.process && g.process.env && g.process.env.__STRYKER_ACTIVE_MUTANT__) {
+  if (
+    ns.activeMutant === undefined &&
+    g.process &&
+    g.process.env &&
+    g.process.env.__STRYKER_ACTIVE_MUTANT__
+  ) {
     ns.activeMutant = g.process.env.__STRYKER_ACTIVE_MUTANT__;
   }
   function retrieveNS() {
@@ -14,10 +24,12 @@
 stryNS_9fa48();
 function stryCov_9fa48() {
   var ns = stryNS_9fa48();
-  var cov = ns.mutantCoverage || (ns.mutantCoverage = {
-    static: {},
-    perTest: {}
-  });
+  var cov =
+    ns.mutantCoverage ||
+    (ns.mutantCoverage = {
+      static: {},
+      perTest: {},
+    });
   function cover() {
     var c = cov.static;
     if (ns.currentTestId) {
@@ -36,7 +48,9 @@ function stryMutAct_9fa48(id) {
   function isActive(id) {
     if (ns.activeMutant === id) {
       if (ns.hitCount !== void 0 && ++ns.hitCount > ns.hitLimit) {
-        throw new Error('Stryker: Hit count limit reached (' + ns.hitCount + ')');
+        throw new Error(
+          'Stryker: Hit count limit reached (' + ns.hitCount + ')',
+        );
       }
       return true;
     }
@@ -46,18 +60,20 @@ function stryMutAct_9fa48(id) {
   return isActive(id);
 }
 export function add(a: number, b: number): number {
-  if (stryMutAct_9fa48("8")) {
-    {}
+  if (stryMutAct_9fa48('8')) {
+    {
+    }
   } else {
-    stryCov_9fa48("8");
-    return stryMutAct_9fa48("9") ? a - b : (stryCov_9fa48("9"), a + b);
+    stryCov_9fa48('8');
+    return stryMutAct_9fa48('9') ? a - b : (stryCov_9fa48('9'), a + b);
   }
 }
 export function subtract(a: number, b: number): number {
-  if (stryMutAct_9fa48("10")) {
-    {}
+  if (stryMutAct_9fa48('10')) {
+    {
+    }
   } else {
-    stryCov_9fa48("10");
-    return stryMutAct_9fa48("11") ? a + b : (stryCov_9fa48("11"), a - b);
+    stryCov_9fa48('10');
+    return stryMutAct_9fa48('11') ? a + b : (stryCov_9fa48('11'), a - b);
   }
 }

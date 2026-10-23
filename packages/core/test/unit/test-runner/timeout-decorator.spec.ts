@@ -132,11 +132,41 @@ describe(TimeoutDecorator.name, () => {
       const result = await runPromise;
       const expectedTimeoutResult: TimeoutMutantRunResult = {
         status: MutantRunStatus.Timeout,
+        duration: 20,
       };
       expect(result).deep.eq(expectedTimeoutResult);
       expect(availableTestRunners).to.have.lengthOf(0);
       expect(testRunner1.dispose).to.have.been.called;
       expect(testRunner2.init).to.have.been.called;
+    });
+
+    it('should add the elapsed time to a timeout reported by the test runner', async () => {
+      let resolve: (result: MutantRunResult) => void = () => {};
+      testRunner1.mutantRun.returns(
+        new Promise<MutantRunResult>((res) => (resolve = res)),
+      );
+      const runPromise = sut.mutantRun(
+        factory.mutantRunOptions({ timeout: 20 }),
+      );
+      clock.tick(12);
+      resolve(factory.timeoutMutantRunResult({ reason: 'Hit limit reached' }));
+      const result = await runPromise;
+      const expectedTimeoutResult: TimeoutMutantRunResult = {
+        status: MutantRunStatus.Timeout,
+        reason: 'Hit limit reached',
+        duration: 12,
+      };
+      expect(result).deep.eq(expectedTimeoutResult);
+    });
+
+    it('should not override the duration of a timeout reported by the test runner', async () => {
+      testRunner1.mutantRun.resolves(
+        factory.timeoutMutantRunResult({ duration: 3 }),
+      );
+      const result = await sut.mutantRun(
+        factory.mutantRunOptions({ timeout: 20 }),
+      );
+      expect(result).deep.include({ duration: 3 });
     });
   });
 });

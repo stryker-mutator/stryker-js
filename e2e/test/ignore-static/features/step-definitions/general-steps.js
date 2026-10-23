@@ -4,11 +4,11 @@ import { MyMath } from '../../src/math.js';
 
 const myMath = new MyMath();
 
-Given('input myMath.pi', function() {
+Given('input myMath.pi', function () {
   this.value = myMath.pi;
 });
 
-Given('input MyMath.pi', function() {
+Given('input MyMath.pi', function () {
   this.value = MyMath.pi;
 });
 

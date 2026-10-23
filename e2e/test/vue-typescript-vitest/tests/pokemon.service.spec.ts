@@ -6,7 +6,11 @@ describe('pokemon service', () => {
     it('should fetch pokemon', async () => {
       // Arrange
       const expectedPokemon = [{ name: 'foo', type: 'bar' }];
-      vi.stubGlobal('fetch', () => Promise.resolve({ json: () => new Promise((resolve) => resolve(expectedPokemon)) }));
+      vi.stubGlobal('fetch', () =>
+        Promise.resolve({
+          json: () => new Promise((resolve) => resolve(expectedPokemon)),
+        }),
+      );
 
       // Act
       const actual = await pokemonService.getAll();

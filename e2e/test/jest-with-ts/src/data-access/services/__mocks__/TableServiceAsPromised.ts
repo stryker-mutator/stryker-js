@@ -12,7 +12,7 @@ const mock = jest.fn().mockImplementation(() => {
     insertOrMergeEntity: insertOrMergeEntityMock,
     retrieveEntity: retrieveEntityMock,
     replaceEntity: replaceEntityMock,
-    insertEntity: insertEntityMock
+    insertEntity: insertEntityMock,
   };
 });
 

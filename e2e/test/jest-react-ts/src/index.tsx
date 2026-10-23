@@ -1,1 +1,1 @@
-export type Routes = '/' | '/active' | '/completed'
+export type Routes = '/' | '/active' | '/completed';

@@ -1,6 +1,6 @@
-function factorial (num) {
-  if (typeof (num) !== 'number') throw new Error("Input must be a number.");
-  if (num < 0) throw new Error("Input must not be negative.");
+function factorial(num) {
+  if (typeof num !== 'number') throw new Error('Input must be a number.');
+  if (num < 0) throw new Error('Input must not be negative.');
   var i = 2,
     o = 1;
 
@@ -11,4 +11,4 @@ function factorial (num) {
   }
 
   return o;
-};
+}

@@ -4,7 +4,12 @@ import { factory, tick } from '@stryker-mutator/test-helpers';
 import { Task, ExpirableTask } from '@stryker-mutator/util';
 import { toArray, mergeWith, lastValueFrom, range, ReplaySubject } from 'rxjs';
 
-import { Pool, Resource } from '../../../src/concurrent/index.js';
+import {
+  createTestRunnerPool,
+  Pool,
+  PoolOptions,
+  Resource,
+} from '../../../src/concurrent/index.js';
 
 describe(Pool.name, () => {
   let worker1: sinon.SinonStubbedInstance<Required<Resource>>;
@@ -38,10 +43,11 @@ describe(Pool.name, () => {
       .returns(worker2);
   }
 
-  function createSut() {
+  function createSut(options?: PoolOptions) {
     return new Pool<Required<Resource>>(
       createWorkerStub,
       concurrencyTokenSubject,
+      options,
     );
   }
 
@@ -281,6 +287,83 @@ describe(Pool.name, () => {
       // Act & Assert
       await expect(sut.init()).rejectedWith(expectedError);
       concurrencyTokenSubject.complete();
+    });
+  });
+
+  describe('with warmUpSharedCachesWithFirstResource', () => {
+    function createTestRunnerSut() {
+      return createTestRunnerPool(
+        createWorkerStub,
+        concurrencyTokenSubject,
+      ) as unknown as Pool<Required<Resource>>;
+    }
+
+    it('should be enabled for the test runner pool', async () => {
+      // Arrange
+      arrangeWorkers();
+      setConcurrency(2);
+      const initWorker1Task = new Task<void>();
+      worker1.init.returns(initWorker1Task.promise);
+      sut = createTestRunnerSut();
+
+      // Act
+      await tick();
+
+      // Assert
+      expect(createWorkerStub).callCount(1);
+      initWorker1Task.resolve();
+    });
+
+    it('should initialize the other workers after the first worker is initialized', async () => {
+      // Arrange
+      arrangeWorkers();
+      setConcurrency(3);
+      const initWorker1Task = new Task<void>();
+      worker1.init.returns(initWorker1Task.promise);
+      worker2.init.returns(new Task<void>().promise);
+      genericWorkerForAllSubsequentCreates.init.returns(
+        new Task<void>().promise,
+      );
+      sut = createSut({ warmUpSharedCachesWithFirstResource: true });
+      await tick();
+      expect(createWorkerStub).callCount(1);
+
+      // Act
+      initWorker1Task.resolve();
+      await tick();
+
+      // Assert
+      expect(createWorkerStub).callCount(3);
+      sinon.assert.callOrder(worker1.init, worker2.init);
+    });
+
+    it('should provide the first worker for work while the others are still initializing', async () => {
+      // Arrange
+      arrangeWorkers();
+      setConcurrency(2);
+      worker2.init.returns(new Task<void>().promise);
+      sut = createSut({ warmUpSharedCachesWithFirstResource: true });
+
+      // Act
+      const actualWorkers = await lastValueFrom(
+        sut.schedule(range(0, 2), (worker) => worker).pipe(toArray()),
+      );
+
+      // Assert
+      expect(actualWorkers).deep.eq([worker1, worker1]);
+    });
+
+    it('should not create other workers when the first worker fails to initialize', async () => {
+      // Arrange
+      arrangeWorkers();
+      setConcurrency(3);
+      const expectedError = new Error('expected error');
+      worker1.init.rejects(expectedError);
+      sut = createSut({ warmUpSharedCachesWithFirstResource: true });
+
+      // Act & Assert
+      await expect(sut.init()).rejectedWith(expectedError);
+      expect(createWorkerStub).callCount(1);
     });
   });
 

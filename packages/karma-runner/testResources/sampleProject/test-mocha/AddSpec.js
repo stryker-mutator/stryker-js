@@ -1,4 +1,4 @@
-function equal (actual, expected) {
+function equal(actual, expected) {
   if (actual !== expected) {
     throw new Error(`Expected ${expected} but got ${actual}`);
   }

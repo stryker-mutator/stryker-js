@@ -103,8 +103,7 @@ export class JestTestRunner implements TestRunner {
     private readonly configLoader: JestConfigLoader,
     private readonly jestWrapper: JestWrapper,
     private readonly globalNamespace:
-      | typeof INSTRUMENTER_CONSTANTS.NAMESPACE
-      | '__stryker2__',
+      typeof INSTRUMENTER_CONSTANTS.NAMESPACE | '__stryker2__',
   ) {
     this.jestOptions = (options as JestRunnerOptionsWithStrykerOptions).jest;
     // Get enableFindRelatedTests from stryker jest options or default to true

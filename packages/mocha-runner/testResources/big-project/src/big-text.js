@@ -1,4 +1,3 @@
-
 // Change the text each iteration to prevent nodejs from optimizing it into one value on the heap
 if (!global.n) {
   global.n = 300000;

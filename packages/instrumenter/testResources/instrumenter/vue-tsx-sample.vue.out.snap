@@ -68,6 +68,6 @@ export default class AuditDrawerInfo extends Vue {
   };
 }
 </script>
-<style lang=\\"scss\\">
-</style>"
+<style lang=\\"scss\\"></style>
+"
 `;

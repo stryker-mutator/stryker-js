@@ -17,9 +17,13 @@ installAll()
  */
 async function installAll() {
   const globPattern = process.env.PERF_TEST_GLOB_PATTERN || '*';
-  const testDirs = fs.readdirSync(testRootDirUrl).filter((testDir) => minimatch(testDir, globPattern));
+  const testDirs = fs
+    .readdirSync(testRootDirUrl)
+    .filter((testDir) => minimatch(testDir, globPattern));
   if (testDirs.length) {
-    console.log(`Installing ${testDirs.join(', ')} (matched with glob pattern "${globPattern}")`);
+    console.log(
+      `Installing ${testDirs.join(', ')} (matched with glob pattern "${globPattern}")`,
+    );
   } else {
     console.warn(`No tests match glob expression ${globPattern}`);
   }
@@ -31,7 +35,12 @@ async function installAll() {
  */
 async function install(testDir) {
   const testDirUrl = new URL(testDir, `${testRootDirUrl}/`);
-  const strykerConfig = JSON.parse(await fs.promises.readFile(new URL(`../test/${testDir}/stryker.conf.json`, import.meta.url), 'utf-8'));
+  const strykerConfig = JSON.parse(
+    await fs.promises.readFile(
+      new URL(`../test/${testDir}/stryker.conf.json`, import.meta.url),
+      'utf-8',
+    ),
+  );
   /** @type {string | undefined} */
   const packageManager = strykerConfig.packageManager;
   let command = 'npm';

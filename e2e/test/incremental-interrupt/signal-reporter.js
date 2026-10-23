@@ -3,7 +3,6 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 
-
 /**
  * Reporter that triggers an interrupt after a configurable number of *new*
  * (non-reused) mutants have been tested.
