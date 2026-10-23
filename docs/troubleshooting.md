@@ -428,3 +428,34 @@ Run `svelte-kit sync` before running Stryker. For example, in your `package.json
   }
 }
 ```
+
+### Vitest behaves differently or fails when using the `threads` pool (default)
+
+**Symptom**
+
+Tests pass with `vitest run` but fail, hang, crash, or behave differently during Stryker’s initial test run.
+
+Typical symptoms include:
+
+- The process exits with `SIGSEGV`.
+- Environment-dependent behavior, such as `env.TZ`, is not applied as expected.
+- A Node.js option configured through `test.execArgv` is rejected.
+- Failed to start threads worker
+
+**Problem**
+
+Vitest supports multiple worker pools. The `threads` pool uses Node.js worker threads, while the `forks` pool executes tests in separate child processes.
+
+These execution models differ in process isolation, supported Node.js flags, environment initialization, native-addon behavior, and global state. A project that works under Vitest’s default `forks` pool may therefore fail under `threads`, which is the default pool for StrykerJS.
+
+**Solution**
+
+If the problem only occurs with `threads`, configure the Stryker Vitest runner to use `forks`:
+
+```json
+{
+  "vitest": {
+    "pool": "forks"
+  }
+}
+```
