@@ -32,6 +32,12 @@ jobs:
           set -euo pipefail
 
           publish_missing() {
+            local release_version
+            release_version="$(node -p "require('./lerna.json').version")"
+            if [[ "$GITHUB_REF_NAME" != "v${release_version}" ]]; then
+              echo "::error::Ref ${GITHUB_REF_NAME} is not the release tag v${release_version}."
+              return 1
+            fi
             pnpm exec lerna publish from-package \
               --yes \
               --pre-dist-tag next \
