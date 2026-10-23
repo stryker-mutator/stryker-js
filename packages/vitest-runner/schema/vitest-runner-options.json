@@ -23,6 +23,12 @@
         "configFile": {
           "description": "Path to the config file. Default resolving to `vitest.config.*`, `vite.config.*`",
           "type": "string"
+        },
+        "pool": {
+          "description": "The pool used to run tests. Defaults to `threads`",
+          "type": "string",
+          "enum": ["threads", "forks", "vmThreads", "vmForks"],
+          "default": "threads"
         }
       }
     }
