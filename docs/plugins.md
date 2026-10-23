@@ -19,6 +19,7 @@ A test runner plugin can hook into your test runner support coverage analysis or
 - [Jest](./jest-runner.md) ([@stryker-mutator/jest-runner](https://github.com/stryker-mutator/stryker-js/tree/master/packages/jest-runner))
 - [Karma](./karma-runner.md) ([@stryker-mutator/karma-runner](https://github.com/stryker-mutator/stryker-js/tree/master/packages/karma-runner))
 - [Mocha](./mocha-runner.md) ([@stryker-mutator/mocha-runner](https://github.com/stryker-mutator/stryker-js/tree/master/packages/mocha-runner))
+- [Node.js test runner](./node-test-runner.md) ([@stryker-mutator/node-test-runner](https://github.com/stryker-mutator/stryker-js/tree/master/packages/node-test-runner))
 - [Tap](./tap-runner.md) ([@stryker-mutator/tap-runner](https://github.com/stryker-mutator/stryker-js/tree/master/packages/tap-runner))
 - [Vitest](./vitest-runner.md) ([@stryker-mutator/vitest-runner](https://github.com/stryker-mutator/stryker-js/tree/master/packages/vitest-runner))
 
