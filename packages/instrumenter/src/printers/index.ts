@@ -4,6 +4,7 @@ import { print as htmlPrint } from './html-printer.js';
 import { print as jsPrint } from './js-printer.js';
 import { print as tsPrint } from './ts-printer.js';
 import { print as sveltePrint } from './svelte-printer.js';
+import { print as vuePrint } from './vue-printer.js';
 
 export type Printer<T extends Ast> = (
   file: T,
@@ -29,5 +30,7 @@ export function print(file: Ast): string {
       return htmlPrint(file, context);
     case AstFormat.Svelte:
       return sveltePrint(file, context);
+    case AstFormat.Vue:
+      return vuePrint(file, context);
   }
 }

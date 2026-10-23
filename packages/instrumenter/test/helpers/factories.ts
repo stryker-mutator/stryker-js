@@ -8,6 +8,7 @@ import {
   SvelteAst,
   TemplateScript,
   Range,
+  VueAst,
 } from '../../src/syntax/index.js';
 import { Mutant, Mutable } from '../../src/mutant.js';
 import { ParserOptions } from '../../src/parsers/index.js';
@@ -98,6 +99,24 @@ export function createSvelteAst(overrides?: Partial<SvelteAst>): SvelteAst {
     root: {
       moduleScript: overrides?.root?.moduleScript,
       additionalScripts: overrides?.root?.additionalScripts ?? [],
+    },
+    ...overrides,
+  };
+}
+
+export function createVueAst(overrides?: Partial<VueAst>): VueAst {
+  const rawContent =
+    overrides?.rawContent ??
+    '<script>let name = "temp"</script><h1>hello!</h1>';
+  const originFileName = overrides?.originFileName ?? 'foo.vue';
+  return {
+    format: AstFormat.Vue,
+    originFileName,
+    rawContent,
+    root: {
+      moduleScript: overrides?.root?.moduleScript,
+      additionalScripts: overrides?.root?.additionalScripts ?? [],
+      setup: overrides?.root?.setup,
     },
     ...overrides,
   };

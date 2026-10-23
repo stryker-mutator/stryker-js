@@ -9,6 +9,7 @@ import { transformBabel } from './babel-transformer.js';
 import { transformHtml } from './html-transformer.js';
 import { MutantCollector } from './mutant-collector.js';
 import { transformSvelte } from './svelte-transformer.js';
+import { transformVue } from './vue-transformer.js';
 
 /**
  * Transform the AST by generating mutants and placing them in the AST.
@@ -37,6 +38,9 @@ export function transform(
       break;
     case AstFormat.Svelte:
       transformSvelte(ast, mutantCollector, context);
+      break;
+    case AstFormat.Vue:
+      transformVue(ast, mutantCollector, context);
   }
 }
 
