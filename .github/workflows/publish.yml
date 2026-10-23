@@ -5,18 +5,56 @@ on:
     tags:
       - '**' # Fine when using locked versioning mode with lerna, as only one tag is pushed to git.
 
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   release:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write # to enable use of OIDC for npm provenance
+
     steps:
       - uses: actions/checkout@v7
+
       - uses: ./.github/setup
         with:
           install-chromium: false
+
       - name: Build
         run: pnpm run build
+
       - name: Release
-        run: pnpm exec lerna publish from-git --yes --pre-dist-tag next --concurrency 1
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          publish_missing() {
+            pnpm exec lerna publish from-package \
+              --yes \
+              --pre-dist-tag next \
+              --concurrency 1
+          }
+
+          # A manually rerun workflow may already have published some packages.
+          if [ "${{ github.run_attempt }}" -gt 1 ]; then
+            publish_missing
+            exit 0
+          fi
+
+          # Normal first attempt: the Git tag determines the intended release.
+          if pnpm exec lerna publish from-git \
+            --yes \
+            --pre-dist-tag next \
+            --concurrency 1; then
+            exit 0
+          fi
+
+          echo "::warning::Publish partially failed; retrying missing package versions."
+
+          # Allow npm registry reads to catch up before querying package versions.
+          sleep 10
+
+          publish_missing
