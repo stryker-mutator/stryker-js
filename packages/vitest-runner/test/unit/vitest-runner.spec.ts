@@ -3,6 +3,8 @@ import { expect } from 'chai';
 import fs from 'fs';
 import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import {
+  CompleteDryRunResult,
+  DryRunStatus,
   MutantRunStatus,
   TestRunnerCapabilities,
 } from '@stryker-mutator/api/test-runner';
@@ -11,7 +13,12 @@ import { Vitest } from 'vitest/node';
 import { VitestTestRunner } from '../../src/vitest-test-runner.js';
 import { VitestRunnerOptionsWithStrykerOptions } from '../../src/vitest-runner-options-with-stryker-options.js';
 import { vitestWrapper } from '../../src/vitest-wrapper.js';
-import { createVitestMock } from '../util/factories.js';
+import {
+  createSuite,
+  createVitestFile,
+  createVitestMock,
+  createVitestTest,
+} from '../util/factories.js';
 import { VITEST_ERROR_CODES } from '../../src/vitest-helpers.js';
 
 describe(VitestTestRunner.name, () => {
@@ -102,6 +109,85 @@ describe(VitestTestRunner.name, () => {
       expect(vitestOptions).deep.include({
         pool: 'threads',
         maxWorkers: 1,
+      });
+    });
+
+    const vitestVersions = [
+      {
+        version: '4.0.0',
+        separator: ' ',
+      },
+      {
+        version: '4.1.12',
+        separator: ' ',
+      },
+      {
+        version: '4.1.12-beta',
+        separator: ' ',
+      },
+      {
+        version: '5.0.0',
+        separator: ' > ',
+      },
+      {
+        version: '5.0.1',
+        separator: ' > ',
+      },
+      {
+        version: '5.0.0-prerelease',
+        separator: ' > ',
+      },
+    ];
+
+    vitestVersions.forEach(({ version, separator }) => {
+      it(`should provide the \`${separator}\` test name separator for vitest ${version}`, async () => {
+        sinon.replace(vitestWrapper, 'version', version);
+
+        await sut.init();
+
+        sinon.assert.calledWithExactly(
+          vitestStub.provide as sinon.SinonStub,
+          'testNameSeparator',
+          separator,
+        );
+      });
+    });
+
+    vitestVersions.forEach(({ version, separator }) => {
+      it(`should report test ids using the \`${separator}\` separator for vitest ${version}`, async () => {
+        // Arrange
+        sinon.replace(vitestWrapper, 'version', version);
+
+        const suite = createSuite({ name: 'suite' });
+        const test = createVitestTest({
+          name: 'test1',
+          suite,
+          result: { state: 'pass', duration: 1 },
+        });
+
+        suite.tasks = [test];
+
+        const file = createVitestFile({
+          filepath: 'file.spec.js',
+          tasks: [suite],
+        });
+
+        vitestStub.state.getFiles = () => [file];
+        await sut.init();
+
+        // Act
+        const actual = await sut.dryRun(
+          factory.dryRunOptions({ files: ['file.js'] }),
+        );
+
+        // Assert
+        expect(actual).deep.include({
+          status: DryRunStatus.Complete,
+        });
+
+        expect(
+          (actual as CompleteDryRunResult).tests.map(({ id }) => id),
+        ).deep.equal([`file.spec.js#suite${separator}test1`]);
       });
     });
 
