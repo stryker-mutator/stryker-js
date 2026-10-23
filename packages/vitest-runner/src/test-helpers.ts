@@ -10,8 +10,8 @@ import type { RunnerTestCase, RunnerTestSuite } from 'vitest';
  * before that it was a plain space.
  * @see https://vitest.dev/guide/migration/
  */
-export const VITEST_5_TEST_NAME_SEPARATOR = ' > ';
-export const LEGACY_TEST_NAME_SEPARATOR = ' ';
+export const VITEST_MODERN_TEST_NAME_SEPARATOR = ' > ';
+export const VITEST_LEGACY_TEST_NAME_SEPARATOR = ' ';
 
 export function collectTestName(
   {
@@ -21,7 +21,7 @@ export function collectTestName(
     name: string;
     suite?: RunnerTestSuite;
   },
-  separator: string = LEGACY_TEST_NAME_SEPARATOR,
+  separator: string = VITEST_LEGACY_TEST_NAME_SEPARATOR,
 ): string {
   const nameParts = [name];
   let currentSuite = suite;
@@ -34,7 +34,7 @@ export function collectTestName(
 
 export function toRawTestId(
   test: RunnerTestCase,
-  separator: string = LEGACY_TEST_NAME_SEPARATOR,
+  separator: string = VITEST_LEGACY_TEST_NAME_SEPARATOR,
 ): string {
   return `${test.file?.filepath ?? 'unknown.js'}#${collectTestName(test, separator)}`;
 }

@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import path from 'path';
 import {
   toRawTestId,
-  VITEST_5_TEST_NAME_SEPARATOR,
+  VITEST_MODERN_TEST_NAME_SEPARATOR,
 } from '../../src/test-helpers.js';
 import { createVitestTest, createVitestFile } from '../util/factories.js';
 
@@ -34,7 +34,7 @@ describe('test-helpers', () => {
       const test = createVitestTest({
         file: createVitestFile({ filepath: filePath }),
       });
-      const result = toRawTestId(test, VITEST_5_TEST_NAME_SEPARATOR);
+      const result = toRawTestId(test, VITEST_MODERN_TEST_NAME_SEPARATOR);
       expect(result).to.be.equal(`${filePath}#suite > test1`);
     });
   });
