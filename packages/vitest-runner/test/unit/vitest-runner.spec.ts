@@ -21,6 +21,7 @@ import {
   createSuite,
   createVitestFile,
   createVitestMock,
+  createVitestRunnerOptions,
   createVitestTest,
 } from '../util/factories.js';
 import { VITEST_ERROR_CODES } from '../../src/vitest-helpers.js';
@@ -39,9 +40,7 @@ describe(VitestTestRunner.name, () => {
       .injectClass(VitestTestRunner);
     createVitestStub = sinon.stub(vitestWrapper, 'createVitest');
     options = testInjector.options as VitestRunnerOptionsWithStrykerOptions;
-    options.vitest = {
-      related: true,
-    };
+    options.vitest = createVitestRunnerOptions();
     vitestStub = createVitestMock();
     createVitestStub.resolves(vitestStub);
     sinon.stub(fs.promises, 'copyFile').resolves();

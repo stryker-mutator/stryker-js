@@ -103,27 +103,81 @@ export class VitestTestRunner implements TestRunner {
 
   #getVitestPoolConfig(version: string) {
     if (semver.lt(version, '1.0.0')) {
-      return {
-        threads: true,
-        maxThreads: 1,
-        minThreads: 1,
-      };
-    }
-
-    if (semver.lt(version, '4.1.0')) {
-      return {
-        pool: 'threads',
-        poolOptions: {
-          threads: {
+      switch (this.options.vitest.pool) {
+        case 'threads':
+          return {
+            threads: true,
             maxThreads: 1,
             minThreads: 1,
-          },
-        },
-      };
+          };
+
+        case 'forks':
+          return {
+            threads: false,
+            singleThread: true,
+          };
+
+        case 'vmThreads':
+          return {
+            experimentalVmThreads: true,
+            maxThreads: 1,
+            minThreads: 1,
+          };
+
+        case 'vmForks':
+          throw new Error(
+            'The vmForks pool is not supported by Vitest versions below 1.0.0',
+          );
+      }
+    }
+
+    if (semver.lt(version, '4.0.0')) {
+      switch (this.options.vitest.pool) {
+        case 'forks':
+          return {
+            pool: 'forks',
+            poolOptions: {
+              forks: {
+                maxForks: 1,
+                minForks: 1,
+              },
+            },
+          };
+        case 'vmForks':
+          return {
+            pool: 'vmForks',
+            poolOptions: {
+              vmForks: {
+                maxForks: 1,
+                minForks: 1,
+              },
+            },
+          };
+        case 'threads':
+          return {
+            pool: 'threads',
+            poolOptions: {
+              threads: {
+                maxThreads: 1,
+                minThreads: 1,
+              },
+            },
+          };
+        case 'vmThreads':
+          return {
+            pool: 'vmThreads',
+            poolOptions: {
+              vmThreads: {
+                maxThreads: 1,
+                minThreads: 1,
+              },
+            },
+          };
+      }
     }
 
     return {
-      pool: 'threads',
+      pool: this.options.vitest.pool,
       maxWorkers: 1,
     };
   }
