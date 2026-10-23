@@ -1,3 +1,4 @@
+import { MutantCoverage } from '@stryker-mutator/api/core';
 import { commonTokens } from '@stryker-mutator/api/plugin';
 import {
   assertions,
@@ -32,6 +33,18 @@ describe('JestTestRunner coverage analysis integration', () => {
     return testInjector.injector
       .provideValue(commonTokens.options, options)
       .injectFunction(jestTestRunnerFactory);
+  }
+
+  function expectOwnedByTestRunner(coverage: MutantCoverage) {
+    // A coverage object created by a test file would keep that test file in memory
+    for (const object of [
+      coverage,
+      coverage.static,
+      coverage.perTest,
+      ...Object.values(coverage.perTest),
+    ]) {
+      expect(object).instanceOf(Object);
+    }
   }
 
   const nodeTestCases: TestCase[] = [
@@ -91,6 +104,7 @@ describe('JestTestRunner coverage analysis integration', () => {
               '15': 1,
               '16': 1,
             });
+            expectOwnedByTestRunner(result.mutantCoverage!);
           });
 
           it('should provide perTest coverage when coverageAnalysis is "perTest"', async () => {
@@ -134,6 +148,7 @@ describe('JestTestRunner coverage analysis integration', () => {
                   16: 1,
                 },
             });
+            expectOwnedByTestRunner(result.mutantCoverage!);
           });
         });
 
@@ -238,6 +253,7 @@ describe('JestTestRunner coverage analysis integration', () => {
               26: 1,
               30: 1,
             });
+            expectOwnedByTestRunner(result.mutantCoverage!);
           });
 
           it('should provide perTest coverage when coverageAnalysis is "perTest"', async () => {
@@ -298,6 +314,7 @@ describe('JestTestRunner coverage analysis integration', () => {
                   26: 1,
                 },
             });
+            expectOwnedByTestRunner(result.mutantCoverage!);
           });
         });
 

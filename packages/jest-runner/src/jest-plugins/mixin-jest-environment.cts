@@ -37,12 +37,14 @@ export function mixinJestEnvironment<T extends typeof JestEnvironment>(
        */
       readonly #strykerContext: InstrumenterContext;
       readonly #innerHandleTestEvent: JestEnvironment['handleTestEvent'];
+      readonly #innerTeardown: JestEnvironment['teardown'];
 
       public static readonly [STRYKER_JEST_ENV] = true;
 
       constructor(config: JestEnvironmentConfig, context: EnvironmentContext) {
         super(config, context);
         this.#innerHandleTestEvent = this.handleTestEvent; // grab the "handle test event", since it might be a class property
+        this.#innerTeardown = this.teardown; // same for "teardown"
         this.#strykerContext = this.global[
           this.global.__strykerGlobalNamespace__ ?? '__stryker__'
         ] = state.instrumenterContext;
@@ -62,8 +64,39 @@ export function mixinJestEnvironment<T extends typeof JestEnvironment>(
             }
           }
         }) satisfies Circus.EventHandler;
+
+        this.teardown = async () => {
+          await this.#innerTeardown();
+          copyCoverageToRunnerRealm(this.#strykerContext);
+        };
       }
     }
     return StrykerJestEnvironment;
   }
+}
+
+/**
+ * The instrumented code creates its coverage objects in the realm of the test file that runs it.
+ * Such an object keeps that whole realm alive, so copy it into this realm, since the shared context outlives the test file.
+ */
+function copyCoverageToRunnerRealm(context: InstrumenterContext): void {
+  const coverage = context.mutantCoverage;
+  if (coverage) {
+    const perTest = ownedByRunner(coverage.perTest);
+    if (state.coverageAnalysis === 'perTest') {
+      for (const testId in perTest) {
+        perTest[testId] = ownedByRunner(perTest[testId]);
+      }
+    }
+    context.mutantCoverage = {
+      static: ownedByRunner(coverage.static),
+      perTest,
+    };
+  }
+}
+
+function ownedByRunner<T extends object>(value: T): T {
+  return Object.getPrototypeOf(value) === Object.prototype
+    ? value
+    : { ...value };
 }
