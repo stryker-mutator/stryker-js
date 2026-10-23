@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [10.1.0](https://github.com/stryker-mutator/stryker-js/compare/v10.0.0...v10.1.0) (2026-10-23)
+
+### Bug Fixes
+
+- **instrumenter:** crash when mutating ts non null expression in babel >= 8 ([#6221](https://github.com/stryker-mutator/stryker-js/issues/6221)) ([e873a24](https://github.com/stryker-mutator/stryker-js/commit/e873a24ea7fe828a790a1b4e8c50bc46bbb3c99e)), closes [#6185](https://github.com/stryker-mutator/stryker-js/issues/6185)
+
 # [10.0.0](https://github.com/stryker-mutator/stryker-js/compare/v9.6.1...v10.0.0) (2026-08-14)
 
 ### Bug Fixes

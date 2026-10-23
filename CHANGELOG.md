@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [10.1.0](https://github.com/stryker-mutator/stryker-js/compare/v10.0.0...v10.1.0) (2026-10-23)
+
+### Bug Fixes
+
+- **core:** prevent test runners racing to populate shared caches on startup ([#6251](https://github.com/stryker-mutator/stryker-js/issues/6251)) ([c931a93](https://github.com/stryker-mutator/stryker-js/commit/c931a93237816901f1e9f48da411170beeb3dfca)), closes [#6250](https://github.com/stryker-mutator/stryker-js/issues/6250)
+- **instrumenter:** crash when mutating ts non null expression in babel >= 8 ([#6221](https://github.com/stryker-mutator/stryker-js/issues/6221)) ([e873a24](https://github.com/stryker-mutator/stryker-js/commit/e873a24ea7fe828a790a1b4e8c50bc46bbb3c99e)), closes [#6185](https://github.com/stryker-mutator/stryker-js/issues/6185)
+- **vitest-runner:** do not select tests whose name only starts with a filtered name ([#6246](https://github.com/stryker-mutator/stryker-js/issues/6246)) ([6ad4adb](https://github.com/stryker-mutator/stryker-js/commit/6ad4adbe21a30dcc1cdb4c22ab4304e02fe9d32e))
+- **vitest-runner:** report mutant collection failures instead of surviving mutants ([#6269](https://github.com/stryker-mutator/stryker-js/issues/6269)) ([cf5695e](https://github.com/stryker-mutator/stryker-js/commit/cf5695e88fac6063dc0fc172f4443fa513cd85f0))
+
+### Features
+
+- add opt-in mutation-phase test timing diagnostics with sidecar reporter ([#5866](https://github.com/stryker-mutator/stryker-js/issues/5866)) ([201dce8](https://github.com/stryker-mutator/stryker-js/commit/201dce8efee34fa04e05b6474800a5d2fc8791d3))
+- **core:** cli option for command runner ([#6006](https://github.com/stryker-mutator/stryker-js/issues/6006)) ([aa7f3bb](https://github.com/stryker-mutator/stryker-js/commit/aa7f3bb0a322eaaef4c626d3a491ed471c6e7be1)), closes [#5153](https://github.com/stryker-mutator/stryker-js/issues/5153)
+- **core:** report mutant `duration` in the mutation report ([#6252](https://github.com/stryker-mutator/stryker-js/issues/6252)) ([7284a4a](https://github.com/stryker-mutator/stryker-js/commit/7284a4a20daca496e49dfb9e534a4d2be41d0c2e)), closes [#5866](https://github.com/stryker-mutator/stryker-js/issues/5866) [#5866](https://github.com/stryker-mutator/stryker-js/issues/5866)
+- **vitest-runner:** report test locations ([#6188](https://github.com/stryker-mutator/stryker-js/issues/6188)) ([f2a49ff](https://github.com/stryker-mutator/stryker-js/commit/f2a49ff02437e3b7fe2682dba808ac93039895bf)), closes [#6186](https://github.com/stryker-mutator/stryker-js/issues/6186)
+- **vitest-runner:** support vitest pool options ([#6268](https://github.com/stryker-mutator/stryker-js/issues/6268)) ([3073ea2](https://github.com/stryker-mutator/stryker-js/commit/3073ea2c4ef0402953347cff92db8f6b62d64de9)), closes [#6236](https://github.com/stryker-mutator/stryker-js/issues/6236) [#5982](https://github.com/stryker-mutator/stryker-js/issues/5982) [#6223](https://github.com/stryker-mutator/stryker-js/issues/6223)
+- **vitest-runner:** support vitest v5 ([#6214](https://github.com/stryker-mutator/stryker-js/issues/6214)) ([10e2cca](https://github.com/stryker-mutator/stryker-js/commit/10e2cca959ea1e33fca94164186577b3074e7629))
+
 # [10.0.0](https://github.com/stryker-mutator/stryker-js/compare/v9.6.1...v10.0.0) (2026-08-14)
 
 ### Bug Fixes

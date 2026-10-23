@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [10.1.0](https://github.com/stryker-mutator/stryker-js/compare/v10.0.0...v10.1.0) (2026-10-23)
+
+### Bug Fixes
+
+- **core:** prevent test runners racing to populate shared caches on startup ([#6251](https://github.com/stryker-mutator/stryker-js/issues/6251)) ([c931a93](https://github.com/stryker-mutator/stryker-js/commit/c931a93237816901f1e9f48da411170beeb3dfca)), closes [#6250](https://github.com/stryker-mutator/stryker-js/issues/6250)
+
+### Features
+
+- add opt-in mutation-phase test timing diagnostics with sidecar reporter ([#5866](https://github.com/stryker-mutator/stryker-js/issues/5866)) ([201dce8](https://github.com/stryker-mutator/stryker-js/commit/201dce8efee34fa04e05b6474800a5d2fc8791d3))
+- **core:** cli option for command runner ([#6006](https://github.com/stryker-mutator/stryker-js/issues/6006)) ([aa7f3bb](https://github.com/stryker-mutator/stryker-js/commit/aa7f3bb0a322eaaef4c626d3a491ed471c6e7be1)), closes [#5153](https://github.com/stryker-mutator/stryker-js/issues/5153)
+- **core:** report mutant `duration` in the mutation report ([#6252](https://github.com/stryker-mutator/stryker-js/issues/6252)) ([7284a4a](https://github.com/stryker-mutator/stryker-js/commit/7284a4a20daca496e49dfb9e534a4d2be41d0c2e)), closes [#5866](https://github.com/stryker-mutator/stryker-js/issues/5866) [#5866](https://github.com/stryker-mutator/stryker-js/issues/5866)
+
 # [10.0.0](https://github.com/stryker-mutator/stryker-js/compare/v9.6.1...v10.0.0) (2026-08-14)
 
 ### Bug Fixes

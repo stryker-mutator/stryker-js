@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [10.1.0](https://github.com/stryker-mutator/stryker-js/compare/v10.0.0...v10.1.0) (2026-10-23)
+
+### Features
+
+- **core:** report mutant `duration` in the mutation report ([#6252](https://github.com/stryker-mutator/stryker-js/issues/6252)) ([7284a4a](https://github.com/stryker-mutator/stryker-js/commit/7284a4a20daca496e49dfb9e534a4d2be41d0c2e)), closes [#5866](https://github.com/stryker-mutator/stryker-js/issues/5866) [#5866](https://github.com/stryker-mutator/stryker-js/issues/5866)
+
 # [10.0.0](https://github.com/stryker-mutator/stryker-js/compare/v9.6.1...v10.0.0) (2026-08-14)
 
 ### Features
