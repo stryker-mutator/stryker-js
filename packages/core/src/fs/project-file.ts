@@ -27,10 +27,32 @@ export class ProjectFile implements FileDescription {
 
   async #writeTo(to: string): Promise<void> {
     if (this.#currentContent === undefined) {
-      await this.fs.copyFile(this.name, to);
+      await this.#copyTo(to);
     } else {
       await this.fs.writeFile(to, this.#currentContent, 'utf-8');
     }
+  }
+
+  /**
+   * Copies the file to `to`, recreating a symbolic link instead of copying through it.
+   * `fs.copyFile` follows links, so a link to a directory makes it fail with `ENOTSUP` on macOS
+   * and `EISDIR` on other platforms (see #6224). Links that cannot be recreated — a file link on
+   * Windows, or a platform that refuses the call — fall back to the plain copy.
+   */
+  async #copyTo(to: string): Promise<void> {
+    if ((await this.fs.lstat(this.name)).isSymbolicLink()) {
+      try {
+        await this.fs.symlink(
+          await this.fs.readlink(this.name),
+          to,
+          'junction',
+        );
+        return;
+      } catch {
+        // Not a link we can recreate here, copy the target instead.
+      }
+    }
+    await this.fs.copyFile(this.name, to);
   }
 
   public setContent(content: string): void {
@@ -87,7 +109,7 @@ export class ProjectFile implements FileDescription {
     const backupFileName = path.join(backupDir, this.#relativePath);
     await this.fs.mkdir(path.dirname(backupFileName), { recursive: true });
     if (this.#originalContent === undefined) {
-      await this.fs.copyFile(this.name, backupFileName);
+      await this.#copyTo(backupFileName);
     } else {
       await this.fs.writeFile(backupFileName, this.#originalContent);
     }

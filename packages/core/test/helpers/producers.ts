@@ -37,6 +37,9 @@ export function createFileSystemMock(): sinon.SinonStubbedInstance<FileSystem> {
     mkdir: sinon.stub(),
     writeFile: sinon.stub(),
     readdir: sinon.stub(),
+    lstat: sinon.stub(),
+    readlink: sinon.stub(),
+    symlink: sinon.stub(),
   } as sinon.SinonStubbedInstance<FileSystem>;
 }
 

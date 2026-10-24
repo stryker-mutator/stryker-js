@@ -1,3 +1,4 @@
+import { Stats } from 'fs';
 import path from 'path';
 
 import { MutateDescription } from '@stryker-mutator/api/core';
@@ -13,6 +14,10 @@ describe(ProjectFile.name, () => {
 
   beforeEach(() => {
     fileSystemMock = createFileSystemMock();
+    // Assume regular files unless a test says otherwise: `ProjectFile` copies those.
+    fileSystemMock.lstat.resolves({
+      isSymbolicLink: () => false,
+    } as unknown as Stats);
   });
 
   describe(ProjectFile.prototype.readContent.name, () => {
@@ -291,6 +296,33 @@ describe(ProjectFile.name, () => {
         actualSandboxFile,
       );
       sinon.assert.notCalled(fileSystemMock.writeFile);
+    });
+
+    it('should recreate a symbolic link instead of copying through it', async () => {
+      // Arrange
+      const originalFileName = path.resolve('src', 'assets', 'locales');
+      const sut = createSut({ name: originalFileName });
+      fileSystemMock.lstat.resolves({
+        isSymbolicLink: () => true,
+      } as unknown as Stats);
+      fileSystemMock.readlink.resolves('../locales');
+
+      // Act
+      const actualSandboxFile = await sut.writeToSandbox(
+        path.resolve('.stryker-tmp', 'sandbox123'),
+      );
+
+      // Assert
+      expect(actualSandboxFile).eq(
+        path.resolve('.stryker-tmp', 'sandbox123', 'src', 'assets', 'locales'),
+      );
+      sinon.assert.calledOnceWithExactly(
+        fileSystemMock.symlink,
+        '../locales',
+        actualSandboxFile,
+        'junction',
+      );
+      sinon.assert.notCalled(fileSystemMock.copyFile);
     });
   });
 
