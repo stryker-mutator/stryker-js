@@ -13,7 +13,7 @@
     "@types/mocha": "10.0.10",
     "@types/node": "24.13.3",
     "@types/sinon": "22.0.0",
-    "@types/sinon-chai": "4.0.0",
+    "@types/sinon-chai": "4.0.1",
     "@types/source-map-support": "0.5.10",
     "@typescript-eslint/utils": "8.68.0",
     "@vitejs/plugin-react": "6.1.1",

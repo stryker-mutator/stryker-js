@@ -36,8 +36,8 @@ importers:
         specifier: 22.0.0
         version: 22.0.0
       '@types/sinon-chai':
-        specifier: 4.0.0
-        version: 4.0.0
+        specifier: 4.0.1
+        version: 4.0.1
       '@types/source-map-support':
         specifier: 0.5.10
         version: 0.5.10
@@ -6278,8 +6278,8 @@ packages:
   '@types/serve-static@2.2.0':
     resolution: {integrity: sha512-8mam4H1NHLtu7nmtalF7eyBH14QyOASmcxHhSfEoRyr0nP/YdoesEtU+uSRvMe96TW/HPTtkoKqQLl53N7UXMQ==}
 
-  '@types/sinon-chai@4.0.0':
-    resolution: {integrity: sha512-Uar+qk3TmeFsUWCwtqRNqNUE7vf34+MCJiQJR5M2rd4nCbhtE8RgTiHwN/mVwbfCjhmO6DiOel/MgzHkRMJJFg==}
+  '@types/sinon-chai@4.0.1':
+    resolution: {integrity: sha512-CQmvXG0GAOesZfRHS4aYSWcoHTZCdfOhgOJRM20bYqBECBMVe/ogBP18Qbfsy7gMA1cE4yIKO75aPRjeFyR2NQ==}
 
   '@types/sinon@22.0.0':
     resolution: {integrity: sha512-TDbVpbccc2HfiqHR09Argj3mHV1KMW7sCCKj52fsl8lbRLkEn7fB1966EWhOKWUBcqfBueZuPoA7/OK1CKiy3g==}
@@ -24424,7 +24424,7 @@ snapshots:
       '@types/http-errors': 2.0.5
       '@types/node': 22.20.1
 
-  '@types/sinon-chai@4.0.0':
+  '@types/sinon-chai@4.0.1':
     dependencies:
       '@types/chai': 5.2.3
       '@types/sinon': 22.0.0
