@@ -408,6 +408,21 @@ describe('VitestRunner integration', () => {
     });
   });
 
+  describe('using a project where no test reaches instrumented code', () => {
+    beforeEach(async () => {
+      sandbox = new TempTestDirectorySandbox('no-coverage');
+      await sandbox.init();
+      await sut.init();
+    });
+
+    it('should report empty mutant coverage', async () => {
+      const runResult = await sut.dryRun(factory.dryRunOptions());
+
+      assertions.expectCompleted(runResult);
+      expect(runResult.mutantCoverage).deep.eq({ static: {}, perTest: {} });
+    });
+  });
+
   describe('using multiple-configs project', () => {
     beforeEach(async () => {
       sandbox = new TempTestDirectorySandbox('multiple-configs');
