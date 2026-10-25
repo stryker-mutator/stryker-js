@@ -1,6 +1,7 @@
 import { promises as fsPromises } from 'fs';
 
 import { expect } from 'chai';
+import { notEmpty } from '@stryker-mutator/util';
 
 import { createParser, ParserOptions } from '../../src/parsers/index.js';
 import {
@@ -9,6 +10,7 @@ import {
   TSAst,
   JSAst,
   Ast,
+  VueAst,
 } from '../../src/syntax/index.js';
 import { createParserOptions } from '../helpers/factories.js';
 import { resolveTestResource } from '../helpers/resolve-test-resource.js';
@@ -29,9 +31,10 @@ describe('parsers integration', () => {
   });
 
   it('should allow to parse a *.vue file', async () => {
-    const actual = await actAssertHtml('App.vue');
-    expect(actual.format).eq(AstFormat.Html);
-    expect(actual.root.scripts).lengthOf(1);
+    const actual = await actAssertVue('App.vue');
+    expect(actual.root.moduleScript).ok;
+    expect(actual.root.additionalScripts).lengthOf(0);
+    expect(actual.root.setup).undefined;
     expect(actual).to.matchSnapshot();
   });
 
@@ -111,6 +114,14 @@ describe('parsers integration', () => {
     expect(actual.format).eq(AstFormat.Html);
     return actual as HtmlAst;
   }
+  async function actAssertVue(
+    testResourceFileName: string,
+    options = createParserOptions(),
+  ): Promise<VueAst> {
+    const actual = await act(testResourceFileName, options);
+    expect(actual.format).eq(AstFormat.Vue);
+    return actual as VueAst;
+  }
   async function actAssertTS(
     testResourceFileName: string,
     options = createParserOptions(),
@@ -145,6 +156,13 @@ describe('parsers integration', () => {
       ast.root.scripts.forEach((script) => {
         script.originFileName = fileNameOverride;
       });
+    }
+    if (ast.format === AstFormat.Vue) {
+      [ast.root.moduleScript, ...ast.root.additionalScripts]
+        .filter(notEmpty)
+        .forEach(({ ast: script }) => {
+          script.originFileName = fileNameOverride;
+        });
     }
   }
 });
