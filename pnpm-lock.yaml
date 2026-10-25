@@ -79,7 +79,7 @@ importers:
         version: 1.2.1(eslint@10.9.1(jiti@1.21.7))
       eslint-plugin-prettier:
         specifier: 5.5.7
-        version: 5.5.7(@types/eslint@8.56.12)(eslint-config-prettier@10.1.8(eslint@10.9.1(jiti@1.21.7)))(eslint@10.9.1(jiti@1.21.7))(prettier@3.9.9)
+        version: 5.5.7(@types/eslint@8.56.12)(eslint-config-prettier@10.1.8(eslint@10.9.1(jiti@1.21.7)))(eslint@10.9.1(jiti@1.21.7))(prettier@3.9.10)
       estree-walker:
         specifier: 3.0.3
         version: 3.0.3
@@ -114,8 +114,8 @@ importers:
         specifier: 1.62.1
         version: 1.62.1
       prettier:
-        specifier: 3.9.9
-        version: 3.9.9
+        specifier: 3.9.10
+        version: 3.9.10
       rimraf:
         specifier: 6.1.3
         version: 6.1.3
@@ -14129,8 +14129,8 @@ packages:
     resolution: {integrity: sha512-SxToR7P8Y2lWmv/kTzVLC1t/GDI2WGjMwNhLLE9qtH8Q13C+aEmuRlzDst4Up4s0Wc8sF2M+J57iB3cMLqftfg==}
     engines: {node: '>=6.0.0'}
 
-  prettier@3.8.5:
-    resolution: {integrity: sha512-zxcTTCedNGJM4R8sj/Cq/F0W/c4iE0afWBcBwMTRtw4WHYP9TWkYjdiH3npPRUYsXQCPR0hTU9yjovOu+E6EQA==}
+  prettier@3.9.10:
+    resolution: {integrity: sha512-skGHTH1Yb9QvaTC4hWnRTzEYtCpApF0UMBPz+t/0ZPzP8ihefo/btKd+QA7pUE0fEwA1SbS/NmhyEcstdXOIdA==}
     engines: {node: '>=14'}
     hasBin: true
 
@@ -28408,10 +28408,10 @@ snapshots:
       safe-regex-test: 1.1.0
       string.prototype.includes: 2.0.1
 
-  eslint-plugin-prettier@5.5.7(@types/eslint@8.56.12)(eslint-config-prettier@10.1.8(eslint@10.9.1(jiti@1.21.7)))(eslint@10.9.1(jiti@1.21.7))(prettier@3.9.9):
+  eslint-plugin-prettier@5.5.7(@types/eslint@8.56.12)(eslint-config-prettier@10.1.8(eslint@10.9.1(jiti@1.21.7)))(eslint@10.9.1(jiti@1.21.7))(prettier@3.9.10):
     dependencies:
       eslint: 10.9.1(jiti@1.21.7)
-      prettier: 3.9.9
+      prettier: 3.9.10
       prettier-linter-helpers: 1.0.1
       synckit: 0.12.3
     optionalDependencies:
@@ -32432,7 +32432,7 @@ snapshots:
       js-yaml: 4.3.1
       lodash: 4.18.1
       minimist: 1.2.8
-      prettier: 3.8.5
+      prettier: 3.9.9
       tinyglobby: 0.2.17
 
   json-schema-traverse@0.4.1: {}
@@ -34999,7 +34999,7 @@ snapshots:
     dependencies:
       fast-diff: 1.3.0
 
-  prettier@3.8.5: {}
+  prettier@3.9.10: {}
 
   prettier@3.9.9: {}
 
