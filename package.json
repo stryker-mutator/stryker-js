@@ -18,7 +18,7 @@
     "@typescript-eslint/utils": "8.68.0",
     "@vitejs/plugin-react": "6.1.2",
     "c8": "12.0.0",
-    "chai": "6.2.2",
+    "chai": "6.3.0",
     "chai-as-promised": "8.0.2",
     "chai-jest-snapshot": "2.0.0",
     "concurrently": "10.0.6",
