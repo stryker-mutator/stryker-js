@@ -190,6 +190,13 @@ export class MutantTestPlanner {
     // 1. We have a specific test filter (not running all tests)
     // 2. The mutant is NOT static (static mutants require full reload)
     const canHotSwap = !!testFilter && isStatic === false;
+    // A file or test filter only selects suites. Static mutants, and mutants
+    // with unknown static status, must be active before the module evaluates.
+    // Runtime activation is reserved for mutants known to be non-static, and
+    // for hybrid mutants whose static coverage is ignored.
+    const activateAtRuntime =
+      !!testFilter &&
+      (isStatic === false || (isStatic === true && this.options.ignoreStatic));
 
     return {
       plan: PlanKind.Run,
@@ -208,7 +215,7 @@ export class MutantTestPlanner {
           mutatorName: mutant.mutatorName,
           replacement: mutant.replacement,
         },
-        mutantActivation: testFilter ? 'runtime' : 'static',
+        mutantActivation: activateAtRuntime ? 'runtime' : 'static',
         timeout,
         testFilter,
         sandboxFileName: this.sandbox.sandboxFileFor(mutant.fileName),
