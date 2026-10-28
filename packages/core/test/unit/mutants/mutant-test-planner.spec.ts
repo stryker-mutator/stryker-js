@@ -472,7 +472,7 @@ describe(MutantTestPlanner.name, () => {
         // Assert
         assertIsRunPlan(plan);
         expect(plan.runOptions.testFilter).deep.eq(['sandbox/src/foo.spec.ts']);
-        expect(plan.runOptions.mutantActivation).eq('runtime');
+        expect(plan.runOptions.mutantActivation).eq('static');
         expect(plan.runOptions.reloadEnvironment).true;
       });
 
@@ -498,7 +498,35 @@ describe(MutantTestPlanner.name, () => {
         // Assert
         assertIsRunPlan(plan);
         expect(plan.runOptions.testFilter).deep.eq(['sandbox/src/foo.spec.ts']);
-        expect(plan.runOptions.mutantActivation).eq('runtime');
+        expect(plan.runOptions.mutantActivation).eq('static');
+        expect(plan.runOptions.reloadEnvironment).true;
+      });
+
+      it('should keep static activation and the file filter when a static mutant has no per-test coverage', async () => {
+        // Arrange
+        testInjector.options.ignoreStatic = false;
+        testCoverage.hasCoverage = true;
+        testCoverage.staticCoverage['1'] = true;
+        testCoverage.addTest(
+          factory.successTestResult({ id: 'spec1', timeSpentMs: 10 }),
+        );
+        const mutant = factory.mutant({ id: '1' });
+        const project = new Project(
+          fileSystemTestDouble,
+          fileSystemTestDouble.toFileDescriptions(),
+          undefined,
+          ['src/foo.spec.ts'],
+        );
+
+        // Act
+        const [plan] = await act([mutant], project);
+
+        // Assert
+        assertIsRunPlan(plan);
+        expect(plan.mutant.static).true;
+        expect(plan.mutant.coveredBy).deep.eq([]);
+        expect(plan.runOptions.testFilter).deep.eq(['sandbox/src/foo.spec.ts']);
+        expect(plan.runOptions.mutantActivation).eq('static');
         expect(plan.runOptions.reloadEnvironment).true;
       });
     });

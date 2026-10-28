@@ -350,6 +350,58 @@ describe('VitestRunner integration', () => {
         expect(runResult.failureMessage).contains('expected 2.86 to be 3.14');
       });
 
+      it('should kill a static mutant during import when an explicit test file is selected', async () => {
+        await sut.init();
+        const runResult = await sut.mutantRun(
+          factory.mutantRunOptions({
+            activeMutant: factory.mutant({ id: '0' }),
+            sandboxFileName,
+            mutantActivation: 'static',
+            testFilter: ['tests/pi.spec.ts'],
+          }),
+        );
+
+        assertions.expectKilled(runResult);
+        expect(runResult.killedBy).deep.eq([test6]);
+        expect(runResult.nrOfTests).eq(1);
+        expect(runResult.failureMessage).contains('expected 2.86 to be 3.14');
+      });
+
+      it('should run every owning test and kill a static mutant when no test filter is set', async () => {
+        options.disableBail = true;
+        try {
+          await sut.init();
+          const runResult = await sut.mutantRun(
+            factory.mutantRunOptions({
+              activeMutant: factory.mutant({ id: '0' }),
+              sandboxFileName,
+              mutantActivation: 'static',
+            }),
+          );
+
+          assertions.expectKilled(runResult);
+          expect(runResult.killedBy).deep.eq([test6]);
+          expect(runResult.nrOfTests).eq(6);
+        } finally {
+          options.disableBail = false;
+        }
+      });
+
+      it('should not kill a static mutant when that same explicit test file is activated at runtime', async () => {
+        await sut.init();
+        const runResult = await sut.mutantRun(
+          factory.mutantRunOptions({
+            activeMutant: factory.mutant({ id: '0' }),
+            sandboxFileName,
+            mutantActivation: 'runtime',
+            testFilter: ['tests/pi.spec.ts'],
+          }),
+        );
+
+        assertions.expectSurvived(runResult);
+        expect(runResult.nrOfTests).eq(1);
+      });
+
       it('should be able to reload the environment after a static mutant is tested', async () => {
         // Arrange
         await sut.init();
