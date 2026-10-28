@@ -63,17 +63,22 @@ if (mode === 'mutant') {
     // Vitest's hooks API requires this empty destructure to allow access to suite.meta
     // eslint-disable-next-line no-empty-pattern
     afterAll(({}, suite) => {
-      suite.meta.mutantCoverage = ns.mutantCoverage;
+      // Report empty coverage when no mutant was hit, so "no coverage" isn't mistaken for "coverage not measured"
+      suite.meta.mutantCoverage = ns.mutantCoverage ?? emptyCoverage();
     });
   } else {
     // @ts-expect-error This was changed in Vitest v4.1
     afterAll(({ meta }) => {
-      meta.mutantCoverage = ns.mutantCoverage;
+      meta.mutantCoverage = ns.mutantCoverage ?? emptyCoverage();
     });
   }
 }
 
 // Stryker disable all: this file is copied to the sandbox dir
+function emptyCoverage(): MutantCoverage {
+  return { static: {}, perTest: {} };
+}
+
 function collectTestName(
   {
     name,
