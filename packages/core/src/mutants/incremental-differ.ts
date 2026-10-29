@@ -49,8 +49,10 @@ const diffMatchPatch = new DiffMatchPatch();
  * - The location of the mutant refers to a piece of code that didn't change
  * - If mutant was killed:
  *   - The culprit test wasn't changed
- * - If the mutant survived:
- *   - No test was added
+ * - If the mutant was not killed:
+ *   - No covering test was added or changed
+ *   - Static and hybrid mutants can additionally be rerun when any test was added or changed with incrementalRerunStaticOnTestChange
+ *     (when ignoreStatic is false); otherwise, changes outside their per-test coverage don't invalidate reuse
  *
  * It uses google's "diff-match-patch" project to calculate the new locations for tests and mutants, see link.
  * @link https://github.com/google/diff-match-patch
@@ -131,11 +133,17 @@ export class IncrementalDiffer {
     const testInfoByKey = collectCurrentTestInfo();
 
     // Mark which tests are added
+    let hasAddedTests = false;
     for (const [key, { relativeFileName }] of testInfoByKey) {
       if (!oldTestKeys.has(key)) {
+        hasAddedTests = true;
         testStatisticsCollector.count(relativeFileName, 'added');
       }
     }
+    const rerunStaticOnTestChange =
+      this.options.incrementalRerunStaticOnTestChange &&
+      !this.options.ignoreStatic &&
+      hasAddedTests;
 
     // Make sure that tests that didn't run this time around aren't forgotten
     for (const [
@@ -423,6 +431,14 @@ export class IncrementalDiffer {
           }
         }
         // Killing tests has changed or no longer exists
+        return false;
+      }
+      if (
+        rerunStaticOnTestChange &&
+        testCoverage.hasStaticCoverage(mutant.id)
+      ) {
+        // Static and hybrid mutants run against all tests when ignoreStatic is off.
+        // Any added or changed test could kill them, even without per-test coverage.
         return false;
       }
       for (const action of testsDiff.values()) {

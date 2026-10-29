@@ -371,6 +371,18 @@ Config file: `"incrementalFile": "reports/stryker-incremental-alternative.json"`
 Specify the file to use for incremental mode.
 See [incremental](./incremental.md) for more details.
 
+### `incrementalRerunStaticOnTestChange` [`boolean`]
+
+Default: `false`<br />
+Command line: `--incrementalRerunStaticOnTestChange`<br />
+Config file: `"incrementalRerunStaticOnTestChange": true`<br />
+
+In [incremental mode](./incremental.md), rerun previously non-killed [static and hybrid mutants](../../mutation-testing-elements/static-mutants/) when Stryker detects any added or changed test. This only applies when [`ignoreStatic`](#ignorestatic-boolean) is `false`, because these mutants run against the whole test suite.
+
+This can increase the time spent mutation testing: a single added or changed test can cause all non-killed mutants with static coverage in scope to run again. Previously killed mutants can still be reused when their killing test is unchanged.
+
+Test changes are detected using the test information reported by the runner, as described in the [incremental limitations](./incremental.md#limitations). If only test names are available, only added tests can trigger this option. Changes to other files, such as snapshots or dependencies, do not trigger it.
+
 ### `inPlace` [`boolean`]
 
 Default: `false`<br />

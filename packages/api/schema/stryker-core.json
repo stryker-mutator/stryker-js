@@ -333,6 +333,11 @@
       "type": "string",
       "default": "reports/stryker-incremental.json"
     },
+    "incrementalRerunStaticOnTestChange": {
+      "description": "Rerun non-killed static and hybrid mutants when incremental mode detects added or changed tests. Only applies when ignoreStatic is false.",
+      "type": "boolean",
+      "default": false
+    },
     "force": {
       "description": "Run all mutants, even if --incremental is provided and an incremental file exists. Can be used to force a rebuild of the incremental file.",
       "type": "boolean",
