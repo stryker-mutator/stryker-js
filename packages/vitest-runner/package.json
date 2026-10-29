@@ -48,7 +48,7 @@
   "homepage": "https://stryker-mutator.io/docs/stryker-js/vitest-runner",
   "devDependencies": {
     "@stryker-mutator/test-helpers": "workspace:*",
-    "@types/node": "24.13.3",
+    "@types/node": "24.19.2",
     "@types/semver": "7.8.0",
     "@vitest/browser": "4.1.12",
     "@vitest/browser-playwright": "4.1.12",
