@@ -8,6 +8,9 @@ on:
         required: true
         default: '*'
 
+permissions:
+  contents: read
+
 jobs:
   performance_test:
     runs-on: ubuntu-latest
