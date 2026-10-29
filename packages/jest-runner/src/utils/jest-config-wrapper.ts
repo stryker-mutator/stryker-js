@@ -27,4 +27,10 @@ export class JestConfigWrapper {
   ): ReturnType<typeof jestConfig.readInitialOptions> {
     return this.jestConfig.readInitialOptions(...args);
   }
+
+  public normalize(
+    ...args: Parameters<typeof jestConfig.normalize>
+  ): ReturnType<typeof jestConfig.normalize> {
+    return this.jestConfig.normalize(...args);
+  }
 }
