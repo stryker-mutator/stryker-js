@@ -33,8 +33,8 @@ importers:
         specifier: 24.13.3
         version: 24.13.3
       '@types/sinon':
-        specifier: 22.0.0
-        version: 22.0.0
+        specifier: 22.0.2
+        version: 22.0.2
       '@types/sinon-chai':
         specifier: 4.0.1
         version: 4.0.1
@@ -120,11 +120,11 @@ importers:
         specifier: 6.1.3
         version: 6.1.3
       sinon:
-        specifier: 22.0.0
-        version: 22.0.0
+        specifier: 22.1.0
+        version: 22.1.0
       sinon-chai:
         specifier: 4.0.1
-        version: 4.0.1(chai@6.3.0)(sinon@22.0.0)
+        version: 4.0.1(chai@6.3.0)(sinon@22.1.0)
       source-map-support:
         specifier: 0.5.21
         version: 0.5.21
@@ -6314,6 +6314,9 @@ packages:
 
   '@types/sinon@22.0.0':
     resolution: {integrity: sha512-TDbVpbccc2HfiqHR09Argj3mHV1KMW7sCCKj52fsl8lbRLkEn7fB1966EWhOKWUBcqfBueZuPoA7/OK1CKiy3g==}
+
+  '@types/sinon@22.0.2':
+    resolution: {integrity: sha512-2qLRFlluKkn6mci189eKhlOsHcdFpsn/9+29S4VmwKCpfb+vseKrZSSOSy5259yzIpP/y4gLfqQfIIR/lZn4Ng==}
 
   '@types/sinonjs__fake-timers@15.0.1':
     resolution: {integrity: sha512-Ko2tjWJq8oozHzHV+reuvS5KYIRAokHnGbDwGh/J64LntgpbuylF74ipEL24HCyRjf9FOlBiBHWBR1RlVKsI1w==}
@@ -15275,8 +15278,8 @@ packages:
       chai: ^5.0.0 || ^6.0.0
       sinon: '>=4.0.0'
 
-  sinon@22.0.0:
-    resolution: {integrity: sha512-sq/6DpdXOrLyfbKlXLg/Usc7xu8YXPeLkOFZRvA3bNUSA2lhbrZ06yuXbH1fkzBPCbz9O10+7hznzUsjaYNm0Q==}
+  sinon@22.1.0:
+    resolution: {integrity: sha512-n1ajF2rBWMTtEwbKcw4UdFg4nCnDdq/U6RDoxtOd7oapOlRoJ5ynwFx60owROyhDpA9QhMZi0pCO/xtmwFjG7w==}
 
   sirv@3.0.2:
     resolution: {integrity: sha512-2wcC/oGxHis/BoHkkPwldgiPSYcpZK3JU28WoMVv55yHJgcZ8rlXvuG9iZggz+sU1d4bRgIGASwyWqjxu3FM0g==}
@@ -24714,6 +24717,10 @@ snapshots:
   '@types/sinon@22.0.0':
     dependencies:
       '@types/sinonjs__fake-timers': 15.0.1
+
+  '@types/sinon@22.0.2':
+    dependencies:
+      '@sinonjs/fake-timers': 15.4.0
 
   '@types/sinonjs__fake-timers@15.0.1': {}
 
@@ -36621,12 +36628,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  sinon-chai@4.0.1(chai@6.3.0)(sinon@22.0.0):
+  sinon-chai@4.0.1(chai@6.3.0)(sinon@22.1.0):
     dependencies:
       chai: 6.3.0
-      sinon: 22.0.0
+      sinon: 22.1.0
 
-  sinon@22.0.0:
+  sinon@22.1.0:
     dependencies:
       '@sinonjs/commons': 3.0.1
       '@sinonjs/fake-timers': 15.4.0
