@@ -840,6 +840,186 @@ describe(IncrementalDiffer.name, () => {
   });
 
   describe('test changes', () => {
+    describe('incrementalRerunStaticOnTestChange', () => {
+      beforeEach(() => {
+        testInjector.options.incrementalRerunStaticOnTestChange = true;
+      });
+
+      for (const isStaticOnly of [true, false]) {
+        describe(isStaticOnly ? 'static mutants' : 'hybrid mutants', () => {
+          function createScenario(mutantState: MutantStatus = 'Survived') {
+            const scenario = new ScenarioBuilder().withMathProjectExample({
+              mutantState,
+              isStatic: isStaticOnly,
+            });
+            scenario.testCoverage.staticCoverage[scenario.mutantId] = true;
+            if (mutantState !== 'Killed') {
+              scenario.incrementalFiles[srcAdd].mutants[0].killedBy = [];
+            }
+            return scenario;
+          }
+
+          function addUnrelatedTest(scenario: ScenarioBuilder) {
+            scenario.testCoverage.addTest(
+              factory.testResult({ id: 'unrelated', name: 'unrelated test' }),
+            );
+          }
+
+          for (const mutantState of [
+            'Survived',
+            'NoCoverage',
+            'Timeout',
+            'RuntimeError',
+          ] as const) {
+            it(`should rerun a ${mutantState} mutant when an unrelated test is added`, () => {
+              const scenario = createScenario(mutantState);
+              addUnrelatedTest(scenario);
+
+              expect(scenario.act()[0].status).undefined;
+            });
+          }
+
+          it('should rerun when an unrelated existing test changes', () => {
+            const scenario = createScenario();
+            scenario.incrementalTestFiles[testMultiply] =
+              factory.mutationTestReportSchemaTestFile({
+                source: testMultiplyContent,
+                tests: [
+                  {
+                    id: 'old-unrelated',
+                    name: 'multiply',
+                    location: loc(4, 2, 6, 5),
+                  },
+                ],
+              });
+            scenario.testCoverage.addTest(
+              factory.testResult({
+                id: 'unrelated',
+                fileName: testMultiply,
+                name: 'multiply',
+                startPosition: pos(4, 2),
+              }),
+            );
+            scenario.currentFiles.set(
+              testMultiply,
+              testMultiplyContent.replace('multiply(2, 21)', 'multiply(3, 14)'),
+            );
+
+            expect(scenario.act()[0].status).undefined;
+          });
+
+          it('should reuse when no tests change', () => {
+            expect(createScenario().act()[0].status).eq('Survived');
+          });
+
+          it('should reuse when only a test is removed', () => {
+            const scenario =
+              createScenario().withSecondTestInIncrementalReport();
+
+            expect(scenario.act()[0].status).eq('Survived');
+          });
+
+          it('should reuse a killed mutant when its killing test is unchanged', () => {
+            const scenario = createScenario('Killed');
+            addUnrelatedTest(scenario);
+
+            expect(scenario.act()[0].status).eq('Killed');
+          });
+
+          it('should preserve reuse when the option is disabled', () => {
+            testInjector.options.incrementalRerunStaticOnTestChange = false;
+            const scenario = createScenario();
+            addUnrelatedTest(scenario);
+
+            expect(scenario.act()[0].status).eq('Survived');
+          });
+
+          it('should preserve reuse when ignoreStatic is enabled', () => {
+            testInjector.options.ignoreStatic = true;
+            const scenario = createScenario();
+            addUnrelatedTest(scenario);
+
+            expect(scenario.act()[0].status).eq('Survived');
+          });
+
+          it('should detect added tests when only test names are available', () => {
+            const scenario = createScenario();
+            scenario.incrementalTestFiles[''] =
+              scenario.incrementalTestFiles[testAdd];
+            delete scenario.incrementalTestFiles[testAdd];
+            scenario.testCoverage.testsById.get(scenario.newTestId)!.fileName =
+              undefined;
+            addUnrelatedTest(scenario);
+
+            expect(scenario.act()[0].status).undefined;
+          });
+
+          it('should reuse after a test code change when only test names are available', () => {
+            const scenario = createScenario();
+            scenario.incrementalTestFiles[''] =
+              scenario.incrementalTestFiles[testAdd];
+            delete scenario.incrementalTestFiles[testAdd];
+            scenario.testCoverage.testsById.get(scenario.newTestId)!.fileName =
+              undefined;
+            scenario.currentFiles.set(
+              testAdd,
+              testAddContent.replace('add(40, 2)', 'add(39, 3)'),
+            );
+
+            expect(scenario.act()[0].status).eq('Survived');
+          });
+        });
+      }
+
+      it('should preserve reuse for a non-static mutant when an unrelated test is added', () => {
+        const scenario = new ScenarioBuilder().withMathProjectExample({
+          mutantState: 'Survived',
+        });
+        scenario.testCoverage.addTest(
+          factory.testResult({ id: 'unrelated', name: 'unrelated test' }),
+        );
+
+        expect(scenario.act()[0].status).eq('Survived');
+      });
+
+      for (const testChange of ['added', 'changed']) {
+        it(`should reuse without coverage when a test is ${testChange}`, () => {
+          const scenario = new ScenarioBuilder().withMathProjectExample({
+            mutantState: 'Survived',
+            isStatic: true,
+          });
+          scenario.incrementalFiles[srcAdd].mutants[0].static = true;
+          if (testChange === 'added') {
+            scenario.testCoverage.addTest(
+              factory.testResult({ id: 'unrelated', name: 'unrelated test' }),
+            );
+          } else {
+            scenario.incrementalTestFiles[testAdd].tests[0].location = loc(
+              4,
+              2,
+              6,
+              5,
+            );
+            scenario.testCoverage.testsById.get(
+              scenario.newTestId,
+            )!.startPosition = pos(4, 2);
+            scenario.currentFiles.set(
+              testAdd,
+              testAddContent.replace('add(40, 2)', 'add(39, 3)'),
+            );
+          }
+          scenario.testCoverage.hasCoverage = false;
+          scenario.testCoverage.staticCoverage = {};
+
+          expect(scenario.act()[0].status).eq('Survived');
+          expect(scenario.sut!.testStatisticsCollector!.total).property(
+            'added',
+            1,
+          );
+        });
+      }
+    });
+
     it('should identify that a mutant state can be reused when no tests changed', () => {
       const actualDiff = new ScenarioBuilder()
         .withMathProjectExample()

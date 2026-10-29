@@ -145,6 +145,77 @@ describe('incremental', () => {
     },
   );
 
+  describe('incrementalRerunStaticOnTestChange', () => {
+    const addedTestFile = new URL('../spec/static.spec.js', import.meta.url);
+
+    beforeEach(async () => {
+      await fsPromises.writeFile(
+        new URL('../src/concat.js', import.meta.url),
+        `export function createGreeting() { return 'Hello'; }
+export const defaultGreeting = createGreeting();
+export const staticGreeting = 'Hello';
+`,
+      );
+      await fsPromises.writeFile(
+        new URL('../spec/concat.spec.js', import.meta.url),
+        `import { createGreeting } from '../src/concat.js';
+it('should create a greeting', () => { createGreeting(); });
+`,
+      );
+      strykerOptions.testRunner = 'mocha';
+      strykerOptions.plugins.push(
+        import.meta.resolve('@stryker-mutator/mocha-runner'),
+      );
+      strykerOptions.mutate = ['src/concat.js'];
+    });
+
+    afterEach(async () => {
+      await fsPromises.rm(addedTestFile, { force: true });
+    });
+
+    for (const incrementalRerunStaticOnTestChange of [false, true]) {
+      it(`should ${incrementalRerunStaticOnTestChange ? 'rerun' : 'reuse'} static and hybrid mutants when a test is added`, async () => {
+        const stryker = new Stryker({
+          ...strykerOptions,
+          incrementalRerunStaticOnTestChange,
+        });
+        const firstResults = await stryker.runMutationTest();
+        const firstStringMutants = firstResults.filter(
+          ({ mutatorName }) => mutatorName === 'StringLiteral',
+        );
+        expect(firstStringMutants.map(({ status }) => status)).deep.eq([
+          'Survived',
+          'Survived',
+        ]);
+        expect(firstStringMutants.every(({ static: isStatic }) => isStatic))
+          .true;
+        expect(
+          firstStringMutants.map(({ coveredBy }) => coveredBy.length).sort(),
+        ).deep.eq([0, 1]);
+        await fsPromises.writeFile(
+          addedTestFile,
+          `import { defaultGreeting, staticGreeting } from '../src/concat.js';
+it('should initialize greetings', () => {
+  expect(defaultGreeting).toBe('Hello');
+  expect(staticGreeting).toBe('Hello');
+});
+`,
+        );
+
+        const actualResults = await stryker.runMutationTest();
+
+        const expectedStatus = incrementalRerunStaticOnTestChange
+          ? 'Killed'
+          : 'Survived';
+        expect(
+          actualResults
+            .filter(({ mutatorName }) => mutatorName === 'StringLiteral')
+            .map(({ status }) => status),
+        ).deep.eq([expectedStatus, expectedStatus]);
+      });
+    }
+  });
+
   /**
    * @param {'changed' | 'original'} blueprint
    * @param location
