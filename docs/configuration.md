@@ -377,11 +377,11 @@ Default: `false`<br />
 Command line: `--incrementalRerunStaticOnTestChange`<br />
 Config file: `"incrementalRerunStaticOnTestChange": true`<br />
 
-In [incremental mode](./incremental.md), rerun previously non-killed [static and hybrid mutants](../../mutation-testing-elements/static-mutants/) when Stryker detects any added or changed test. This only applies when [`ignoreStatic`](#ignorestatic-boolean) is `false`, because these mutants run against the whole test suite.
+In [incremental mode](./incremental.md), rerun previously non-killed static and hybrid mutants when Stryker detects an added or changed test. Static code runs when a module is loaded; hybrid code also runs during tests. A new test can check a value initialized at module load without appearing in the mutant's per-test coverage. See [rerunning static mutants](./incremental.md#rerunning-static-mutants-when-tests-change) for an example.
 
-This can increase the time spent mutation testing: a single added or changed test can cause all non-killed mutants with static coverage in scope to run again. Previously killed mutants can still be reused when their killing test is unchanged.
+This option requires `"incremental": true`, `"ignoreStatic": false`, and mutation coverage from the test runner. Use the default [`"coverageAnalysis": "perTest"`](#coverageanalysis-string). For runners supporting `"all"`, coverage is collected for the whole suite rather than individual tests, so this option can rerun every previously non-killed covered mutant, including code that only runs during tests. The option has no effect when mutation coverage is unavailable, such as with the `command` runner or a runner that honors `"coverageAnalysis": "off"`.
 
-Test changes are detected using the test information reported by the runner, as described in the [incremental limitations](./incremental.md#limitations). If only test names are available, only added tests can trigger this option. Changes to other files, such as snapshots or dependencies, do not trigger it.
+A single added or changed test can cause all eligible mutants in scope to run again, increasing the time spent mutation testing. Previously killed mutants can still be reused when their killing test is unchanged. Test-change detection depends on the runner's reported test information; see the [incremental limitations](./incremental.md#limitations).
 
 ### `inPlace` [`boolean`]
 

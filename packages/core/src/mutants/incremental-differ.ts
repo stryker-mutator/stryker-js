@@ -51,8 +51,8 @@ const diffMatchPatch = new DiffMatchPatch();
  *   - The culprit test wasn't changed
  * - If the mutant was not killed:
  *   - No covering test was added or changed
- *   - Static and hybrid mutants can additionally be rerun when any test was added or changed with incrementalRerunStaticOnTestChange
- *     (when ignoreStatic is false); otherwise, changes outside their per-test coverage don't invalidate reuse
+ *   - Static and hybrid mutants also require no added or changed tests when incrementalRerunStaticOnTestChange is enabled
+ *     and ignoreStatic is false. Otherwise, only their per-test coverage is considered.
  *
  * It uses google's "diff-match-patch" project to calculate the new locations for tests and mutants, see link.
  * @link https://github.com/google/diff-match-patch
@@ -132,7 +132,7 @@ export class IncrementalDiffer {
     // Create a dictionary to more easily get test information
     const testInfoByKey = collectCurrentTestInfo();
 
-    // Mark which tests are added
+    // Mark which tests are added (changed tests are also counted as added)
     let hasAddedTests = false;
     for (const [key, { relativeFileName }] of testInfoByKey) {
       if (!oldTestKeys.has(key)) {

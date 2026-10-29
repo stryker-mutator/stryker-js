@@ -982,13 +982,42 @@ describe(IncrementalDiffer.name, () => {
         expect(scenario.act()[0].status).eq('Survived');
       });
 
-      it('should preserve reuse without coverage', () => {
-        const scenario = new ScenarioBuilder()
-          .withMathProjectExample({ mutantState: 'Survived' })
-          .withoutTestCoverage();
+      for (const testChange of ['added', 'changed']) {
+        it(`should reuse without coverage when a test is ${testChange}`, () => {
+          const scenario = new ScenarioBuilder().withMathProjectExample({
+            mutantState: 'Survived',
+            isStatic: true,
+          });
+          scenario.incrementalFiles[srcAdd].mutants[0].static = true;
+          if (testChange === 'added') {
+            scenario.testCoverage.addTest(
+              factory.testResult({ id: 'unrelated', name: 'unrelated test' }),
+            );
+          } else {
+            scenario.incrementalTestFiles[testAdd].tests[0].location = loc(
+              4,
+              2,
+              6,
+              5,
+            );
+            scenario.testCoverage.testsById.get(
+              scenario.newTestId,
+            )!.startPosition = pos(4, 2);
+            scenario.currentFiles.set(
+              testAdd,
+              testAddContent.replace('add(40, 2)', 'add(39, 3)'),
+            );
+          }
+          scenario.testCoverage.hasCoverage = false;
+          scenario.testCoverage.staticCoverage = {};
 
-        expect(scenario.act()[0].status).eq('Survived');
-      });
+          expect(scenario.act()[0].status).eq('Survived');
+          expect(scenario.sut!.testStatisticsCollector!.total).property(
+            'added',
+            1,
+          );
+        });
+      }
     });
 
     it('should identify that a mutant state can be reused when no tests changed', () => {

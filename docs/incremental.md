@@ -52,6 +52,32 @@ report file. This means the next incremental run can pick up where
 the interrupted run left off, instead of having to redo the work from
 the interrupted run.
 
+## Rerunning static mutants when tests change
+
+Some code runs when a module is imported, before any test starts. For example:
+
+```js
+export const staticGreeting = 'Hello';
+
+export function createGreeting() {
+  return 'Hello';
+}
+
+export const defaultGreeting = createGreeting();
+```
+
+Changing the first `'Hello'` to `''` creates a [static mutant](../../mutation-testing-elements/static-mutants/): it changes a value initialized when the module loads. If a test also calls `createGreeting()`, changing the second `'Hello'` creates a hybrid mutant, because that code runs both at module load and during a test.
+
+Now suppose a mutant survived, and you add a test that checks `expect(defaultGreeting).toBe('Hello')`. This test could kill the hybrid mutant without calling `createGreeting()` again, so it won't appear in the mutant's per-test coverage. A new test checking `staticGreeting` has the same problem. By default, incremental mode can reuse these previous results even though the new test would kill the mutant.
+
+With `ignoreStatic` set to `false` (the default), Stryker runs static and hybrid mutants against the whole test suite. To rerun previously non-killed mutants like these whenever Stryker detects an added or changed test, enable [`incrementalRerunStaticOnTestChange`](./configuration.md#incrementalrerunstaticontestchange-boolean):
+
+```sh
+npx stryker run --incremental --incrementalRerunStaticOnTestChange
+```
+
+This is opt-in because one test change can rerun all non-killed static and hybrid mutants in scope, making incremental runs slower. Previously killed mutants can still be reused if their killing test is unchanged. The option needs mutation coverage from the runner; see its [coverage requirements](./configuration.md#incrementalrerunstaticontestchange-boolean) for the effects of `perTest`, `all`, and unavailable coverage. Test changes are detected using the runner information described below.
+
 ## Limitations
 
 Running in incremental mode, Stryker will do its best to produce an accurate mutation testing report. However, there are some limitations here:
@@ -60,7 +86,7 @@ Running in incremental mode, Stryker will do its best to produce an accurate mut
 - Detecting test file changes is only supported if the test runner plugin supports reporting the test files. (see support table below)
 - Detecting test changes is only supported if the test runner plugin supports reporting test locations. (see support table below)
 - Any other changes to your environment are not detected, such as updates to other files, updated (dev) dependencies, changes to environment variables, changes to `.snap` files, readme files, etc.
-- [Static mutants](../../mutation-testing-elements/static-mutants/) don't have per-test coverage; thus, Stryker won't detect test changes for them by default. Hybrid mutants have per-test coverage, but changes to tests outside that coverage also won't invalidate their results, even though they run against the whole suite when `ignoreStatic` is `false`. Enable [`incrementalRerunStaticOnTestChange`](./configuration.md#incrementalrerunstaticontestchange-boolean) to rerun previously non-killed static and hybrid mutants in scope whenever Stryker detects an added or changed test. This option only applies when `ignoreStatic` is `false` and uses the test information available from the runner (see below).
+- By default, test changes don't invalidate static-mutant results. Hybrid-mutant results are invalidated only when the changes affect their per-test coverage. See [rerunning static mutants when tests change](#rerunning-static-mutants-when-tests-change).
 
 | Test runner plugin | Test reporting                    |
 | ------------------ | --------------------------------- |
