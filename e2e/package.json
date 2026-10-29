@@ -83,7 +83,7 @@
     "vitest": "4.1.12",
     "typescript": "6.0.3",
     "@typescript/native": "npm:typescript@7.0.2",
-    "vite": "8.3.2",
+    "vite": "8.3.3",
     "webpack": "5.112.2",
     "webpack-cli": "7.2.3"
   },
@@ -124,7 +124,7 @@
   },
   "overrides": {
     "karma-vite": {
-      "vite": "8.3.2"
+      "vite": "8.3.3"
     }
   },
   "scripts": {

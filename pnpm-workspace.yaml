@@ -28,4 +28,6 @@ minimumReleaseAgeExclude:
   - '@babel/types@8.0.4'
   - '@babel/parser@8.0.4'
   - '@babel/helper-validator-identifier@8.0.4'
+  # Renovate security update: vite@8.3.3
+  - vite@8.3.3
 optimisticRepeatInstall: false
