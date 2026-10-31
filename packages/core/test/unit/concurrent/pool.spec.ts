@@ -292,10 +292,9 @@ describe(Pool.name, () => {
 
   describe('with warmUpSharedCachesWithFirstResource', () => {
     function createTestRunnerSut() {
-      return createTestRunnerPool(
-        createWorkerStub,
-        concurrencyTokenSubject,
-      ) as unknown as Pool<Required<Resource>>;
+      return createTestRunnerPool(createWorkerStub, concurrencyTokenSubject, {
+        recordWorkerActivity: () => {},
+      }) as unknown as Pool<Required<Resource>>;
     }
 
     it('should be enabled for the test runner pool', async () => {

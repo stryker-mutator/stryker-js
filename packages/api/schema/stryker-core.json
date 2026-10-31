@@ -417,6 +417,11 @@
       "$ref": "#/definitions/jsonReporterOptions",
       "default": {}
     },
+    "experimentalPerformanceReport": {
+      "description": "Experimental. Write a detailed performance report (per-phase timing, per-mutant timing, static vs runtime cost, environment reloads, machine and configuration info) to `reports/mutation/performance.json`. Off by default; the format is unstable and may change between releases.",
+      "type": "boolean",
+      "default": false
+    },
     "disableTypeChecks": {
       "description": "Set to 'true' to disable type checking, or 'false' to enable it. For more control, configure a pattern that matches the files of which type checking has to be disabled. This is needed because Stryker will create (typescript) type errors when inserting the mutants in your code. Stryker disables type checking by inserting `// @ts-nocheck` atop those files and removing other `// @ts-xxx` directives (so they won't interfere with `@ts-nocheck`). The default setting allows these directives to be stripped from all JavaScript and friend files in `lib`, `src` and `test` directories.",
       "oneOf": [

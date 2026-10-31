@@ -259,6 +259,14 @@ The options for the event recorder reporter:
 
 - `baseDir`: The relative base dir to write the events to.
 
+### `experimentalPerformanceReport` [`boolean`]
+
+Default: `false`<br />
+Command line: `--experimentalPerformanceReport`<br />
+Config file: `"experimentalPerformanceReport": true`
+
+Experimental. Write a detailed performance report to `reports/mutation/performance.json`. It contains per-phase timing (setup, initial run, mutation), per-mutant timing, the static-vs-runtime cost split, environment reloads, and machine and configuration info. Useful for diagnosing and comparing the performance of a mutation test run. Off by default; the format is unstable and may change between releases. See [performance report](./performance-report.md) for the format and how to read the numbers (wall time vs summed work).
+
 ### `fileLogLevel` [`string`]
 
 Default: `off`<br />

@@ -17,6 +17,7 @@ import { Disposable, tokens } from 'typed-inject';
 
 import { CheckerFacade } from '../checker/index.js';
 import { coreTokens } from '../di/index.js';
+import { Timer } from '../utils/timer.js';
 
 const MAX_CONCURRENT_INIT = 2;
 
@@ -29,6 +30,24 @@ export interface Resource extends Partial<Disposable> {
   init?(): Promise<void>;
 }
 
+/**
+ * Records how long each pool resource spent working versus idle, so the performance report can
+ * show worker utilization. The test runner pool passes the shared metrics sink; other pools record nothing.
+ */
+export interface WorkerActivityRecorder {
+  recordWorkerActivity(
+    workerId: string,
+    busyWallMs: number,
+    idleWallMs: number,
+  ): void;
+}
+
+const noopWorkerActivityRecorder: WorkerActivityRecorder = {
+  recordWorkerActivity() {
+    // no-op
+  },
+};
+
 export interface PoolOptions {
   /**
    * Let the first resource populate caches on disk that are shared between resources (e.g. Vite's dependency optimization cache),
@@ -36,18 +55,25 @@ export interface PoolOptions {
    * The first resource is already available for work while the others are initializing.
    */
   warmUpSharedCachesWithFirstResource?: boolean;
+  /**
+   * Receives the busy and idle time of each resource per work item, for the experimental performance report.
+   */
+  workerActivityRecorder?: WorkerActivityRecorder;
 }
 
 createTestRunnerPool.inject = tokens(
   coreTokens.testRunnerFactory,
   coreTokens.testRunnerConcurrencyTokens,
+  coreTokens.performanceMetricsSink,
 );
 export function createTestRunnerPool(
   factory: () => TestRunnerResource,
   concurrencyToken$: Observable<number>,
+  workerActivityRecorder: WorkerActivityRecorder,
 ): Pool<TestRunner> {
   return new Pool(factory, concurrencyToken$, {
     warmUpSharedCachesWithFirstResource: true,
+    workerActivityRecorder,
   });
 }
 
@@ -119,6 +145,10 @@ export class Pool<TResource extends Resource> implements Disposable {
   );
 
   private readonly createdResources: TResource[] = [];
+  private readonly workerIdByResource = new Map<TResource, string>();
+  private readonly idleTimerByResource = new Map<TResource, Timer>();
+  private workerCount = 0;
+  private readonly workerActivityRecorder: WorkerActivityRecorder;
   // The queued work items. This is a replay subject, so scheduled work items can easily be rejected after it was picked up
   private readonly todoSubject = new ReplaySubject<
     WorkItem<TResource, any, any>
@@ -127,8 +157,12 @@ export class Pool<TResource extends Resource> implements Disposable {
   constructor(
     factory: () => TResource,
     concurrencyToken$: Observable<number>,
-    { warmUpSharedCachesWithFirstResource = false }: PoolOptions = {},
+    {
+      warmUpSharedCachesWithFirstResource = false,
+      workerActivityRecorder = noopWorkerActivityRecorder,
+    }: PoolOptions = {},
   ) {
+    this.workerActivityRecorder = workerActivityRecorder;
     // Stream resources that are ready to pick up work
     const resourcesSubject = new Subject<TResource>();
 
@@ -136,7 +170,16 @@ export class Pool<TResource extends Resource> implements Disposable {
     zip(resourcesSubject, this.todoSubject)
       .pipe(
         mergeMap(async ([resource, workItem]) => {
+          const idleWallMs =
+            this.idleTimerByResource.get(resource)?.elapsedMs() ?? 0;
+          const busyTimer = new Timer();
           await workItem.execute(resource);
+          this.workerActivityRecorder.recordWorkerActivity(
+            this.workerIdByResource.get(resource) ?? 'unknown',
+            busyTimer.elapsedMs(),
+            idleWallMs,
+          );
+          this.idleTimerByResource.set(resource, new Timer());
           resourcesSubject.next(resource); // recycle resource so it can pick up more work
         }),
         ignoreElements(),
@@ -155,6 +198,8 @@ export class Pool<TResource extends Resource> implements Disposable {
       }
       const resource = factory();
       this.createdResources.push(resource);
+      this.workerIdByResource.set(resource, String(this.workerCount++));
+      this.idleTimerByResource.set(resource, new Timer());
       await resource.init?.();
       return resource;
     };
@@ -200,6 +245,13 @@ export class Pool<TResource extends Resource> implements Disposable {
    */
   public async init(): Promise<void> {
     await lastValueFrom(this.initSubject);
+  }
+
+  /**
+   * Returns the worker id assigned to a resource (its creation order), or undefined if unknown.
+   */
+  public workerIdOf(resource: TResource): string | undefined {
+    return this.workerIdByResource.get(resource);
   }
 
   /**
