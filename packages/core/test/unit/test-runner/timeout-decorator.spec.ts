@@ -132,6 +132,7 @@ describe(TimeoutDecorator.name, () => {
       const result = await runPromise;
       const expectedTimeoutResult: TimeoutMutantRunResult = {
         status: MutantRunStatus.Timeout,
+        reason: 'Timeout of 20 ms expired',
         duration: 20,
       };
       expect(result).deep.eq(expectedTimeoutResult);

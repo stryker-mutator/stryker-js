@@ -12,6 +12,7 @@ import { ExpirableTask } from '@stryker-mutator/util';
 import { Timer } from '../utils/timer.js';
 
 import { TestRunnerDecorator } from './test-runner-decorator.js';
+import { wallClockTimeout } from './wall-clock-timeout.js';
 import { Logger } from '@stryker-mutator/api/logging';
 
 /**
@@ -41,10 +42,7 @@ export class TimeoutDecorator extends TestRunnerDecorator {
       super.mutantRun(options),
     );
     if (result === ExpirableTask.TimeoutExpired) {
-      return {
-        status: MutantRunStatus.Timeout,
-        duration: elapsedMs,
-      };
+      return { ...wallClockTimeout(options.timeout), duration: elapsedMs };
     } else if (
       result.status === MutantRunStatus.Timeout &&
       result.duration === undefined
