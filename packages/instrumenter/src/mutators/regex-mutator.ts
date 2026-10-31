@@ -59,7 +59,8 @@ function mutatePattern(pattern: string, flags: string | undefined): string[] {
     try {
       return weaponRegex
         .mutate(pattern, flags, weaponRegexOptions)
-        .map((mutant) => mutant.pattern);
+        .map((mutant) => mutant.pattern)
+        .filter((mutatedPattern) => isValidRegex(mutatedPattern, flags));
     } catch (err: any) {
       console.error(
         `[RegexMutator]: The Regex parser of weapon-regex couldn't parse this regex pattern: "${pattern}". Please report this issue at https://github.com/stryker-mutator/weapon-regex/issues. Inner error: ${err.message}`,
@@ -67,4 +68,20 @@ function mutatePattern(pattern: string, flags: string | undefined): string[] {
     }
   }
   return [];
+}
+
+/**
+ * Checks whether a (mutated) pattern is still a valid regular expression with the given flags.
+ * The `u` and `v` flags are stricter than the "classic" regex syntax, so some mutations
+ * result in patterns that only throw a SyntaxError with those flags.
+ * @example
+ * isValidRegex('\\V', 'u'); // false, mutated from /\v/u
+ */
+function isValidRegex(pattern: string, flags: string | undefined): boolean {
+  try {
+    new RegExp(pattern, flags);
+    return true;
+  } catch {
+    return false;
+  }
 }
