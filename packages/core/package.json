@@ -87,7 +87,7 @@
     "progress": "~2.0.3",
     "rxjs": "~7.8.1",
     "semver": "^7.6.3",
-    "source-map": "~0.7.4",
+    "source-map": "~0.8.0",
     "tree-kill": "~1.2.2",
     "tslib": "2.8.1",
     "typed-inject": "~5.0.0",
