@@ -48,6 +48,9 @@ export class FileSystem implements Disposable {
   public readonly writeFile = this.forward('writeFile');
   public readonly mkdir = this.forward('mkdir');
   public readonly readdir = this.forward('readdir');
+  public readonly lstat = this.forward('lstat');
+  public readonly readlink = this.forward('readlink');
+  public readonly symlink = this.forward('symlink');
 
   private forward<TMethod extends keyof Omit<typeof fs.promises, 'constants'>>(
     method: TMethod,
