@@ -98,6 +98,10 @@ describe(sut.name, () => {
     );
   });
 
+  it('should still mutate to a regex that is invalid with the unicode flag without that flag', () => {
+    expectJSMutation(sut, '/\\v/', { isExpressionContext: false }, '/\\V/');
+  });
+
   it('should not mutate to a regex that is invalid with the flags of a new RegExp constructor', () => {
     expectJSMutation(sut, 'new RegExp("\\\\v", "u")', {
       isExpressionContext: false,
