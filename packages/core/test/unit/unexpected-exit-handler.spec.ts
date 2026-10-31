@@ -54,6 +54,7 @@ describe(UnexpectedExitHandler.name, () => {
     });
 
     it(`should force-exit on second "${signal}" signal`, () => {
+      const clock = sinon.useFakeTimers();
       createSut();
       // First signal: normal path — no async handlers registered, so exit() is called immediately.
       // This also sets shuttingDown = true inside the handler.
@@ -62,11 +63,13 @@ describe(UnexpectedExitHandler.name, () => {
       // Reset the call history so the final assertion only checks
       // whether the *second* signal independently caused an exit call.
       processMock.exit.resetHistory();
-      // Second signal: shuttingDown is already true, so the force-exit branch fires immediately
-      // without waiting for any async handlers.
+      // Second signal, a second later: not a duplicate of the first, so the force-exit branch fires
+      // immediately without waiting for any async handlers.
+      clock.tick(1000);
       processMock.emit(signal, signal, 4);
       // 128 + 4 (signal number), per POSIX convention for signal-terminated processes
       expect(processMock.exit).calledWith(132);
+      clock.restore();
     });
   });
 
@@ -146,13 +149,47 @@ describe(UnexpectedExitHandler.name, () => {
       expect(processMock.exit).calledWith(143);
     });
 
+    it('should keep shutting down when the same signal arrives again within a second (#6257)', async () => {
+      // npm forwards a signal that the process group also delivered: one interrupt, twice
+      const handler = sinon
+        .stub()
+        .callsFake(
+          () => new Promise<void>((resolve) => setTimeout(resolve, 5000)),
+        );
+      const sut = createSut();
+      sut.registerHandler(handler);
+      processMock.emit('SIGINT', 'SIGINT', 2);
+      clock.tick(999);
+      processMock.emit('SIGINT', 'SIGINT', 2);
+      expect(processMock.exit).not.called;
+      await clock.runAllAsync();
+      expect(handler).calledOnce;
+      expect(processMock.exit).calledOnceWith(130);
+    });
+
+    it('should force-exit when the same signal arrives again a second or more later', async () => {
+      const handler = sinon
+        .stub()
+        .callsFake(
+          () => new Promise<void>((resolve) => setTimeout(resolve, 5000)),
+        );
+      const sut = createSut();
+      sut.registerHandler(handler);
+      processMock.emit('SIGINT', 'SIGINT', 2);
+      clock.tick(1000);
+      processMock.emit('SIGINT', 'SIGINT', 2);
+      expect(processMock.exit).calledOnceWith(130);
+      await clock.runAllAsync();
+    });
+
     it('should log "Forced exit." to stderr on second signal', async () => {
       const consoleErrorStub = sinon.stub(console, 'error');
       const handler = sinon.stub().resolves();
       const sut = createSut();
       sut.registerHandler(handler);
-      // First signal starts async shutdown; second signal hits the force-exit branch.
+      // First signal starts async shutdown; the same signal a second later hits the force-exit branch.
       processMock.emit('SIGINT', 'SIGINT', 2);
+      clock.tick(1000);
       processMock.emit('SIGINT', 'SIGINT', 2);
       // The force-exit branch logs to stderr before calling process.exit(),
       // so the user knows why the process exited abruptly.
