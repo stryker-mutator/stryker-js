@@ -6,6 +6,7 @@ import {
   expectAst,
   AstExpectation,
 } from '../../helpers/syntax-test-helpers.js';
+import { createParserOptions } from '../../helpers/factories.js';
 
 describe(parseTS.name, () => {
   it('should be able to parse simple typescript', async () => {
@@ -43,6 +44,31 @@ describe(parseTS.name, () => {
       'class A { #foo; get foo() { return this.#foo; }}',
       (t) => t.isPrivateName() && t.node.id.name === 'foo',
     );
+  });
+
+  describe('decorators option', () => {
+    const autoAccessorSource = 'class A { @observable accessor foo = 1; }';
+
+    it('should reject TC39 stage-3 auto-accessors by default (legacy decorators)', async () => {
+      await expect(parseTS(autoAccessorSource, 'test.ts')).to.be.rejectedWith(
+        /decoratorAutoAccessors/,
+      );
+    });
+
+    it('should allow TC39 stage-3 auto-accessors when configured with decorators version 2023-11', async () => {
+      const { root } = await parseTS(
+        autoAccessorSource,
+        'test.ts',
+        createParserOptions({ decorators: { version: '2023-11' } }),
+      );
+      expectAst(
+        root,
+        (t) =>
+          t.isClassAccessorProperty() &&
+          t.node.key.type === 'Identifier' &&
+          t.node.key.name === 'foo',
+      );
+    });
   });
 
   async function arrangeAndAssert(

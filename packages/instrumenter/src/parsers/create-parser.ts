@@ -32,9 +32,13 @@ export function createParser(
       case AstFormat.JS:
         return jsParse(code, fileName) as Promise<AstByFormat[T]>;
       case AstFormat.Tsx:
-        return parseTsx(code, fileName) as Promise<AstByFormat[T]>;
+        return parseTsx(code, fileName, parserOptions) as Promise<
+          AstByFormat[T]
+        >;
       case AstFormat.TS:
-        return parseTS(code, fileName) as Promise<AstByFormat[T]>;
+        return parseTS(code, fileName, parserOptions) as Promise<
+          AstByFormat[T]
+        >;
       case AstFormat.Html:
         return htmlParse(code, fileName, { parse }) as Promise<AstByFormat[T]>;
       case AstFormat.Svelte:

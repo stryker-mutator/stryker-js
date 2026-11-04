@@ -21,6 +21,7 @@ export function createParserOptions(
 ): ParserOptions {
   return {
     plugins: null,
+    decorators: null,
     ...overrides,
   };
 }

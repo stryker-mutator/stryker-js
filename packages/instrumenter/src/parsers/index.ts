@@ -1,5 +1,5 @@
-import { ParserOptions } from './parser-options.js';
+import { DecoratorsOptions, ParserOptions } from './parser-options.js';
 import { createParser, getFormat } from './create-parser.js';
 
-export type { ParserOptions };
+export type { DecoratorsOptions, ParserOptions };
 export { createParser, getFormat };
