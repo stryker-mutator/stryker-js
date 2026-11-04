@@ -218,6 +218,26 @@ describe(VitestTestRunner.name, () => {
 
       expect(process.env.VITEST).to.equal('1');
     });
+
+    it('should warn that `vitest.dryRunMaxWorkers` requires vitest >=4.0.0', async () => {
+      sinon.replace(vitestWrapper, 'version', '3.2.0');
+      options.vitest.dryRunMaxWorkers = 4;
+
+      await sut.init();
+
+      sinon.assert.calledWith(
+        testInjector.logger.warn,
+        '`vitest.dryRunMaxWorkers` requires Vitest 4 or later, but Vitest 3.2.0 is installed. The initial test run will use a single worker.',
+      );
+    });
+
+    it('should not warn about the default `vitest.dryRunMaxWorkers` for vitest <4.0.0', async () => {
+      sinon.replace(vitestWrapper, 'version', '3.2.0');
+
+      await sut.init();
+
+      sinon.assert.notCalled(testInjector.logger.warn);
+    });
   });
 
   describe(VitestTestRunner.prototype.mutantRun.name, () => {
@@ -464,6 +484,100 @@ describe(VitestTestRunner.name, () => {
 
       // Assert
       sinon.assert.notCalled(testInjector.logger.warn);
+    });
+
+    describe('with `vitest.dryRunMaxWorkers`', () => {
+      let project: { config: { maxWorkers: number } };
+      let maxWorkersPerStart: Array<[number, number]>;
+
+      beforeEach(() => {
+        project = { config: { maxWorkers: 1 } };
+        vitestStub.projects = [project] as unknown as Vitest['projects'];
+        vitestStub.config.maxWorkers = 1;
+        maxWorkersPerStart = [];
+        vitestStub.start.callsFake(() => {
+          maxWorkersPerStart.push([
+            vitestStub.config.maxWorkers,
+            project.config.maxWorkers,
+          ]);
+          return Promise.resolve(
+            undefined as unknown as Awaited<ReturnType<Vitest['start']>>,
+          );
+        });
+      });
+
+      it('should run the dry run on one worker by default', async () => {
+        await sut.dryRun(factory.dryRunOptions());
+
+        expect(maxWorkersPerStart).deep.eq([[1, 1]]);
+      });
+
+      it('should run the dry run on that many workers', async () => {
+        options.vitest.dryRunMaxWorkers = 4;
+
+        await sut.dryRun(factory.dryRunOptions());
+
+        expect(maxWorkersPerStart).deep.eq([[4, 4]]);
+      });
+
+      it('should run mutant runs on one worker after the dry run', async () => {
+        options.vitest.dryRunMaxWorkers = 4;
+
+        await sut.dryRun(factory.dryRunOptions());
+        await sut.mutantRun(factory.mutantRunOptions());
+
+        expect(maxWorkersPerStart).deep.eq([
+          [4, 4],
+          [1, 1],
+        ]);
+      });
+
+      it('should give a project back its own `maxWorkers` after the dry run', async () => {
+        options.vitest.dryRunMaxWorkers = 4;
+        project.config.maxWorkers = 2;
+
+        await sut.dryRun(factory.dryRunOptions());
+
+        expect(maxWorkersPerStart).deep.eq([[4, 4]]);
+        expect(vitestStub.config.maxWorkers).eq(1);
+        expect(project.config.maxWorkers).eq(2);
+      });
+
+      it('should go back to one worker when the dry run throws', async () => {
+        options.vitest.dryRunMaxWorkers = 4;
+        const expectedError = new Error('expected error');
+        vitestStub.start.rejects(expectedError);
+
+        await expect(sut.dryRun(factory.dryRunOptions())).rejectedWith(
+          expectedError,
+        );
+
+        expect(vitestStub.config.maxWorkers).eq(1);
+        expect(project.config.maxWorkers).eq(1);
+      });
+    });
+  });
+
+  describe(`${VitestTestRunner.prototype.dryRun.name} with vitest <4.0.0`, () => {
+    beforeEach(async () => {
+      sinon.replace(vitestWrapper, 'version', '3.2.0');
+      await sut.init();
+    });
+
+    it('should ignore `vitest.dryRunMaxWorkers`', async () => {
+      options.vitest.dryRunMaxWorkers = 4;
+      vitestStub.config.maxWorkers = 1;
+      let maxWorkersDuringStart: number | undefined;
+      vitestStub.start.callsFake(() => {
+        maxWorkersDuringStart = vitestStub.config.maxWorkers;
+        return Promise.resolve(
+          undefined as unknown as Awaited<ReturnType<Vitest['start']>>,
+        );
+      });
+
+      await sut.dryRun(factory.dryRunOptions());
+
+      expect(maxWorkersDuringStart).eq(1);
     });
   });
 });

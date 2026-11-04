@@ -181,6 +181,39 @@ describe('VitestRunner integration', () => {
           },
         });
       });
+
+      it('should report the same mutant coverage when the dry run uses several workers', async () => {
+        const serialResult = await sut.dryRun(factory.dryRunOptions());
+        options.vitest.dryRunMaxWorkers = 3;
+
+        const parallelResult = await sut.dryRun(factory.dryRunOptions());
+
+        assertions.expectCompleted(serialResult);
+        assertions.expectCompleted(parallelResult);
+        expect(parallelResult.mutantCoverage).deep.eq(
+          serialResult.mutantCoverage,
+        );
+        expect(parallelResult.tests.map(({ id }) => id).sort()).deep.eq(
+          serialResult.tests.map(({ id }) => id).sort(),
+        );
+      });
+
+      it('should kill a mutant after a dry run on several workers', async () => {
+        options.vitest.dryRunMaxWorkers = 3;
+        await sut.dryRun(factory.dryRunOptions());
+
+        const runResult = await sut.mutantRun(
+          factory.mutantRunOptions({
+            activeMutant: factory.mutant({ id: '2' }),
+            sandboxFileName,
+            mutantActivation: 'runtime',
+            testFilter: [test1],
+          }),
+        );
+
+        assertions.expectKilled(runResult);
+        expect(runResult.killedBy).deep.eq([test1]);
+      });
     });
 
     describe('test collection failures', () => {

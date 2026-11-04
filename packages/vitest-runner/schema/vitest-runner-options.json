@@ -29,6 +29,12 @@
           "type": "string",
           "enum": ["threads", "forks", "vmThreads", "vmForks"],
           "default": "threads"
+        },
+        "dryRunMaxWorkers": {
+          "description": "The number of Vitest workers for the initial test run (dry run). Mutant runs always use one worker per test runner. Requires Vitest 4 or later.",
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
         }
       }
     }

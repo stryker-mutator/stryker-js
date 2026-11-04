@@ -64,6 +64,16 @@ Pool used to run tests in. Look at the [Vitest documentation](https://vitest.dev
 
 NOTE: The `vmForks` pool is not supported by Vitest versions below 1.0.0 since this was introduced in Vitest v1.
 
+### vitest.dryRunMaxWorkers [`number`]
+
+Default: `1`
+
+The number of Vitest workers for the initial test run (dry run). StrykerJS runs the dry run in one test runner while the others wait, so with the default the dry run runs one test file at a time. If your test files take long to import, the dry run can take longer than all mutant runs together; running it on more workers, for example as many as your [`concurrency`](./configuration.md#concurrency-number--string), shortens it. Mutant runs always use one worker per test runner.
+
+When the dry run runs in parallel, its test times add up to more than the time it took, so StrykerJS measures no overhead for it and gives mutant runs less time before they [time out](./configuration.md#timeoutms-number). If mutants time out that don't with a single worker, raise `timeoutMS`.
+
+Requires Vitest 4 or later. With older versions, StrykerJS logs a warning and uses a single worker.
+
 ## Non overridable options
 
 The following options will be set by Stryker and cannot be overridden:
@@ -82,7 +92,7 @@ The following options will be set by Stryker and cannot be overridden:
 As you can see, the vitest runner:
 
 - Will run your tests in a **single thread**  
-  This is done because StrykerJS uses it's own [parallel workers](./parallel-workers.md).
+  This is done because StrykerJS uses it's own [parallel workers](./parallel-workers.md). Only the initial test run can use more, with [`vitest.dryRunMaxWorkers`](#vitestdryrunmaxworkers-number).
 - Will **bail** on the first test failure (unless you set `disableBail` to `true`).  
   This is done to boost performance.
 - Will **disable code coverage reporting**  
