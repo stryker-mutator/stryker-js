@@ -90,6 +90,7 @@ export function createVitestRunnerOptions(
   return {
     pool: 'threads',
     related: true,
+    dryRunMaxWorkers: 1,
     ...overrides,
   };
 }

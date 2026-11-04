@@ -230,10 +230,46 @@ export class VitestTestRunner implements TestRunner {
       ];
       project.config.browser.screenshotFailures = false;
     });
+    if (
+      this.options.vitest.dryRunMaxWorkers > 1 &&
+      semver.lt(vitestWrapper.version, '4.0.0')
+    ) {
+      this.log.warn(
+        `\`vitest.dryRunMaxWorkers\` requires Vitest 4 or later, but Vitest ${vitestWrapper.version} is installed. The initial test run will use a single worker.`,
+      );
+    }
     if (this.log.isDebugEnabled()) {
       this.log.debug(
         `vitest final config: ${JSON.stringify(this.ctx.config, null, 2)}`,
       );
+    }
+  }
+
+  /**
+   * Runs the dry run on `vitest.dryRunMaxWorkers` workers. The other test runners are idle during
+   * the dry run, and the per-test coverage comes back in each test file's meta, whichever worker
+   * ran it. Vitest 4 reads `maxWorkers` from the project config on every run, so mutant runs are
+   * back on their workers afterwards.
+   */
+  async #withDryRunWorkers<T>(run: () => Promise<T>): Promise<T> {
+    const maxWorkers = this.options.vitest.dryRunMaxWorkers;
+    if (maxWorkers <= 1 || semver.lt(vitestWrapper.version, '4.0.0')) {
+      return run();
+    }
+    const configs = [
+      this.ctx!.config,
+      ...this.ctx!.projects.map(({ config }) => config),
+    ];
+    const previous = configs.map((config) => config.maxWorkers);
+    configs.forEach((config) => {
+      config.maxWorkers = maxWorkers;
+    });
+    try {
+      return await run();
+    } finally {
+      configs.forEach((config, index) => {
+        config.maxWorkers = previous[index];
+      });
     }
   }
 
@@ -242,12 +278,14 @@ export class VitestTestRunner implements TestRunner {
 
     // If testFilter is provided, use those files directly instead of relying on related files
     // We still need to pass relatedFiles for vitest to properly resolve the test files
-    const testResult = testFilesProvided(options)
-      ? await this.run({
-          testFiles: options.testFiles,
-          relatedFiles: options.files,
-        })
-      : await this.run({ relatedFiles: options.files });
+    const testResult = await this.#withDryRunWorkers(() =>
+      testFilesProvided(options)
+        ? this.run({
+            testFiles: options.testFiles,
+            relatedFiles: options.files,
+          })
+        : this.run({ relatedFiles: options.files }),
+    );
     if (
       testResult.status === DryRunStatus.Complete &&
       testResult.tests.length === 0 &&
