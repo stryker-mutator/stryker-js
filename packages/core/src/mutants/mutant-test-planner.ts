@@ -208,7 +208,7 @@ export class MutantTestPlanner {
           mutatorName: mutant.mutatorName,
           replacement: mutant.replacement,
         },
-        mutantActivation: testFilter ? 'runtime' : 'static',
+        mutantActivation: canHotSwap ? 'runtime' : 'static',
         timeout,
         testFilter,
         sandboxFileName: this.sandbox.sandboxFileFor(mutant.fileName),
