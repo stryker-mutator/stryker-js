@@ -290,6 +290,15 @@ describe(DryRunExecutor.name, () => {
         );
       });
 
+      it('should provide the test runner capabilities', async () => {
+        runResult.tests.push(factory.successTestResult());
+        const actualInjector = await sut.execute();
+        expect(actualInjector.provideValue).calledWithExactly(
+          coreTokens.testRunnerCapabilities,
+          testRunnerCapabilities,
+        );
+      });
+
       it('should remap test files that are reported', async () => {
         runResult.tests.push(
           factory.successTestResult({
