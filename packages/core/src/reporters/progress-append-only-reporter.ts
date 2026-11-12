@@ -20,6 +20,9 @@ export class ProgressAppendOnlyReporter extends ProgressKeeper {
     if (this.intervalReference) {
       clearInterval(this.intervalReference);
     }
+    if (this.progress.mutants > 0) {
+      this.render();
+    }
   }
 
   private render() {
