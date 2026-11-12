@@ -441,6 +441,31 @@ describe('VitestRunner integration', () => {
     });
   });
 
+  describe('using a project that inherits maxWorkers from the root config', () => {
+    beforeEach(async () => {
+      sandbox = new TempTestDirectorySandbox('project-max-workers');
+      await sandbox.init();
+    });
+
+    it('should not run test files in parallel', async () => {
+      await sut.init();
+      const runResult = await sut.dryRun(factory.dryRunOptions());
+      assertions.expectCompleted(runResult);
+      const testRuns = (
+        await fs.readFile(
+          path.resolve(sandbox.tmpDir, 'test-runs.jsonl'),
+          'utf8',
+        )
+      )
+        .trim()
+        .split('\n')
+        .map((line) => JSON.parse(line) as { start: number; end: number })
+        .sort((a, b) => a.start - b.start);
+      expect(testRuns).lengthOf(2);
+      expect(testRuns[1].start).gte(testRuns[0].end);
+    });
+  });
+
   describe('using a project using workspaces', () => {
     let fooTestId: string;
     let barTestId: string;

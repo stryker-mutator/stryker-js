@@ -229,6 +229,8 @@ export class VitestTestRunner implements TestRunner {
         ...project.config.setupFiles,
       ];
       project.config.browser.screenshotFailures = false;
+      // A project keeps its own maxWorkers, so the override passed to createVitest does not reach it.
+      project.config.maxWorkers = 1;
     });
     if (this.log.isDebugEnabled()) {
       this.log.debug(
