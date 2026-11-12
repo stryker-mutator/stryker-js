@@ -37,6 +37,17 @@ describe('statementMutantPlacer', () => {
       // Assert
       expect(actual).true;
     });
+
+    it('should be false for the body of a labeled statement', () => {
+      // Arrange
+      const ast = parseJS('loop: for (;;) { continue loop; }');
+      const loop = findNodePath(ast, (p) => p.isForStatement());
+      const labeled = findNodePath(ast, (p) => p.isLabeledStatement());
+
+      // Act & Assert
+      expect(statementMutantPlacer.canPlace(loop)).false;
+      expect(statementMutantPlacer.canPlace(labeled)).true;
+    });
   });
 
   describe(statementMutantPlacer.place.name, () => {
