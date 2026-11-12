@@ -89,7 +89,7 @@ export class DryRunExecutor {
     const testRunnerPool = testRunnerInjector.resolve(
       coreTokens.testRunnerPool,
     );
-    const { result, timing, capabilities } = await lastValueFrom(
+    const { result, timing } = await lastValueFrom(
       testRunnerPool.schedule(of(0), (testRunner) =>
         this.executeDryRun(testRunner),
       ),
@@ -105,7 +105,6 @@ export class DryRunExecutor {
     return testRunnerInjector
       .provideValue(coreTokens.timeOverheadMS, timing.overhead)
       .provideValue(coreTokens.dryRunResult, result)
-      .provideValue(coreTokens.testRunnerCapabilities, capabilities)
       .provideValue(coreTokens.requireFromCwd, requireResolve)
       .provideFactory(coreTokens.testCoverage, TestCoverage.from)
       .provideClass(coreTokens.incrementalDiffer, IncrementalDiffer)

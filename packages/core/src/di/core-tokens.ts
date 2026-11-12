@@ -5,7 +5,6 @@ export const disableTypeChecksHelper = 'disableTypeChecksHelper';
 export const execa = 'execa';
 export const execaSync = 'execaSync';
 export const dryRunResult = 'dryRunResult';
-export const testRunnerCapabilities = 'testRunnerCapabilities';
 export const mutants = 'mutants';
 export const mutantTestPlanner = 'mutantTestPlanner';
 export const process = 'process';

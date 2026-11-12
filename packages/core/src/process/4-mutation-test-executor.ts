@@ -22,7 +22,6 @@ import {
 import {
   TestRunner,
   CompleteDryRunResult,
-  TestRunnerCapabilities,
 } from '@stryker-mutator/api/test-runner';
 import { Logger } from '@stryker-mutator/api/logging';
 import { I } from '@stryker-mutator/util';
@@ -44,7 +43,6 @@ export interface MutationTestContext extends DryRunContext {
   [coreTokens.mutationTestReportHelper]: MutationTestReportHelper;
   [coreTokens.mutantTestPlanner]: MutantTestPlanner;
   [coreTokens.dryRunResult]: I<CompleteDryRunResult>;
-  [coreTokens.testRunnerCapabilities]: TestRunnerCapabilities;
 }
 
 const CHECK_BUFFER_MS = 10_000;
@@ -62,7 +60,6 @@ export class MutationTestExecutor {
     coreTokens.timer,
     coreTokens.concurrencyTokenProvider,
     coreTokens.dryRunResult,
-    coreTokens.testRunnerCapabilities,
   );
 
   constructor(
@@ -77,7 +74,6 @@ export class MutationTestExecutor {
     private readonly timer: I<Timer>,
     private readonly concurrencyTokenProvider: I<ConcurrencyTokenProvider>,
     private readonly dryRunResult: CompleteDryRunResult,
-    private readonly testRunnerCapabilities: TestRunnerCapabilities,
   ) {}
 
   public async execute(): Promise<MutantResult[]> {
@@ -144,9 +140,16 @@ export class MutationTestExecutor {
   private executeRunInTestRunner(
     input$: Observable<MutantRunPlan>,
   ): Observable<MutantResult> {
-    const orderedPlan$ = this.testRunnerCapabilities.reloadEnvironment
-      ? input$
-      : runReloadingPlansLast(input$);
+    // Run all mutants that reuse the test environment first and the ones that need a
+    // reload (static mutants) last, across the whole run rather than per buffered batch.
+    // Interleaving them forces an extra environment reload on whichever mutant follows a
+    // static one, which on large suites adds up to many avoidable reloads.
+    const sharedPlan$ = input$.pipe(shareReplay());
+    const [reloadPlan$, noReloadPlan$] = partition(
+      sharedPlan$,
+      ({ runOptions }) => Boolean(runOptions.reloadEnvironment),
+    );
+    const orderedPlan$ = concat(noReloadPlan$, reloadPlan$);
     return this.testRunnerPool.schedule(
       orderedPlan$,
       async (testRunner, { mutant, runOptions }) => {
@@ -244,14 +247,4 @@ export class MutationTestExecutor {
       );
     return checkTask$;
   }
-}
-
-function runReloadingPlansLast(
-  input$: Observable<MutantRunPlan>,
-): Observable<MutantRunPlan> {
-  const [reloadPlan$, noReloadPlan$] = partition(
-    input$.pipe(shareReplay()),
-    ({ runOptions }) => Boolean(runOptions.reloadEnvironment),
-  );
-  return concat(noReloadPlan$, reloadPlan$);
 }

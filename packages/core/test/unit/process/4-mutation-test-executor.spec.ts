@@ -14,7 +14,6 @@ import {
   MutantRunStatus,
   CompleteDryRunResult,
   TestResult,
-  TestRunnerCapabilities,
 } from '@stryker-mutator/api/test-runner';
 import { CheckResult, CheckStatus } from '@stryker-mutator/api/check';
 import { mergeMap } from 'rxjs/operators';
@@ -80,7 +79,6 @@ describe(MutationTestExecutor.name, () => {
   let concurrencyTokenProviderMock: sinon.SinonStubbedInstance<ConcurrencyTokenProvider>;
   let sandboxMock: sinon.SinonStubbedInstance<Sandbox>;
   let completeDryRunResult: sinon.SinonStubbedInstance<CompleteDryRunResult>;
-  let testRunnerCapabilities: TestRunnerCapabilities;
 
   beforeEach(() => {
     reporterMock = factory.reporter();
@@ -131,13 +129,8 @@ describe(MutationTestExecutor.name, () => {
     mutants = [factory.mutant()];
     mutantTestPlans = [];
     completeDryRunResult = factory.completeDryRunResult();
-    testRunnerCapabilities = factory.testRunnerCapabilities();
     mutantTestPlannerMock.makePlan.resolves(mutantTestPlans);
-    sut = createSut();
-  });
-
-  function createSut() {
-    return testInjector.injector
+    sut = testInjector.injector
       .provideValue(coreTokens.reporter, reporterMock)
       .provideValue(coreTokens.checkerPool, checkerPoolMock)
       .provideValue(coreTokens.testRunnerPool, testRunnerPoolMock)
@@ -156,9 +149,8 @@ describe(MutationTestExecutor.name, () => {
         concurrencyTokenProviderMock,
       )
       .provideValue(coreTokens.dryRunResult, completeDryRunResult)
-      .provideValue(coreTokens.testRunnerCapabilities, testRunnerCapabilities)
       .injectClass(MutationTestExecutor);
-  }
+  });
 
   function arrangeMutationTestReportHelper() {
     mutationTestReportHelperMock.reportMutantStatus.returnsArg(0);
@@ -457,27 +449,6 @@ describe(MutationTestExecutor.name, () => {
       expect(testRunnerPoolMock.schedule).calledOnce;
       expect(testRunner.mutantRun).calledWithExactly(plan1.runOptions);
       expect(testRunner.mutantRun).calledWithExactly(plan2.runOptions);
-    });
-
-    it('should keep the plan order when the test runner reloads the environment itself', async () => {
-      // Arrange
-      arrangeScenario();
-      testRunnerCapabilities.reloadEnvironment = true;
-      sut = createSut();
-      const plan1 = mutantRunPlan({ id: '1', reloadEnvironment: true });
-      const plan2 = mutantRunPlan({ id: '2', reloadEnvironment: false });
-      const plan3 = mutantRunPlan({ id: '3', reloadEnvironment: true });
-      mutantTestPlans.push(plan1, plan2, plan3);
-
-      // Act
-      await sut.execute();
-
-      // Assert
-      sinon.assert.callOrder(
-        testRunner.mutantRun.withArgs(plan1.runOptions),
-        testRunner.mutantRun.withArgs(plan2.runOptions),
-        testRunner.mutantRun.withArgs(plan3.runOptions),
-      );
     });
 
     it('should sort the mutants that reload the environment last', async () => {
