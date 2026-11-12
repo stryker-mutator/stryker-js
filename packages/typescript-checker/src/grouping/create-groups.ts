@@ -45,7 +45,15 @@ export function createGroups(
   nodes: Map<string, TSFileNode>,
 ): string[][] {
   const groups: string[][] = [];
-  const mutantsToGroup = new Set(mutants);
+  // The file of a mutant and the files that (indirectly) import a file don't change while grouping.
+  // Both are looked up once, instead of once for every mutant in every pass.
+  const parentReferencesByNode = new Map<TSFileNode, Set<TSFileNode>>();
+  const mutantsToGroup = new Set(
+    mutants.map(({ id, fileName }) => ({
+      id,
+      node: findNode(fileName, nodes),
+    })),
+  );
 
   while (mutantsToGroup.size) {
     const group: string[] = [];
@@ -53,24 +61,40 @@ export function createGroups(
     const nodesToIgnore = new Set<TSFileNode>();
 
     for (const currentMutant of mutantsToGroup) {
-      const currentNode = findNode(currentMutant.fileName, nodes);
-      if (
-        !nodesToIgnore.has(currentNode) &&
-        !parentsHaveOverlapWith(currentNode, groupNodes)
-      ) {
+      const currentNode = currentMutant.node;
+      if (nodesToIgnore.has(currentNode)) {
+        continue;
+      }
+      const parentReferences = getAllParentReferencesIncludingSelf(
+        currentNode,
+        parentReferencesByNode,
+      );
+      if (haveOverlap(parentReferences, groupNodes)) {
+        // The group only grows during a pass, so the other mutants in this file can't join this group either.
+        nodesToIgnore.add(currentNode);
+      } else {
         group.push(currentMutant.id);
         groupNodes.add(currentNode);
         mutantsToGroup.delete(currentMutant);
-        addRangeOfNodesToSet(
-          nodesToIgnore,
-          currentNode.getAllParentReferencesIncludingSelf(),
-        );
+        addRangeOfNodesToSet(nodesToIgnore, parentReferences);
       }
     }
     groups.push(group);
   }
 
   return groups;
+}
+
+function getAllParentReferencesIncludingSelf(
+  node: TSFileNode,
+  parentReferencesByNode: Map<TSFileNode, Set<TSFileNode>>,
+): Set<TSFileNode> {
+  let parentReferences = parentReferencesByNode.get(node);
+  if (!parentReferences) {
+    parentReferences = node.getAllParentReferencesIncludingSelf();
+    parentReferencesByNode.set(node, parentReferences);
+  }
+  return parentReferences;
 }
 
 function addRangeOfNodesToSet(
@@ -90,15 +114,18 @@ function findNode(fileName: string, nodes: Map<string, TSFileNode>) {
   return node;
 }
 
-function parentsHaveOverlapWith(
-  currentNode: TSFileNode,
+function haveOverlap(
+  parentReferences: Set<TSFileNode>,
   groupNodes: Set<TSFileNode>,
-) {
-  for (const parentNode of currentNode.getAllParentReferencesIncludingSelf()) {
-    if (groupNodes.has(parentNode)) {
+): boolean {
+  const [smallest, largest] =
+    parentReferences.size < groupNodes.size
+      ? [parentReferences, groupNodes]
+      : [groupNodes, parentReferences];
+  for (const node of smallest) {
+    if (largest.has(node)) {
       return true;
     }
   }
-
   return false;
 }
