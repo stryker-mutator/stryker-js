@@ -212,6 +212,40 @@ describe(sut.name, () => {
         { isExpressionContext: false },
       );
     });
+    it('should not mutate class method names', () => {
+      expectJSMutation(sut, 'class Foo { "baz-bar"() {} }', {
+        isExpressionContext: false,
+      });
+      expectJSMutation(sut, 'class Foo { static "baz-bar"() {} }', {
+        isExpressionContext: false,
+      });
+      expectJSMutation(sut, 'class Foo { ["baz-bar"]() {} }', {
+        isExpressionContext: false,
+      });
+    });
+    it('should not mutate class getter and setter names', () => {
+      expectJSMutation(sut, 'class Foo { get "baz-bar"() {} }', {
+        isExpressionContext: false,
+      });
+      expectJSMutation(sut, 'class Foo { set "baz-bar"(v) {} }', {
+        isExpressionContext: false,
+      });
+    });
+    it('should not mutate class method overload names', () => {
+      expectJSMutation(
+        sut,
+        'class Foo { "baz-bar"(): void; "baz-bar"(a?: number) {} }',
+        { isExpressionContext: false },
+      );
+    });
+    it('should still mutate strings inside class methods', () => {
+      expectJSMutation(
+        sut,
+        'class Foo { "baz-bar"() { return "baz"; } }',
+        { isExpressionContext: false },
+        'class Foo { "baz-bar"() { return ""; } }',
+      );
+    });
     it('should mutate class property values', () => {
       expectJSMutation(
         sut,
