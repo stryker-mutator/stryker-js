@@ -1,4 +1,5 @@
 import { promises as fsPromises } from 'fs';
+import { Script } from 'vm';
 
 import { testInjector } from '@stryker-mutator/test-helpers';
 import { expect } from 'chai';
@@ -81,6 +82,11 @@ describe('instrumenter integration', () => {
   });
   it('should be able to place exotic mutants', async () => {
     await arrangeAndActAssert('mutant-placing.ts');
+  });
+  it('should keep labels on their loops (#6316)', async () => {
+    const content = await arrangeAndActAssert('labeled-statements.js');
+    // `continue loop` is a syntax error if the label is not on a loop
+    expect(() => new Script(content)).not.throws();
   });
   it('should be able to instrument svelte', async () => {
     await arrangeAndActAssert('svelte-hello-world.svelte');
@@ -178,6 +184,7 @@ describe('instrumenter integration', () => {
       resolveTestResource('instrumenter', `${file.name}.out.snap`),
     );
     expect(result.files[0].content).matchSnapshot();
+    return result.files[0].content;
   }
 
   const consoleIgnorer = {

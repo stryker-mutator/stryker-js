@@ -17,7 +17,10 @@ const { types: t } = babel;
 export const statementMutantPlacer: MutantPlacer<types.Statement> = {
   name: 'statementMutantPlacer',
   canPlace(path) {
-    return path.isStatement();
+    // The body of a labeled statement must stay its body, or `continue label`
+    // no longer points to a loop. Its mutants are placed on the labeled
+    // statement instead.
+    return path.isStatement() && !path.parentPath?.isLabeledStatement();
   },
   place(path, appliedMutants) {
     let statement: types.Statement = t.blockStatement([
