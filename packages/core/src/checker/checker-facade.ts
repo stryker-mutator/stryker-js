@@ -1,5 +1,5 @@
 import { CheckResult } from '@stryker-mutator/api/check';
-import { MutantRunPlan } from '@stryker-mutator/api/core';
+import { Mutant, MutantRunPlan } from '@stryker-mutator/api/core';
 
 import { ResourceDecorator } from '../concurrent/index.js';
 
@@ -11,6 +11,16 @@ function toMap(mutantRunPlans: MutantRunPlan[]) {
   );
 }
 
+/**
+ * Checkers decide on the mutated code alone, so they don't need the ids of the tests that cover or killed a mutant.
+ * In a large project those ids make up most of the message to the checker process, enough to exceed
+ * V8's maximum string length when all mutants are sent at once to be grouped.
+ */
+function toCheckerMutant({ mutant }: MutantRunPlan): Mutant {
+  const { coveredBy, killedBy, ...checkerMutant } = mutant;
+  return checkerMutant;
+}
+
 export class CheckerFacade extends ResourceDecorator<CheckerResource> {
   public async check(
     checkerName: string,
@@ -19,7 +29,7 @@ export class CheckerFacade extends ResourceDecorator<CheckerResource> {
     const innerCheckerResult = Object.entries(
       await this.innerResource.check(
         checkerName,
-        mutantRunPlans.map((mr) => mr.mutant),
+        mutantRunPlans.map(toCheckerMutant),
       ),
     );
 
@@ -57,7 +67,7 @@ export class CheckerFacade extends ResourceDecorator<CheckerResource> {
   ): Promise<MutantRunPlan[][]> {
     const mutantIdGroups = await this.innerResource.group(
       checkerName,
-      mutantRunPlans.map((mr) => mr.mutant),
+      mutantRunPlans.map(toCheckerMutant),
     );
 
     // Check if the checker returned all the mutants that was given

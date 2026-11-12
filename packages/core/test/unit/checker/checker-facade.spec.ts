@@ -48,6 +48,27 @@ describe(CheckerFacade.name, () => {
       ]);
     });
 
+    it('should not send the covering and killing tests to the checker', async () => {
+      const mutantRunPlan = factory.mutantRunPlan({
+        mutant: {
+          ...factory.mutantTestCoverage({ id: '1', coveredBy: ['spec1'] }),
+          killedBy: ['spec1'],
+        },
+      });
+      innerChecker.check.resolves({ '1': { status: CheckStatus.Passed } });
+
+      const result = await sut.check('test-checker', [mutantRunPlan]);
+
+      const { coveredBy, killedBy, ...expectedMutant } = mutantRunPlan.mutant;
+      sinon.assert.calledOnceWithExactly(innerChecker.check, 'test-checker', [
+        expectedMutant,
+      ]);
+      expect(result).to.deep.equal([
+        [mutantRunPlan, { status: CheckStatus.Passed }],
+      ]);
+      expect(result[0][0].mutant.coveredBy).deep.eq(['spec1']);
+    });
+
     it('should throw an error when checker does not return all mutants', async () => {
       innerChecker.check.returns(
         Promise.resolve({ '1': { status: CheckStatus.Passed } }),
@@ -110,6 +131,25 @@ describe(CheckerFacade.name, () => {
       const result = await sut.group('test-checker', [mutant1, mutant2]);
 
       expect(result).to.deep.equal([[mutant1, mutant2]]);
+    });
+
+    it('should not send the covering and killing tests to the checker', async () => {
+      const mutantRunPlan = factory.mutantRunPlan({
+        mutant: {
+          ...factory.mutantTestCoverage({ id: '1', coveredBy: ['spec1'] }),
+          killedBy: ['spec1'],
+        },
+      });
+      innerChecker.group.resolves([['1']]);
+
+      const result = await sut.group('test-checker', [mutantRunPlan]);
+
+      const { coveredBy, killedBy, ...expectedMutant } = mutantRunPlan.mutant;
+      sinon.assert.calledOnceWithExactly(innerChecker.group, 'test-checker', [
+        expectedMutant,
+      ]);
+      expect(result).to.deep.equal([[mutantRunPlan]]);
+      expect(result[0][0].mutant.coveredBy).deep.eq(['spec1']);
     });
 
     it('should throw an error when group returns to many mutants', async () => {
