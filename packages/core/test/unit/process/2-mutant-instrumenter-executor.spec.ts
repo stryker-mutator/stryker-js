@@ -10,11 +10,13 @@ import {
 } from '@stryker-mutator/instrumenter';
 import { I } from '@stryker-mutator/util';
 import { FileDescriptions } from '@stryker-mutator/api/core';
+import { DryRunStatus } from '@stryker-mutator/api/test-runner';
 import { PluginKind } from '@stryker-mutator/api/plugin';
 
 import {
   DryRunContext,
   MutantInstrumenterExecutor,
+  NoMutantsToTestExecutor,
 } from '../../../src/process/index.js';
 import { Project } from '../../../src/fs/index.js';
 import { PluginCreator, coreTokens } from '../../../src/di/index.js';
@@ -85,6 +87,7 @@ describe(MutantInstrumenterExecutor.name, () => {
       project,
       testInjector.options,
       pluginCreatorMock,
+      testInjector.logger,
     );
     injectorMock.injectFunction
       .withArgs(createInstrumenter)
@@ -197,5 +200,97 @@ describe(MutantInstrumenterExecutor.name, () => {
   it('should initialize the sandbox', async () => {
     await sut.execute();
     expect(sandboxMock.init).calledOnce;
+  });
+
+  describe('without mutants to test', () => {
+    let noMutantsToTestExecutorMock: sinon.SinonStubbedInstance<NoMutantsToTestExecutor>;
+    let mutantResults: ReturnType<typeof factory.mutantResult>[];
+
+    beforeEach(() => {
+      mutantResults = [factory.mutantResult({ status: 'Ignored' })];
+      noMutantsToTestExecutorMock = sinon.createStubInstance(
+        NoMutantsToTestExecutor,
+      );
+      noMutantsToTestExecutorMock.execute.resolves(mutantResults);
+      injectorMock.injectClass
+        .withArgs(NoMutantsToTestExecutor)
+        .returns(noMutantsToTestExecutorMock);
+    });
+
+    it('should report the results without testing when no mutants were found', async () => {
+      instrumentResult.mutants = [];
+      const result = await sut.execute();
+      expect(result).eq(mutantResults);
+      sinon.assert.calledOnce(noMutantsToTestExecutorMock.execute);
+    });
+
+    it('should report the results without testing when all mutants are ignored', async () => {
+      instrumentResult.mutants = [
+        factory.mutant({ id: '1', status: 'Ignored' }),
+        factory.mutant({ id: '2', status: 'Ignored' }),
+      ];
+      const result = await sut.execute();
+      expect(result).eq(mutantResults);
+      sinon.assert.calledWithExactly(
+        injectorMock.provideValue,
+        coreTokens.mutants,
+        instrumentResult.mutants,
+      );
+    });
+
+    it('should provide an empty dry run result to report without coverage', async () => {
+      instrumentResult.mutants = [];
+      await sut.execute();
+      sinon.assert.calledWithExactly(
+        injectorMock.provideValue,
+        coreTokens.dryRunResult,
+        { status: DryRunStatus.Complete, tests: [] },
+      );
+    });
+
+    it('should log that the run is skipped', async () => {
+      instrumentResult.mutants = [
+        factory.mutant({ id: '1', status: 'Ignored' }),
+      ];
+      await sut.execute();
+      sinon.assert.calledWithExactly(
+        testInjector.logger.info,
+        'No mutants to test. Skipping the checkers, sandbox and initial test run.',
+      );
+    });
+
+    it('should not start the checkers, preprocess or create the sandbox', async () => {
+      instrumentResult.mutants = [];
+      await sut.execute();
+      sinon.assert.notCalled(checkerPoolMock.init);
+      sinon.assert.notCalled(sandboxFilePreprocessorMock.preprocess);
+      sinon.assert.neverCalledWith(
+        injectorMock.provideClass,
+        coreTokens.sandbox,
+        Sandbox,
+      );
+      sinon.assert.notCalled(sandboxMock.init);
+    });
+
+    it('should test as usual when one mutant is not ignored', async () => {
+      instrumentResult.mutants = [
+        factory.mutant({ id: '1', status: 'Ignored' }),
+        factory.mutant({ id: '2' }),
+      ];
+      const result = await sut.execute();
+      expect(result).eq(injectorMock);
+      sinon.assert.notCalled(noMutantsToTestExecutorMock.execute);
+      sinon.assert.calledOnce(sandboxMock.init);
+    });
+
+    it('should still do the dry run when "dryRunOnly" is enabled', async () => {
+      testInjector.options.dryRunOnly = true;
+      instrumentResult.mutants = [];
+      const result = await sut.execute();
+      expect(result).eq(injectorMock);
+      sinon.assert.notCalled(noMutantsToTestExecutorMock.execute);
+      sinon.assert.calledOnce(checkerPoolMock.init);
+      sinon.assert.calledOnce(sandboxMock.init);
+    });
   });
 });

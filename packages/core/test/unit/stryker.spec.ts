@@ -110,6 +110,15 @@ describe(Stryker.name, () => {
       expect(mutationTestExecutorMock.execute).calledOnce;
     });
 
+    it('should skip the dry run and mutation testing when the mutant instrumenter reports the results', async () => {
+      const expectedResults = [factory.mutantResult({ status: 'Ignored' })];
+      mutantInstrumenterExecutorMock.execute.resolves(expectedResults);
+      const actualResults = await sut.runMutationTest();
+      expect(actualResults).eq(expectedResults);
+      expect(dryRunExecutorMock.execute).not.called;
+      expect(mutationTestExecutorMock.execute).not.called;
+    });
+
     it('should provide the cli options to the prepare executor', async () => {
       cliOptions.logLevel = LogLevel.Trace;
       const expectedCliOptions = { ...cliOptions };
