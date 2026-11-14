@@ -1,0 +1,11 @@
+{
+  "name": "no-mutants-to-test",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A test project to verify that Stryker skips the dry run when there are no mutants to test",
+  "type": "module",
+  "scripts": {
+    "test:mocha": "mocha",
+    "test": "mocha --no-config --no-package --timeout 0 verify/verify.js"
+  }
+}

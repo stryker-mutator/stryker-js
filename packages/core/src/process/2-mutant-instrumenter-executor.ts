@@ -10,9 +10,18 @@ import {
   createInstrumenter,
   InstrumentResult,
 } from '@stryker-mutator/instrumenter';
-import { StrykerOptions } from '@stryker-mutator/api/core';
+import {
+  Mutant,
+  MutantResult,
+  StrykerOptions,
+} from '@stryker-mutator/api/core';
+import { Logger } from '@stryker-mutator/api/logging';
+import {
+  CompleteDryRunResult,
+  DryRunStatus,
+} from '@stryker-mutator/api/test-runner';
 import { Reporter } from '@stryker-mutator/api/report';
-import { I } from '@stryker-mutator/util';
+import { I, requireResolve } from '@stryker-mutator/util';
 
 import { coreTokens, PluginCreator } from '../di/index.js';
 import { Sandbox } from '../sandbox/sandbox.js';
@@ -27,8 +36,11 @@ import { TemporaryDirectory } from '../utils/temporary-directory.js';
 import { UnexpectedExitHandler } from '../unexpected-exit-handler.js';
 import { FileSystem, Project } from '../fs/index.js';
 import { IdGenerator } from '../child-proxy/id-generator.js';
+import { IncrementalDiffer, TestCoverage } from '../mutants/index.js';
+import { MutationTestReportHelper } from '../reporters/mutation-test-report-helper.js';
 
 import { DryRunContext } from './3-dry-run-executor.js';
+import { NoMutantsToTestExecutor } from './no-mutants-to-test-executor.js';
 
 export interface MutantInstrumenterContext extends PluginContext {
   [commonTokens.options]: StrykerOptions;
@@ -51,15 +63,21 @@ export class MutantInstrumenterExecutor {
     coreTokens.project,
     commonTokens.options,
     coreTokens.pluginCreator,
+    commonTokens.logger,
   );
   constructor(
     private readonly injector: Injector<MutantInstrumenterContext>,
     private readonly project: Project,
     private readonly options: StrykerOptions,
     private readonly pluginCreator: PluginCreator,
+    private readonly log: Logger,
   ) {}
 
-  public async execute(): Promise<Injector<DryRunContext>> {
+  /**
+   * Instruments the files and prepares the dry run.
+   * Resolves with the mutant results directly when there are no mutants to test.
+   */
+  public async execute(): Promise<Injector<DryRunContext> | MutantResult[]> {
     // Create the checker and instrumenter
     const instrumenter = this.injector.injectFunction(createInstrumenter);
 
@@ -71,6 +89,16 @@ export class MutantInstrumenterExecutor {
       await this.readFilesToMutate(),
       { ignorers, ...this.options.mutator },
     );
+
+    if (
+      !this.options.dryRunOnly &&
+      !hasMutantsToTest(instrumentResult.mutants)
+    ) {
+      this.log.info(
+        'No mutants to test. Skipping the checkers, sandbox and initial test run.',
+      );
+      return this.reportWithoutTesting(instrumentResult.mutants);
+    }
 
     // Preprocess the project
     const preprocess = this.injector.injectFunction(createPreprocessor);
@@ -106,6 +134,27 @@ export class MutantInstrumenterExecutor {
     return dryRunProvider;
   }
 
+  private reportWithoutTesting(
+    mutants: readonly Mutant[],
+  ): Promise<MutantResult[]> {
+    const dryRunResult: CompleteDryRunResult = {
+      status: DryRunStatus.Complete,
+      tests: [],
+    };
+    return this.injector
+      .provideValue(coreTokens.mutants, mutants)
+      .provideValue(coreTokens.dryRunResult, dryRunResult)
+      .provideValue(coreTokens.requireFromCwd, requireResolve)
+      .provideFactory(coreTokens.testCoverage, TestCoverage.from)
+      .provideClass(coreTokens.incrementalDiffer, IncrementalDiffer)
+      .provideClass(
+        coreTokens.mutationTestReportHelper,
+        MutationTestReportHelper,
+      )
+      .injectClass(NoMutantsToTestExecutor)
+      .execute();
+  }
+
   private readFilesToMutate() {
     return Promise.all(
       [...this.project.filesToMutate.values()].map((file) =>
@@ -119,4 +168,8 @@ export class MutantInstrumenterExecutor {
       this.project.files.get(name)!.setContent(content);
     }
   }
+}
+
+function hasMutantsToTest(mutants: readonly Mutant[]): boolean {
+  return mutants.some(({ status }) => status !== 'Ignored');
 }

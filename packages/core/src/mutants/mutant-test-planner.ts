@@ -268,65 +268,81 @@ export class MutantTestPlanner {
     }
   }
 
-  private async incrementalDiff(
+  private incrementalDiff(
     currentMutants: readonly Mutant[],
   ): Promise<readonly Mutant[]> {
-    const { incrementalReport } = this.project;
-
-    if (incrementalReport) {
-      const currentFiles = await this.readAllOriginalFiles(
-        currentMutants,
-        this.testCoverage.testsById.values(),
-        Object.keys(incrementalReport.files),
-        Object.keys(incrementalReport.testFiles ?? {}),
-      );
-      const diffedMutants = this.incrementalDiffer.diff(
-        currentMutants,
-        this.testCoverage,
-        incrementalReport,
-        currentFiles,
-      );
-
-      return diffedMutants;
-    }
-    return currentMutants;
-  }
-
-  private async readAllOriginalFiles(
-    ...thingsWithFileNamesOrFileNames: Array<
-      Iterable<string | { fileName?: string }>
-    >
-  ): Promise<Map<string, string>> {
-    const uniqueFileNames = [
-      ...new Set(
-        thingsWithFileNamesOrFileNames
-          .flatMap((container) =>
-            [...container].map((thing) =>
-              typeof thing === 'string' ? thing : thing.fileName,
-            ),
-          )
-          .filter(notEmpty)
-          .map((fileName) => path.resolve(fileName)),
-      ),
-    ];
-    const result = await Promise.all(
-      uniqueFileNames.map(async (fileName) => {
-        const originalContent = await this.project.files
-          .get(fileName)
-          ?.readOriginal();
-        if (originalContent) {
-          return [
-            toRelativeNormalizedFileName(fileName),
-            originalContent,
-          ] as const;
-        } else {
-          return undefined;
-        }
-      }),
+    return diffWithIncrementalReport(
+      currentMutants,
+      this.project,
+      this.testCoverage,
+      this.incrementalDiffer,
     );
-
-    return new Map(result.filter(notEmpty));
   }
+}
+
+/**
+ * Applies the incremental report (if any) to the current mutants.
+ * Reuses results of mutants that didn't change and adds the results of mutants that are outside of the mutated scope.
+ */
+export async function diffWithIncrementalReport(
+  currentMutants: readonly Mutant[],
+  project: I<Project>,
+  testCoverage: I<TestCoverage>,
+  incrementalDiffer: I<IncrementalDiffer>,
+): Promise<readonly Mutant[]> {
+  const { incrementalReport } = project;
+
+  if (incrementalReport) {
+    const currentFiles = await readAllOriginalFiles(
+      project,
+      currentMutants,
+      testCoverage.testsById.values(),
+      Object.keys(incrementalReport.files),
+      Object.keys(incrementalReport.testFiles ?? {}),
+    );
+    return incrementalDiffer.diff(
+      currentMutants,
+      testCoverage,
+      incrementalReport,
+      currentFiles,
+    );
+  }
+  return currentMutants;
+}
+
+async function readAllOriginalFiles(
+  project: I<Project>,
+  ...thingsWithFileNamesOrFileNames: Array<
+    Iterable<string | { fileName?: string }>
+  >
+): Promise<Map<string, string>> {
+  const uniqueFileNames = [
+    ...new Set(
+      thingsWithFileNamesOrFileNames
+        .flatMap((container) =>
+          [...container].map((thing) =>
+            typeof thing === 'string' ? thing : thing.fileName,
+          ),
+        )
+        .filter(notEmpty)
+        .map((fileName) => path.resolve(fileName)),
+    ),
+  ];
+  const result = await Promise.all(
+    uniqueFileNames.map(async (fileName) => {
+      const originalContent = await project.files.get(fileName)?.readOriginal();
+      if (originalContent) {
+        return [
+          toRelativeNormalizedFileName(fileName),
+          originalContent,
+        ] as const;
+      } else {
+        return undefined;
+      }
+    }),
+  );
+
+  return new Map(result.filter(notEmpty));
 }
 
 function calculateTotalTime(testResults: Iterable<TestResult>): number {
