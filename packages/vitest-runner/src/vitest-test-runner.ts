@@ -37,6 +37,10 @@ import {
 
 import { vitestWrapper, Vitest } from './vitest-wrapper.js';
 import {
+  VITEST_MODERN_TEST_NAME_SEPARATOR,
+  VITEST_LEGACY_TEST_NAME_SEPARATOR,
+} from './test-helpers.js';
+import {
   convertTestToTestResult,
   fromTestId,
   collectTestsFromSuite,
@@ -87,33 +91,93 @@ export class VitestTestRunner implements TestRunner {
     this.options = options as VitestRunnerOptionsWithStrykerOptions;
   }
 
+  get #testNameSeparator(): string {
+    return semver.gte(vitestWrapper.version, '5.0.0-0')
+      ? VITEST_MODERN_TEST_NAME_SEPARATOR
+      : VITEST_LEGACY_TEST_NAME_SEPARATOR;
+  }
+
   public capabilities(): TestRunnerCapabilities {
     return { reloadEnvironment: true };
   }
 
   #getVitestPoolConfig(version: string) {
-    if (semver.satisfies(version, '<1.0.0')) {
-      return {
-        threads: true,
-        maxThreads: 1,
-        minThreads: 1,
-      };
-    }
-
-    if (semver.satisfies(version, '<4.1.0')) {
-      return {
-        pool: 'threads',
-        poolOptions: {
-          threads: {
+    if (semver.lt(version, '1.0.0')) {
+      switch (this.options.vitest.pool) {
+        case 'threads':
+          return {
+            threads: true,
             maxThreads: 1,
             minThreads: 1,
-          },
-        },
-      };
+          };
+
+        case 'forks':
+          return {
+            threads: false,
+            singleThread: true,
+          };
+
+        case 'vmThreads':
+          return {
+            experimentalVmThreads: true,
+            maxThreads: 1,
+            minThreads: 1,
+          };
+
+        case 'vmForks':
+          throw new Error(
+            'The vmForks pool is not supported by Vitest versions below 1.0.0',
+          );
+      }
+    }
+
+    if (semver.lt(version, '4.0.0')) {
+      switch (this.options.vitest.pool) {
+        case 'forks':
+          return {
+            pool: 'forks',
+            poolOptions: {
+              forks: {
+                maxForks: 1,
+                minForks: 1,
+              },
+            },
+          };
+        case 'vmForks':
+          return {
+            pool: 'vmForks',
+            poolOptions: {
+              vmForks: {
+                maxForks: 1,
+                minForks: 1,
+              },
+            },
+          };
+        case 'threads':
+          return {
+            pool: 'threads',
+            poolOptions: {
+              threads: {
+                maxThreads: 1,
+                minThreads: 1,
+              },
+            },
+          };
+        case 'vmThreads':
+          return {
+            pool: 'vmThreads',
+            poolOptions: {
+              vmThreads: {
+                maxThreads: 1,
+                minThreads: 1,
+              },
+            },
+          };
+      }
     }
 
     return {
-      pool: 'threads',
+      pool: this.options.vitest.pool,
       maxWorkers: 1,
     };
   }
@@ -155,8 +219,9 @@ export class VitestTestRunner implements TestRunner {
     this.ctx.provide('globalNamespace', this.globalNamespace);
     this.ctx.provide(
       'isGreaterThanVitest4Point1',
-      semver.satisfies(vitestWrapper.version, '>=4.1.0'),
+      semver.gte(vitestWrapper.version, '4.1.0'),
     );
+    this.ctx.provide('testNameSeparator', this.#testNameSeparator);
     this.ctx.config.browser.screenshotFailures = false;
     this.ctx.projects.forEach((project) => {
       project.config.setupFiles = [
@@ -229,10 +294,13 @@ export class VitestTestRunner implements TestRunner {
     let testFilesToRun: string[] | undefined = explicitTestFiles;
     if (testIds.length > 0) {
       const parsedTests = testIds.map(fromTestId);
+      // Anchor the end of the pattern: it is matched against the full test name, so without it
+      // a filter for "calc add" would also select "calc add negative". The start can't be anchored,
+      // as vitest prefixes the name. Allow trailing whitespace: test ids have it trimmed, the full name doesn't.
       const regexTestNameFilter = parsedTests
         .map(({ test: name }) => escapeRegExp(name))
         .join('|');
-      const regex = new RegExp(regexTestNameFilter);
+      const regex = new RegExp(`(?:${regexTestNameFilter})\\s*$`);
       testFilesToRun = parsedTests.map(({ file }) => file);
       this.ctx!.projects.forEach((project) => {
         project.config.testNamePattern = regex;
@@ -260,15 +328,27 @@ export class VitestTestRunner implements TestRunner {
 
     let failure = false;
     const testResults = tests.map((test) => {
-      const testResult = convertTestToTestResult(test);
+      const testResult = convertTestToTestResult(test, this.#testNameSeparator);
       failure ||= testResult.status === TestStatus.Failed;
       return testResult;
     });
 
-    if (!failure && this.ctx!.state.errorsSet.size > 0) {
-      const errorText = [...this.ctx!.state.errorsSet]
-        .map(errorToString)
-        .join('\n');
+    // Collection errors are stored on the file, not in errorsSet, and may
+    // leave no individual tests to report the failure.
+    const fileErrors = this.ctx!.state.getFiles()
+      .filter((file) => file.result?.state === 'fail')
+      .map(
+        (file) =>
+          `${file.filepath}: ${file.result?.errors?.map((error) => error.message).join('\n') || 'StrykerJS: Test file execution failed'}`,
+      );
+    if (
+      !failure &&
+      (fileErrors.length > 0 || this.ctx!.state.errorsSet.size > 0)
+    ) {
+      const errorText = [
+        ...fileErrors,
+        ...[...this.ctx!.state.errorsSet].map(errorToString),
+      ].join('\n');
       return {
         status: DryRunStatus.Error,
         errorMessage: `An error occurred outside of a test run: ${errorText}`,

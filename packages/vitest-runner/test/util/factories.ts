@@ -88,6 +88,7 @@ export function createVitestRunnerOptions(
   overrides?: Partial<VitestRunnerOptions>,
 ): VitestRunnerOptions {
   return {
+    pool: 'threads',
     related: true,
     ...overrides,
   };

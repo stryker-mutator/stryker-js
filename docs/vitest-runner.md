@@ -54,16 +54,25 @@ Default: `true`
 
 If set to `true`, Vitest will only run tests that are related to the mutated files. It uses the [`related`](https://vitest.dev/guide/cli.html#vitest-related) under the hood. Disable this if your test files don't import your source files directly, for example when using API calls to call your server code in integration tests.
 
+### vitest.pool [`threads` | `forks` | `vmThreads` | `vmForks`]
+
+_Since v10.1.0_
+
+Default: `threads`
+
+Pool used to run tests in. Look at the [Vitest documentation](https://vitest.dev/config/pool) for more information.
+
+NOTE: The `vmForks` pool is not supported by Vitest versions below 1.0.0 since this was introduced in Vitest v1.
+
 ## Non overridable options
 
 The following options will be set by Stryker and cannot be overridden:
 
 ```javascript
 {
-  threads: true,
   coverage: { enabled: false },
   includeTaskLocation: true,
-  singleThread: true,
+  maxWorkers: 1,
   watch: false,
   bail: options.disableBail ? 0 : 1,
   onConsoleLog: () => false,

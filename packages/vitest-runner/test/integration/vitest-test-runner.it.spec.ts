@@ -1,4 +1,5 @@
 import path from 'path';
+import fs from 'fs/promises';
 
 import {
   factory,
@@ -32,6 +33,43 @@ describe('VitestRunner integration', () => {
   afterEach(async () => {
     await sut.dispose();
     await sandbox.dispose();
+  });
+
+  describe('using the prefix-names project', () => {
+    const calcAdd = 'tests/calc.spec.ts#calc add';
+
+    beforeEach(async () => {
+      sandbox = new TempTestDirectorySandbox('prefix-names');
+      await sandbox.init();
+    });
+
+    it('should only run the tests of the test filter, not tests whose name starts with a filtered name', async () => {
+      await sut.init();
+      const runResult = await sut.mutantRun(
+        factory.mutantRunOptions({
+          activeMutant: factory.mutant({ id: '1' }),
+          sandboxFileName: path.resolve(sandbox.tmpDir, 'math.ts'),
+          mutantActivation: 'runtime',
+          testFilter: [calcAdd], // "calc add negative" fails, but isn't selected
+        }),
+      );
+      assertions.expectSurvived(runResult);
+      expect(runResult.nrOfTests).eq(1);
+    });
+
+    it('should select a test whose name has trailing whitespace', async () => {
+      await sut.init();
+      const runResult = await sut.mutantRun(
+        factory.mutantRunOptions({
+          activeMutant: factory.mutant({ id: '1' }),
+          sandboxFileName: path.resolve(sandbox.tmpDir, 'math.ts'),
+          mutantActivation: 'runtime',
+          testFilter: ['tests/calc.spec.ts#calc padded'],
+        }),
+      );
+      assertions.expectSurvived(runResult);
+      expect(runResult.nrOfTests).eq(1);
+    });
   });
 
   describe('using the simple-project project', () => {
@@ -143,6 +181,82 @@ describe('VitestRunner integration', () => {
           },
         });
       });
+    });
+
+    describe('test collection failures', () => {
+      const collectionFile = 'tests/collection-error.spec.ts';
+
+      it('should reject a baseline with an import error, even when other files pass', async () => {
+        await fs.writeFile(
+          'broken-module.ts',
+          'throw new Error("Cannot initialize module");',
+        );
+        await fs.writeFile(collectionFile, 'import "../broken-module";');
+        await sut.init();
+
+        const result = await sut.dryRun(factory.dryRunOptions());
+
+        assertions.expectErrored(result);
+        expect(result.errorMessage).contains('collection-error.spec.ts');
+        expect(result.errorMessage).contains('Cannot initialize module');
+      });
+
+      for (const duringDescribe of [false, true]) {
+        it(`should report a collection error ${duringDescribe ? 'in describe' : 'at import time'} instead of a surviving mutant`, async () => {
+          await fs.writeFile(
+            'checked-pi.ts',
+            `
+            import { pi } from './math';
+            if (pi !== 3.14) throw new Error('Cannot initialize module');
+            export { pi };
+          `,
+          );
+          await fs.writeFile(
+            collectionFile,
+            duringDescribe
+              ? `
+            import { describe, it, expect } from 'vitest';
+            import { pi } from '../math';
+            describe('pi', () => {
+              if (pi !== 3.14) throw new Error('Cannot initialize module');
+              it('loads', () => expect(pi).toBe(3.14));
+            });
+          `
+              : `
+            import { it, expect } from 'vitest';
+            import { pi } from '../checked-pi';
+            it('loads', () => expect(pi).toBe(3.14));
+          `,
+          );
+          await sut.init();
+          const baseline = await sut.dryRun(factory.dryRunOptions());
+          assertions.expectCompleted(baseline);
+          expect(baseline.tests).lengthOf(7);
+          expect(
+            baseline.tests.every(({ status }) => status === TestStatus.Success),
+          ).true;
+
+          const result = await sut.mutantRun(
+            factory.mutantRunOptions({
+              activeMutant: factory.mutant({ id: '0' }),
+              mutantActivation: 'static',
+              // Include a passing test to verify that it cannot hide the collection failure.
+              testFilter: [`${collectionFile}#`, test1],
+            }),
+          );
+
+          assertions.expectErrored(result);
+          expect(result.errorMessage).contains('collection-error.spec.ts');
+          expect(result.errorMessage).contains('Cannot initialize module');
+
+          const nextRun = await sut.dryRun(factory.dryRunOptions());
+          assertions.expectCompleted(nextRun);
+          expect(nextRun.tests).lengthOf(7);
+          expect(
+            nextRun.tests.every(({ status }) => status === TestStatus.Success),
+          ).true;
+        });
+      }
     });
 
     describe(VitestTestRunner.prototype.mutantRun.name, () => {

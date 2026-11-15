@@ -2,8 +2,14 @@ import sinon from 'sinon';
 import { expect } from 'chai';
 import fs from 'fs';
 import { format } from 'util';
-import { factory, testInjector } from '@stryker-mutator/test-helpers';
 import {
+  assertions,
+  factory,
+  testInjector,
+} from '@stryker-mutator/test-helpers';
+import {
+  CompleteDryRunResult,
+  DryRunStatus,
   MutantRunStatus,
   TestRunnerCapabilities,
 } from '@stryker-mutator/api/test-runner';
@@ -12,7 +18,13 @@ import { Vitest } from 'vitest/node';
 import { VitestTestRunner } from '../../src/vitest-test-runner.js';
 import { VitestRunnerOptionsWithStrykerOptions } from '../../src/vitest-runner-options-with-stryker-options.js';
 import { vitestWrapper } from '../../src/vitest-wrapper.js';
-import { createVitestMock } from '../util/factories.js';
+import {
+  createSuite,
+  createVitestFile,
+  createVitestMock,
+  createVitestRunnerOptions,
+  createVitestTest,
+} from '../util/factories.js';
 import { VITEST_ERROR_CODES } from '../../src/vitest-helpers.js';
 
 describe(VitestTestRunner.name, () => {
@@ -29,9 +41,7 @@ describe(VitestTestRunner.name, () => {
       .injectClass(VitestTestRunner);
     createVitestStub = sinon.stub(vitestWrapper, 'createVitest');
     options = testInjector.options as VitestRunnerOptionsWithStrykerOptions;
-    options.vitest = {
-      related: true,
-    };
+    options.vitest = createVitestRunnerOptions();
     vitestStub = createVitestMock();
     createVitestStub.resolves(vitestStub);
     sinon.stub(fs.promises, 'copyFile').resolves();
@@ -103,6 +113,85 @@ describe(VitestTestRunner.name, () => {
       expect(vitestOptions).deep.include({
         pool: 'threads',
         maxWorkers: 1,
+      });
+    });
+
+    const vitestVersions = [
+      {
+        version: '4.0.0',
+        separator: ' ',
+      },
+      {
+        version: '4.1.12',
+        separator: ' ',
+      },
+      {
+        version: '4.1.12-beta',
+        separator: ' ',
+      },
+      {
+        version: '5.0.0',
+        separator: ' > ',
+      },
+      {
+        version: '5.0.1',
+        separator: ' > ',
+      },
+      {
+        version: '5.0.0-prerelease',
+        separator: ' > ',
+      },
+    ];
+
+    vitestVersions.forEach(({ version, separator }) => {
+      it(`should provide the \`${separator}\` test name separator for vitest ${version}`, async () => {
+        sinon.replace(vitestWrapper, 'version', version);
+
+        await sut.init();
+
+        sinon.assert.calledWithExactly(
+          vitestStub.provide as sinon.SinonStub,
+          'testNameSeparator',
+          separator,
+        );
+      });
+    });
+
+    vitestVersions.forEach(({ version, separator }) => {
+      it(`should report test ids using the \`${separator}\` separator for vitest ${version}`, async () => {
+        // Arrange
+        sinon.replace(vitestWrapper, 'version', version);
+
+        const suite = createSuite({ name: 'suite' });
+        const test = createVitestTest({
+          name: 'test1',
+          suite,
+          result: { state: 'pass', duration: 1 },
+        });
+
+        suite.tasks = [test];
+
+        const file = createVitestFile({
+          filepath: 'file.spec.js',
+          tasks: [suite],
+        });
+
+        vitestStub.state.getFiles = () => [file];
+        await sut.init();
+
+        // Act
+        const actual = await sut.dryRun(
+          factory.dryRunOptions({ files: ['file.js'] }),
+        );
+
+        // Assert
+        expect(actual).deep.include({
+          status: DryRunStatus.Complete,
+        });
+
+        expect(
+          (actual as CompleteDryRunResult).tests.map(({ id }) => id),
+        ).deep.equal([`file.spec.js#suite${separator}test1`]);
       });
     });
 
@@ -180,6 +269,143 @@ describe(VitestTestRunner.name, () => {
         'mode',
         'mutant',
       );
+    });
+  });
+
+  describe('test collection failures', () => {
+    beforeEach(async () => {
+      await sut.init();
+    });
+
+    it('should report a failed file even when it collected no tests and other files passed', async () => {
+      sinon.stub(vitestStub.state, 'getFiles').returns([
+        createVitestFile({
+          filepath: 'broken.spec.ts',
+          result: {
+            state: 'fail',
+            errors: [{ message: 'Cannot initialize module' }],
+          },
+        }),
+        createVitestFile({
+          filepath: 'passing.spec.ts',
+          result: { state: 'pass' },
+          tasks: [createVitestTest({ result: { state: 'pass' } })],
+        }),
+      ]);
+
+      const result = await sut.dryRun(factory.dryRunOptions());
+
+      assertions.expectErrored(result);
+      expect(result.errorMessage).contains('broken.spec.ts');
+      expect(result.errorMessage).contains('Cannot initialize module');
+    });
+
+    it('should not report a mutant as survived when a file failed to collect tests', async () => {
+      sinon.stub(vitestStub.state, 'getFiles').returns([
+        createVitestFile({
+          result: { state: 'fail', errors: [{ message: 'Collection failed' }] },
+        }),
+      ]);
+
+      const result = await sut.mutantRun(factory.mutantRunOptions());
+
+      assertions.expectErrored(result);
+      expect(result.errorMessage).contains('Collection failed');
+    });
+
+    it('should include errors from all failed files and unhandled errors', async () => {
+      sinon.stub(vitestStub.state, 'getFiles').returns([
+        createVitestFile({
+          filepath: 'first.spec.ts',
+          result: {
+            state: 'fail',
+            errors: [
+              { message: 'First collection error' },
+              { message: 'Second collection error' },
+            ],
+          },
+        }),
+        createVitestFile({
+          filepath: 'second.spec.ts',
+          result: {
+            state: 'fail',
+            errors: [{ message: 'Another collection error' }],
+          },
+        }),
+      ]);
+      vitestStub.state.errorsSet.add(new Error('Unhandled error'));
+
+      const result = await sut.dryRun(factory.dryRunOptions());
+
+      assertions.expectErrored(result);
+      for (const message of [
+        'first.spec.ts',
+        'second.spec.ts',
+        'First collection error',
+        'Second collection error',
+        'Another collection error',
+        'Unhandled error',
+      ]) {
+        expect(result.errorMessage).contains(message);
+      }
+    });
+
+    it('should report a failed file even when no error details are available', async () => {
+      sinon.stub(vitestStub.state, 'getFiles').returns([
+        createVitestFile({
+          filepath: 'broken.spec.ts',
+          result: { state: 'fail' },
+        }),
+      ]);
+
+      const result = await sut.dryRun(factory.dryRunOptions());
+
+      assertions.expectErrored(result);
+      expect(result.errorMessage).contains('broken.spec.ts');
+      expect(result.errorMessage).contains(
+        'StrykerJS: Test file execution failed',
+      );
+    });
+
+    for (const state of [undefined, 'skip', 'pass'] as const) {
+      it(`should not treat an empty file with state ${state} as a collection failure`, async () => {
+        sinon
+          .stub(vitestStub.state, 'getFiles')
+          .returns([
+            createVitestFile({ result: state ? { state } : undefined }),
+          ]);
+
+        const result = await sut.mutantRun(factory.mutantRunOptions());
+
+        assertions.expectSurvived(result);
+        expect(result.nrOfTests).eq(0);
+      });
+    }
+
+    it('should preserve a killed result when an individual test failed', async () => {
+      sinon.stub(vitestStub.state, 'getFiles').returns([
+        createVitestFile({
+          result: { state: 'fail', errors: [{ message: 'Collection failed' }] },
+        }),
+        createVitestFile({
+          result: { state: 'fail' },
+          tasks: [
+            createVitestTest({
+              result: {
+                state: 'fail',
+                errors: [{ message: 'Assertion failed' }],
+              },
+            }),
+          ],
+        }),
+      ]);
+      vitestStub.state.errorsSet.add(new Error('Unhandled error'));
+
+      const result = await sut.mutantRun(factory.mutantRunOptions());
+
+      assertions.expectKilled(result);
+      expect(result.failureMessage).eq('Assertion failed');
+      expect(result.nrOfTests).eq(1);
     });
   });
 
