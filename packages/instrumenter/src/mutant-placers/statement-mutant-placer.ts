@@ -34,7 +34,9 @@ export const statementMutantPlacer: MutantPlacer<types.Statement> = {
       );
     }
     path.replaceWith(
-      path.isBlockStatement() ? t.blockStatement([statement]) : statement,
+      path.isBlockStatement()
+        ? t.blockStatement([statement], path.node.directives)
+        : statement,
     );
   },
 };
