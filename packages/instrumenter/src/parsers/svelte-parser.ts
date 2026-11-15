@@ -19,8 +19,12 @@ interface Range {
   start: number;
   end: number;
 }
+interface RangedNode extends BaseNode, Range {
+  [key: string]: unknown;
+}
 interface TemplateRange extends Range {
   isExpression: boolean;
+  parenthesized?: boolean;
 }
 
 interface TemplateScriptRange extends TemplateRange {
@@ -134,11 +138,18 @@ export async function parse(
           });
         }
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        const templateExpression = collectTemplateExpression(node);
-        if (templateExpression) {
+        for (const templateExpression of collectTemplateExpressions(node)) {
           const { start, end } = templateExpression;
-          ranges.push({ start, end, isExpression: true });
+          ranges.push({
+            start,
+            end,
+            isExpression: true,
+            parenthesized: [
+              'ObjectExpression',
+              'FunctionExpression',
+              'ClassExpression',
+            ].includes(templateExpression.type),
+          });
         }
       },
     });
@@ -159,13 +170,22 @@ export async function parse(
     end,
     isExpression,
     format,
+    parenthesized,
   }: TemplateScriptRange): Promise<TemplateScript> {
     const scriptText = text.slice(start, end);
-    const parsed = await context.parse(scriptText, fileName, format);
+    const parsed = await context.parse(
+      parenthesized ? `(${scriptText})` : scriptText,
+      fileName,
+      format,
+    );
+    const offset = positionConverter.positionFromOffset(start);
     return {
       ast: {
         ...parsed,
-        offset: positionConverter.positionFromOffset(start),
+        offset: {
+          line: offset.line,
+          column: offset.column - (parenthesized ? 1 : 0),
+        },
       },
       range: { start, end },
       isExpression,
@@ -225,6 +245,7 @@ function remapScriptLocations(
     } else {
       // Template expressions use the same format as the file's script lang
       return {
+        ...range,
         start,
         end: start + script.length,
         isExpression: range.isExpression,
@@ -240,10 +261,21 @@ function remapScriptLocations(
   };
 }
 
-function collectTemplateExpression(node: {
-  type: string;
-  expression: BaseNode & Range;
-}): (BaseNode & Range) | undefined {
+function isRangedNode(value: unknown): value is RangedNode {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'type' in value &&
+    typeof value.type === 'string' &&
+    'start' in value &&
+    typeof value.start === 'number' &&
+    'end' in value &&
+    typeof value.end === 'number'
+  );
+}
+
+function collectTemplateExpressions(node: unknown): RangedNode[] {
+  if (!isRangedNode(node)) return [];
   switch (node.type) {
     case 'MustacheTag':
     case 'RawMustacheTag':
@@ -253,8 +285,54 @@ function collectTemplateExpression(node: {
     case 'AwaitBlock':
     case 'KeyBlock':
     case 'EventHandler':
-      return node.expression;
+      return [node.expression].filter(isRangedNode);
+    case 'RenderTag': {
+      const expression = node.expression;
+      if (!isRangedNode(expression)) return [];
+      const call =
+        expression.type === 'ChainExpression'
+          ? expression.expression
+          : expression;
+      if (!isRangedNode(call) || call.type !== 'CallExpression') return [];
+      return [
+        call.callee,
+        ...(Array.isArray(call.arguments) ? call.arguments : []),
+      ].filter(isRangedNode);
+    }
+    case 'SnippetBlock':
+      return Array.isArray(node.parameters)
+        ? node.parameters.flatMap(collectParameterExpressions)
+        : [];
     default:
-      return undefined;
+      return [];
+  }
+}
+
+function collectParameterExpressions(node: unknown): RangedNode[] {
+  if (!isRangedNode(node)) return [];
+  switch (node.type) {
+    case 'AssignmentPattern':
+      return [node.right]
+        .filter(isRangedNode)
+        .concat(collectParameterExpressions(node.left));
+    case 'ArrayPattern':
+      return Array.isArray(node.elements)
+        ? node.elements.flatMap(collectParameterExpressions)
+        : [];
+    case 'ObjectPattern':
+      return Array.isArray(node.properties)
+        ? node.properties.flatMap((property: unknown): RangedNode[] => {
+            if (!isRangedNode(property)) return [];
+            if (property.type === 'RestElement') {
+              return collectParameterExpressions(property.argument);
+            }
+            return [
+              ...(property.computed ? [property.key].filter(isRangedNode) : []),
+              ...collectParameterExpressions(property.value),
+            ];
+          })
+        : [];
+    default:
+      return [];
   }
 }
