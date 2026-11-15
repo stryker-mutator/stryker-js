@@ -110,6 +110,37 @@ describe('statementMutantPlacer', () => {
       expect(actualCode).matches(/function\s*add\s*\(a,\s*b\)\s*{.*}/);
     });
 
+    it('should keep directives at the start of a block statement', () => {
+      const ast = parseJS('function add(a, b) { "use strict"; return a + b; }');
+      const statement = findNodePath<babel.types.BlockStatement>(ast, (p) =>
+        p.isBlockStatement(),
+      );
+      const originalNodePath = findNodePath<babel.types.BinaryExpression>(
+        ast,
+        (p) => p.isBinaryExpression(),
+      );
+      const mutant = createMutant({
+        original: originalNodePath.node,
+        replacement: types.binaryExpression(
+          '>>>',
+          types.identifier('a'),
+          types.identifier('b'),
+        ),
+      });
+      const appliedMutants = new Map([
+        [mutant, mutant.applied(statement.node)],
+      ]);
+
+      statementMutantPlacer.place(statement, appliedMutants);
+      const actualCode = normalizeWhitespaces(generator(ast).code);
+
+      expect(actualCode).contains(
+        normalizeWhitespaces(
+          'function add(a, b) { "use strict"; if (stryMutAct_9fa48("1"))',
+        ),
+      );
+    });
+
     it('should place the original code as alternative (inside `else`)', () => {
       const { ast, appliedMutants, statement } = arrangeSingleMutant();
       statementMutantPlacer.place(statement, appliedMutants);
