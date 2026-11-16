@@ -1086,8 +1086,8 @@ importers:
         specifier: ^7.6.3
         version: 7.8.5
       source-map:
-        specifier: ~0.7.4
-        version: 0.7.6
+        specifier: ~0.8.0
+        version: 0.8.0
       tree-kill:
         specifier: ~1.2.2
         version: 1.2.2
@@ -10666,6 +10666,7 @@ packages:
   image-size@0.5.5:
     resolution: {integrity: sha512-6TDAlDPZxUFCv+fuOkIoXT/V/f3Qbq8e37p+YOiYrUv3v9cc3/6x78VdfPgFVaB9dZYeLUfKgHRebpkm/oP2VQ==}
     engines: {node: '>=0.10.0'}
+    deprecated: Please migrate to image-size@2.x
     hasBin: true
 
   immer@9.0.21:
@@ -23461,7 +23462,7 @@ snapshots:
       progress: 2.0.3
       rxjs: 7.8.2
       semver: 7.8.5
-      source-map: 0.7.6
+      source-map: 0.8.0
       tree-kill: 1.2.2
       tslib: 2.8.1
       typed-inject: 5.0.0
@@ -23492,7 +23493,7 @@ snapshots:
       progress: 2.0.3
       rxjs: 7.8.2
       semver: 7.8.5
-      source-map: 0.7.6
+      source-map: 0.8.0
       tree-kill: 1.2.2
       tslib: 2.8.1
       typed-inject: 5.0.0
@@ -23523,7 +23524,7 @@ snapshots:
       progress: 2.0.3
       rxjs: 7.8.2
       semver: 7.8.5
-      source-map: 0.7.6
+      source-map: 0.8.0
       tree-kill: 1.2.2
       tslib: 2.8.1
       typed-inject: 5.0.0
