@@ -259,6 +259,21 @@ describe('VitestRunner integration', () => {
       }
     });
 
+    describe('with isolate: false', () => {
+      beforeEach(async () => {
+        options.vitest.configFile = 'vitest.no-isolate.config.js';
+        await sut.init();
+      });
+
+      it('should report mutant coverage of the tests in every test file', async () => {
+        const runResult = await sut.dryRun(factory.dryRunOptions());
+        assertions.expectCompleted(runResult);
+        expect(Object.keys(runResult.mutantCoverage!.perTest).sort()).deep.eq(
+          [test1, test2, test3, test4, test5].sort(),
+        );
+      });
+    });
+
     describe(VitestTestRunner.prototype.mutantRun.name, () => {
       it('should be able to kill a mutant', async () => {
         await sut.init();
