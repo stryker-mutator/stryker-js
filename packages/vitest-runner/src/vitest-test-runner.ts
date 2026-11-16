@@ -79,8 +79,10 @@ export class VitestTestRunner implements TestRunner {
   ] as const;
   private ctx?: Vitest;
   private readonly options: VitestRunnerOptionsWithStrykerOptions;
-  private localSetupFile = path.resolve(
-    `./stryker-setup-${process.env.STRYKER_MUTATOR_WORKER ?? 0}.js`,
+  private localSetupFile = normalizeFileName(
+    path.resolve(
+      `./stryker-setup-${process.env.STRYKER_MUTATOR_WORKER ?? 0}.js`,
+    ),
   );
 
   constructor(
