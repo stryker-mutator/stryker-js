@@ -1,36 +1,33 @@
 import path from 'path';
 
-import { minimatch } from 'minimatch';
+import { Minimatch } from 'minimatch';
 import { normalizeFileName } from '@stryker-mutator/util';
 
 /**
  * A helper class for matching files using the `disableTypeChecks` setting.
  */
 export class FileMatcher {
-  private readonly pattern: boolean | string;
+  private readonly matcher: Minimatch | boolean;
 
-  constructor(
-    pattern: boolean | string,
-    private readonly allowHiddenFiles = true,
-  ) {
+  constructor(pattern: boolean | string, allowHiddenFiles = true) {
     if (typeof pattern === 'string') {
-      this.pattern = normalizeFileName(path.resolve(pattern));
+      this.matcher = new Minimatch(normalizeFileName(path.resolve(pattern)), {
+        dot: allowHiddenFiles,
+      });
     } else if (pattern) {
-      this.pattern = '**/*.{js,ts,jsx,tsx,html,vue,mjs,mts,cts,cjs}';
+      this.matcher = new Minimatch(
+        '**/*.{js,ts,jsx,tsx,html,vue,mjs,mts,cts,cjs}',
+        { dot: allowHiddenFiles },
+      );
     } else {
-      this.pattern = pattern;
+      this.matcher = pattern;
     }
   }
 
   public matches(fileName: string): boolean {
-    if (typeof this.pattern === 'string') {
-      return minimatch(
-        normalizeFileName(path.resolve(fileName)),
-        this.pattern,
-        { dot: this.allowHiddenFiles },
-      );
-    } else {
-      return this.pattern;
+    if (typeof this.matcher === 'boolean') {
+      return this.matcher;
     }
+    return this.matcher.match(normalizeFileName(path.resolve(fileName)));
   }
 }
