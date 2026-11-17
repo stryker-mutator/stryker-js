@@ -1,4 +1,7 @@
-import type { MutantCoverage } from '@stryker-mutator/api/core';
+import type {
+  InstrumenterContext,
+  MutantCoverage,
+} from '@stryker-mutator/api/core';
 import type { MutantActivation } from '@stryker-mutator/api/test-runner';
 import {
   beforeEach,
@@ -17,7 +20,8 @@ const globalNamespace = inject('globalNamespace');
 const mutantActivation = inject('mutantActivation');
 const mode = inject('mode');
 
-const ns = globalThis[globalNamespace] || (globalThis[globalNamespace] = {});
+const ns: InstrumenterContext & { mutantCoverageReported?: boolean } =
+  globalThis[globalNamespace] || (globalThis[globalNamespace] = {});
 ns.hitLimit = inject('hitLimit');
 const isGreaterThanVitest4Point1 = inject('isGreaterThanVitest4Point1');
 // Must match the separator the runner filters with; see test-helpers.ts
@@ -50,6 +54,7 @@ if (mode === 'mutant') {
   }
 } else {
   ns.activeMutant = undefined;
+  startNewMutantCoverage();
 
   beforeEach(({ task }) => {
     ns.currentTestId = toRawTestId(task, testNameSeparator);
@@ -63,17 +68,42 @@ if (mode === 'mutant') {
     // Vitest's hooks API requires this empty destructure to allow access to suite.meta
     // eslint-disable-next-line no-empty-pattern
     afterAll(({}, suite) => {
-      suite.meta.mutantCoverage = ns.mutantCoverage;
+      suite.meta.mutantCoverage = reportMutantCoverage();
     });
   } else {
     // @ts-expect-error This was changed in Vitest v4.1
     afterAll(({ meta }) => {
-      meta.mutantCoverage = ns.mutantCoverage;
+      meta.mutantCoverage = reportMutantCoverage();
     });
   }
 }
 
 // Stryker disable all: this file is copied to the sandbox dir
+/**
+ * Reports the live coverage objects, so hits after this hook (`beforeAll` cleanups, fixture teardown) are still reported.
+ */
+function reportMutantCoverage(): MutantCoverage | undefined {
+  const coverage = ns.mutantCoverage;
+  if (!coverage) {
+    return undefined;
+  }
+  ns.mutantCoverageReported = true;
+  return { static: coverage.static, perTest: coverage.perTest };
+}
+
+/**
+ * With `isolate: false`, test files share `ns.mutantCoverage`. Gives the next test file new objects, so that it does not report the coverage of earlier files again.
+ * Instrumented modules keep a reference to `ns.mutantCoverage`, but read its `static` and `perTest` on each hit, so only those are replaced.
+ */
+function startNewMutantCoverage(): void {
+  const coverage = ns.mutantCoverage;
+  if (coverage && ns.mutantCoverageReported) {
+    coverage.static = {};
+    coverage.perTest = {};
+  }
+  ns.mutantCoverageReported = false;
+}
+
 function collectTestName(
   {
     name,

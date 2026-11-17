@@ -183,6 +183,91 @@ describe('VitestRunner integration', () => {
       });
     });
 
+    describe('dry run with isolate: false', () => {
+      beforeEach(async () => {
+        options.vitest.configFile = 'vitest.no-isolate.config.js';
+        await sut.init();
+      });
+
+      it('should report the mutant coverage of each test file once', async () => {
+        const runResult = await sut.dryRun(factory.dryRunOptions());
+        assertions.expectCompleted(runResult);
+        expect(runResult.mutantCoverage).deep.eq({
+          static: {
+            '0': 1,
+          },
+          perTest: {
+            [test1]: {
+              '1': 1,
+              '2': 1,
+            },
+            [test2]: {
+              '1': 1,
+              '2': 1,
+            },
+            [test3]: {
+              '5': 1,
+              '6': 1,
+            },
+            [test4]: {
+              '3': 1,
+              '4': 1,
+            },
+            [test5]: {
+              '7': 1,
+              '8': 1,
+              '9': 1,
+              '10': 1,
+              '11': 1,
+              '12': 1,
+              '13': 1,
+              '14': 1,
+            },
+          },
+        });
+      });
+    });
+
+    describe('dry run with coverage after afterAll', () => {
+      beforeEach(async () => {
+        await fs.writeFile(
+          'tests/teardown.spec.ts',
+          `import { beforeAll, it } from 'vitest';
+import { add } from '../math.js';
+
+beforeAll(() => () => {
+  add(1, 2);
+});
+
+it('should pass', () => {});
+`,
+        );
+      });
+
+      it('should report the coverage of a beforeAll cleanup with isolate: true', async () => {
+        await sut.init();
+        const runResult = await sut.dryRun(factory.dryRunOptions());
+        assertions.expectCompleted(runResult);
+        expect(runResult.mutantCoverage?.static).deep.eq({
+          '0': 4,
+          '1': 1,
+          '2': 1,
+        });
+      });
+
+      it('should report the coverage of a beforeAll cleanup with isolate: false', async () => {
+        options.vitest.configFile = 'vitest.no-isolate.config.js';
+        await sut.init();
+        const runResult = await sut.dryRun(factory.dryRunOptions());
+        assertions.expectCompleted(runResult);
+        expect(runResult.mutantCoverage?.static).deep.eq({
+          '0': 1,
+          '1': 1,
+          '2': 1,
+        });
+      });
+    });
+
     describe('test collection failures', () => {
       const collectionFile = 'tests/collection-error.spec.ts';
 
