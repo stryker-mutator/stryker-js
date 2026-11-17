@@ -183,6 +183,51 @@ describe('VitestRunner integration', () => {
       });
     });
 
+    describe('dry run with isolate: false', () => {
+      beforeEach(async () => {
+        options.vitest.configFile = 'vitest.no-isolate.config.js';
+        await sut.init();
+      });
+
+      it('should report the mutant coverage of each test file once', async () => {
+        const runResult = await sut.dryRun(factory.dryRunOptions());
+        assertions.expectCompleted(runResult);
+        expect(runResult.mutantCoverage).deep.eq({
+          static: {
+            '0': 1,
+          },
+          perTest: {
+            [test1]: {
+              '1': 1,
+              '2': 1,
+            },
+            [test2]: {
+              '1': 1,
+              '2': 1,
+            },
+            [test3]: {
+              '5': 1,
+              '6': 1,
+            },
+            [test4]: {
+              '3': 1,
+              '4': 1,
+            },
+            [test5]: {
+              '7': 1,
+              '8': 1,
+              '9': 1,
+              '10': 1,
+              '11': 1,
+              '12': 1,
+              '13': 1,
+              '14': 1,
+            },
+          },
+        });
+      });
+    });
+
     describe('test collection failures', () => {
       const collectionFile = 'tests/collection-error.spec.ts';
 

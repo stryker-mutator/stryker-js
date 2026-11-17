@@ -63,17 +63,40 @@ if (mode === 'mutant') {
     // Vitest's hooks API requires this empty destructure to allow access to suite.meta
     // eslint-disable-next-line no-empty-pattern
     afterAll(({}, suite) => {
-      suite.meta.mutantCoverage = ns.mutantCoverage;
+      suite.meta.mutantCoverage = takeMutantCoverage();
     });
   } else {
     // @ts-expect-error This was changed in Vitest v4.1
     afterAll(({ meta }) => {
-      meta.mutantCoverage = ns.mutantCoverage;
+      meta.mutantCoverage = takeMutantCoverage();
     });
   }
 }
 
 // Stryker disable all: this file is copied to the sandbox dir
+/**
+ * Takes the coverage collected since the previous test file, and empties the shared object.
+ * With `isolate: false`, test files share `ns.mutantCoverage`, so reporting the object itself would report the coverage of all earlier files again.
+ * Instrumented modules keep a reference to the object, so it is emptied in place, never replaced.
+ */
+function takeMutantCoverage(): MutantCoverage | undefined {
+  const coverage: MutantCoverage | undefined = ns.mutantCoverage;
+  if (!coverage) {
+    return undefined;
+  }
+  const taken: MutantCoverage = {
+    static: { ...coverage.static },
+    perTest: { ...coverage.perTest },
+  };
+  for (const id of Object.keys(coverage.static)) {
+    delete coverage.static[id];
+  }
+  for (const id of Object.keys(coverage.perTest)) {
+    delete coverage.perTest[id];
+  }
+  return taken;
+}
+
 function collectTestName(
   {
     name,
