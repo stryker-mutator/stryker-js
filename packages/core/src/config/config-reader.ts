@@ -15,7 +15,10 @@ import { ConfigError } from '../errors.js';
 import { fileUtils } from '../utils/file-utils.js';
 
 import { OptionsValidator } from './options-validator.js';
-import { SUPPORTED_CONFIG_FILE_NAMES } from './config-file-formats.js';
+import {
+  SUPPORTED_CONFIG_FILE_NAMES,
+  TYPESCRIPT_CONFIG_FILE_EXTENSIONS,
+} from './config-file-formats.js';
 
 export const CONFIG_SYNTAX_HELP = `
 Example of how a config file should look:
@@ -33,6 +36,13 @@ Or using commonjs:
 module.exports = {
   // You're options here!
 }
+
+Or using TypeScript (requires Node.js 22.18 or newer):
+import type { PartialStrykerOptions } from '@stryker-mutator/api/core';
+
+export default {
+  // You're options here!
+} satisfies PartialStrykerOptions;
 
 See https://stryker-mutator.io/docs/stryker-js/config-file for more information.`.trim();
 
@@ -171,8 +181,24 @@ export class ConfigReader {
         pathToFileURL(path.resolve(configFile)).toString(),
       );
     } catch (err) {
+      if (
+        this.isTypeScriptFile(configFile) &&
+        hasErrorCode(err, 'ERR_UNKNOWN_FILE_EXTENSION')
+      ) {
+        throw new ConfigReaderError(
+          `Node.js ${process.version} cannot import a TypeScript config file. Use Node.js 22.18 or newer without --no-experimental-strip-types, or use a "stryker.config.mjs" or "stryker.config.json" file instead`,
+          configFile,
+          err,
+        );
+      }
       throw new ConfigReaderError('Error during import', configFile, err);
     }
+  }
+
+  private isTypeScriptFile(configFile: string): boolean {
+    return TYPESCRIPT_CONFIG_FILE_EXTENSIONS.includes(
+      path.extname(configFile).toLocaleLowerCase(),
+    );
   }
 
   private hasDefaultExport(
@@ -184,6 +210,15 @@ export class ConfigReader {
       ? true
       : false;
   }
+}
+
+function hasErrorCode(err: unknown, code: string): boolean {
+  return (
+    typeof err === 'object' &&
+    err !== null &&
+    'code' in err &&
+    err.code === code
+  );
 }
 
 export class ConfigReaderError extends ConfigError {
