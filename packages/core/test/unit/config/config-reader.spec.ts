@@ -98,7 +98,7 @@ describe(ConfigReader.name, () => {
       expect(result).deep.eq(expectedOptions);
     });
 
-    ['js', 'mjs', 'cjs'].forEach((ext) => {
+    ['js', 'mjs', 'cjs', 'ts', 'mts', 'cts'].forEach((ext) => {
       it(`should load ${base}.${ext} by default`, async () => {
         // Arrange
         const strykerConfFile = `${base}.${ext}`;
@@ -219,6 +219,127 @@ describe(ConfigReader.name, () => {
     );
     expect(error).instanceOf(ConfigError);
     expect((error as ConfigError).innerError).eq(syntaxError);
+  });
+
+  describe('TypeScript config files', () => {
+    function createImportError(code: string, message: string): Error {
+      return Object.assign(new Error(message), { code });
+    }
+
+    it('should import a custom .ts file as a JS module', async () => {
+      // Arrange
+      const expectedOptions = { testRunner: 'my-runner', configFile: 'my.ts' };
+      existsStub.withArgs('my.ts').resolves(true);
+      importModuleStub
+        .withArgs(pathToFileURL(path.resolve('my.ts')).toString())
+        .resolves({ default: expectedOptions });
+
+      // Act
+      const result = await sut.readConfig({ configFile: 'my.ts' });
+
+      // Assert
+      expect(result).deep.eq(expectedOptions);
+      expect(readFileStub).not.called;
+    });
+
+    it('should prefer a JavaScript config file over a TypeScript config file', async () => {
+      // Arrange
+      const expectedOptions = { testRunner: 'js-runner' };
+      existsStub.withArgs('stryker.config.mjs').resolves(true);
+      existsStub.withArgs('stryker.config.ts').resolves(true);
+      importModuleStub
+        .withArgs(pathToFileURL(path.resolve('stryker.config.mjs')).toString())
+        .resolves({ default: expectedOptions });
+
+      // Act
+      const result = await sut.readConfig({});
+
+      // Assert
+      expect(result).deep.eq(expectedOptions);
+    });
+
+    ['.ts', '.mts', '.cts'].forEach((ext) => {
+      it(`should explain that Node.js cannot load a \`${ext}\` config file when the extension is unknown`, async () => {
+        // Arrange
+        const configFile = `stryker.config${ext}`;
+        const importError = createImportError(
+          'ERR_UNKNOWN_FILE_EXTENSION',
+          `Unknown file extension "${ext}"`,
+        );
+        existsStub.withArgs(configFile).resolves(true);
+        importModuleStub.rejects(importError);
+
+        // Act
+        const error = await expect(sut.readConfig({})).rejectedWith(
+          `Invalid config file "${configFile}". Node.js ${process.version} cannot import a TypeScript config file. Use Node.js 22.18 or newer`,
+        );
+
+        // Assert
+        expect(error).instanceOf(ConfigError);
+        expect((error as ConfigError).innerError).eq(importError);
+      });
+    });
+
+    it('should recognize the TypeScript extension regardless of casing', async () => {
+      // Arrange
+      existsStub.withArgs('my.TS').resolves(true);
+      importModuleStub.rejects(
+        createImportError(
+          'ERR_UNKNOWN_FILE_EXTENSION',
+          'Unknown file extension',
+        ),
+      );
+
+      // Act & assert
+      await expect(sut.readConfig({ configFile: 'my.TS' })).rejectedWith(
+        `Invalid config file "my.TS". Node.js ${process.version} cannot import a TypeScript config file`,
+      );
+    });
+
+    it('should not blame the Node.js version for other import errors in a TypeScript config file', async () => {
+      // Arrange
+      const syntaxError = createImportError('ERR_SYNTAX', 'SyntaxError');
+      existsStub.withArgs('stryker.config.ts').resolves(true);
+      importModuleStub.rejects(syntaxError);
+
+      // Act
+      const error = await expect(sut.readConfig({})).rejectedWith(
+        'Invalid config file "stryker.config.ts". Error during import.',
+      );
+
+      // Assert
+      expect((error as ConfigError).innerError).eq(syntaxError);
+    });
+
+    it('should not blame the Node.js version for an unknown extension in a JavaScript config file', async () => {
+      // Arrange
+      const importError = createImportError(
+        'ERR_UNKNOWN_FILE_EXTENSION',
+        'Unknown file extension',
+      );
+      existsStub.withArgs('stryker.config.js').resolves(true);
+      importModuleStub.rejects(importError);
+
+      // Act & assert
+      await expect(sut.readConfig({})).rejectedWith(
+        'Invalid config file "stryker.config.js". Error during import.',
+      );
+    });
+
+    it('should show a TypeScript example when the config file is invalid', async () => {
+      // Arrange
+      existsStub.withArgs('stryker.config.ts').resolves(true);
+      importModuleStub.resolves({ default: 42 });
+
+      // Act & assert
+      await expect(sut.readConfig({})).rejected;
+      sinon.assert.calledWithMatch(
+        testInjector.logger.fatal,
+        sinon.match(
+          "import type { PartialStrykerOptions } from '@stryker-mutator/api/core';",
+        ),
+      );
+    });
   });
 
   describe('logging', () => {

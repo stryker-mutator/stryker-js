@@ -80,6 +80,33 @@ describe(ConfigReader.name, () => {
         expect(testInjector.logger.warn).not.called;
       });
 
+      describe('with a TypeScript config file', function () {
+        // Only Node.js 22.18 and newer strips types by default.
+        before(function () {
+          if (!process.features.typescript) {
+            this.skip();
+          }
+        });
+
+        it('should load the stryker.conf.ts config in cwd', async () => {
+          process.chdir(resolveTestResource('ts'));
+          sut = createSut();
+
+          const result = await sut.readConfig({});
+
+          expect(result.type).to.be.eq('ts');
+        });
+
+        it('should load the stryker.config.mts config in cwd', async () => {
+          process.chdir(resolveTestResource('mts'));
+          sut = createSut();
+
+          const result = await sut.readConfig({});
+
+          expect(result.type).to.be.eq('mts');
+        });
+      });
+
       it('should use the stryker.conf.json file in cwd', async () => {
         process.chdir(resolveTestResource('json'));
         sut = createSut();
