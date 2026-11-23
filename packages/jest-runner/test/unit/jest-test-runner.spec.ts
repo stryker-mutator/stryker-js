@@ -405,6 +405,20 @@ describe(JestTestRunner.name, () => {
         expect(result.mutantCoverage).deep.eq(expectedMutantCoverage);
       });
 
+      it('should return empty mutant coverage when no test reached a mutant', async () => {
+        // Arrange
+        const sut = await arrangeInitializedSut();
+
+        // Act
+        const result = await sut.dryRun(
+          factory.dryRunOptions({ coverageAnalysis: 'perTest' }),
+        );
+
+        // Assert
+        assertions.expectCompleted(result);
+        expect(result.mutantCoverage).deep.eq({ static: {}, perTest: {} });
+      });
+
       it('should override the testEnvironment if coverage analysis != off', async () => {
         const testEnvironment = 'my-test-environment';
         options.jest.config = { testEnvironment };

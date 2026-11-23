@@ -160,7 +160,14 @@ export class JestTestRunner implements TestRunner {
           errorMessage,
         };
       } else {
-        dryRunResult.mutantCoverage = state.instrumenterContext.mutantCoverage;
+        // Every test file ran with the Stryker environment (verified above), so no coverage at all
+        // means no test reached a mutant, not that coverage wasn't measured. Report it as empty,
+        // or core falls back to running every test against every mutant.
+        dryRunResult.mutantCoverage = state.instrumenterContext
+          .mutantCoverage ?? {
+          static: {},
+          perTest: {},
+        };
       }
     }
     return dryRunResult;
