@@ -56,6 +56,12 @@
   },
   "peerDependencies": {
     "@stryker-mutator/core": "workspace:*",
+    "@typescript/native": ">=7.0.0-0",
     "typescript": ">=3.6"
+  },
+  "peerDependenciesMeta": {
+    "@typescript/native": {
+      "optional": true
+    }
   }
 }
