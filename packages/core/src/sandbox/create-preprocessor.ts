@@ -8,6 +8,7 @@ import {
 import { disableTypeChecks } from '@stryker-mutator/instrumenter';
 
 import { coreTokens } from '../di/index.js';
+import type { TemporaryDirectory } from '../utils/temporary-directory.js';
 
 import { TSConfigPreprocessor } from './ts-config-preprocessor.js';
 import { FilePreprocessor } from './file-preprocessor.js';
@@ -16,7 +17,11 @@ import { DisableTypeChecksPreprocessor } from './disable-type-checks-preprocesso
 
 createPreprocessor.inject = tokens(commonTokens.injector);
 export function createPreprocessor(
-  injector: Injector<PluginContext>,
+  injector: Injector<
+    PluginContext & {
+      [coreTokens.temporaryDirectory]: Pick<TemporaryDirectory, 'path'>;
+    }
+  >,
 ): FilePreprocessor {
   return new MultiPreprocessor([
     injector

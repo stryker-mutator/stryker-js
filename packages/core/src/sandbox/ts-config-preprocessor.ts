@@ -5,12 +5,14 @@ import { tokens, commonTokens } from '@stryker-mutator/api/plugin';
 import { Logger } from '@stryker-mutator/api/logging';
 
 import { Project } from '../fs/project.js';
+import { coreTokens } from '../di/index.js';
+import type { TemporaryDirectory } from '../utils/temporary-directory.js';
 
 import { FilePreprocessor } from './file-preprocessor.js';
 
 export interface TSConfig {
   references?: Array<{ path: string }>;
-  extends?: string;
+  extends?: string | string[];
   files?: string[];
   exclude?: string[];
   include?: string[];
@@ -38,10 +40,12 @@ export class TSConfigPreprocessor implements FilePreprocessor {
   public static readonly inject = tokens(
     commonTokens.logger,
     commonTokens.options,
+    coreTokens.temporaryDirectory,
   );
   constructor(
     private readonly log: Logger,
     private readonly options: StrykerOptions,
+    private readonly sandboxDirectory: Pick<TemporaryDirectory, 'path'>,
   ) {}
 
   public async preprocess(project: Project): Promise<void> {
@@ -92,16 +96,21 @@ export class TSConfigPreprocessor implements FilePreprocessor {
     config: TSConfig,
     tsconfigFileName: string,
   ): Promise<void> {
-    const extend = config.extends;
-    if (typeof extend === 'string') {
-      const rewritten = this.tryRewriteReference(extend, tsconfigFileName);
-      if (rewritten) {
-        config.extends = rewritten;
-      } else {
-        await this.rewriteTSConfigFile(
-          project,
-          path.resolve(path.dirname(tsconfigFileName), extend),
-        );
+    const rewrite = async (reference: string): Promise<string> => {
+      if (typeof reference !== 'string') return reference;
+      const rewritten = this.tryRewriteReference(reference, tsconfigFileName);
+      if (rewritten !== false) return rewritten;
+      await this.rewriteTSConfigFile(
+        project,
+        path.resolve(path.dirname(tsconfigFileName), reference),
+      );
+      return reference;
+    };
+    if (typeof config.extends === 'string') {
+      config.extends = await rewrite(config.extends);
+    } else if (Array.isArray(config.extends)) {
+      for (const [index, reference] of config.extends.entries()) {
+        config.extends[index] = await rewrite(reference);
       }
     }
   }
@@ -155,14 +164,25 @@ export class TSConfigPreprocessor implements FilePreprocessor {
   ): string | false {
     const dirName = path.dirname(originTSConfigFileName);
     const fileName = path.resolve(dirName, reference);
-    const relativeToSandbox = path.relative(process.cwd(), fileName);
-    if (relativeToSandbox.startsWith('..')) {
-      return this.join('..', '..', reference);
+    const projectRoot = process.cwd();
+    const relativeToProject = path.relative(projectRoot, fileName);
+    if (
+      relativeToProject === '..' ||
+      relativeToProject.startsWith(`..${path.sep}`) ||
+      path.isAbsolute(relativeToProject)
+    ) {
+      const relocatedConfigDir = path.resolve(
+        this.sandboxDirectory.path,
+        path.relative(projectRoot, dirName),
+      );
+      const relative = path.relative(relocatedConfigDir, fileName);
+      const portable = relative.split(path.sep).join('/');
+      return path.isAbsolute(relative) ||
+        portable.startsWith('../') ||
+        portable === '..'
+        ? portable
+        : `./${portable}`;
     }
     return false;
-  }
-
-  private join(...pathSegments: string[]) {
-    return pathSegments.map((segment) => segment.replace(/\\/g, '/')).join('/');
   }
 }
