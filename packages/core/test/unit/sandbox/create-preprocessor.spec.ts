@@ -10,6 +10,7 @@ import {
 import { FileSystemTestDouble } from '../../helpers/file-system-test-double.js';
 import { serializeTSConfig } from '../../helpers/producers.js';
 import { Project } from '../../../src/fs/index.js';
+import { coreTokens } from '../../../src/di/index.js';
 
 describe(createPreprocessor.name, () => {
   let fsTestDouble: FileSystemTestDouble;
@@ -17,7 +18,11 @@ describe(createPreprocessor.name, () => {
 
   beforeEach(() => {
     fsTestDouble = new FileSystemTestDouble();
-    sut = testInjector.injector.injectFunction(createPreprocessor);
+    sut = testInjector.injector
+      .provideValue(coreTokens.temporaryDirectory, {
+        path: path.resolve(testInjector.options.tempDirName, 'sandbox-test'),
+      })
+      .injectFunction(createPreprocessor);
   });
 
   it('should rewrite tsconfig files', async () => {

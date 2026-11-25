@@ -7,6 +7,7 @@ import { TSConfigPreprocessor } from '../../../src/sandbox/ts-config-preprocesso
 import { FileSystemTestDouble } from '../../helpers/file-system-test-double.js';
 import { Project } from '../../../src/fs/project.js';
 import { serializeTSConfig } from '../../helpers/producers.js';
+import { coreTokens } from '../../../src/di/index.js';
 
 describe(TSConfigPreprocessor.name, () => {
   let fsTestDouble: FileSystemTestDouble;
@@ -15,7 +16,13 @@ describe(TSConfigPreprocessor.name, () => {
 
   beforeEach(() => {
     fsTestDouble = new FileSystemTestDouble();
-    sut = testInjector.injector.injectClass(TSConfigPreprocessor);
+    sut = testInjector.injector
+      .provideValue(coreTokens.temporaryDirectory, {
+        get path() {
+          return path.resolve(testInjector.options.tempDirName, 'sandbox-test');
+        },
+      })
+      .injectClass(TSConfigPreprocessor);
   });
 
   it('should not do anything if the tsconfig file does not exist', async () => {
@@ -107,6 +114,79 @@ describe(TSConfigPreprocessor.name, () => {
       serializeTSConfig({
         references: [{ path: '../../../model/tsconfig.json' }],
       }),
+    );
+  });
+
+  it('should rewrite external paths for a nested temporary directory', async () => {
+    testInjector.options.tempDirName = '.stryker-tmp/nested/run';
+    fsTestDouble.files[tsconfigFileName] = serializeTSConfig({
+      extends: '../tsconfig.base.json',
+      references: [{ path: '../model' }],
+      include: ['../shared/**/*.ts'],
+    });
+    const project = new Project(
+      fsTestDouble,
+      fsTestDouble.toFileDescriptions(),
+    );
+
+    await sut.preprocess(project);
+
+    expect(await project.files.get(tsconfigFileName)!.readContent()).eq(
+      serializeTSConfig({
+        extends: '../../../../../tsconfig.base.json',
+        references: [{ path: '../../../../../model/tsconfig.json' }],
+        include: ['../../../../../shared/**/*.ts'],
+      }),
+    );
+  });
+
+  it('should rewrite external paths when the temporary directory is outside the project', async () => {
+    testInjector.options.tempDirName = path.resolve('..', 'external-temp');
+    fsTestDouble.files[tsconfigFileName] = serializeTSConfig({
+      extends: '../tsconfig.base.json',
+    });
+    const project = new Project(
+      fsTestDouble,
+      fsTestDouble.toFileDescriptions(),
+    );
+
+    await sut.preprocess(project);
+
+    expect(await project.files.get(tsconfigFileName)!.readContent()).eq(
+      serializeTSConfig({ extends: '../../tsconfig.base.json' }),
+    );
+  });
+
+  it('should rewrite an extends array while retaining order and local and package references', async () => {
+    fsTestDouble.files[tsconfigFileName] = serializeTSConfig({
+      extends: [
+        '../tsconfig.base.json',
+        './tsconfig.local.json',
+        '@tsconfig/node22',
+      ],
+    });
+    const localConfig = path.resolve('tsconfig.local.json');
+    fsTestDouble.files[localConfig] = serializeTSConfig({
+      extends: '../tsconfig.shared.json',
+    });
+    const project = new Project(
+      fsTestDouble,
+      fsTestDouble.toFileDescriptions(),
+    );
+
+    await sut.preprocess(project);
+
+    expect(await project.files.get(tsconfigFileName)!.readContent()).eq(
+      serializeTSConfig({
+        extends: [
+          '../../../tsconfig.base.json',
+          './tsconfig.local.json',
+          '@tsconfig/node22',
+        ],
+      }),
+    );
+    expect(await project.files.get(localConfig)!.readContent()).eq(
+      serializeTSConfig({ extends: '../../../tsconfig.shared.json' }),
     );
   });
 
